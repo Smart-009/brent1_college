@@ -1,18 +1,30 @@
-import { useState } from 'react'
-import { useNavigate, Link } from 'react-router-dom'
+import { useState, useEffect } from 'react'
+import { useNavigate, useSearchParams, Link } from 'react-router-dom'
 import { useAuthContext } from '@/features/auth/AuthContext'
 import type { Role } from '@/lib/database.types'
 
 export function Login() {
   const { signIn, signInAsDemo } = useAuthContext()
   const navigate = useNavigate()
+  const [searchParams] = useSearchParams()
+  const paramRole = searchParams.get('role') as Role | null
 
-  const [selectedRole, setSelectedRole] = useState<Role>('student')
-  const [admissionNumber, setAdmissionNumber] = useState('BC-2026-001')
-  const [password, setPassword] = useState('password123')
+  const [selectedRole, setSelectedRole] = useState<Role>(paramRole === 'admin' ? 'admin' : 'student')
+  const [admissionNumber, setAdmissionNumber] = useState(paramRole === 'admin' ? 'ADMIN-001' : 'BC-2026-001')
+  const [password, setPassword] = useState('')
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
   const [showPassword, setShowPassword] = useState(false)
+
+  useEffect(() => {
+    if (paramRole && ['admin', 'bursar', 'teacher', 'student', 'parent'].includes(paramRole)) {
+      setSelectedRole(paramRole)
+      if (paramRole === 'admin') {
+        setAdmissionNumber('ADMIN-001')
+        setPassword('')
+      }
+    }
+  }, [paramRole])
 
   const rolesConfig: { role: Role; label: string; icon: string; defaultId: string; defaultName: string; route: string; desc: string }[] = [
     {
