@@ -998,10 +998,30 @@ tbody td { padding: var(--space-3) var(--space-4); color: var(--color-text-secon
     display: none !important;
   }
 
-  /* Safe interactive touch targets */
-  .btn {
-    min-height: 44px;
+  /* Safe interactive touch targets & zero-delay clicks */
+  .btn, button, a, select, input {
     touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  /* GPU accelerated sticky bars & bottom navigation */
+  .mobile-bottom-nav,
+  header {
+    transform: translateZ(0);
+    -webkit-transform: translateZ(0);
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+  }
+
+  /* Smooth momentum scrolling */
+  body, html, main, .modal-body, .course-list-scroll {
+    -webkit-overflow-scrolling: touch;
+    scroll-behavior: smooth;
+  }
+
+  /* Prevent layout shifts */
+  img {
+    content-visibility: auto;
   }
 }
 
