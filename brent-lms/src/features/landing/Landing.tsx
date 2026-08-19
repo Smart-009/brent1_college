@@ -1506,265 +1506,7 @@ export function Landing() {
         </div>
       </section>
 
-      {/* Free Application & Inquiry Modal */}
-      {inquiryModalOpen && (
-        <div className="modal-overlay" onClick={() => setInquiryModalOpen(false)}>
-          <div className="modal-content modal-md" onClick={(e) => e.stopPropagation()} style={{ padding: '2.25rem', borderRadius: '16px' }}>
-            <div className="modal-header" style={{ padding: 0, paddingBottom: '1rem', marginBottom: '1.5rem', borderBottom: '1px solid #e2e8f0' }}>
-              <div>
-                <h3 className="modal-title" style={{ fontSize: '1.35rem', fontWeight: 900, color: '#1e3a8a' }}>
-                  Apply for Short Course / Free Consultation
-                </h3>
-                <p style={{ fontSize: '0.85rem', color: '#64748b', margin: '0.25rem 0 0' }}>
-                  Fill out this 60-second form. Our Admissions Office will reach out with timetable options and fee installment plans.
-                </p>
-              </div>
-              <button type="button" className="modal-close" onClick={() => setInquiryModalOpen(false)}>✕</button>
-            </div>
-
-            {inquirySuccess ? (
-              <div style={{ background: '#dcfce7', border: '1px solid #86efac', borderRadius: '12px', padding: '2rem', textAlign: 'center', color: '#166534' }}>
-                <div style={{ fontSize: '2.5rem', marginBottom: '0.5rem' }}>✓</div>
-                <h4 style={{ fontWeight: 900, fontSize: '1.2rem', margin: '0 0 0.35rem' }}>Application Inquiry Received!</h4>
-                <p style={{ fontSize: '0.9rem', margin: 0 }}>
-                  Thank you, <strong>{inquiryForm.name}</strong>. The Admissions Office has received your application for <strong>{inquiryForm.course}</strong> and will call/WhatsApp you shortly.
-                </p>
-              </div>
-            ) : (
-              <form onSubmit={handleInquirySubmit}>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-                  <div>
-                    <label className="label">Your Full Name *</label>
-                    <input
-                      type="text"
-                      required
-                      className="input"
-                      placeholder="e.g. Cynthia Achieng"
-                      value={inquiryForm.name}
-                      onChange={(e) => setInquiryForm({ ...inquiryForm, name: e.target.value })}
-                    />
-                  </div>
-
-                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
-                    <div>
-                      <label className="label">Phone / WhatsApp Number *</label>
-                      <input
-                        type="tel"
-                        required
-                        className="input"
-                        placeholder="+254 722 264 380"
-                        value={inquiryForm.phone}
-                        onChange={(e) => setInquiryForm({ ...inquiryForm, phone: e.target.value })}
-                      />
-                    </div>
-                    <div>
-                      <label className="label">Email Address</label>
-                      <input
-                        type="email"
-                        className="input"
-                        placeholder="cynthia@gmail.com"
-                        value={inquiryForm.email}
-                        onChange={(e) => setInquiryForm({ ...inquiryForm, email: e.target.value })}
-                      />
-                    </div>
-                  </div>
-
-                  <div>
-                    <label className="label">Selected Short Course *</label>
-                    <select
-                      className="input"
-                      value={inquiryForm.course}
-                      onChange={(e) => setInquiryForm({ ...inquiryForm, course: e.target.value })}
-                    >
-                      {COURSES_DATA.map((c) => (
-                        <option key={c.id} value={c.title}>
-                          {c.title} ({c.duration} — {c.fee})
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-
-                  <div>
-                    <label className="label">Preferred Timetable Shift</label>
-                    <select
-                      className="input"
-                      value={inquiryForm.preferredShift}
-                      onChange={(e) => setInquiryForm({ ...inquiryForm, preferredShift: e.target.value })}
-                    >
-                      <option value="Morning Batch (8:30 AM - 11:30 AM)">Morning Batch (8:30 AM - 11:30 AM)</option>
-                      <option value="Afternoon Batch (2:00 PM - 5:00 PM)">Afternoon Batch (2:00 PM - 5:00 PM)</option>
-                      <option value="Evening Executive Batch (5:30 PM - 7:30 PM)">Evening Executive Batch (5:30 PM - 7:30 PM)</option>
-                      <option value="Saturday Intensive Masterclass (8:30 AM - 4:30 PM)">Saturday Intensive Masterclass (8:30 AM - 4:30 PM)</option>
-                    </select>
-                  </div>
-
-                  <div>
-                    <label className="label">Questions or Career Goals (Optional)</label>
-                    <textarea
-                      className="input"
-                      rows={2}
-                      placeholder="e.g. Do you offer job interview preparation?..."
-                      value={inquiryForm.notes}
-                      onChange={(e) => setInquiryForm({ ...inquiryForm, notes: e.target.value })}
-                    />
-                  </div>
-                </div>
-
-                <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.75rem', marginTop: '1.75rem' }}>
-                  <button type="button" className="btn btn-secondary" onClick={() => setInquiryModalOpen(false)}>Cancel</button>
-                  <button type="submit" className="btn btn-primary" style={{ fontWeight: 800, padding: '0.75rem 1.75rem' }}>
-                    ✓ Submit Application & Secure Seat
-                  </button>
-                </div>
-              </form>
-            )}
-          </div>
-        </div>
-      )}
-
-      {/* College Portals & Management Desks Modal */}
-      {showPortalDesksModal && (
-        <div className="modal-overlay" onClick={() => setShowPortalDesksModal(false)}>
-          <div className="modal-content modal-md" onClick={(e) => e.stopPropagation()} style={{ padding: '2rem', borderRadius: '16px' }}>
-            <div className="modal-header" style={{ padding: 0, paddingBottom: '1rem', marginBottom: '1.5rem', borderBottom: '1px solid #cbd5e1' }}>
-              <div>
-                <h3 className="modal-title" style={{ fontSize: '1.25rem', fontWeight: 900, color: '#1e3a8a' }}>
-                  🔐 College Portals & Management Workstations
-                </h3>
-                <p style={{ fontSize: '0.85rem', color: '#334155', margin: '0.25rem 0 0', fontWeight: 500 }}>
-                  Select your role to access your personalized workstation:
-                </p>
-              </div>
-              <button type="button" className="modal-close" onClick={() => setShowPortalDesksModal(false)}>✕</button>
-            </div>
-
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
-              <div
-                onClick={() => handleLaunchRole('student')}
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '1rem',
-                  padding: '1rem',
-                  background: '#f8fafc',
-                  border: '1px solid #cbd5e1',
-                  borderRadius: '10px',
-                  cursor: 'pointer',
-                  transition: 'all 0.2s',
-                }}
-                onMouseEnter={(e) => (e.currentTarget.style.borderColor = '#2563eb')}
-                onMouseLeave={(e) => (e.currentTarget.style.borderColor = '#cbd5e1')}
-              >
-                <span style={{ fontSize: '1.75rem' }}>🎓</span>
-                <div>
-                  <div style={{ fontWeight: 800, color: '#1e3a8a' }}>Student & Trainee Portal</div>
-                  <div style={{ fontSize: '0.82rem', color: '#334155', fontWeight: 500 }}>Access registered short course units, video lessons & e-library</div>
-                </div>
-              </div>
-
-              <div
-                onClick={() => handleLaunchRole('bursar')}
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '1rem',
-                  padding: '1rem',
-                  background: '#f8fafc',
-                  border: '1px solid #cbd5e1',
-                  borderRadius: '10px',
-                  cursor: 'pointer',
-                  transition: 'all 0.2s',
-                }}
-                onMouseEnter={(e) => (e.currentTarget.style.borderColor = '#059669')}
-                onMouseLeave={(e) => (e.currentTarget.style.borderColor = '#cbd5e1')}
-              >
-                <span style={{ fontSize: '1.75rem' }}>💼</span>
-                <div>
-                  <div style={{ fontWeight: 800, color: '#059669' }}>Bursar & Admissions Registry</div>
-                  <div style={{ fontSize: '0.82rem', color: '#334155', fontWeight: 500 }}>M-Pesa receipts, calling letters, unit registration & fee ledger</div>
-                </div>
-              </div>
-
-              <div
-                onClick={() => handleLaunchRole('teacher')}
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '1rem',
-                  padding: '1rem',
-                  background: '#f8fafc',
-                  border: '1px solid #cbd5e1',
-                  borderRadius: '10px',
-                  cursor: 'pointer',
-                  transition: 'all 0.2s',
-                }}
-                onMouseEnter={(e) => (e.currentTarget.style.borderColor = '#d97706')}
-                onMouseLeave={(e) => (e.currentTarget.style.borderColor = '#cbd5e1')}
-              >
-                <span style={{ fontSize: '1.75rem' }}>👩‍🏫</span>
-                <div>
-                  <div style={{ fontWeight: 800, color: '#d97706' }}>Faculty & HOD Portal</div>
-                  <div style={{ fontSize: '0.82rem', color: '#334155', fontWeight: 500 }}>Upload video tutorials, grade books & lab practical assignments</div>
-                </div>
-              </div>
-
-              <div
-                onClick={() => handleLaunchRole('admin')}
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '1rem',
-                  padding: '1rem',
-                  background: '#f8fafc',
-                  border: '1px solid #cbd5e1',
-                  borderRadius: '10px',
-                  cursor: 'pointer',
-                  transition: 'all 0.2s',
-                }}
-                onMouseEnter={(e) => (e.currentTarget.style.borderColor = '#1e3a8a')}
-                onMouseLeave={(e) => (e.currentTarget.style.borderColor = '#cbd5e1')}
-              >
-                <span style={{ fontSize: '1.75rem' }}>🛡️</span>
-                <div>
-                  <div style={{ fontWeight: 800, color: '#1e3a8a' }}>Principal & Admin Console</div>
-                  <div style={{ fontSize: '0.82rem', color: '#334155', fontWeight: 500 }}>Department controls, course pricing, subject disciplines & institutional overview</div>
-                </div>
-              </div>
-
-              <div
-                onClick={() => handleLaunchRole('parent')}
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '1rem',
-                  padding: '1rem',
-                  background: '#f8fafc',
-                  border: '1px solid #cbd5e1',
-                  borderRadius: '10px',
-                  cursor: 'pointer',
-                  transition: 'all 0.2s',
-                }}
-                onMouseEnter={(e) => (e.currentTarget.style.borderColor = '#b45309')}
-                onMouseLeave={(e) => (e.currentTarget.style.borderColor = '#cbd5e1')}
-              >
-                <span style={{ fontSize: '1.75rem' }}>👨‍👩‍👧</span>
-                <div>
-                  <div style={{ fontWeight: 800, color: '#b45309' }}>Parent / Sponsor Portal</div>
-                  <div style={{ fontSize: '0.82rem', color: '#334155', fontWeight: 500 }}>Student attendance, fee receipts & academic progress tracking</div>
-                </div>
-              </div>
-            </div>
-
-            <div style={{ marginTop: '1.5rem', textAlign: 'center' }}>
-              <Link to="/login" className="btn btn-secondary btn-sm" style={{ width: '100%', color: '#ffffff', fontWeight: 700 }}>
-                Go to Standard Username / Password Login →
-              </Link>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Footer */}
+      {/* Desktop Footer */}
       <footer style={{ background: '#090d16', color: '#cbd5e1', padding: '4rem 1.5rem 2.5rem', borderTop: '1px solid #1e293b' }}>
         <div style={{ maxWidth: '1280px', margin: '0 auto', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '2.5rem', marginBottom: '3rem' }}>
           {/* Brand & Overview */}
@@ -1790,14 +1532,14 @@ export function Landing() {
               Specialized Short Courses
             </h4>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '0.65rem', fontSize: '0.88rem' }}>
-              <a href="#courses" style={{ color: '#cbd5e1', textDecoration: 'none', transition: 'color 0.2s' }} onMouseEnter={(e) => (e.currentTarget.style.color = '#93c5fd')} onMouseLeave={(e) => (e.currentTarget.style.color = '#cbd5e1')}>💻 Computer Packages & Digital Skills</a>
-              <a href="#courses" style={{ color: '#cbd5e1', textDecoration: 'none', transition: 'color 0.2s' }} onMouseEnter={(e) => (e.currentTarget.style.color = '#93c5fd')} onMouseLeave={(e) => (e.currentTarget.style.color = '#cbd5e1')}>☕ Professional Barista & Coffee Brewing Artistry</a>
-              <a href="#courses" style={{ color: '#cbd5e1', textDecoration: 'none', transition: 'color 0.2s' }} onMouseEnter={(e) => (e.currentTarget.style.color = '#93c5fd')} onMouseLeave={(e) => (e.currentTarget.style.color = '#cbd5e1')}>🗣️ English Language Mastery & Fluency</a>
-              <a href="#courses" style={{ color: '#cbd5e1', textDecoration: 'none', transition: 'color 0.2s' }} onMouseEnter={(e) => (e.currentTarget.style.color = '#93c5fd')} onMouseLeave={(e) => (e.currentTarget.style.color = '#cbd5e1')}>🇰🇪 Kiswahili Sanifu (Expatriates & Beginners)</a>
-              <a href="#courses" style={{ color: '#cbd5e1', textDecoration: 'none', transition: 'color 0.2s' }} onMouseEnter={(e) => (e.currentTarget.style.color = '#93c5fd')} onMouseLeave={(e) => (e.currentTarget.style.color = '#cbd5e1')}>🌐 Foreign Languages (Arabic, French, German)</a>
-              <a href="#courses" style={{ color: '#cbd5e1', textDecoration: 'none', transition: 'color 0.2s' }} onMouseEnter={(e) => (e.currentTarget.style.color = '#93c5fd')} onMouseLeave={(e) => (e.currentTarget.style.color = '#cbd5e1')}>💄 Henna Artistry & Professional Make-up</a>
-              <a href="#courses" style={{ color: '#cbd5e1', textDecoration: 'none', transition: 'color 0.2s' }} onMouseEnter={(e) => (e.currentTarget.style.color = '#93c5fd')} onMouseLeave={(e) => (e.currentTarget.style.color = '#cbd5e1')}>✂️ Fashion Design, Sewing & Garment Tailoring</a>
-              <a href="#courses" style={{ color: '#cbd5e1', textDecoration: 'none', transition: 'color 0.2s' }} onMouseEnter={(e) => (e.currentTarget.style.color = '#93c5fd')} onMouseLeave={(e) => (e.currentTarget.style.color = '#cbd5e1')}>🌍 IELTS Exam Preparation (Band 7.5+)</a>
+              <a href="#courses" style={{ color: '#cbd5e1', textDecoration: 'none', transition: 'color 0.2s' }}>💻 Computer Packages & Digital Skills</a>
+              <a href="#courses" style={{ color: '#cbd5e1', textDecoration: 'none', transition: 'color 0.2s' }}>☕ Professional Barista & Coffee Brewing Artistry</a>
+              <a href="#courses" style={{ color: '#cbd5e1', textDecoration: 'none', transition: 'color 0.2s' }}>🗣️ English Language Mastery & Fluency</a>
+              <a href="#courses" style={{ color: '#cbd5e1', textDecoration: 'none', transition: 'color 0.2s' }}>🇰🇪 Kiswahili Sanifu (Expatriates & Beginners)</a>
+              <a href="#courses" style={{ color: '#cbd5e1', textDecoration: 'none', transition: 'color 0.2s' }}>🌐 Foreign Languages (Arabic, French, German)</a>
+              <a href="#courses" style={{ color: '#cbd5e1', textDecoration: 'none', transition: 'color 0.2s' }}>💄 Henna Artistry & Professional Make-up</a>
+              <a href="#courses" style={{ color: '#cbd5e1', textDecoration: 'none', transition: 'color 0.2s' }}>✂️ Fashion Design, Sewing & Garment Tailoring</a>
+              <a href="#courses" style={{ color: '#cbd5e1', textDecoration: 'none', transition: 'color 0.2s' }}>🌍 IELTS Exam Preparation (Band 7.5+)</a>
             </div>
           </div>
 
@@ -1943,6 +1685,367 @@ export function Landing() {
         )}
       </div>
       </>
+      )}
+
+      {/* ============================================================
+          GLOBAL RESPONSIVE MODALS (Mobile & Desktop)
+          ============================================================ */}
+
+      {/* 1. Free Application & Inquiry Modal */}
+      {inquiryModalOpen && (
+        <div className="modal-overlay" onClick={() => setInquiryModalOpen(false)}>
+          <div className="modal-content modal-md" onClick={(e) => e.stopPropagation()} style={{ padding: '1.75rem', borderRadius: '16px' }}>
+            <div className="modal-header" style={{ padding: 0, paddingBottom: '1rem', marginBottom: '1.25rem', borderBottom: '1px solid #e2e8f0' }}>
+              <div>
+                <h3 className="modal-title" style={{ fontSize: '1.25rem', fontWeight: 900, color: '#1e3a8a' }}>
+                  🚀 Apply for Short Course / Intake
+                </h3>
+                <p style={{ fontSize: '0.82rem', color: '#64748b', margin: '0.25rem 0 0' }}>
+                  Fill out this 60-second form. Admissions Office will contact you with timetable options and 2-part fee plans.
+                </p>
+              </div>
+              <button type="button" className="modal-close" onClick={() => setInquiryModalOpen(false)}>✕</button>
+            </div>
+
+            {inquirySuccess ? (
+              <div style={{ background: '#dcfce7', border: '1px solid #86efac', borderRadius: '12px', padding: '1.75rem', textAlign: 'center', color: '#166534' }}>
+                <div style={{ fontSize: '2.5rem', marginBottom: '0.5rem' }}>✓</div>
+                <h4 style={{ fontWeight: 900, fontSize: '1.15rem', margin: '0 0 0.35rem' }}>Application Inquiry Received!</h4>
+                <p style={{ fontSize: '0.88rem', margin: '0 0 1rem' }}>
+                  Thank you, <strong>{inquiryForm.name}</strong>. The Admissions Office has received your application for <strong>{inquiryForm.course}</strong> at Sahl Mall and will call/WhatsApp you shortly.
+                </p>
+                <button
+                  type="button"
+                  className="btn btn-primary btn-sm"
+                  onClick={() => setInquiryModalOpen(false)}
+                >
+                  Done
+                </button>
+              </div>
+            ) : (
+              <form onSubmit={handleInquirySubmit}>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.85rem' }}>
+                  <div>
+                    <label className="label" style={{ fontSize: '0.82rem' }}>Your Full Name *</label>
+                    <input
+                      type="text"
+                      required
+                      className="input"
+                      placeholder="e.g. Cynthia Achieng"
+                      value={inquiryForm.name}
+                      onChange={(e) => setInquiryForm({ ...inquiryForm, name: e.target.value })}
+                    />
+                  </div>
+
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '0.75rem' }}>
+                    <div>
+                      <label className="label" style={{ fontSize: '0.82rem' }}>Phone / WhatsApp Number *</label>
+                      <input
+                        type="tel"
+                        required
+                        className="input"
+                        placeholder="0722 264 380"
+                        value={inquiryForm.phone}
+                        onChange={(e) => setInquiryForm({ ...inquiryForm, phone: e.target.value })}
+                      />
+                    </div>
+                    <div>
+                      <label className="label" style={{ fontSize: '0.82rem' }}>Email Address (Optional)</label>
+                      <input
+                        type="email"
+                        className="input"
+                        placeholder="cynthia@gmail.com"
+                        value={inquiryForm.email}
+                        onChange={(e) => setInquiryForm({ ...inquiryForm, email: e.target.value })}
+                      />
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="label" style={{ fontSize: '0.82rem' }}>Selected Short Course *</label>
+                    <select
+                      className="input"
+                      value={inquiryForm.course}
+                      onChange={(e) => setInquiryForm({ ...inquiryForm, course: e.target.value })}
+                    >
+                      {COURSES_DATA.map((c) => (
+                        <option key={c.id} value={c.title}>
+                          {c.title} ({c.duration} — {c.fee})
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+
+                  <div>
+                    <label className="label" style={{ fontSize: '0.82rem' }}>Preferred Timetable Shift</label>
+                    <select
+                      className="input"
+                      value={inquiryForm.preferredShift}
+                      onChange={(e) => setInquiryForm({ ...inquiryForm, preferredShift: e.target.value })}
+                    >
+                      <option value="Morning Batch (8:30 AM - 11:30 AM)">Morning Batch (8:30 AM - 11:30 AM)</option>
+                      <option value="Afternoon Batch (2:00 PM - 5:00 PM)">Afternoon Batch (2:00 PM - 5:00 PM)</option>
+                      <option value="Evening Executive Batch (5:30 PM - 7:30 PM)">Evening Executive Batch (5:30 PM - 7:30 PM)</option>
+                      <option value="Saturday Intensive Masterclass (8:30 AM - 4:30 PM)">Saturday Intensive Masterclass (8:30 AM - 4:30 PM)</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.75rem', marginTop: '1.25rem' }}>
+                  <button type="button" className="btn btn-secondary" onClick={() => setInquiryModalOpen(false)}>Cancel</button>
+                  <button type="submit" className="btn btn-primary" style={{ fontWeight: 800 }}>
+                    ✓ Submit & Secure Seat
+                  </button>
+                </div>
+              </form>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* 2. College Portals & Management Desks Modal */}
+      {showPortalDesksModal && (
+        <div className="modal-overlay" onClick={() => setShowPortalDesksModal(false)}>
+          <div className="modal-content modal-md" onClick={(e) => e.stopPropagation()} style={{ padding: '1.75rem', borderRadius: '16px' }}>
+            <div className="modal-header" style={{ padding: 0, paddingBottom: '1rem', marginBottom: '1.25rem', borderBottom: '1px solid #cbd5e1' }}>
+              <div>
+                <h3 className="modal-title" style={{ fontSize: '1.25rem', fontWeight: 900, color: '#1e3a8a' }}>
+                  🔐 College Portals & Management Workstations
+                </h3>
+                <p style={{ fontSize: '0.82rem', color: '#334155', margin: '0.25rem 0 0', fontWeight: 500 }}>
+                  Select your role to access your personalized workstation:
+                </p>
+              </div>
+              <button type="button" className="modal-close" onClick={() => setShowPortalDesksModal(false)}>✕</button>
+            </div>
+
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.65rem' }}>
+              <div
+                onClick={() => handleLaunchRole('student')}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '0.85rem',
+                  padding: '0.85rem',
+                  background: '#f8fafc',
+                  border: '1px solid #cbd5e1',
+                  borderRadius: '10px',
+                  cursor: 'pointer',
+                }}
+              >
+                <span style={{ fontSize: '1.6rem' }}>🎓</span>
+                <div>
+                  <div style={{ fontWeight: 800, color: '#1e3a8a', fontSize: '0.95rem' }}>Student & Trainee Portal</div>
+                  <div style={{ fontSize: '0.78rem', color: '#334155' }}>Access registered units, video lessons & timetable</div>
+                </div>
+              </div>
+
+              <div
+                onClick={() => handleLaunchRole('bursar')}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '0.85rem',
+                  padding: '0.85rem',
+                  background: '#f8fafc',
+                  border: '1px solid #cbd5e1',
+                  borderRadius: '10px',
+                  cursor: 'pointer',
+                }}
+              >
+                <span style={{ fontSize: '1.6rem' }}>💼</span>
+                <div>
+                  <div style={{ fontWeight: 800, color: '#059669', fontSize: '0.95rem' }}>Bursar & Admissions Registry</div>
+                  <div style={{ fontSize: '0.78rem', color: '#334155' }}>M-Pesa receipts, calling letters & fee ledger</div>
+                </div>
+              </div>
+
+              <div
+                onClick={() => handleLaunchRole('teacher')}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '0.85rem',
+                  padding: '0.85rem',
+                  background: '#f8fafc',
+                  border: '1px solid #cbd5e1',
+                  borderRadius: '10px',
+                  cursor: 'pointer',
+                }}
+              >
+                <span style={{ fontSize: '1.6rem' }}>👩‍🏫</span>
+                <div>
+                  <div style={{ fontWeight: 800, color: '#d97706', fontSize: '0.95rem' }}>Faculty & HOD Portal</div>
+                  <div style={{ fontSize: '0.78rem', color: '#334155' }}>Upload video tutorials, grade books & lab assignments</div>
+                </div>
+              </div>
+
+              <div
+                onClick={() => handleLaunchRole('admin')}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '0.85rem',
+                  padding: '0.85rem',
+                  background: '#f8fafc',
+                  border: '1px solid #cbd5e1',
+                  borderRadius: '10px',
+                  cursor: 'pointer',
+                }}
+              >
+                <span style={{ fontSize: '1.6rem' }}>🛡️</span>
+                <div>
+                  <div style={{ fontWeight: 800, color: '#1e3a8a', fontSize: '0.95rem' }}>Principal & Admin Console</div>
+                  <div style={{ fontSize: '0.78rem', color: '#334155' }}>Course pricing, subjects, discipline & institutional overview</div>
+                </div>
+              </div>
+            </div>
+
+            <div style={{ marginTop: '1.25rem', textAlign: 'center' }}>
+              <Link to="/login" className="btn btn-secondary btn-sm" style={{ width: '100%', color: '#ffffff', fontWeight: 700 }}>
+                Go to Standard Username / Password Login →
+              </Link>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* 3. Course Syllabus & Practical Lab Breakdown Modal */}
+      {selectedCourseForModal && (
+        <div className="modal-overlay" onClick={() => setSelectedCourseForModal(null)}>
+          <div className="modal-content modal-lg" onClick={(e) => e.stopPropagation()} style={{ padding: '1.75rem', borderRadius: '16px', maxHeight: '88vh' }}>
+            <div className="modal-header" style={{ padding: 0, paddingBottom: '1rem', marginBottom: '1.25rem', borderBottom: '1px solid #e2e8f0' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                <span style={{ fontSize: '2rem' }}>{selectedCourseForModal.icon}</span>
+                <div>
+                  <div style={{ fontSize: '0.75rem', fontWeight: 800, color: selectedCourseForModal.tagColor, textTransform: 'uppercase' }}>
+                    {selectedCourseForModal.tag}
+                  </div>
+                  <h3 className="modal-title" style={{ fontSize: '1.25rem', fontWeight: 900, color: '#1e3a8a', margin: '2px 0 0' }}>
+                    {selectedCourseForModal.title}
+                  </h3>
+                </div>
+              </div>
+              <button type="button" className="modal-close" onClick={() => setSelectedCourseForModal(null)}>✕</button>
+            </div>
+
+            {/* Course Meta Grid */}
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '0.75rem', marginBottom: '1.25rem', background: '#f8fafc', padding: '1rem', borderRadius: '10px', border: '1px solid #e2e8f0' }}>
+              <div>
+                <div style={{ fontSize: '0.72rem', color: '#64748b', fontWeight: 700, textTransform: 'uppercase' }}>Duration & Shift</div>
+                <div style={{ fontWeight: 800, color: '#0f172a', marginTop: '2px', fontSize: '0.9rem' }}>⏱️ {selectedCourseForModal.duration}</div>
+                <div style={{ fontSize: '0.75rem', color: '#475569' }}>{selectedCourseForModal.schedule}</div>
+              </div>
+              <div>
+                <div style={{ fontSize: '0.72rem', color: '#64748b', fontWeight: 700, textTransform: 'uppercase' }}>Total Tuition Fee</div>
+                <div style={{ fontWeight: 900, color: '#16a34a', marginTop: '2px', fontSize: '1.15rem' }}>{selectedCourseForModal.fee}</div>
+                <div style={{ fontSize: '0.75rem', color: '#059669', fontWeight: 600 }}>{selectedCourseForModal.installment}</div>
+              </div>
+              <div>
+                <div style={{ fontSize: '0.72rem', color: '#64748b', fontWeight: 700, textTransform: 'uppercase' }}>Campus Location</div>
+                <div style={{ fontWeight: 800, color: '#0f172a', marginTop: '2px', fontSize: '0.88rem' }}>📍 Sahl Mall Campus</div>
+                <div style={{ fontSize: '0.75rem', color: '#475569' }}>4th Street, Eastleigh</div>
+              </div>
+            </div>
+
+            {/* Key Skills Covered */}
+            <div style={{ marginBottom: '1.25rem' }}>
+              <div style={{ fontSize: '0.85rem', fontWeight: 800, color: '#1e3a8a', marginBottom: '0.5rem' }}>
+                🎯 Core Practical Competencies & Tools Covered:
+              </div>
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
+                {selectedCourseForModal.skills.map((skill, idx) => (
+                  <span
+                    key={idx}
+                    style={{
+                      background: '#eff6ff',
+                      color: '#1d4ed8',
+                      border: '1px solid #bfdbfe',
+                      padding: '4px 10px',
+                      borderRadius: '6px',
+                      fontSize: '0.78rem',
+                      fontWeight: 700,
+                    }}
+                  >
+                    ✓ {skill}
+                  </span>
+                ))}
+              </div>
+            </div>
+
+            {/* Week by Week Syllabus */}
+            {selectedCourseForModal.syllabus && selectedCourseForModal.syllabus.length > 0 && (
+              <div style={{ marginBottom: '1.25rem' }}>
+                <div style={{ fontSize: '0.85rem', fontWeight: 800, color: '#1e3a8a', marginBottom: '0.65rem' }}>
+                  📚 Week-by-Week Practical Lab Breakdown:
+                </div>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.65rem' }}>
+                  {selectedCourseForModal.syllabus.map((s, idx) => (
+                    <div
+                      key={idx}
+                      style={{
+                        background: '#ffffff',
+                        border: '1px solid #e2e8f0',
+                        borderRadius: '8px',
+                        padding: '0.75rem 1rem',
+                        borderLeft: '4px solid #2563eb',
+                      }}
+                    >
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2px' }}>
+                        <strong style={{ color: '#1e3a8a', fontSize: '0.85rem' }}>{s.week}: {s.topic}</strong>
+                      </div>
+                      <div style={{ fontSize: '0.8rem', color: '#475569', marginTop: '2px' }}>
+                        🧪 <strong>Lab Practical:</strong> {s.practicalLab}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Career Outcomes */}
+            <div style={{ background: '#f0fdf4', border: '1px solid #bbf7d0', borderRadius: '8px', padding: '0.85rem 1rem', marginBottom: '1.25rem', fontSize: '0.82rem', color: '#166534' }}>
+              💼 <strong>Target Career Outcomes:</strong> {selectedCourseForModal.careerOutcome}
+            </div>
+
+            {/* Modal Actions */}
+            <div style={{ display: 'flex', gap: '0.75rem', justifyContent: 'flex-end', flexWrap: 'wrap' }}>
+              <a
+                href={`https://wa.me/254722264380?text=Hello%20Brent%20College!%20I%20want%20to%20inquire%20about%20enrolling%20in%20${encodeURIComponent(selectedCourseForModal.title)}%20at%20Sahl%20Mall.`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="btn"
+                style={{
+                  background: '#22c55e',
+                  color: '#ffffff',
+                  fontWeight: 800,
+                  fontSize: '0.85rem',
+                  padding: '0.65rem 1.25rem',
+                  textDecoration: 'none',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '6px',
+                  borderRadius: '8px',
+                }}
+              >
+                <span>💬</span> WhatsApp Consultation
+              </a>
+
+              <button
+                type="button"
+                className="btn btn-primary"
+                style={{ fontWeight: 800, fontSize: '0.85rem', padding: '0.65rem 1.5rem', borderRadius: '8px' }}
+                onClick={() => {
+                  setInquiryForm((prev) => ({ ...prev, course: selectedCourseForModal.title }))
+                  setSelectedCourseForModal(null)
+                  setInquiryModalOpen(true)
+                }}
+              >
+                🚀 Apply in 60s →
+              </button>
+            </div>
+          </div>
+        </div>
       )}
 
       {/* Floating Toast Notification */}
