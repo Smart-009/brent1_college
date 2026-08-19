@@ -42,12 +42,12 @@ export function LayoutShell() {
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
             <img src="/logo.png" alt="Brent College Logo" style={{ width: '28px', height: '28px', borderRadius: '50%' }} />
             <div>
-              <strong style={{ color: 'var(--color-text)' }}>Brent College Nairobi</strong> • Sahal Tower, 4th Street, Eastleigh
+              <strong style={{ color: 'var(--color-text)' }}>Brent College Nairobi</strong> • Sahal Mall, 4th Street, Eastleigh
             </div>
           </div>
           <div style={{ display: 'flex', gap: '1.25rem', alignItems: 'center', flexWrap: 'wrap' }}>
             <span>🏢 Paybill: <strong style={{ color: 'var(--color-primary)' }}>247247</strong></span>
-            <span>📞 Support: <strong style={{ color: 'var(--color-text)' }}>+254 712 345 678</strong></span>
+            <span>📞 Support: <strong style={{ color: 'var(--color-text)' }}>+254 722 264 380</strong></span>
             <span>✉️ <a href="mailto:admissions@brentcollege.ac.ke" style={{ color: 'var(--color-primary)', textDecoration: 'none' }}>admissions@brentcollege.ac.ke</a></span>
           </div>
         </footer>

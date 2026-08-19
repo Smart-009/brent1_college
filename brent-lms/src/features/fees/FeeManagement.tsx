@@ -453,7 +453,7 @@ export function FeeManagement() {
               <div style={{ textAlign: 'center', borderBottom: '2px solid #1e3a8a', paddingBottom: '1rem', marginBottom: '1rem' }}>
                 <img src="/logo.png" alt="Brent College" style={{ width: '52px', height: '52px', borderRadius: '50%' }} />
                 <h2 style={{ fontSize: '1.4rem', fontWeight: 900, color: '#1e3a8a', margin: '0.25rem 0' }}>BRENT COLLEGE</h2>
-                <div style={{ fontSize: '0.75rem', color: '#64748b', fontWeight: 700 }}>Sahal Tower, 4th Street, Eastleigh, Nairobi</div>
+                <div style={{ fontSize: '0.75rem', color: '#64748b', fontWeight: 700 }}>Sahal Mall, 4th Street, Eastleigh, Nairobi</div>
                 <div style={{ display: 'inline-block', background: '#f1f5f9', color: '#1e3a8a', padding: '2px 12px', borderRadius: '999px', fontSize: '0.75rem', fontWeight: 800, marginTop: '4px' }}>
                   OFFICIAL TUITION PAYMENT RECEIPT (ORIGINAL)
                 </div>
@@ -486,7 +486,7 @@ export function FeeManagement() {
               </div>
 
               <div style={{ textAlign: 'center', fontSize: '0.75rem', color: '#64748b', borderTop: '1px dashed #cbd5e1', paddingTop: '0.75rem' }}>
-                Thank you for your payment. Brent College • Sahal Tower, 4th Street, Eastleigh, Nairobi.
+                Thank you for your payment. Brent College • Sahal Mall, 4th Street, Eastleigh, Nairobi.
               </div>
             </div>
           </div>

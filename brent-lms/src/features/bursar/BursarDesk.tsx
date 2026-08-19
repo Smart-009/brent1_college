@@ -809,13 +809,13 @@ export function BursarDesk() {
                     <td style={{ color: s.fee_cleared ? '#16a34a' : '#dc2626', fontWeight: 700 }}>
                       {s.fee_cleared ? 'Cleared (KES 0)' : `KES ${s.fee_balance.toLocaleString()}`}
                     </td>
-                    <td>{s.guardian?.phone || s.parent_phone || '+254 712 345 678'}</td>
+                    <td>{s.guardian?.phone || s.parent_phone || '+254 722 264 380'}</td>
                     <td>
                       <button
                         type="button"
                         className="btn btn-sm btn-primary"
                         disabled={s.fee_cleared}
-                        onClick={() => handleSendReminder(s.full_name, s.guardian?.phone || s.parent_phone || '+254 712 345 678', s.fee_balance)}
+                        onClick={() => handleSendReminder(s.full_name, s.guardian?.phone || s.parent_phone || '+254 722 264 380', s.fee_balance)}
                       >
                         📱 Send SMS Reminder
                       </button>
@@ -1339,7 +1339,7 @@ export function BursarDesk() {
                       type="text"
                       required
                       className="input"
-                      placeholder="e.g. +254 712 345 678"
+                      placeholder="e.g. +254 722 264 380"
                       value={newInquiry.phone}
                       onChange={(e) => setNewInquiry({ ...newInquiry, phone: e.target.value })}
                     />
@@ -1395,7 +1395,7 @@ export function BursarDesk() {
                 <img src="/logo.png" alt="Brent College" style={{ width: '48px', height: '48px', borderRadius: '50%' }} />
                 <div>
                   <h2 style={{ color: '#1e3a8a', margin: 0, fontSize: '1.5rem', fontWeight: 900, letterSpacing: '-0.02em' }}>BRENT COLLEGE</h2>
-                  <div style={{ fontSize: '0.75rem', color: '#64748b', fontWeight: 700 }}>Sahal Tower, 4th Street, Eastleigh, Nairobi</div>
+                  <div style={{ fontSize: '0.75rem', color: '#64748b', fontWeight: 700 }}>Sahal Mall, 4th Street, Eastleigh, Nairobi</div>
                 </div>
               </div>
               <div style={{ display: 'inline-block', background: '#f1f5f9', color: '#1e3a8a', padding: '3px 14px', borderRadius: '999px', fontSize: '0.8rem', fontWeight: 800 }}>
@@ -1456,7 +1456,7 @@ export function BursarDesk() {
             {/* Official Digital Stamp */}
             <div style={{ background: '#f8fafc', border: '1px dashed #94a3b8', borderRadius: '8px', padding: '0.75rem', textAlign: 'center', fontSize: '0.75rem', color: '#475569' }}>
               <div>🛡️ <strong>OFFICIAL STAMP & VERIFICATION</strong></div>
-              <div>Brent College Directorate of Finance • Eastleigh Sahal Tower Campus</div>
+              <div>Brent College Directorate of Finance • Eastleigh Sahal Mall Campus</div>
               <div style={{ color: '#16a34a', fontWeight: 800, marginTop: '2px' }}>STATUS: TRANSACTION VERIFIED & ACCOUNT CREDITED</div>
             </div>
 

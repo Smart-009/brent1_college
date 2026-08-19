@@ -53,7 +53,7 @@ export function CertificateGenerator({
             <span style={{ fontSize: '1.4rem' }}>🎓</span>
             <div>
               <strong style={{ fontSize: '1rem', color: '#ffffff' }}>Official Vocational Certificate of Completion</strong>
-              <div style={{ fontSize: '0.78rem', color: '#93c5fd' }}>Verified Institutional Credential • Sahal Tower Nairobi</div>
+              <div style={{ fontSize: '0.78rem', color: '#93c5fd' }}>Verified Institutional Credential • Sahal Mall Nairobi</div>
             </div>
           </div>
           <div style={{ display: 'flex', gap: '0.75rem' }}>
@@ -122,7 +122,7 @@ export function CertificateGenerator({
                 CENTRE FOR VOCATIONAL EXCELLENCE & PRACTICAL SKILLS
               </div>
               <div style={{ fontSize: '0.75rem', color: '#64748b', marginTop: '2px' }}>
-                Sahal Tower, 4th Street, Eastleigh, Nairobi • Tel: +254 712 345 678
+                Sahal Mall, 4th Street, Eastleigh, Nairobi • Tel: +254 722 264 380
               </div>
             </div>
 
@@ -253,7 +253,7 @@ export function CertificateGenerator({
                 <strong>Date of Conferment:</strong> {cert.issue_date}
               </div>
               <div>
-                <strong>Campus:</strong> Sahal Tower, Eastleigh
+                <strong>Campus:</strong> Sahal Mall, Eastleigh
               </div>
             </div>
           </div>

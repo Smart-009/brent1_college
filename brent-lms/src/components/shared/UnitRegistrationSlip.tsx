@@ -36,7 +36,7 @@ export function UnitRegistrationSlip({
                 Brent College
               </h1>
               <div style={{ fontSize: '0.8rem', color: '#475569', fontWeight: 600 }}>
-                Sahal Tower, 4th Street, Eastleigh, Nairobi • Office of Academic Affairs
+                Sahal Mall, 4th Street, Eastleigh, Nairobi • Office of Academic Affairs
               </div>
             </div>
           </div>

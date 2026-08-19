@@ -96,7 +96,7 @@ export function ReportCardGenerator({ reportCard, onClose }: ReportCardGenerator
                   Shaping Minds, Inspiring Success
                 </p>
                 <p style={{ margin: '0.25rem 0 0', fontSize: '0.75rem', color: '#334155', fontWeight: 600 }}>
-                  Sahal Tower, 4th Street, Eastleigh, Nairobi • P.O. Box 45892-00100 Nairobi • Tel: +254 712 345 678
+                  Sahal Mall, 4th Street, Eastleigh, Nairobi • P.O. Box 45892-00100 Nairobi • Tel: +254 722 264 380
                 </p>
               </div>
             </div>

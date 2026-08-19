@@ -139,7 +139,7 @@ export function MobileLandingView({
               BRENT COLLEGE
             </div>
             <div style={{ fontSize: '0.65rem', color: '#94a3b8', fontWeight: 600 }}>
-              Sahal Tower • 4th St, Eastleigh
+              Sahal Mall • 4th St, Eastleigh
             </div>
           </div>
         </div>
@@ -279,7 +279,7 @@ export function MobileLandingView({
               🚀 Apply in 60s
             </button>
             <a
-              href="https://wa.me/254712345678?text=Hello%20Brent%20College!%20I%20want%20to%20inquire%20about%20intakes%20at%20Sahal%20Tower."
+              href="https://wa.me/254722264380?text=Hello%20Brent%20College!%20I%20want%20to%20inquire%20about%20intakes%20at%20Sahal%20Mall."
               target="_blank"
               rel="noopener noreferrer"
               style={{
@@ -640,8 +640,8 @@ export function MobileLandingView({
               Copy
             </button>
           </div>
-          <div>📞 Hotline: <a href="tel:+254712345678" style={{ color: '#60a5fa', textDecoration: 'none', fontWeight: 700 }}>+254 712 345 678</a></div>
-          <div>📍 Campus: <strong style={{ color: '#ffffff' }}>Sahal Tower, 4th Street, Eastleigh, Nairobi</strong></div>
+          <div>📞 Hotline: <a href="tel:+254722264380" style={{ color: '#60a5fa', textDecoration: 'none', fontWeight: 700 }}>+254 722 264 380</a></div>
+          <div>📍 Campus: <strong style={{ color: '#ffffff' }}>Sahal Mall, 4th Street, Eastleigh, Nairobi</strong></div>
         </div>
       </div>
 
