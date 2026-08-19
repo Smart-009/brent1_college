@@ -447,33 +447,35 @@ export function Landing() {
       <PWAInstallBanner />
       <DesktopCommandPalette />
 
-      {/* Top Admissions Announcement Ribbon */}
+      {/* Top Admissions & Quick Contacts Bar */}
       <div
         style={{
           background: 'linear-gradient(90deg, #1e3a8a 0%, #2563eb 50%, #1e3a8a 100%)',
           color: '#ffffff',
-          padding: '0.55rem 1rem',
-          fontSize: '0.84rem',
+          padding: '0.45rem 1rem',
+          fontSize: '0.8rem',
           fontWeight: 600,
           display: 'flex',
           justifyContent: 'center',
           alignItems: 'center',
-          gap: '1.25rem',
-          flexWrap: 'wrap',
+          gap: '1rem',
           textAlign: 'center',
+          whiteSpace: 'nowrap',
+          overflow: 'hidden',
+          textOverflow: 'ellipsis',
         }}
       >
-        <span style={{ display: 'inline-flex', alignItems: 'center', gap: '0.45rem' }}>
-          <span style={{ width: '9px', height: '9px', borderRadius: '50%', background: '#22c55e', display: 'inline-block' }} />
-          <strong>Intake Ongoing:</strong> Early Bird 15% Tuition Voucher Available
+        <span style={{ display: 'inline-flex', alignItems: 'center', gap: '0.4rem' }}>
+          <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#22c55e', display: 'inline-block', flexShrink: 0 }} />
+          <strong>Intake Ongoing:</strong> 15% Early Bird Voucher
         </span>
         <span className="hidden sm:inline" style={{ opacity: 0.8 }}>|</span>
         <span className="hidden sm:inline">
-          📞 Admissions Hotline: <strong>+254 712 345 678</strong>
+          📞 <strong>+254 712 345 678</strong>
         </span>
         <span className="hidden md:inline" style={{ opacity: 0.8 }}>|</span>
         <span className="hidden md:inline">
-          🏢 M-Pesa Paybill: <strong>247247</strong> (Account: Student Name)
+          🏢 Paybill: <strong>247247</strong>
         </span>
       </div>
 
@@ -483,32 +485,32 @@ export function Landing() {
           position: 'sticky',
           top: 0,
           zIndex: 100,
-          background: 'rgba(255, 255, 255, 0.95)',
+          background: 'rgba(255, 255, 255, 0.98)',
           backdropFilter: 'blur(12px)',
           borderBottom: '1px solid #e2e8f0',
-          padding: '0.85rem 1.5rem',
+          padding: '0.65rem 1rem',
         }}
       >
-        <div style={{ maxWidth: '1240px', margin: '0 auto', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <div style={{ maxWidth: '1240px', margin: '0 auto', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'nowrap', gap: '0.5rem' }}>
           {/* Brand Logo */}
-          <Link to="/" style={{ display: 'flex', alignItems: 'center', gap: '0.9rem', textDecoration: 'none' }}>
+          <Link to="/" style={{ display: 'flex', alignItems: 'center', gap: '0.65rem', textDecoration: 'none', minWidth: 0, flexShrink: 1 }}>
             <img
               src="/logo.png"
               alt="Brent College Logo"
-              style={{ width: '46px', height: '46px', borderRadius: '50%', objectFit: 'cover', boxShadow: '0 2px 8px rgba(0,0,0,0.12)' }}
+              style={{ width: '38px', height: '38px', borderRadius: '50%', objectFit: 'cover', boxShadow: '0 2px 8px rgba(0,0,0,0.12)', flexShrink: 0 }}
             />
-            <div>
-              <div style={{ fontSize: '1.3rem', fontWeight: 900, color: '#1e3a8a', letterSpacing: '-0.02em', lineHeight: 1.1 }}>
+            <div style={{ minWidth: 0 }}>
+              <div style={{ fontSize: '1.15rem', fontWeight: 900, color: '#1e3a8a', letterSpacing: '-0.02em', lineHeight: 1.1, whiteSpace: 'nowrap' }}>
                 BRENT COLLEGE
               </div>
-              <div style={{ fontSize: '0.72rem', color: '#64748b', fontWeight: 700, letterSpacing: '0.05em', textTransform: 'uppercase' }}>
-                Eastleigh 4th Street, Sahal Tower • Nairobi
+              <div className="hidden sm:block" style={{ fontSize: '0.68rem', color: '#64748b', fontWeight: 700, letterSpacing: '0.05em', textTransform: 'uppercase', whiteSpace: 'nowrap' }}>
+                Eastleigh 4th Street • Nairobi
               </div>
             </div>
           </Link>
 
           {/* Nav Links */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '1.5rem' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '1.25rem', flexShrink: 0 }}>
             <nav className="hidden lg:flex" style={{ display: 'flex', alignItems: 'center', gap: '1.75rem', fontSize: '0.92rem', fontWeight: 600 }}>
               <a href="#courses" style={{ color: '#334155', textDecoration: 'none', transition: 'color 0.2s' }}>Courses</a>
               <a href="#why-brent" style={{ color: '#334155', textDecoration: 'none', transition: 'color 0.2s' }}>Why Choose Us</a>
@@ -516,7 +518,7 @@ export function Landing() {
               <a href="#intakes" style={{ color: '#334155', textDecoration: 'none', transition: 'color 0.2s' }}>Intakes & Fees</a>
             </nav>
 
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', flexWrap: 'nowrap' }}>
               {!isInstalled && (
                 <button
                   type="button"
@@ -526,19 +528,20 @@ export function Landing() {
                     color: '#ffffff',
                     border: 'none',
                     fontWeight: 700,
-                    padding: '0.55rem 0.85rem',
+                    padding: '0.45rem 0.75rem',
                     borderRadius: '8px',
-                    boxShadow: '0 2px 8px rgba(22, 163, 74, 0.3)',
+                    boxShadow: '0 2px 6px rgba(22, 163, 74, 0.3)',
                     display: 'inline-flex',
                     alignItems: 'center',
                     gap: '4px',
-                    fontSize: '0.82rem',
+                    fontSize: '0.78rem',
+                    whiteSpace: 'nowrap',
                   }}
                   onClick={promptInstall}
                   title="Install Brent College App on your Phone"
                 >
                   <span>📲</span>
-                  <span>Install App</span>
+                  <span className="hidden xs:inline">App</span>
                 </button>
               )}
 
@@ -550,9 +553,10 @@ export function Landing() {
                   color: '#1d4ed8',
                   border: '1px solid #bfdbfe',
                   fontWeight: 700,
-                  padding: '0.55rem 0.85rem',
+                  padding: '0.45rem 0.75rem',
                   borderRadius: '8px',
-                  fontSize: '0.82rem',
+                  fontSize: '0.78rem',
+                  whiteSpace: 'nowrap',
                 }}
                 onClick={() => setInquiryModalOpen(true)}
               >
@@ -564,10 +568,11 @@ export function Landing() {
                 className="btn btn-sm btn-primary"
                 style={{
                   fontWeight: 700,
-                  padding: '0.55rem 1rem',
+                  padding: '0.45rem 0.85rem',
                   borderRadius: '8px',
-                  boxShadow: '0 4px 12px rgba(30, 58, 138, 0.25)',
-                  fontSize: '0.82rem',
+                  boxShadow: '0 4px 10px rgba(30, 58, 138, 0.25)',
+                  fontSize: '0.78rem',
+                  whiteSpace: 'nowrap',
                 }}
                 onClick={() => setShowPortalDesksModal(true)}
               >
