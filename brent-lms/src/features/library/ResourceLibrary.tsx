@@ -7,6 +7,7 @@ const CATEGORIES = ['All', 'Past Papers', 'Revision Notes', 'Textbooks', 'Syllab
 
 export function ResourceLibrary() {
   const { profile } = useAuth()
+  const isAdmin = profile?.role === 'admin'
   const isStudent = profile?.role === 'student' || profile?.role === 'parent'
 
   // Dynamically load subjects from store
@@ -24,7 +25,7 @@ export function ResourceLibrary() {
   const [readerTheme, setReaderTheme] = useState<'light' | 'sepia' | 'dark'>('light')
   const [currentPage, setCurrentPage] = useState(1)
 
-  // Upload Modal State (for faculty/admin)
+  // Upload Modal State (for admin only)
   const [showUploadModal, setShowUploadModal] = useState(false)
   const [newTitle, setNewTitle] = useState('')
   const [newCategory, setNewCategory] = useState<AcademicResource['category']>('Past Papers')
@@ -56,6 +57,10 @@ export function ResourceLibrary() {
 
   const handleUploadResource = async (e: React.FormEvent) => {
     e.preventDefault()
+    if (!isAdmin) {
+      alert('Access Restricted: Only Administrators are authorized to upload learning materials and resources.')
+      return
+    }
     if (!newTitle.trim()) return
 
     const item: AcademicResource = {
@@ -69,7 +74,7 @@ export function ResourceLibrary() {
       file_type: 'PDF',
       downloads_count: 0,
       year: Number(newYear) || 2025,
-      uploaded_by: profile?.full_name || 'Academic Faculty',
+      uploaded_by: profile?.full_name || 'Academic Administrator',
       created_at: new Date().toISOString(),
     }
 
@@ -86,19 +91,19 @@ export function ResourceLibrary() {
         <div>
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.25rem' }}>
             <h1 className="page-title" style={{ margin: 0 }}>📖 Digital E-Library & Past Papers Hub</h1>
-            {isStudent && (
+            {!isAdmin && (
               <span className="badge badge-info" style={{ fontWeight: 700 }}>
-                🔒 Read-Only Mode
+                🔒 Read-Only Access
               </span>
             )}
           </div>
           <p className="page-subtitle">
-            {isStudent
-              ? 'Institutional short course past papers, marking schemes, revision handbooks, and modular lab manuals for online reading.'
-              : 'Curate, upload, and publish short course past examination papers and modular learning resources for trainees.'}
+            {isAdmin
+              ? 'Administrator Console: Curate, upload, and publish short course past examination papers and modular learning resources for trainees.'
+              : 'Institutional short course past papers, marking schemes, revision handbooks, and modular lab manuals for online reading.'}
           </p>
         </div>
-        {!isStudent && (
+        {isAdmin && (
           <div style={{ display: 'flex', gap: '0.75rem' }}>
             <button
               type="button"

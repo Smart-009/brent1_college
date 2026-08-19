@@ -95,6 +95,12 @@ export function AdminDashboard() {
             </p>
           </div>
           <div className="flex gap-2 flex-wrap">
+            <Button variant="accent" size="sm" onClick={() => navigate('/teacher/courses/new')}>
+              + 📖 Build Course Unit
+            </Button>
+            <Button variant="outline" size="sm" style={{ color: 'white', borderColor: 'white' }} onClick={() => navigate('/library')}>
+              + 📚 Upload E-Resource
+            </Button>
             <Button variant="accent" size="sm" onClick={() => navigate('/admin/users')}>
               + Issue Admission / User
             </Button>

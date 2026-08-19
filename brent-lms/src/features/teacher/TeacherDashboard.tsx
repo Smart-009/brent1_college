@@ -134,13 +134,15 @@ export function TeacherDashboard() {
       <div className="card mb-6" style={{ background: '#e8edf8', border: '1px solid #c5d2f3' }}>
         <div className="card-body flex justify-between items-center flex-wrap gap-4">
           <div>
-            <div className="font-bold text-base text-primary">Teacher Quick Controls</div>
-            <div className="text-xs text-muted">Create courses, upload video lessons, track attendance, and export gradebooks.</div>
+            <div className="font-bold text-base text-primary">Faculty Quick Controls</div>
+            <div className="text-xs text-muted">Review enrolled trainee cohorts, record daily attendance, and enter exam grades.</div>
           </div>
           <div className="flex gap-2 flex-wrap">
-            <Button variant="primary" size="sm" onClick={() => navigate('/teacher/courses/new')}>
-              + New Course
-            </Button>
+            {profile?.role === 'admin' && (
+              <Button variant="primary" size="sm" onClick={() => navigate('/teacher/courses/new')}>
+                + New Course Unit
+              </Button>
+            )}
             <Button variant="secondary" size="sm" onClick={() => navigate('/teacher/attendance')}>
               📋 Mark Attendance
             </Button>

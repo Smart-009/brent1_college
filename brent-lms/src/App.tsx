@@ -133,7 +133,15 @@ export function App() {
           <Route
             path="/teacher/courses/new"
             element={
-              <RequireAuth allowedRoles={['teacher', 'admin']}>
+              <RequireAuth allowedRoles={['admin']}>
+                <CreateCourse />
+              </RequireAuth>
+            }
+          />
+          <Route
+            path="/admin/courses/new"
+            element={
+              <RequireAuth allowedRoles={['admin']}>
                 <CreateCourse />
               </RequireAuth>
             }
@@ -141,7 +149,7 @@ export function App() {
           <Route
             path="/teacher/lesson/new"
             element={
-              <RequireAuth allowedRoles={['teacher', 'admin']}>
+              <RequireAuth allowedRoles={['admin']}>
                 <LessonUploader />
               </RequireAuth>
             }
@@ -149,7 +157,7 @@ export function App() {
           <Route
             path="/teacher/lesson/:id/edit"
             element={
-              <RequireAuth allowedRoles={['teacher', 'admin']}>
+              <RequireAuth allowedRoles={['admin']}>
                 <EditLesson />
               </RequireAuth>
             }

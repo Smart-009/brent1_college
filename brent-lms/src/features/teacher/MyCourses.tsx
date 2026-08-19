@@ -1,16 +1,23 @@
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
+import { useAuth } from '@/hooks/useAuth'
 import { PageWrapper } from '@/components/layout/PageWrapper'
 import { Button } from '@/components/ui/Button'
 import { schoolStore } from '@/lib/schoolData'
 import type { CourseUnit } from '@/types/school'
 
 export function MyCourses() {
+  const { profile } = useAuth()
+  const isAdmin = profile?.role === 'admin'
   const navigate = useNavigate()
   const [courseUnits, setCourseUnits] = useState<CourseUnit[]>(() => schoolStore.getCourseUnits())
   const [selectedUnit, setSelectedUnit] = useState<CourseUnit | null>(null)
 
   const handleDelete = async (id: string, code: string) => {
+    if (!isAdmin) {
+      alert('Access Restricted: Only Administrators are authorized to delete course units.')
+      return
+    }
     if (window.confirm(`Are you sure you want to remove Course Unit "${code}" from the curriculum?`)) {
       await schoolStore.deleteCourseUnit(id)
       setCourseUnits(schoolStore.getCourseUnits())
@@ -19,18 +26,24 @@ export function MyCourses() {
   }
 
   const handleTogglePublish = async (unit: CourseUnit) => {
+    if (!isAdmin) {
+      alert('Access Restricted: Only Administrators are authorized to change course publication status.')
+      return
+    }
     await schoolStore.updateCourseUnit(unit.id, { is_published: !unit.is_published })
     setCourseUnits(schoolStore.getCourseUnits())
   }
 
   return (
     <PageWrapper
-      title="Faculty Curriculum & Course Units"
-      subtitle="Manage accredited course units, instructional syllabus modules, learning outcomes, and lecture video materials."
+      title={isAdmin ? "Curriculum & Course Units Management" : "Faculty Course Units Directory"}
+      subtitle={isAdmin ? "Administrator Console: Build, publish, and manage accredited vocational short courses, modules, and lessons." : "Explore accredited college course units, syllabus breakdowns, contact hours, and instructional modules."}
       action={
-        <Button variant="primary" onClick={() => navigate('/teacher/courses/new')}>
-          + Build New Course Unit
-        </Button>
+        isAdmin ? (
+          <Button variant="primary" onClick={() => navigate('/teacher/courses/new')}>
+            + Build New Course Unit
+          </Button>
+        ) : undefined
       }
     >
       {courseUnits.length === 0 ? (
@@ -38,11 +51,15 @@ export function MyCourses() {
           <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>📖</div>
           <h3 style={{ fontSize: '1.25rem', fontWeight: 700, margin: '0 0 0.5rem' }}>No Course Units Created Yet</h3>
           <p style={{ color: 'var(--color-text-secondary)', fontSize: '0.9rem', lineHeight: '1.6', margin: '0 0 1.5rem' }}>
-            Get started by creating your department's accredited course units with modular syllabus breakdowns, contact hours, and video lectures.
+            {isAdmin
+              ? "Get started by creating your department's accredited course units with modular syllabus breakdowns, contact hours, and video lectures."
+              : "No curriculum course units have been published yet by the administration."}
           </p>
-          <Button variant="primary" onClick={() => navigate('/teacher/courses/new')}>
-            + Build First Course Unit
-          </Button>
+          {isAdmin && (
+            <Button variant="primary" onClick={() => navigate('/teacher/courses/new')}>
+              + Build First Course Unit
+            </Button>
+          )}
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -59,24 +76,26 @@ export function MyCourses() {
                       {unit.is_published ? 'Published' : 'Draft'}
                     </span>
                   </div>
-                  <div style={{ display: 'flex', gap: '0.35rem' }}>
-                    <button
-                      type="button"
-                      style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: '0.85rem' }}
-                      onClick={() => handleTogglePublish(unit)}
-                      title={unit.is_published ? 'Unpublish' : 'Publish'}
-                    >
-                      {unit.is_published ? '🟢' : '⚪'}
-                    </button>
-                    <button
-                      type="button"
-                      style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: '0.85rem', color: '#ef4444' }}
-                      onClick={() => handleDelete(unit.id, unit.code)}
-                      title="Delete Unit"
-                    >
-                      🗑️
-                    </button>
-                  </div>
+                  {isAdmin && (
+                    <div style={{ display: 'flex', gap: '0.35rem' }}>
+                      <button
+                        type="button"
+                        style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: '0.85rem' }}
+                        onClick={() => handleTogglePublish(unit)}
+                        title={unit.is_published ? 'Unpublish' : 'Publish'}
+                      >
+                        {unit.is_published ? '🟢' : '⚪'}
+                      </button>
+                      <button
+                        type="button"
+                        style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: '0.85rem', color: '#ef4444' }}
+                        onClick={() => handleDelete(unit.id, unit.code)}
+                        title="Delete Unit"
+                      >
+                        🗑️
+                      </button>
+                    </div>
+                  )}
                 </div>
 
                 <h3 style={{ fontSize: '1.2rem', fontWeight: 700, margin: '0 0 0.5rem', color: 'var(--color-text-primary)' }}>

@@ -184,6 +184,25 @@ export function LessonUploader() {
 
   const videoId = extractYouTubeId(youtubeUrl)
 
+  if (profile?.role !== 'admin') {
+    return (
+      <PageWrapper title="Access Restricted">
+        <div className="card" style={{ padding: '3rem 2rem', textAlign: 'center', maxWidth: '600px', margin: '2rem auto' }}>
+          <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>🔒</div>
+          <h3 style={{ fontSize: '1.25rem', fontWeight: 800, color: 'var(--color-primary)', marginBottom: '0.5rem' }}>
+            Administrator Access Only
+          </h3>
+          <p style={{ color: 'var(--color-text-secondary)', fontSize: '0.9rem', lineHeight: '1.6', marginBottom: '1.5rem' }}>
+            Only College Administrators are authorized to upload video lessons and learning material files.
+          </p>
+          <Button variant="primary" onClick={() => navigate('/admin')}>
+            ← Return to Dashboard
+          </Button>
+        </div>
+      </PageWrapper>
+    )
+  }
+
   return (
     <PageWrapper
       title="Upload Video Lesson & Multi-Question Quiz"
