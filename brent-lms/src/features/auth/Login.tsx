@@ -20,7 +20,7 @@ export function Login() {
     if (paramRole && ['admin', 'bursar', 'teacher', 'student', 'parent'].includes(paramRole)) {
       setSelectedRole(paramRole)
       if (paramRole === 'admin') {
-        setAdmissionNumber('ADMIN-001')
+        setAdmissionNumber('Brent2026@admin')
         setPassword('')
       }
     }
@@ -58,7 +58,7 @@ export function Login() {
       role: 'admin',
       label: 'Principal / Admin',
       icon: '🏛️',
-      defaultId: 'ADMIN-001',
+      defaultId: 'Brent2026@admin',
       defaultName: 'College Principal',
       route: '/admin',
       desc: 'Full school administration, user provisioning, course pricing, and oversight.',

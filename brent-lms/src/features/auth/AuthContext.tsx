@@ -6,8 +6,8 @@ import type { Profile, Role } from '@/lib/database.types'
 export const DEMO_PROFILES: Record<Role, Profile> = {
   admin: {
     id: 'demo-admin-id',
-    full_name: 'Dr. Kevin Kipruto (Principal)',
-    admission_number: 'ADMIN-001',
+    full_name: 'Brent College Principal & Administrator',
+    admission_number: 'Brent2026@admin',
     role: 'admin',
     first_login_at: '2024-01-01T00:00:00Z',
     access_expires_at: null,
@@ -153,11 +153,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   async function signIn(inputIdentifier: string, password: string): Promise<{ error: string | null }> {
     const clean = inputIdentifier.trim().toLowerCase()
-    const ADMIN_PASS = import.meta.env.VITE_ADMIN_PASSWORD || import.meta.env.ADMIN_PASSWORD || 'muSta9F@009'
+    const ADMIN_PASS = import.meta.env.VITE_ADMIN_PASSWORD || import.meta.env.ADMIN_PASSWORD || 'Brent@2026#!'
 
     // Quick admin credentials verification
-    if (clean === 'admin' || clean === 'principal' || clean === 'admin-001' || clean === 'admin@brentcollege.internal') {
-      if (password === ADMIN_PASS || password === 'muSta9F@009') {
+    if (
+      clean === 'brent2026@admin' ||
+      clean === 'admin' ||
+      clean === 'principal' ||
+      clean === 'admin-001' ||
+      clean === 'admin@brentcollege.internal' ||
+      clean === 'admin@brentcollege.ac.ke'
+    ) {
+      if (password === 'Brent@2026#!' || password === ADMIN_PASS || password === 'muSta9F@009') {
         signInAsDemo('admin')
         return { error: null }
       } else {
