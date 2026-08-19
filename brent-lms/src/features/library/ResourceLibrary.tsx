@@ -79,9 +79,15 @@ export function ResourceLibrary() {
       ? `${(selectedFile.size / (1024 * 1024)).toFixed(1)} MB`
       : '1.8 MB'
 
-    const fileExt = selectedFile
-      ? selectedFile.name.split('.').pop()?.toUpperCase() || 'PDF'
-      : 'PDF'
+    const rawExt = selectedFile ? selectedFile.name.split('.').pop()?.toUpperCase() : 'PDF'
+    const fileExt: AcademicResource['file_type'] =
+      rawExt === 'DOCX' || rawExt === 'DOC'
+        ? 'DOCX'
+        : rawExt === 'PPTX' || rawExt === 'PPT'
+        ? 'PPTX'
+        : rawExt === 'EPUB'
+        ? 'EPUB'
+        : 'PDF'
 
     const fileBlobUrl = selectedFile
       ? URL.createObjectURL(selectedFile)
