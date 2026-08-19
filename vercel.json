@@ -1,0 +1,12 @@
+{
+  "framework": "vite",
+  "buildCommand": "npm --prefix brent-lms run build",
+  "outputDirectory": "brent-lms/dist",
+  "installCommand": "npm --prefix brent-lms install",
+  "rewrites": [
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
+    }
+  ]
+}
