@@ -486,3 +486,76 @@
   text-align: center;
 }
 .change-password-icon { font-size: 48px; margin-bottom: var(--space-4); }
+
+/* ============================================================
+   ADVANCED MOBILE UI & UX ENHANCEMENTS (SMARTPHONE APP FEEL)
+   ============================================================ */
+@media (max-width: 768px) {
+  /* Prevent iOS 16px auto-zoom on inputs */
+  input, select, textarea {
+    font-size: 16px !important;
+    min-height: 44px;
+    border-radius: 8px;
+  }
+
+  /* Compact padding for cards on mobile */
+  .card {
+    padding: 1rem !important;
+    border-radius: 12px !important;
+  }
+
+  /* Grid stacking on mobile */
+  .grid-2, .grid-3, .grid-4,
+  [style*="grid-template-columns"] {
+    grid-template-columns: 1fr !important;
+    gap: 0.85rem !important;
+  }
+
+  /* Stat & KPI Cards in 2-column mobile layout */
+  .stats-grid,
+  .dashboard-kpi-grid {
+    display: grid !important;
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 0.65rem !important;
+  }
+
+  .stat-card {
+    padding: 0.85rem !important;
+  }
+
+  .stat-card-value {
+    font-size: 1.35rem !important;
+  }
+
+  /* Full width buttons on mobile forms */
+  .modal-footer button,
+  .form-actions button {
+    flex: 1;
+  }
+
+  /* Mobile page header styling */
+  .page-header {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 0.75rem !important;
+    margin-bottom: 1.25rem !important;
+  }
+
+  .page-title {
+    font-size: 1.45rem !important;
+  }
+
+  /* Touch-friendly horizontal scroll bars */
+  .horizontal-scroll-container,
+  .table-responsive {
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: thin;
+  }
+
+  /* Mobile bottom padding to avoid bottom-nav collision */
+  .page-container,
+  .landing-page-container {
+    padding-bottom: 5.5rem !important;
+  }
+}
+
