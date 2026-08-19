@@ -15,7 +15,7 @@ CREATE TABLE IF NOT EXISTS profiles (
   id UUID PRIMARY KEY REFERENCES auth.users(id) ON DELETE CASCADE,
   full_name TEXT NOT NULL,
   admission_number TEXT UNIQUE NOT NULL,
-  role TEXT NOT NULL CHECK (role IN ('admin', 'teacher', 'student')),
+  role TEXT NOT NULL CHECK (role IN ('admin', 'teacher', 'student', 'bursar', 'parent')),
   first_login_at TIMESTAMPTZ,
   access_expires_at TIMESTAMPTZ,
   is_active BOOLEAN NOT NULL DEFAULT TRUE,
