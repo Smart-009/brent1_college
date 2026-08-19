@@ -4,6 +4,7 @@ import type { Role } from '@/lib/database.types'
 import { useAuthContext } from '@/features/auth/AuthContext'
 import { usePWAInstall } from '@/hooks/usePWAInstall'
 import { MobileAppBottomNav } from '@/components/layout/MobileAppBottomNav'
+import { SafariInstallModal } from '@/components/shared/SafariInstallModal'
 
 export interface CourseItem {
   id: string
@@ -50,9 +51,21 @@ export function MobileLandingView({
   onSelectCourse,
   showToast,
 }: MobileLandingProps) {
-  const { isInstalled, promptInstall } = usePWAInstall()
+  const { isInstalled, isIOS, promptInstall } = usePWAInstall()
+  const [safariModalOpen, setSafariModalOpen] = useState(false)
   const [selectedCat, setSelectedCat] = useState('All')
   const [search, setSearch] = useState('')
+
+  const handleInstallClick = async () => {
+    if (isIOS) {
+      setSafariModalOpen(true)
+    } else {
+      const installed = await promptInstall()
+      if (!installed) {
+        setSafariModalOpen(true)
+      }
+    }
+  }
 
   const filteredCourses = courses.filter((c) => {
     const matchCat = selectedCat === 'All' || c.category === selectedCat
@@ -135,7 +148,7 @@ export function MobileLandingView({
           {!isInstalled && (
             <button
               type="button"
-              onClick={promptInstall}
+              onClick={handleInstallClick}
               style={{
                 background: '#16a34a',
                 color: '#ffffff',
@@ -634,6 +647,13 @@ export function MobileLandingView({
 
       {/* 7. Native Mobile Bottom Navigation Bar */}
       <MobileAppBottomNav />
+
+      {/* Safari & Manual PWA Installation Guide Modal */}
+      <SafariInstallModal
+        isOpen={safariModalOpen}
+        onClose={() => setSafariModalOpen(false)}
+        isIOS={isIOS}
+      />
     </div>
   )
 }
