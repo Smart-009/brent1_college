@@ -186,7 +186,7 @@ export function TimetableView() {
               <label className="label" style={{ fontSize: '0.75rem' }}>Select Program / Cohort</label>
               <select
                 className="input"
-                style={{ width: '280px' }}
+                style={{ width: '100%', maxWidth: '320px' }}
                 value={selectedClass}
                 onChange={(e) => setSelectedClass(e.target.value)}
               >
@@ -200,7 +200,7 @@ export function TimetableView() {
             {viewMode === 'day' && (
               <div>
                 <label className="label" style={{ fontSize: '0.75rem' }}>Select Day</label>
-                <div style={{ display: 'flex', gap: '0.35rem' }}>
+                <div style={{ display: 'flex', gap: '0.35rem', flexWrap: 'wrap' }}>
                   {DAYS_OF_WEEK.map((d) => (
                     <button
                       key={d}
@@ -220,7 +220,7 @@ export function TimetableView() {
 
       {/* Timetable Weekly Display */}
       {viewMode === 'week' ? (
-        <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '1rem' }}>
           {DAYS_OF_WEEK.map((day) => {
             const dayPeriods = filteredPeriods
               .filter((p) => p.day_of_week === day)

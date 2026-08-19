@@ -36,7 +36,7 @@ export function UnitRegistrationSlip({
                 Brent College
               </h1>
               <div style={{ fontSize: '0.8rem', color: '#475569', fontWeight: 600 }}>
-                Sahal Mall, 4th Street, Eastleigh, Nairobi • Office of Academic Affairs
+                Sahl Mall, 4th Street, Eastleigh, Nairobi • Office of Academic Affairs
               </div>
             </div>
           </div>

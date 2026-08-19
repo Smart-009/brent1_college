@@ -42,7 +42,7 @@ export function LayoutShell() {
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
             <img src="/logo.png" alt="Brent College Logo" style={{ width: '28px', height: '28px', borderRadius: '50%' }} />
             <div>
-              <strong style={{ color: 'var(--color-text)' }}>Brent College Nairobi</strong> • Sahal Mall, 4th Street, Eastleigh
+              <strong style={{ color: 'var(--color-text)' }}>Brent College Nairobi</strong> • Sahl Mall, 4th Street, Eastleigh
             </div>
           </div>
           <div style={{ display: 'flex', gap: '1.25rem', alignItems: 'center', flexWrap: 'wrap' }}>

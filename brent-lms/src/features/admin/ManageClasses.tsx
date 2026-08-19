@@ -309,7 +309,7 @@ export function ManageClasses() {
         <div className="card" style={{ padding: '1.25rem', borderLeft: '4px solid #7c3aed' }}>
           <div style={{ fontSize: '0.8rem', color: '#1e293b', fontWeight: 700 }}>Campus Location</div>
           <div style={{ fontSize: '1.35rem', fontWeight: 900, color: '#7c3aed', marginTop: '0.4rem' }}>
-            Sahal Mall
+            Sahl Mall
           </div>
           <div style={{ fontSize: '0.75rem', color: '#334155', fontWeight: 600 }}>4th Street, Eastleigh, Nairobi</div>
         </div>

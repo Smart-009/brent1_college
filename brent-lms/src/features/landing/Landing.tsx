@@ -665,7 +665,7 @@ export function Landing() {
               fontWeight: 500,
             }}
           >
-            Nairobi’s premier short course college at Sahal Mall, 4th Street, Eastleigh. Master Computer Packages, Barista Artistry, English & Kiswahili Fluency, Henna & Bridal Make-up, Sewing & Tailoring, and IELTS Exam Preparation with 100% hands-on practical training!
+            Nairobi’s premier short course college at Sahl Mall, 4th Street, Eastleigh. Master Computer Packages, Barista Artistry, English & Kiswahili Fluency, Henna & Bridal Make-up, Sewing & Tailoring, and IELTS Exam Preparation with 100% hands-on practical training!
           </p>
 
           {/* Hero CTAs */}
@@ -752,7 +752,7 @@ export function Landing() {
                 Ongoing Monthly Intake — Morning, Afternoon & Evening Batches
               </div>
               <div style={{ fontSize: '0.78rem', color: '#cbd5e1', marginTop: '2px' }}>
-                📍 Sahal Mall Campus, 4th Street, Eastleigh • Limited Practical Lab Seats
+                📍 Sahl Mall Campus, 4th Street, Eastleigh • Limited Practical Lab Seats
               </div>
             </div>
 
@@ -1357,7 +1357,7 @@ export function Landing() {
               <div style={{ fontSize: '0.85rem', fontWeight: 800, color: '#34d399', textTransform: 'uppercase' }}>Step 2</div>
               <h3 style={{ fontSize: '1.25rem', fontWeight: 800, margin: '0.35rem 0 0.5rem', color: '#ffffff' }}>Intensive Practical Training</h3>
               <p style={{ fontSize: '0.9rem', color: '#cbd5e1', lineHeight: 1.6, margin: 0 }}>
-                Attend hands-on lab sessions in our Eastleigh, Sahal Mall center. Build real-world portfolio projects under active industry mentorship.
+                Attend hands-on lab sessions in our Eastleigh, Sahl Mall center. Build real-world portfolio projects under active industry mentorship.
               </p>
             </div>
 
@@ -1421,11 +1421,11 @@ export function Landing() {
               <span style={{ fontSize: '2rem' }}>📍</span>
               <div>
                 <h3 style={{ fontSize: '1.3rem', fontWeight: 900, color: '#0f172a', margin: 0 }}>Eastleigh Main Campus</h3>
-                <div style={{ fontSize: '0.8rem', color: '#64748b' }}>Sahal Mall, 4th Street, Nairobi</div>
+                <div style={{ fontSize: '0.8rem', color: '#64748b' }}>Sahl Mall, 4th Street, Nairobi</div>
               </div>
             </div>
             <div style={{ fontSize: '0.92rem', color: '#475569', lineHeight: 1.7, marginTop: '1.25rem' }}>
-              <div>🏢 <strong>Location:</strong> Sahal Mall, 4th Street, Eastleigh, Nairobi</div>
+              <div>🏢 <strong>Location:</strong> Sahl Mall, 4th Street, Eastleigh, Nairobi</div>
               <div>🕒 <strong>Opening Hours:</strong> Mon – Fri: 7:30 AM – 7:30 PM | Sat: 8:00 AM – 5:00 PM</div>
               <div>📞 <strong>Admissions Hotline:</strong> +254 722 264 380</div>
               <div>✉️ <strong>Direct Inquiries:</strong> admissions@brentcollege.ac.ke</div>
@@ -1434,7 +1434,7 @@ export function Landing() {
               type="button"
               className="btn btn-secondary btn-sm mt-4"
               style={{ fontWeight: 700 }}
-              onClick={() => alert('Campus Visit Hotline: Call +254 722 264 380 to schedule a free tour of our practical labs at Sahal Mall, 4th Street, Eastleigh.')}
+              onClick={() => alert('Campus Visit Hotline: Call +254 722 264 380 to schedule a free tour of our practical labs at Sahl Mall, 4th Street, Eastleigh.')}
             >
               🗓️ Book Free Campus Tour
             </button>
@@ -1489,7 +1489,7 @@ export function Landing() {
                     <div>📜 <strong>Awarded Qualification:</strong> {certResult.courseTitle}</div>
                     <div>🗓️ <strong>Completion Date:</strong> {certResult.completionDate}</div>
                     <div>🔢 <strong>Certificate Reference:</strong> <span style={{ color: '#fde047', fontWeight: 800 }}>{certResult.certNumber}</span></div>
-                    <div>🏛️ <strong>Campus:</strong> Sahal Mall, 4th Street, Eastleigh, Nairobi</div>
+                    <div>🏛️ <strong>Campus:</strong> Sahl Mall, 4th Street, Eastleigh, Nairobi</div>
                   </div>
                 </div>
               ) : (
@@ -1827,7 +1827,7 @@ export function Landing() {
               Admissions & Campus
             </h4>
             <div style={{ fontSize: '0.88rem', lineHeight: 1.75, color: '#cbd5e1' }}>
-              <div style={{ marginBottom: '0.35rem' }}>📍 <span style={{ color: '#94a3b8' }}>Campus:</span> <strong style={{ color: '#f8fafc' }}>Sahal Mall, 4th Street, Eastleigh</strong></div>
+              <div style={{ marginBottom: '0.35rem' }}>📍 <span style={{ color: '#94a3b8' }}>Campus:</span> <strong style={{ color: '#f8fafc' }}>Sahl Mall, 4th Street, Eastleigh</strong></div>
               <div style={{ marginBottom: '0.35rem' }}>📞 <span style={{ color: '#94a3b8' }}>Phone:</span> <strong style={{ color: '#f8fafc' }}>+254 722 264 380</strong></div>
               <div style={{ marginBottom: '0.35rem' }}>💬 <span style={{ color: '#94a3b8' }}>WhatsApp:</span> <strong style={{ color: '#f8fafc' }}>+254 722 264 380</strong></div>
               <div style={{ marginBottom: '0.5rem' }}>✉️ <span style={{ color: '#94a3b8' }}>Email:</span> <a href="mailto:admissions@brentcollege.ac.ke" style={{ color: '#93c5fd', textDecoration: 'underline' }}>admissions@brentcollege.ac.ke</a></div>
@@ -1848,7 +1848,7 @@ export function Landing() {
             © {new Date().getFullYear()} <strong style={{ color: '#e2e8f0' }}>Brent College Nairobi</strong>. All Rights Reserved. Shaping Minds, Inspiring Practical Success.
           </div>
           <div style={{ display: 'flex', gap: '1.25rem', alignItems: 'center' }}>
-            <span style={{ fontSize: '0.82rem', color: '#93c5fd' }}>📍 Sahal Mall, 4th Street, Eastleigh</span>
+            <span style={{ fontSize: '0.82rem', color: '#93c5fd' }}>📍 Sahl Mall, 4th Street, Eastleigh</span>
             <button
               type="button"
               className="btn btn-primary btn-sm"
@@ -1865,7 +1865,7 @@ export function Landing() {
       <div className="floating-action-group">
         {/* WhatsApp Fast Chat */}
         <a
-          href="https://wa.me/254722264380?text=Hello%20Brent%20College%20Admissions!%20I%20would%20like%20to%20inquire%20about%20the%20upcoming%20short%20courses%20at%20Sahal%20Mall."
+          href="https://wa.me/254722264380?text=Hello%20Brent%20College%20Admissions!%20I%20would%20like%20to%20inquire%20about%20the%20upcoming%20short%20courses%20at%20Sahl%20Mall."
           target="_blank"
           rel="noopener noreferrer"
           style={{
