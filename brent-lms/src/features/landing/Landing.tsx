@@ -2,9 +2,11 @@ import { useState, useMemo, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useAuthContext } from '@/features/auth/AuthContext'
 import { usePWAInstall } from '@/hooks/usePWAInstall'
+import { useIsMobile } from '@/hooks/useMediaQuery'
 import { PWAInstallBanner } from '@/components/shared/PWAInstallBanner'
 import { DesktopCommandPalette } from '@/components/shared/DesktopCommandPalette'
 import { MobileAppBottomNav } from '@/components/layout/MobileAppBottomNav'
+import { MobileLandingView } from './MobileLandingView'
 import { schoolStore } from '@/lib/schoolData'
 import type { Role } from '@/lib/database.types'
 
@@ -267,6 +269,7 @@ const TESTIMONIALS = [
 ]
 
 export function Landing() {
+  const isMobile = useIsMobile(768)
   const { signInAsDemo } = useAuthContext()
   const { isInstalled, promptInstall } = usePWAInstall()
   const navigate = useNavigate()
@@ -443,14 +446,28 @@ export function Landing() {
   }
 
   return (
-    <div style={{ minHeight: '100vh', background: '#f8fafc', color: '#0f172a', fontFamily: 'Inter, system-ui, -apple-system, sans-serif' }}>
+    <div style={{ minHeight: '100vh', background: isMobile ? '#090d16' : '#f8fafc', color: isMobile ? '#f8fafc' : '#0f172a', fontFamily: 'Inter, system-ui, -apple-system, sans-serif' }}>
       <PWAInstallBanner />
       <DesktopCommandPalette />
 
-      {/* Top Admissions & Quick Contacts Bar */}
-      <div
-        style={{
-          background: 'linear-gradient(90deg, #1e3a8a 0%, #2563eb 50%, #1e3a8a 100%)',
+      {isMobile ? (
+        <MobileLandingView
+          courses={COURSES_DATA}
+          timeLeft={timeLeft}
+          onOpenInquiry={(title) => {
+            if (title) setInquiryForm((prev) => ({ ...prev, course: title }))
+            setInquiryModalOpen(true)
+          }}
+          onOpenPortals={() => setShowPortalDesksModal(true)}
+          onSelectCourse={(c) => setSelectedCourseForModal(c)}
+          showToast={showToast}
+        />
+      ) : (
+        <>
+          {/* Top Admissions & Quick Contacts Bar */}
+          <div
+            style={{
+              background: 'linear-gradient(90deg, #1e3a8a 0%, #2563eb 50%, #1e3a8a 100%)',
           color: '#ffffff',
           padding: '0.45rem 1rem',
           fontSize: '0.8rem',
@@ -1925,6 +1942,8 @@ export function Landing() {
           </button>
         )}
       </div>
+      </>
+      )}
 
       {/* Floating Toast Notification */}
       {toastMessage && (
