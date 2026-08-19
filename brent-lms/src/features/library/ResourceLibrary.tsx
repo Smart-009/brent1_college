@@ -27,6 +27,7 @@ export function ResourceLibrary() {
 
   // Upload Modal State (for admin only)
   const [showUploadModal, setShowUploadModal] = useState(false)
+  const [selectedFile, setSelectedFile] = useState<File | null>(null)
   const [newTitle, setNewTitle] = useState('')
   const [newCategory, setNewCategory] = useState<AcademicResource['category']>('Past Papers')
   const [newSubject, setNewSubject] = useState(storeSubjects[0] || 'General Studies')
@@ -55,6 +56,17 @@ export function ResourceLibrary() {
     setCurrentPage(1)
   }
 
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (file) {
+      setSelectedFile(file)
+      if (!newTitle.trim()) {
+        const cleanName = file.name.replace(/\.[^/.]+$/, '').replace(/[_-]/g, ' ')
+        setNewTitle(cleanName)
+      }
+    }
+  }
+
   const handleUploadResource = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!isAdmin) {
@@ -63,15 +75,27 @@ export function ResourceLibrary() {
     }
     if (!newTitle.trim()) return
 
+    const fileSizeFormatted = selectedFile
+      ? `${(selectedFile.size / (1024 * 1024)).toFixed(1)} MB`
+      : '1.8 MB'
+
+    const fileExt = selectedFile
+      ? selectedFile.name.split('.').pop()?.toUpperCase() || 'PDF'
+      : 'PDF'
+
+    const fileBlobUrl = selectedFile
+      ? URL.createObjectURL(selectedFile)
+      : 'https://brentcollege.internal/docs/' + encodeURIComponent(newTitle)
+
     const item: AcademicResource = {
       id: `res-${Date.now()}`,
       title: newTitle.trim(),
       category: newCategory,
       subject: newSubject,
       class_level: newClassLevel,
-      file_url: 'https://brentcollege.internal/docs/' + encodeURIComponent(newTitle),
-      file_size: '2.4 MB',
-      file_type: 'PDF',
+      file_url: fileBlobUrl,
+      file_size: fileSizeFormatted,
+      file_type: fileExt,
       downloads_count: 0,
       year: Number(newYear) || 2025,
       uploaded_by: profile?.full_name || 'Academic Administrator',
@@ -82,6 +106,7 @@ export function ResourceLibrary() {
     setResources(schoolStore.getResources())
     setShowUploadModal(false)
     setNewTitle('')
+    setSelectedFile(null)
   }
 
   return (
@@ -109,8 +134,9 @@ export function ResourceLibrary() {
               type="button"
               className="btn btn-primary"
               onClick={() => setShowUploadModal(true)}
+              style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontWeight: 700 }}
             >
-              + Upload Academic E-Resource
+              + 📁 Upload Material from Local Storage
             </button>
           </div>
         )}
@@ -475,13 +501,81 @@ export function ResourceLibrary() {
             </div>
             <form onSubmit={handleUploadResource}>
               <div className="modal-body" style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                {/* Local Storage File Picker */}
+                <div>
+                  <label className="label">Upload Document / File from Device *</label>
+                  <div
+                    style={{
+                      border: '2px dashed #3b82f6',
+                      borderRadius: '12px',
+                      padding: '1.25rem',
+                      textAlign: 'center',
+                      background: selectedFile ? '#eff6ff' : '#f8fafc',
+                      cursor: 'pointer',
+                      transition: 'all 0.2s',
+                    }}
+                    onClick={() => document.getElementById('libFilePicker')?.click()}
+                  >
+                    <input
+                      id="libFilePicker"
+                      type="file"
+                      style={{ display: 'none' }}
+                      accept=".pdf, .docx, .doc, .ppt, .pptx, .xlsx, .xls, .zip, .html, .txt, image/*"
+                      onChange={handleFileChange}
+                    />
+                    <div style={{ fontSize: '2rem', marginBottom: '0.35rem' }}>
+                      {selectedFile ? '📄' : '📁'}
+                    </div>
+                    {selectedFile ? (
+                      <div>
+                        <div style={{ fontWeight: 800, color: '#1e3a8a', fontSize: '0.92rem' }}>
+                          {selectedFile.name}
+                        </div>
+                        <div style={{ fontSize: '0.75rem', color: '#16a34a', fontWeight: 600, marginTop: '2px' }}>
+                          ✓ Ready to upload • {(selectedFile.size / (1024 * 1024)).toFixed(2)} MB
+                        </div>
+                        <button
+                          type="button"
+                          onClick={(e) => {
+                            e.stopPropagation()
+                            setSelectedFile(null)
+                          }}
+                          style={{
+                            background: 'none',
+                            border: 'none',
+                            color: '#dc2626',
+                            fontSize: '0.75rem',
+                            fontWeight: 700,
+                            cursor: 'pointer',
+                            marginTop: '0.4rem',
+                          }}
+                        >
+                          ✕ Choose different file
+                        </button>
+                      </div>
+                    ) : (
+                      <div>
+                        <div style={{ fontWeight: 700, color: '#1e293b', fontSize: '0.9rem' }}>
+                          Click or Drag to Upload from Local Storage
+                        </div>
+                        <div style={{ fontSize: '0.75rem', color: '#64748b', marginTop: '2px' }}>
+                          Accepts PDF, Word (DOCX), PowerPoint, Excel, ZIP or HTML files
+                        </div>
+                        <div style={{ display: 'inline-block', background: '#2563eb', color: '#ffffff', padding: '4px 12px', borderRadius: '6px', fontSize: '0.75rem', fontWeight: 700, marginTop: '0.6rem' }}>
+                          Browse Files
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </div>
+
                 <div>
                   <label className="label">Resource Title *</label>
                   <input
                     type="text"
                     required
                     className="input"
-                    placeholder="e.g. 2025 Web Systems Final Examination & Marking Scheme"
+                    placeholder="Enter document title (e.g. 2026 Revision Guide)"
                     value={newTitle}
                     onChange={(e) => setNewTitle(e.target.value)}
                   />
