@@ -107,8 +107,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }
 
   useEffect(() => {
+    const safetyTimer = setTimeout(() => {
+      setLoading(false)
+    }, 800)
+
     // Non-blocking asynchronous session restoration
     supabase.auth.getSession().then(({ data: { session } }) => {
+      clearTimeout(safetyTimer)
       setSession(session)
       if (session?.user) {
         fetchProfile(session.user.id).finally(() => setLoading(false))
@@ -120,6 +125,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         setLoading(false)
       }
     }).catch(() => {
+      clearTimeout(safetyTimer)
       setLoading(false)
     })
 

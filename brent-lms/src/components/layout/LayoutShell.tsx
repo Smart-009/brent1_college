@@ -16,6 +16,7 @@ export function LayoutShell() {
       <PWAInstallBanner />
       <DesktopCommandPalette />
       <Navbar onToggleSidebar={() => setSidebarOpen(!sidebarOpen)} />
+      <div className={`sidebar-backdrop ${sidebarOpen ? 'open' : ''}`} onClick={() => setSidebarOpen(false)} />
       <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
       <MobileAppBottomNav />
       <main className="main-content" style={{ display: 'flex', flexDirection: 'column', minHeight: 'calc(100vh - 64px)' }}>
