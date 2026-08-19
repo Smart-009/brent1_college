@@ -21,8 +21,19 @@ export function ManageUsers() {
   const [admissionNumber, setAdmissionNumber] = useState('')
   const [password, setPassword] = useState('')
   const [role, setRole] = useState<Role>('student')
-  const [classId, setClassId] = useState('')
+  const [selectedClassIds, setSelectedClassIds] = useState<string[]>([])
   const [modalError, setModalError] = useState<string | null>(null)
+
+  // Default institutional programs fallback
+  const DEFAULT_PROGRAMS: Class[] = [
+    { id: 'prog-comp', name: 'Comprehensive Computer Packages & Digital Skills', grade_level: 'Vocational Certificate', academic_year: '2026 Intake', created_at: '' },
+    { id: 'prog-barista', name: 'Professional Barista & Coffee Brewing Artistry', grade_level: 'Master Barista Certification', academic_year: '2026 Intake', created_at: '' },
+    { id: 'prog-lang', name: 'Languages & Communication (English & Kiswahili)', grade_level: 'Fluency Certificate', academic_year: '2026 Intake', created_at: '' },
+    { id: 'prog-henna', name: 'Henna Artistry, Cosmetology & Bridal Makeup', grade_level: 'Beauty Certificate', academic_year: '2026 Intake', created_at: '' },
+    { id: 'prog-tailor', name: 'Professional Tailoring, Sewing & Garment Cutting', grade_level: 'Fashion Certificate', academic_year: '2026 Intake', created_at: '' },
+    { id: 'prog-ielts', name: 'IELTS Academic & General Exam Training', grade_level: 'Band 7.5+ Target', academic_year: '2026 Intake', created_at: '' },
+    { id: 'prog-acc', name: 'Accounting: QuickBooks, Tally & KRA iTax Filing', grade_level: 'Business Skills', academic_year: '2026 Intake', created_at: '' },
+  ]
 
   // Fetch all profiles
   const { data: users, isLoading } = useQuery({
@@ -35,13 +46,29 @@ export function ManageUsers() {
   })
 
   // Fetch classes
-  const { data: classes } = useQuery({
+  const { data: classesData } = useQuery({
     queryKey: ['classes-admin-users'],
     queryFn: async () => {
       const { data } = await supabase.from('classes').select('*').order('name')
       return (data || []) as Class[]
     },
   })
+
+  const availableClasses: Class[] = (classesData && classesData.length > 0) ? classesData : DEFAULT_PROGRAMS
+
+  const toggleSelectClass = (cId: string) => {
+    setSelectedClassIds((prev) =>
+      prev.includes(cId) ? prev.filter((id) => id !== cId) : [...prev, cId]
+    )
+  }
+
+  const selectAllClasses = () => {
+    setSelectedClassIds(availableClasses.map((c) => c.id))
+  }
+
+  const clearAllClasses = () => {
+    setSelectedClassIds([])
+  }
 
   // Add user mutation (calls Supabase signup / edge function or fallback)
   const addUserMutation = useMutation({
@@ -67,12 +94,15 @@ export function ManageUsers() {
 
       if (authErr) throw authErr
 
-      // If class ID selected for student, enroll in class
-      if (role === 'student' && classId && authData.user) {
-        await supabase.from('class_enrollments').insert({
-          student_id: authData.user.id,
-          class_id: classId,
-        })
+      // If multiple classes selected, enroll user in all selected classes
+      if (selectedClassIds.length > 0 && authData.user) {
+        const enrollments = selectedClassIds.map((cId) => ({
+          student_id: authData.user!.id,
+          class_id: cId,
+        }))
+        try {
+          await supabase.from('class_enrollments').insert(enrollments)
+        } catch {}
       }
     },
     onSuccess: () => {
@@ -81,6 +111,7 @@ export function ManageUsers() {
       setFullName('')
       setAdmissionNumber('')
       setPassword('')
+      setSelectedClassIds([])
       setModalError(null)
     },
     onError: (err: Error) => {
@@ -281,19 +312,88 @@ export function ManageUsers() {
             <span className="form-hint">The user will be prompted to change this password on first login.</span>
           </div>
 
-          {role === 'student' && (
-            <div className="form-group">
-              <label className="form-label" htmlFor="classGroup">Assign Class / Grade</label>
-              <select id="classGroup" value={classId} onChange={(e) => setClassId(e.target.value)}>
-                <option value="">-- Select Class --</option>
-                {classes?.map((c) => (
-                  <option key={c.id} value={c.id}>
-                    {c.name}
-                  </option>
-                ))}
-              </select>
+          <div className="form-group">
+            <div className="flex justify-between items-center mb-2">
+              <label className="form-label" style={{ margin: 0 }}>
+                {role === 'student' ? 'Assign Enrolled Classes / Courses' : 'Assign Teaching Classes / Cohorts'}
+                {selectedClassIds.length > 0 && (
+                  <span className="badge badge-primary ml-2" style={{ fontSize: '0.75rem', padding: '2px 8px' }}>
+                    {selectedClassIds.length} Selected
+                  </span>
+                )}
+              </label>
+              <div className="flex gap-2">
+                <button
+                  type="button"
+                  onClick={selectAllClasses}
+                  style={{ background: 'none', border: 'none', color: '#2563eb', fontSize: '0.78rem', cursor: 'pointer', fontWeight: 600 }}
+                >
+                  Select All
+                </button>
+                <span style={{ color: '#94a3b8' }}>•</span>
+                <button
+                  type="button"
+                  onClick={clearAllClasses}
+                  style={{ background: 'none', border: 'none', color: '#64748b', fontSize: '0.78rem', cursor: 'pointer', fontWeight: 600 }}
+                >
+                  Clear
+                </button>
+              </div>
             </div>
-          )}
+
+            <div
+              style={{
+                border: '1.5px solid var(--color-border)',
+                borderRadius: '12px',
+                padding: '0.75rem',
+                maxHeight: '220px',
+                overflowY: 'auto',
+                display: 'flex',
+                flexDirection: 'column',
+                gap: '0.5rem',
+                background: '#f8fafc',
+              }}
+            >
+              {availableClasses.map((c) => {
+                const isSelected = selectedClassIds.includes(c.id)
+                return (
+                  <label
+                    key={c.id}
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '0.75rem',
+                      padding: '0.55rem 0.75rem',
+                      borderRadius: '8px',
+                      background: isSelected ? '#eff6ff' : '#ffffff',
+                      border: isSelected ? '1.5px solid #3b82f6' : '1px solid #e2e8f0',
+                      cursor: 'pointer',
+                      transition: 'all 0.15s',
+                    }}
+                  >
+                    <input
+                      type="checkbox"
+                      checked={isSelected}
+                      onChange={() => toggleSelectClass(c.id)}
+                      style={{ width: '16px', height: '16px', accentColor: '#2563eb', cursor: 'pointer' }}
+                    />
+                    <div style={{ flex: 1 }}>
+                      <div style={{ fontSize: '0.85rem', fontWeight: isSelected ? 700 : 600, color: isSelected ? '#1e3a8a' : '#0f172a' }}>
+                        {c.name}
+                      </div>
+                      {c.grade_level && (
+                        <div style={{ fontSize: '0.72rem', color: '#64748b' }}>
+                          {c.grade_level} {c.academic_year ? `• ${c.academic_year}` : ''}
+                        </div>
+                      )}
+                    </div>
+                    {isSelected && <span style={{ color: '#2563eb', fontWeight: 900 }}>✓</span>}
+                  </label>
+                )
+              })}
+            </div>
+            <span className="form-hint">You can select multiple classes/courses for this account.</span>
+          </div>
 
           <div className="flex justify-end gap-3 mt-6">
             <Button type="button" variant="ghost" onClick={() => setShowAddModal(false)}>
