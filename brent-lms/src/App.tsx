@@ -5,8 +5,8 @@ import { useAuth } from '@/hooks/useAuth'
 import { LayoutShell } from '@/components/layout/LayoutShell'
 import { LoadingScreen } from '@/components/ui/Spinner'
 
-// Lazy-loaded Public & Auth Pages
-const Landing = lazy(() => import('@/features/landing/Landing').then((m) => ({ default: m.Landing })))
+// Direct import for Home/Landing page for instant render
+import { Landing } from '@/features/landing/Landing'
 const Login = lazy(() => import('@/features/auth/Login').then((m) => ({ default: m.Login })))
 const ChangePassword = lazy(() => import('@/features/auth/ChangePassword').then((m) => ({ default: m.ChangePassword })))
 const AccessExpired = lazy(() => import('@/features/auth/AccessExpired').then((m) => ({ default: m.AccessExpired })))
