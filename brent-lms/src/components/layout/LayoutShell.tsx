@@ -5,6 +5,7 @@ import { Sidebar } from './Sidebar'
 import { PWAInstallBanner } from '@/components/shared/PWAInstallBanner'
 import { OfflineIndicator } from '@/components/shared/OfflineIndicator'
 import { DesktopCommandPalette } from '@/components/shared/DesktopCommandPalette'
+import { MobileAppBottomNav } from './MobileAppBottomNav'
 
 export function LayoutShell() {
   const [sidebarOpen, setSidebarOpen] = useState(false)
@@ -16,6 +17,7 @@ export function LayoutShell() {
       <DesktopCommandPalette />
       <Navbar onToggleSidebar={() => setSidebarOpen(!sidebarOpen)} />
       <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
+      <MobileAppBottomNav />
       <main className="main-content" style={{ display: 'flex', flexDirection: 'column', minHeight: 'calc(100vh - 64px)' }}>
         <div style={{ flex: 1 }}>
           <Outlet />

@@ -4,6 +4,7 @@ import { useAuthContext } from '@/features/auth/AuthContext'
 import { usePWAInstall } from '@/hooks/usePWAInstall'
 import { PWAInstallBanner } from '@/components/shared/PWAInstallBanner'
 import { DesktopCommandPalette } from '@/components/shared/DesktopCommandPalette'
+import { MobileAppBottomNav } from '@/components/layout/MobileAppBottomNav'
 import { schoolStore } from '@/lib/schoolData'
 import type { Role } from '@/lib/database.types'
 
@@ -515,7 +516,32 @@ export function Landing() {
               <a href="#intakes" style={{ color: '#334155', textDecoration: 'none', transition: 'color 0.2s' }}>Intakes & Fees</a>
             </nav>
 
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+              {!isInstalled && (
+                <button
+                  type="button"
+                  className="btn btn-sm"
+                  style={{
+                    background: '#16a34a',
+                    color: '#ffffff',
+                    border: 'none',
+                    fontWeight: 700,
+                    padding: '0.55rem 0.85rem',
+                    borderRadius: '8px',
+                    boxShadow: '0 2px 8px rgba(22, 163, 74, 0.3)',
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '4px',
+                    fontSize: '0.82rem',
+                  }}
+                  onClick={promptInstall}
+                  title="Install Brent College App on your Phone"
+                >
+                  <span>📲</span>
+                  <span>Install App</span>
+                </button>
+              )}
+
               <button
                 type="button"
                 className="btn btn-sm"
@@ -524,12 +550,13 @@ export function Landing() {
                   color: '#1d4ed8',
                   border: '1px solid #bfdbfe',
                   fontWeight: 700,
-                  padding: '0.55rem 1rem',
+                  padding: '0.55rem 0.85rem',
                   borderRadius: '8px',
+                  fontSize: '0.82rem',
                 }}
                 onClick={() => setInquiryModalOpen(true)}
               >
-                ⚡ Apply in 60s
+                ⚡ Apply
               </button>
 
               <button
@@ -537,13 +564,14 @@ export function Landing() {
                 className="btn btn-sm btn-primary"
                 style={{
                   fontWeight: 700,
-                  padding: '0.55rem 1.25rem',
+                  padding: '0.55rem 1rem',
                   borderRadius: '8px',
                   boxShadow: '0 4px 12px rgba(30, 58, 138, 0.25)',
+                  fontSize: '0.82rem',
                 }}
                 onClick={() => setShowPortalDesksModal(true)}
               >
-                🔐 College Portals & Login
+                🔐 Portals
               </button>
             </div>
           </div>
@@ -1937,6 +1965,9 @@ export function Landing() {
           </button>
         </div>
       )}
+
+      {/* Mobile-Native Bottom App Bar */}
+      <MobileAppBottomNav />
     </div>
   )
 }

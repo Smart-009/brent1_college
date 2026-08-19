@@ -919,3 +919,61 @@ tbody td { padding: var(--space-3) var(--space-4); color: var(--color-text-secon
   background: var(--color-bg-alt);
 }
 
+/* ============================================================
+   NATIVE MOBILE APP BAR & MOBILE SHELL ENHANCEMENTS
+   ============================================================ */
+@media (min-width: 769px) {
+  .mobile-bottom-nav {
+    display: none !important;
+  }
+}
+
+@media (max-width: 768px) {
+  body {
+    padding-bottom: calc(68px + env(safe-area-inset-bottom, 0px)) !important;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .main-content {
+    padding-bottom: 2rem !important;
+  }
+
+  .mobile-bottom-nav {
+    display: flex !important;
+  }
+
+  .mobile-nav-item {
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+  }
+
+  .mobile-nav-item:active {
+    transform: scale(0.92);
+  }
+
+  .mobile-nav-item.active {
+    color: #60a5fa !important;
+  }
+
+  .mobile-nav-item.active span:first-child {
+    filter: drop-shadow(0 0 6px rgba(96, 165, 250, 0.6));
+    transform: scale(1.1);
+  }
+
+  /* Compact header on mobile */
+  .navbar-school-name {
+    font-size: 1.05rem !important;
+  }
+
+  .navbar-tagline {
+    display: none !important;
+  }
+
+  /* Safe interactive touch targets */
+  .btn {
+    min-height: 44px;
+    touch-action: manipulation;
+  }
+}
+
+
