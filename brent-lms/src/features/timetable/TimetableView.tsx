@@ -444,7 +444,7 @@ export function TimetableView() {
                       type="text"
                       required
                       className="input"
-                      placeholder="e.g. Dr. Kevin Kipruto"
+                      placeholder="Enter lecturer or instructor name"
                       value={newPeriod.teacher_name}
                       onChange={(e) => setNewPeriod({ ...newPeriod, teacher_name: e.target.value })}
                     />

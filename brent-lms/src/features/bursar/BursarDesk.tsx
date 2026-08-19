@@ -960,7 +960,7 @@ export function BursarDesk() {
                       type="text"
                       required
                       className="input"
-                      placeholder="e.g. Mary Wanjiku"
+                      placeholder="Enter student full name"
                       value={paymentData.student_name}
                       onChange={(e) => setPaymentData({ ...paymentData, student_name: e.target.value })}
                     />
@@ -1231,7 +1231,7 @@ export function BursarDesk() {
                       type="text"
                       required
                       className="input"
-                      placeholder="e.g. John Macharia"
+                      placeholder="Enter student full name"
                       value={newInvoice.student_name}
                       onChange={(e) => setNewInvoice({ ...newInvoice, student_name: e.target.value })}
                     />
@@ -1245,7 +1245,7 @@ export function BursarDesk() {
                       type="text"
                       required
                       className="input"
-                      placeholder="e.g. Professional Barista Mastery"
+                      placeholder="Enter course name"
                       value={newInvoice.class_name}
                       onChange={(e) => setNewInvoice({ ...newInvoice, class_name: e.target.value })}
                     />
@@ -1285,7 +1285,7 @@ export function BursarDesk() {
                       required
                       min="100"
                       className="input"
-                      placeholder="e.g. 25000"
+                      placeholder="Enter amount (e.g. 25000)"
                       value={newInvoice.total_amount || ''}
                       onChange={(e) => setNewInvoice({ ...newInvoice, total_amount: Number(e.target.value) })}
                     />
@@ -1327,7 +1327,7 @@ export function BursarDesk() {
                     type="text"
                     required
                     className="input"
-                    placeholder="e.g. Mary Wanjiku"
+                    placeholder="Enter visitor full name"
                     value={newInquiry.visitor_name}
                     onChange={(e) => setNewInquiry({ ...newInquiry, visitor_name: e.target.value })}
                   />
@@ -1339,7 +1339,7 @@ export function BursarDesk() {
                       type="text"
                       required
                       className="input"
-                      placeholder="e.g. +254 722 264 380"
+                      placeholder="07XX XXX XXX"
                       value={newInquiry.phone}
                       onChange={(e) => setNewInquiry({ ...newInquiry, phone: e.target.value })}
                     />

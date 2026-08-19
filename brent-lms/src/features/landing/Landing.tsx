@@ -1734,7 +1734,7 @@ export function Landing() {
                       type="text"
                       required
                       className="input"
-                      placeholder="e.g. Cynthia Achieng"
+                      placeholder="Enter your full name"
                       value={inquiryForm.name}
                       onChange={(e) => setInquiryForm({ ...inquiryForm, name: e.target.value })}
                     />
@@ -1747,7 +1747,7 @@ export function Landing() {
                         type="tel"
                         required
                         className="input"
-                        placeholder="0722 264 380"
+                        placeholder="07XX XXX XXX"
                         value={inquiryForm.phone}
                         onChange={(e) => setInquiryForm({ ...inquiryForm, phone: e.target.value })}
                       />
@@ -1757,7 +1757,7 @@ export function Landing() {
                       <input
                         type="email"
                         className="input"
-                        placeholder="cynthia@gmail.com"
+                        placeholder="yourname@email.com"
                         value={inquiryForm.email}
                         onChange={(e) => setInquiryForm({ ...inquiryForm, email: e.target.value })}
                       />

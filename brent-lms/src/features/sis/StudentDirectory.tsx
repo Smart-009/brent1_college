@@ -873,7 +873,7 @@ export function StudentDirectory() {
                     type="text"
                     required
                     className="input"
-                    placeholder="e.g. Maryanne Wambui Kamau"
+                    placeholder="Enter student full name"
                     value={newStudent.full_name}
                     onChange={(e) => setNewStudent({ ...newStudent, full_name: e.target.value })}
                   />
@@ -942,7 +942,7 @@ export function StudentDirectory() {
                         type="text"
                         required
                         className="input"
-                        placeholder="e.g. John Kamau"
+                        placeholder="Enter guardian full name"
                         value={newStudent.guardian?.name}
                         onChange={(e) =>
                           setNewStudent({

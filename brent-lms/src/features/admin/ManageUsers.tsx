@@ -246,7 +246,7 @@ export function ManageUsers() {
             <input
               id="fullName"
               type="text"
-              placeholder="e.g. Hassan Abdi Mohamed"
+              placeholder="Enter full name of student or staff"
               value={fullName}
               onChange={(e) => setFullName(e.target.value)}
               required

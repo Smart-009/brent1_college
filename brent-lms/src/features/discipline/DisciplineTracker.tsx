@@ -192,7 +192,7 @@ export function DisciplineTracker() {
                       type="text"
                       required
                       className="input"
-                      placeholder="e.g. Mary Wanjiku"
+                      placeholder="Enter student name"
                       value={newRecord.student_name}
                       onChange={(e) => setNewRecord({ ...newRecord, student_name: e.target.value })}
                     />
