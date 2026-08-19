@@ -465,7 +465,7 @@ export function Landing() {
       >
         <span style={{ display: 'inline-flex', alignItems: 'center', gap: '0.45rem' }}>
           <span style={{ width: '9px', height: '9px', borderRadius: '50%', background: '#22c55e', display: 'inline-block' }} />
-          <strong>May 2026 Intake Ongoing:</strong> Early Bird 15% Tuition Voucher Available
+          <strong>Intake Ongoing:</strong> Early Bird 15% Tuition Voucher Available
         </span>
         <span className="hidden sm:inline" style={{ opacity: 0.8 }}>|</span>
         <span className="hidden sm:inline">

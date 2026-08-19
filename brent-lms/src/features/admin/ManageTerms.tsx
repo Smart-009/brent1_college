@@ -79,7 +79,7 @@ export function ManageTerms() {
           <div className="empty-state-icon">📅</div>
           <div className="empty-state-title">No Intake Batches Configured</div>
           <div className="empty-state-desc">
-            Define upcoming monthly short course intakes (e.g. May 2026 Morning Cohort) to coordinate student enrollments.
+            Define upcoming monthly short course intakes (e.g. Practical Cohort Morning / Evening) to coordinate student enrollments.
           </div>
           <Button variant="primary" onClick={() => setShowAddModal(true)}>
             + Add First Intake Batch
@@ -105,7 +105,7 @@ export function ManageTerms() {
             <input
               id="termName"
               type="text"
-              placeholder="e.g. May 2026 Practical Cohort (Morning / Evening)"
+              placeholder="e.g. Practical Cohort (Morning / Evening)"
               value={name}
               onChange={(e) => setName(e.target.value)}
               required
