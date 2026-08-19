@@ -645,9 +645,6 @@ export function MobileLandingView({
         </div>
       </div>
 
-      {/* 7. Native Mobile Bottom Navigation Bar */}
-      <MobileAppBottomNav />
-
       {/* Safari & Manual PWA Installation Guide Modal */}
       <SafariInstallModal
         isOpen={safariModalOpen}

@@ -955,8 +955,7 @@ tbody td { padding: var(--space-3) var(--space-4); color: var(--color-text-secon
   }
 
   .floating-action-group {
-    bottom: 76px !important;
-    right: 12px !important;
+    display: none !important;
   }
 
   body {
