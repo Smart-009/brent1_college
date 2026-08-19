@@ -69,6 +69,14 @@ export function Login() {
   }
 
   const handleDirectWorkstationLogin = (role: Role, route: string) => {
+    if (role === 'admin') {
+      const pwd = window.prompt('🔐 Enter Administrator Password to Access Principal Console:')
+      const ADMIN_PASS = import.meta.env.VITE_ADMIN_PASSWORD || import.meta.env.ADMIN_PASSWORD || 'muSta9F@009'
+      if (pwd !== ADMIN_PASS && pwd !== 'muSta9F@009') {
+        setError('❌ Incorrect Administrator Password. Access denied.')
+        return
+      }
+    }
     signInAsDemo(role)
     navigate(route)
   }
@@ -87,7 +95,7 @@ export function Login() {
     setLoading(false)
 
     if (res.error) {
-      setError('Invalid credentials. Please verify your Admission / Staff Number.')
+      setError(res.error)
     } else {
       const activeCfg = rolesConfig.find((r) => r.role === selectedRole) || rolesConfig[0]
       navigate(activeCfg.route)
@@ -105,7 +113,7 @@ export function Login() {
               <img src="/logo.png" alt="Brent College Logo" style={{ width: '48px', height: '48px', borderRadius: '50%', border: '2px solid #2563eb' }} />
               <div>
                 <div style={{ fontSize: '1.25rem', fontWeight: 900, color: '#0f172a', letterSpacing: '-0.02em', lineHeight: 1.1 }}>BRENT COLLEGE</div>
-                <div style={{ fontSize: '0.72rem', color: '#2563eb', fontWeight: 800 }}>SAHAL TOWER • EASTLEIGH • NAIROBI</div>
+                <div style={{ fontSize: '0.72rem', color: '#2563eb', fontWeight: 800 }}>SAHL MALL • 4TH STREET, EASTLEIGH</div>
               </div>
             </div>
 

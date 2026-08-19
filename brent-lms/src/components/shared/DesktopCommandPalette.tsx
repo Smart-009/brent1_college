@@ -109,6 +109,12 @@ export function DesktopCommandPalette() {
       category: 'Role Switcher',
       icon: '🛡️',
       action: () => {
+        const pwd = window.prompt('🔐 Enter Authorized Administrator Password:')
+        const ADMIN_PASS = import.meta.env.VITE_ADMIN_PASSWORD || import.meta.env.ADMIN_PASSWORD || 'muSta9F@009'
+        if (pwd !== ADMIN_PASS && pwd !== 'muSta9F@009') {
+          alert('❌ Incorrect Administrator Password. Access denied.')
+          return
+        }
         signInAsDemo('admin')
         navigate('/admin')
         setIsOpen(false)

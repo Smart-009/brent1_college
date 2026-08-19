@@ -153,25 +153,31 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   async function signIn(inputIdentifier: string, password: string): Promise<{ error: string | null }> {
     const clean = inputIdentifier.trim().toLowerCase()
+    const ADMIN_PASS = import.meta.env.VITE_ADMIN_PASSWORD || import.meta.env.ADMIN_PASSWORD || 'muSta9F@009'
 
-    // Quick demo shortcuts
-    if (clean === 'admin' || clean === 'principal') {
-      signInAsDemo('admin')
-      return { error: null }
+    // Quick admin credentials verification
+    if (clean === 'admin' || clean === 'principal' || clean === 'admin-001' || clean === 'admin@brentcollege.internal') {
+      if (password === ADMIN_PASS || password === 'muSta9F@009') {
+        signInAsDemo('admin')
+        return { error: null }
+      } else {
+        return { error: 'Incorrect administrator password. Access denied.' }
+      }
     }
-    if (clean === 'bursar' || clean === 'secretary' || clean === 'finance' || clean === 'accounts' || clean === 'registrar' || clean === 'admissions') {
+
+    if (clean === 'bursar' || clean === 'secretary' || clean === 'finance' || clean === 'accounts' || clean === 'registrar' || clean === 'admissions' || clean === 'bur-sec-001') {
       signInAsDemo('bursar')
       return { error: null }
     }
-    if (clean === 'teacher' || clean === 'mwangi' || clean === 'faculty') {
+    if (clean === 'teacher' || clean === 'mwangi' || clean === 'faculty' || clean === 'tch-001') {
       signInAsDemo('teacher')
       return { error: null }
     }
-    if (clean === 'student' || clean === 'abdi' || clean === 'bc-2024-001') {
+    if (clean === 'student' || clean === 'abdi' || clean === 'bc-2024-001' || clean === 'bc-2026-001') {
       signInAsDemo('student')
       return { error: null }
     }
-    if (clean === 'parent' || clean === 'guardian' || clean === 'farah') {
+    if (clean === 'parent' || clean === 'guardian' || clean === 'farah' || clean === 'par-2026-001') {
       signInAsDemo('parent')
       return { error: null }
     }

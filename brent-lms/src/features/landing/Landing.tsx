@@ -432,6 +432,14 @@ export function Landing() {
   }
 
   const handleLaunchRole = (role: Role) => {
+    if (role === 'admin') {
+      const pwd = window.prompt('🔐 Enter Administrator Password to Access Principal Console:')
+      const ADMIN_PASS = import.meta.env.VITE_ADMIN_PASSWORD || import.meta.env.ADMIN_PASSWORD || 'muSta9F@009'
+      if (pwd !== ADMIN_PASS && pwd !== 'muSta9F@009') {
+        showToast('❌ Incorrect Administrator Password.')
+        return
+      }
+    }
     signInAsDemo(role)
     setShowPortalDesksModal(false)
     if (role === 'admin') navigate('/admin')
