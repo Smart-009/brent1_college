@@ -511,7 +511,7 @@ export function Landing() {
 
           {/* Nav Links */}
           <div style={{ display: 'flex', alignItems: 'center', gap: '1.25rem', flexShrink: 0 }}>
-            <nav className="hidden lg:flex" style={{ display: 'flex', alignItems: 'center', gap: '1.75rem', fontSize: '0.92rem', fontWeight: 600 }}>
+            <nav className="desktop-nav-links" style={{ fontSize: '0.92rem', fontWeight: 600 }}>
               <a href="#courses" style={{ color: '#334155', textDecoration: 'none', transition: 'color 0.2s' }}>Courses</a>
               <a href="#why-brent" style={{ color: '#334155', textDecoration: 'none', transition: 'color 0.2s' }}>Why Choose Us</a>
               <a href="#testimonials" style={{ color: '#334155', textDecoration: 'none', transition: 'color 0.2s' }}>Graduate Outcomes</a>
@@ -1845,18 +1845,7 @@ export function Landing() {
       </footer>
 
       {/* Floating Action Menu (WhatsApp, Call, Scroll-To-Top) */}
-      <div
-        style={{
-          position: 'fixed',
-          bottom: '24px',
-          right: '24px',
-          zIndex: 99,
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'flex-end',
-          gap: '10px',
-        }}
-      >
+      <div className="floating-action-group">
         {/* WhatsApp Fast Chat */}
         <a
           href="https://wa.me/254712345678?text=Hello%20Brent%20College%20Admissions!%20I%20would%20like%20to%20inquire%20about%20the%20upcoming%20short%20courses%20at%20Sahal%20Tower."
@@ -1880,7 +1869,7 @@ export function Landing() {
           onMouseLeave={(e) => (e.currentTarget.style.transform = 'scale(1)')}
         >
           <span style={{ fontSize: '1.2rem' }}>💬</span>
-          <span className="hidden sm:inline">WhatsApp Admissions</span>
+          <span className="hide-on-mobile">WhatsApp</span>
         </a>
 
         {/* Call Admissions Button */}
@@ -1904,7 +1893,7 @@ export function Landing() {
           onMouseLeave={(e) => (e.currentTarget.style.transform = 'scale(1)')}
         >
           <span style={{ fontSize: '1.1rem' }}>📞</span>
-          <span className="hidden sm:inline">Call +254 712 345 678</span>
+          <span className="hide-on-mobile">Call</span>
         </a>
 
         {/* Scroll To Top FAB */}

@@ -922,13 +922,43 @@ tbody td { padding: var(--space-3) var(--space-4); color: var(--color-text-secon
 /* ============================================================
    NATIVE MOBILE APP BAR & MOBILE SHELL ENHANCEMENTS
    ============================================================ */
-@media (min-width: 769px) {
+/* Responsive Header Navigation */
+.desktop-nav-links {
+  display: flex !important;
+  align-items: center;
+  gap: 1.75rem;
+}
+
+.floating-action-group {
+  position: fixed;
+  bottom: 24px;
+  right: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  z-index: 900;
+}
+
+@media (min-width: 992px) {
   .mobile-bottom-nav {
     display: none !important;
   }
 }
 
-@media (max-width: 768px) {
+@media (max-width: 991px) {
+  .desktop-nav-links {
+    display: none !important;
+  }
+
+  .hide-on-mobile {
+    display: none !important;
+  }
+
+  .floating-action-group {
+    bottom: 76px !important;
+    right: 12px !important;
+  }
+
   body {
     padding-bottom: calc(68px + env(safe-area-inset-bottom, 0px)) !important;
     -webkit-tap-highlight-color: transparent;
@@ -975,5 +1005,6 @@ tbody td { padding: var(--space-3) var(--space-4); color: var(--color-text-secon
     touch-action: manipulation;
   }
 }
+
 
 
