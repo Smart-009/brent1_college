@@ -57,15 +57,19 @@ export function MobileAppBottomNav() {
           height: '100%',
           textDecoration: 'none',
           color: currentPath === '/' ? '#60a5fa' : '#94a3b8',
-          transition: 'all 0.2s ease',
-          fontSize: '0.68rem',
-          fontWeight: currentPath === '/' ? 700 : 500,
-          gap: '3px',
+          transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
+          fontSize: '0.7rem',
+          fontWeight: currentPath === '/' ? 800 : 500,
+          gap: '2px',
           userSelect: 'none',
+          transform: currentPath === '/' ? 'scale(1.05)' : 'scale(1)',
         }}
       >
         <span style={{ fontSize: '1.25rem', lineHeight: 1 }}>🏠</span>
         <span>Home</span>
+        {currentPath === '/' && (
+          <span style={{ width: '4px', height: '4px', borderRadius: '50%', background: '#60a5fa', boxShadow: '0 0 8px #60a5fa' }} />
+        )}
       </Link>
 
       {/* Courses Tab */}
@@ -88,15 +92,19 @@ export function MobileAppBottomNav() {
           height: '100%',
           textDecoration: 'none',
           color: currentPath === '/courses' ? '#60a5fa' : '#94a3b8',
-          transition: 'all 0.2s ease',
-          fontSize: '0.68rem',
-          fontWeight: currentPath === '/courses' ? 700 : 500,
-          gap: '3px',
+          transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
+          fontSize: '0.7rem',
+          fontWeight: currentPath === '/courses' ? 800 : 500,
+          gap: '2px',
           userSelect: 'none',
+          transform: currentPath === '/courses' ? 'scale(1.05)' : 'scale(1)',
         }}
       >
         <span style={{ fontSize: '1.25rem', lineHeight: 1 }}>📚</span>
         <span>Courses</span>
+        {currentPath === '/courses' && (
+          <span style={{ width: '4px', height: '4px', borderRadius: '50%', background: '#60a5fa', boxShadow: '0 0 8px #60a5fa' }} />
+        )}
       </Link>
 
       {/* Fees / M-Pesa Tab */}
@@ -112,15 +120,19 @@ export function MobileAppBottomNav() {
           height: '100%',
           textDecoration: 'none',
           color: currentPath === '/fees' ? '#60a5fa' : '#94a3b8',
-          transition: 'all 0.2s ease',
-          fontSize: '0.68rem',
-          fontWeight: currentPath === '/fees' ? 700 : 500,
-          gap: '3px',
+          transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
+          fontSize: '0.7rem',
+          fontWeight: currentPath === '/fees' ? 800 : 500,
+          gap: '2px',
           userSelect: 'none',
+          transform: currentPath === '/fees' ? 'scale(1.05)' : 'scale(1)',
         }}
       >
         <span style={{ fontSize: '1.25rem', lineHeight: 1 }}>💳</span>
         <span>Fees 247247</span>
+        {currentPath === '/fees' && (
+          <span style={{ width: '4px', height: '4px', borderRadius: '50%', background: '#60a5fa', boxShadow: '0 0 8px #60a5fa' }} />
+        )}
       </Link>
 
       {/* Timetable Tab */}
@@ -136,15 +148,19 @@ export function MobileAppBottomNav() {
           height: '100%',
           textDecoration: 'none',
           color: currentPath === '/timetable' ? '#60a5fa' : '#94a3b8',
-          transition: 'all 0.2s ease',
-          fontSize: '0.68rem',
-          fontWeight: currentPath === '/timetable' ? 700 : 500,
-          gap: '3px',
+          transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
+          fontSize: '0.7rem',
+          fontWeight: currentPath === '/timetable' ? 800 : 500,
+          gap: '2px',
           userSelect: 'none',
+          transform: currentPath === '/timetable' ? 'scale(1.05)' : 'scale(1)',
         }}
       >
         <span style={{ fontSize: '1.25rem', lineHeight: 1 }}>📅</span>
         <span>Timetable</span>
+        {currentPath === '/timetable' && (
+          <span style={{ width: '4px', height: '4px', borderRadius: '50%', background: '#60a5fa', boxShadow: '0 0 8px #60a5fa' }} />
+        )}
       </Link>
 
       {/* Portal / Account Tab */}
@@ -160,15 +176,19 @@ export function MobileAppBottomNav() {
           height: '100%',
           textDecoration: 'none',
           color: isPortalActive ? '#60a5fa' : '#94a3b8',
-          transition: 'all 0.2s ease',
-          fontSize: '0.68rem',
-          fontWeight: isPortalActive ? 700 : 500,
-          gap: '3px',
+          transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
+          fontSize: '0.7rem',
+          fontWeight: isPortalActive ? 800 : 500,
+          gap: '2px',
           userSelect: 'none',
+          transform: isPortalActive ? 'scale(1.05)' : 'scale(1)',
         }}
       >
         <span style={{ fontSize: '1.25rem', lineHeight: 1 }}>{profile ? '🎓' : '🔐'}</span>
         <span>{portalLabel}</span>
+        {isPortalActive && (
+          <span style={{ width: '4px', height: '4px', borderRadius: '50%', background: '#60a5fa', boxShadow: '0 0 8px #60a5fa' }} />
+        )}
       </Link>
     </nav>
   )
