@@ -42,24 +42,43 @@ export class ErrorBoundary extends Component<Props, State> {
           <p style={{ color: '#94a3b8', maxWidth: '400px', marginBottom: '1.5rem', fontSize: '0.95rem' }}>
             A temporary display error occurred. Please click below to refresh.
           </p>
-          <button
-            onClick={() => {
-              localStorage.clear()
-              window.location.reload()
-            }}
-            style={{
-              padding: '0.75rem 1.5rem',
-              background: '#2563eb',
-              color: '#ffffff',
-              border: 'none',
-              borderRadius: '8px',
-              fontWeight: 600,
-              fontSize: '1rem',
-              cursor: 'pointer'
-            }}
-          >
-            Reload Brent College
-          </button>
+          <div style={{ display: 'flex', gap: '0.75rem' }}>
+            <button
+              onClick={() => {
+                sessionStorage.clear()
+                window.location.reload()
+              }}
+              style={{
+                padding: '0.75rem 1.5rem',
+                background: '#2563eb',
+                color: '#ffffff',
+                border: 'none',
+                borderRadius: '8px',
+                fontWeight: 600,
+                fontSize: '0.95rem',
+                cursor: 'pointer'
+              }}
+            >
+              🔄 Refresh Application
+            </button>
+            <button
+              onClick={() => {
+                window.location.href = '/'
+              }}
+              style={{
+                padding: '0.75rem 1.5rem',
+                background: '#334155',
+                color: '#ffffff',
+                border: 'none',
+                borderRadius: '8px',
+                fontWeight: 600,
+                fontSize: '0.95rem',
+                cursor: 'pointer'
+              }}
+            >
+              🏠 Return Home
+            </button>
+          </div>
         </div>
       )
     }

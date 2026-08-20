@@ -15,6 +15,17 @@ export function Login() {
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
   const [showPassword, setShowPassword] = useState(false)
+  const [failedAttempts, setFailedAttempts] = useState(0)
+  const [lockoutSeconds, setLockoutSeconds] = useState(0)
+
+  useEffect(() => {
+    if (lockoutSeconds > 0) {
+      const timer = setInterval(() => {
+        setLockoutSeconds((prev) => (prev > 0 ? prev - 1 : 0))
+      }, 1000)
+      return () => clearInterval(timer)
+    }
+  }, [lockoutSeconds])
 
   useEffect(() => {
     if (paramRole && ['admin', 'bursar', 'teacher', 'student', 'parent'].includes(paramRole)) {
@@ -100,6 +111,11 @@ export function Login() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+    if (lockoutSeconds > 0) {
+      setError(`🔒 Security Lockout Active: Please wait ${lockoutSeconds}s before retrying.`)
+      return
+    }
+
     if (!admissionNumber || !password) {
       setError('Please enter both your Admission/Staff Number and Password.')
       return
@@ -108,13 +124,23 @@ export function Login() {
     setError(null)
     setLoading(true)
 
-    const res = await signIn(admissionNumber.trim(), password)
+    const cleanAdmission = admissionNumber.trim().replace(/[<>]/g, '')
+    const res = await signIn(cleanAdmission, password)
     setLoading(false)
 
     if (res.error) {
-      setError(res.error)
+      const nextFailed = failedAttempts + 1
+      setFailedAttempts(nextFailed)
+      if (nextFailed >= 5) {
+        setLockoutSeconds(60)
+        setError('🛡️ Security Lockout: 5 consecutive failed attempts. System locked for 60 seconds.')
+      } else {
+        setError(`${res.error} (${5 - nextFailed} attempts remaining before temporary security lock)`)
+      }
     } else {
-      if (selectedRole === 'admin' || admissionNumber.toLowerCase().includes('admin')) {
+      setFailedAttempts(0)
+      setLockoutSeconds(0)
+      if (selectedRole === 'admin' || cleanAdmission.toLowerCase().includes('admin')) {
         navigate('/admin')
       } else {
         const activeCfg = rolesConfig.find((r) => r.role === selectedRole) || rolesConfig[0]
