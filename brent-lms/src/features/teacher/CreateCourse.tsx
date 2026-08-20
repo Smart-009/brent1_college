@@ -3,6 +3,7 @@ import { useNavigate, Link } from 'react-router-dom'
 import { useAuth } from '@/hooks/useAuth'
 import { PageWrapper } from '@/components/layout/PageWrapper'
 import { Button } from '@/components/ui/Button'
+import { supabase } from '@/lib/supabase'
 import { schoolStore } from '@/lib/schoolData'
 import type { CourseUnit, SyllabusModule, CollegeDepartment, CollegeSubject } from '@/types/school'
 
@@ -130,6 +131,20 @@ export function CreateCourse() {
       }
 
       await schoolStore.addCourseUnit(newUnit)
+
+      // Synchronize to Supabase Cloud Database
+      try {
+        await supabase.from('courses').insert({
+          title: newUnit.title,
+          description: newUnit.description || '',
+          teacher_id: profile?.id,
+          is_published: true,
+        })
+      } catch {}
+
+      // Broadcast live sync event for frontpage
+      window.dispatchEvent(new Event('storage'))
+
       navigate('/teacher/courses')
     } catch (err: any) {
       setError(err.message || 'Failed to create course unit.')

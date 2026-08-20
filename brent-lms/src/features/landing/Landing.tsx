@@ -27,7 +27,7 @@ interface CourseItem {
   syllabus?: { week: string; topic: string; practicalLab: string }[]
 }
 
-const COURSES_DATA: CourseItem[] = [
+const DEFAULT_COURSES_DATA: CourseItem[] = [
   {
     id: 'c-comp',
     title: 'Comprehensive Computer Packages & Digital Skills',
@@ -338,6 +338,95 @@ export function Landing() {
     setTimeout(() => setToastMessage(null), 3500)
   }
 
+  // Dynamic courses synchronized with Admin Curriculum & Courses Store
+  const [coursesList, setCoursesList] = useState<CourseItem[]>(() => {
+    const units = schoolStore.getCourseUnits()
+    const customCourses: CourseItem[] = units.map((u) => ({
+      id: u.id,
+      title: u.title,
+      category: (u.department?.toLowerCase().includes('computer') || u.program?.toLowerCase().includes('computer')) ? 'Computer Courses'
+        : (u.department?.toLowerCase().includes('barista') || u.program?.toLowerCase().includes('barista')) ? 'Barista Training'
+        : (u.department?.toLowerCase().includes('language') || u.program?.toLowerCase().includes('language')) ? 'Languages (English & Kiswahili)'
+        : (u.department?.toLowerCase().includes('henna') || u.department?.toLowerCase().includes('beauty')) ? 'Henna & Make-up'
+        : (u.department?.toLowerCase().includes('tailor') || u.department?.toLowerCase().includes('sewing')) ? 'Sewing & Tailoring'
+        : (u.department?.toLowerCase().includes('ielts') || u.program?.toLowerCase().includes('ielts')) ? 'IELTS Prep'
+        : (u.department?.toLowerCase().includes('account') || u.department?.toLowerCase().includes('business')) ? 'Business & Accounting'
+        : (u.department as any) || 'Computer Courses',
+      tag: `🏛️ ${u.program || u.department || 'Accredited Course'}`,
+      tagColor: '#1e3a8a',
+      duration: u.course_duration || '4 Weeks Certificate',
+      schedule: 'Morning / Afternoon / Evening',
+      fee: 'KES 4,500',
+      installment: '2 installments',
+      careerOutcome: u.description || 'Certified Professional Graduate',
+      skills: u.syllabus_modules?.flatMap((m) => m.topics) || ['Practical Lab Training', 'Certification'],
+      icon: '📖',
+      popular: true,
+      syllabus: u.syllabus_modules?.map((m, idx) => ({
+        week: `Week ${idx + 1}`,
+        topic: m.title,
+        practicalLab: m.learning_outcomes?.[0] || 'Hands-on practical sessions in college laboratory.',
+      })),
+    }))
+
+    const combined = [...customCourses]
+    for (const def of DEFAULT_COURSES_DATA) {
+      if (!combined.some((c) => c.title.toLowerCase() === def.title.toLowerCase())) {
+        combined.push(def)
+      }
+    }
+    return combined
+  })
+
+  // Synchronize immediately on store change or window focus
+  useEffect(() => {
+    const handleStoreChange = () => {
+      const units = schoolStore.getCourseUnits()
+      const customCourses: CourseItem[] = units.map((u) => ({
+        id: u.id,
+        title: u.title,
+        category: (u.department?.toLowerCase().includes('computer') || u.program?.toLowerCase().includes('computer')) ? 'Computer Courses'
+          : (u.department?.toLowerCase().includes('barista') || u.program?.toLowerCase().includes('barista')) ? 'Barista Training'
+          : (u.department?.toLowerCase().includes('language') || u.program?.toLowerCase().includes('language')) ? 'Languages (English & Kiswahili)'
+          : (u.department?.toLowerCase().includes('henna') || u.department?.toLowerCase().includes('beauty')) ? 'Henna & Make-up'
+          : (u.department?.toLowerCase().includes('tailor') || u.department?.toLowerCase().includes('sewing')) ? 'Sewing & Tailoring'
+          : (u.department?.toLowerCase().includes('ielts') || u.program?.toLowerCase().includes('ielts')) ? 'IELTS Prep'
+          : (u.department?.toLowerCase().includes('account') || u.department?.toLowerCase().includes('business')) ? 'Business & Accounting'
+          : (u.department as any) || 'Computer Courses',
+        tag: `🏛️ ${u.program || u.department || 'Accredited Course'}`,
+        tagColor: '#1e3a8a',
+        duration: u.course_duration || '4 Weeks Certificate',
+        schedule: 'Morning / Afternoon / Evening',
+        fee: 'KES 4,500',
+        installment: '2 installments',
+        careerOutcome: u.description || 'Certified Professional Graduate',
+        skills: u.syllabus_modules?.flatMap((m) => m.topics) || ['Practical Lab Training', 'Certification'],
+        icon: '📖',
+        popular: true,
+        syllabus: u.syllabus_modules?.map((m, idx) => ({
+          week: `Week ${idx + 1}`,
+          topic: m.title,
+          practicalLab: m.learning_outcomes?.[0] || 'Hands-on practical sessions in college laboratory.',
+        })),
+      }))
+
+      const combined = [...customCourses]
+      for (const def of DEFAULT_COURSES_DATA) {
+        if (!combined.some((c) => c.title.toLowerCase() === def.title.toLowerCase())) {
+          combined.push(def)
+        }
+      }
+      setCoursesList(combined)
+    }
+
+    window.addEventListener('storage', handleStoreChange)
+    window.addEventListener('focus', handleStoreChange)
+    return () => {
+      window.removeEventListener('storage', handleStoreChange)
+      window.removeEventListener('focus', handleStoreChange)
+    }
+  }, [])
+
   // Interactive Enhancements State
   const [expandedSyllabusId, setExpandedSyllabusId] = useState<string | null>(null)
   const [calcCourseId, setCalcCourseId] = useState<string>('c-comp')
@@ -362,7 +451,7 @@ export function Landing() {
   })
 
   const filteredCourses = useMemo(() => {
-    let list = COURSES_DATA
+    let list = coursesList
     if (activeCategory !== 'All') {
       list = list.filter((c) => c.category === activeCategory)
     }
@@ -377,11 +466,11 @@ export function Landing() {
       )
     }
     return list
-  }, [activeCategory, searchQuery])
+  }, [coursesList, activeCategory, searchQuery])
 
   const selectedCalcCourse = useMemo(() => {
-    return COURSES_DATA.find((c) => c.id === calcCourseId) || COURSES_DATA[0]
-  }, [calcCourseId])
+    return coursesList.find((c) => c.id === calcCourseId) || coursesList[0] || DEFAULT_COURSES_DATA[0]
+  }, [coursesList, calcCourseId])
 
   const handleOpenCourseApplication = (course: CourseItem) => {
     setSelectedCourseForModal(course)
@@ -472,7 +561,7 @@ export function Landing() {
 
       {isMobile ? (
         <MobileLandingView
-          courses={COURSES_DATA}
+          courses={coursesList}
           timeLeft={timeLeft}
           onOpenInquiry={(title) => {
             if (title) setInquiryForm((prev) => ({ ...prev, course: title }))
@@ -1187,7 +1276,7 @@ export function Landing() {
                   onChange={(e) => setCalcCourseId(e.target.value)}
                   style={{ marginBottom: '1.25rem', fontWeight: 600 }}
                 >
-                  {COURSES_DATA.map((c) => (
+                  {coursesList.map((c) => (
                     <option key={c.id} value={c.id}>
                       {c.icon} {c.title} — ({c.fee})
                     </option>
@@ -1788,7 +1877,7 @@ export function Landing() {
                       value={inquiryForm.course}
                       onChange={(e) => setInquiryForm({ ...inquiryForm, course: e.target.value })}
                     >
-                      {COURSES_DATA.map((c) => (
+                      {coursesList.map((c) => (
                         <option key={c.id} value={c.title}>
                           {c.title} ({c.duration} — {c.fee})
                         </option>
