@@ -7,6 +7,7 @@ import { PWAInstallBanner } from '@/components/shared/PWAInstallBanner'
 import { DesktopCommandPalette } from '@/components/shared/DesktopCommandPalette'
 import { MobileAppBottomNav } from '@/components/layout/MobileAppBottomNav'
 import { MobileLandingView } from './MobileLandingView'
+import { supabase } from '@/lib/supabase'
 import { schoolStore } from '@/lib/schoolData'
 import type { Role } from '@/lib/database.types'
 
@@ -378,9 +379,10 @@ export function Landing() {
     return combined
   })
 
-  // Synchronize immediately on store change or window focus
+  // Synchronize immediately on store change, Supabase Cloud fetch, and Realtime event
   useEffect(() => {
-    const handleStoreChange = () => {
+    const syncAllSources = async () => {
+      // 1. Local storage store units
       const units = schoolStore.getCourseUnits()
       const customCourses: CourseItem[] = units.map((u) => ({
         id: u.id,
@@ -410,20 +412,69 @@ export function Landing() {
         })),
       }))
 
-      const combined = [...customCourses]
+      // 2. Supabase Cloud Database courses (allows updates made on other PCs to show on phones)
+      let cloudMapped: CourseItem[] = []
+      try {
+        const { data: cloudCourses } = await supabase.from('courses').select('*').order('created_at', { ascending: false })
+        if (cloudCourses && cloudCourses.length > 0) {
+          cloudMapped = cloudCourses.map((c: any) => ({
+            id: c.id,
+            title: c.title,
+            category: (c.title?.toLowerCase().includes('computer') || c.title?.toLowerCase().includes('tech') || c.description?.toLowerCase().includes('computer')) ? 'Computer Courses'
+              : (c.title?.toLowerCase().includes('barista') || c.title?.toLowerCase().includes('coffee')) ? 'Barista Training'
+              : (c.title?.toLowerCase().includes('language') || c.title?.toLowerCase().includes('english') || c.title?.toLowerCase().includes('kiswahili')) ? 'Languages (English & Kiswahili)'
+              : (c.title?.toLowerCase().includes('henna') || c.title?.toLowerCase().includes('makeup') || c.title?.toLowerCase().includes('beauty')) ? 'Henna & Make-up'
+              : (c.title?.toLowerCase().includes('tailor') || c.title?.toLowerCase().includes('sewing')) ? 'Sewing & Tailoring'
+              : (c.title?.toLowerCase().includes('ielts')) ? 'IELTS Prep'
+              : (c.title?.toLowerCase().includes('quickbooks') || c.title?.toLowerCase().includes('accounting') || c.title?.toLowerCase().includes('tax')) ? 'Business & Accounting'
+              : 'Computer Courses',
+            tag: '🌟 Accredited Course',
+            tagColor: '#1e3a8a',
+            duration: '4 to 6 Weeks',
+            schedule: 'Morning / Afternoon / Evening',
+            fee: 'KES 4,500',
+            installment: '2 installments of KES 2,500',
+            careerOutcome: c.description || 'Certified Professional Trainee',
+            skills: ['100% Practical Lab Training', 'Institutional Certification'],
+            icon: '📖',
+            popular: true,
+            syllabus: [
+              { week: 'Week 1-2', topic: 'Fundamentals & Practical Lab Sessions', practicalLab: 'Core foundation exercises and lab work.' },
+              { week: 'Week 3-4', topic: 'Advanced Practical Projects & Examination', practicalLab: 'Real-world project simulations.' },
+            ],
+          }))
+        }
+      } catch (err) {
+        console.error('Cloud courses load:', err)
+      }
+
+      // Merge: Cloud + Local Custom + Default baseline
+      const merged = [...cloudMapped, ...customCourses]
       for (const def of DEFAULT_COURSES_DATA) {
-        if (!combined.some((c) => c.title.toLowerCase() === def.title.toLowerCase())) {
-          combined.push(def)
+        if (!merged.some((c) => c.title.toLowerCase().trim() === def.title.toLowerCase().trim())) {
+          merged.push(def)
         }
       }
-      setCoursesList(combined)
+      setCoursesList(merged)
     }
 
-    window.addEventListener('storage', handleStoreChange)
-    window.addEventListener('focus', handleStoreChange)
+    syncAllSources()
+
+    window.addEventListener('storage', syncAllSources)
+    window.addEventListener('focus', syncAllSources)
+
+    // Supabase Realtime channel subscription
+    const channel = supabase
+      .channel('realtime_public_courses')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'courses' }, () => {
+        syncAllSources()
+      })
+      .subscribe()
+
     return () => {
-      window.removeEventListener('storage', handleStoreChange)
-      window.removeEventListener('focus', handleStoreChange)
+      window.removeEventListener('storage', syncAllSources)
+      window.removeEventListener('focus', syncAllSources)
+      supabase.removeChannel(channel)
     }
   }, [])
 

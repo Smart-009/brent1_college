@@ -1,6 +1,7 @@
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect } from 'react'
 import { schoolStore } from '@/lib/schoolData'
 import { useAuthContext } from '@/features/auth/AuthContext'
+import { supabase } from '@/lib/supabase'
 import type { SchoolNotice } from '@/types/school'
 
 export function SchoolNoticeboard() {
@@ -18,10 +19,60 @@ export function SchoolNoticeboard() {
     category: 'General',
     target_audience: 'All',
     content: '',
-    author_name: profile?.full_name || 'Dr. Kevin Kipruto',
+    author_name: profile?.full_name || 'College Administration',
     author_role: profile?.role === 'admin' ? 'Principal & Head of Institution' : 'College Administration',
     is_pinned: false,
   })
+
+  // Load from Supabase Cloud Database & Subscribe to Realtime Updates
+  useEffect(() => {
+    const fetchCloudNotices = async () => {
+      try {
+        const { data: cloudAnnouncements } = await supabase
+          .from('announcements')
+          .select('*, author:profiles!author_id(full_name)')
+          .order('created_at', { ascending: false })
+
+        if (cloudAnnouncements && cloudAnnouncements.length > 0) {
+          const mapped: SchoolNotice[] = cloudAnnouncements.map((a: any) => ({
+            id: a.id,
+            title: a.title,
+            category: 'Academic',
+            target_audience: (a.target?.charAt(0).toUpperCase() + a.target?.slice(1)) || 'All',
+            content: a.body,
+            author_name: a.author?.full_name || 'Academic Administration',
+            author_role: 'Official Notice',
+            publish_date: a.created_at?.split('T')[0] || new Date().toISOString().split('T')[0],
+            is_pinned: Boolean(a.pinned),
+          }))
+
+          const local = schoolStore.getNotices()
+          const combined = [...mapped]
+          for (const l of local) {
+            if (!combined.some((c) => c.title.toLowerCase().trim() === l.title.toLowerCase().trim())) {
+              combined.push(l)
+            }
+          }
+          setNotices(combined)
+        }
+      } catch (err) {
+        console.error('Failed to load cloud notices:', err)
+      }
+    }
+
+    fetchCloudNotices()
+
+    const channel = supabase
+      .channel('realtime_announcements_noticeboard')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'announcements' }, () => {
+        fetchCloudNotices()
+      })
+      .subscribe()
+
+    return () => {
+      supabase.removeChannel(channel)
+    }
+  }, [])
 
   const filteredNotices = useMemo(() => {
     return notices.filter((n) => {
@@ -32,7 +83,7 @@ export function SchoolNoticeboard() {
   }, [notices, categoryFilter, audienceFilter])
 
   // Handle Add Notice
-  const handleAddNotice = (e: React.FormEvent) => {
+  const handleAddNotice = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!newNotice.title || !newNotice.content) return
 
@@ -49,6 +100,20 @@ export function SchoolNoticeboard() {
     }
 
     schoolStore.addNotice(notice)
+
+    // Save to Supabase Cloud Database
+    try {
+      if (profile?.id) {
+        await supabase.from('announcements').insert({
+          title: notice.title,
+          body: notice.content,
+          target: notice.target_audience.toLowerCase(),
+          pinned: notice.is_pinned,
+          author_id: profile.id,
+        })
+      }
+    } catch {}
+
     setNotices(schoolStore.getNotices())
     setShowAddModal(false)
     setNewNotice({ title: '', category: 'General', target_audience: 'All', content: '', is_pinned: false })
@@ -65,10 +130,13 @@ export function SchoolNoticeboard() {
   }
 
   // Handle Delete Notice
-  const handleDeleteNotice = (id: string) => {
+  const handleDeleteNotice = async (id: string) => {
     if (window.confirm('Are you sure you want to delete this circular notice?')) {
       schoolStore.deleteNotice(id)
-      setNotices(schoolStore.getNotices())
+      try {
+        await supabase.from('announcements').delete().eq('id', id)
+      } catch {}
+      setNotices((prev) => prev.filter((n) => n.id !== id))
     }
   }
 
