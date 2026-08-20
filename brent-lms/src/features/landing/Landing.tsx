@@ -273,6 +273,16 @@ export function Landing() {
   const { signInAsDemo } = useAuthContext()
   const { isInstalled, promptInstall } = usePWAInstall()
   const location = useLocation()
+  const navigate = useNavigate()
+
+  const [activeCategory, setActiveCategory] = useState<string>('All')
+  const [searchQuery, setSearchQuery] = useState<string>('')
+  const [selectedCourseForModal, setSelectedCourseForModal] = useState<CourseItem | null>(null)
+  const [inquiryModalOpen, setInquiryModalOpen] = useState(false)
+  const [inquirySuccess, setInquirySuccess] = useState(false)
+  const [showPortalDesksModal, setShowPortalDesksModal] = useState(false)
+  const [showScrollTop, setShowScrollTop] = useState(false)
+  const [toastMessage, setToastMessage] = useState<string | null>(null)
 
   // Scroll to courses on #courses or /courses route
   useEffect(() => {
