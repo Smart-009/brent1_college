@@ -402,7 +402,7 @@ export function MobileLandingView({
       </div>
 
       {/* 4. Search & Filter Header */}
-      <div style={{ padding: '1.25rem 1rem 0.5rem' }}>
+      <div id="courses" style={{ padding: '1.25rem 1rem 0.5rem', scrollMarginTop: '70px' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.65rem' }}>
           <h3 style={{ fontSize: '1.1rem', fontWeight: 800, color: '#ffffff', margin: 0 }}>
             Featured Courses ({filteredCourses.length})

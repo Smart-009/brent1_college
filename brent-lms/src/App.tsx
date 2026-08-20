@@ -80,6 +80,7 @@ export function App() {
       <Routes>
         {/* Public Landing & Login */}
         <Route path="/" element={<Landing />} />
+        <Route path="/courses" element={<Landing />} />
         <Route path="/login" element={<Login />} />
         <Route path="/change-password" element={<ChangePassword />} />
         <Route path="/access-expired" element={<AccessExpired />} />

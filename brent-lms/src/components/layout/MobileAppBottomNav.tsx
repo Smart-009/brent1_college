@@ -47,6 +47,11 @@ export function MobileAppBottomNav() {
       {/* Home Tab */}
       <Link
         to="/"
+        onClick={() => {
+          if (currentPath === '/') {
+            window.scrollTo({ top: 0, behavior: 'smooth' })
+          }
+        }}
         className={`mobile-nav-item ${currentPath === '/' ? 'active' : ''}`}
         style={{
           display: 'flex',
@@ -74,12 +79,14 @@ export function MobileAppBottomNav() {
 
       {/* Courses Tab */}
       <Link
-        to="/#courses"
+        to="/courses"
         onClick={(e) => {
-          if (currentPath === '/') {
+          if (currentPath === '/' || currentPath === '/courses') {
             e.preventDefault()
             const el = document.getElementById('courses')
-            if (el) el.scrollIntoView({ behavior: 'smooth' })
+            if (el) {
+              el.scrollIntoView({ behavior: 'smooth' })
+            }
           }
         }}
         className={`mobile-nav-item ${currentPath === '/courses' ? 'active' : ''}`}

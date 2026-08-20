@@ -1,5 +1,5 @@
 import { useState, useMemo, useEffect } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link, useNavigate, useLocation } from 'react-router-dom'
 import { useAuthContext } from '@/features/auth/AuthContext'
 import { usePWAInstall } from '@/hooks/usePWAInstall'
 import { useIsMobile } from '@/hooks/useMediaQuery'
@@ -272,16 +272,20 @@ export function Landing() {
   const isMobile = useIsMobile(768)
   const { signInAsDemo } = useAuthContext()
   const { isInstalled, promptInstall } = usePWAInstall()
-  const navigate = useNavigate()
+  const location = useLocation()
 
-  const [activeCategory, setActiveCategory] = useState<string>('All')
-  const [searchQuery, setSearchQuery] = useState<string>('')
-  const [selectedCourseForModal, setSelectedCourseForModal] = useState<CourseItem | null>(null)
-  const [inquiryModalOpen, setInquiryModalOpen] = useState(false)
-  const [inquirySuccess, setInquirySuccess] = useState(false)
-  const [showPortalDesksModal, setShowPortalDesksModal] = useState(false)
-  const [showScrollTop, setShowScrollTop] = useState(false)
-  const [toastMessage, setToastMessage] = useState<string | null>(null)
+  // Scroll to courses on #courses or /courses route
+  useEffect(() => {
+    if (location.pathname === '/courses' || location.hash === '#courses') {
+      const timer = setTimeout(() => {
+        const el = document.getElementById('courses')
+        if (el) {
+          el.scrollIntoView({ behavior: 'smooth' })
+        }
+      }, 100)
+      return () => clearTimeout(timer)
+    }
+  }, [location.pathname, location.hash])
 
   // Live Intake Countdown Timer
   const [timeLeft, setTimeLeft] = useState<{ days: number; hours: number; minutes: number; seconds: number }>({
