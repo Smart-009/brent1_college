@@ -1,7 +1,6 @@
 import { useState, useEffect, useMemo } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuthContext } from '@/features/auth/AuthContext'
-import type { Role } from '@/lib/database.types'
 
 interface PaletteItem {
   id: string

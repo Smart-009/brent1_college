@@ -12,9 +12,9 @@ export function AdminDashboard() {
   const navigate = useNavigate()
 
   const handlePurgeForLaunch = () => {
-    if (window.confirm('Are you sure you want to purge all dummy/test student records, invoices, and inquiries for live production launch?')) {
+    if (window.confirm('Are you sure you want to purge all test student records, invoices, and inquiries for live production launch?')) {
       schoolStore.purgeAllDataForLaunch()
-      alert('All system test records have been wiped clean! The system is 100% fresh for live production launch.')
+      alert('All system records have been reset cleanly. The system is ready for live production registration.')
       window.location.reload()
     }
   }

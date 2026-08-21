@@ -48,7 +48,6 @@ const DisciplineTracker = lazy(() => import('@/features/discipline/DisciplineTra
 const ParentDashboard = lazy(() => import('@/features/parent/ParentDashboard').then((m) => ({ default: m.ParentDashboard })))
 const SchoolNoticeboard = lazy(() => import('@/features/announcements/SchoolNoticeboard').then((m) => ({ default: m.SchoolNoticeboard })))
 const BursarDesk = lazy(() => import('@/features/bursar/BursarDesk').then((m) => ({ default: m.BursarDesk })))
-const SecretaryDesk = lazy(() => import('@/features/secretary/SecretaryDesk').then((m) => ({ default: m.SecretaryDesk })))
 
 /** Auth Guard Component */
 function RequireAuth({ children, allowedRoles }: { children: ReactElement; allowedRoles?: string[] }) {

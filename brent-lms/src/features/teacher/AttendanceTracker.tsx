@@ -102,6 +102,7 @@ export function AttendanceTracker() {
                 id="attClass"
                 value={selectedClassId}
                 onChange={(e) => handleClassChange(e.target.value)}
+                disabled={loadingClasses}
               >
                 <option value="">-- Select Class --</option>
                 {classes?.map((c) => (

@@ -54,7 +54,7 @@ export function FeeManagement() {
 
     const newReceipt: FeePaymentReceipt = {
       id: `rec-${Date.now()}`,
-      receipt_number: `REC-2026-${Math.floor(1000 + Math.random() * 9000)}`,
+      receipt_number: `REC-${new Date().getFullYear()}-${Math.floor(1000 + Math.random() * 9000)}`,
       student_id: student.id,
       student_name: student.full_name,
       admission_number: student.admission_number,

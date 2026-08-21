@@ -13,7 +13,7 @@ export function ManageTerms() {
 
   const [showAddModal, setShowAddModal] = useState(false)
   const [name, setName] = useState('')
-  const [academicYear, setAcademicYear] = useState('2026 Intake')
+  const [academicYear, setAcademicYear] = useState(() => `${new Date().getFullYear()} Intake`)
   const [startDate, setStartDate] = useState('')
   const [endDate, setEndDate] = useState('')
 
@@ -33,7 +33,7 @@ export function ManageTerms() {
       if (!name || !startDate || !endDate) return
       const { error } = await supabase.from('school_terms').insert({
         name: name.trim(),
-        academic_year: academicYear.trim() || '2026 Intake',
+        academic_year: academicYear.trim() || `${new Date().getFullYear()} Intake`,
         start_date: startDate,
         end_date: endDate,
       })
@@ -117,7 +117,7 @@ export function ManageTerms() {
             <input
               id="tYear"
               type="text"
-              placeholder="e.g. 2026 Short Course Intake"
+              placeholder={`e.g. ${new Date().getFullYear()} Short Course Intake`}
               value={academicYear}
               onChange={(e) => setAcademicYear(e.target.value)}
               required

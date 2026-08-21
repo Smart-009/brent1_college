@@ -1,58 +1,61 @@
 import { createContext, useContext, useEffect, useState, type ReactNode } from 'react'
 import type { Session, User } from '@supabase/supabase-js'
 import { supabase } from '@/lib/supabase'
+import { schoolStore } from '@/lib/schoolData'
 import type { Profile, Role } from '@/lib/database.types'
 
+export const ADMIN_PROFILE: Profile = {
+  id: '40bcf126-5fa0-4df1-be4b-480088ce315a',
+  full_name: 'Brent College Principal & Administrator',
+  admission_number: 'Brent2026@admin',
+  role: 'admin',
+  first_login_at: '2024-01-01T00:00:00Z',
+  access_expires_at: null,
+  is_active: true,
+  created_at: '2024-01-01T00:00:00Z',
+}
+
 export const DEMO_PROFILES: Record<Role, Profile> = {
-  admin: {
-    id: 'demo-admin-id',
-    full_name: 'Brent College Principal & Administrator',
-    admission_number: 'Brent2026@admin',
-    role: 'admin',
-    first_login_at: '2024-01-01T00:00:00Z',
-    access_expires_at: null,
-    is_active: true,
-    created_at: '2024-01-01T00:00:00Z',
-  },
+  admin: ADMIN_PROFILE,
   bursar: {
-    id: 'demo-bursar-id',
-    full_name: 'Mrs. Grace Odhiambo (Bursar & Admissions Registrar)',
+    id: 'bursar-unregistered',
+    full_name: 'Admissions & Bursar Officer',
     admission_number: 'BUR-SEC-001',
     role: 'bursar',
-    first_login_at: '2024-01-01T00:00:00Z',
+    first_login_at: null,
     access_expires_at: null,
     is_active: true,
-    created_at: '2024-01-01T00:00:00Z',
+    created_at: new Date().toISOString(),
   },
   teacher: {
-    id: 'demo-teacher-id',
-    full_name: 'Mr. James Mwangi (HOD Computer Science)',
+    id: 'teacher-unregistered',
+    full_name: 'Vocational Faculty Lecturer',
     admission_number: 'TCH-001',
     role: 'teacher',
-    first_login_at: '2024-01-01T00:00:00Z',
+    first_login_at: null,
     access_expires_at: null,
     is_active: true,
-    created_at: '2024-01-01T00:00:00Z',
+    created_at: new Date().toISOString(),
   },
   student: {
-    id: 'demo-student-id',
-    full_name: 'Abdi Hassan Mohamed',
-    admission_number: 'BC-2024-001',
+    id: 'student-unregistered',
+    full_name: 'Student Trainee',
+    admission_number: `BC-${new Date().getFullYear()}-001`,
     role: 'student',
-    first_login_at: '2024-01-01T00:00:00Z',
-    access_expires_at: '2026-12-31T23:59:59Z',
-    is_active: true,
-    created_at: '2024-01-01T00:00:00Z',
-  },
-  parent: {
-    id: 'demo-parent-id',
-    full_name: 'Hassan Mohamed Farah (Guardian)',
-    admission_number: 'PAR-2024-001',
-    role: 'parent',
-    first_login_at: '2024-01-01T00:00:00Z',
+    first_login_at: null,
     access_expires_at: null,
     is_active: true,
-    created_at: '2024-01-01T00:00:00Z',
+    created_at: new Date().toISOString(),
+  },
+  parent: {
+    id: 'parent-unregistered',
+    full_name: 'Student Sponsor & Guardian',
+    admission_number: `PAR-${new Date().getFullYear()}-001`,
+    role: 'parent',
+    first_login_at: null,
+    access_expires_at: null,
+    is_active: true,
+    created_at: new Date().toISOString(),
   },
 }
 
@@ -74,8 +77,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [profile, setProfile] = useState<Profile | null>(() => {
     try {
       const stored = localStorage.getItem('brent_demo_role') as Role | null
-      if (stored && DEMO_PROFILES[stored]) {
-        return DEMO_PROFILES[stored]
+      // Only restore admin from demo role; others must authenticate cleanly
+      if (stored === 'admin') {
+        return ADMIN_PROFILE
+      } else {
+        localStorage.removeItem('brent_demo_role')
       }
     } catch {}
     return null
@@ -181,24 +187,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       }
     }
 
-    if (clean === 'bursar' || clean === 'secretary' || clean === 'finance' || clean === 'accounts' || clean === 'registrar' || clean === 'admissions' || clean === 'bur-sec-001' || clean.startsWith('bur')) {
-      signInAsDemo('bursar')
-      return { error: null }
-    }
-    if (clean === 'teacher' || clean === 'mwangi' || clean === 'faculty' || clean === 'tch-001' || clean.startsWith('tch')) {
-      signInAsDemo('teacher')
-      return { error: null }
-    }
-    if (clean === 'student' || clean === 'abdi' || clean === 'bc-2024-001' || clean === 'bc-2026-001' || clean.startsWith('bc-') || clean.startsWith('std')) {
-      signInAsDemo('student')
-      return { error: null }
-    }
-    if (clean === 'parent' || clean === 'guardian' || clean === 'farah' || clean === 'par-2026-001' || clean.startsWith('par')) {
-      signInAsDemo('parent')
-      return { error: null }
-    }
-
-    // Supabase Auth with safe fallback
+    // 2. Supabase Auth lookup for registered accounts
     const candidates: string[] = []
     if (clean.includes('@')) {
       candidates.push(clean)
@@ -226,29 +215,28 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       // Graceful fallback for offline / network issues
     }
 
-    // Default demo fallback if Supabase returns network error / Failed to fetch
-    if (clean.includes('admin') || clean.startsWith('adm')) {
-      signInAsDemo('admin')
-      return { error: null }
-    }
-    if (clean.startsWith('bur') || clean.startsWith('sec')) {
-      signInAsDemo('bursar')
-      return { error: null }
-    }
-    if (clean.startsWith('tch')) {
-      signInAsDemo('teacher')
-      return { error: null }
-    }
-    if (clean.startsWith('par')) {
-      signInAsDemo('parent')
-      return { error: null }
-    }
-    if (clean.startsWith('bc-') || clean.startsWith('std') || clean) {
-      signInAsDemo('student')
+    // 3. Check dynamically registered student records in SIS store
+    const registeredStudents = schoolStore.getStudents()
+    const student = registeredStudents.find(
+      (s) => s.admission_number.toLowerCase().replace(/[^a-z0-9]/g, '') === clean
+    )
+
+    if (student) {
+      const studentProfile: Profile = {
+        id: student.id,
+        full_name: student.full_name,
+        admission_number: student.admission_number,
+        role: 'student',
+        first_login_at: new Date().toISOString(),
+        access_expires_at: null,
+        is_active: true,
+        created_at: student.admission_date || new Date().toISOString(),
+      }
+      setProfile(studentProfile)
       return { error: null }
     }
 
-    return { error: lastError || 'Invalid admission number or password.' }
+    return { error: lastError || 'Account not found. Please contact the Admissions Office or Administrator to register your account.' }
   }
 
   async function signOut() {

@@ -19,7 +19,7 @@ export function SecretaryDesk() {
   // Unit Registration Form State
   const [regStudentId, setRegStudentId] = useState<string>(students[0]?.id || '')
   const [regCourseDuration, setRegCourseDuration] = useState('4 to 12 Weeks (Practical Certificate)')
-  const [regAcademicYear, setRegAcademicYear] = useState('2026 Intake Batch')
+  const [regAcademicYear, setRegAcademicYear] = useState(() => `${new Date().getFullYear()} Intake Batch`)
   const [selectedUnitIds, setSelectedUnitIds] = useState<string[]>([])
 
   // Inquiry Form
@@ -82,7 +82,7 @@ export function SecretaryDesk() {
 
     const receipt: UnitRegistrationReceipt = {
       id: `reg-${Date.now()}`,
-      receipt_number: `UNIT-REG-2026-${Math.floor(1000 + Math.random() * 9000)}`,
+      receipt_number: `UNIT-REG-${new Date().getFullYear()}-${Math.floor(1000 + Math.random() * 9000)}`,
       student_id: targetStudent.id,
       student_name: targetStudent.full_name,
       admission_number: targetStudent.admission_number,
@@ -588,6 +588,73 @@ export function SecretaryDesk() {
           receipt={selectedSlipForView}
           onClose={() => setSelectedSlipForView(null)}
         />
+      )}
+
+      {/* Modal: Admission Calling Letter */}
+      {selectedStudentForLetter && (
+        <div className="modal-overlay" onClick={() => setSelectedStudentForLetter(null)}>
+          <div className="modal-content modal-lg" onClick={(e) => e.stopPropagation()} style={{ background: '#ffffff', color: '#0f172a', padding: '2.5rem' }}>
+            <div style={{ textAlign: 'center', borderBottom: '2px solid #1e3a8a', paddingBottom: '1rem', marginBottom: '1.5rem' }}>
+              <h2 style={{ color: '#1e3a8a', margin: 0, fontSize: '1.6rem', fontWeight: 900, textTransform: 'uppercase' }}>Brent College</h2>
+              <div style={{ fontSize: '0.85rem', color: '#475569', fontWeight: 600 }}>Directorate of Admissions & Student Affairs</div>
+              <div style={{ display: 'inline-block', background: '#f1f5f9', padding: '4px 16px', borderRadius: '999px', fontSize: '0.85rem', fontWeight: 700, color: '#1e3a8a', marginTop: '0.5rem' }}>
+                OFFICIAL PROVISIONAL ADMISSION LETTER
+              </div>
+            </div>
+
+            <div style={{ fontSize: '0.9rem', lineHeight: '1.6', marginBottom: '1.5rem' }}>
+              <p>Dear <strong>{selectedStudentForLetter.full_name}</strong> (Adm No: <strong>{selectedStudentForLetter.admission_number}</strong>),</p>
+              <p>
+                We are pleased to inform you that you have been offered provisional admission to study <strong>{selectedStudentForLetter.class_name}</strong> at Brent College.
+              </p>
+              <p>
+                Your reporting date is effective from <strong>{selectedStudentForLetter.admission_date || selectedStudentForLetter.enrollment_date || `${new Date().getFullYear()} Intake Batch`}</strong>. Please ensure complete fee clearance with the Bursar's Office to finalize your unit registration and obtain your student identification badge.
+              </p>
+            </div>
+
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', borderTop: '1px solid #e2e8f0', paddingTop: '1.5rem' }}>
+              <div>
+                <div style={{ fontWeight: 700 }}>Mrs. Grace Odhiambo</div>
+                <div style={{ fontSize: '0.8rem', color: '#64748b' }}>Admissions Registrar & Secretary Desk</div>
+              </div>
+              <div style={{ display: 'flex', gap: '0.5rem' }}>
+                <button type="button" className="btn btn-secondary btn-sm" onClick={() => setSelectedStudentForLetter(null)}>Close</button>
+                <button type="button" className="btn btn-primary btn-sm" onClick={() => window.print()}>🖨️ Print Letter</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modal: Student ID Card */}
+      {selectedStudentForIdCard && (
+        <div className="modal-overlay" onClick={() => setSelectedStudentForIdCard(null)}>
+          <div className="modal-content modal-sm" onClick={(e) => e.stopPropagation()} style={{ background: '#ffffff', color: '#0f172a', padding: '1.5rem', borderRadius: '12px' }}>
+            <div style={{ background: 'linear-gradient(135deg, #1e3a8a 0%, #1e1b4b 100%)', color: '#fff', padding: '1rem', borderRadius: '8px 8px 0 0', textAlign: 'center' }}>
+              <h3 style={{ margin: 0, fontSize: '1.1rem', fontWeight: 800 }}>BRENT COLLEGE</h3>
+              <div style={{ fontSize: '0.7rem', opacity: 0.85 }}>STUDENT IDENTIFICATION PASS</div>
+            </div>
+            <div style={{ padding: '1.25rem', textAlign: 'center', background: '#f8fafc', borderRadius: '0 0 8px 8px', border: '1px solid #e2e8f0' }}>
+              <div style={{ width: '64px', height: '64px', borderRadius: '50%', background: '#1e3a8a', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 0.75rem', fontSize: '1.5rem', fontWeight: 800 }}>
+                {selectedStudentForIdCard.full_name.slice(0, 2).toUpperCase()}
+              </div>
+              <h4 style={{ margin: '0 0 0.25rem', fontSize: '1.1rem', fontWeight: 800 }}>{selectedStudentForIdCard.full_name}</h4>
+              <div style={{ color: '#1e3a8a', fontWeight: 800, fontSize: '0.9rem', marginBottom: '0.5rem' }}>
+                {selectedStudentForIdCard.admission_number}
+              </div>
+              <div style={{ fontSize: '0.8rem', color: '#475569', marginBottom: '0.75rem' }}>
+                {selectedStudentForIdCard.class_name}
+              </div>
+              <div style={{ background: '#22c55e', color: '#fff', display: 'inline-block', padding: '2px 10px', borderRadius: '999px', fontSize: '0.7rem', fontWeight: 700 }}>
+                VALID {new Date().getFullYear()} INTAKE
+              </div>
+            </div>
+            <div className="modal-footer" style={{ marginTop: '1rem', justifyContent: 'space-between' }}>
+              <button type="button" className="btn btn-secondary btn-sm" onClick={() => setSelectedStudentForIdCard(null)}>Close</button>
+              <button type="button" className="btn btn-primary btn-sm" onClick={() => window.print()}>🖨️ Print ID</button>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   )

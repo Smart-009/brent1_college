@@ -283,8 +283,12 @@ class SchoolDataStore {
 
   private cleanLegacyMockData() {
     try {
-      const isCleaned = localStorage.getItem('brent_launch_clean_slate_v5_pure')
+      const isCleaned = localStorage.getItem('brent_launch_clean_slate_v6_pure')
       if (!isCleaned) {
+        const storedRole = localStorage.getItem('brent_demo_role')
+        if (storedRole && storedRole !== 'admin') {
+          localStorage.removeItem('brent_demo_role')
+        }
         localStorage.removeItem('brent_school_students')
         localStorage.removeItem('brent_school_timetable')
         localStorage.removeItem('brent_school_exams')
@@ -298,7 +302,7 @@ class SchoolDataStore {
         localStorage.removeItem('brent_school_inquiries')
         localStorage.removeItem('brent_school_course_units')
         localStorage.removeItem('brent_school_unit_registrations')
-        localStorage.setItem('brent_launch_clean_slate_v5_pure', 'true')
+        localStorage.setItem('brent_launch_clean_slate_v6_pure', 'true')
       }
     } catch {}
   }
@@ -661,6 +665,32 @@ class SchoolDataStore {
       () => {
         const list = this.getResources()
         list.unshift(resource)
+        this.set('resources', list)
+      }
+    )
+  }
+
+  async updateResource(id: string, updated: Partial<AcademicResource>): Promise<void> {
+    await txEngine.executeAtomic(
+      `UPDATE_RESOURCE_${id}`,
+      ['brent_school_resources'],
+      () => {
+        const list = this.getResources()
+        const idx = list.findIndex((r) => r.id === id)
+        if (idx !== -1) {
+          list[idx] = { ...list[idx], ...updated }
+          this.set('resources', list)
+        }
+      }
+    )
+  }
+
+  async deleteResource(id: string): Promise<void> {
+    await txEngine.executeAtomic(
+      `DELETE_RESOURCE_${id}`,
+      ['brent_school_resources'],
+      () => {
+        const list = this.getResources().filter((r) => r.id !== id)
         this.set('resources', list)
       }
     )

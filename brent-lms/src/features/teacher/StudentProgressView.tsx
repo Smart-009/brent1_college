@@ -5,7 +5,7 @@ import { supabase } from '@/lib/supabase'
 import { PageWrapper } from '@/components/layout/PageWrapper'
 import { ProgressBar } from '@/components/ui/ProgressBar'
 import { Spinner } from '@/components/ui/Spinner'
-import type { Course, Enrollment, Profile } from '@/lib/database.types'
+import type { Course, Profile } from '@/lib/database.types'
 
 export function StudentProgressView() {
   const { profile } = useAuth()

@@ -102,7 +102,7 @@ export function ManageSubjects() {
   const [subDuration, setSubDuration] = useState('4 Weeks (1 Month)')
   const [subBadge, setSubBadge] = useState('Certified')
   const [subDescription, setSubDescription] = useState('')
-  const [subColor, setSubColor] = useState('#2563eb')
+  const subColor = '#2563eb'
   const [subError, setSubError] = useState<string | null>(null)
 
   // Add Subject / Short Course
@@ -495,15 +495,27 @@ export function ManageSubjects() {
                   </div>
                 </div>
 
-                <div>
-                  <label className="label">Select Parent Department *</label>
-                  <select className="input" value={subDeptId} onChange={(e) => setSubDeptId(e.target.value)}>
-                    {departments.map((d) => (
-                      <option key={d.id} value={d.id}>
-                        {d.name} ({d.code})
-                      </option>
-                    ))}
-                  </select>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem' }}>
+                  <div>
+                    <label className="label">Badge / Highlighting Tag</label>
+                    <input
+                      type="text"
+                      className="input"
+                      placeholder="e.g. Certified, Popular"
+                      value={subBadge}
+                      onChange={(e) => setSubBadge(e.target.value)}
+                    />
+                  </div>
+                  <div>
+                    <label className="label">Select Parent Department *</label>
+                    <select className="input" value={subDeptId} onChange={(e) => setSubDeptId(e.target.value)}>
+                      {departments.map((d) => (
+                        <option key={d.id} value={d.id}>
+                          {d.name} ({d.code})
+                        </option>
+                      ))}
+                    </select>
+                  </div>
                 </div>
 
                 <div>

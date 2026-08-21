@@ -27,9 +27,15 @@ export function StudentDashboard() {
       )
     : null
 
+  const currentDayOfWeek = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'].includes(
+    new Date().toLocaleDateString('en-US', { weekday: 'long' })
+  )
+    ? new Date().toLocaleDateString('en-US', { weekday: 'long' })
+    : 'Monday'
+
   const todayPeriods = schoolStore
     .getTimetable()
-    .filter((p) => p.day_of_week === 'Monday')
+    .filter((p) => p.day_of_week === currentDayOfWeek)
     .slice(0, 3)
 
   // Fetch enrollments with course details from Supabase (if online)
@@ -82,12 +88,12 @@ export function StudentDashboard() {
         <CertificateGenerator 
           cert={{
             student_name: currentStudent?.full_name || profile?.full_name || 'Enrolled Trainee',
-            admission_number: currentStudent?.admission_number || profile?.admission_number || 'BC-2026-001',
+            admission_number: currentStudent?.admission_number || profile?.admission_number || `BC-${new Date().getFullYear()}-001`,
             course_title: currentStudent?.class_name || 'Comprehensive Practical Short Course',
             grade: studentTranscript?.mean_grade || 'Distinction (A)',
             percentage: studentTranscript?.mean_percentage || 90,
             issue_date: new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' }),
-            certificate_no: `BC-CERT-${(currentStudent?.admission_number || '2026').replace(/[^a-zA-Z0-9]/g, '')}`,
+            certificate_no: `BC-CERT-${(currentStudent?.admission_number || `${new Date().getFullYear()}`).replace(/[^a-zA-Z0-9]/g, '')}`,
             duration: '4 to 12 Weeks Intensive Practical Training',
             trainer_name: 'Lead Vocational Instructor',
             skills_acquired: ['Hands-on Laboratory Mastery', 'Technical Workflow & Safety', 'Industry Standards'],

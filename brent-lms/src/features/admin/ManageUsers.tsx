@@ -26,13 +26,13 @@ export function ManageUsers() {
 
   // Default institutional programs fallback
   const DEFAULT_PROGRAMS: Class[] = [
-    { id: 'prog-comp', name: 'Comprehensive Computer Packages & Digital Skills', grade_level: 'Vocational Certificate', academic_year: '2026 Intake', created_at: '' },
-    { id: 'prog-barista', name: 'Professional Barista & Coffee Brewing Artistry', grade_level: 'Master Barista Certification', academic_year: '2026 Intake', created_at: '' },
-    { id: 'prog-lang', name: 'Languages & Communication (English & Kiswahili)', grade_level: 'Fluency Certificate', academic_year: '2026 Intake', created_at: '' },
-    { id: 'prog-henna', name: 'Henna Artistry, Cosmetology & Bridal Makeup', grade_level: 'Beauty Certificate', academic_year: '2026 Intake', created_at: '' },
-    { id: 'prog-tailor', name: 'Professional Tailoring, Sewing & Garment Cutting', grade_level: 'Fashion Certificate', academic_year: '2026 Intake', created_at: '' },
-    { id: 'prog-ielts', name: 'IELTS Academic & General Exam Training', grade_level: 'Band 7.5+ Target', academic_year: '2026 Intake', created_at: '' },
-    { id: 'prog-acc', name: 'Accounting: QuickBooks, Tally & KRA iTax Filing', grade_level: 'Business Skills', academic_year: '2026 Intake', created_at: '' },
+    { id: 'prog-comp', name: 'Comprehensive Computer Packages & Digital Skills', grade_level: 'Vocational Certificate', academic_year: `${new Date().getFullYear()} Intake`, created_at: '' },
+    { id: 'prog-barista', name: 'Professional Barista & Coffee Brewing Artistry', grade_level: 'Master Barista Certification', academic_year: `${new Date().getFullYear()} Intake`, created_at: '' },
+    { id: 'prog-lang', name: 'Languages & Communication (English & Kiswahili)', grade_level: 'Fluency Certificate', academic_year: `${new Date().getFullYear()} Intake`, created_at: '' },
+    { id: 'prog-henna', name: 'Henna Artistry, Cosmetology & Bridal Makeup', grade_level: 'Beauty Certificate', academic_year: `${new Date().getFullYear()} Intake`, created_at: '' },
+    { id: 'prog-tailor', name: 'Professional Tailoring, Sewing & Garment Cutting', grade_level: 'Fashion Certificate', academic_year: `${new Date().getFullYear()} Intake`, created_at: '' },
+    { id: 'prog-ielts', name: 'IELTS Academic & General Exam Training', grade_level: 'Band 7.5+ Target', academic_year: `${new Date().getFullYear()} Intake`, created_at: '' },
+    { id: 'prog-acc', name: 'Accounting: QuickBooks, Tally & KRA iTax Filing', grade_level: 'Business Skills', academic_year: `${new Date().getFullYear()} Intake`, created_at: '' },
   ]
 
   // Fetch all profiles
@@ -291,7 +291,7 @@ export function ManageUsers() {
             <input
               id="admNo"
               type="text"
-              placeholder={role === 'student' ? 'BC-2026-001' : 'TCH-001'}
+              placeholder={role === 'student' ? `BC-${new Date().getFullYear()}-001` : 'TCH-001'}
               value={admissionNumber}
               onChange={(e) => setAdmissionNumber(e.target.value)}
               required
@@ -304,7 +304,7 @@ export function ManageUsers() {
             <input
               id="tempPass"
               type="text"
-              placeholder="Min 6 characters (e.g. Brent2026!)"
+              placeholder={`Min 6 characters (e.g. Brent${new Date().getFullYear()}!)`}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required

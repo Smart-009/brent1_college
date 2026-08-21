@@ -56,6 +56,8 @@ export function BursarDesk() {
     issued_by: defaultIssuer,
   })
 
+  const currentAcademicYear = `${new Date().getFullYear()}/${new Date().getFullYear() + 1}`
+
   // Invoice Form
   const [newInvoice, setNewInvoice] = useState({
     student_id: '',
@@ -63,7 +65,7 @@ export function BursarDesk() {
     admission_number: '',
     class_name: '',
     term: 'Short Course',
-    academic_year: '2025/2026',
+    academic_year: currentAcademicYear,
     item_description: 'Tuition & Practical Training',
     total_amount: 0,
     due_date: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().slice(0, 10),
@@ -72,7 +74,7 @@ export function BursarDesk() {
   // Unit Registration Form State
   const [regStudentId, setRegStudentId] = useState<string>(students[0]?.id || '')
   const [regCourseDuration, setRegCourseDuration] = useState('3 Months (Certificate Program)')
-  const [regAcademicYear, setRegAcademicYear] = useState('2025/2026')
+  const [regAcademicYear, setRegAcademicYear] = useState(currentAcademicYear)
   const [selectedUnitIds, setSelectedUnitIds] = useState<string[]>([])
 
   // Inquiry Form State
@@ -156,7 +158,7 @@ export function BursarDesk() {
 
     const receipt: FeePaymentReceipt = {
       id: `rcpt-${Date.now()}`,
-      receipt_number: `RCT-2026-${Math.floor(1000 + Math.random() * 9000)}`,
+      receipt_number: `RCT-${new Date().getFullYear()}-${Math.floor(1000 + Math.random() * 9000)}`,
       invoice_id: existingInv ? existingInv.id : `inv-${Date.now()}`,
       student_id: student.id,
       student_name: student.full_name,
@@ -208,7 +210,7 @@ export function BursarDesk() {
 
     const receipt: UnitRegistrationReceipt = {
       id: `reg-${Date.now()}`,
-      receipt_number: `UNIT-REG-2026-${Math.floor(1000 + Math.random() * 9000)}`,
+      receipt_number: `UNIT-REG-${new Date().getFullYear()}-${Math.floor(1000 + Math.random() * 9000)}`,
       student_id: targetStudent.id,
       student_name: targetStudent.full_name,
       admission_number: targetStudent.admission_number,
@@ -269,13 +271,13 @@ export function BursarDesk() {
 
     const invoice: FeeInvoice = {
       id: `inv-${Date.now()}`,
-      invoice_number: `INV-2026-${Math.floor(1000 + Math.random() * 9000)}`,
+      invoice_number: `INV-${new Date().getFullYear()}-${Math.floor(1000 + Math.random() * 9000)}`,
       student_id: std ? std.id : `std-${Date.now()}`,
       student_name: std ? std.full_name : (newInvoice.student_name || 'Student'),
       admission_number: std ? std.admission_number : newInvoice.admission_number,
       class_name: std ? std.class_name : (newInvoice.class_name || 'Vocational Short Course'),
       term: newInvoice.term || 'Short Course',
-      academic_year: newInvoice.academic_year || '2025/2026',
+      academic_year: newInvoice.academic_year || currentAcademicYear,
       issue_date: new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }),
       due_date: newInvoice.due_date,
       items: [{ id: `item-1`, description: newInvoice.item_description || 'Tuition & Practical Training', amount: Number(newInvoice.total_amount) }],
@@ -294,7 +296,7 @@ export function BursarDesk() {
       admission_number: '',
       class_name: '',
       term: 'Short Course',
-      academic_year: '2025/2026',
+      academic_year: currentAcademicYear,
       item_description: 'Tuition & Practical Training',
       total_amount: 0,
       due_date: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().slice(0, 10),
@@ -655,7 +657,7 @@ export function BursarDesk() {
                       <td><strong>{std.admission_number}</strong></td>
                       <td>{std.full_name}</td>
                       <td><span className="badge badge-primary">{std.class_name}</span></td>
-                      <td>{std.admission_date || std.enrollment_date || '2025/2026'}</td>
+                      <td>{std.admission_date || std.enrollment_date || currentAcademicYear}</td>
                       <td>
                         <span className={`badge ${std.fee_cleared ? 'badge-success' : 'badge-warning'}`}>
                           {std.fee_cleared ? '✓ Cleared' : `KES ${std.fee_balance.toLocaleString()} Due`}
@@ -1491,7 +1493,7 @@ export function BursarDesk() {
                 We are pleased to inform you that you have been offered provisional admission to study <strong>{selectedStudentForLetter.class_name}</strong> at Brent College.
               </p>
               <p>
-                Your reporting date is effective from <strong>{selectedStudentForLetter.admission_date || selectedStudentForLetter.enrollment_date || '2025/2026'}</strong>. Please ensure complete fee clearance with the Bursar's Office to finalize your unit registration and obtain your student identification badge.
+                Your reporting date is effective from <strong>{selectedStudentForLetter.admission_date || selectedStudentForLetter.enrollment_date || currentAcademicYear}</strong>. Please ensure complete fee clearance with the Bursar's Office to finalize your unit registration and obtain your student identification badge.
               </p>
             </div>
 
@@ -1529,7 +1531,7 @@ export function BursarDesk() {
                 {selectedStudentForIdCard.class_name}
               </div>
               <div style={{ background: '#22c55e', color: '#fff', display: 'inline-block', padding: '2px 10px', borderRadius: '999px', fontSize: '0.7rem', fontWeight: 700 }}>
-                VALID 2025/2026
+                VALID {currentAcademicYear}
               </div>
             </div>
             <div className="modal-footer" style={{ marginTop: '1rem', justifyContent: 'space-between' }}>

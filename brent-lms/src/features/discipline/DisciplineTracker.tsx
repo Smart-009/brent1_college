@@ -30,7 +30,7 @@ export function DisciplineTracker() {
       id: `disc-${Date.now()}`,
       student_id: std ? std.id : `std-${Date.now()}`,
       student_name: std ? std.full_name : newRecord.student_name,
-      admission_number: std ? std.admission_number : (newRecord.admission_number || 'BC-2026'),
+      admission_number: std ? std.admission_number : (newRecord.admission_number || `BC-${new Date().getFullYear()}`),
       class_name: std ? std.class_name : (newRecord.class_name || 'Short Course Trainee'),
       type: newRecord.type,
       points: Number(newRecord.points),

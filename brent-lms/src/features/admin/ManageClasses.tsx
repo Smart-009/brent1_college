@@ -19,13 +19,15 @@ export interface DepartmentProgram {
   created_at?: string
 }
 
+const CURRENT_YEAR = new Date().getFullYear()
+
 const DEFAULT_DEPARTMENTS: DepartmentProgram[] = [
   {
     id: 'dept-ict',
     name: 'Computer Packages & Digital Information Technology',
     hod_name: 'Mr. David Mwangi',
     grade_level: 'Vocational Short Course Certificate',
-    academic_year: '2026 Practical Intake',
+    academic_year: `${CURRENT_YEAR} Practical Intake`,
     fee_amount: 4500,
     duration: '4-6 Weeks',
     shifts: 'Morning (8:30AM) / Evening (5:30PM)',
@@ -36,7 +38,7 @@ const DEFAULT_DEPARTMENTS: DepartmentProgram[] = [
     name: 'Professional Barista & Specialty Coffee Brewing',
     hod_name: 'Chef Michael Omondi',
     grade_level: 'Master Barista Certification',
-    academic_year: '2026 Practical Intake',
+    academic_year: `${CURRENT_YEAR} Practical Intake`,
     fee_amount: 9500,
     duration: '4-6 Weeks',
     shifts: 'Morning (9:00AM) / Afternoon (2:00PM)',
@@ -47,7 +49,7 @@ const DEFAULT_DEPARTMENTS: DepartmentProgram[] = [
     name: 'Languages & Communication (English & Kiswahili)',
     hod_name: 'Madam Amina Hassan',
     grade_level: 'Fluency Certificate',
-    academic_year: '2026 Practical Intake',
+    academic_year: `${CURRENT_YEAR} Practical Intake`,
     fee_amount: 4000,
     duration: '4-8 Weeks',
     shifts: 'Morning (7:30AM) / Evening (5:30PM)',
@@ -58,7 +60,7 @@ const DEFAULT_DEPARTMENTS: DepartmentProgram[] = [
     name: 'Henna Artistry, Cosmetology & Bridal Makeup',
     hod_name: 'Ustadh Fatima Noor',
     grade_level: 'Professional Beauty Certificate',
-    academic_year: '2026 Practical Intake',
+    academic_year: `${CURRENT_YEAR} Practical Intake`,
     fee_amount: 8000,
     duration: '4-6 Weeks',
     shifts: 'Morning (9:00AM) / Afternoon (1:30PM)',
@@ -69,7 +71,7 @@ const DEFAULT_DEPARTMENTS: DepartmentProgram[] = [
     name: 'Fashion Design, Sewing & Garment Tailoring',
     hod_name: 'Madam Mary Wanjiku',
     grade_level: 'Master Tailor Certificate',
-    academic_year: '2026 Practical Intake',
+    academic_year: `${CURRENT_YEAR} Practical Intake`,
     fee_amount: 10000,
     duration: '8-12 Weeks',
     shifts: 'Full Day Intensive (8:30AM - 4:00PM)',
@@ -80,7 +82,7 @@ const DEFAULT_DEPARTMENTS: DepartmentProgram[] = [
     name: 'IELTS Academic & General Exam Preparation (Band 7.5+)',
     hod_name: 'Prof. Eric Kiprono',
     grade_level: 'International English Certification',
-    academic_year: '2026 Practical Intake',
+    academic_year: `${CURRENT_YEAR} Practical Intake`,
     fee_amount: 12000,
     duration: '4-6 Weeks',
     shifts: 'Evening (5:30PM) / Saturday Intensive',
@@ -120,7 +122,7 @@ export function ManageClasses() {
   const [name, setName] = useState('')
   const [hodName, setHodName] = useState('')
   const [gradeLevel, setGradeLevel] = useState('Vocational Short Course Certificate')
-  const [academicYear, setAcademicYear] = useState('2026 Practical Intake')
+  const [academicYear, setAcademicYear] = useState(`${CURRENT_YEAR} Practical Intake`)
   const [feeAmount, setFeeAmount] = useState<number>(4500)
   const [duration, setDuration] = useState('4-6 Weeks')
   const [shifts, setShifts] = useState('Morning / Evening Shifts')
@@ -138,7 +140,7 @@ export function ManageClasses() {
             id: d.id,
             name: d.name,
             grade_level: d.grade_level || 'Vocational Short Course Certificate',
-            academic_year: d.academic_year || '2026 Practical Intake',
+            academic_year: d.academic_year || `${CURRENT_YEAR} Practical Intake`,
             hod_name: d.hod_name || 'Lead Instructor',
             fee_amount: d.fee_amount || 4500,
             duration: d.duration || '4-6 Weeks',
@@ -161,7 +163,7 @@ export function ManageClasses() {
     setName(dept.name)
     setHodName(dept.hod_name || '')
     setGradeLevel(dept.grade_level || 'Vocational Short Course Certificate')
-    setAcademicYear(dept.academic_year || '2026 Practical Intake')
+    setAcademicYear(dept.academic_year || `${CURRENT_YEAR} Practical Intake`)
     setFeeAmount(dept.fee_amount || 4500)
     setDuration(dept.duration || '4-6 Weeks')
     setShifts(dept.shifts || 'Morning / Evening Shifts')
@@ -174,7 +176,7 @@ export function ManageClasses() {
     setName('')
     setHodName('')
     setGradeLevel('Vocational Short Course Certificate')
-    setAcademicYear('2026 Practical Intake')
+    setAcademicYear(`${CURRENT_YEAR} Practical Intake`)
     setFeeAmount(4500)
     setDuration('4-6 Weeks')
     setShifts('Morning (8:30AM) / Evening (5:30PM)')
@@ -196,7 +198,7 @@ export function ManageClasses() {
                 name: name.trim(),
                 hod_name: hodName.trim() || 'Lead Instructor',
                 grade_level: gradeLevel.trim() || 'Vocational Short Course Certificate',
-                academic_year: academicYear.trim() || '2026 Practical Intake',
+                academic_year: academicYear.trim() || `${CURRENT_YEAR} Practical Intake`,
                 fee_amount: Number(feeAmount) || 0,
                 duration: duration.trim(),
                 shifts: shifts.trim(),
@@ -212,7 +214,7 @@ export function ManageClasses() {
             .update({
               name: name.trim(),
               grade_level: gradeLevel.trim() || null,
-              academic_year: academicYear.trim() || '2026',
+              academic_year: academicYear.trim() || `${CURRENT_YEAR}`,
             })
             .eq('id', editingDept.id)
         } catch {
@@ -225,7 +227,7 @@ export function ManageClasses() {
           name: name.trim(),
           hod_name: hodName.trim() || 'Lead Instructor',
           grade_level: gradeLevel.trim() || 'Vocational Short Course Certificate',
-          academic_year: academicYear.trim() || '2026 Practical Intake',
+          academic_year: academicYear.trim() || `${CURRENT_YEAR} Practical Intake`,
           fee_amount: Number(feeAmount) || 0,
           duration: duration.trim(),
           shifts: shifts.trim(),
@@ -238,7 +240,7 @@ export function ManageClasses() {
           await supabase.from('classes').insert({
             name: name.trim(),
             grade_level: gradeLevel.trim() || null,
-            academic_year: academicYear.trim() || '2026',
+            academic_year: academicYear.trim() || `${CURRENT_YEAR}`,
           })
         } catch {
           // ignore

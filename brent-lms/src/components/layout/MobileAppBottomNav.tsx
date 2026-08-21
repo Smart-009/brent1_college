@@ -1,12 +1,9 @@
-import { Link, useLocation, useNavigate } from 'react-router-dom'
+import { Link, useLocation } from 'react-router-dom'
 import { useAuthContext } from '@/features/auth/AuthContext'
-import { usePWAInstall } from '@/hooks/usePWAInstall'
 
 export function MobileAppBottomNav() {
   const location = useLocation()
-  const navigate = useNavigate()
   const { profile } = useAuthContext()
-  const { isInstalled, promptInstall } = usePWAInstall()
 
   const currentPath = location.pathname
 

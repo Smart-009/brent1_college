@@ -1,9 +1,6 @@
-import React, { useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
-import type { Role } from '@/lib/database.types'
-import { useAuthContext } from '@/features/auth/AuthContext'
+import { useState } from 'react'
+import { Link } from 'react-router-dom'
 import { usePWAInstall } from '@/hooks/usePWAInstall'
-import { MobileAppBottomNav } from '@/components/layout/MobileAppBottomNav'
 import { SafariInstallModal } from '@/components/shared/SafariInstallModal'
 
 export interface CourseItem {

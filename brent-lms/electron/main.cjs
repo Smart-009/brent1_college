@@ -2,7 +2,7 @@
 // Brent College — Native Desktop Application Main Process
 // ============================================================
 
-const { app, BrowserWindow, Menu, shell, ipcMain } = require('electron')
+const { app, BrowserWindow, Menu, shell } = require('electron')
 const path = require('path')
 
 const isDev = !app.isPackaged && process.env.NODE_ENV !== 'production'

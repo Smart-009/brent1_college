@@ -534,22 +534,45 @@ export function Landing() {
     if (!certQuery.trim()) return
 
     const q = certQuery.trim().toUpperCase()
-    // Authentic certificate validation lookup
-    if (q.includes('BC-') || q.length >= 6) {
+    const allStudents = schoolStore.getStudents()
+    const allUnitRegs = schoolStore.getUnitRegistrations()
+
+    const matchStudent = allStudents.find(
+      (s) =>
+        s.admission_number.toUpperCase() === q ||
+        s.admission_number.toUpperCase().includes(q) ||
+        s.full_name.toUpperCase().includes(q) ||
+        q.includes(s.admission_number.toUpperCase())
+    )
+
+    const matchUnitReg = allUnitRegs.find(
+      (r) =>
+        r.receipt_number.toUpperCase() === q ||
+        r.receipt_number.toUpperCase().includes(q) ||
+        r.admission_number.toUpperCase() === q ||
+        r.student_name.toUpperCase().includes(q)
+    )
+
+    if (matchStudent || matchUnitReg) {
+      const studentName = matchStudent?.full_name || matchUnitReg?.student_name || 'Verified Trainee'
+      const courseTitle = matchStudent?.class_name || matchUnitReg?.program || 'Vocational Training Program'
+      const completionDate = matchStudent?.enrollment_date || matchStudent?.admission_date || matchUnitReg?.registered_at || new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })
+      const isCleared = matchStudent ? matchStudent.fee_cleared : matchUnitReg?.fee_clearance_status === 'Cleared'
+
       setCertResult({
         found: true,
-        studentName: 'Zahra Hassan Abdi',
-        courseTitle: 'Professional Henna Artistry & Bridal Cosmetology',
-        completionDate: '15th December 2025',
+        studentName,
+        courseTitle,
+        completionDate,
         certNumber: q,
-        status: 'Officially Verified & Accredited',
+        status: isCleared ? 'Officially Verified & Accredited' : 'Verified (Academic Registry Clear)',
       })
-      showToast('✓ Certificate credential record verified successfully!')
+      showToast(`✓ Credential record verified for ${studentName}!`)
     } else {
       setCertResult({
         found: false,
       })
-      showToast('⚠️ No certificate matched the query number.')
+      showToast(`⚠️ No student or certificate record matched "${q}".`)
     }
   }
 
@@ -1287,11 +1310,7 @@ export function Landing() {
                       padding: '0.65rem 1.25rem',
                       fontSize: '0.9rem',
                     }}
-                    onClick={() => {
-                      setInquiryForm({ ...inquiryForm, course: course.title })
-                      setSelectedCourseForModal(course)
-                      setInquiryModalOpen(true)
-                    }}
+                    onClick={() => handleOpenCourseApplication(course)}
                   >
                     Apply Now →
                   </button>
@@ -1425,11 +1444,7 @@ export function Landing() {
                   type="button"
                   className="btn btn-primary btn-full mt-4"
                   style={{ fontWeight: 800, padding: '0.75rem', borderRadius: '10px' }}
-                  onClick={() => {
-                    setInquiryForm({ ...inquiryForm, course: selectedCalcCourse.title })
-                    setSelectedCourseForModal(selectedCalcCourse)
-                    setInquiryModalOpen(true)
-                  }}
+                  onClick={() => handleOpenCourseApplication(selectedCalcCourse)}
                 >
                   🚀 Apply for {selectedCalcCourse.title.split('&')[0]} →
                 </button>

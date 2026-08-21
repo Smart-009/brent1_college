@@ -38,9 +38,28 @@ export function TimetableView() {
     )
   }, [timetablePeriods, selectedClass, viewMode, selectedDay])
 
+  const currentDayName = useMemo(() => {
+    const today = new Date().toLocaleDateString('en-US', { weekday: 'long' })
+    return (DAYS_OF_WEEK as readonly string[]).includes(today) ? today : 'Monday'
+  }, [])
+
   const currentPeriod = useMemo(() => {
-    return timetablePeriods.find((p) => p.day_of_week === 'Monday' && p.period_number === 1)
-  }, [timetablePeriods])
+    const todayPeriods = timetablePeriods.filter((p) => p.day_of_week === currentDayName)
+    if (todayPeriods.length === 0) return timetablePeriods[0] || null
+
+    const now = new Date()
+    const nowMinutes = now.getHours() * 60 + now.getMinutes()
+
+    const active = todayPeriods.find((p) => {
+      const [startH, startM] = (p.start_time || '00:00').split(':').map(Number)
+      const [endH, endM] = (p.end_time || '23:59').split(':').map(Number)
+      const startMin = startH * 60 + (startM || 0)
+      const endMin = endH * 60 + (endM || 0)
+      return nowMinutes >= startMin && nowMinutes <= endMin
+    })
+
+    return active || todayPeriods[0] || null
+  }, [timetablePeriods, currentDayName])
 
   // Handle Add Period
   const handleAddPeriod = (e: React.FormEvent) => {

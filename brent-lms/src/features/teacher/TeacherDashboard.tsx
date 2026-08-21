@@ -6,7 +6,7 @@ import { PageWrapper } from '@/components/layout/PageWrapper'
 import { AnnouncementCard } from '@/components/shared/AnnouncementCard'
 import { Button } from '@/components/ui/Button'
 import { Spinner } from '@/components/ui/Spinner'
-import type { Announcement, Course, QuizAttempt, Profile } from '@/lib/database.types'
+import type { Announcement, Course, Profile } from '@/lib/database.types'
 
 export function TeacherDashboard() {
   const { profile } = useAuth()

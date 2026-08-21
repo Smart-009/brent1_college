@@ -101,6 +101,23 @@ export interface LessonResource {
   edit_locked_at: string
 }
 
+export interface LibraryResource {
+  id: string
+  title: string
+  category: 'Past Papers' | 'Revision Notes' | 'Textbooks' | 'Syllabus' | 'Marking Schemes' | 'Lab Manuals'
+  subject: string
+  class_level: string
+  file_url: string
+  file_name?: string | null
+  file_size?: string | null
+  file_type: 'PDF' | 'DOCX' | 'PPTX' | 'EPUB' | 'ZIP' | 'HTML'
+  downloads_count: number
+  year?: number | null
+  uploaded_by?: string | null
+  uploaded_by_id?: string | null
+  created_at: string
+}
+
 export interface Quiz {
   id: string
   lesson_id: string

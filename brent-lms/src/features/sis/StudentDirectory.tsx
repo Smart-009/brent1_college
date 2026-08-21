@@ -26,7 +26,7 @@ export function StudentDirectory() {
   // New Student Form State
   const [newStudent, setNewStudent] = useState<Partial<StudentRecord>>({
     full_name: '',
-    admission_number: `BC-2026-00${students.length + 1}`,
+    admission_number: `BC-${new Date().getFullYear()}-00${students.length + 1}`,
     gender: 'Male',
     grade_level: '4 to 12 Weeks (Short Course Certificate)',
     stream: 'Practical Lab Trainee',
@@ -333,7 +333,7 @@ export function StudentDirectory() {
             <input
               type="text"
               className="input"
-              placeholder="e.g. Abdi Hassan or BC-2024..."
+              placeholder={`e.g. Abdi Hassan or BC-${new Date().getFullYear()}...`}
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
             />
@@ -347,9 +347,9 @@ export function StudentDirectory() {
               onChange={(e) => setClassFilter(e.target.value)}
             >
               <option value="All">All Programs & Departments</option>
-              <option value="Computer Science">Diploma in Computer Science & ICT</option>
-              <option value="Business Management">Diploma in Business Management</option>
-              <option value="Web & Cloud">Certificate in Web & Cloud Systems</option>
+              {programOptions.map((prog) => (
+                <option key={prog} value={prog}>{prog}</option>
+              ))}
             </select>
           </div>
 

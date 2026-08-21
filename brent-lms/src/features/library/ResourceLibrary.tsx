@@ -1,6 +1,7 @@
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect } from 'react'
 import { useAuth } from '@/hooks/useAuth'
 import { schoolStore } from '@/lib/schoolData'
+import { supabase } from '@/lib/supabase'
 import type { AcademicResource } from '@/types/school'
 
 const CATEGORIES = ['All', 'Past Papers', 'Revision Notes', 'Textbooks', 'Syllabus', 'Lab Manuals']
@@ -18,6 +19,51 @@ export function ResourceLibrary() {
   const [search, setSearch] = useState('')
   const [selectedCat, setSelectedCat] = useState('All')
   const [selectedSub, setSelectedSub] = useState('All')
+  const [isUploading, setIsUploading] = useState(false)
+
+  // Fetch live resources from Supabase database on mount
+  useEffect(() => {
+    let isMounted = true
+    async function loadDatabaseResources() {
+      try {
+        const { data, error } = await supabase
+          .from('library_resources')
+          .select('*')
+          .order('created_at', { ascending: false })
+
+        if (!error && data && data.length > 0 && isMounted) {
+          const dbList: AcademicResource[] = data.map((d: any) => ({
+            id: d.id,
+            title: d.title,
+            category: d.category,
+            subject: d.subject,
+            class_level: d.class_level || 'Short Course / Certificate',
+            file_url: d.file_url,
+            file_size: d.file_size || '1.5 MB',
+            file_type: d.file_type || 'PDF',
+            downloads_count: d.downloads_count || 0,
+            year: d.year || new Date().getFullYear(),
+            uploaded_by: d.uploaded_by || 'Academic Administrator',
+            created_at: d.created_at || new Date().toISOString(),
+          }))
+
+          // Merge with local store to ensure offline and online consistency
+          const localList = schoolStore.getResources()
+          const combinedMap = new Map<string, AcademicResource>()
+          for (const item of localList) combinedMap.set(item.id, item)
+          for (const item of dbList) combinedMap.set(item.id, item)
+          const merged = Array.from(combinedMap.values())
+          setResources(merged)
+        }
+      } catch {
+        // Fallback to local store
+      }
+    }
+    loadDatabaseResources()
+    return () => {
+      isMounted = false
+    }
+  }, [])
 
   // E-Reader Modal State
   const [readingResource, setReadingResource] = useState<AcademicResource | null>(null)
@@ -32,7 +78,7 @@ export function ResourceLibrary() {
   const [newCategory, setNewCategory] = useState<AcademicResource['category']>('Past Papers')
   const [newSubject, setNewSubject] = useState(storeSubjects[0] || 'General Studies')
   const [newClassLevel, setNewClassLevel] = useState('Short Course / Certificate')
-  const [newYear, setNewYear] = useState(2025)
+  const [newYear, setNewYear] = useState(() => new Date().getFullYear())
 
   const filteredResources = useMemo(() => {
     return resources.filter((res) => {
@@ -49,11 +95,18 @@ export function ResourceLibrary() {
   }, [resources, search, selectedCat, selectedSub])
 
   const handleOpenReader = (res: AcademicResource) => {
-    // Increment read counter
-    const updated = resources.map((r) => (r.id === res.id ? { ...r, downloads_count: (r.downloads_count || 0) + 1 } : r))
+    // Increment read counter locally & in Supabase
+    const nextCount = (res.downloads_count || 0) + 1
+    const updated = resources.map((r) => (r.id === res.id ? { ...r, downloads_count: nextCount } : r))
     setResources(updated)
     setReadingResource(res)
     setCurrentPage(1)
+    schoolStore.updateResource(res.id, { downloads_count: nextCount }).catch(() => {})
+    supabase
+      .from('library_resources')
+      .update({ downloads_count: nextCount })
+      .eq('id', res.id)
+      .then(() => {})
   }
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -67,6 +120,17 @@ export function ResourceLibrary() {
     }
   }
 
+  const handleDeleteResource = async (id: string) => {
+    if (!window.confirm('Are you sure you want to permanently remove this resource from the E-Library?')) return
+    try {
+      await supabase.from('library_resources').delete().eq('id', id)
+    } catch {
+      // ignore
+    }
+    await schoolStore.deleteResource(id)
+    setResources(schoolStore.getResources())
+  }
+
   const handleUploadResource = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!isAdmin) {
@@ -75,44 +139,94 @@ export function ResourceLibrary() {
     }
     if (!newTitle.trim()) return
 
-    const fileSizeFormatted = selectedFile
-      ? `${(selectedFile.size / (1024 * 1024)).toFixed(1)} MB`
-      : '1.8 MB'
+    setIsUploading(true)
+    try {
+      const fileSizeFormatted = selectedFile
+        ? `${(selectedFile.size / (1024 * 1024)).toFixed(1)} MB`
+        : '1.8 MB'
 
-    const rawExt = selectedFile ? selectedFile.name.split('.').pop()?.toUpperCase() : 'PDF'
-    const fileExt: AcademicResource['file_type'] =
-      rawExt === 'DOCX' || rawExt === 'DOC'
-        ? 'DOCX'
-        : rawExt === 'PPTX' || rawExt === 'PPT'
-        ? 'PPTX'
-        : rawExt === 'EPUB'
-        ? 'EPUB'
-        : 'PDF'
+      const rawExt = selectedFile ? selectedFile.name.split('.').pop()?.toUpperCase() : 'PDF'
+      const fileExt: AcademicResource['file_type'] =
+        rawExt === 'DOCX' || rawExt === 'DOC'
+          ? 'DOCX'
+          : rawExt === 'PPTX' || rawExt === 'PPT'
+          ? 'PPTX'
+          : rawExt === 'EPUB'
+          ? 'EPUB'
+          : 'PDF'
 
-    const fileBlobUrl = selectedFile
-      ? URL.createObjectURL(selectedFile)
-      : 'https://brentcollege.internal/docs/' + encodeURIComponent(newTitle)
+      let fileBlobUrl = selectedFile
+        ? URL.createObjectURL(selectedFile)
+        : 'https://brentcollege.internal/docs/' + encodeURIComponent(newTitle)
 
-    const item: AcademicResource = {
-      id: `res-${Date.now()}`,
-      title: newTitle.trim(),
-      category: newCategory,
-      subject: newSubject,
-      class_level: newClassLevel,
-      file_url: fileBlobUrl,
-      file_size: fileSizeFormatted,
-      file_type: fileExt,
-      downloads_count: 0,
-      year: Number(newYear) || 2025,
-      uploaded_by: profile?.full_name || 'Academic Administrator',
-      created_at: new Date().toISOString(),
+      // Upload file directly to Supabase Storage bucket 'library-resources'
+      if (selectedFile) {
+        try {
+          const safeName = `${Date.now()}_${selectedFile.name.replace(/[^a-zA-Z0-9_.-]/g, '_')}`
+          const filePath = `documents/${safeName}`
+          const { error: storageErr } = await supabase.storage
+            .from('library-resources')
+            .upload(filePath, selectedFile, {
+              contentType: selectedFile.type || 'application/pdf',
+              upsert: true,
+            })
+
+          if (!storageErr) {
+            const { data: publicUrlData } = supabase.storage
+              .from('library-resources')
+              .getPublicUrl(filePath)
+            if (publicUrlData?.publicUrl) {
+              fileBlobUrl = publicUrlData.publicUrl
+            }
+          }
+        } catch (uploadErr) {
+          console.warn('Storage bucket upload notice:', uploadErr)
+        }
+      }
+
+      const item: AcademicResource = {
+        id: `res-${Date.now()}`,
+        title: newTitle.trim(),
+        category: newCategory,
+        subject: newSubject,
+        class_level: newClassLevel,
+        file_url: fileBlobUrl,
+        file_size: fileSizeFormatted,
+        file_type: fileExt,
+        downloads_count: 0,
+        year: Number(newYear) || new Date().getFullYear(),
+        uploaded_by: profile?.full_name || 'Academic Administrator',
+        created_at: new Date().toISOString(),
+      }
+
+      // Save into Supabase library_resources table
+      try {
+        await supabase.from('library_resources').insert({
+          title: item.title,
+          category: item.category,
+          subject: item.subject,
+          class_level: item.class_level,
+          file_url: item.file_url,
+          file_name: selectedFile?.name || item.title,
+          file_size: item.file_size,
+          file_type: item.file_type,
+          downloads_count: item.downloads_count,
+          year: item.year,
+          uploaded_by: item.uploaded_by,
+          uploaded_by_id: profile?.id || null,
+        })
+      } catch (dbErr) {
+        console.warn('Supabase DB library insert notice:', dbErr)
+      }
+
+      await schoolStore.addResource(item)
+      setResources(schoolStore.getResources())
+      setShowUploadModal(false)
+      setNewTitle('')
+      setSelectedFile(null)
+    } finally {
+      setIsUploading(false)
     }
-
-    await schoolStore.addResource(item)
-    setResources(schoolStore.getResources())
-    setShowUploadModal(false)
-    setNewTitle('')
-    setSelectedFile(null)
   }
 
   return (
@@ -234,17 +348,30 @@ export function ResourceLibrary() {
                 </div>
               </div>
 
-              <div style={{ marginTop: '1.5rem', paddingTop: '0.85rem', borderTop: '1px solid var(--color-border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <div style={{ marginTop: '1.5rem', paddingTop: '0.85rem', borderTop: '1px solid var(--color-border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '0.5rem' }}>
                 <span style={{ fontSize: '0.75rem', color: 'var(--color-text-secondary)', fontWeight: 600 }}>
                   {res.year ? `Examination Year ${res.year}` : 'Active Edition'}
                 </span>
-                <button
-                  type="button"
-                  className="btn btn-primary btn-sm"
-                  onClick={() => handleOpenReader(res)}
-                >
-                  📖 Open & Read Online
-                </button>
+                <div style={{ display: 'flex', gap: '0.5rem' }}>
+                  {isAdmin && (
+                    <button
+                      type="button"
+                      className="btn btn-ghost btn-sm"
+                      style={{ color: '#dc2626' }}
+                      title="Delete Resource"
+                      onClick={() => handleDeleteResource(res.id)}
+                    >
+                      🗑️
+                    </button>
+                  )}
+                  <button
+                    type="button"
+                    className="btn btn-primary btn-sm"
+                    onClick={() => handleOpenReader(res)}
+                  >
+                    📖 Open & Read Online
+                  </button>
+                </div>
               </div>
             </div>
           ))
@@ -287,7 +414,7 @@ export function ResourceLibrary() {
                     {readingResource.title}
                   </h3>
                   <div style={{ fontSize: '0.75rem', opacity: 0.8 }}>
-                    {readingResource.category} • {readingResource.subject} ({readingResource.year || '2025'})
+                    {readingResource.category} • {readingResource.subject} ({readingResource.year || new Date().getFullYear()})
                   </div>
                 </div>
               </div>
@@ -392,7 +519,7 @@ export function ResourceLibrary() {
                   BRENT COLLEGE — PROFESSIONAL SHORT COURSES DIRECTORY
                 </div>
                 <div style={{ fontSize: '0.9rem', fontWeight: 700, margin: '0.35rem 0' }}>
-                  {readingResource.subject} • {readingResource.category} ({readingResource.year || '2025/2026'})
+                  {readingResource.subject} • {readingResource.category} ({readingResource.year || `${new Date().getFullYear()}/${new Date().getFullYear() + 1}`})
                 </div>
                 <div style={{ fontSize: '0.8rem', opacity: 0.8 }}>
                   Curated by Faculty Instructor: <strong>{readingResource.uploaded_by}</strong> • Read-Only Reference
@@ -634,8 +761,12 @@ export function ResourceLibrary() {
                 </div>
               </div>
               <div className="modal-footer">
-                <button type="button" className="btn btn-secondary" onClick={() => setShowUploadModal(false)}>Cancel</button>
-                <button type="submit" className="btn btn-primary">✓ Publish to E-Library</button>
+                <button type="button" className="btn btn-secondary" disabled={isUploading} onClick={() => setShowUploadModal(false)}>
+                  Cancel
+                </button>
+                <button type="submit" className="btn btn-primary" disabled={isUploading}>
+                  {isUploading ? '⏳ Uploading & Saving to Database...' : '✓ Publish to E-Library'}
+                </button>
               </div>
             </form>
           </div>

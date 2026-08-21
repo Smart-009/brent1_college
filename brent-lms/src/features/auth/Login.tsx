@@ -9,8 +9,10 @@ export function Login() {
   const [searchParams] = useSearchParams()
   const paramRole = searchParams.get('role') as Role | null
 
+  const currentYear = new Date().getFullYear()
+
   const [selectedRole, setSelectedRole] = useState<Role>(paramRole === 'admin' ? 'admin' : 'student')
-  const [admissionNumber, setAdmissionNumber] = useState(paramRole === 'admin' ? 'ADMIN-001' : 'BC-2026-001')
+  const [admissionNumber, setAdmissionNumber] = useState(paramRole === 'admin' ? 'ADMIN-001' : `BC-${currentYear}-001`)
   const [password, setPassword] = useState('')
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
@@ -42,7 +44,7 @@ export function Login() {
       role: 'student',
       label: 'Student / Trainee',
       icon: '🎓',
-      defaultId: 'BC-2026-001',
+      defaultId: `BC-${currentYear}-001`,
       defaultName: 'Enrolled Trainee',
       route: '/student',
       desc: 'Access your registered short course units, video lessons, and transcripts.',
@@ -78,7 +80,7 @@ export function Login() {
       role: 'parent',
       label: 'Parent / Sponsor',
       icon: '👨‍👩‍👧',
-      defaultId: 'PAR-2026-001',
+      defaultId: `PAR-${currentYear}-001`,
       defaultName: 'Student Sponsor',
       route: '/parent',
       desc: 'Track student attendance, fee statements, and term academic reports.',
