@@ -159,12 +159,26 @@ export function Navbar({ onToggleSidebar }: { onToggleSidebar: () => void }) {
             </div>
 
             <button
-              className="btn btn-sm btn-ghost"
-              style={{ color: 'white', opacity: 0.85 }}
+              type="button"
+              className="btn btn-sm"
+              style={{
+                background: 'rgba(220, 38, 38, 0.25)',
+                color: '#ffffff',
+                border: '1px solid rgba(239, 68, 68, 0.6)',
+                fontWeight: 700,
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '5px',
+                padding: '0.4rem 0.8rem',
+                borderRadius: '8px',
+                cursor: 'pointer',
+                transition: 'all 0.2s',
+              }}
               onClick={() => signOut().then(() => navigate('/login'))}
-              title="Sign Out"
+              title="Sign Out of Brent College Portal"
             >
-              🚪
+              <span>🚪</span>
+              <span>Logout</span>
             </button>
           </>
         )}
