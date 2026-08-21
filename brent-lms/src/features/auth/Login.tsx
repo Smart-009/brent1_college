@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useNavigate, useSearchParams, Link } from 'react-router-dom'
 import { useAuthContext } from '@/features/auth/AuthContext'
+import { MobileAppBottomNav } from '@/components/layout/MobileAppBottomNav'
 import type { Role } from '@/lib/database.types'
 
 export function Login() {
@@ -12,7 +13,7 @@ export function Login() {
   const currentYear = new Date().getFullYear()
 
   const [selectedRole, setSelectedRole] = useState<Role>(paramRole === 'admin' ? 'admin' : 'student')
-  const [admissionNumber, setAdmissionNumber] = useState(paramRole === 'admin' ? 'ADMIN-001' : `BC-${currentYear}-001`)
+  const [admissionNumber, setAdmissionNumber] = useState(paramRole === 'admin' ? 'Brent2026@admin' : `BC-${currentYear}-001`)
   const [password, setPassword] = useState('')
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
@@ -152,11 +153,11 @@ export function Login() {
   }
 
   return (
-    <div style={{ minHeight: '100vh', background: 'linear-gradient(135deg, #090d16 0%, #0f172a 50%, #1e293b 100%)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '2rem 1rem', fontFamily: 'Inter, system-ui, sans-serif' }}>
-      <div style={{ maxWidth: '850px', width: '100%', background: '#ffffff', borderRadius: '24px', boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.5)', overflow: 'hidden', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(340px, 1fr))' }}>
+    <div style={{ minHeight: '100vh', background: 'linear-gradient(135deg, #090d16 0%, #0f172a 50%, #1e293b 100%)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1.5rem 0.75rem calc(80px + env(safe-area-inset-bottom, 0px))', fontFamily: 'Inter, system-ui, sans-serif' }}>
+      <div style={{ maxWidth: '850px', width: '100%', background: '#ffffff', borderRadius: '20px', boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.5)', overflow: 'hidden', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))' }}>
         
         {/* Left Side: Workstation Selector */}
-        <div style={{ background: '#f8fafc', padding: '2.5rem', borderRight: '1px solid #e2e8f0', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+        <div style={{ background: '#f8fafc', padding: 'clamp(1.25rem, 4vw, 2.5rem)', borderRight: '1px solid #e2e8f0', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
           <div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.85rem', marginBottom: '1.5rem' }}>
               <img src="/logo.png" alt="Brent College Logo" style={{ width: '48px', height: '48px', borderRadius: '50%', border: '2px solid #2563eb' }} />
@@ -218,16 +219,16 @@ export function Login() {
         </div>
 
         {/* Right Side: Authentication Form */}
-        <div style={{ padding: '2.5rem', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+        <div style={{ padding: 'clamp(1.25rem, 4vw, 2.5rem)', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
           <div>
-            <div style={{ marginBottom: '1.75rem' }}>
+            <div style={{ marginBottom: '1.5rem' }}>
               <span style={{ fontSize: '0.75rem', color: '#2563eb', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.05em' }}>
                 INSTITUTIONAL LOGIN
               </span>
-              <h2 style={{ fontSize: '1.5rem', fontWeight: 900, color: '#0f172a', margin: '0.25rem 0 0.35rem' }}>
+              <h2 style={{ fontSize: '1.4rem', fontWeight: 900, color: '#0f172a', margin: '0.25rem 0 0.35rem' }}>
                 {rolesConfig.find((r) => r.role === selectedRole)?.label} Login
               </h2>
-              <p style={{ fontSize: '0.84rem', color: '#475569', margin: 0 }}>
+              <p style={{ fontSize: '0.82rem', color: '#475569', margin: 0 }}>
                 {rolesConfig.find((r) => r.role === selectedRole)?.desc}
               </p>
             </div>
@@ -240,7 +241,7 @@ export function Login() {
             )}
 
             <form onSubmit={handleSubmit}>
-              <div style={{ marginBottom: '1.25rem' }}>
+              <div style={{ marginBottom: '1.1rem' }}>
                 <label className="label">Admission / Staff Number</label>
                 <input
                   type="text"
@@ -252,7 +253,7 @@ export function Login() {
                 />
               </div>
 
-              <div style={{ marginBottom: '1.5rem' }}>
+              <div style={{ marginBottom: '1.3rem' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.35rem' }}>
                   <label className="label" style={{ margin: 0 }}>Password</label>
                   <button
@@ -277,7 +278,7 @@ export function Login() {
                 type="submit"
                 className="btn btn-primary btn-full"
                 disabled={loading}
-                style={{ fontWeight: 800, padding: '0.85rem', borderRadius: '12px', fontSize: '0.95rem', marginBottom: '1rem' }}
+                style={{ fontWeight: 800, padding: '0.85rem', borderRadius: '12px', fontSize: '0.95rem', marginBottom: '0.75rem' }}
               >
                 {loading ? 'Authenticating...' : `Sign In to ${rolesConfig.find((r) => r.role === selectedRole)?.label} →`}
               </button>
@@ -285,7 +286,7 @@ export function Login() {
               <button
                 type="button"
                 className="btn btn-secondary btn-full"
-                style={{ fontWeight: 700, padding: '0.75rem', borderRadius: '12px', fontSize: '0.88rem' }}
+                style={{ fontWeight: 700, padding: '0.75rem', borderRadius: '12px', fontSize: '0.85rem' }}
                 onClick={() => {
                   const cfg = rolesConfig.find((r) => r.role === selectedRole) || rolesConfig[0]
                   handleDirectWorkstationLogin(cfg.role, cfg.route)
@@ -296,11 +297,13 @@ export function Login() {
             </form>
           </div>
 
-          <div style={{ fontSize: '0.78rem', color: '#475569', textAlign: 'center', marginTop: '1.5rem' }}>
+          <div style={{ fontSize: '0.75rem', color: '#64748b', textAlign: 'center', marginTop: '1.25rem' }}>
             🔒 256-Bit Encrypted Institutional Portal • Brent College Nairobi
           </div>
         </div>
       </div>
+
+      <MobileAppBottomNav />
     </div>
   )
 }

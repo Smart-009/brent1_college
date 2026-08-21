@@ -51,10 +51,10 @@ const BursarDesk = lazy(() => import('@/features/bursar/BursarDesk').then((m) =>
 
 /** Auth Guard Component */
 function RequireAuth({ children, allowedRoles }: { children: ReactElement; allowedRoles?: string[] }) {
-  const { user, profile, loading } = useAuth()
+  const { profile, loading } = useAuth()
 
   if (loading) return <LoadingScreen message="Verifying security session..." />
-  if (!user || !profile) return <Navigate to="/login" replace />
+  if (!profile) return <Navigate to="/login" replace />
 
   // Forced password change check
   if (profile.first_login_at === null && window.location.pathname !== '/change-password') {
