@@ -99,10 +99,11 @@ export function Sidebar({ isOpen, onClose }: { isOpen: boolean; onClose: () => v
       {/* User Account & Prominent Logout Section */}
       <div
         style={{
-          padding: '1rem',
+          padding: '1rem 1rem calc(80px + env(safe-area-inset-bottom, 0px)) 1rem',
           borderTop: '1px solid var(--color-border)',
           background: 'var(--color-bg-secondary)',
           margin: 0,
+          flexShrink: 0,
         }}
       >
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem', marginBottom: '0.75rem' }}>

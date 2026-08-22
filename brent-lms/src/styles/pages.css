@@ -72,10 +72,14 @@
   align-items: center; justify-content: center;
 }
 @media (max-width: 640px) {
+  .navbar {
+    padding: 0 var(--space-2);
+  }
   .navbar-menu-btn { display: flex; }
-  .navbar-school-name { font-size: var(--text-base); }
+  .navbar-school-name { font-size: var(--text-sm); font-weight: 800; }
   .navbar-tagline { display: none; }
   .navbar-user-name { display: none; }
+  .navbar-actions { gap: 4px; }
 }
 
 /* =====================
@@ -139,13 +143,19 @@
 @media (max-width: 1024px) {
   .sidebar {
     transform: translateX(-100%);
-    width: 280px;
-    z-index: 100;
+    width: 290px;
+    z-index: 10001;
+    height: 100vh;
+    top: 0;
+    padding-top: var(--navbar-height);
     box-shadow: none;
   }
   .sidebar.open {
     transform: translateX(0);
-    box-shadow: 0 0 50px rgba(0, 0, 0, 0.6);
+    box-shadow: 0 0 50px rgba(0, 0, 0, 0.7);
+  }
+  .sidebar-backdrop {
+    z-index: 10000;
   }
   .sidebar-backdrop.open {
     display: block;

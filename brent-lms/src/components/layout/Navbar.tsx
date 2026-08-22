@@ -162,17 +162,20 @@ export function Navbar({ onToggleSidebar }: { onToggleSidebar: () => void }) {
               type="button"
               className="btn btn-sm"
               style={{
-                background: 'rgba(220, 38, 38, 0.25)',
+                background: '#dc2626',
                 color: '#ffffff',
-                border: '1px solid rgba(239, 68, 68, 0.6)',
-                fontWeight: 700,
+                border: 'none',
+                fontWeight: 800,
                 display: 'inline-flex',
                 alignItems: 'center',
-                gap: '5px',
-                padding: '0.4rem 0.8rem',
+                gap: '4px',
+                padding: '0.4rem 0.75rem',
                 borderRadius: '8px',
                 cursor: 'pointer',
                 transition: 'all 0.2s',
+                boxShadow: '0 2px 6px rgba(220, 38, 38, 0.4)',
+                flexShrink: 0,
+                fontSize: '0.8rem',
               }}
               onClick={() => signOut().then(() => navigate('/login'))}
               title="Sign Out of Brent College Portal"
