@@ -339,7 +339,11 @@ export function LessonPlayer() {
                         <span>Licensed to: {profile?.full_name || 'Enrolled Student'}</span>
                       </div>
                       <iframe
-                        src={`${res.file_url}#toolbar=0&navpanes=0&scrollbar=0`}
+                        src={
+                          res.file_url?.startsWith('http')
+                            ? `https://docs.google.com/viewer?url=${encodeURIComponent(res.file_url)}&embedded=true`
+                            : res.file_url
+                        }
                         title={res.file_name}
                         style={{
                           width: '100%',

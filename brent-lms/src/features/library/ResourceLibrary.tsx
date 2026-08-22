@@ -81,7 +81,7 @@ export function ResourceLibrary() {
       // Intercept Ctrl+S / Cmd+S (Save)
       if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 's') {
         e.preventDefault()
-        setDrmWarning('🔒 DRM Protection: Local saving & downloading are disabled for copyrighted materials.')
+        setDrmWarning('🔒 Protected Academic Viewer: Screenshots and file saving are restricted.')
         setTimeout(() => setDrmWarning(null), 4000)
         return
       }
@@ -89,7 +89,7 @@ export function ResourceLibrary() {
       // Intercept Ctrl+P / Cmd+P (Print)
       if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'p') {
         e.preventDefault()
-        setDrmWarning('🔒 DRM Protection: Printing or exporting is strictly prohibited.')
+        setDrmWarning('🔒 Protected Academic Viewer: Screenshots and file saving are restricted.')
         setTimeout(() => setDrmWarning(null), 4000)
         return
       }
@@ -97,7 +97,15 @@ export function ResourceLibrary() {
       // Intercept PrintScreen key
       if (e.key === 'PrintScreen' || e.code === 'PrintScreen') {
         e.preventDefault()
-        setDrmWarning('⚠️ Anti-Piracy Notice: Screenshot capture attempt detected and blocked.')
+        setDrmWarning('🔒 Protected Academic Viewer: Screenshots and file saving are restricted.')
+        setTimeout(() => setDrmWarning(null), 4000)
+        return
+      }
+
+      // Intercept Ctrl+C / Cmd+C (Copy)
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'c') {
+        e.preventDefault()
+        setDrmWarning('🔒 Protected Academic Viewer: Screenshots and file saving are restricted.')
         setTimeout(() => setDrmWarning(null), 4000)
         return
       }
@@ -430,12 +438,12 @@ export function ResourceLibrary() {
           onClick={() => setReadingResource(null)}
           onContextMenu={(e) => {
             e.preventDefault()
-            setDrmWarning('🔒 DRM Protection: Right-click context menu is disabled.')
+            setDrmWarning('🔒 Protected Academic Viewer: Screenshots and file saving are restricted.')
             setTimeout(() => setDrmWarning(null), 3000)
           }}
           onCopy={(e) => {
             e.preventDefault()
-            setDrmWarning('🔒 Copying copyrighted learning material is restricted.')
+            setDrmWarning('🔒 Protected Academic Viewer: Screenshots and file saving are restricted.')
             setTimeout(() => setDrmWarning(null), 3000)
           }}
           onCut={(e) => e.preventDefault()}
@@ -463,20 +471,21 @@ export function ResourceLibrary() {
               <div
                 style={{
                   position: 'absolute',
-                  top: '12px',
+                  top: '16px',
                   left: '50%',
                   transform: 'translateX(-50%)',
                   zIndex: 9999,
                   background: '#dc2626',
                   color: '#ffffff',
-                  padding: '0.6rem 1.25rem',
+                  padding: '0.65rem 1.4rem',
                   borderRadius: '999px',
                   fontWeight: 800,
                   fontSize: '0.85rem',
-                  boxShadow: '0 4px 15px rgba(220, 38, 38, 0.4)',
+                  boxShadow: '0 8px 24px rgba(220, 38, 38, 0.45)',
                   display: 'flex',
                   alignItems: 'center',
                   gap: '8px',
+                  textAlign: 'center',
                   animation: 'fadeIn 0.2s ease-in-out',
                 }}
               >
@@ -617,28 +626,6 @@ export function ResourceLibrary() {
             {/* Document Content Viewport */}
             {readerMode === 'document' ? (
               <div style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden', background: readerTheme === 'dark' ? '#0f172a' : '#f1f5f9', position: 'relative' }}>
-                <div
-                  style={{
-                    padding: '0.45rem 1rem',
-                    background: readerTheme === 'dark' ? '#1e293b' : '#fef2f2',
-                    borderBottom: `1px solid ${readerTheme === 'dark' ? '#334155' : '#fecaca'}`,
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                    alignItems: 'center',
-                    fontSize: '0.78rem',
-                    color: '#991b1b',
-                    flexWrap: 'wrap',
-                    gap: '0.5rem',
-                  }}
-                >
-                  <div>
-                    <span style={{ fontWeight: 800 }}>🔒 Protected Academic Viewer:</span> Screenshots and file saving are restricted.
-                  </div>
-                  <div style={{ fontSize: '0.72rem', color: '#64748b' }}>
-                    Licensed to {profile?.full_name || 'Enrolled Student'}
-                  </div>
-                </div>
-
                 <div style={{ flex: 1, width: '100%', height: '100%', position: 'relative', overflow: 'hidden' }}>
                   {/* Dynamic Watermark Pattern Overlay */}
                   <div
@@ -685,9 +672,13 @@ export function ResourceLibrary() {
                     </div>
                   ) : (
                     <iframe
-                      src={`${readingResource.file_url}#toolbar=0&navpanes=0&scrollbar=0`}
+                      src={
+                        readingResource.file_url?.startsWith('http')
+                          ? `https://docs.google.com/viewer?url=${encodeURIComponent(readingResource.file_url)}&embedded=true`
+                          : readingResource.file_url
+                      }
                       title={readingResource.title}
-                      style={{ width: '100%', height: '100%', minHeight: '65vh', border: 'none', background: '#ffffff' }}
+                      style={{ width: '100%', height: '100%', minHeight: '75vh', border: 'none', background: '#ffffff' }}
                     />
                   )}
                 </div>
