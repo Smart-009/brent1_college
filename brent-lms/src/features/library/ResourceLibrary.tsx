@@ -71,6 +71,50 @@ export function ResourceLibrary() {
   const [readerFontSize, setReaderFontSize] = useState<'normal' | 'large' | 'xlarge'>('normal')
   const [readerTheme, setReaderTheme] = useState<'light' | 'sepia' | 'dark'>('light')
   const [currentPage, setCurrentPage] = useState(1)
+  const [drmWarning, setDrmWarning] = useState<string | null>(null)
+
+  // DRM Anti-Screenshot, Anti-Save, and Anti-Print Interceptor
+  useEffect(() => {
+    if (!readingResource) return
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      // Intercept Ctrl+S / Cmd+S (Save)
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 's') {
+        e.preventDefault()
+        setDrmWarning('🔒 DRM Protection: Local saving & downloading are disabled for copyrighted materials.')
+        setTimeout(() => setDrmWarning(null), 4000)
+        return
+      }
+
+      // Intercept Ctrl+P / Cmd+P (Print)
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'p') {
+        e.preventDefault()
+        setDrmWarning('🔒 DRM Protection: Printing or exporting is strictly prohibited.')
+        setTimeout(() => setDrmWarning(null), 4000)
+        return
+      }
+
+      // Intercept PrintScreen key
+      if (e.key === 'PrintScreen' || e.code === 'PrintScreen') {
+        e.preventDefault()
+        setDrmWarning('⚠️ Anti-Piracy Notice: Screenshot capture attempt detected and blocked.')
+        setTimeout(() => setDrmWarning(null), 4000)
+        return
+      }
+
+      // Intercept F12 / Inspect shortcuts
+      if (
+        e.key === 'F12' ||
+        ((e.ctrlKey || e.metaKey) && e.shiftKey && (e.key.toLowerCase() === 'i' || e.key.toLowerCase() === 'j' || e.key.toLowerCase() === 'c')) ||
+        ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'u')
+      ) {
+        e.preventDefault()
+      }
+    }
+
+    window.addEventListener('keydown', handleKeyDown)
+    return () => window.removeEventListener('keydown', handleKeyDown)
+  }, [readingResource])
 
   // Upload Modal State (for admin only)
   const [showUploadModal, setShowUploadModal] = useState(false)
@@ -365,24 +409,12 @@ export function ResourceLibrary() {
                       🗑️
                     </button>
                   )}
-                  {res.file_url && res.file_url.startsWith('http') && (
-                    <a
-                      href={res.file_url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="btn btn-secondary btn-sm"
-                      style={{ textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: '4px' }}
-                      title="Download / Open original file in new tab"
-                    >
-                      📥 Download
-                    </a>
-                  )}
                   <button
                     type="button"
                     className="btn btn-primary btn-sm"
                     onClick={() => handleOpenReader(res)}
                   >
-                    📖 Read Online
+                    📖 Read Online 🔒
                   </button>
                 </div>
               </div>
@@ -391,11 +423,25 @@ export function ResourceLibrary() {
         )}
       </div>
 
-      {/* Interactive Document Reader & File Viewer Modal */}
+      {/* Interactive Protected Document Reader & File Viewer Modal */}
       {readingResource && (
-        <div className="modal-overlay" onClick={() => setReadingResource(null)}>
+        <div
+          className="modal-overlay"
+          onClick={() => setReadingResource(null)}
+          onContextMenu={(e) => {
+            e.preventDefault()
+            setDrmWarning('🔒 DRM Protection: Right-click context menu is disabled.')
+            setTimeout(() => setDrmWarning(null), 3000)
+          }}
+          onCopy={(e) => {
+            e.preventDefault()
+            setDrmWarning('🔒 Copying copyrighted learning material is restricted.')
+            setTimeout(() => setDrmWarning(null), 3000)
+          }}
+          onCut={(e) => e.preventDefault()}
+        >
           <div
-            className="modal-content modal-xl"
+            className="modal-content modal-xl drm-protected-viewport"
             onClick={(e) => e.stopPropagation()}
             style={{
               background: readerTheme === 'dark' ? '#0f172a' : readerTheme === 'sepia' ? '#fdf6e2' : '#ffffff',
@@ -407,8 +453,38 @@ export function ResourceLibrary() {
               borderRadius: '12px',
               padding: 0,
               overflow: 'hidden',
+              position: 'relative',
+              userSelect: 'none',
+              WebkitUserSelect: 'none',
             }}
           >
+            {/* DRM Toast Warning Notification */}
+            {drmWarning && (
+              <div
+                style={{
+                  position: 'absolute',
+                  top: '12px',
+                  left: '50%',
+                  transform: 'translateX(-50%)',
+                  zIndex: 9999,
+                  background: '#dc2626',
+                  color: '#ffffff',
+                  padding: '0.6rem 1.25rem',
+                  borderRadius: '999px',
+                  fontWeight: 800,
+                  fontSize: '0.85rem',
+                  boxShadow: '0 4px 15px rgba(220, 38, 38, 0.4)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '8px',
+                  animation: 'fadeIn 0.2s ease-in-out',
+                }}
+              >
+                <span>🛡️</span>
+                <span>{drmWarning}</span>
+              </div>
+            )}
+
             {/* Top Reader Toolbar */}
             <div
               style={{
@@ -429,13 +505,31 @@ export function ResourceLibrary() {
                     {readingResource.title}
                   </h3>
                   <div style={{ fontSize: '0.75rem', opacity: 0.8 }}>
-                    {readingResource.category} • {readingResource.subject} ({readingResource.year || new Date().getFullYear()}) • {readingResource.file_type || 'PDF'}
+                    {readingResource.category} • {readingResource.subject} ({readingResource.year || new Date().getFullYear()}) • 🔒 Protected Read-Only
                   </div>
                 </div>
               </div>
 
               {/* Reader Controls */}
               <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', flexWrap: 'wrap' }}>
+                {/* DRM Protection Indicator Badge */}
+                <span
+                  style={{
+                    background: 'rgba(239, 68, 68, 0.15)',
+                    color: '#dc2626',
+                    border: '1px solid rgba(239, 68, 68, 0.3)',
+                    padding: '3px 9px',
+                    borderRadius: '999px',
+                    fontSize: '0.72rem',
+                    fontWeight: 800,
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '4px',
+                  }}
+                >
+                  🔒 DRM Shield Active
+                </span>
+
                 {/* View Mode Switcher */}
                 <div style={{ display: 'flex', gap: '2px', background: readerTheme === 'dark' ? '#0f172a' : '#e2e8f0', borderRadius: '6px', padding: '2px' }}>
                   <button
@@ -481,18 +575,6 @@ export function ResourceLibrary() {
                   </div>
                 )}
 
-                {readingResource.file_url && (
-                  <button
-                    type="button"
-                    className="btn btn-sm btn-secondary"
-                    style={{ fontSize: '0.75rem', fontWeight: 700, display: 'inline-flex', alignItems: 'center', gap: '4px' }}
-                    onClick={() => window.open(readingResource.file_url, '_blank')}
-                    title="Open original file in new browser window"
-                  >
-                    ↗️ Open / Download
-                  </button>
-                )}
-
                 {/* Theme Selector */}
                 <div style={{ display: 'flex', gap: '2px', background: readerTheme === 'dark' ? '#0f172a' : '#e2e8f0', borderRadius: '6px', padding: '2px' }}>
                   <button
@@ -534,59 +616,76 @@ export function ResourceLibrary() {
 
             {/* Document Content Viewport */}
             {readerMode === 'document' ? (
-              <div style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden', background: readerTheme === 'dark' ? '#0f172a' : '#f1f5f9' }}>
+              <div style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden', background: readerTheme === 'dark' ? '#0f172a' : '#f1f5f9', position: 'relative' }}>
                 <div
                   style={{
-                    padding: '0.5rem 1rem',
-                    background: readerTheme === 'dark' ? '#1e293b' : '#eff6ff',
-                    borderBottom: `1px solid ${readerTheme === 'dark' ? '#334155' : '#bfdbfe'}`,
+                    padding: '0.45rem 1rem',
+                    background: readerTheme === 'dark' ? '#1e293b' : '#fef2f2',
+                    borderBottom: `1px solid ${readerTheme === 'dark' ? '#334155' : '#fecaca'}`,
                     display: 'flex',
                     justifyContent: 'space-between',
                     alignItems: 'center',
-                    fontSize: '0.8rem',
+                    fontSize: '0.78rem',
+                    color: '#991b1b',
                     flexWrap: 'wrap',
                     gap: '0.5rem',
                   }}
                 >
                   <div>
-                    <span style={{ fontWeight: 700 }}>📄 Document Viewer:</span> {readingResource.title} ({readingResource.file_type || 'PDF'}, {readingResource.file_size || '1.5 MB'})
+                    <span style={{ fontWeight: 800 }}>🔒 Protected Academic Viewer:</span> Screenshots and file saving are restricted.
                   </div>
-                  <div style={{ display: 'flex', gap: '0.5rem' }}>
-                    <a
-                      href={readingResource.file_url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="btn btn-sm btn-primary"
-                      style={{ fontSize: '0.75rem', textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: '4px' }}
-                    >
-                      ⬇️ Download / Fullscreen
-                    </a>
-                    {readingResource.file_url?.startsWith('http') && (
-                      <a
-                        href={`https://docs.google.com/viewer?url=${encodeURIComponent(readingResource.file_url)}&embedded=true`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="btn btn-sm btn-secondary"
-                        style={{ fontSize: '0.75rem', textDecoration: 'none' }}
-                      >
-                        📱 Google Docs Viewer
-                      </a>
-                    )}
+                  <div style={{ fontSize: '0.72rem', color: '#64748b' }}>
+                    Licensed to {profile?.full_name || 'Enrolled Student'}
                   </div>
                 </div>
 
                 <div style={{ flex: 1, width: '100%', height: '100%', position: 'relative', overflow: 'hidden' }}>
+                  {/* Dynamic Watermark Pattern Overlay */}
+                  <div
+                    style={{
+                      position: 'absolute',
+                      inset: 0,
+                      pointerEvents: 'none',
+                      zIndex: 20,
+                      display: 'flex',
+                      flexDirection: 'column',
+                      justifyContent: 'space-around',
+                      opacity: 0.08,
+                      overflow: 'hidden',
+                      userSelect: 'none',
+                    }}
+                  >
+                    {Array.from({ length: 6 }).map((_, idx) => (
+                      <div
+                        key={idx}
+                        style={{
+                          transform: 'rotate(-20deg)',
+                          fontSize: '1.1rem',
+                          fontWeight: 900,
+                          color: '#dc2626',
+                          letterSpacing: '0.12em',
+                          textAlign: 'center',
+                          whiteSpace: 'nowrap',
+                        }}
+                      >
+                        BRENT COLLEGE NAIROBI • LICENSED TO {profile?.full_name?.toUpperCase() || 'ENROLLED STUDENT'} • STRICTLY CONFIDENTIAL
+                      </div>
+                    ))}
+                  </div>
+
                   {/\.(png|jpe?g|webp|gif|svg)$/i.test(readingResource.file_url || '') ? (
                     <div style={{ padding: '1.5rem', height: '100%', overflowY: 'auto', textAlign: 'center' }}>
                       <img
                         src={readingResource.file_url}
                         alt={readingResource.title}
-                        style={{ maxWidth: '100%', maxHeight: '80vh', objectFit: 'contain', borderRadius: '8px', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}
+                        onContextMenu={(e) => e.preventDefault()}
+                        onDragStart={(e) => e.preventDefault()}
+                        style={{ maxWidth: '100%', maxHeight: '80vh', objectFit: 'contain', borderRadius: '8px', boxShadow: '0 4px 12px rgba(0,0,0,0.1)', pointerEvents: 'none' }}
                       />
                     </div>
                   ) : (
                     <iframe
-                      src={readingResource.file_url}
+                      src={`${readingResource.file_url}#toolbar=0&navpanes=0&scrollbar=0`}
                       title={readingResource.title}
                       style={{ width: '100%', height: '100%', minHeight: '65vh', border: 'none', background: '#ffffff' }}
                     />

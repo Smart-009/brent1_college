@@ -55,6 +55,7 @@ export function LessonPlayer() {
   const queryClient = useQueryClient()
 
   const [activeHtmlUrl, setActiveHtmlUrl] = useState<string | null>(null)
+  const [activeDocUrl, setActiveDocUrl] = useState<string | null>(null)
 
   // Combined instant parallel query (eliminates network waterfall delays)
   const { data, isLoading, error } = useQuery({
@@ -294,14 +295,13 @@ export function LessonPlayer() {
                       )}
 
                       {!isHtml && (
-                        <a
-                          href={res.file_url}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="btn btn-sm btn-outline"
+                        <button
+                          type="button"
+                          className="btn btn-sm btn-primary"
+                          onClick={() => setActiveDocUrl(activeDocUrl === res.file_url ? null : res.file_url)}
                         >
-                          Download File →
-                        </a>
+                          {activeDocUrl === res.file_url ? 'Hide Document ✕' : 'Read Document Online 🔒'}
+                        </button>
                       )}
                     </div>
                   </div>
@@ -310,6 +310,45 @@ export function LessonPlayer() {
                   {isHtml && activeHtmlUrl === res.file_url && (
                     <div className="mt-3 pt-3" style={{ borderTop: '1px solid var(--color-border-light)' }}>
                       <HtmlViewer fileUrl={res.file_url} title={res.file_name} />
+                    </div>
+                  )}
+
+                  {/* DRM Protected Document Viewer */}
+                  {!isHtml && activeDocUrl === res.file_url && (
+                    <div
+                      className="mt-3 pt-3 drm-protected-viewport"
+                      onContextMenu={(e) => e.preventDefault()}
+                      style={{ borderTop: '1px solid var(--color-border-light)', position: 'relative', overflow: 'hidden' }}
+                    >
+                      <div
+                        style={{
+                          padding: '0.45rem 0.85rem',
+                          background: '#fef2f2',
+                          color: '#991b1b',
+                          fontSize: '0.75rem',
+                          fontWeight: 700,
+                          borderRadius: '6px',
+                          marginBottom: '0.6rem',
+                          display: 'flex',
+                          justifyContent: 'space-between',
+                          flexWrap: 'wrap',
+                          gap: '0.5rem',
+                        }}
+                      >
+                        <span>🔒 DRM Protected Viewer: Local downloading and screenshots are restricted.</span>
+                        <span>Licensed to: {profile?.full_name || 'Enrolled Student'}</span>
+                      </div>
+                      <iframe
+                        src={`${res.file_url}#toolbar=0&navpanes=0&scrollbar=0`}
+                        title={res.file_name}
+                        style={{
+                          width: '100%',
+                          height: 580,
+                          border: '1px solid var(--color-border)',
+                          borderRadius: 8,
+                          background: '#ffffff',
+                        }}
+                      />
                     </div>
                   )}
                 </div>

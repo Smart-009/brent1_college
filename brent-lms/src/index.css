@@ -106,3 +106,32 @@ code {
   padding: 4px 8px;
   background: var(--code-bg);
 }
+
+/* DRM Content Security & Anti-Piracy Protection */
+@media print {
+  body * {
+    visibility: hidden !important;
+    display: none !important;
+  }
+  body::before {
+    visibility: visible !important;
+    content: "⚠️ PROPRIETARY & CONFIDENTIAL MATERIAL — BRENT COLLEGE. PRINTING AND EXPORTING ARE STRICTLY PROHIBITED BY DRM POLICY.";
+    display: block !important;
+    position: fixed;
+    top: 30%;
+    left: 10%;
+    right: 10%;
+    font-size: 24px;
+    font-weight: bold;
+    color: red;
+    text-align: center;
+  }
+}
+
+.drm-protected-viewport {
+  -webkit-user-select: none !important;
+  -moz-user-select: none !important;
+  -ms-user-select: none !important;
+  user-select: none !important;
+  -webkit-touch-callout: none !important;
+}
