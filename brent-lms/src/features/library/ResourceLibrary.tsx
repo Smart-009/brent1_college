@@ -67,6 +67,7 @@ export function ResourceLibrary() {
 
   // E-Reader Modal State
   const [readingResource, setReadingResource] = useState<AcademicResource | null>(null)
+  const [readerMode, setReaderMode] = useState<'document' | 'notes'>('document')
   const [readerFontSize, setReaderFontSize] = useState<'normal' | 'large' | 'xlarge'>('normal')
   const [readerTheme, setReaderTheme] = useState<'light' | 'sepia' | 'dark'>('light')
   const [currentPage, setCurrentPage] = useState(1)
@@ -352,7 +353,7 @@ export function ResourceLibrary() {
                 <span style={{ fontSize: '0.75rem', color: 'var(--color-text-secondary)', fontWeight: 600 }}>
                   {res.year ? `Examination Year ${res.year}` : 'Active Edition'}
                 </span>
-                <div style={{ display: 'flex', gap: '0.5rem' }}>
+                <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
                   {isAdmin && (
                     <button
                       type="button"
@@ -364,12 +365,24 @@ export function ResourceLibrary() {
                       🗑️
                     </button>
                   )}
+                  {res.file_url && res.file_url.startsWith('http') && (
+                    <a
+                      href={res.file_url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="btn btn-secondary btn-sm"
+                      style={{ textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: '4px' }}
+                      title="Download / Open original file in new tab"
+                    >
+                      📥 Download
+                    </a>
+                  )}
                   <button
                     type="button"
                     className="btn btn-primary btn-sm"
                     onClick={() => handleOpenReader(res)}
                   >
-                    📖 Open & Read Online
+                    📖 Read Online
                   </button>
                 </div>
               </div>
@@ -378,7 +391,7 @@ export function ResourceLibrary() {
         )}
       </div>
 
-      {/* Interactive Read-Only Document Reader Modal */}
+      {/* Interactive Document Reader & File Viewer Modal */}
       {readingResource && (
         <div className="modal-overlay" onClick={() => setReadingResource(null)}>
           <div
@@ -389,8 +402,8 @@ export function ResourceLibrary() {
               color: readerTheme === 'dark' ? '#f8fafc' : '#1e293b',
               display: 'flex',
               flexDirection: 'column',
-              maxHeight: '92vh',
-              height: '92vh',
+              maxHeight: '94vh',
+              height: '94vh',
               borderRadius: '12px',
               padding: 0,
               overflow: 'hidden',
@@ -405,6 +418,8 @@ export function ResourceLibrary() {
                 padding: '0.75rem 1.25rem',
                 borderBottom: `1px solid ${readerTheme === 'dark' ? '#334155' : '#e2e8f0'}`,
                 background: readerTheme === 'dark' ? '#1e293b' : '#f8fafc',
+                flexWrap: 'wrap',
+                gap: '0.5rem',
               }}
             >
               <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
@@ -414,51 +429,69 @@ export function ResourceLibrary() {
                     {readingResource.title}
                   </h3>
                   <div style={{ fontSize: '0.75rem', opacity: 0.8 }}>
-                    {readingResource.category} • {readingResource.subject} ({readingResource.year || new Date().getFullYear()})
+                    {readingResource.category} • {readingResource.subject} ({readingResource.year || new Date().getFullYear()}) • {readingResource.file_type || 'PDF'}
                   </div>
                 </div>
               </div>
 
               {/* Reader Controls */}
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                {/* DRM Badge */}
-                <span
-                  style={{
-                    background: readerTheme === 'dark' ? '#334155' : '#f1f5f9',
-                    padding: '3px 10px',
-                    borderRadius: '999px',
-                    fontSize: '0.75rem',
-                    fontWeight: 700,
-                    color: '#ea580c',
-                  }}
-                >
-                  🔒 Read-Only Mode
-                </span>
-
-                {/* Font Size Selector */}
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', flexWrap: 'wrap' }}>
+                {/* View Mode Switcher */}
                 <div style={{ display: 'flex', gap: '2px', background: readerTheme === 'dark' ? '#0f172a' : '#e2e8f0', borderRadius: '6px', padding: '2px' }}>
                   <button
                     type="button"
-                    style={{ background: readerFontSize === 'normal' ? 'var(--color-primary)' : 'transparent', color: readerFontSize === 'normal' ? '#fff' : 'inherit', border: 'none', padding: '3px 8px', borderRadius: '4px', cursor: 'pointer', fontSize: '0.75rem' }}
-                    onClick={() => setReaderFontSize('normal')}
+                    style={{ background: readerMode === 'document' ? 'var(--color-primary)' : 'transparent', color: readerMode === 'document' ? '#fff' : 'inherit', border: 'none', padding: '3px 8px', borderRadius: '4px', cursor: 'pointer', fontSize: '0.75rem', fontWeight: 700 }}
+                    onClick={() => setReaderMode('document')}
                   >
-                    A
+                    📄 Original Document
                   </button>
                   <button
                     type="button"
-                    style={{ background: readerFontSize === 'large' ? 'var(--color-primary)' : 'transparent', color: readerFontSize === 'large' ? '#fff' : 'inherit', border: 'none', padding: '3px 8px', borderRadius: '4px', cursor: 'pointer', fontSize: '0.85rem', fontWeight: 700 }}
-                    onClick={() => setReaderFontSize('large')}
+                    style={{ background: readerMode === 'notes' ? 'var(--color-primary)' : 'transparent', color: readerMode === 'notes' ? '#fff' : 'inherit', border: 'none', padding: '3px 8px', borderRadius: '4px', cursor: 'pointer', fontSize: '0.75rem', fontWeight: 700 }}
+                    onClick={() => setReaderMode('notes')}
                   >
-                    A+
-                  </button>
-                  <button
-                    type="button"
-                    style={{ background: readerFontSize === 'xlarge' ? 'var(--color-primary)' : 'transparent', color: readerFontSize === 'xlarge' ? '#fff' : 'inherit', border: 'none', padding: '3px 8px', borderRadius: '4px', cursor: 'pointer', fontSize: '0.95rem', fontWeight: 800 }}
-                    onClick={() => setReaderFontSize('xlarge')}
-                  >
-                    A++
+                    📝 Study Notes
                   </button>
                 </div>
+
+                {/* Font Size Selector (for Study Notes) */}
+                {readerMode === 'notes' && (
+                  <div style={{ display: 'flex', gap: '2px', background: readerTheme === 'dark' ? '#0f172a' : '#e2e8f0', borderRadius: '6px', padding: '2px' }}>
+                    <button
+                      type="button"
+                      style={{ background: readerFontSize === 'normal' ? 'var(--color-primary)' : 'transparent', color: readerFontSize === 'normal' ? '#fff' : 'inherit', border: 'none', padding: '3px 7px', borderRadius: '4px', cursor: 'pointer', fontSize: '0.72rem' }}
+                      onClick={() => setReaderFontSize('normal')}
+                    >
+                      A
+                    </button>
+                    <button
+                      type="button"
+                      style={{ background: readerFontSize === 'large' ? 'var(--color-primary)' : 'transparent', color: readerFontSize === 'large' ? '#fff' : 'inherit', border: 'none', padding: '3px 7px', borderRadius: '4px', cursor: 'pointer', fontSize: '0.8rem', fontWeight: 700 }}
+                      onClick={() => setReaderFontSize('large')}
+                    >
+                      A+
+                    </button>
+                    <button
+                      type="button"
+                      style={{ background: readerFontSize === 'xlarge' ? 'var(--color-primary)' : 'transparent', color: readerFontSize === 'xlarge' ? '#fff' : 'inherit', border: 'none', padding: '3px 7px', borderRadius: '4px', cursor: 'pointer', fontSize: '0.9rem', fontWeight: 800 }}
+                      onClick={() => setReaderFontSize('xlarge')}
+                    >
+                      A++
+                    </button>
+                  </div>
+                )}
+
+                {readingResource.file_url && (
+                  <button
+                    type="button"
+                    className="btn btn-sm btn-secondary"
+                    style={{ fontSize: '0.75rem', fontWeight: 700, display: 'inline-flex', alignItems: 'center', gap: '4px' }}
+                    onClick={() => window.open(readingResource.file_url, '_blank')}
+                    title="Open original file in new browser window"
+                  >
+                    ↗️ Open / Download
+                  </button>
+                )}
 
                 {/* Theme Selector */}
                 <div style={{ display: 'flex', gap: '2px', background: readerTheme === 'dark' ? '#0f172a' : '#e2e8f0', borderRadius: '6px', padding: '2px' }}>
@@ -468,7 +501,7 @@ export function ResourceLibrary() {
                     onClick={() => setReaderTheme('light')}
                     title="Light Theme"
                   >
-                    ☀️ Light
+                    ☀️
                   </button>
                   <button
                     type="button"
@@ -476,7 +509,7 @@ export function ResourceLibrary() {
                     onClick={() => setReaderTheme('sepia')}
                     title="Sepia Paper Theme"
                   >
-                    📜 Sepia
+                    📜
                   </button>
                   <button
                     type="button"
@@ -484,7 +517,7 @@ export function ResourceLibrary() {
                     onClick={() => setReaderTheme('dark')}
                     title="Night Mode"
                   >
-                    🌙 Dark
+                    🌙
                   </button>
                 </div>
 
@@ -500,126 +533,176 @@ export function ResourceLibrary() {
             </div>
 
             {/* Document Content Viewport */}
-            <div
-              style={{
-                flex: 1,
-                overflowY: 'auto',
-                padding: '2.5rem 3.5rem',
-                fontSize: readerFontSize === 'xlarge' ? '1.25rem' : readerFontSize === 'large' ? '1.1rem' : '0.95rem',
-                lineHeight: 1.8,
-                maxWidth: '900px',
-                margin: '0 auto',
-                width: '100%',
-                userSelect: 'none', // Prevents unauthorized copy-paste in read-only mode
-              }}
-            >
-              {/* Document Header */}
-              <div style={{ textAlign: 'center', borderBottom: `2px dashed ${readerTheme === 'dark' ? '#334155' : '#cbd5e1'}`, paddingBottom: '1.5rem', marginBottom: '2rem' }}>
-                <div style={{ fontSize: '1.2rem', fontWeight: 900, textTransform: 'uppercase', letterSpacing: '0.05em' }}>
-                  BRENT COLLEGE — PROFESSIONAL SHORT COURSES DIRECTORY
-                </div>
-                <div style={{ fontSize: '0.9rem', fontWeight: 700, margin: '0.35rem 0' }}>
-                  {readingResource.subject} • {readingResource.category} ({readingResource.year || `${new Date().getFullYear()}/${new Date().getFullYear() + 1}`})
-                </div>
-                <div style={{ fontSize: '0.8rem', opacity: 0.8 }}>
-                  Curated by Faculty Instructor: <strong>{readingResource.uploaded_by}</strong> • Read-Only Reference
-                </div>
-              </div>
-
-              {/* Document Body (Simulated Academic Content & Past Examination Sections) */}
-              {currentPage === 1 && (
-                <div>
-                  <h2 style={{ fontSize: '1.2rem', fontWeight: 800, borderLeft: '4px solid var(--color-primary)', paddingLeft: '0.75rem', marginBottom: '1rem' }}>
-                    SECTION A: CORE CONCEPTS & COMPULSORY PRINCIPLES (40 MARKS)
-                  </h2>
-                  <p>
-                    <strong>Question 1 (10 Marks):</strong><br />
-                    Explain the fundamental system architecture of modern cloud-native web systems. Describe the functional distinction between reactive client-side rendering (CSR) and server-side state machines with transactional ACID compliance.
-                  </p>
-                  <p>
-                    <strong>Question 2 (15 Marks):</strong><br />
-                    A vocational enterprise software project requires an in-memory L1 cache layer combined with persistent local write-ahead journals. Construct the data flow sequence illustrating how state synchronization occurs during high-concurrency operations.
-                  </p>
-                  <p>
-                    <strong>Question 3 (15 Marks):</strong><br />
-                    Outline the step-by-step procedure for conducting modular curriculum assessment in a TVET technical institution. Highlight the validation protocols for continuous laboratory projects versus summative certification exams.
-                  </p>
-                </div>
-              )}
-
-              {currentPage === 2 && (
-                <div>
-                  <h2 style={{ fontSize: '1.2rem', fontWeight: 800, borderLeft: '4px solid #16a34a', paddingLeft: '0.75rem', marginBottom: '1rem' }}>
-                    SECTION B: PRACTICAL IMPLEMENTATION & CASE STUDIES (60 MARKS)
-                  </h2>
-                  <p>
-                    <strong>Question 4 (30 Marks): Practical System Design</strong><br />
-                    Given a scenario where a vocational college delivers fast-track 1-month to 6-month short courses, design a normalized data schema and role-gated access control matrix protecting video tutorials and laboratory notes for tuition-cleared students only.
-                  </p>
-                  <p>
-                    <strong>Question 5 (30 Marks): Examination Marking Scheme & Solutions</strong><br />
-                    Provide the step-by-step scoring breakdown for:
-                  </p>
-                  <ul style={{ paddingLeft: '1.5rem', lineHeight: 1.8 }}>
-                    <li>1. Database Transaction isolation level validation (10 Marks)</li>
-                    <li>2. Offline PWA caching strategy & Service Worker lifecycle (10 Marks)</li>
-                    <li>3. Responsive typography and accessible UI state transitions (10 Marks)</li>
-                  </ul>
-                </div>
-              )}
-
-              {currentPage === 3 && (
-                <div>
-                  <h2 style={{ fontSize: '1.2rem', fontWeight: 800, borderLeft: '4px solid #7c3aed', paddingLeft: '0.75rem', marginBottom: '1rem' }}>
-                    APPENDIX & LECTURER REVISION NOTES
-                  </h2>
-                  <div style={{ background: readerTheme === 'dark' ? '#1e293b' : '#f8fafc', border: `1px solid ${readerTheme === 'dark' ? '#334155' : '#e2e8f0'}`, borderRadius: '8px', padding: '1.25rem', marginBottom: '1.5rem' }}>
-                    <h4 style={{ margin: '0 0 0.5rem', fontSize: '0.95rem', fontWeight: 700 }}>Instructor's Study Guide</h4>
-                    <p style={{ margin: 0, fontSize: '0.85rem', lineHeight: 1.6 }}>
-                      "Students are advised to review all modular syllabus units before attempting past paper mock tests. Focus especially on practical code challenges and continuous assessment assignments."
-                    </p>
+            {readerMode === 'document' ? (
+              <div style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden', background: readerTheme === 'dark' ? '#0f172a' : '#f1f5f9' }}>
+                <div
+                  style={{
+                    padding: '0.5rem 1rem',
+                    background: readerTheme === 'dark' ? '#1e293b' : '#eff6ff',
+                    borderBottom: `1px solid ${readerTheme === 'dark' ? '#334155' : '#bfdbfe'}`,
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    fontSize: '0.8rem',
+                    flexWrap: 'wrap',
+                    gap: '0.5rem',
+                  }}
+                >
+                  <div>
+                    <span style={{ fontWeight: 700 }}>📄 Document Viewer:</span> {readingResource.title} ({readingResource.file_type || 'PDF'}, {readingResource.file_size || '1.5 MB'})
                   </div>
-                  <div style={{ textAlign: 'center', opacity: 0.7, fontSize: '0.8rem', marginTop: '2rem' }}>
-                    — END OF DOCUMENT — <br />
-                    Brent College Directorate of Academic Resources
+                  <div style={{ display: 'flex', gap: '0.5rem' }}>
+                    <a
+                      href={readingResource.file_url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="btn btn-sm btn-primary"
+                      style={{ fontSize: '0.75rem', textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: '4px' }}
+                    >
+                      ⬇️ Download / Fullscreen
+                    </a>
+                    {readingResource.file_url?.startsWith('http') && (
+                      <a
+                        href={`https://docs.google.com/viewer?url=${encodeURIComponent(readingResource.file_url)}&embedded=true`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="btn btn-sm btn-secondary"
+                        style={{ fontSize: '0.75rem', textDecoration: 'none' }}
+                      >
+                        📱 Google Docs Viewer
+                      </a>
+                    )}
                   </div>
                 </div>
-              )}
-            </div>
 
-            {/* Bottom Pagination Bar */}
-            <div
-              style={{
-                display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-                padding: '0.75rem 1.5rem',
-                borderTop: `1px solid ${readerTheme === 'dark' ? '#334155' : '#e2e8f0'}`,
-                background: readerTheme === 'dark' ? '#1e293b' : '#f8fafc',
-              }}
-            >
-              <button
-                type="button"
-                className="btn btn-secondary btn-sm"
-                disabled={currentPage === 1}
-                onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
-              >
-                ← Previous Page
-              </button>
-
-              <div style={{ fontSize: '0.85rem', fontWeight: 700 }}>
-                Page {currentPage} of 3
+                <div style={{ flex: 1, width: '100%', height: '100%', position: 'relative', overflow: 'hidden' }}>
+                  {/\.(png|jpe?g|webp|gif|svg)$/i.test(readingResource.file_url || '') ? (
+                    <div style={{ padding: '1.5rem', height: '100%', overflowY: 'auto', textAlign: 'center' }}>
+                      <img
+                        src={readingResource.file_url}
+                        alt={readingResource.title}
+                        style={{ maxWidth: '100%', maxHeight: '80vh', objectFit: 'contain', borderRadius: '8px', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}
+                      />
+                    </div>
+                  ) : (
+                    <iframe
+                      src={readingResource.file_url}
+                      title={readingResource.title}
+                      style={{ width: '100%', height: '100%', minHeight: '65vh', border: 'none', background: '#ffffff' }}
+                    />
+                  )}
+                </div>
               </div>
+            ) : (
+              /* Study Notes Mode */
+              <>
+                <div
+                  style={{
+                    flex: 1,
+                    overflowY: 'auto',
+                    padding: '2.5rem 3.5rem',
+                    fontSize: readerFontSize === 'xlarge' ? '1.25rem' : readerFontSize === 'large' ? '1.1rem' : '0.95rem',
+                    lineHeight: 1.8,
+                    maxWidth: '900px',
+                    margin: '0 auto',
+                    width: '100%',
+                  }}
+                >
+                  {/* Document Header */}
+                  <div style={{ textAlign: 'center', borderBottom: `2px dashed ${readerTheme === 'dark' ? '#334155' : '#cbd5e1'}`, paddingBottom: '1.5rem', marginBottom: '2rem' }}>
+                    <div style={{ fontSize: '1.2rem', fontWeight: 900, textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                      BRENT COLLEGE — PROFESSIONAL SHORT COURSES DIRECTORY
+                    </div>
+                    <div style={{ fontSize: '0.9rem', fontWeight: 700, margin: '0.35rem 0' }}>
+                      {readingResource.subject} • {readingResource.category} ({readingResource.year || new Date().getFullYear()})
+                    </div>
+                    <div style={{ fontSize: '0.8rem', opacity: 0.8 }}>
+                      Curated by Faculty Instructor: <strong>{readingResource.uploaded_by}</strong> • Revision Notes
+                    </div>
+                  </div>
 
-              <button
-                type="button"
-                className="btn btn-secondary btn-sm"
-                disabled={currentPage === 3}
-                onClick={() => setCurrentPage((p) => Math.min(3, p + 1))}
-              >
-                Next Page →
-              </button>
-            </div>
+                  {currentPage === 1 && (
+                    <div>
+                      <h2 style={{ fontSize: '1.2rem', fontWeight: 800, borderLeft: '4px solid var(--color-primary)', paddingLeft: '0.75rem', marginBottom: '1rem' }}>
+                        SECTION A: CORE CONCEPTS & COMPULSORY PRINCIPLES
+                      </h2>
+                      <p>
+                        <strong>Module Objective:</strong><br />
+                        This document covers standard practical competencies, safety guidelines, and examination objectives for <strong>{readingResource.subject}</strong>.
+                      </p>
+                      <p>
+                        <strong>Key Assessment Points:</strong><br />
+                        Students must demonstrate thorough familiarity with practical workshop procedures, equipment handling, and theoretical foundations before sitting for certification.
+                      </p>
+                    </div>
+                  )}
+
+                  {currentPage === 2 && (
+                    <div>
+                      <h2 style={{ fontSize: '1.2rem', fontWeight: 800, borderLeft: '4px solid #16a34a', paddingLeft: '0.75rem', marginBottom: '1rem' }}>
+                        SECTION B: PRACTICAL IMPLEMENTATION & CASE STUDIES
+                      </h2>
+                      <p>
+                        <strong>Practical Application:</strong><br />
+                        Case study analysis, real-world project simulations, and industry standards aligned with TVET requirements.
+                      </p>
+                    </div>
+                  )}
+
+                  {currentPage === 3 && (
+                    <div>
+                      <h2 style={{ fontSize: '1.2rem', fontWeight: 800, borderLeft: '4px solid #7c3aed', paddingLeft: '0.75rem', marginBottom: '1rem' }}>
+                        APPENDIX & INSTRUCTOR REVISION GUIDE
+                      </h2>
+                      <div style={{ background: readerTheme === 'dark' ? '#1e293b' : '#f8fafc', border: `1px solid ${readerTheme === 'dark' ? '#334155' : '#e2e8f0'}`, borderRadius: '8px', padding: '1.25rem', marginBottom: '1.5rem' }}>
+                        <h4 style={{ margin: '0 0 0.5rem', fontSize: '0.95rem', fontWeight: 700 }}>Instructor's Study Recommendation</h4>
+                        <p style={{ margin: 0, fontSize: '0.85rem', lineHeight: 1.6 }}>
+                          "Review all modules thoroughly and complete the practical lab exercises before the end-of-term evaluation."
+                        </p>
+                      </div>
+                      <div style={{ textAlign: 'center', opacity: 0.7, fontSize: '0.8rem', marginTop: '2rem' }}>
+                        — END OF NOTES — <br />
+                        Brent College Directorate of Academic Resources
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                {/* Bottom Pagination Bar */}
+                <div
+                  style={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    padding: '0.75rem 1.5rem',
+                    borderTop: `1px solid ${readerTheme === 'dark' ? '#334155' : '#e2e8f0'}`,
+                    background: readerTheme === 'dark' ? '#1e293b' : '#f8fafc',
+                  }}
+                >
+                  <button
+                    type="button"
+                    className="btn btn-secondary btn-sm"
+                    disabled={currentPage === 1}
+                    onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+                  >
+                    ← Previous Page
+                  </button>
+
+                  <div style={{ fontSize: '0.85rem', fontWeight: 700 }}>
+                    Page {currentPage} of 3
+                  </div>
+
+                  <button
+                    type="button"
+                    className="btn btn-secondary btn-sm"
+                    disabled={currentPage === 3}
+                    onClick={() => setCurrentPage((p) => Math.min(3, p + 1))}
+                  >
+                    Next Page →
+                  </button>
+                </div>
+              </>
+            )}
           </div>
         </div>
       )}
