@@ -10,6 +10,15 @@ import '@/styles/index.css'
 import '@/styles/components.css'
 import '@/styles/pages.css'
 
+import { registerSW } from 'virtual:pwa-register'
+
+const updateSW = registerSW({
+  immediate: true,
+  onNeedRefresh() {
+    updateSW(true)
+  },
+})
+
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
