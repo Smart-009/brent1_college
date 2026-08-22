@@ -56,6 +56,7 @@ export function LessonPlayer() {
 
   const [activeHtmlUrl, setActiveHtmlUrl] = useState<string | null>(null)
   const [activeDocUrl, setActiveDocUrl] = useState<string | null>(null)
+  const [docEngine, setDocEngine] = useState<'cloud' | 'direct'>('cloud')
 
   // Combined instant parallel query (eliminates network waterfall delays)
   const { data, isLoading, error } = useQuery({
@@ -323,24 +324,42 @@ export function LessonPlayer() {
                       <div
                         style={{
                           padding: '0.45rem 0.85rem',
-                          background: '#fef2f2',
-                          color: '#991b1b',
-                          fontSize: '0.75rem',
-                          fontWeight: 700,
-                          borderRadius: '6px',
+                          background: '#f8fafc',
+                          border: '1px solid var(--color-border)',
+                          borderRadius: '8px',
                           marginBottom: '0.6rem',
                           display: 'flex',
                           justifyContent: 'space-between',
+                          alignItems: 'center',
                           flexWrap: 'wrap',
                           gap: '0.5rem',
                         }}
                       >
-                        <span>🔒 DRM Protected Viewer: Local downloading and screenshots are restricted.</span>
-                        <span>Licensed to: {profile?.full_name || 'Enrolled Student'}</span>
+                        <div style={{ fontSize: '0.78rem', color: '#1e3a8a', fontWeight: 700 }}>
+                          🔒 Protected Reader: {res.file_name}
+                        </div>
+                        <div style={{ display: 'flex', gap: '4px' }}>
+                          <button
+                            type="button"
+                            className={`btn btn-xs ${docEngine === 'cloud' ? 'btn-primary' : 'btn-ghost'}`}
+                            style={{ fontSize: '0.72rem', padding: '2px 8px', minHeight: 'auto' }}
+                            onClick={() => setDocEngine('cloud')}
+                          >
+                            🌐 Cloud Reader
+                          </button>
+                          <button
+                            type="button"
+                            className={`btn btn-xs ${docEngine === 'direct' ? 'btn-primary' : 'btn-ghost'}`}
+                            style={{ fontSize: '0.72rem', padding: '2px 8px', minHeight: 'auto' }}
+                            onClick={() => setDocEngine('direct')}
+                          >
+                            📄 Direct Stream
+                          </button>
+                        </div>
                       </div>
                       <iframe
                         src={
-                          res.file_url?.startsWith('http')
+                          docEngine === 'cloud' && res.file_url?.startsWith('http')
                             ? `https://docs.google.com/viewer?url=${encodeURIComponent(res.file_url)}&embedded=true`
                             : res.file_url
                         }

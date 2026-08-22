@@ -68,6 +68,7 @@ export function ResourceLibrary() {
   // E-Reader Modal State
   const [readingResource, setReadingResource] = useState<AcademicResource | null>(null)
   const [readerMode, setReaderMode] = useState<'document' | 'notes'>('document')
+  const [docEngine, setDocEngine] = useState<'cloud' | 'direct'>('cloud')
   const [readerFontSize, setReaderFontSize] = useState<'normal' | 'large' | 'xlarge'>('normal')
   const [readerTheme, setReaderTheme] = useState<'light' | 'sepia' | 'dark'>('light')
   const [currentPage, setCurrentPage] = useState(1)
@@ -208,12 +209,17 @@ export function ResourceLibrary() {
           ? 'EPUB'
           : 'PDF'
 
-      let fileBlobUrl = selectedFile
-        ? URL.createObjectURL(selectedFile)
-        : 'https://brentcollege.internal/docs/' + encodeURIComponent(newTitle)
-
-      // Upload file directly to Supabase Storage bucket 'library-resources'
+      let fileBlobUrl = ''
       if (selectedFile) {
+        // Read file as Base64 Data URL so it is self-contained and immediately viewable everywhere
+        const base64DataUrl = await new Promise<string>((resolve) => {
+          const reader = new FileReader()
+          reader.onloadend = () => resolve(reader.result as string)
+          reader.readAsDataURL(selectedFile)
+        })
+        fileBlobUrl = base64DataUrl
+
+        // Also attempt upload to Supabase storage bucket 'library-resources'
         try {
           const safeName = `${Date.now()}_${selectedFile.name.replace(/[^a-zA-Z0-9_.-]/g, '_')}`
           const filePath = `documents/${safeName}`
@@ -235,6 +241,8 @@ export function ResourceLibrary() {
         } catch (uploadErr) {
           console.warn('Storage bucket upload notice:', uploadErr)
         }
+      } else {
+        fileBlobUrl = 'https://brentcollege.internal/docs/' + encodeURIComponent(newTitle)
       }
 
       const item: AcademicResource = {
@@ -539,18 +547,58 @@ export function ResourceLibrary() {
                   🔒 DRM Shield Active
                 </span>
 
-                {/* View Mode Switcher */}
+                {/* View Mode & Engine Switcher */}
                 <div style={{ display: 'flex', gap: '2px', background: readerTheme === 'dark' ? '#0f172a' : '#e2e8f0', borderRadius: '6px', padding: '2px' }}>
                   <button
                     type="button"
-                    style={{ background: readerMode === 'document' ? 'var(--color-primary)' : 'transparent', color: readerMode === 'document' ? '#fff' : 'inherit', border: 'none', padding: '3px 8px', borderRadius: '4px', cursor: 'pointer', fontSize: '0.75rem', fontWeight: 700 }}
-                    onClick={() => setReaderMode('document')}
+                    style={{
+                      background: readerMode === 'document' && docEngine === 'cloud' ? 'var(--color-primary)' : 'transparent',
+                      color: readerMode === 'document' && docEngine === 'cloud' ? '#fff' : 'inherit',
+                      border: 'none',
+                      padding: '4px 9px',
+                      borderRadius: '4px',
+                      cursor: 'pointer',
+                      fontSize: '0.75rem',
+                      fontWeight: 700,
+                    }}
+                    onClick={() => {
+                      setReaderMode('document')
+                      setDocEngine('cloud')
+                    }}
                   >
-                    📄 Original Document
+                    🌐 Cloud Reader
                   </button>
                   <button
                     type="button"
-                    style={{ background: readerMode === 'notes' ? 'var(--color-primary)' : 'transparent', color: readerMode === 'notes' ? '#fff' : 'inherit', border: 'none', padding: '3px 8px', borderRadius: '4px', cursor: 'pointer', fontSize: '0.75rem', fontWeight: 700 }}
+                    style={{
+                      background: readerMode === 'document' && docEngine === 'direct' ? 'var(--color-primary)' : 'transparent',
+                      color: readerMode === 'document' && docEngine === 'direct' ? '#fff' : 'inherit',
+                      border: 'none',
+                      padding: '4px 9px',
+                      borderRadius: '4px',
+                      cursor: 'pointer',
+                      fontSize: '0.75rem',
+                      fontWeight: 700,
+                    }}
+                    onClick={() => {
+                      setReaderMode('document')
+                      setDocEngine('direct')
+                    }}
+                  >
+                    📄 Direct Stream
+                  </button>
+                  <button
+                    type="button"
+                    style={{
+                      background: readerMode === 'notes' ? 'var(--color-primary)' : 'transparent',
+                      color: readerMode === 'notes' ? '#fff' : 'inherit',
+                      border: 'none',
+                      padding: '4px 9px',
+                      borderRadius: '4px',
+                      cursor: 'pointer',
+                      fontSize: '0.75rem',
+                      fontWeight: 700,
+                    }}
                     onClick={() => setReaderMode('notes')}
                   >
                     📝 Study Notes
@@ -673,7 +721,7 @@ export function ResourceLibrary() {
                   ) : (
                     <iframe
                       src={
-                        readingResource.file_url?.startsWith('http')
+                        docEngine === 'cloud' && readingResource.file_url?.startsWith('http')
                           ? `https://docs.google.com/viewer?url=${encodeURIComponent(readingResource.file_url)}&embedded=true`
                           : readingResource.file_url
                       }
