@@ -127,3 +127,26 @@ export function pluralize(count: number, singular: string, plural?: string): str
 export function deepClone<T>(obj: T): T {
   return JSON.parse(JSON.stringify(obj))
 }
+
+/** Sanitize input strings to prevent XSS and injection attacks */
+export function sanitizeInput(str: string): string {
+  if (!str) return ''
+  return str
+    .replace(/[<>]/g, '')
+    .replace(/javascript:/gi, '')
+    .replace(/on\w+=/gi, '')
+    .trim()
+}
+
+/** Validate safe URLs (http, https, blob, or relative paths) */
+export function isSafeUrl(url: string): boolean {
+  if (!url) return false
+  const trimmed = url.trim()
+  if (trimmed.startsWith('/') || trimmed.startsWith('blob:') || trimmed.startsWith('data:image/')) return true
+  try {
+    const parsed = new URL(trimmed)
+    return parsed.protocol === 'http:' || parsed.protocol === 'https:'
+  } catch {
+    return false
+  }
+}
