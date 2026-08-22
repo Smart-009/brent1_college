@@ -5,7 +5,7 @@ import { MobileAppBottomNav } from '@/components/layout/MobileAppBottomNav'
 import type { Role } from '@/lib/database.types'
 
 export function Login() {
-  const { signIn, signInAsDemo } = useAuthContext()
+  const { signIn } = useAuthContext()
   const navigate = useNavigate()
   const [searchParams] = useSearchParams()
   const paramRole = searchParams.get('role') as Role | null
@@ -92,24 +92,6 @@ export function Login() {
     setSelectedRole(cfg.role)
     setAdmissionNumber(cfg.defaultId)
     setError(null)
-  }
-
-  const handleDirectWorkstationLogin = async (role: Role, route: string) => {
-    if (role === 'admin') {
-      const isCorrect =
-        password === 'Brent@2026#!' ||
-        password === 'muSta9F@009' ||
-        password === (import.meta.env.VITE_ADMIN_PASSWORD || 'Brent@2026#!')
-
-      if (!isCorrect && !password) {
-        setPassword('Brent@2026#!')
-      }
-      signInAsDemo('admin')
-      navigate('/admin')
-      return
-    }
-    signInAsDemo(role)
-    navigate(route)
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -278,21 +260,9 @@ export function Login() {
                 type="submit"
                 className="btn btn-primary btn-full"
                 disabled={loading}
-                style={{ fontWeight: 800, padding: '0.85rem', borderRadius: '12px', fontSize: '0.95rem', marginBottom: '0.75rem' }}
+                style={{ fontWeight: 800, padding: '0.85rem', borderRadius: '12px', fontSize: '0.95rem' }}
               >
                 {loading ? 'Authenticating...' : `Sign In to ${rolesConfig.find((r) => r.role === selectedRole)?.label} →`}
-              </button>
-
-              <button
-                type="button"
-                className="btn btn-secondary btn-full"
-                style={{ fontWeight: 700, padding: '0.75rem', borderRadius: '12px', fontSize: '0.85rem' }}
-                onClick={() => {
-                  const cfg = rolesConfig.find((r) => r.role === selectedRole) || rolesConfig[0]
-                  handleDirectWorkstationLogin(cfg.role, cfg.route)
-                }}
-              >
-                ⚡ Instant Access as {rolesConfig.find((r) => r.role === selectedRole)?.defaultName}
               </button>
             </form>
           </div>

@@ -1,28 +1,18 @@
 import { useState } from 'react'
-import { useAuthContext, DEMO_PROFILES } from '@/features/auth/AuthContext'
+import { useAuthContext } from '@/features/auth/AuthContext'
 import type { Role } from '@/lib/database.types'
 import { useNavigate } from 'react-router-dom'
 
 export function RoleSwitcher() {
-  const { profile, signInAsDemo } = useAuthContext()
+  const { profile } = useAuthContext()
   const [isOpen, setIsOpen] = useState(false)
   const navigate = useNavigate()
 
   const currentRole = profile?.role || 'admin'
 
   const handleSwitch = (role: Role) => {
-    if (role === 'admin' && profile?.role !== 'admin') {
-      navigate('/login?role=admin')
-      setIsOpen(false)
-      return
-    }
-    signInAsDemo(role)
     setIsOpen(false)
-    if (role === 'admin') navigate('/admin')
-    else if (role === 'bursar') navigate('/bursar')
-    else if (role === 'teacher') navigate('/teacher')
-    else if (role === 'student') navigate('/student')
-    else if (role === 'parent') navigate('/parent')
+    navigate(`/login?role=${role}`)
   }
 
   const roleColors: Record<Role, { bg: string; text: string; label: string; icon: string }> = {
@@ -145,7 +135,7 @@ export function RoleSwitcher() {
                 color: 'var(--color-text-secondary)',
               }}
             >
-              Active: {DEMO_PROFILES[currentRole]?.full_name}
+              Active: {profile?.full_name || currentRole}
             </div>
           </div>
         </>

@@ -1,6 +1,5 @@
 import { useState, useMemo, useEffect } from 'react'
 import { Link, useNavigate, useLocation } from 'react-router-dom'
-import { useAuthContext } from '@/features/auth/AuthContext'
 import { usePWAInstall } from '@/hooks/usePWAInstall'
 import { useIsMobile } from '@/hooks/useMediaQuery'
 import { PWAInstallBanner } from '@/components/shared/PWAInstallBanner'
@@ -271,7 +270,6 @@ const TESTIMONIALS = [
 
 export function Landing() {
   const isMobile = useIsMobile(768)
-  const { signInAsDemo } = useAuthContext()
   const { isInstalled, promptInstall } = usePWAInstall()
   const location = useLocation()
   const navigate = useNavigate()
@@ -613,15 +611,7 @@ export function Landing() {
 
   const handleLaunchRole = (role: Role) => {
     setShowPortalDesksModal(false)
-    if (role === 'admin') {
-      navigate('/login?role=admin')
-      return
-    }
-    signInAsDemo(role)
-    if (role === 'bursar') navigate('/bursar')
-    else if (role === 'teacher') navigate('/teacher')
-    else if (role === 'parent') navigate('/parent')
-    else navigate('/student')
+    navigate(`/login?role=${role}`)
   }
 
   const scrollToTop = () => {

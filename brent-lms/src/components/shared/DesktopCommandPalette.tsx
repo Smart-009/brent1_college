@@ -1,6 +1,5 @@
 import { useState, useEffect, useMemo } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { useAuthContext } from '@/features/auth/AuthContext'
 
 interface PaletteItem {
   id: string
@@ -14,7 +13,6 @@ export function DesktopCommandPalette() {
   const [isOpen, setIsOpen] = useState(false)
   const [search, setSearch] = useState('')
   const navigate = useNavigate()
-  const { signInAsDemo } = useAuthContext()
 
   // Keyboard shortcut listener for Ctrl+K / Cmd+K
   useEffect(() => {
@@ -104,8 +102,8 @@ export function DesktopCommandPalette() {
     },
     {
       id: 'role-admin',
-      title: 'Switch Role: Principal / Admin Executive',
-      category: 'Role Switcher',
+      title: 'Principal / Admin Login',
+      category: 'Workstations',
       icon: '🛡️',
       action: () => {
         navigate('/login?role=admin')
@@ -114,49 +112,45 @@ export function DesktopCommandPalette() {
     },
     {
       id: 'role-bursar',
-      title: 'Switch Role: Bursar & Admissions Desk',
-      category: 'Role Switcher',
+      title: 'Bursar & Admissions Desk Login',
+      category: 'Workstations',
       icon: '💼',
       action: () => {
-        signInAsDemo('bursar')
-        navigate('/bursar')
+        navigate('/login?role=bursar')
         setIsOpen(false)
       },
     },
     {
       id: 'role-teacher',
-      title: 'Switch Role: Faculty / Teacher',
-      category: 'Role Switcher',
+      title: 'Faculty / Teacher Login',
+      category: 'Workstations',
       icon: '👩‍🏫',
       action: () => {
-        signInAsDemo('teacher')
-        navigate('/teacher')
+        navigate('/login?role=teacher')
         setIsOpen(false)
       },
     },
     {
       id: 'role-student',
-      title: 'Switch Role: Student Portal',
-      category: 'Role Switcher',
+      title: 'Student Portal Login',
+      category: 'Workstations',
       icon: '🎓',
       action: () => {
-        signInAsDemo('student')
-        navigate('/student')
+        navigate('/login?role=student')
         setIsOpen(false)
       },
     },
     {
       id: 'role-parent',
-      title: 'Switch Role: Parent / Sponsor',
-      category: 'Role Switcher',
+      title: 'Parent / Sponsor Login',
+      category: 'Workstations',
       icon: '👨‍👩‍👧',
       action: () => {
-        signInAsDemo('parent')
-        navigate('/parent')
+        navigate('/login?role=parent')
         setIsOpen(false)
       },
     },
-  ], [navigate, signInAsDemo])
+  ], [navigate])
 
   const filteredItems = useMemo(() => {
     if (!search.trim()) return items
