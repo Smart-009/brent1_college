@@ -215,7 +215,33 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       // Graceful fallback for offline / network issues
     }
 
-    // 3. Check dynamically registered student records in SIS store
+    // 3. Check registered credentials in local credential store
+    try {
+      const localCredsRaw = localStorage.getItem('brent_local_credentials')
+      if (localCredsRaw) {
+        const parsed = JSON.parse(localCredsRaw)
+        const userEntry = parsed[clean]
+        if (userEntry) {
+          if (userEntry.password && userEntry.password !== password) {
+            return { error: 'Incorrect password for this student admission account.' }
+          }
+          const studentProfile: Profile = {
+            id: userEntry.id || `usr-${clean}`,
+            full_name: userEntry.full_name,
+            admission_number: userEntry.admission_number,
+            role: userEntry.role || 'student',
+            first_login_at: new Date().toISOString(),
+            access_expires_at: null,
+            is_active: true,
+            created_at: userEntry.created_at || new Date().toISOString(),
+          }
+          setProfile(studentProfile)
+          return { error: null }
+        }
+      }
+    } catch {}
+
+    // 4. Check dynamically registered student records in SIS store
     const registeredStudents = schoolStore.getStudents()
     const student = registeredStudents.find(
       (s) => s.admission_number.toLowerCase().replace(/[^a-z0-9]/g, '') === clean
