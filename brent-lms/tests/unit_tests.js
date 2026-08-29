@@ -218,3 +218,154 @@ test('E-Library: Supported Document Formats Validation', () => {
   assert.ok(allowedExtensions.includes(ext2))
   assert.ok(allowedExtensions.includes(ext3))
 })
+
+// ============================================================
+// 5. BIOMETRIC FINGERPRINT & FEE CLEARANCE VERIFICATION SUITE
+// ============================================================
+
+function generateBiometricTemplate(studentId, admissionNumber, fingerName) {
+  const seed = `${studentId}:${admissionNumber}:${fingerName}:BRENT_SECURITY_V1`
+  let hash1 = 0x811c9dc5
+  let hash2 = 0x5bd1e995
+  for (let i = 0; i < seed.length; i++) {
+    const char = seed.charCodeAt(i)
+    hash1 ^= char
+    hash1 = Math.imul(hash1, 0x01000193)
+    hash2 ^= char
+    hash2 = (hash2 << 5) | (hash2 >>> 27)
+  }
+  const hex1 = Math.abs(hash1).toString(16).padStart(8, '0')
+  const hex2 = Math.abs(hash2).toString(16).padStart(8, '0')
+  const hex3 = Math.abs((hash1 ^ hash2) >>> 0).toString(16).padStart(8, '0')
+  return `BIO-FP-${hex1.toUpperCase()}-${hex2.toUpperCase()}-${hex3.toUpperCase()}`
+}
+
+function generateBiometricVerificationCode() {
+  const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'
+  const rand = (n) =>
+    Array.from({ length: n }, () => chars[Math.floor(Math.random() * chars.length)]).join('')
+  return `BIO-AUTH-${rand(4)}-${rand(4)}`
+}
+
+function generateClearanceSecurityHash(studentId, passCode, feeStatus) {
+  const raw = `${studentId}:${passCode}:${feeStatus}:${new Date().getFullYear()}:BRENT_FIN_CLEARANCE`
+  let h = 0
+  for (let i = 0; i < raw.length; i++) {
+    h = (Math.imul(31, h) + raw.charCodeAt(i)) | 0
+  }
+  return `BC-SEC-${Math.abs(h).toString(16).toUpperCase().padStart(8, '0')}`
+}
+
+function evaluateFeeClearance(student) {
+  const feeBalance = Number(student.fee_balance || 0)
+  const totalBilled = Number(student.term_fee_total || 4500)
+  const amountPaid = Math.max(0, totalBilled - feeBalance)
+  const paymentPercentage = totalBilled > 0 ? Math.round((amountPaid / totalBilled) * 100) : 100
+
+  if (feeBalance <= 0) {
+    return {
+      status: 'CLEARED',
+      isCleared: true,
+      canIssuePass: true,
+      message: 'Tuition fees 100% cleared. Unrestricted exam and lecture access granted.',
+      badgeColor: '#16a34a',
+      paymentPercentage: 100,
+    }
+  }
+
+  if (paymentPercentage >= 75) {
+    return {
+      status: 'CONDITIONAL',
+      isCleared: false,
+      canIssuePass: true,
+      message: `Conditional clearance granted (${paymentPercentage}% paid). Balance KES ${feeBalance.toLocaleString()} must be settled before final project submission.`,
+      badgeColor: '#d97706',
+      paymentPercentage,
+    }
+  }
+
+  return {
+    status: 'BLOCKED',
+    isCleared: false,
+    canIssuePass: false,
+    message: `Fee clearance denied (${paymentPercentage}% paid). Minimum 75% payment required to sit for assessments. Outstanding: KES ${feeBalance.toLocaleString()}.`,
+    badgeColor: '#dc2626',
+    paymentPercentage,
+  }
+}
+
+test('Biometrics: Template Hash Determinism & Format', () => {
+  const stdId = 'std-2026-001'
+  const admNo = 'BC-2026-001'
+  const finger = 'Right Thumb'
+
+  const hash1 = generateBiometricTemplate(stdId, admNo, finger)
+  const hash2 = generateBiometricTemplate(stdId, admNo, finger)
+  const hashOtherFinger = generateBiometricTemplate(stdId, admNo, 'Left Index')
+
+  assert.equal(hash1, hash2, 'Biometric template hash must be deterministic for identical parameters')
+  assert.notEqual(hash1, hashOtherFinger, 'Different fingers must produce distinct hashes')
+  assert.match(hash1, /^BIO-FP-[0-9A-F]{8}-[0-9A-F]{8}-[0-9A-F]{8}$/, 'Hash must follow standard security template format')
+})
+
+test('Biometrics: Verification Authorization Code Format', () => {
+  const authCode = generateBiometricVerificationCode()
+  assert.match(authCode, /^BIO-AUTH-[A-Z0-9]{4}-[A-Z0-9]{4}$/)
+})
+
+test('Biometrics: Clearance Security Hash Integrity', () => {
+  const hash = generateClearanceSecurityHash('std-123', 'PASS-999', 'CLEARED')
+  assert.match(hash, /^BC-SEC-[0-9A-F]{8}$/)
+})
+
+test('Biometrics: Fee Clearance Evaluation Rules (Fully Cleared)', () => {
+  const student = {
+    id: 'std-1',
+    full_name: 'Abdi Hassan',
+    admission_number: 'BC-2026-001',
+    fee_balance: 0,
+    term_fee_total: 15000,
+    biometric_enrolled: true,
+  }
+
+  const result = evaluateFeeClearance(student)
+  assert.equal(result.status, 'CLEARED')
+  assert.equal(result.isCleared, true)
+  assert.equal(result.canIssuePass, true)
+  assert.equal(result.paymentPercentage, 100)
+})
+
+test('Biometrics: Fee Clearance Evaluation Rules (Conditional 75%+ Paid)', () => {
+  const student = {
+    id: 'std-2',
+    full_name: 'Fatima Omar',
+    admission_number: 'BC-2026-002',
+    fee_balance: 3000,
+    term_fee_total: 15000, // 12000 paid = 80%
+    biometric_enrolled: true,
+  }
+
+  const result = evaluateFeeClearance(student)
+  assert.equal(result.status, 'CONDITIONAL')
+  assert.equal(result.isCleared, false)
+  assert.equal(result.canIssuePass, true)
+  assert.equal(result.paymentPercentage, 80)
+})
+
+test('Biometrics: Fee Clearance Evaluation Rules (Blocked < 75% Paid)', () => {
+  const student = {
+    id: 'std-3',
+    full_name: 'Kevin Otieno',
+    admission_number: 'BC-2026-003',
+    fee_balance: 10000,
+    term_fee_total: 15000, // 5000 paid = 33%
+    biometric_enrolled: true,
+  }
+
+  const result = evaluateFeeClearance(student)
+  assert.equal(result.status, 'BLOCKED')
+  assert.equal(result.isCleared, false)
+  assert.equal(result.canIssuePass, false)
+  assert.equal(result.paymentPercentage, 33)
+})
+

@@ -36,6 +36,11 @@ export interface StudentRecord {
   discipline_points: number
   merits_count: number
   demerits_count: number
+  biometric_enrolled?: boolean
+  biometric_finger_name?: 'Right Index' | 'Right Thumb' | 'Left Index' | 'Left Thumb' | 'Right Middle' | 'Left Middle'
+  biometric_template_hash?: string
+  biometric_enrolled_at?: string
+  biometric_enrolled_by?: string
 }
 
 export interface TimetablePeriod {
@@ -148,6 +153,29 @@ export interface FeePaymentReceipt {
   received_by?: string
   balance_after: number
   balance_remaining?: number
+  biometric_verified?: boolean
+  biometric_finger_used?: string
+  biometric_verification_code?: string
+  biometric_verified_at?: string
+}
+
+export interface BiometricFeeClearancePass {
+  id: string
+  clearance_code: string // e.g. "BRENT-BIO-2026-98124"
+  student_id: string
+  student_name: string
+  admission_number: string
+  class_name: string
+  fee_balance: number
+  total_billed: number
+  total_paid: number
+  status: 'CLEARED' | 'CONDITIONAL' | 'OVERDUE'
+  finger_scanned: string
+  match_confidence: number // e.g. 99.4%
+  verified_by: string
+  verified_at: string
+  purpose: 'Exam Entry' | 'Lab Clearance' | 'Certificate Collection' | 'Financial Audit' | 'Registration Clearance'
+  security_hash: string
 }
 
 export interface AcademicResource {

@@ -1,6 +1,8 @@
 import { useState, useMemo } from 'react'
 import { schoolStore } from '@/lib/schoolData'
 import type { StudentRecord, PaymentReminder } from '@/types/school'
+import { BiometricEnrollModal } from '@/components/biometrics/BiometricEnrollModal'
+import { BiometricScannerModal } from '@/components/biometrics/BiometricScannerModal'
 
 export function StudentDirectory() {
   const [students, setStudents] = useState<StudentRecord[]>(() => schoolStore.getStudents())
@@ -17,9 +19,13 @@ export function StudentDirectory() {
   const [searchTerm, setSearchTerm] = useState('')
   const [classFilter, setClassFilter] = useState('All')
   const [feeFilter, setFeeFilter] = useState('All')
+  const [biometricFilter, setBiometricFilter] = useState<'All' | 'Enrolled' | 'Not Enrolled'>('All')
   const [selectedStudent, setSelectedStudent] = useState<StudentRecord | null>(null)
   const [editingStudent, setEditingStudent] = useState<StudentRecord | null>(null)
   const [showAddModal, setShowAddModal] = useState(false)
+  const [showEnrollModal, setShowEnrollModal] = useState(false)
+  const [studentToEnroll, setStudentToEnroll] = useState<StudentRecord | null>(null)
+  const [showBiometricStation, setShowBiometricStation] = useState(false)
   const [reminderTarget, setReminderTarget] = useState<StudentRecord | null>(null)
   const [bulkReminderSuccess, setBulkReminderSuccess] = useState<string | null>(null)
 
@@ -62,9 +68,14 @@ export function StudentDirectory() {
         (feeFilter === 'Cleared' && s.fee_balance === 0) ||
         (feeFilter === 'Outstanding' && s.fee_balance > 0)
 
-      return matchSearch && matchClass && matchFee
+      const matchBiometric =
+        biometricFilter === 'All' ||
+        (biometricFilter === 'Enrolled' && s.biometric_enrolled) ||
+        (biometricFilter === 'Not Enrolled' && !s.biometric_enrolled)
+
+      return matchSearch && matchClass && matchFee && matchBiometric
     })
-  }, [students, searchTerm, classFilter, feeFilter])
+  }, [students, searchTerm, classFilter, feeFilter, biometricFilter])
 
   // --- Excel / CSV Export ---
   const handleExportExcel = () => {
@@ -248,10 +259,18 @@ export function StudentDirectory() {
         <div>
           <h1 className="page-title">Student Information System (SIS)</h1>
           <p className="page-subtitle">
-            Comprehensive college student directory, guardian contacts, program enrollments, and fee accounts.
+            Comprehensive college student directory, guardian contacts, program enrollments, fee accounts, and biometric security registry.
           </p>
         </div>
         <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.75rem' }}>
+          <button
+            type="button"
+            className="btn btn-primary"
+            style={{ background: '#0284c7', borderColor: '#0284c7', display: 'flex', alignItems: 'center', gap: '0.4rem' }}
+            onClick={() => setShowBiometricStation(true)}
+          >
+            <span>🖐️</span> Biometric Fee Verification
+          </button>
           <button
             type="button"
             className="btn btn-secondary"
@@ -306,12 +325,14 @@ export function StudentDirectory() {
           </div>
         </div>
 
-        <div className="card" style={{ padding: '1.25rem', borderLeft: '4px solid #7c3aed' }}>
-          <div style={{ fontSize: '0.8rem', color: 'var(--color-text-secondary)', fontWeight: 600 }}>Average Lecture Attendance</div>
-          <div style={{ fontSize: '1.85rem', fontWeight: 700, color: '#7c3aed', marginTop: '0.25rem' }}>
-            {students.length > 0 ? Math.round(students.reduce((acc, s) => acc + s.attendance_rate, 0) / students.length) : 100}%
+        <div className="card" style={{ padding: '1.25rem', borderLeft: '4px solid #0284c7' }}>
+          <div style={{ fontSize: '0.8rem', color: 'var(--color-text-secondary)', fontWeight: 600 }}>Biometric Fingerprints</div>
+          <div style={{ fontSize: '1.85rem', fontWeight: 700, color: '#0284c7', marginTop: '0.25rem' }}>
+            {students.filter((s) => s.biometric_enrolled).length}
           </div>
-          <div style={{ fontSize: '0.75rem', color: 'var(--color-text-secondary)', marginTop: '0.2rem' }}>Semester 1 Average</div>
+          <div style={{ fontSize: '0.75rem', color: '#0284c7', marginTop: '0.2rem' }}>
+            {students.length > 0 ? Math.round((students.filter((s) => s.biometric_enrolled).length / students.length) * 100) : 0}% Enrolled
+          </div>
         </div>
 
         <div className="card" style={{ padding: '1.25rem', borderLeft: '4px solid #ea580c' }}>
@@ -327,7 +348,7 @@ export function StudentDirectory() {
 
       {/* Filter and Search Bar */}
       <div className="card mb-6" style={{ padding: '1rem' }}>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '0.75rem' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '0.75rem' }}>
           <div>
             <label className="label" style={{ fontSize: '0.75rem' }}>Search Student, Admission # or Guardian</label>
             <input
@@ -365,6 +386,19 @@ export function StudentDirectory() {
               <option value="Outstanding">Has Outstanding Balance</option>
             </select>
           </div>
+
+          <div>
+            <label className="label" style={{ fontSize: '0.75rem' }}>Biometric Registry</label>
+            <select
+              className="input"
+              value={biometricFilter}
+              onChange={(e) => setBiometricFilter(e.target.value as any)}
+            >
+              <option value="All">All Students</option>
+              <option value="Enrolled">🟢 Biometrically Enrolled</option>
+              <option value="Not Enrolled">⚪ Not Enrolled</option>
+            </select>
+          </div>
         </div>
       </div>
 
@@ -377,6 +411,7 @@ export function StudentDirectory() {
                 <th>Adm No.</th>
                 <th>Student Name</th>
                 <th>Program & Year</th>
+                <th>Biometrics</th>
                 <th>Guardian Contact</th>
                 <th>Attendance</th>
                 <th>Fee Status</th>
@@ -386,7 +421,7 @@ export function StudentDirectory() {
             <tbody>
               {filteredStudents.length === 0 ? (
                 <tr>
-                  <td colSpan={7} style={{ textAlign: 'center', padding: '3rem', color: 'var(--color-text-secondary)' }}>
+                  <td colSpan={8} style={{ textAlign: 'center', padding: '3rem', color: 'var(--color-text-secondary)' }}>
                     No student records found. Click "+ Register New Student" to add a student to the directory.
                   </td>
                 </tr>
@@ -401,6 +436,27 @@ export function StudentDirectory() {
                     <td>
                       <div className="badge badge-info">{std.class_name}</div>
                       <div style={{ fontSize: '0.72rem', color: 'var(--color-text-secondary)', marginTop: '2px' }}>{std.grade_level}</div>
+                    </td>
+                    <td>
+                      {std.biometric_enrolled ? (
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
+                          <span className="badge badge-success" style={{ fontSize: '0.72rem' }}>
+                            🟢 {std.biometric_finger_name || 'Enrolled'}
+                          </span>
+                        </div>
+                      ) : (
+                        <button
+                          type="button"
+                          className="btn btn-xs btn-secondary"
+                          style={{ fontSize: '0.7rem', color: '#0284c7', borderColor: '#bae6fd' }}
+                          onClick={() => {
+                            setStudentToEnroll(std)
+                            setShowEnrollModal(true)
+                          }}
+                        >
+                          🖐️ Enroll
+                        </button>
+                      )}
                     </td>
                     <td>
                       <div style={{ fontSize: '0.85rem', fontWeight: 500 }}>{std.guardian.name} ({std.guardian.relationship})</div>
@@ -571,6 +627,54 @@ export function StudentDirectory() {
                   <div><strong>Merit Commendations:</strong> ⭐ {selectedStudent.merits_count} awarded</div>
                   <div><strong>Demerit Points:</strong> ⚠️ {selectedStudent.demerits_count} recorded</div>
                   <div><strong>Dean’s Standing:</strong> <span className="badge badge-info">Honors Standing</span></div>
+                </div>
+              </div>
+
+              {/* Biometric Security & Fingerprint Registry Card */}
+              <div className="card" style={{ padding: '1rem', borderLeft: '4px solid #0284c7' }}>
+                <h4 style={{ fontSize: '0.9rem', fontWeight: 700, marginBottom: '0.75rem', color: '#0284c7' }}>
+                  🖐️ Biometric Security & Fee Clearance Registry
+                </h4>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', fontSize: '0.85rem' }}>
+                  <div>
+                    <strong>Enrollment Status:</strong>{' '}
+                    {selectedStudent.biometric_enrolled ? (
+                      <span className="badge badge-success">✓ Active & Enrolled</span>
+                    ) : (
+                      <span className="badge badge-danger">Not Enrolled</span>
+                    )}
+                  </div>
+                  {selectedStudent.biometric_enrolled ? (
+                    <>
+                      <div><strong>Primary Finger:</strong> 🖐️ {selectedStudent.biometric_finger_name || 'Right Index'}</div>
+                      <div><strong>Enrolled Date:</strong> {selectedStudent.biometric_enrolled_at ? new Date(selectedStudent.biometric_enrolled_at).toLocaleDateString() : 'Active'}</div>
+                      <div><strong>Enrolled Officer:</strong> {selectedStudent.biometric_enrolled_by || 'Bursar Desk'}</div>
+                      <div>
+                        <strong>Template Hash:</strong>{' '}
+                        <code style={{ fontSize: '0.75rem', wordBreak: 'break-all' }}>
+                          {selectedStudent.biometric_template_hash?.slice(0, 24)}...
+                        </code>
+                      </div>
+                    </>
+                  ) : (
+                    <div style={{ color: '#64748b', fontSize: '0.8rem', marginTop: '0.2rem' }}>
+                      No fingerprint recorded yet. Student must enroll biometrics for instant exam sitting clearance and fee payment verification.
+                    </div>
+                  )}
+
+                  <div style={{ marginTop: '0.5rem' }}>
+                    <button
+                      type="button"
+                      className="btn btn-sm btn-primary"
+                      style={{ background: '#0284c7', borderColor: '#0284c7', width: '100%' }}
+                      onClick={() => {
+                        setStudentToEnroll(selectedStudent)
+                        setShowEnrollModal(true)
+                      }}
+                    >
+                      {selectedStudent.biometric_enrolled ? '🖐️ Re-scan & Update Fingerprint' : '🖐️ Enroll Student Fingerprint'}
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>
@@ -979,6 +1083,32 @@ export function StudentDirectory() {
             </form>
           </div>
         </div>
+      )}
+
+      {/* Biometric Student Enrollment Modal */}
+      {showEnrollModal && studentToEnroll && (
+        <BiometricEnrollModal
+          student={studentToEnroll}
+          officerName="Registrar Desk"
+          onClose={() => {
+            setShowEnrollModal(false)
+            setStudentToEnroll(null)
+          }}
+          onEnrolled={(updated) => {
+            setStudents(schoolStore.getStudents())
+            if (selectedStudent && selectedStudent.id === updated.id) {
+              setSelectedStudent(updated)
+            }
+          }}
+        />
+      )}
+
+      {/* Biometric Scanner Terminal Modal */}
+      {showBiometricStation && (
+        <BiometricScannerModal
+          officerName="Registrar Desk"
+          onClose={() => setShowBiometricStation(false)}
+        />
       )}
     </div>
   )

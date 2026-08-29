@@ -18,9 +18,11 @@ import type {
   UnitRegistrationReceipt,
   CollegeDepartment,
   CollegeSubject,
+  BiometricFeeClearancePass,
 } from '@/types/school'
 import { txEngine, IntegrityError } from './transactionManager'
 import { schoolEventBus } from './eventBus'
+import { generateBiometricTemplate } from './biometricEngine'
 
 // Clean initial state (Zero seeded mock records)
 export const INITIAL_STUDENTS: StudentRecord[] = []
@@ -894,6 +896,81 @@ class SchoolDataStore {
     )
   }
 
+  // --- Biometric Security & Fingerprint Verification (ACID Protected) ---
+  async enrollStudentBiometric(
+    studentId: string,
+    fingerName: 'Right Index' | 'Right Thumb' | 'Left Index' | 'Left Thumb' | 'Right Middle' | 'Left Middle',
+    enrolledBy = 'Admissions / Bursar Officer'
+  ): Promise<StudentRecord> {
+    let updatedStudent: StudentRecord | null = null
+    await txEngine.executeAtomic(
+      `ENROLL_BIOMETRIC_${studentId}`,
+      ['brent_school_students'],
+      () => {
+        const list = this.getStudents()
+        const idx = list.findIndex((s) => s.id === studentId)
+        if (idx === -1) throw new IntegrityError(`Student ID "${studentId}" not found for biometric enrollment.`)
+
+        const student = list[idx]
+        const templateHash = generateBiometricTemplate(student.admission_number, fingerName)
+        const now = new Date().toISOString()
+
+        list[idx] = {
+          ...student,
+          biometric_enrolled: true,
+          biometric_finger_name: fingerName,
+          biometric_template_hash: templateHash,
+          biometric_enrolled_at: now,
+          biometric_enrolled_by: enrolledBy,
+        }
+        updatedStudent = list[idx]
+        this.set('students', list)
+      }
+    )
+
+    schoolEventBus.publish('STUDENT_UPDATED', updatedStudent)
+    return updatedStudent!
+  }
+
+  async removeStudentBiometric(studentId: string): Promise<void> {
+    await txEngine.executeAtomic(
+      `REMOVE_BIOMETRIC_${studentId}`,
+      ['brent_school_students'],
+      () => {
+        const list = this.getStudents()
+        const idx = list.findIndex((s) => s.id === studentId)
+        if (idx !== -1) {
+          list[idx] = {
+            ...list[idx],
+            biometric_enrolled: false,
+            biometric_finger_name: undefined,
+            biometric_template_hash: undefined,
+            biometric_enrolled_at: undefined,
+            biometric_enrolled_by: undefined,
+          }
+          this.set('students', list)
+        }
+      }
+    )
+    schoolEventBus.publish('STUDENT_UPDATED')
+  }
+
+  getBiometricClearanceLogs(): BiometricFeeClearancePass[] {
+    return this.get<BiometricFeeClearancePass[]>('biometric_passes', [])
+  }
+
+  async saveBiometricClearanceLog(pass: BiometricFeeClearancePass): Promise<void> {
+    await txEngine.executeAtomic(
+      `SAVE_CLEARANCE_PASS_${pass.clearance_code}`,
+      ['brent_school_biometric_passes'],
+      () => {
+        const list = this.getBiometricClearanceLogs()
+        list.unshift(pass)
+        this.set('biometric_passes', list)
+      }
+    )
+  }
+
   // --- Complete Factory Reset ---
   resetToCleanSlate() {
     localStorage.removeItem('brent_school_students')
@@ -911,6 +988,7 @@ class SchoolDataStore {
     localStorage.removeItem('brent_school_unit_registrations')
     localStorage.removeItem('brent_school_departments')
     localStorage.removeItem('brent_school_subjects')
+    localStorage.removeItem('brent_school_biometric_passes')
   }
 }
 

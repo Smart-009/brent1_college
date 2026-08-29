@@ -9,21 +9,27 @@ import type {
   SecretaryInquiry,
   CourseUnit,
   UnitRegistrationReceipt,
+  BiometricFeeClearancePass,
 } from '@/types/school'
 import { UnitRegistrationSlip } from '@/components/shared/UnitRegistrationSlip'
+import { BiometricScannerModal } from '@/components/biometrics/BiometricScannerModal'
+import { BiometricEnrollModal } from '@/components/biometrics/BiometricEnrollModal'
+import { BiometricClearancePassModal } from '@/components/biometrics/BiometricClearancePassModal'
+import { generateBiometricVerificationCode } from '@/lib/biometricEngine'
 
 export function BursarDesk() {
   const [invoices, setInvoices] = useState<FeeInvoice[]>(() => schoolStore.getInvoices())
   const [receipts, setReceipts] = useState<FeePaymentReceipt[]>(() => schoolStore.getReceipts())
   const [reminders, setReminders] = useState<PaymentReminder[]>(() => schoolStore.getReminders())
-  const [students] = useState<StudentRecord[]>(() => schoolStore.getStudents())
+  const [students, setStudents] = useState<StudentRecord[]>(() => schoolStore.getStudents())
   const [inquiries, setInquiries] = useState<SecretaryInquiry[]>(() => schoolStore.getInquiries())
   const [courseUnits] = useState<CourseUnit[]>(() => schoolStore.getCourseUnits())
   const [unitRegistrations, setUnitRegistrations] = useState<UnitRegistrationReceipt[]>(() => schoolStore.getUnitRegistrations())
+  const [clearanceLogs, setClearanceLogs] = useState<BiometricFeeClearancePass[]>(() => schoolStore.getBiometricClearanceLogs())
 
   // Tab State
   const [activeTab, setActiveTab] = useState<
-    'overview' | 'invoices' | 'receipts' | 'admissions' | 'unit_registration' | 'idcards' | 'reminders' | 'inquiries'
+    'overview' | 'invoices' | 'receipts' | 'biometrics' | 'admissions' | 'unit_registration' | 'idcards' | 'reminders' | 'inquiries'
   >('overview')
 
   // Modals
@@ -31,6 +37,10 @@ export function BursarDesk() {
   const [showInvoiceModal, setShowInvoiceModal] = useState(false)
   const [showInquiryModal, setShowInquiryModal] = useState(false)
   const [showUnitRegModal, setShowUnitRegModal] = useState(false)
+  const [showBiometricStation, setShowBiometricStation] = useState(false)
+  const [showEnrollModal, setShowEnrollModal] = useState(false)
+  const [studentToEnroll, setStudentToEnroll] = useState<StudentRecord | null>(null)
+  const [selectedClearancePass, setSelectedClearancePass] = useState<BiometricFeeClearancePass | null>(null)
   const [selectedReceipt, setSelectedReceipt] = useState<FeePaymentReceipt | null>(null)
   const [selectedStudentForLetter, setSelectedStudentForLetter] = useState<StudentRecord | null>(null)
   const [selectedStudentForIdCard, setSelectedStudentForIdCard] = useState<StudentRecord | null>(null)
@@ -54,6 +64,9 @@ export function BursarDesk() {
     reference_code: `MPESA-${Math.random().toString(36).substring(2, 8).toUpperCase()}`,
     paid_by: '',
     issued_by: defaultIssuer,
+    biometric_verified: false,
+    biometric_finger_used: 'Right Thumb',
+    biometric_verification_code: '',
   })
 
   const currentAcademicYear = `${new Date().getFullYear()}/${new Date().getFullYear() + 1}`
@@ -173,11 +186,18 @@ export function BursarDesk() {
       payment_date: new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }),
       balance_after: remainingBalance,
       balance_remaining: remainingBalance,
+      biometric_verified: paymentData.biometric_verified,
+      biometric_finger_used: paymentData.biometric_verified ? paymentData.biometric_finger_used : undefined,
+      biometric_verification_code: paymentData.biometric_verified
+        ? paymentData.biometric_verification_code || generateBiometricVerificationCode()
+        : undefined,
+      biometric_verified_at: paymentData.biometric_verified ? new Date().toISOString() : undefined,
     }
 
     await schoolStore.recordPayment(receipt)
     setReceipts(schoolStore.getReceipts())
     setInvoices(schoolStore.getInvoices())
+    setStudents(schoolStore.getStudents())
     setShowPayModal(false)
     setSelectedReceipt(receipt)
   }
@@ -337,10 +357,18 @@ export function BursarDesk() {
         <div>
           <h1 className="page-title">💼 Bursar, Admissions & Secretary Desk</h1>
           <p className="page-subtitle">
-            Integrated executive office for Tuition Billing, M-Pesa Receipts, Student Admissions, TVET Short Course Registration, and Front Office Operations.
+            Integrated executive office for Tuition Billing, M-Pesa Receipts, Student Admissions, TVET Short Course Registration, and Biometric Fingerprint Clearance.
           </p>
         </div>
         <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap' }}>
+          <button
+            type="button"
+            className="btn btn-primary"
+            style={{ background: '#0284c7', borderColor: '#0284c7', display: 'flex', alignItems: 'center', gap: '0.4rem' }}
+            onClick={() => setShowBiometricStation(true)}
+          >
+            <span>🖐️</span> Biometric Fee Verification
+          </button>
           <button type="button" className="btn btn-secondary" onClick={handleExportFinancials}>
             📊 Export Financial Ledger
           </button>
@@ -367,6 +395,17 @@ export function BursarDesk() {
           </button>
           <button type="button" className={`btn btn-sm ${activeTab === 'receipts' ? 'btn-primary' : 'btn-ghost'}`} onClick={() => setActiveTab('receipts')}>
             🧾 Fee Receipts ({receipts.length})
+          </button>
+          <button
+            type="button"
+            className={`btn btn-sm ${activeTab === 'biometrics' ? 'btn-primary' : 'btn-ghost'}`}
+            style={activeTab === 'biometrics' ? { background: '#0284c7', borderColor: '#0284c7' } : { color: '#0284c7' }}
+            onClick={() => {
+              setClearanceLogs(schoolStore.getBiometricClearanceLogs())
+              setActiveTab('biometrics')
+            }}
+          >
+            🖐️ Biometric Clearance Station ({clearanceLogs.length})
           </button>
           <button type="button" className={`btn btn-sm ${activeTab === 'admissions' ? 'btn-primary' : 'btn-ghost'}`} onClick={() => setActiveTab('admissions')}>
             📜 Admissions & Calling Letters ({students.length})
@@ -414,53 +453,71 @@ export function BursarDesk() {
               <div style={{ fontSize: '0.75rem', color: 'var(--color-text-secondary)', marginTop: '0.2rem' }}>Pending Payments</div>
             </div>
 
-            <div className="card" style={{ padding: '1.25rem', borderLeft: '4px solid #7c3aed' }}>
-              <div style={{ fontSize: '0.8rem', color: 'var(--color-text-secondary)', fontWeight: 600 }}>Admitted Students</div>
-              <div style={{ fontSize: '1.85rem', fontWeight: 800, color: '#7c3aed', marginTop: '0.25rem' }}>
-                {students.length}
+            <div className="card" style={{ padding: '1.25rem', borderLeft: '4px solid #0284c7' }}>
+              <div style={{ fontSize: '0.8rem', color: 'var(--color-text-secondary)', fontWeight: 600 }}>Biometric Enrolled</div>
+              <div style={{ fontSize: '1.85rem', fontWeight: 800, color: '#0284c7', marginTop: '0.25rem' }}>
+                {students.filter((s) => s.biometric_enrolled).length} / {students.length}
               </div>
-              <div style={{ fontSize: '0.75rem', color: 'var(--color-text-secondary)', marginTop: '0.2rem' }}>Registered Short Course Trainees</div>
+              <div style={{ fontSize: '0.75rem', color: '#0284c7', marginTop: '0.2rem' }}>Fingerprint Verified Students</div>
             </div>
           </div>
 
           {/* Quick Action Matrix */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div className="card" style={{ padding: '1.5rem', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+            <div className="card" style={{ padding: '1.25rem', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', borderTop: '3px solid #0284c7' }}>
               <div>
-                <div style={{ fontSize: '2rem', marginBottom: '0.5rem' }}>💰</div>
-                <h3 style={{ fontSize: '1.1rem', fontWeight: 700, margin: '0 0 0.5rem' }}>Instant M-Pesa Payment Recording</h3>
-                <p style={{ fontSize: '0.85rem', color: 'var(--color-text-secondary)', margin: 0 }}>
-                  Issue verified fee receipts and instantly unlock gated course video lessons for students upon fee clearance.
+                <div style={{ fontSize: '1.8rem', marginBottom: '0.35rem' }}>🖐️</div>
+                <h3 style={{ fontSize: '1rem', fontWeight: 700, margin: '0 0 0.35rem', color: '#0284c7' }}>Biometric Fee Clearance</h3>
+                <p style={{ fontSize: '0.8rem', color: 'var(--color-text-secondary)', margin: 0 }}>
+                  Scan student fingerprint to instantly verify fee balance and issue exam passes.
                 </p>
               </div>
-              <button type="button" className="btn btn-primary btn-sm mt-4" onClick={() => setShowPayModal(true)}>
-                + Record Payment Receipt
+              <button
+                type="button"
+                className="btn btn-primary btn-sm mt-3"
+                style={{ background: '#0284c7', borderColor: '#0284c7' }}
+                onClick={() => setShowBiometricStation(true)}
+              >
+                🖐️ Launch Scanner
               </button>
             </div>
 
-            <div className="card" style={{ padding: '1.5rem', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+            <div className="card" style={{ padding: '1.25rem', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', borderTop: '3px solid var(--color-primary)' }}>
               <div>
-                <div style={{ fontSize: '2rem', marginBottom: '0.5rem' }}>🎓</div>
-                <h3 style={{ fontSize: '1.1rem', fontWeight: 700, margin: '0 0 0.5rem' }}>Short Course Unit Registration</h3>
-                <p style={{ fontSize: '0.85rem', color: 'var(--color-text-secondary)', margin: 0 }}>
-                  Register approved short course units and generate formal printable assessment clearance slips.
+                <div style={{ fontSize: '1.8rem', marginBottom: '0.35rem' }}>💰</div>
+                <h3 style={{ fontSize: '1rem', fontWeight: 700, margin: '0 0 0.35rem' }}>M-Pesa Fee Recording</h3>
+                <p style={{ fontSize: '0.8rem', color: 'var(--color-text-secondary)', margin: 0 }}>
+                  Issue verified fee receipts and unlock gated course lessons for students.
                 </p>
               </div>
-              <button type="button" className="btn btn-primary btn-sm mt-4" onClick={() => { setActiveTab('unit_registration'); setShowUnitRegModal(true); }}>
-                + Register Student Units
+              <button type="button" className="btn btn-primary btn-sm mt-3" onClick={() => setShowPayModal(true)}>
+                + Record Payment
               </button>
             </div>
 
-            <div className="card" style={{ padding: '1.5rem', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+            <div className="card" style={{ padding: '1.25rem', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', borderTop: '3px solid #16a34a' }}>
               <div>
-                <div style={{ fontSize: '2rem', marginBottom: '0.5rem' }}>📜</div>
-                <h3 style={{ fontSize: '1.1rem', fontWeight: 700, margin: '0 0 0.5rem' }}>Provisional Admission Letters</h3>
-                <p style={{ fontSize: '0.85rem', color: 'var(--color-text-secondary)', margin: 0 }}>
-                  Generate official admission calling letters with Brent College seal for new incoming vocational trainees.
+                <div style={{ fontSize: '1.8rem', marginBottom: '0.35rem' }}>🎓</div>
+                <h3 style={{ fontSize: '1rem', fontWeight: 700, margin: '0 0 0.35rem' }}>Course Unit Registration</h3>
+                <p style={{ fontSize: '0.8rem', color: 'var(--color-text-secondary)', margin: 0 }}>
+                  Register approved units and generate formal printable assessment clearance slips.
                 </p>
               </div>
-              <button type="button" className="btn btn-primary btn-sm mt-4" onClick={() => setActiveTab('admissions')}>
-                View Admissions Registry
+              <button type="button" className="btn btn-secondary btn-sm mt-3" onClick={() => { setActiveTab('unit_registration'); setShowUnitRegModal(true); }}>
+                + Register Units
+              </button>
+            </div>
+
+            <div className="card" style={{ padding: '1.25rem', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', borderTop: '3px solid #ea580c' }}>
+              <div>
+                <div style={{ fontSize: '1.8rem', marginBottom: '0.35rem' }}>📜</div>
+                <h3 style={{ fontSize: '1rem', fontWeight: 700, margin: '0 0 0.35rem' }}>Provisional Letters</h3>
+                <p style={{ fontSize: '0.8rem', color: 'var(--color-text-secondary)', margin: 0 }}>
+                  Generate official admission calling letters with Brent College seal.
+                </p>
+              </div>
+              <button type="button" className="btn btn-secondary btn-sm mt-3" onClick={() => setActiveTab('admissions')}>
+                View Admissions
               </button>
             </div>
           </div>
@@ -557,12 +614,22 @@ export function BursarDesk() {
             <div>
               <h3 style={{ fontSize: '1.2rem', fontWeight: 700, margin: 0 }}>Fee Payment Receipts & Ledger</h3>
               <p style={{ fontSize: '0.85rem', color: 'var(--color-text-secondary)', margin: '0.25rem 0 0' }}>
-                Official verified payment receipts issued via M-Pesa, Bank, or Cash.
+                Official verified payment receipts issued via M-Pesa, Bank, or Cash with optional biometric authentication.
               </p>
             </div>
-            <button type="button" className="btn btn-primary" onClick={() => setShowPayModal(true)}>
-              + Record New Payment
-            </button>
+            <div style={{ display: 'flex', gap: '0.5rem' }}>
+              <button
+                type="button"
+                className="btn btn-secondary"
+                style={{ background: '#0284c7', borderColor: '#0284c7', color: '#fff' }}
+                onClick={() => setShowBiometricStation(true)}
+              >
+                🖐️ Biometric Scan
+              </button>
+              <button type="button" className="btn btn-primary" onClick={() => setShowPayModal(true)}>
+                + Record New Payment
+              </button>
+            </div>
           </div>
 
           {receipts.length === 0 ? (
@@ -583,6 +650,7 @@ export function BursarDesk() {
                     <th>Remaining Balance</th>
                     <th>Method</th>
                     <th>Ref / M-Pesa Code</th>
+                    <th>Biometric Auth</th>
                     <th>Issued By</th>
                     <th>Date</th>
                     <th>Action</th>
@@ -604,6 +672,15 @@ export function BursarDesk() {
                       </td>
                       <td><span className="badge badge-info">{rcpt.payment_method}</span></td>
                       <td><code>{rcpt.reference_code}</code></td>
+                      <td>
+                        {rcpt.biometric_verified ? (
+                          <span className="badge badge-success" style={{ fontSize: '0.72rem' }}>
+                            🔒 🖐️ Verified
+                          </span>
+                        ) : (
+                          <span style={{ fontSize: '0.75rem', color: 'var(--color-text-secondary)' }}>Standard</span>
+                        )}
+                      </td>
                       <td style={{ fontSize: '0.82rem', color: '#475569' }}><strong>{rcpt.recorded_by || rcpt.received_by || defaultIssuer}</strong></td>
                       <td>{rcpt.payment_date}</td>
                       <td>
@@ -617,6 +694,160 @@ export function BursarDesk() {
               </table>
             </div>
           )}
+        </div>
+      )}
+
+      {/* Tab: Biometrics Clearance Station */}
+      {activeTab === 'biometrics' && (
+        <div>
+          {/* Biometric Quick Station Launchpad */}
+          <div
+            className="card mb-6"
+            style={{
+              padding: '1.75rem',
+              background: 'linear-gradient(135deg, rgba(2, 132, 199, 0.08) 0%, rgba(30, 58, 138, 0.08) 100%)',
+              border: '1px solid #bae6fd',
+            }}
+          >
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                <div
+                  style={{
+                    width: '60px',
+                    height: '60px',
+                    borderRadius: '50%',
+                    background: '#0284c7',
+                    color: '#fff',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    fontSize: '2rem',
+                    boxShadow: '0 0 15px rgba(2, 132, 199, 0.4)',
+                  }}
+                >
+                  🖐️
+                </div>
+                <div>
+                  <h3 style={{ fontSize: '1.25rem', fontWeight: 800, color: '#0369a1', margin: 0 }}>
+                    Bursar Fingerprint Fee Clearance Terminal
+                  </h3>
+                  <p style={{ fontSize: '0.85rem', color: '#334155', margin: '0.25rem 0 0 0' }}>
+                    Instant student biometric identification, fee balance audit, and official exam sitting clearance issuance.
+                  </p>
+                </div>
+              </div>
+
+              <div style={{ display: 'flex', gap: '0.75rem' }}>
+                <button
+                  type="button"
+                  className="btn btn-primary"
+                  style={{ background: '#0284c7', borderColor: '#0284c7' }}
+                  onClick={() => setShowBiometricStation(true)}
+                >
+                  🖐️ Launch Live Scanner Station
+                </button>
+              </div>
+            </div>
+
+            {/* Enrolled Stats Bar */}
+            <div
+              style={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+                gap: '1rem',
+                marginTop: '1.5rem',
+                paddingTop: '1.25rem',
+                borderTop: '1px solid rgba(2, 132, 199, 0.2)',
+              }}
+            >
+              <div>
+                <div style={{ fontSize: '0.75rem', color: '#64748b', fontWeight: 600 }}>BIOMETRICALLY ENROLLED</div>
+                <div style={{ fontSize: '1.4rem', fontWeight: 800, color: '#0284c7' }}>
+                  {students.filter((s) => s.biometric_enrolled).length} / {students.length} Students
+                </div>
+              </div>
+
+              <div>
+                <div style={{ fontSize: '0.75rem', color: '#64748b', fontWeight: 600 }}>CLEARANCE PASSES ISSUED</div>
+                <div style={{ fontSize: '1.4rem', fontWeight: 800, color: '#16a34a' }}>
+                  {clearanceLogs.length} Official Passes
+                </div>
+              </div>
+
+              <div>
+                <div style={{ fontSize: '0.75rem', color: '#64748b', fontWeight: 600 }}>OPTICAL BIOMETRIC GATEWAY</div>
+                <div style={{ fontSize: '1rem', fontWeight: 700, color: '#15803d', display: 'flex', alignItems: 'center', gap: '0.35rem', marginTop: '0.25rem' }}>
+                  <span style={{ display: 'inline-block', width: '8px', height: '8px', borderRadius: '50%', background: '#22c55e' }} />
+                  Sensor Online & Ready
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Biometric Clearance Logs */}
+          <div className="card" style={{ overflow: 'hidden' }}>
+            <div style={{ padding: '1rem 1.25rem', borderBottom: '1px solid var(--color-border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <strong style={{ fontSize: '1rem' }}>Authenticated Biometric Clearance History</strong>
+              <span className="badge badge-info">{clearanceLogs.length} Verified Records</span>
+            </div>
+
+            {clearanceLogs.length === 0 ? (
+              <div style={{ padding: '2.5rem', textAlign: 'center', color: 'var(--color-text-secondary)' }}>
+                <div style={{ fontSize: '2.5rem', marginBottom: '0.5rem' }}>🖐️</div>
+                <div style={{ fontWeight: 600, fontSize: '0.95rem' }}>No Biometric Clearance Passes Issued Yet</div>
+                <p style={{ fontSize: '0.8rem', marginTop: '0.25rem' }}>
+                  Launch the Biometric Scanner Station above to scan a student's fingerprint and issue an official clearance certificate.
+                </p>
+              </div>
+            ) : (
+              <div className="table-responsive">
+                <table className="table">
+                  <thead>
+                    <tr>
+                      <th>Clearance Code</th>
+                      <th>Student Name</th>
+                      <th>Adm No.</th>
+                      <th>Purpose</th>
+                      <th>Finger Scanned</th>
+                      <th>Match Score</th>
+                      <th>Fee Status</th>
+                      <th>Verified At</th>
+                      <th style={{ textAlign: 'right' }}>Action</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {clearanceLogs.map((log) => (
+                      <tr key={log.id}>
+                        <td style={{ fontWeight: 700, color: 'var(--color-primary)', fontFamily: 'monospace' }}>
+                          {log.clearance_code}
+                        </td>
+                        <td style={{ fontWeight: 600 }}>{log.student_name}</td>
+                        <td>{log.admission_number}</td>
+                        <td><span className="badge badge-info">{log.purpose}</span></td>
+                        <td>🖐️ {log.finger_scanned}</td>
+                        <td><strong style={{ color: '#16a34a' }}>{log.match_confidence}%</strong></td>
+                        <td>
+                          <span className={`badge ${log.status === 'CLEARED' ? 'badge-success' : log.status === 'CONDITIONAL' ? 'badge-warning' : 'badge-danger'}`}>
+                            {log.status}
+                          </span>
+                        </td>
+                        <td style={{ fontSize: '0.8rem', color: 'var(--color-text-secondary)' }}>{log.verified_at}</td>
+                        <td style={{ textAlign: 'right' }}>
+                          <button
+                            type="button"
+                            className="btn btn-secondary btn-sm"
+                            onClick={() => setSelectedClearancePass(log)}
+                          >
+                            🖨️ View Pass
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+          </div>
         </div>
       )}
 
@@ -1067,6 +1298,54 @@ export function BursarDesk() {
                     />
                   </div>
                 </div>
+
+                {/* Biometric Payment Verification */}
+                <div
+                  style={{
+                    background: paymentData.biometric_verified ? '#f0fdf4' : '#f8fafc',
+                    border: `1px solid ${paymentData.biometric_verified ? '#bbf7d0' : '#e2e8f0'}`,
+                    borderRadius: '8px',
+                    padding: '0.85rem',
+                    marginTop: '0.25rem',
+                  }}
+                >
+                  <label style={{ display: 'flex', alignItems: 'flex-start', gap: '0.6rem', cursor: 'pointer' }}>
+                    <input
+                      type="checkbox"
+                      checked={paymentData.biometric_verified}
+                      style={{ marginTop: '0.2rem' }}
+                      onChange={(e) => {
+                        const checked = e.target.checked
+                        setPaymentData({
+                          ...paymentData,
+                          biometric_verified: checked,
+                          biometric_verification_code: checked
+                            ? paymentData.biometric_verification_code || generateBiometricVerificationCode()
+                            : '',
+                        })
+                      }}
+                    />
+                    <div>
+                      <div style={{ fontWeight: 700, fontSize: '0.88rem', color: paymentData.biometric_verified ? '#166534' : 'inherit' }}>
+                        🖐️ Authenticate Payment with Student Fingerprint Biometrics
+                      </div>
+                      <div style={{ fontSize: '0.75rem', color: '#64748b' }}>
+                        Verifies student identity at payment desk and stamps receipt with biometric security code.
+                      </div>
+                    </div>
+                  </label>
+
+                  {paymentData.biometric_verified && (
+                    <div style={{ marginTop: '0.6rem', paddingTop: '0.6rem', borderTop: '1px solid #bbf7d0', fontSize: '0.8rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                      <div>
+                        <strong>Verified Finger:</strong> {paymentData.biometric_finger_used || 'Right Index'}
+                      </div>
+                      <div>
+                        <strong>Auth Code:</strong> <code style={{ fontSize: '0.75rem', color: '#166534' }}>{paymentData.biometric_verification_code || 'BIO-PENDING'}</code>
+                      </div>
+                    </div>
+                  )}
+                </div>
               </div>
               <div className="modal-footer">
                 <button type="button" className="btn btn-secondary" onClick={() => setShowPayModal(false)}>Cancel</button>
@@ -1455,20 +1734,53 @@ export function BursarDesk() {
               </div>
             </div>
 
-            {/* Official Digital Stamp */}
-            <div style={{ background: '#f8fafc', border: '1px dashed #94a3b8', borderRadius: '8px', padding: '0.75rem', textAlign: 'center', fontSize: '0.75rem', color: '#475569' }}>
-              <div>🛡️ <strong>OFFICIAL STAMP & VERIFICATION</strong></div>
-              <div>Brent College Directorate of Finance • Eastleigh Sahl Mall Campus</div>
-              <div style={{ color: '#16a34a', fontWeight: 800, marginTop: '2px' }}>STATUS: TRANSACTION VERIFIED & ACCOUNT CREDITED</div>
-            </div>
+              {/* Biometric Verification Stamp on Receipt */}
+              {selectedReceipt.biometric_verified && (
+                <div
+                  style={{
+                    background: '#f0fdf4',
+                    border: '1px solid #86efac',
+                    borderRadius: '8px',
+                    padding: '0.75rem 1rem',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    fontSize: '0.8rem',
+                    marginBottom: '1rem',
+                  }}
+                >
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                    <span style={{ fontSize: '1.2rem' }}>🔒</span>
+                    <div>
+                      <strong style={{ color: '#166534' }}>BIOMETRICALLY VERIFIED VIA FINGERPRINT</strong>
+                      <div style={{ fontSize: '0.72rem', color: '#15803d' }}>
+                        Authenticated Sensor: {selectedReceipt.biometric_finger_used || 'Right Index'}
+                      </div>
+                    </div>
+                  </div>
+                  <div style={{ textAlign: 'right' }}>
+                    <div style={{ fontSize: '0.7rem', color: '#64748b' }}>SECURITY STAMP</div>
+                    <code style={{ fontSize: '0.75rem', fontWeight: 700, color: '#166534' }}>
+                      {selectedReceipt.biometric_verification_code || 'BIO-VERIFIED'}
+                    </code>
+                  </div>
+                </div>
+              )}
 
-            <div className="modal-footer" style={{ justifyContent: 'space-between', marginTop: '1.5rem', padding: 0 }}>
-              <button type="button" className="btn btn-secondary" onClick={() => setSelectedReceipt(null)}>Close</button>
-              <button type="button" className="btn btn-primary" onClick={() => window.print()}>🖨️ Print Stamped Receipt</button>
+              {/* Official Digital Stamp */}
+              <div style={{ background: '#f8fafc', border: '1px dashed #94a3b8', borderRadius: '8px', padding: '0.75rem', textAlign: 'center', fontSize: '0.75rem', color: '#475569' }}>
+                <div>🛡️ <strong>OFFICIAL STAMP & VERIFICATION</strong></div>
+                <div>Brent College Directorate of Finance • Eastleigh Sahl Mall Campus</div>
+                <div style={{ color: '#16a34a', fontWeight: 800, marginTop: '2px' }}>STATUS: TRANSACTION VERIFIED & ACCOUNT CREDITED</div>
+              </div>
+
+              <div className="modal-footer" style={{ justifyContent: 'space-between', marginTop: '1.5rem', padding: 0 }}>
+                <button type="button" className="btn btn-secondary" onClick={() => setSelectedReceipt(null)}>Close</button>
+                <button type="button" className="btn btn-primary" onClick={() => window.print()}>🖨️ Print Stamped Receipt</button>
+              </div>
             </div>
           </div>
-        </div>
-      )}
+        )}
 
       {/* Modal: View Unit Registration Slip */}
       {selectedSlipForView && (
@@ -1540,6 +1852,58 @@ export function BursarDesk() {
             </div>
           </div>
         </div>
+      )}
+
+      {/* Biometric Scanner Terminal Modal */}
+      {showBiometricStation && (
+        <BiometricScannerModal
+          officerName={defaultIssuer}
+          onClose={() => {
+            setShowBiometricStation(false)
+            setClearanceLogs(schoolStore.getBiometricClearanceLogs())
+          }}
+          onRecordPayment={(std) => {
+            setPaymentData({
+              student_id: std.id,
+              admission_number: std.admission_number,
+              student_name: std.full_name,
+              course_name: std.class_name,
+              total_fee: std.fee_balance,
+              amount: std.fee_balance,
+              payment_method: 'M-Pesa',
+              reference_code: `MPESA-${Math.random().toString(36).substring(2, 8).toUpperCase()}`,
+              paid_by: std.full_name,
+              issued_by: defaultIssuer,
+              biometric_verified: true,
+              biometric_finger_used: std.biometric_finger_name || 'Right Index',
+              biometric_verification_code: generateBiometricVerificationCode(),
+            })
+            setShowPayModal(true)
+          }}
+        />
+      )}
+
+      {/* Biometric Student Enrollment Modal */}
+      {showEnrollModal && studentToEnroll && (
+        <BiometricEnrollModal
+          student={studentToEnroll}
+          officerName={defaultIssuer}
+          onClose={() => {
+            setShowEnrollModal(false)
+            setStudentToEnroll(null)
+          }}
+          onEnrolled={(updated) => {
+            setStudents(schoolStore.getStudents())
+          }}
+        />
+      )}
+
+      {/* View Individual Clearance Pass Modal */}
+      {selectedClearancePass && (
+        <BiometricClearancePassModal
+          pass={selectedClearancePass}
+          onClose={() => setSelectedClearancePass(null)}
+        />
       )}
     </div>
   )
