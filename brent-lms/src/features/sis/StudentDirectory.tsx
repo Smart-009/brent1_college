@@ -39,7 +39,7 @@ export function StudentDirectory() {
     class_name: programOptions[0] || 'Comprehensive Computer Packages & Digital Skills',
     dob: '2005-01-01',
     status: 'Active',
-    fee_balance: 0,
+    fee_balance: 4500,
     term_fee_total: 4500,
     attendance_rate: 100,
     discipline_points: 100,
@@ -141,6 +141,9 @@ export function StudentDirectory() {
     e.preventDefault()
     if (!newStudent.full_name || !newStudent.admission_number) return
 
+    const billed = Number(newStudent.term_fee_total) || 4500
+    const balance = newStudent.fee_balance !== undefined ? Number(newStudent.fee_balance) : billed
+
     const record: StudentRecord = {
       id: `std-${Date.now()}`,
       admission_number: newStudent.admission_number || `BC-2026-00${students.length + 1}`,
@@ -148,22 +151,22 @@ export function StudentDirectory() {
       gender: newStudent.gender as 'Male' | 'Female',
       dob: newStudent.dob || '2005-01-01',
       class_id: 'cls-custom',
-      class_name: newStudent.class_name || 'Diploma in Computer Science & ICT',
-      grade_level: newStudent.grade_level || 'Year 1 (Semester 1)',
-      stream: newStudent.stream || 'Software Engineering',
+      class_name: newStudent.class_name || 'Comprehensive Computer Packages & Digital Skills',
+      grade_level: newStudent.grade_level || '4 to 12 Weeks (Short Course Certificate)',
+      stream: newStudent.stream || 'Practical Lab Trainee',
       enrollment_date: new Date().toISOString().split('T')[0],
       status: 'Active',
       guardian: newStudent.guardian || {
-        name: 'Parent / Sponsor',
+        name: '',
         relationship: 'Father',
-        phone: '+254 700 000 000',
-        email: 'guardian@example.ke',
+        phone: '',
+        email: '',
       },
-      emergency_contact: newStudent.guardian?.phone || '+254 700 000 000',
-      blood_group: 'O+',
-      fee_balance: Number(newStudent.fee_balance) || 0,
-      term_fee_total: Number(newStudent.term_fee_total) || 48000,
-      fee_cleared: Number(newStudent.fee_balance) === 0,
+      emergency_contact: newStudent.guardian?.phone || '',
+      blood_group: newStudent.blood_group || undefined,
+      fee_balance: balance,
+      term_fee_total: billed,
+      fee_cleared: balance === 0,
       attendance_rate: 100,
       discipline_points: 100,
       merits_count: 0,
@@ -576,13 +579,13 @@ export function StudentDirectory() {
                   👤 Personal & Academic Bio
                 </h4>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', fontSize: '0.85rem' }}>
-                  <div><strong>Gender:</strong> {selectedStudent.gender}</div>
-                  <div><strong>Date of Birth:</strong> {selectedStudent.dob}</div>
+                  <div><strong>Gender:</strong> {selectedStudent.gender || 'Not Specified'}</div>
+                  <div><strong>Date of Birth:</strong> {selectedStudent.dob || 'Not Specified'}</div>
                   <div><strong>Program:</strong> {selectedStudent.class_name}</div>
-                  <div><strong>Year & Semester:</strong> {selectedStudent.grade_level}</div>
-                  <div><strong>Specialization:</strong> {selectedStudent.stream}</div>
+                  <div><strong>Course Duration:</strong> {selectedStudent.grade_level || '4 to 12 Weeks Certificate'}</div>
+                  <div><strong>Specialization:</strong> {selectedStudent.stream || 'Practical Skills Cohort'}</div>
                   <div><strong>Enrollment Date:</strong> {selectedStudent.enrollment_date}</div>
-                  <div><strong>Blood Group:</strong> {selectedStudent.blood_group || 'O+'}</div>
+                  {selectedStudent.blood_group && <div><strong>Blood Group:</strong> {selectedStudent.blood_group}</div>}
                   <div><strong>Status:</strong> <span className="badge badge-success">{selectedStudent.status}</span></div>
                 </div>
               </div>
@@ -593,28 +596,81 @@ export function StudentDirectory() {
                   👨‍👩‍👦 Guardian & Sponsor Details
                 </h4>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', fontSize: '0.85rem' }}>
-                  <div><strong>Guardian Name:</strong> {selectedStudent.guardian.name}</div>
-                  <div><strong>Relationship:</strong> {selectedStudent.guardian.relationship}</div>
-                  <div><strong>Phone Number:</strong> {selectedStudent.guardian.phone}</div>
-                  <div><strong>Email Address:</strong> {selectedStudent.guardian.email}</div>
-                  <div><strong>Occupation:</strong> {selectedStudent.guardian.occupation || 'N/A'}</div>
-                  <div><strong>Residential Address:</strong> {selectedStudent.guardian.address || 'Nairobi, Kenya'}</div>
-                  <div><strong>Emergency Hotline:</strong> {selectedStudent.emergency_contact}</div>
+                  <div><strong>Guardian Name:</strong> {selectedStudent.guardian.name || 'Not Provided'}</div>
+                  <div><strong>Relationship:</strong> {selectedStudent.guardian.relationship || 'Guardian'}</div>
+                  <div><strong>Phone Number:</strong> {selectedStudent.guardian.phone || 'Not Provided'}</div>
+                  {selectedStudent.guardian.email && <div><strong>Email Address:</strong> {selectedStudent.guardian.email}</div>}
+                  {selectedStudent.guardian.occupation && <div><strong>Occupation:</strong> {selectedStudent.guardian.occupation}</div>}
+                  {selectedStudent.guardian.address && <div><strong>Residential Address:</strong> {selectedStudent.guardian.address}</div>}
+                  {selectedStudent.emergency_contact && <div><strong>Emergency Hotline:</strong> {selectedStudent.emergency_contact}</div>}
                 </div>
               </div>
 
-              {/* Financial & Fee Status */}
-              <div className="card" style={{ padding: '1rem' }}>
-                <h4 style={{ fontSize: '0.9rem', fontWeight: 700, marginBottom: '0.75rem', color: 'var(--color-primary)' }}>
-                  💳 Tuition & Financial Ledger
-                </h4>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', fontSize: '0.85rem' }}>
-                  <div><strong>Total Semester Billed:</strong> KES {selectedStudent.term_fee_total.toLocaleString()}</div>
-                  <div><strong>Outstanding Balance:</strong> <span style={{ fontWeight: 700, color: selectedStudent.fee_balance > 0 ? '#ea580c' : '#16a34a' }}>KES {selectedStudent.fee_balance.toLocaleString()}</span></div>
-                  <div><strong>Clearance Status:</strong> {selectedStudent.fee_cleared ? <span className="badge badge-success">Fully Cleared</span> : <span className="badge badge-warning">Pending Payment</span>}</div>
-                  <div><strong>Exam Clearance Card:</strong> {selectedStudent.fee_cleared ? 'Issued & Valid' : 'Withheld until balance cleared'}</div>
-                </div>
-              </div>
+              {/* Financial & Fee Status — Dynamically calculated from live receipts & invoices */}
+              {(() => {
+                const studentReceipts = schoolStore.getReceipts().filter(
+                  (r) => r.student_id === selectedStudent.id || r.admission_number === selectedStudent.admission_number
+                )
+                const totalPaid = studentReceipts.reduce((acc, r) => acc + (Number(r.amount) || 0), 0)
+                const totalBilled = selectedStudent.term_fee_total || 4500
+                const currentBalance = Math.max(0, totalBilled - totalPaid)
+                const isFullyPaid = currentBalance === 0 && totalPaid > 0
+
+                return (
+                  <div className="card" style={{ padding: '1rem' }}>
+                    <h4 style={{ fontSize: '0.9rem', fontWeight: 700, marginBottom: '0.75rem', color: 'var(--color-primary)' }}>
+                      💳 Tuition & Financial Ledger
+                    </h4>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', fontSize: '0.85rem' }}>
+                      <div><strong>Total Semester Billed:</strong> KES {totalBilled.toLocaleString()}</div>
+                      <div><strong>Total Paid to Date:</strong> <span style={{ fontWeight: 700, color: totalPaid > 0 ? '#16a34a' : 'inherit' }}>KES {totalPaid.toLocaleString()}</span></div>
+                      <div>
+                        <strong>Outstanding Balance:</strong>{' '}
+                        <span style={{ fontWeight: 700, color: currentBalance > 0 ? '#dc2626' : '#16a34a' }}>
+                          KES {currentBalance.toLocaleString()}
+                        </span>
+                      </div>
+                      <div>
+                        <strong>Clearance Status:</strong>{' '}
+                        {isFullyPaid ? (
+                          <span className="badge badge-success">✓ Fully Cleared</span>
+                        ) : totalPaid > 0 ? (
+                          <span className="badge badge-warning">Partial Payment (KES {currentBalance.toLocaleString()} Due)</span>
+                        ) : (
+                          <span className="badge badge-danger">Unpaid (KES {currentBalance.toLocaleString()} Due)</span>
+                        )}
+                      </div>
+                      <div>
+                        <strong>Exam Clearance Card:</strong>{' '}
+                        {isFullyPaid && selectedStudent.biometric_enrolled
+                          ? '✓ Issued & Valid'
+                          : isFullyPaid && !selectedStudent.biometric_enrolled
+                          ? '⚠️ Fees Cleared • Pending Biometric Registration'
+                          : '✕ Withheld until tuition fees are settled'}
+                      </div>
+
+                      {/* Payment History List */}
+                      {studentReceipts.length > 0 ? (
+                        <div style={{ marginTop: '0.5rem', paddingTop: '0.5rem', borderTop: '1px solid var(--color-border)' }}>
+                          <div style={{ fontSize: '0.76rem', fontWeight: 700, color: 'var(--color-text-secondary)', marginBottom: '0.3rem' }}>
+                            Receipts on File ({studentReceipts.length}):
+                          </div>
+                          {studentReceipts.map((rc) => (
+                            <div key={rc.id} style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.76rem', padding: '0.2rem 0' }}>
+                              <span>{rc.receipt_number} ({rc.payment_method})</span>
+                              <strong style={{ color: '#16a34a' }}>KES {rc.amount.toLocaleString()}</strong>
+                            </div>
+                          ))}
+                        </div>
+                      ) : (
+                        <div style={{ fontSize: '0.75rem', color: 'var(--color-text-secondary)', marginTop: '0.3rem' }}>
+                          No payment receipts recorded yet.
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                )
+              })()}
 
               {/* Conduct & Attendance */}
               <div className="card" style={{ padding: '1rem' }}>
@@ -622,11 +678,11 @@ export function StudentDirectory() {
                   ⭐ Conduct & Lecture Attendance
                 </h4>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', fontSize: '0.85rem' }}>
-                  <div><strong>Lecture Attendance Rate:</strong> {selectedStudent.attendance_rate}%</div>
-                  <div><strong>Discipline Index:</strong> {selectedStudent.discipline_points}/100</div>
-                  <div><strong>Merit Commendations:</strong> ⭐ {selectedStudent.merits_count} awarded</div>
-                  <div><strong>Demerit Points:</strong> ⚠️ {selectedStudent.demerits_count} recorded</div>
-                  <div><strong>Dean’s Standing:</strong> <span className="badge badge-info">Honors Standing</span></div>
+                  <div><strong>Lecture Attendance Rate:</strong> {selectedStudent.attendance_rate || 100}%</div>
+                  <div><strong>Discipline Index:</strong> {selectedStudent.discipline_points || 100}/100</div>
+                  <div><strong>Merit Commendations:</strong> ⭐ {selectedStudent.merits_count || 0} awarded</div>
+                  <div><strong>Demerit Points:</strong> ⚠️ {selectedStudent.demerits_count || 0} recorded</div>
+                  <div><strong>Academic Standing:</strong> <span className="badge badge-info">{selectedStudent.status === 'Active' ? 'Active Enrollee' : selectedStudent.status}</span></div>
                 </div>
               </div>
 

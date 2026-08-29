@@ -354,7 +354,23 @@ class SchoolDataStore {
 
   // --- Students CRUD (ACID Protected) ---
   getStudents(): StudentRecord[] {
-    return this.get<StudentRecord[]>('students', INITIAL_STUDENTS)
+    const rawList = this.get<StudentRecord[]>('students', INITIAL_STUDENTS)
+    const receipts = this.getReceipts()
+    return rawList.map((s) => {
+      const studentReceipts = receipts.filter(
+        (r) => (r.student_id && r.student_id === s.id) || (r.admission_number && r.admission_number.toLowerCase() === s.admission_number.toLowerCase())
+      )
+      const totalPaid = studentReceipts.reduce((acc, r) => acc + (Number(r.amount) || 0), 0)
+      const billed = Number(s.term_fee_total) || 4500
+      const liveBalance = Math.max(0, billed - totalPaid)
+      const isCleared = liveBalance === 0 && totalPaid >= billed && billed > 0
+      return {
+        ...s,
+        term_fee_total: billed,
+        fee_balance: liveBalance,
+        fee_cleared: isCleared,
+      }
+    })
   }
 
   saveStudents(students: StudentRecord[]) {
