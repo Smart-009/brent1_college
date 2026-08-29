@@ -381,17 +381,61 @@ class SchoolDataStore {
   async addStudent(student: StudentRecord): Promise<void> {
     await txEngine.executeAtomic(
       `ADD_STUDENT_${student.admission_number}`,
-      ['brent_school_students'],
+      ['brent_school_students', 'brent_school_invoices'],
       () => {
-        const list = this.getStudents()
+        const list = this.get<StudentRecord[]>('students', INITIAL_STUDENTS)
         if (list.some((s) => s.admission_number.toLowerCase() === student.admission_number.toLowerCase())) {
           throw new IntegrityError(`Admission Number "${student.admission_number}" is already registered in the system.`)
         }
-        list.unshift(student)
+
+        const billed = Number(student.term_fee_total) || 4500
+        const newRecord: StudentRecord = {
+          ...student,
+          term_fee_total: billed,
+          fee_balance: billed,
+          fee_cleared: false,
+          attendance_rate: Number(student.attendance_rate) || 0,
+          discipline_points: Number(student.discipline_points) || 0,
+          merits_count: 0,
+          demerits_count: 0,
+        }
+
+        list.unshift(newRecord)
         this.set('students', list)
+
+        // Automatically create unpaid/pending invoice for the new student
+        const invoices = this.get<FeeInvoice[]>('invoices', INITIAL_INVOICES)
+        if (!invoices.some((inv) => inv.admission_number.toLowerCase() === student.admission_number.toLowerCase())) {
+          invoices.unshift({
+            id: `inv-${Date.now()}-${student.admission_number.replace(/[^a-zA-Z0-9]/g, '')}`,
+            invoice_number: `INV-${new Date().getFullYear()}-${Math.floor(1000 + Math.random() * 9000)}`,
+            student_id: student.id,
+            student_name: student.full_name,
+            admission_number: student.admission_number,
+            class_name: student.class_name || 'Short Course Cohort',
+            term: 'Term 1',
+            academic_year: `${new Date().getFullYear()}`,
+            issue_date: student.enrollment_date || new Date().toISOString().split('T')[0],
+            due_date: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+            total_amount: billed,
+            paid_amount: 0,
+            balance: billed,
+            status: 'Pending',
+            items: [
+              {
+                id: `item-${Date.now()}-1`,
+                description: `Tuition & Lab Training Fee (${student.class_name})`,
+                amount: billed,
+              },
+            ],
+          })
+          this.set('invoices', invoices)
+        }
       }
     )
     schoolEventBus.publish('STUDENT_ADDED', student)
+    schoolEventBus.publish('INVOICE_CREATED')
+    schoolEventBus.publish('STUDENT_UPDATED')
   }
 
   async updateStudent(id: string, updated: Partial<StudentRecord>): Promise<void> {
@@ -489,7 +533,65 @@ class SchoolDataStore {
 
   // --- Invoices & Fees (ACID Protected) ---
   getInvoices(): FeeInvoice[] {
-    return this.get<FeeInvoice[]>('invoices', INITIAL_INVOICES)
+    const rawInvoices = this.get<FeeInvoice[]>('invoices', INITIAL_INVOICES)
+    const rawStudents = this.get<StudentRecord[]>('students', INITIAL_STUDENTS)
+    const receipts = this.getReceipts()
+
+    const invoiceList = [...rawInvoices]
+    for (const std of rawStudents) {
+      const hasInv = invoiceList.some(
+        (inv) =>
+          (inv.student_id && inv.student_id === std.id) ||
+          (inv.admission_number && inv.admission_number.toLowerCase() === std.admission_number.toLowerCase())
+      )
+      if (!hasInv) {
+        const billed = Number(std.term_fee_total) || 4500
+        invoiceList.push({
+          id: `inv-${std.id}`,
+          invoice_number: `INV-${new Date().getFullYear()}-${Math.floor(1000 + Math.random() * 9000)}`,
+          student_id: std.id,
+          student_name: std.full_name,
+          admission_number: std.admission_number,
+          class_name: std.class_name || 'Short Course Cohort',
+          term: 'Term 1',
+          academic_year: `${new Date().getFullYear()}`,
+          issue_date: std.enrollment_date || new Date().toISOString().split('T')[0],
+          due_date: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+          total_amount: billed,
+          paid_amount: 0,
+          balance: billed,
+          status: 'Pending',
+          items: [
+            {
+              id: `item-${std.id}-1`,
+              description: `Tuition & Training Fee (${std.class_name})`,
+              amount: billed,
+            },
+          ],
+        })
+      }
+    }
+
+    return invoiceList.map((inv) => {
+      const matchingReceipts = receipts.filter(
+        (r) =>
+          (r.invoice_id && r.invoice_id === inv.id) ||
+          (r.student_id && r.student_id === inv.student_id) ||
+          (r.admission_number && r.admission_number.toLowerCase() === inv.admission_number.toLowerCase())
+      )
+      const paid = matchingReceipts.reduce((acc, r) => acc + (Number(r.amount) || 0), 0)
+      const total = Number(inv.total_amount) || 4500
+      const balance = Math.max(0, total - paid)
+      const status: 'Paid' | 'Partial' | 'Overdue' | 'Pending' =
+        balance === 0 && paid > 0 ? 'Paid' : paid > 0 ? 'Partial' : 'Pending'
+      return {
+        ...inv,
+        total_amount: total,
+        paid_amount: paid,
+        balance,
+        status,
+      }
+    })
   }
 
   saveInvoices(invoices: FeeInvoice[]) {
