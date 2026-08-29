@@ -414,7 +414,7 @@ export const BiometricScannerModal: React.FC<Props> = ({
             </div>
           )}
 
-          {/* Matched Result Card */}
+          {/* Matched Result Card — Front-Desk Fee Status & Financial Audit */}
           {scanState === 'matched' && matchedStudent && feeEval && (
             <div>
               {/* Success Banner */}
@@ -422,27 +422,42 @@ export const BiometricScannerModal: React.FC<Props> = ({
                 style={{
                   background: '#f0fdf4',
                   border: '1px solid #bbf7d0',
-                  borderRadius: '10px',
-                  padding: '0.65rem 0.85rem',
+                  borderRadius: '12px',
+                  padding: '0.75rem 1rem',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'space-between',
                   marginBottom: '1rem',
                 }}
               >
-                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                  <span style={{ fontSize: '1.2rem' }}>✓</span>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
+                  <div
+                    style={{
+                      width: '28px',
+                      height: '28px',
+                      borderRadius: '50%',
+                      background: '#16a34a',
+                      color: '#fff',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      fontWeight: 800,
+                      fontSize: '0.9rem',
+                    }}
+                  >
+                    ✓
+                  </div>
                   <div>
-                    <strong style={{ color: '#166534', fontSize: '0.88rem' }}>
-                      Biometric Match Confirmed!
+                    <strong style={{ color: '#166534', fontSize: '0.92rem' }}>
+                      Identity Verified via Phone Fingerprint Sensor!
                     </strong>
-                    <div style={{ fontSize: '0.72rem', color: '#15803d' }}>
-                      Sensor: {usedDeviceName} • {confidenceScore}% Match Score
+                    <div style={{ fontSize: '0.74rem', color: '#15803d' }}>
+                      {usedDeviceName} • {confidenceScore}% Biometric Confidence Score
                     </div>
                   </div>
                 </div>
                 <button type="button" className="btn btn-secondary btn-xs" onClick={handleResetScanner}>
-                  🔄 Re-Scan
+                  🔄 Next Student
                 </button>
               </div>
 
@@ -450,12 +465,12 @@ export const BiometricScannerModal: React.FC<Props> = ({
               <div
                 style={{
                   display: 'grid',
-                  gridTemplateColumns: '56px 1fr',
+                  gridTemplateColumns: '56px 1fr auto',
                   gap: '0.85rem',
                   background: 'var(--color-bg-secondary)',
                   border: '1px solid var(--color-border)',
-                  borderRadius: '10px',
-                  padding: '0.85rem',
+                  borderRadius: '12px',
+                  padding: '0.9rem 1rem',
                   alignItems: 'center',
                   marginBottom: '1rem',
                 }}
@@ -472,6 +487,7 @@ export const BiometricScannerModal: React.FC<Props> = ({
                     justifyContent: 'center',
                     fontWeight: 900,
                     fontSize: '1.35rem',
+                    boxShadow: '0 2px 8px rgba(30, 58, 138, 0.25)',
                   }}
                 >
                   {matchedStudent.full_name.charAt(0)}
@@ -479,17 +495,26 @@ export const BiometricScannerModal: React.FC<Props> = ({
 
                 <div style={{ minWidth: 0 }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', flexWrap: 'wrap' }}>
-                    <h4 style={{ fontSize: '1.05rem', fontWeight: 800, margin: 0, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                    <h4 style={{ fontSize: '1.1rem', fontWeight: 800, margin: 0, color: 'var(--color-text-primary)' }}>
                       {matchedStudent.full_name}
                     </h4>
-                    <span className="badge badge-info" style={{ fontSize: '0.7rem' }}>{matchedStudent.class_name}</span>
+                    <span className="badge badge-info" style={{ fontSize: '0.72rem' }}>{matchedStudent.class_name}</span>
                   </div>
-                  <div style={{ fontSize: '0.78rem', color: 'var(--color-text-secondary)', marginTop: '0.15rem' }}>
-                    Adm No: <strong style={{ color: 'var(--color-primary)' }}>{matchedStudent.admission_number}</strong> • Status: {matchedStudent.status}
+                  <div style={{ fontSize: '0.8rem', color: 'var(--color-text-secondary)', marginTop: '0.2rem' }}>
+                    Adm No: <strong style={{ color: 'var(--color-primary)' }}>{matchedStudent.admission_number}</strong> • Status: <span style={{ color: '#16a34a', fontWeight: 600 }}>{matchedStudent.status}</span>
                   </div>
                   <div style={{ fontSize: '0.72rem', color: 'var(--color-text-secondary)', marginTop: '0.15rem' }}>
-                    Biometric Hash: <code style={{ fontSize: '0.68rem' }}>{matchedStudent.biometric_template_hash || 'FP-AUTHENTICATED'}</code>
+                    Key Credential: <code style={{ fontSize: '0.68rem', background: 'var(--color-bg-primary)', padding: '0.1rem 0.3rem', borderRadius: '4px' }}>{matchedStudent.biometric_credential_id ? `PASSKEY-${matchedStudent.biometric_credential_id.slice(0, 12)}...` : (matchedStudent.biometric_template_hash || 'PASSKEY-AUTHENTICATED')}</code>
                   </div>
+                </div>
+
+                <div>
+                  <span
+                    className={`badge ${feeEval.status === 'CLEARED' ? 'badge-success' : feeEval.status === 'CONDITIONAL' ? 'badge-warning' : 'badge-danger'}`}
+                    style={{ fontSize: '0.8rem', padding: '0.35rem 0.65rem', fontWeight: 700 }}
+                  >
+                    {feeEval.status === 'CLEARED' ? '🟢 100% Cleared' : feeEval.status === 'CONDITIONAL' ? '🟡 Partial Balance' : '🔴 Overdue Arrears'}
+                  </span>
                 </div>
               </div>
 
@@ -498,62 +523,125 @@ export const BiometricScannerModal: React.FC<Props> = ({
                 style={{
                   display: 'grid',
                   gridTemplateColumns: '1fr 1fr 1fr',
-                  gap: '0.5rem',
+                  gap: '0.6rem',
                   textAlign: 'center',
                   marginBottom: '1rem',
                 }}
               >
-                <div className="card" style={{ padding: '0.65rem 0.5rem', background: '#fff' }}>
-                  <div style={{ fontSize: '0.68rem', color: 'var(--color-text-secondary)', fontWeight: 600 }}>TOTAL BILLED</div>
-                  <div style={{ fontSize: '1.05rem', fontWeight: 800, color: 'var(--color-primary)', marginTop: '2px' }}>
+                <div className="card" style={{ padding: '0.8rem 0.6rem', background: '#fff', border: '1px solid var(--color-border)', borderRadius: '10px' }}>
+                  <div style={{ fontSize: '0.7rem', color: 'var(--color-text-secondary)', fontWeight: 700, letterSpacing: '0.04em' }}>TOTAL BILLED</div>
+                  <div style={{ fontSize: '1.25rem', fontWeight: 800, color: 'var(--color-primary)', marginTop: '3px' }}>
                     KES {matchedStudent.term_fee_total.toLocaleString()}
                   </div>
+                  <div style={{ fontSize: '0.68rem', color: 'var(--color-text-secondary)', marginTop: '2px' }}>Term Schedule</div>
                 </div>
 
-                <div className="card" style={{ padding: '0.65rem 0.5rem', background: '#fff' }}>
-                  <div style={{ fontSize: '0.68rem', color: 'var(--color-text-secondary)', fontWeight: 600 }}>TOTAL PAID</div>
-                  <div style={{ fontSize: '1.05rem', fontWeight: 800, color: '#16a34a', marginTop: '2px' }}>
+                <div className="card" style={{ padding: '0.8rem 0.6rem', background: '#fff', border: '1px solid var(--color-border)', borderRadius: '10px' }}>
+                  <div style={{ fontSize: '0.7rem', color: 'var(--color-text-secondary)', fontWeight: 700, letterSpacing: '0.04em' }}>TOTAL PAID</div>
+                  <div style={{ fontSize: '1.25rem', fontWeight: 800, color: '#16a34a', marginTop: '3px' }}>
                     KES {Math.max(0, matchedStudent.term_fee_total - matchedStudent.fee_balance).toLocaleString()}
+                  </div>
+                  <div style={{ fontSize: '0.68rem', color: '#16a34a', fontWeight: 600, marginTop: '2px' }}>
+                    {Math.round(((matchedStudent.term_fee_total - matchedStudent.fee_balance) / (matchedStudent.term_fee_total || 1)) * 100)}% Complete
                   </div>
                 </div>
 
-                <div className="card" style={{ padding: '0.65rem 0.5rem', background: '#fff' }}>
-                  <div style={{ fontSize: '0.68rem', color: 'var(--color-text-secondary)', fontWeight: 600 }}>BALANCE</div>
+                <div className="card" style={{ padding: '0.8rem 0.6rem', background: '#fff', border: '1px solid var(--color-border)', borderRadius: '10px' }}>
+                  <div style={{ fontSize: '0.7rem', color: 'var(--color-text-secondary)', fontWeight: 700, letterSpacing: '0.04em' }}>FEE BALANCE</div>
                   <div
                     style={{
-                      fontSize: '1.05rem',
+                      fontSize: '1.25rem',
                       fontWeight: 900,
-                      color: matchedStudent.fee_balance === 0 ? '#16a34a' : '#ea580c',
-                      marginTop: '2px',
+                      color: matchedStudent.fee_balance === 0 ? '#16a34a' : '#dc2626',
+                      marginTop: '3px',
                     }}
                   >
                     KES {matchedStudent.fee_balance.toLocaleString()}
                   </div>
+                  <div style={{ fontSize: '0.68rem', color: matchedStudent.fee_balance === 0 ? '#16a34a' : '#dc2626', fontWeight: 600, marginTop: '2px' }}>
+                    {matchedStudent.fee_balance === 0 ? 'No Arrears' : 'Payment Due'}
+                  </div>
+                </div>
+              </div>
+
+              {/* Fee Progress Bar */}
+              <div style={{ marginBottom: '1rem', background: 'var(--color-bg-secondary)', padding: '0.75rem 1rem', borderRadius: '10px' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.78rem', fontWeight: 700, marginBottom: '0.35rem' }}>
+                  <span>Fee Clearance Progress:</span>
+                  <span style={{ color: matchedStudent.fee_balance === 0 ? '#16a34a' : '#ea580c' }}>
+                    {Math.round(((matchedStudent.term_fee_total - matchedStudent.fee_balance) / (matchedStudent.term_fee_total || 1)) * 100)}% Paid
+                  </span>
+                </div>
+                <div style={{ width: '100%', height: '8px', background: '#e2e8f0', borderRadius: '999px', overflow: 'hidden' }}>
+                  <div
+                    style={{
+                      height: '100%',
+                      width: `${Math.min(100, Math.round(((matchedStudent.term_fee_total - matchedStudent.fee_balance) / (matchedStudent.term_fee_total || 1)) * 100))}%`,
+                      background: matchedStudent.fee_balance === 0 ? '#16a34a' : '#ea580c',
+                      transition: 'width 0.3s ease',
+                    }}
+                  />
                 </div>
               </div>
 
               {/* Clearance Verdict Box */}
               <div
                 style={{
-                  padding: '0.85rem',
-                  borderRadius: '10px',
+                  padding: '0.9rem',
+                  borderRadius: '12px',
                   background: feeEval.status === 'CLEARED' ? '#f0fdf4' : feeEval.status === 'CONDITIONAL' ? '#fffbeb' : '#fef2f2',
                   border: `2px solid ${feeEval.color}`,
                   textAlign: 'center',
                   marginBottom: '1rem',
                 }}
               >
-                <div style={{ fontSize: '0.95rem', fontWeight: 900, color: feeEval.color }}>
-                  {feeEval.status === 'CLEARED' && '✓ FEES FULLY CLEARED — 100% AUTHORIZED'}
+                <div style={{ fontSize: '1rem', fontWeight: 900, color: feeEval.color }}>
+                  {feeEval.status === 'CLEARED' && '✓ FEES FULLY CLEARED — 100% AUTHORIZED FOR EXAMS'}
                   {feeEval.status === 'CONDITIONAL' && '⚠️ CONDITIONAL CLEARANCE — PARTIAL BALANCE OUTSTANDING'}
                   {feeEval.status === 'OVERDUE' && '✕ FEE ARREARS OUTSTANDING — PAYMENT REQUIRED'}
                 </div>
-                <div style={{ fontSize: '0.76rem', color: '#475569', marginTop: '0.2rem' }}>
+                <div style={{ fontSize: '0.78rem', color: '#475569', marginTop: '0.25rem', lineHeight: '1.4' }}>
                   {feeEval.status === 'CLEARED'
-                    ? 'Student is fully cleared in financial ledgers. Authorized for all examinations, practical lab access, and transcript issuance.'
-                    : `Student has an outstanding fee balance of KES ${matchedStudent.fee_balance.toLocaleString()}. Authorized for provisional clearance with bursar sign-off.`}
+                    ? 'Student is 100% in good financial standing. Authorized for practical labs, term examinations, and official certificate release.'
+                    : `Student has an outstanding fee balance of KES ${matchedStudent.fee_balance.toLocaleString()}. Please settle via M-Pesa Paybill 247247 or bursar desk.`}
                 </div>
               </div>
+
+              {/* Student's Payment History Table at Front Desk */}
+              {(() => {
+                const studentReceipts = schoolStore.getReceipts().filter(
+                  (r) => r.student_id === matchedStudent.id || r.admission_number === matchedStudent.admission_number
+                )
+                if (studentReceipts.length === 0) return null
+                return (
+                  <div style={{ marginBottom: '1rem', border: '1px solid var(--color-border)', borderRadius: '10px', overflow: 'hidden' }}>
+                    <div style={{ background: 'var(--color-bg-secondary)', padding: '0.5rem 0.75rem', fontSize: '0.76rem', fontWeight: 700, borderBottom: '1px solid var(--color-border)' }}>
+                      📜 Recent Payment Receipts on File ({studentReceipts.length}):
+                    </div>
+                    <div style={{ maxHeight: '110px', overflowY: 'auto' }}>
+                      <table style={{ width: '100%', fontSize: '0.74rem', borderCollapse: 'collapse' }}>
+                        <tbody>
+                          {studentReceipts.slice(0, 4).map((rc) => (
+                            <tr key={rc.id} style={{ borderBottom: '1px solid var(--color-border)' }}>
+                              <td style={{ padding: '0.35rem 0.75rem' }}>
+                                <strong>{rc.receipt_number}</strong>
+                                <div style={{ fontSize: '0.68rem', color: 'var(--color-text-secondary)' }}>{rc.payment_date ? rc.payment_date.slice(0, 10) : 'Recent'}</div>
+                              </td>
+                              <td style={{ padding: '0.35rem 0.75rem' }}>
+                                <span className="badge badge-info" style={{ fontSize: '0.66rem' }}>{rc.payment_method}</span>
+                                <div style={{ fontSize: '0.68rem', color: 'var(--color-text-secondary)' }}>{rc.reference_code}</div>
+                              </td>
+                              <td style={{ padding: '0.35rem 0.75rem', textAlign: 'right', fontWeight: 800, color: '#16a34a' }}>
+                                KES {rc.amount.toLocaleString()}
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                )
+              })()}
 
               {/* Clearance Pass Options & Direct Payment Action */}
               <div
@@ -564,16 +652,16 @@ export const BiometricScannerModal: React.FC<Props> = ({
                   gap: '0.75rem',
                   flexWrap: 'wrap',
                   background: 'var(--color-bg-secondary)',
-                  padding: '0.75rem 0.85rem',
-                  borderRadius: '10px',
+                  padding: '0.85rem 1rem',
+                  borderRadius: '12px',
                   marginBottom: '0.75rem',
                 }}
               >
-                <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', flex: 1 }}>
-                  <label style={{ fontSize: '0.78rem', fontWeight: 600 }}>Purpose:</label>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flex: 1, minWidth: '200px' }}>
+                  <label style={{ fontSize: '0.8rem', fontWeight: 700 }}>Pass Purpose:</label>
                   <select
                     className="input"
-                    style={{ width: 'auto', padding: '0.3rem 0.5rem', fontSize: '0.78rem' }}
+                    style={{ width: 'auto', padding: '0.35rem 0.6rem', fontSize: '0.8rem' }}
                     value={selectedPurpose}
                     onChange={(e) => setSelectedPurpose(e.target.value as any)}
                   >
@@ -585,28 +673,41 @@ export const BiometricScannerModal: React.FC<Props> = ({
                   </select>
                 </div>
 
-                <div style={{ display: 'flex', gap: '0.4rem' }}>
+                <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
                   {matchedStudent.fee_balance > 0 && onRecordPayment && (
                     <button
                       type="button"
                       className="btn btn-warning btn-sm"
-                      style={{ fontSize: '0.76rem', padding: '0.35rem 0.6rem' }}
+                      style={{ fontSize: '0.8rem', padding: '0.4rem 0.75rem', fontWeight: 700 }}
                       onClick={() => {
                         onClose()
                         onRecordPayment(matchedStudent)
                       }}
                     >
-                      💳 Pay Balance
+                      💳 Pay Fee Balance (KES {matchedStudent.fee_balance.toLocaleString()})
                     </button>
                   )}
 
                   <button
                     type="button"
                     className="btn btn-primary btn-sm"
-                    style={{ fontSize: '0.76rem', padding: '0.35rem 0.6rem' }}
+                    style={{ fontSize: '0.8rem', padding: '0.4rem 0.75rem', fontWeight: 700 }}
                     onClick={handleIssueClearancePass}
                   >
-                    🖨️ Issue Pass
+                    🖨️ Issue & Print Pass
+                  </button>
+
+                  <button
+                    type="button"
+                    className="btn btn-secondary btn-sm"
+                    style={{ fontSize: '0.8rem', padding: '0.4rem 0.75rem' }}
+                    onClick={() => {
+                      const text = `Brent College Fee Statement:\nStudent: ${matchedStudent.full_name} (${matchedStudent.admission_number})\nClass: ${matchedStudent.class_name}\nTotal Billed: KES ${matchedStudent.term_fee_total.toLocaleString()}\nTotal Paid: KES ${Math.max(0, matchedStudent.term_fee_total - matchedStudent.fee_balance).toLocaleString()}\nBalance Due: KES ${matchedStudent.fee_balance.toLocaleString()}\nStatus: ${matchedStudent.fee_balance === 0 ? 'CLEARED' : 'PENDING'}\nPay via M-Pesa Paybill 247247, Acc: ${matchedStudent.admission_number}`
+                      navigator.clipboard.writeText(text)
+                      alert('✓ Student fee statement copied to clipboard! You can paste and send via WhatsApp/SMS.')
+                    }}
+                  >
+                    📋 Copy SMS Statement
                   </button>
                 </div>
               </div>
