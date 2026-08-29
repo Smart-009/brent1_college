@@ -19,11 +19,19 @@ export const BiometricClearancePassModal: React.FC<Props> = ({ pass, onClose }) 
   }
 
   return (
-    <div className="modal-overlay" onClick={onClose}>
+    <div className="modal-overlay" onClick={onClose} style={{ zIndex: 1150, padding: '0.75rem' }}>
       <div
         className="modal-content modal-lg"
         onClick={(e) => e.stopPropagation()}
-        style={{ maxWidth: '780px', padding: 0, overflow: 'hidden' }}
+        style={{
+          maxWidth: '780px',
+          width: '100%',
+          maxHeight: '92vh',
+          overflowY: 'auto',
+          WebkitOverflowScrolling: 'touch',
+          padding: 0,
+          borderRadius: '16px',
+        }}
       >
         {/* Top Control Bar (Hidden on print) */}
         <div
@@ -35,15 +43,17 @@ export const BiometricClearancePassModal: React.FC<Props> = ({ pass, onClose }) 
             padding: '0.75rem 1.25rem',
             background: 'var(--color-bg-secondary)',
             borderBottom: '1px solid var(--color-border)',
+            flexWrap: 'wrap',
+            gap: '0.5rem',
           }}
         >
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
             <span style={{ fontSize: '1.2rem' }}>🔒</span>
-            <strong>Official Biometric Fee Clearance Pass</strong>
+            <strong style={{ fontSize: '0.9rem' }}>Official Biometric Fee Clearance Pass</strong>
           </div>
           <div style={{ display: 'flex', gap: '0.5rem' }}>
             <button type="button" className="btn btn-primary btn-sm" onClick={handlePrint}>
-              🖨️ Print Clearance Pass
+              🖨️ Print Pass
             </button>
             <button type="button" className="btn btn-secondary btn-sm" onClick={onClose}>
               ✕ Close
@@ -55,7 +65,7 @@ export const BiometricClearancePassModal: React.FC<Props> = ({ pass, onClose }) 
         <div
           id="biometric-clearance-pass"
           style={{
-            padding: '2.5rem',
+            padding: 'clamp(1rem, 3.5vw, 2.5rem)',
             background: '#ffffff',
             color: '#0f172a',
             position: 'relative',

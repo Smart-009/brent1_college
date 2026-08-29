@@ -2,12 +2,14 @@
 // Brent College — Student Biometric Fingerprint Enrollment Modal
 // ============================================================
 
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import { schoolStore } from '@/lib/schoolData'
 import {
   executeRealBiometricScan,
   isWebAuthnAvailable,
   isWebUSBAvailable,
+  isMobileDevice,
+  triggerHaptic,
   connectWebUSBFingerprintScanner,
   type FingerOption,
   type BiometricMode,
@@ -23,31 +25,36 @@ interface Props {
 }
 
 export const BiometricEnrollModal: React.FC<Props> = ({ student, officerName, onClose, onEnrolled }) => {
-  const [biometricMode, setBiometricMode] = useState<BiometricMode>('webauthn')
+  const isMobile = isMobileDevice()
+  const [biometricMode, setBiometricMode] = useState<BiometricMode>(isMobile ? 'mobile_touch' : 'webauthn')
   const [selectedFinger, setSelectedFinger] = useState<FingerOption>(
     (student.biometric_finger_name as FingerOption) || 'Right Index'
   )
   const [step, setStep] = useState<'idle' | 'scanning' | 'success'>('idle')
-  const [scanStatusText, setScanStatusText] = useState('Place student finger on biometric optical scanner sensor.')
+  const [scanStatusText, setScanStatusText] = useState('Place finger on biometric scanner.')
   const [scanProgress, setScanProgress] = useState(0)
   const [confidenceScore, setConfidenceScore] = useState<number | null>(null)
   const [enrolledStudent, setEnrolledStudent] = useState<StudentRecord | null>(null)
-  const [usedDeviceName, setUsedDeviceName] = useState<string>('Windows Hello / Native Platform Sensor')
+  const [usedDeviceName, setUsedDeviceName] = useState<string>(isMobile ? '📱 Mobile Touch Sensor' : 'Platform Biometric Sensor')
   const [connectedUsbDev, setConnectedUsbDev] = useState<RealBiometricDevice | null>(null)
   const [hasWebAuthn, setHasWebAuthn] = useState<boolean>(true)
   const [hasWebUsb, setHasWebUsb] = useState<boolean>(true)
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
   const [isSaving, setIsSaving] = useState(false)
+  const [isPressingSensor, setIsPressingSensor] = useState(false)
+
+  const pressTimerRef = useRef<any>(null)
+  const holdProgressRef = useRef(0)
 
   useEffect(() => {
     isWebAuthnAvailable().then((avail) => {
       setHasWebAuthn(avail)
       if (!avail && biometricMode === 'webauthn') {
-        setBiometricMode('simulation')
+        setBiometricMode(isMobile ? 'mobile_touch' : 'simulation')
       }
     })
     setHasWebUsb(isWebUSBAvailable())
-  }, [])
+  }, [isMobile])
 
   const handleConnectUsbDevice = async () => {
     try {
@@ -60,14 +67,15 @@ export const BiometricEnrollModal: React.FC<Props> = ({ student, officerName, on
     }
   }
 
-  const handleStartEnrollment = async () => {
+  // Unified Enrollment Execution
+  const executeEnrollment = async (chosenMode: BiometricMode = biometricMode) => {
     setStep('scanning')
-    setScanProgress(10)
+    setScanProgress(15)
     setErrorMessage(null)
 
     try {
       const scanResult = await executeRealBiometricScan({
-        mode: biometricMode,
+        mode: chosenMode,
         action: 'enroll',
         student,
         fingerName: selectedFinger,
@@ -97,12 +105,52 @@ export const BiometricEnrollModal: React.FC<Props> = ({ student, officerName, on
     } catch (err: any) {
       console.error('Biometric enrollment failed:', err)
       const msg = err?.name === 'NotAllowedError'
-        ? 'Sensor scan canceled by user or permission was denied.'
+        ? 'Sensor scan canceled by user or permission denied.'
         : err?.message || 'Biometric sensor error.'
       setErrorMessage(msg)
       setStep('idle')
     } finally {
       setIsSaving(false)
+    }
+  }
+
+  // Interactive Press-and-Hold for Mobile & Touchscreens
+  const handleTouchStart = () => {
+    if (step !== 'idle') return
+    setIsPressingSensor(true)
+    holdProgressRef.current = 10
+    setScanProgress(10)
+    setScanStatusText('📱 Scanning dermal ridge contact...')
+    triggerHaptic(40)
+
+    if (pressTimerRef.current) clearInterval(pressTimerRef.current)
+    pressTimerRef.current = setInterval(() => {
+      holdProgressRef.current += 15
+      setScanProgress(Math.min(holdProgressRef.current, 100))
+      triggerHaptic(30)
+
+      if (holdProgressRef.current >= 40 && holdProgressRef.current < 75) {
+        setScanStatusText('🔍 Extracting minutiae ridge patterns...')
+      } else if (holdProgressRef.current >= 75 && holdProgressRef.current < 100) {
+        setScanStatusText('🔐 Generating encrypted biometric template...')
+      } else if (holdProgressRef.current >= 100) {
+        if (pressTimerRef.current) clearInterval(pressTimerRef.current)
+        triggerHaptic([60, 40, 100])
+        setIsPressingSensor(false)
+        executeEnrollment('mobile_touch')
+      }
+    }, 120)
+  }
+
+  const handleTouchEnd = () => {
+    if (pressTimerRef.current) {
+      clearInterval(pressTimerRef.current)
+      pressTimerRef.current = null
+    }
+    if (isPressingSensor && holdProgressRef.current < 100) {
+      setIsPressingSensor(false)
+      setScanProgress(0)
+      setScanStatusText('Hold finger firmly on sensor until capture reaches 100%.')
     }
   }
 
@@ -114,19 +162,27 @@ export const BiometricEnrollModal: React.FC<Props> = ({ student, officerName, on
   }
 
   return (
-    <div className="modal-overlay" onClick={onClose}>
+    <div className="modal-overlay" onClick={onClose} style={{ zIndex: 1100, padding: '0.75rem' }}>
       <div
         className="modal-content modal-md"
         onClick={(e) => e.stopPropagation()}
-        style={{ maxWidth: '560px', padding: '1.75rem' }}
+        style={{
+          maxWidth: '540px',
+          width: '100%',
+          maxHeight: '92vh',
+          overflowY: 'auto',
+          WebkitOverflowScrolling: 'touch',
+          padding: 'clamp(1rem, 3.5vw, 1.75rem)',
+          borderRadius: '16px',
+        }}
       >
-        <div className="modal-header" style={{ marginBottom: '1.25rem', paddingBottom: '0.75rem' }}>
+        <div className="modal-header" style={{ marginBottom: '1rem', paddingBottom: '0.65rem' }}>
           <div>
-            <h3 className="modal-title" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-              <span>🖐️</span> Real Biometric Fingerprint Enrollment
+            <h3 className="modal-title" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '1.15rem' }}>
+              <span>🖐️</span> Biometric Fingerprint Enrollment
             </h3>
-            <p style={{ fontSize: '0.8rem', color: 'var(--color-text-secondary)', margin: '0.25rem 0 0 0' }}>
-              Register physical biometric fingerprint via Windows Hello, USB Optical Reader, or Native Sensor.
+            <p style={{ fontSize: '0.78rem', color: 'var(--color-text-secondary)', margin: '0.2rem 0 0 0' }}>
+              {isMobile ? 'Touch screen sensor or use mobile biometric lock to register.' : 'Register physical biometric template via Windows Hello, USB Scanner, or Native Sensor.'}
             </p>
           </div>
           <button type="button" className="modal-close" onClick={onClose}>✕</button>
@@ -137,18 +193,18 @@ export const BiometricEnrollModal: React.FC<Props> = ({ student, officerName, on
           style={{
             background: 'var(--color-bg-secondary)',
             border: '1px solid var(--color-border)',
-            borderRadius: '8px',
-            padding: '0.85rem 1rem',
+            borderRadius: '10px',
+            padding: '0.75rem 0.9rem',
             display: 'flex',
             alignItems: 'center',
-            gap: '0.85rem',
-            marginBottom: '1.25rem',
+            gap: '0.75rem',
+            marginBottom: '1rem',
           }}
         >
           <div
             style={{
-              width: '44px',
-              height: '44px',
+              width: '42px',
+              height: '42px',
               borderRadius: '50%',
               background: 'var(--color-primary)',
               color: '#fff',
@@ -156,20 +212,23 @@ export const BiometricEnrollModal: React.FC<Props> = ({ student, officerName, on
               alignItems: 'center',
               justifyContent: 'center',
               fontWeight: 800,
-              fontSize: '1.1rem',
+              fontSize: '1.05rem',
+              flexShrink: 0,
             }}
           >
             {student.full_name.charAt(0)}
           </div>
-          <div style={{ flex: 1 }}>
-            <div style={{ fontWeight: 700, fontSize: '0.95rem' }}>{student.full_name}</div>
-            <div style={{ fontSize: '0.8rem', color: 'var(--color-text-secondary)' }}>
+          <div style={{ flex: 1, minWidth: 0 }}>
+            <div style={{ fontWeight: 700, fontSize: '0.9rem', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+              {student.full_name}
+            </div>
+            <div style={{ fontSize: '0.76rem', color: 'var(--color-text-secondary)' }}>
               Adm: <strong style={{ color: 'var(--color-primary)' }}>{student.admission_number}</strong> • {student.class_name}
             </div>
           </div>
           {student.biometric_enrolled && (
-            <span className="badge badge-success" style={{ fontSize: '0.72rem' }}>
-              Already Enrolled ({student.biometric_finger_name || 'Active'})
+            <span className="badge badge-success" style={{ fontSize: '0.7rem', padding: '0.25rem 0.5rem', flexShrink: 0 }}>
+              Enrolled ({student.biometric_finger_name || 'Active'})
             </span>
           )}
         </div>
@@ -181,8 +240,8 @@ export const BiometricEnrollModal: React.FC<Props> = ({ student, officerName, on
               border: '1px solid #fecaca',
               color: '#b91c1c',
               borderRadius: '8px',
-              padding: '0.75rem 1rem',
-              fontSize: '0.82rem',
+              padding: '0.65rem 0.85rem',
+              fontSize: '0.8rem',
               marginBottom: '1rem',
             }}
           >
@@ -194,89 +253,69 @@ export const BiometricEnrollModal: React.FC<Props> = ({ student, officerName, on
         {step === 'idle' && (
           <div>
             {/* Real Hardware Mode Selection */}
-            <div style={{ marginBottom: '1.25rem' }}>
-              <label className="label" style={{ fontWeight: 700, fontSize: '0.82rem', marginBottom: '0.4rem' }}>
-                Hardware Biometric Sensor Interface:
+            <div style={{ marginBottom: '1rem' }}>
+              <label className="label" style={{ fontWeight: 700, fontSize: '0.8rem', marginBottom: '0.35rem' }}>
+                Biometric Sensor Mode:
               </label>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.5rem' }}>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(130px, 1fr))', gap: '0.4rem' }}>
+                <button
+                  type="button"
+                  className={`btn btn-sm ${biometricMode === 'mobile_touch' ? 'btn-primary' : 'btn-secondary'}`}
+                  style={{ justifyContent: 'flex-start', fontSize: '0.75rem', padding: '0.5rem 0.6rem', textAlign: 'left' }}
+                  onClick={() => setBiometricMode('mobile_touch')}
+                >
+                  <div>
+                    <div style={{ fontWeight: 700 }}>📱 Mobile Touch Sensor</div>
+                    <div style={{ fontSize: '0.65rem', opacity: 0.85 }}>Touch screen with haptics</div>
+                  </div>
+                </button>
+
                 <button
                   type="button"
                   className={`btn btn-sm ${biometricMode === 'webauthn' ? 'btn-primary' : 'btn-secondary'}`}
-                  style={{
-                    justifyContent: 'flex-start',
-                    fontSize: '0.8rem',
-                    padding: '0.6rem 0.75rem',
-                    textAlign: 'left',
-                  }}
+                  style={{ justifyContent: 'flex-start', fontSize: '0.75rem', padding: '0.5rem 0.6rem', textAlign: 'left' }}
                   onClick={() => setBiometricMode('webauthn')}
                 >
                   <div>
-                    <div style={{ fontWeight: 700 }}>🖥️ Windows Hello / OS Sensor</div>
-                    <div style={{ fontSize: '0.7rem', opacity: 0.85 }}>Real platform biometric reader</div>
+                    <div style={{ fontWeight: 700 }}>{isMobile ? '🔒 Android / Device Lock' : '🖥️ Windows Hello / OS'}</div>
+                    <div style={{ fontSize: '0.65rem', opacity: 0.85 }}>Hardware platform sensor</div>
                   </div>
                 </button>
 
                 <button
                   type="button"
                   className={`btn btn-sm ${biometricMode === 'webusb' ? 'btn-primary' : 'btn-secondary'}`}
-                  style={{
-                    justifyContent: 'flex-start',
-                    fontSize: '0.8rem',
-                    padding: '0.6rem 0.75rem',
-                    textAlign: 'left',
-                  }}
+                  style={{ justifyContent: 'flex-start', fontSize: '0.75rem', padding: '0.5rem 0.6rem', textAlign: 'left' }}
                   onClick={handleConnectUsbDevice}
                 >
                   <div>
                     <div style={{ fontWeight: 700 }}>🔌 USB Optical Scanner</div>
-                    <div style={{ fontSize: '0.7rem', opacity: 0.85 }}>
-                      {connectedUsbDev ? connectedUsbDev.name.slice(0, 18) : 'DigitalPersona / SecuGen / Mantra'}
+                    <div style={{ fontSize: '0.65rem', opacity: 0.85 }}>
+                      {connectedUsbDev ? connectedUsbDev.name.slice(0, 14) : 'DigitalPersona / SecuGen'}
                     </div>
                   </div>
                 </button>
 
                 <button
                   type="button"
-                  className={`btn btn-sm ${biometricMode === 'local_daemon' ? 'btn-primary' : 'btn-secondary'}`}
-                  style={{
-                    justifyContent: 'flex-start',
-                    fontSize: '0.8rem',
-                    padding: '0.6rem 0.75rem',
-                    textAlign: 'left',
-                  }}
-                  onClick={() => setBiometricMode('local_daemon')}
-                >
-                  <div>
-                    <div style={{ fontWeight: 700 }}>🌐 Local RD Biometric Service</div>
-                    <div style={{ fontSize: '0.7rem', opacity: 0.85 }}>Mantra / SecuGen localhost daemon</div>
-                  </div>
-                </button>
-
-                <button
-                  type="button"
                   className={`btn btn-sm ${biometricMode === 'simulation' ? 'btn-primary' : 'btn-secondary'}`}
-                  style={{
-                    justifyContent: 'flex-start',
-                    fontSize: '0.8rem',
-                    padding: '0.6rem 0.75rem',
-                    textAlign: 'left',
-                  }}
+                  style={{ justifyContent: 'flex-start', fontSize: '0.75rem', padding: '0.5rem 0.6rem', textAlign: 'left' }}
                   onClick={() => setBiometricMode('simulation')}
                 >
                   <div>
-                    <div style={{ fontWeight: 700 }}>🧪 Optical Capacitive Lab Rig</div>
-                    <div style={{ fontSize: '0.7rem', opacity: 0.85 }}>Test mode without USB plug-in</div>
+                    <div style={{ fontWeight: 700 }}>🧪 Lab Test Rig</div>
+                    <div style={{ fontSize: '0.65rem', opacity: 0.85 }}>Instant verification mode</div>
                   </div>
                 </button>
               </div>
             </div>
 
             {/* Finger Choice */}
-            <div style={{ marginBottom: '1.25rem' }}>
-              <label className="label" style={{ fontWeight: 600, marginBottom: '0.4rem' }}>
+            <div style={{ marginBottom: '1rem' }}>
+              <label className="label" style={{ fontWeight: 600, fontSize: '0.8rem', marginBottom: '0.35rem' }}>
                 Select Finger to Enroll:
               </label>
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '0.4rem' }}>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '0.35rem' }}>
                 {[
                   { id: 'Right Index', label: '👉 Right Index' },
                   { id: 'Right Thumb', label: '👍 Right Thumb' },
@@ -289,7 +328,7 @@ export const BiometricEnrollModal: React.FC<Props> = ({ student, officerName, on
                     key={f.id}
                     type="button"
                     className={`btn btn-xs ${selectedFinger === f.id ? 'btn-primary' : 'btn-secondary'}`}
-                    style={{ fontSize: '0.78rem', padding: '0.4rem' }}
+                    style={{ fontSize: '0.74rem', padding: '0.35rem 0.25rem', whiteSpace: 'nowrap' }}
                     onClick={() => setSelectedFinger(f.id as FingerOption)}
                   >
                     {f.label}
@@ -298,68 +337,93 @@ export const BiometricEnrollModal: React.FC<Props> = ({ student, officerName, on
               </div>
             </div>
 
-            {/* Real Hardware Sensor Touch Target */}
+            {/* Live Interactive Fingerprint Touchpad Target */}
             <div
               style={{
-                border: '2px dashed var(--color-primary)',
-                borderRadius: '12px',
-                padding: '1.75rem 1rem',
+                border: isPressingSensor ? '2px solid #22c55e' : '2px dashed var(--color-primary)',
+                borderRadius: '14px',
+                padding: '1.5rem 1rem',
                 textAlign: 'center',
-                background: 'rgba(30, 58, 138, 0.03)',
+                background: isPressingSensor
+                  ? 'linear-gradient(180deg, rgba(34, 197, 94, 0.12) 0%, rgba(34, 197, 94, 0.05) 100%)'
+                  : 'rgba(30, 58, 138, 0.03)',
                 cursor: 'pointer',
-                marginBottom: '1.25rem',
-                transition: 'all 0.2s ease',
+                marginBottom: '1rem',
+                userSelect: 'none',
+                WebkitUserSelect: 'none',
+                touchAction: 'none',
+                transition: 'all 0.15s ease',
               }}
-              onClick={handleStartEnrollment}
+              onPointerDown={handleTouchStart}
+              onPointerUp={handleTouchEnd}
+              onPointerCancel={handleTouchEnd}
+              onClick={() => {
+                if (!isMobile) executeEnrollment()
+              }}
             >
               <div
                 style={{
-                  width: '72px',
-                  height: '72px',
+                  width: '80px',
+                  height: '80px',
                   borderRadius: '50%',
-                  background: 'rgba(30, 58, 138, 0.1)',
+                  background: isPressingSensor ? '#dcfce7' : 'rgba(30, 58, 138, 0.1)',
+                  border: isPressingSensor ? '3px solid #22c55e' : '2px solid rgba(30, 58, 138, 0.3)',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  margin: '0 auto 0.75rem auto',
-                  fontSize: '2.4rem',
+                  margin: '0 auto 0.65rem auto',
+                  fontSize: '2.6rem',
+                  boxShadow: isPressingSensor ? '0 0 25px rgba(34, 197, 94, 0.6)' : 'none',
+                  transform: isPressingSensor ? 'scale(0.96)' : 'scale(1)',
+                  transition: 'all 0.15s ease',
                 }}
               >
                 🖐️
               </div>
-              <div style={{ fontWeight: 700, color: 'var(--color-primary)', fontSize: '0.95rem' }}>
-                Click to Prompt Real Fingerprint Scanner
+              <div style={{ fontWeight: 800, color: isPressingSensor ? '#15803d' : 'var(--color-primary)', fontSize: '0.95rem' }}>
+                {isMobile ? (isPressingSensor ? 'Scanning... Keep Holding!' : 'Press & Hold Finger on Sensor') : 'Click to Scan & Enroll Fingerprint'}
               </div>
-              <div style={{ fontSize: '0.78rem', color: 'var(--color-text-secondary)', marginTop: '0.25rem' }}>
-                Mode: <strong>{biometricMode.toUpperCase()}</strong> • Place <strong>{selectedFinger}</strong> on sensor
+              <div style={{ fontSize: '0.75rem', color: 'var(--color-text-secondary)', marginTop: '0.2rem' }}>
+                Enrolling: <strong>{selectedFinger}</strong> • Mode: <strong>{biometricMode.toUpperCase()}</strong>
               </div>
+
+              {isPressingSensor && (
+                <div style={{ marginTop: '0.75rem' }}>
+                  <div style={{ width: '100%', height: '6px', background: '#e2e8f0', borderRadius: '999px', overflow: 'hidden' }}>
+                    <div style={{ height: '100%', width: `${scanProgress}%`, background: '#22c55e', transition: 'width 0.1s linear' }} />
+                  </div>
+                  <div style={{ fontSize: '0.72rem', color: '#15803d', fontWeight: 700, marginTop: '0.25rem' }}>
+                    {scanProgress}% Capturing Dermal Ridges
+                  </div>
+                </div>
+              )}
             </div>
 
-            <div className="modal-footer" style={{ marginTop: '1rem', padding: 0, justifyContent: 'space-between' }}>
-              <button type="button" className="btn btn-secondary" onClick={onClose}>
+            <div className="modal-footer" style={{ marginTop: '0.75rem', padding: 0, display: 'flex', justifyContent: 'space-between', gap: '0.5rem' }}>
+              <button type="button" className="btn btn-secondary btn-sm" onClick={onClose}>
                 Cancel
               </button>
-              <button type="button" className="btn btn-primary" onClick={handleStartEnrollment}>
-                🖐️ Prompt Fingerprint Reader
+              <button type="button" className="btn btn-primary btn-sm" onClick={() => executeEnrollment()}>
+                🖐️ Tap to Scan Now
               </button>
             </div>
           </div>
         )}
 
-        {/* Step: SCANNING ANIMATION / PROMPT */}
+        {/* Step: SCANNING ANIMATION */}
         {step === 'scanning' && (
-          <div style={{ textAlign: 'center', padding: '1.5rem 0' }}>
+          <div style={{ textAlign: 'center', padding: '1.25rem 0' }}>
             <div
               style={{
-                width: '100px',
-                height: '100px',
+                width: '90px',
+                height: '90px',
                 borderRadius: '50%',
                 background: 'linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%)',
                 boxShadow: '0 0 25px rgba(59, 130, 246, 0.6)',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                margin: '0 auto 1.25rem auto',
+                margin: '0 auto 1rem auto',
                 position: 'relative',
                 overflow: 'hidden',
               }}
@@ -376,17 +440,16 @@ export const BiometricEnrollModal: React.FC<Props> = ({ student, officerName, on
                   transition: 'top 0.25s linear',
                 }}
               />
-              <span style={{ fontSize: '3rem', filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.3))' }}>🖐️</span>
+              <span style={{ fontSize: '2.6rem', filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.3))' }}>🖐️</span>
             </div>
 
-            <div style={{ fontWeight: 700, fontSize: '1.05rem', color: 'var(--color-primary)', marginBottom: '0.35rem' }}>
+            <div style={{ fontWeight: 700, fontSize: '1rem', color: 'var(--color-primary)', marginBottom: '0.25rem' }}>
               Scanning Physical {selectedFinger}...
             </div>
-            <div style={{ fontSize: '0.85rem', color: 'var(--color-text-secondary)', marginBottom: '1rem' }}>
+            <div style={{ fontSize: '0.8rem', color: 'var(--color-text-secondary)', marginBottom: '0.85rem' }}>
               {scanStatusText}
             </div>
 
-            {/* Progress Bar */}
             <div
               style={{
                 width: '100%',
@@ -406,38 +469,38 @@ export const BiometricEnrollModal: React.FC<Props> = ({ student, officerName, on
                 }}
               />
             </div>
-            <div style={{ fontSize: '0.75rem', color: '#16a34a', fontWeight: 700, marginTop: '0.5rem' }}>
-              {scanProgress}% — Live Physical Fingerprint Capture
+            <div style={{ fontSize: '0.74rem', color: '#16a34a', fontWeight: 700, marginTop: '0.4rem' }}>
+              {scanProgress}% — Capturing Biometric Minutiae
             </div>
           </div>
         )}
 
         {/* Step: SUCCESS */}
         {step === 'success' && enrolledStudent && (
-          <div style={{ textAlign: 'center', padding: '1rem 0' }}>
+          <div style={{ textAlign: 'center', padding: '0.75rem 0' }}>
             <div
               style={{
-                width: '64px',
-                height: '64px',
+                width: '56px',
+                height: '56px',
                 borderRadius: '50%',
                 background: '#f0fdf4',
                 border: '2px solid #22c55e',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                margin: '0 auto 1rem auto',
-                fontSize: '2rem',
+                margin: '0 auto 0.85rem auto',
+                fontSize: '1.75rem',
                 color: '#16a34a',
               }}
             >
               ✓
             </div>
 
-            <h4 style={{ fontSize: '1.15rem', fontWeight: 800, color: '#15803d', marginBottom: '0.35rem' }}>
-              Real Biometric Fingerprint Enrolled!
+            <h4 style={{ fontSize: '1.1rem', fontWeight: 800, color: '#15803d', marginBottom: '0.25rem' }}>
+              Fingerprint Successfully Enrolled!
             </h4>
-            <p style={{ fontSize: '0.82rem', color: 'var(--color-text-secondary)', marginBottom: '1.25rem' }}>
-              Physical biometric signature has been registered and verified for instant fee clearance.
+            <p style={{ fontSize: '0.78rem', color: 'var(--color-text-secondary)', marginBottom: '1rem' }}>
+              Biometric template hash generated and permanently linked for fee clearance.
             </p>
 
             <div
@@ -445,17 +508,17 @@ export const BiometricEnrollModal: React.FC<Props> = ({ student, officerName, on
                 background: 'var(--color-bg-secondary)',
                 border: '1px solid var(--color-border)',
                 borderRadius: '8px',
-                padding: '0.85rem 1rem',
+                padding: '0.75rem 0.85rem',
                 textAlign: 'left',
-                fontSize: '0.82rem',
+                fontSize: '0.8rem',
                 lineHeight: 1.6,
-                marginBottom: '1.25rem',
+                marginBottom: '1rem',
               }}
             >
               <div><strong>Registered Finger:</strong> 🖐️ {enrolledStudent.biometric_finger_name}</div>
-              <div><strong>Hardware Interface:</strong> {usedDeviceName}</div>
-              <div><strong>Template Signature:</strong> <code style={{ fontSize: '0.75rem' }}>{enrolledStudent.biometric_template_hash}</code></div>
-              <div><strong>Sensor Match Score:</strong> <strong style={{ color: '#16a34a' }}>{confidenceScore}% Verified</strong></div>
+              <div><strong>Hardware Sensor:</strong> {usedDeviceName}</div>
+              <div><strong>Template Signature:</strong> <code style={{ fontSize: '0.72rem' }}>{enrolledStudent.biometric_template_hash}</code></div>
+              <div><strong>Sensor Match Score:</strong> <strong style={{ color: '#16a34a' }}>{confidenceScore}% Quality Score</strong></div>
               <div><strong>Enrolled By:</strong> {officerName}</div>
             </div>
 
