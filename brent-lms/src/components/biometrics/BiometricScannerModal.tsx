@@ -182,67 +182,9 @@ export const BiometricScannerModal: React.FC<Props> = ({
           {/* Scanner Interaction Area */}
           {scanState === 'ready' && (
             <div>
-              {/* Hardware Biometric Mode Selection */}
-              <div style={{ marginBottom: '1rem' }}>
-                <label className="label" style={{ fontWeight: 700, fontSize: '0.8rem', marginBottom: '0.35rem' }}>
-                  Biometric Sensor Interface:
-                </label>
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(130px, 1fr))', gap: '0.4rem' }}>
-                  <button
-                    type="button"
-                    className={`btn btn-sm ${biometricMode === 'webauthn' ? 'btn-primary' : 'btn-secondary'}`}
-                    style={{ justifyContent: 'flex-start', fontSize: '0.75rem', padding: '0.5rem 0.6rem', textAlign: 'left' }}
-                    onClick={() => setBiometricMode('webauthn')}
-                  >
-                    <div>
-                      <div style={{ fontWeight: 700 }}>{isMobile ? "📱 Phone's Fingerprint" : '🖥️ Windows Hello'}</div>
-                      <div style={{ fontSize: '0.65rem', opacity: 0.85 }}>{isMobile ? "Phone's native hardware reader" : 'Platform biometric sensor'}</div>
-                    </div>
-                  </button>
-
-                  <button
-                    type="button"
-                    className={`btn btn-sm ${biometricMode === 'mobile_touch' ? 'btn-primary' : 'btn-secondary'}`}
-                    style={{ justifyContent: 'flex-start', fontSize: '0.75rem', padding: '0.5rem 0.6rem', textAlign: 'left' }}
-                    onClick={() => setBiometricMode('mobile_touch')}
-                  >
-                    <div>
-                      <div style={{ fontWeight: 700 }}>🖐️ Touch Sensor</div>
-                      <div style={{ fontSize: '0.65rem', opacity: 0.85 }}>On-screen capacitive touch</div>
-                    </div>
-                  </button>
-
-                  <button
-                    type="button"
-                    className={`btn btn-sm ${biometricMode === 'webusb' ? 'btn-primary' : 'btn-secondary'}`}
-                    style={{ justifyContent: 'flex-start', fontSize: '0.75rem', padding: '0.5rem 0.6rem', textAlign: 'left' }}
-                    onClick={handleConnectUsbDevice}
-                  >
-                    <div>
-                      <div style={{ fontWeight: 700 }}>🔌 USB Optical Scanner</div>
-                      <div style={{ fontSize: '0.65rem', opacity: 0.85 }}>
-                        {connectedUsbDev ? connectedUsbDev.name.slice(0, 14) : 'DigitalPersona / SecuGen'}
-                      </div>
-                    </div>
-                  </button>
-
-                  <button
-                    type="button"
-                    className={`btn btn-sm ${biometricMode === 'simulation' ? 'btn-primary' : 'btn-secondary'}`}
-                    style={{ justifyContent: 'flex-start', fontSize: '0.75rem', padding: '0.5rem 0.6rem', textAlign: 'left' }}
-                    onClick={() => setBiometricMode('simulation')}
-                  >
-                    <div>
-                      <div style={{ fontWeight: 700 }}>🧪 Lab Test Rig</div>
-                      <div style={{ fontSize: '0.65rem', opacity: 0.85 }}>Instant verification mode</div>
-                    </div>
-                  </button>
-                </div>
-              </div>
-
-              {/* Quick Student Selection */}
-              <div style={{ marginBottom: '1rem' }}>
-                <label className="label" style={{ fontWeight: 600, fontSize: '0.8rem', marginBottom: '0.35rem' }}>
+              {/* Student Selection */}
+              <div style={{ marginBottom: '1.25rem' }}>
+                <label className="label" style={{ fontWeight: 700, fontSize: '0.82rem', marginBottom: '0.4rem' }}>
                   Select Student to Verify:
                 </label>
                 {students.length === 0 ? (
@@ -250,10 +192,10 @@ export const BiometricScannerModal: React.FC<Props> = ({
                     No students currently in the directory. Please add a student in Admissions.
                   </div>
                 ) : (
-                  <div style={{ display: 'grid', gridTemplateColumns: '1fr auto', gap: '0.4rem' }}>
+                  <div>
                     <select
                       className="input"
-                      style={{ fontSize: '0.82rem', padding: '0.45rem 0.6rem' }}
+                      style={{ fontSize: '0.88rem', padding: '0.6rem 0.75rem', width: '100%', borderRadius: '10px' }}
                       value={selectedStudentId}
                       onChange={(e) => setSelectedStudentId(e.target.value)}
                     >
@@ -263,14 +205,6 @@ export const BiometricScannerModal: React.FC<Props> = ({
                         </option>
                       ))}
                     </select>
-
-                    <button
-                      type="button"
-                      className="btn btn-primary btn-sm"
-                      onClick={() => handleScanFingerprint()}
-                    >
-                      {isMobile ? "📱 Scan Phone Fingerprint" : "🖐️ Touch Scanner"}
-                    </button>
                   </div>
                 )}
               </div>
@@ -284,7 +218,7 @@ export const BiometricScannerModal: React.FC<Props> = ({
                   textAlign: 'center',
                   background: 'linear-gradient(180deg, rgba(2, 132, 199, 0.08) 0%, rgba(2, 132, 199, 0.16) 100%)',
                   cursor: 'pointer',
-                  marginBottom: '1rem',
+                  marginBottom: '1.25rem',
                   transition: 'all 0.15s ease',
                   boxShadow: '0 4px 15px rgba(2, 132, 199, 0.15)',
                 }}
@@ -310,10 +244,10 @@ export const BiometricScannerModal: React.FC<Props> = ({
                   🖐️
                 </div>
                 <div style={{ fontWeight: 900, color: '#0369a1', fontSize: '1.15rem' }}>
-                  {isMobile ? "👆 Tap to Open Phone's Fingerprint Scanner" : 'Click to Verify with Physical Biometric Reader'}
+                  {isMobile ? "👆 Tap to Scan Phone's Fingerprint" : '👆 Click to Scan Fingerprint / Passkey'}
                 </div>
                 <div style={{ fontSize: '0.8rem', color: '#475569', marginTop: '0.35rem' }}>
-                  {isMobile ? "Opens your Android / iOS native fingerprint prompt directly" : "Uses Windows Hello, WebUSB, or connected hardware sensor"}
+                  {isMobile ? "Opens your phone's native hardware fingerprint reader" : "Hardware biometrics & Windows Hello passkey active"}
                 </div>
               </div>
 

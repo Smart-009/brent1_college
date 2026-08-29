@@ -260,66 +260,6 @@ export const BiometricEnrollModal: React.FC<Props> = ({ student, officerName, on
         {/* Step: IDLE / CONFIGURATION */}
         {step === 'idle' && (
           <div>
-            {/* Real Hardware Mode Selection */}
-            <div style={{ marginBottom: '1rem' }}>
-              <label className="label" style={{ fontWeight: 700, fontSize: '0.8rem', marginBottom: '0.35rem' }}>
-                Biometric Sensor Mode:
-              </label>
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(130px, 1fr))', gap: '0.4rem' }}>
-                <button
-                  type="button"
-                  className={`btn btn-sm ${biometricMode === 'webauthn' ? 'btn-primary' : 'btn-secondary'}`}
-                  style={{ justifyContent: 'flex-start', fontSize: '0.75rem', padding: '0.5rem 0.6rem', textAlign: 'left' }}
-                  onClick={() => setBiometricMode('webauthn')}
-                >
-                  <div>
-                    <div style={{ fontWeight: 700 }}>{isMobile ? '📱 Phone Fingerprint' : '🖥️ Windows Hello / OS'}</div>
-                    <div style={{ fontSize: '0.65rem', opacity: 0.85 }}>{isMobile ? "Phone's physical sensor" : 'Platform biometric sensor'}</div>
-                  </div>
-                </button>
-
-                <button
-                  type="button"
-                  className={`btn btn-sm ${biometricMode === 'mobile_touch' ? 'btn-primary' : 'btn-secondary'}`}
-                  style={{ justifyContent: 'flex-start', fontSize: '0.75rem', padding: '0.5rem 0.6rem', textAlign: 'left' }}
-                  onClick={() => setBiometricMode('mobile_touch')}
-                >
-                  <div>
-                    <div style={{ fontWeight: 700 }}>🖐️ Touch Sensor</div>
-                    <div style={{ fontSize: '0.65rem', opacity: 0.85 }}>On-screen haptic scanner</div>
-                  </div>
-                </button>
-
-                <button
-                  type="button"
-                  className={`btn btn-sm ${biometricMode === 'webusb' ? 'btn-primary' : 'btn-secondary'}`}
-                  style={{ justifyContent: 'flex-start', fontSize: '0.75rem', padding: '0.5rem 0.6rem', textAlign: 'left' }}
-                  onClick={handleConnectUsbDevice}
-                >
-                  <div>
-                    <div style={{ fontWeight: 700 }}>🔌 USB Optical Scanner</div>
-                    <div style={{ fontSize: '0.65rem', opacity: 0.85 }}>
-                      {connectedUsbDev ? connectedUsbDev.name.slice(0, 14) : 'DigitalPersona / SecuGen'}
-                    </div>
-                  </div>
-                </button>
-
-                <button
-                  type="button"
-                  className={`btn btn-sm ${biometricMode === 'simulation' ? 'btn-primary' : 'btn-secondary'}`}
-                  style={{ justifyContent: 'flex-start', fontSize: '0.75rem', padding: '0.5rem 0.6rem', textAlign: 'left' }}
-                  onClick={() => setBiometricMode('simulation')}
-                >
-                  <div>
-                    <div style={{ fontWeight: 700 }}>🧪 Lab Test Rig</div>
-                    <div style={{ fontSize: '0.65rem', opacity: 0.85 }}>Instant verification mode</div>
-                  </div>
-                </button>
-              </div>
-            </div>
-
-
-
             {/* Finger Choice */}
             <div style={{ marginBottom: '1rem' }}>
               <label className="label" style={{ fontWeight: 600, fontSize: '0.8rem', marginBottom: '0.35rem' }}>
