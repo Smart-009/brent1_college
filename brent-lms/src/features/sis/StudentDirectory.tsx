@@ -41,8 +41,8 @@ export function StudentDirectory() {
     status: 'Active',
     fee_balance: 4500,
     term_fee_total: 4500,
-    attendance_rate: 100,
-    discipline_points: 100,
+    attendance_rate: 0,
+    discipline_points: 0,
     merits_count: 0,
     demerits_count: 0,
     guardian: {
@@ -167,8 +167,8 @@ export function StudentDirectory() {
       fee_balance: balance,
       term_fee_total: billed,
       fee_cleared: balance === 0,
-      attendance_rate: 100,
-      discipline_points: 100,
+      attendance_rate: Number(newStudent.attendance_rate) || 0,
+      discipline_points: Number(newStudent.discipline_points) || 0,
       merits_count: 0,
       demerits_count: 0,
     }
@@ -471,12 +471,14 @@ export function StudentDirectory() {
                           <div
                             style={{
                               height: '100%',
-                              width: `${std.attendance_rate}%`,
-                              background: std.attendance_rate >= 90 ? '#16a34a' : '#ea580c',
+                              width: `${std.attendance_rate || 0}%`,
+                              background: (std.attendance_rate || 0) >= 90 ? '#16a34a' : (std.attendance_rate || 0) > 0 ? '#ea580c' : '#94a3b8',
                             }}
                           />
                         </div>
-                        <span style={{ fontSize: '0.8rem', fontWeight: 600 }}>{std.attendance_rate}%</span>
+                        <span style={{ fontSize: '0.8rem', fontWeight: 600 }}>
+                          {std.attendance_rate && std.attendance_rate > 0 ? `${std.attendance_rate}%` : '0% (New)'}
+                        </span>
                       </div>
                     </td>
                     <td>
@@ -678,11 +680,30 @@ export function StudentDirectory() {
                   ⭐ Conduct & Lecture Attendance
                 </h4>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', fontSize: '0.85rem' }}>
-                  <div><strong>Lecture Attendance Rate:</strong> {selectedStudent.attendance_rate || 100}%</div>
-                  <div><strong>Discipline Index:</strong> {selectedStudent.discipline_points || 100}/100</div>
+                  <div>
+                    <strong>Lecture Attendance Rate:</strong>{' '}
+                    {selectedStudent.attendance_rate && selectedStudent.attendance_rate > 0
+                      ? `${selectedStudent.attendance_rate}%`
+                      : '0% (No lecture sessions attended yet)'}
+                  </div>
+                  <div>
+                    <strong>Discipline Index:</strong>{' '}
+                    {selectedStudent.discipline_points && selectedStudent.discipline_points > 0
+                      ? `${selectedStudent.discipline_points}/100`
+                      : '0 Demerits (Clean Record)'}
+                  </div>
                   <div><strong>Merit Commendations:</strong> ⭐ {selectedStudent.merits_count || 0} awarded</div>
                   <div><strong>Demerit Points:</strong> ⚠️ {selectedStudent.demerits_count || 0} recorded</div>
-                  <div><strong>Academic Standing:</strong> <span className="badge badge-info">{selectedStudent.status === 'Active' ? 'Active Enrollee' : selectedStudent.status}</span></div>
+                  <div>
+                    <strong>Academic Standing:</strong>{' '}
+                    <span className="badge badge-info">
+                      {!selectedStudent.attendance_rate || selectedStudent.attendance_rate === 0
+                        ? 'Newly Admitted'
+                        : selectedStudent.status === 'Active'
+                        ? 'Active Enrollee'
+                        : selectedStudent.status}
+                    </span>
+                  </div>
                 </div>
               </div>
 

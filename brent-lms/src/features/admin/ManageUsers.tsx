@@ -195,8 +195,8 @@ export function ManageUsers() {
             fee_balance: progFee,
             term_fee_total: progFee,
             fee_cleared: false,
-            attendance_rate: 100,
-            discipline_points: 100,
+            attendance_rate: 0,
+            discipline_points: 0,
             merits_count: 0,
             demerits_count: 0,
           })
