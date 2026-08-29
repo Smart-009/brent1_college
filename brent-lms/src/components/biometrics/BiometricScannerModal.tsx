@@ -72,12 +72,13 @@ export const BiometricScannerModal: React.FC<Props> = ({
     }
   }
 
-  // Start Real Fingerprint Verification
+  // Start Real Fingerprint Verification via Phone's Native Biometrics
   const handleScanFingerprint = async (targetStudent?: StudentRecord, chosenMode: BiometricMode = biometricMode) => {
     const studentToMatch = targetStudent || students.find((s) => s.id === selectedStudentId)
     setErrorMessage(null)
     setScanState('scanning')
-    setScanProgress(15)
+    setScanProgress(30)
+    setScanStatusText(isMobile ? "Waiting for phone fingerprint touch..." : "Waiting for biometric sensor...")
 
     try {
       const scanRes = await executeRealBiometricScan({
@@ -103,57 +104,12 @@ export const BiometricScannerModal: React.FC<Props> = ({
       console.error('Biometric scan failed:', err)
       let msg = err?.message || 'Fingerprint verification failed.'
       if (err?.name === 'NotAllowedError') {
-        msg = 'Phone fingerprint scan canceled or timed out. Tap again and touch your phone fingerprint sensor.'
+        msg = "Phone fingerprint sensor cancelled or timed out. Please tap 'Scan Phone Fingerprint' and place your registered finger on your phone's physical sensor."
       } else if (err?.name === 'SecurityError' || err?.name === 'NotSupportedError') {
-        msg = 'Hardware fingerprint reader requires HTTPS. You can also use the Touch Sensor below.'
+        msg = "Your phone's hardware biometric sensor requires a Secure HTTPS connection (e.g. your live website URL). You can also use the Touch Sensor below."
       }
       setErrorMessage(msg)
-      setScanState('not_found')
-    }
-  }
-
-  // Mobile Interactive Touch & Hold
-  const handleTouchStart = () => {
-    if (biometricMode === 'webauthn') {
-      handleScanFingerprint(undefined, 'webauthn')
-      return
-    }
-
-    if (scanState !== 'ready') return
-    setIsPressingSensor(true)
-    holdProgressRef.current = 10
-    setScanProgress(10)
-    setScanStatusText('📱 Scanning dermal contact...')
-    triggerHaptic(40)
-
-    if (pressTimerRef.current) clearInterval(pressTimerRef.current)
-    pressTimerRef.current = setInterval(() => {
-      holdProgressRef.current += 15
-      setScanProgress(Math.min(holdProgressRef.current, 100))
-      triggerHaptic(30)
-
-      if (holdProgressRef.current >= 40 && holdProgressRef.current < 75) {
-        setScanStatusText('🔍 Verifying ridge endings & minutiae...')
-      } else if (holdProgressRef.current >= 75 && holdProgressRef.current < 100) {
-        setScanStatusText('🔐 Checking financial clearance authorization...')
-      } else if (holdProgressRef.current >= 100) {
-        if (pressTimerRef.current) clearInterval(pressTimerRef.current)
-        triggerHaptic([60, 40, 100])
-        setIsPressingSensor(false)
-        handleScanFingerprint(undefined, 'mobile_touch')
-      }
-    }, 120)
-  }
-
-  const handleTouchEnd = () => {
-    if (pressTimerRef.current) {
-      clearInterval(pressTimerRef.current)
-      pressTimerRef.current = null
-    }
-    if (isPressingSensor && holdProgressRef.current < 100) {
-      setIsPressingSensor(false)
-      setScanProgress(0)
-      setScanStatusText('Hold finger on sensor until verification reaches 100%.')
+      setScanState('ready')
     }
   }
 
@@ -198,10 +154,10 @@ export const BiometricScannerModal: React.FC<Props> = ({
           <div className="modal-header" style={{ marginBottom: '1rem', paddingBottom: '0.65rem' }}>
             <div>
               <h3 className="modal-title" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '1.15rem' }}>
-                <span style={{ fontSize: '1.25rem' }}>🖐️</span> {isMobile ? 'Phone Fingerprint Fee Station' : 'Biometric Fee Clearance Station'}
+                <span style={{ fontSize: '1.25rem' }}>🖐️</span> {isMobile ? "Phone's Fingerprint Fee Station" : 'Biometric Fee Clearance Station'}
               </h3>
               <p style={{ fontSize: '0.78rem', color: 'var(--color-text-secondary)', margin: '0.2rem 0 0 0' }}>
-                {isMobile ? "Verify clearance using your phone's fingerprint sensor or touchscreen scan." : 'Instant live biometric verification for student exam clearance & security passes.'}
+                {isMobile ? "Uses your phone's native physical fingerprint reader to verify student fees." : 'Instant live biometric verification for student exam clearance & security passes.'}
               </p>
             </div>
             <button type="button" className="modal-close" onClick={onClose}>✕</button>
@@ -229,7 +185,7 @@ export const BiometricScannerModal: React.FC<Props> = ({
               {/* Hardware Biometric Mode Selection */}
               <div style={{ marginBottom: '1rem' }}>
                 <label className="label" style={{ fontWeight: 700, fontSize: '0.8rem', marginBottom: '0.35rem' }}>
-                  Biometric Sensor Mode:
+                  Biometric Sensor Interface:
                 </label>
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(130px, 1fr))', gap: '0.4rem' }}>
                   <button
@@ -239,8 +195,8 @@ export const BiometricScannerModal: React.FC<Props> = ({
                     onClick={() => setBiometricMode('webauthn')}
                   >
                     <div>
-                      <div style={{ fontWeight: 700 }}>{isMobile ? '📱 Phone Fingerprint' : '🖥️ Windows Hello'}</div>
-                      <div style={{ fontSize: '0.65rem', opacity: 0.85 }}>{isMobile ? "Phone's physical sensor" : 'Platform biometric sensor'}</div>
+                      <div style={{ fontWeight: 700 }}>{isMobile ? "📱 Phone's Fingerprint" : '🖥️ Windows Hello'}</div>
+                      <div style={{ fontSize: '0.65rem', opacity: 0.85 }}>{isMobile ? "Phone's native hardware reader" : 'Platform biometric sensor'}</div>
                     </div>
                   </button>
 
@@ -252,7 +208,7 @@ export const BiometricScannerModal: React.FC<Props> = ({
                   >
                     <div>
                       <div style={{ fontWeight: 700 }}>🖐️ Touch Sensor</div>
-                      <div style={{ fontSize: '0.65rem', opacity: 0.85 }}>On-screen haptic scanner</div>
+                      <div style={{ fontSize: '0.65rem', opacity: 0.85 }}>On-screen capacitive touch</div>
                     </div>
                   </button>
 
@@ -287,7 +243,7 @@ export const BiometricScannerModal: React.FC<Props> = ({
               {/* Quick Student Selection */}
               <div style={{ marginBottom: '1rem' }}>
                 <label className="label" style={{ fontWeight: 600, fontSize: '0.8rem', marginBottom: '0.35rem' }}>
-                  Select Enrolled Student or Place Finger on Sensor:
+                  Select Student to Verify:
                 </label>
                 {students.length === 0 ? (
                   <div className="alert alert-warning" style={{ fontSize: '0.82rem' }}>
@@ -313,72 +269,52 @@ export const BiometricScannerModal: React.FC<Props> = ({
                       className="btn btn-primary btn-sm"
                       onClick={() => handleScanFingerprint()}
                     >
-                      🖐️ Touch Scanner
+                      {isMobile ? "📱 Scan Phone Fingerprint" : "🖐️ Touch Scanner"}
                     </button>
                   </div>
                 )}
               </div>
 
-              {/* Live Interactive Fingerprint Touchpad Target */}
+              {/* Direct Primary Fingerprint Scanner Action Button */}
               <div
                 style={{
-                  border: isPressingSensor ? '2px solid #22c55e' : '2px dashed #0284c7',
-                  borderRadius: '14px',
-                  padding: '1.75rem 1rem',
+                  border: '2px solid #0284c7',
+                  borderRadius: '16px',
+                  padding: '2rem 1.25rem',
                   textAlign: 'center',
-                  background: isPressingSensor
-                    ? 'linear-gradient(180deg, rgba(34, 197, 94, 0.12) 0%, rgba(34, 197, 94, 0.05) 100%)'
-                    : 'linear-gradient(180deg, rgba(2, 132, 199, 0.04) 0%, rgba(2, 132, 199, 0.08) 100%)',
+                  background: 'linear-gradient(180deg, rgba(2, 132, 199, 0.08) 0%, rgba(2, 132, 199, 0.16) 100%)',
                   cursor: 'pointer',
                   marginBottom: '1rem',
-                  userSelect: 'none',
-                  WebkitUserSelect: 'none',
-                  touchAction: 'none',
                   transition: 'all 0.15s ease',
+                  boxShadow: '0 4px 15px rgba(2, 132, 199, 0.15)',
                 }}
-                onPointerDown={handleTouchStart}
-                onPointerUp={handleTouchEnd}
-                onPointerCancel={handleTouchEnd}
-                onClick={() => {
-                  if (!isMobile) handleScanFingerprint()
-                }}
+                onClick={() => handleScanFingerprint()}
               >
                 <div
                   style={{
-                    width: '84px',
-                    height: '84px',
+                    width: '88px',
+                    height: '88px',
                     borderRadius: '50%',
-                    background: isPressingSensor ? '#dcfce7' : '#e0f2fe',
-                    border: isPressingSensor ? '3px solid #22c55e' : '3px solid #0284c7',
+                    background: '#e0f2fe',
+                    border: '3px solid #0284c7',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
-                    margin: '0 auto 0.75rem auto',
-                    fontSize: '2.8rem',
-                    boxShadow: isPressingSensor ? '0 0 25px rgba(34, 197, 94, 0.6)' : '0 0 20px rgba(2, 132, 199, 0.25)',
-                    transform: isPressingSensor ? 'scale(0.96)' : 'scale(1)',
+                    margin: '0 auto 0.85rem auto',
+                    fontSize: '3rem',
+                    boxShadow: '0 0 25px rgba(2, 132, 199, 0.35)',
+                    transform: 'scale(1)',
                     transition: 'all 0.15s ease',
                   }}
                 >
                   🖐️
                 </div>
-                <div style={{ fontWeight: 800, color: isPressingSensor ? '#15803d' : '#0369a1', fontSize: '1.05rem' }}>
-                  {isMobile ? (isPressingSensor ? 'Scanning Fingerprint... Hold Firm!' : 'Press & Hold Finger on Sensor') : 'Touch / Press Fingerprint to Verify Fee Clearance'}
+                <div style={{ fontWeight: 900, color: '#0369a1', fontSize: '1.15rem' }}>
+                  {isMobile ? "👆 Tap to Open Phone's Fingerprint Scanner" : 'Click to Verify with Physical Biometric Reader'}
                 </div>
-                <div style={{ fontSize: '0.78rem', color: '#64748b', marginTop: '0.25rem' }}>
-                  Sensor: <strong>{biometricMode.toUpperCase()}</strong> • Android, Touchscreen, WebUSB & Windows Hello Supported
+                <div style={{ fontSize: '0.8rem', color: '#475569', marginTop: '0.35rem' }}>
+                  {isMobile ? "Opens your Android / iOS native fingerprint prompt directly" : "Uses Windows Hello, WebUSB, or connected hardware sensor"}
                 </div>
-
-                {isPressingSensor && (
-                  <div style={{ marginTop: '0.75rem' }}>
-                    <div style={{ width: '100%', height: '6px', background: '#e2e8f0', borderRadius: '999px', overflow: 'hidden' }}>
-                      <div style={{ height: '100%', width: `${scanProgress}%`, background: '#22c55e', transition: 'width 0.1s linear' }} />
-                    </div>
-                    <div style={{ fontSize: '0.72rem', color: '#15803d', fontWeight: 700, marginTop: '0.25rem' }}>
-                      {scanProgress}% Matching Biometric Minutiae
-                    </div>
-                  </div>
-                )}
               </div>
 
               {/* Enrolled Students Quick Badges */}
@@ -409,6 +345,7 @@ export const BiometricScannerModal: React.FC<Props> = ({
               )}
             </div>
           )}
+
 
           {/* Scanner Active Animation */}
           {scanState === 'scanning' && (

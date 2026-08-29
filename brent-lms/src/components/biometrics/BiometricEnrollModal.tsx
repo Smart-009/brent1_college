@@ -347,66 +347,46 @@ export const BiometricEnrollModal: React.FC<Props> = ({ student, officerName, on
               </div>
             </div>
 
-            {/* Live Interactive Fingerprint Touchpad Target */}
+            {/* Direct Primary Fingerprint Scanner Action Button */}
             <div
               style={{
-                border: isPressingSensor ? '2px solid #22c55e' : '2px dashed var(--color-primary)',
-                borderRadius: '14px',
-                padding: '1.5rem 1rem',
+                border: '2px solid var(--color-primary)',
+                borderRadius: '16px',
+                padding: '1.75rem 1rem',
                 textAlign: 'center',
-                background: isPressingSensor
-                  ? 'linear-gradient(180deg, rgba(34, 197, 94, 0.12) 0%, rgba(34, 197, 94, 0.05) 100%)'
-                  : 'rgba(30, 58, 138, 0.03)',
+                background: 'linear-gradient(180deg, rgba(30, 58, 138, 0.05) 0%, rgba(30, 58, 138, 0.12) 100%)',
                 cursor: 'pointer',
                 marginBottom: '1rem',
-                userSelect: 'none',
-                WebkitUserSelect: 'none',
-                touchAction: 'none',
                 transition: 'all 0.15s ease',
+                boxShadow: '0 4px 15px rgba(30, 58, 138, 0.12)',
               }}
-              onPointerDown={handleTouchStart}
-              onPointerUp={handleTouchEnd}
-              onPointerCancel={handleTouchEnd}
-              onClick={() => {
-                if (!isMobile) executeEnrollment()
-              }}
+              onClick={() => executeEnrollment()}
             >
               <div
                 style={{
-                  width: '80px',
-                  height: '80px',
+                  width: '84px',
+                  height: '84px',
                   borderRadius: '50%',
-                  background: isPressingSensor ? '#dcfce7' : 'rgba(30, 58, 138, 0.1)',
-                  border: isPressingSensor ? '3px solid #22c55e' : '2px solid rgba(30, 58, 138, 0.3)',
+                  background: 'rgba(30, 58, 138, 0.1)',
+                  border: '3px solid var(--color-primary)',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  margin: '0 auto 0.65rem auto',
-                  fontSize: '2.6rem',
-                  boxShadow: isPressingSensor ? '0 0 25px rgba(34, 197, 94, 0.6)' : 'none',
-                  transform: isPressingSensor ? 'scale(0.96)' : 'scale(1)',
+                  margin: '0 auto 0.75rem auto',
+                  fontSize: '2.8rem',
+                  boxShadow: '0 0 25px rgba(30, 58, 138, 0.25)',
+                  transform: 'scale(1)',
                   transition: 'all 0.15s ease',
                 }}
               >
                 🖐️
               </div>
-              <div style={{ fontWeight: 800, color: isPressingSensor ? '#15803d' : 'var(--color-primary)', fontSize: '0.95rem' }}>
-                {isMobile ? (isPressingSensor ? 'Scanning... Keep Holding!' : 'Press & Hold Finger on Sensor') : 'Click to Scan & Enroll Fingerprint'}
+              <div style={{ fontWeight: 900, color: 'var(--color-primary)', fontSize: '1.1rem' }}>
+                {isMobile ? "👆 Tap to Open Phone's Fingerprint Scanner" : 'Click to Enroll with Physical Biometric Reader'}
               </div>
-              <div style={{ fontSize: '0.75rem', color: 'var(--color-text-secondary)', marginTop: '0.2rem' }}>
-                Enrolling: <strong>{selectedFinger}</strong> • Mode: <strong>{biometricMode.toUpperCase()}</strong>
+              <div style={{ fontSize: '0.78rem', color: 'var(--color-text-secondary)', marginTop: '0.25rem' }}>
+                Enrolling: <strong>{selectedFinger}</strong> • {isMobile ? "Triggers your phone's native fingerprint reader" : "Windows Hello / Platform Sensor"}
               </div>
-
-              {isPressingSensor && (
-                <div style={{ marginTop: '0.75rem' }}>
-                  <div style={{ width: '100%', height: '6px', background: '#e2e8f0', borderRadius: '999px', overflow: 'hidden' }}>
-                    <div style={{ height: '100%', width: `${scanProgress}%`, background: '#22c55e', transition: 'width 0.1s linear' }} />
-                  </div>
-                  <div style={{ fontSize: '0.72rem', color: '#15803d', fontWeight: 700, marginTop: '0.25rem' }}>
-                    {scanProgress}% Capturing Dermal Ridges
-                  </div>
-                </div>
-              )}
             </div>
 
             <div className="modal-footer" style={{ marginTop: '0.75rem', padding: 0, display: 'flex', justifyContent: 'space-between', gap: '0.5rem' }}>
