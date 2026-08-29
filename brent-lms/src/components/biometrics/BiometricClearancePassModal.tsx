@@ -115,7 +115,7 @@ export const BiometricClearancePassModal: React.FC<Props> = ({ pass, onClose }) 
                   BRENT COLLEGE
                 </h1>
                 <div style={{ fontSize: '0.8rem', color: '#64748b', fontWeight: 600 }}>
-                  Sahl Mall, 4th Street, Eastleigh, Nairobi • Tel: +254 700 000 000 • Web: brentcollege.ac.ke
+                  Sahl Mall, 4th Street, Eastleigh, Nairobi • Tel: +254 722 264 380 • Web: brentcollege.ac.ke
                 </div>
               </div>
             </div>

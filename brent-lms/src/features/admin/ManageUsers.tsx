@@ -172,6 +172,7 @@ export function ManageUsers() {
           (s) => s.admission_number.toUpperCase() === cleanAdm
         )
         if (!existingStudent) {
+          const progFee = 4500
           await schoolStore.addStudent({
             id: registeredUserId,
             admission_number: cleanAdm,
@@ -182,20 +183,20 @@ export function ManageUsers() {
             class_name: selectedProg?.name || 'Comprehensive Computer Packages & Digital Skills',
             grade_level: selectedProg?.grade_level || 'Vocational Certificate',
             stream: 'Main Campus',
-            enrollment_date: new Date().toISOString(),
+            enrollment_date: new Date().toISOString().split('T')[0],
             status: 'Active',
             guardian: {
-              name: 'Parent / Sponsor',
+              name: '',
               relationship: 'Guardian',
-              phone: '0700000000',
-              email: 'sponsor@brentcollege.internal',
+              phone: '',
+              email: '',
             },
-            emergency_contact: '0700000000',
-            fee_balance: 15000,
-            term_fee_total: 15000,
+            emergency_contact: '',
+            fee_balance: progFee,
+            term_fee_total: progFee,
             fee_cleared: false,
             attendance_rate: 100,
-            discipline_points: 0,
+            discipline_points: 100,
             merits_count: 0,
             demerits_count: 0,
           })

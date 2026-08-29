@@ -1042,13 +1042,13 @@ export function BursarDesk() {
                     <td style={{ color: s.fee_cleared ? '#16a34a' : '#dc2626', fontWeight: 700 }}>
                       {s.fee_cleared ? 'Cleared (KES 0)' : `KES ${s.fee_balance.toLocaleString()}`}
                     </td>
-                    <td>{s.guardian?.phone || s.parent_phone || '+254 722 264 380'}</td>
+                    <td>{s.guardian?.phone || s.emergency_contact || 'Not on file'}</td>
                     <td>
                       <button
                         type="button"
                         className="btn btn-sm btn-primary"
-                        disabled={s.fee_cleared}
-                        onClick={() => handleSendReminder(s.full_name, s.guardian?.phone || s.parent_phone || '+254 722 264 380', s.fee_balance)}
+                        disabled={s.fee_cleared || (!s.guardian?.phone && !s.emergency_contact)}
+                        onClick={() => handleSendReminder(s.full_name, s.guardian?.phone || s.emergency_contact || '', s.fee_balance)}
                       >
                         📱 Send SMS Reminder
                       </button>
