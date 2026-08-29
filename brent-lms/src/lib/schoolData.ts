@@ -900,7 +900,11 @@ class SchoolDataStore {
   async enrollStudentBiometric(
     studentId: string,
     fingerName: 'Right Index' | 'Right Thumb' | 'Left Index' | 'Left Thumb' | 'Right Middle' | 'Left Middle',
-    enrolledBy = 'Admissions / Bursar Officer'
+    enrolledBy = 'Admissions / Bursar Officer',
+    credentialId?: string,
+    deviceType?: string,
+    publicKey?: string,
+    customTemplateHash?: string
   ): Promise<StudentRecord> {
     let updatedStudent: StudentRecord | null = null
     await txEngine.executeAtomic(
@@ -912,7 +916,7 @@ class SchoolDataStore {
         if (idx === -1) throw new IntegrityError(`Student ID "${studentId}" not found for biometric enrollment.`)
 
         const student = list[idx]
-        const templateHash = generateBiometricTemplate(student.admission_number, fingerName)
+        const templateHash = customTemplateHash || generateBiometricTemplate(student.admission_number, fingerName)
         const now = new Date().toISOString()
 
         list[idx] = {
@@ -920,6 +924,9 @@ class SchoolDataStore {
           biometric_enrolled: true,
           biometric_finger_name: fingerName,
           biometric_template_hash: templateHash,
+          biometric_credential_id: credentialId,
+          biometric_device_type: deviceType || 'WebAuthn / Optical Sensor',
+          biometric_public_key: publicKey,
           biometric_enrolled_at: now,
           biometric_enrolled_by: enrolledBy,
         }
@@ -945,6 +952,9 @@ class SchoolDataStore {
             biometric_enrolled: false,
             biometric_finger_name: undefined,
             biometric_template_hash: undefined,
+            biometric_credential_id: undefined,
+            biometric_device_type: undefined,
+            biometric_public_key: undefined,
             biometric_enrolled_at: undefined,
             biometric_enrolled_by: undefined,
           }
@@ -952,7 +962,6 @@ class SchoolDataStore {
         }
       }
     )
-    schoolEventBus.publish('STUDENT_UPDATED')
   }
 
   getBiometricClearanceLogs(): BiometricFeeClearancePass[] {

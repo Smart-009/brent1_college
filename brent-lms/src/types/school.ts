@@ -39,6 +39,9 @@ export interface StudentRecord {
   biometric_enrolled?: boolean
   biometric_finger_name?: 'Right Index' | 'Right Thumb' | 'Left Index' | 'Left Thumb' | 'Right Middle' | 'Left Middle'
   biometric_template_hash?: string
+  biometric_credential_id?: string
+  biometric_device_type?: string
+  biometric_public_key?: string
   biometric_enrolled_at?: string
   biometric_enrolled_by?: string
 }
