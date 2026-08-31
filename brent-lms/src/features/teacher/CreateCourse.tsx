@@ -186,7 +186,9 @@ export function CreateCourse() {
       return
     }
 
-    const programFinal = selectedProgram || (currentDept?.programs?.[0] || 'Short Course Certificate Program')
+    const programFinal = isCustomProgram
+      ? (customProgramName.trim() || `${title.trim()} Program`)
+      : (selectedProgram || (currentDept?.programs?.[0] || 'Short Course Certificate Program'))
 
     setIsSubmitting(true)
 
@@ -200,7 +202,7 @@ export function CreateCourse() {
           code: newDeptCode,
           name: customDeptName.trim(),
           hod_name: profile?.full_name || 'Department Faculty Lead',
-          programs: programFinal ? [programFinal] : ['Certificate Program'],
+          programs: [programFinal],
           created_at: new Date().toISOString(),
         }
         await schoolStore.addDepartment(newDept)
@@ -215,12 +217,14 @@ export function CreateCourse() {
         code: cleanCode,
         title: title.trim(),
         department: deptNameFinal,
-        program: programFinal || title.trim(),
+        program: programFinal,
         course_duration: courseDuration,
         credit_hours: Number(creditHours) || 40,
         teacher_id: profile?.id || 'tch-lead',
         teacher_name: profile?.full_name || 'Faculty Lecturer',
         description: description.trim() || `Comprehensive online course in ${title.trim()}.`,
+        live_meeting_url: liveMeetingUrl.trim(),
+        live_schedule_text: liveScheduleText.trim(),
         syllabus_modules: modules,
         lessons,
         is_published: true,

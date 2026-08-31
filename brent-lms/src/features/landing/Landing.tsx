@@ -400,8 +400,8 @@ export function Landing() {
         category: catVal,
         tag: `🏛️ ${u.program || u.department || 'Online Course'}`,
         tagColor: '#0f172a',
-        duration: u.course_duration || matchedSub?.duration || '4 Weeks Certificate',
-        schedule: 'Live Online Batches & 24/7 LMS',
+        duration: u.course_duration || matchedSub?.duration || '3 Months Certificate',
+        schedule: u.live_schedule_text || 'Live Online Batches & 24/7 LMS',
         fee: `$${feeVal}`,
         installment: `2 installments of $${Math.ceil(feeVal / 2)}`,
         careerOutcome: u.description || (matchedSub?.description || 'Certified Online Graduate'),
@@ -416,7 +416,29 @@ export function Landing() {
       }
     })
 
-    const combined = [...customCourses]
+    const subjectCourses: CourseItem[] = storeSubjects
+      .filter((s) => !customCourses.some((c) => c.title.toLowerCase().trim() === s.name.toLowerCase().trim() || c.id === s.id))
+      .map((s) => ({
+        id: s.id,
+        title: s.name,
+        category: s.category || 'Tech & Programming',
+        tag: `🏛️ ${s.department_name || 'Academic Course'}`,
+        tagColor: '#0f172a',
+        duration: s.duration || '3 Months Certificate',
+        schedule: 'Live Online Batches & 24/7 LMS',
+        fee: `$${s.fee || 75}`,
+        installment: `2 installments of $${Math.ceil((s.fee || 75) / 2)}`,
+        careerOutcome: s.description || `${s.name} Certified Specialist`,
+        skills: s.careers || ['Live Virtual Classes', 'Verified E-Certificate'],
+        icon: s.icon || '💻',
+        popular: true,
+        syllabus: [
+          { week: 'Module 1-2', topic: 'Core Foundations & Interactive Practice', practicalLab: 'Live virtual classroom lab and tools setup.' },
+          { week: 'Module 3-4', topic: 'Capstone Lab & Evaluation', practicalLab: 'Online evaluation and certification project.' },
+        ],
+      }))
+
+    const combined = [...customCourses, ...subjectCourses]
     for (const def of DEFAULT_COURSES_DATA) {
       if (!combined.some((c) => c.title.toLowerCase() === def.title.toLowerCase())) {
         combined.push(def)
@@ -450,8 +472,8 @@ export function Landing() {
           category: catVal,
           tag: `🏛️ ${u.program || u.department || 'Online Course'}`,
           tagColor: '#0f172a',
-          duration: u.course_duration || matchedSub?.duration || '4 Weeks Certificate',
-          schedule: 'Live Online Batches & 24/7 LMS',
+          duration: u.course_duration || matchedSub?.duration || '3 Months Certificate',
+          schedule: u.live_schedule_text || 'Live Online Batches & 24/7 LMS',
           fee: `$${feeVal}`,
           installment: `2 installments of $${Math.ceil(feeVal / 2)}`,
           careerOutcome: u.description || (matchedSub?.description || 'Certified Online Graduate'),
@@ -465,6 +487,28 @@ export function Landing() {
           })),
         }
       })
+
+      const subjectCourses: CourseItem[] = storeSubjects
+        .filter((s) => !customCourses.some((c) => c.title.toLowerCase().trim() === s.name.toLowerCase().trim() || c.id === s.id))
+        .map((s) => ({
+          id: s.id,
+          title: s.name,
+          category: s.category || 'Tech & Programming',
+          tag: `🏛️ ${s.department_name || 'Academic Course'}`,
+          tagColor: '#0f172a',
+          duration: s.duration || '3 Months Certificate',
+          schedule: 'Live Online Batches & 24/7 LMS',
+          fee: `$${s.fee || 75}`,
+          installment: `2 installments of $${Math.ceil((s.fee || 75) / 2)}`,
+          careerOutcome: s.description || `${s.name} Certified Specialist`,
+          skills: s.careers || ['Live Virtual Classes', 'Verified E-Certificate'],
+          icon: s.icon || '💻',
+          popular: true,
+          syllabus: [
+            { week: 'Module 1-2', topic: 'Core Foundations & Interactive Practice', practicalLab: 'Live virtual classroom lab and tools setup.' },
+            { week: 'Module 3-4', topic: 'Capstone Lab & Evaluation', practicalLab: 'Online evaluation and certification project.' },
+          ],
+        }))
 
       // 2. Supabase Cloud Database courses
       let cloudMapped: CourseItem[] = []
@@ -498,8 +542,8 @@ export function Landing() {
         console.error('Cloud courses load:', err)
       }
 
-      // Merge: Cloud + Local Custom + Default baseline
-      const merged = [...cloudMapped, ...customCourses]
+      // Merge: Cloud + Local Custom CourseUnits + Local Subjects + Default baseline
+      const merged = [...cloudMapped, ...customCourses, ...subjectCourses]
       for (const def of DEFAULT_COURSES_DATA) {
         if (!merged.some((c) => c.title.toLowerCase().trim() === def.title.toLowerCase().trim())) {
           merged.push(def)
@@ -512,6 +556,7 @@ export function Landing() {
 
     window.addEventListener('storage', syncAllSources)
     window.addEventListener('focus', syncAllSources)
+    window.addEventListener('eclat-courses-updated', syncAllSources)
 
     // Supabase Realtime channel subscription
     const channel = supabase
@@ -524,6 +569,7 @@ export function Landing() {
     return () => {
       window.removeEventListener('storage', syncAllSources)
       window.removeEventListener('focus', syncAllSources)
+      window.removeEventListener('eclat-courses-updated', syncAllSources)
       supabase.removeChannel(channel)
     }
   }, [])
