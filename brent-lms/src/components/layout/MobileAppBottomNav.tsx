@@ -133,7 +133,7 @@ export function MobileAppBottomNav() {
         }}
       >
         <span style={{ fontSize: '1.25rem', lineHeight: 1 }}>💳</span>
-        <span>Fees 247247</span>
+        <span>Fees ($ USD)</span>
         {currentPath === '/fees' && (
           <span style={{ width: '4px', height: '4px', borderRadius: '50%', background: '#60a5fa', boxShadow: '0 0 8px #60a5fa' }} />
         )}

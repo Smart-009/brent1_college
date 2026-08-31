@@ -692,7 +692,7 @@ export function Landing() {
         </span>
         <span className="hidden md:inline" style={{ opacity: 0.8 }}>|</span>
         <span className="hidden md:inline">
-          🏢 Paybill: <strong>247247</strong>
+          🏦 KCB Bank: <strong>1344329268</strong>
         </span>
       </div>
 
@@ -1452,8 +1452,9 @@ export function Landing() {
                   </div>
 
                   <div style={{ background: 'rgba(255,255,255,0.08)', borderRadius: '8px', padding: '0.75rem', fontSize: '0.8rem', color: '#e2e8f0', lineHeight: 1.5 }}>
-                    <div>📱 <strong>Paybill:</strong> 247247</div>
-                    <div>📑 <strong>Account:</strong> Student Admission No / Your Name</div>
+                    <div>🏦 <strong>Bank:</strong> KCB Bank (Acc: <span style={{ color: '#67e8f9', fontWeight: 800 }}>1344329268</span>)</div>
+                    <div>📱 <strong>Paybill:</strong> 522522 (Account: 1344329268)</div>
+                    <div>💳 <strong>Card:</strong> Visa / Mastercard Accepted</div>
                   </div>
                 </div>
 
@@ -1599,8 +1600,10 @@ export function Landing() {
             </div>
             <div style={{ background: 'rgba(255, 255, 255, 0.12)', borderRadius: '12px', padding: '1.25rem', marginTop: '1.5rem', lineHeight: 1.8 }}>
               <div>🌐 <strong>Currency:</strong> <span style={{ fontSize: '1.15rem', fontWeight: 900, color: '#ffffff' }}>USD ($)</span> (or local equivalent)</div>
-              <div>💳 <strong>Accepted Methods:</strong> Visa, Mastercard, PayPal, Stripe, Bank Wire & Mobile Money</div>
-              <div>📑 <strong>Reference / Account:</strong> <span style={{ fontWeight: 800 }}>Student ID Number</span> (or Full Name)</div>
+              <div>💳 <strong>Card Payment:</strong> Debit / Credit Card (Visa & Mastercard)</div>
+              <div>🏦 <strong>Bank Wire / Direct Deposit:</strong> KCB Bank • Acc: <span style={{ fontWeight: 900, color: '#fef08a' }}>1344329268</span></div>
+              <div>📱 <strong>M-Pesa Paybill:</strong> Business No: <strong style={{ color: '#ffffff' }}>522522</strong> • Account: <strong style={{ color: '#fef08a' }}>1344329268</strong></div>
+              <div>📑 <strong>Reference:</strong> Student Full Name or Admission ID</div>
               <div>💰 <strong>Installment Plan:</strong> Available in 2 to 3 flexible parts</div>
             </div>
             <p style={{ fontSize: '0.82rem', color: '#d1fae5', marginTop: '1.25rem', margin: '1.25rem 0 0' }}>

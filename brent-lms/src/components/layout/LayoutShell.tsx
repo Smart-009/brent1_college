@@ -46,7 +46,7 @@ export function LayoutShell() {
             </div>
           </div>
           <div style={{ display: 'flex', gap: '1.25rem', alignItems: 'center', flexWrap: 'wrap' }}>
-            <span>🏢 Paybill: <strong style={{ color: 'var(--color-primary)' }}>247247</strong></span>
+            <span>🏦 KCB Bank Acc: <strong style={{ color: 'var(--color-primary)' }}>1344329268</strong></span>
             <span>📞 Support: <strong style={{ color: 'var(--color-text)' }}>+254 740 027 346</strong></span>
             <span>✉️ <a href="mailto:admissions@eclat.institute" style={{ color: 'var(--color-primary)', textDecoration: 'none' }}>admissions@eclat.institute</a></span>
           </div>

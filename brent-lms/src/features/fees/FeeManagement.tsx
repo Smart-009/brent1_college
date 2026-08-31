@@ -177,11 +177,11 @@ export function FeeManagement() {
         </div>
 
         <div className="card" style={{ padding: '1.25rem', borderLeft: '4px solid #059669' }}>
-          <div style={{ fontSize: '0.8rem', color: 'var(--color-text-secondary)', fontWeight: 600 }}>International Payments</div>
-          <div style={{ fontSize: '1.5rem', fontWeight: 700, color: '#059669', marginTop: '0.25rem' }}>
-            247247
+          <div style={{ fontSize: '0.8rem', color: 'var(--color-text-secondary)', fontWeight: 600 }}>KCB Bank / Paybill</div>
+          <div style={{ fontSize: '1.25rem', fontWeight: 800, color: '#059669', marginTop: '0.25rem' }}>
+            1344329268
           </div>
-          <div style={{ fontSize: '0.75rem', color: 'var(--color-text-secondary)', marginTop: '0.2rem' }}>Acc: Student Adm Number</div>
+          <div style={{ fontSize: '0.75rem', color: 'var(--color-text-secondary)', marginTop: '0.2rem' }}>Paybill: 522522 • Card Online</div>
         </div>
       </div>
 
@@ -519,7 +519,7 @@ export function FeeManagement() {
               Vocational Short Course Tuition & Practical Lab Schedules
             </h3>
             <p style={{ fontSize: '0.85rem', color: 'var(--color-text-secondary)', marginBottom: '1rem' }}>
-              Standard 4 to 12-Week Short Course Fees • Payable in 2 Easy Installments via Paybill 247247
+              Standard 4 to 12-Week Short Course Fees • Payable in Easy Installments via Card or KCB Acc 1344329268
             </p>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', fontSize: '0.88rem' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', padding: '0.4rem 0', borderBottom: '1px solid var(--color-border)' }}>
@@ -559,17 +559,28 @@ export function FeeManagement() {
 
           <div className="card" style={{ padding: '1.5rem', background: '#f8fafc' }}>
             <h3 style={{ fontSize: '1.1rem', fontWeight: 700, marginBottom: '0.75rem', color: '#1e3a8a' }}>
-              📲 Official M-Pesa Paybill Payment Steps
+              🏦 Official Bank, Card & Paybill Payment Channels
             </h3>
             <div style={{ fontSize: '0.88rem', lineHeight: '1.7', color: '#334155' }}>
-              <ol style={{ paddingLeft: '1.25rem' }}>
-                <li>Go to <strong>M-PESA</strong> on your mobile device</li>
-                <li>Select <strong>Lipa na M-PESA</strong> → <strong>Paybill</strong></li>
-                <li>Enter Business Number: <strong>247247</strong> (Equity / Eclat Institute)</li>
-                <li>Enter Account Number: <strong>Student Adm Number</strong> (e.g. <code>BC-2024-001</code>)</li>
-                <li>Enter the fee amount and your M-PESA PIN</li>
-                <li>You will receive an instant SMS confirmation and your digital receipt below!</li>
-              </ol>
+              <div style={{ marginBottom: '0.85rem', background: '#ffffff', padding: '0.85rem', borderRadius: '8px', border: '1px solid #e2e8f0' }}>
+                <strong>💳 1. Debit / Credit Card (Visa / Mastercard):</strong>
+                <div style={{ color: '#64748b', fontSize: '0.82rem' }}>Instant clearance in USD ($) via official student checkout portal.</div>
+              </div>
+              <div style={{ marginBottom: '0.85rem', background: '#ffffff', padding: '0.85rem', borderRadius: '8px', border: '1px solid #e2e8f0' }}>
+                <strong>🏦 2. KCB Bank Direct Wire / Deposit:</strong>
+                <div>• Bank: <strong>Kenya Commercial Bank (KCB Bank)</strong></div>
+                <div>• Account No: <strong style={{ color: '#2563eb' }}>1344329268</strong></div>
+                <div>• Account Name: <strong>Éclat Institute</strong></div>
+              </div>
+              <div style={{ background: '#ffffff', padding: '0.85rem', borderRadius: '8px', border: '1px solid #e2e8f0' }}>
+                <strong>📱 3. M-Pesa Paybill (Via KCB):</strong>
+                <ol style={{ paddingLeft: '1.25rem', margin: '0.25rem 0 0' }}>
+                  <li>Select <strong>Lipa na M-PESA → Paybill</strong></li>
+                  <li>Enter Business No: <strong>522522</strong> (KCB Bank)</li>
+                  <li>Enter Account No: <strong>1344329268</strong></li>
+                  <li>Reference / SMS: <strong>Student Admission ID</strong></li>
+                </ol>
+              </div>
             </div>
           </div>
         </div>

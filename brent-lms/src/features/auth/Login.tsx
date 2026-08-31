@@ -196,7 +196,7 @@ export function Login() {
             <Link to="/" style={{ fontSize: '0.84rem', color: '#2563eb', textDecoration: 'none', fontWeight: 700 }}>
               ← Return to Main Website
             </Link>
-            <span style={{ fontSize: '0.78rem', color: '#64748b' }}>Paybill: 247247</span>
+            <span style={{ fontSize: '0.78rem', color: '#64748b' }}>KCB Acc: 1344329268</span>
           </div>
         </div>
 

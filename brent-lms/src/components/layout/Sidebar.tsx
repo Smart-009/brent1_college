@@ -31,7 +31,7 @@ export function Sidebar({ isOpen, onClose }: { isOpen: boolean; onClose: () => v
   const parentNav = [
     { to: '/parent', label: 'Ward Overview & Attendance', icon: '👨‍👩‍👧' },
     { to: '/exams', label: 'Ward Academic Transcript', icon: '📄' },
-    { to: '/fees', label: 'Fee Clearance (M-Pesa 247247)', icon: '💳' },
+    { to: '/fees', label: 'Fee Clearance & Payments ($ USD)', icon: '💳' },
     { to: '/timetable', label: "Ward's Lecture Schedule", icon: '📅' },
     { to: '/noticeboard', label: 'College Circulars', icon: '📢' },
   ]

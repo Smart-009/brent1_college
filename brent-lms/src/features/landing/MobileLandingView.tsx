@@ -69,9 +69,14 @@ export function MobileLandingView({
     return matchCat && matchSearch
   })
 
+  const copyAccount = () => {
+    navigator.clipboard.writeText('1344329268')
+    showToast('✅ KCB Bank Acc 1344329268 copied to clipboard!')
+  }
+
   const copyPaybill = () => {
-    navigator.clipboard.writeText('247247')
-    showToast('✅ Paybill 247247 copied to clipboard!')
+    navigator.clipboard.writeText('522522')
+    showToast('✅ KCB Paybill 522522 (Acc: 1344329268) copied!')
   }
 
   return (
@@ -347,7 +352,7 @@ export function MobileLandingView({
             }}
           >
             <span style={{ fontSize: '1.35rem' }}>💳</span>
-            <span style={{ fontSize: '0.68rem', fontWeight: 700, textAlign: 'center' }}>Paybill</span>
+            <span style={{ fontSize: '0.68rem', fontWeight: 700, textAlign: 'center' }}>KCB / Pay</span>
           </button>
 
           {/* Tile 3: Timetable */}
@@ -616,11 +621,28 @@ export function MobileLandingView({
           }}
         >
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <span>💳 Payment: <strong style={{ color: '#60a5fa' }}>Card (Visa/Mastercard) • Paybill</strong></span>
-            <span style={{ fontSize: '0.72rem', color: '#34d399', fontWeight: 700 }}>$ USD</span>
+            <span>🏦 KCB Bank Acc: <strong style={{ color: '#67e8f9' }}>1344329268</strong></span>
+            <button
+              type="button"
+              onClick={copyAccount}
+              style={{
+                background: '#1e293b',
+                color: '#93c5fd',
+                border: '1px solid #3b82f6',
+                borderRadius: '6px',
+                padding: '2px 8px',
+                fontSize: '0.7rem',
+                cursor: 'pointer',
+                fontWeight: 700,
+              }}
+            >
+              Copy
+            </button>
           </div>
+          <div>📱 M-Pesa Paybill: <strong>522522</strong> • Acc: <strong style={{ color: '#fde047' }}>1344329268</strong></div>
+          <div>💳 Card: <strong>Visa / Mastercard Accepted</strong> ($ USD)</div>
           <div>📞 Virtual Desk: <a href="tel:+254740027346" style={{ color: '#60a5fa', textDecoration: 'none', fontWeight: 700 }}>+254 740 027 346</a></div>
-          <div>🌐 Delivery: <strong style={{ color: '#ffffff' }}>100% Online Live Classes & LMS (Worldwide)</strong></div>
+          <div>🌐 Delivery: <strong style={{ color: '#ffffff' }}>100% Online Live Classes & LMS</strong></div>
         </div>
       </div>
 
