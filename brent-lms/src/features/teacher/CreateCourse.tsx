@@ -1,4 +1,4 @@
-﻿import { useState, useMemo } from 'react'
+import { useState, useMemo } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 import { useAuth } from '@/hooks/useAuth'
 import { PageWrapper } from '@/components/layout/PageWrapper'
@@ -25,13 +25,19 @@ export function CreateCourse() {
   const [description, setDescription] = useState('')
   const [careerOutcomes, setCareerOutcomes] = useState('')
 
+  // Live Virtual Classroom Google Meet / Zoom Integration
+  const [liveMeetingUrl, setLiveMeetingUrl] = useState('https://meet.google.com/new')
+  const [liveScheduleText, setLiveScheduleText] = useState('Mon, Wed & Fri: 7:30 PM - 9:30 PM EAT')
+
   // Department & Program Handling (Supports existing OR brand-new custom)
   const [isCustomDept, setIsCustomDept] = useState(departments.length === 0)
   const [selectedDeptId, setSelectedDeptId] = useState<string>(departments[0]?.id || '')
   const [customDeptName, setCustomDeptName] = useState('')
   const [customDeptCode, setCustomDeptCode] = useState('')
 
+  const [isCustomProgram, setIsCustomProgram] = useState(true)
   const [selectedProgram, setSelectedProgram] = useState<string>('')
+  const [customProgramName, setCustomProgramName] = useState('')
 
   // Active department details
   const currentDept = useMemo(() => {
@@ -47,6 +53,14 @@ export function CreateCourse() {
       hours: 10,
       topics: ['Introduction to Core Architecture', 'Live Practical Code Lab'],
       learning_outcomes: ['Understand fundamental architecture and setup environment'],
+      resources: [
+        {
+          id: `res-${Date.now()}-1`,
+          file_name: 'Module 1 - Lecture Slides & Code Guide (PDF)',
+          file_url: 'https://eclat.institute/docs/syllabus.pdf',
+          file_type: 'PDF',
+        },
+      ],
     },
   ])
 
@@ -56,8 +70,10 @@ export function CreateCourse() {
       id: `les-${Date.now()}-1`,
       title: 'Lesson 1: Introduction & Environment Setup',
       video_url: '',
+      meeting_url: 'https://meet.google.com/new',
       duration_minutes: 45,
       content: 'Overview of the course prerequisites and software tools installation.',
+      resources: [],
     },
   ])
 
@@ -76,6 +92,7 @@ export function CreateCourse() {
         hours: 10,
         topics: ['Core concept analysis', 'Hands-on practical project lab'],
         learning_outcomes: ['Demonstrate practical mastery and implement lab project'],
+        resources: [],
       },
     ])
   }
@@ -84,6 +101,40 @@ export function CreateCourse() {
     const list = [...modules]
     list[idx] = { ...list[idx], ...updated }
     setModules(list)
+  }
+
+  const handleAddModuleResource = (modIdx: number) => {
+    const list = [...modules]
+    const currentRes = list[modIdx].resources || []
+    list[modIdx].resources = [
+      ...currentRes,
+      {
+        id: `res-${Date.now()}-${currentRes.length + 1}`,
+        file_name: `Attachment ${currentRes.length + 1} (Notes / Lab PDF)`,
+        file_url: '',
+        file_type: 'PDF',
+      },
+    ]
+    setModules(list)
+  }
+
+  const handleUpdateModuleResource = (modIdx: number, resIdx: number, field: string, val: string) => {
+    const list = [...modules]
+    if (list[modIdx].resources) {
+      list[modIdx].resources![resIdx] = {
+        ...list[modIdx].resources![resIdx],
+        [field]: val,
+      }
+      setModules(list)
+    }
+  }
+
+  const handleDeleteModuleResource = (modIdx: number, resIdx: number) => {
+    const list = [...modules]
+    if (list[modIdx].resources) {
+      list[modIdx].resources = list[modIdx].resources!.filter((_, i) => i !== resIdx)
+      setModules(list)
+    }
   }
 
   const handleDeleteModule = (idx: number) => {
@@ -99,8 +150,10 @@ export function CreateCourse() {
         id: `les-${Date.now()}-${nextNum}`,
         title: `Lesson ${nextNum}: Practical Application & Live Demo`,
         video_url: '',
+        meeting_url: liveMeetingUrl || 'https://meet.google.com/new',
         duration_minutes: 50,
         content: '',
+        resources: [],
       },
     ])
   }
@@ -374,23 +427,35 @@ export function CreateCourse() {
             </div>
           </div>
 
-          {/* Department Selection & Custom Toggle */}
-          <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '10px', padding: '1rem', marginBottom: '1.25rem' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.75rem' }}>
-              <strong style={{ fontSize: '0.9rem', color: '#1e3a8a' }}>Academic Department & Accredited Program</strong>
-              <button
-                type="button"
-                onClick={() => setIsCustomDept(!isCustomDept)}
-                style={{ background: 'none', border: 'none', color: '#2563eb', fontSize: '0.78rem', cursor: 'pointer', fontWeight: 700, textDecoration: 'underline' }}
-              >
-                {isCustomDept ? '← Choose Existing Department' : '➕ Type New Custom Department'}
-              </button>
+          {/* 2. Department & Program / Cohort (Dynamic) */}
+          <div style={{ background: '#f8fafc', border: '1.5px solid #e2e8f0', borderRadius: '10px', padding: '1.2rem', marginBottom: '1.25rem' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.85rem' }}>
+              <strong style={{ fontSize: '0.92rem', color: '#1e3a8a' }}>🏛️ Department & Program Cohort Track</strong>
+              <div style={{ display: 'flex', gap: '1rem' }}>
+                <button
+                  type="button"
+                  onClick={() => setIsCustomDept(!isCustomDept)}
+                  style={{ background: 'none', border: 'none', color: '#2563eb', fontSize: '0.78rem', cursor: 'pointer', fontWeight: 700, textDecoration: 'underline' }}
+                >
+                  {isCustomDept ? '← Choose Existing Dept' : '➕ Type New Dept'}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setIsCustomProgram(!isCustomProgram)}
+                  style={{ background: 'none', border: 'none', color: '#059669', fontSize: '0.78rem', cursor: 'pointer', fontWeight: 700, textDecoration: 'underline' }}
+                >
+                  {isCustomProgram ? '← Choose Existing Program' : '➕ Type New Program Track'}
+                </button>
+              </div>
             </div>
 
-            {isCustomDept ? (
-              <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: '0.75rem' }}>
-                <div>
-                  <label className="label" style={{ fontSize: '0.75rem' }}>New Custom Department Name *</label>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+              {/* Department Input / Dropdown */}
+              <div>
+                <label className="label" style={{ fontSize: '0.78rem' }}>
+                  {isCustomDept ? 'New Custom Academic Department *' : 'Select Academic Department *'}
+                </label>
+                {isCustomDept ? (
                   <input
                     type="text"
                     required
@@ -399,22 +464,7 @@ export function CreateCourse() {
                     value={customDeptName}
                     onChange={(e) => setCustomDeptName(e.target.value)}
                   />
-                </div>
-                <div>
-                  <label className="label" style={{ fontSize: '0.75rem' }}>Dept Code</label>
-                  <input
-                    type="text"
-                    className="input"
-                    placeholder="e.g. CYB"
-                    value={customDeptCode}
-                    onChange={(e) => setCustomDeptCode(e.target.value)}
-                  />
-                </div>
-              </div>
-            ) : (
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem' }}>
-                <div>
-                  <label className="label" style={{ fontSize: '0.75rem' }}>Select Existing Department</label>
+                ) : (
                   <select
                     className="input"
                     value={selectedDeptId}
@@ -432,27 +482,67 @@ export function CreateCourse() {
                       </option>
                     ))}
                   </select>
-                </div>
-                <div>
-                  <label className="label" style={{ fontSize: '0.75rem' }}>Program Track / Cohort</label>
-                  {currentDept?.programs?.length ? (
-                    <select className="input" value={selectedProgram} onChange={(e) => setSelectedProgram(e.target.value)}>
-                      {currentDept.programs.map((p, i) => (
-                        <option key={i} value={p}>{p}</option>
-                      ))}
-                    </select>
-                  ) : (
-                    <input
-                      type="text"
-                      className="input"
-                      placeholder="e.g. Certificate in Cybersecurity"
-                      value={selectedProgram}
-                      onChange={(e) => setSelectedProgram(e.target.value)}
-                    />
-                  )}
-                </div>
+                )}
               </div>
-            )}
+
+              {/* Program Track Input / Dropdown */}
+              <div>
+                <label className="label" style={{ fontSize: '0.78rem' }}>
+                  {isCustomProgram ? 'New Accredited Program / Track Name *' : 'Select Program / Track'}
+                </label>
+                {isCustomProgram ? (
+                  <input
+                    type="text"
+                    required
+                    className="input"
+                    placeholder="e.g. Executive Cybersecurity & Ethical Hacking Track"
+                    value={customProgramName}
+                    onChange={(e) => setCustomProgramName(e.target.value)}
+                  />
+                ) : (
+                  <select className="input" value={selectedProgram} onChange={(e) => setSelectedProgram(e.target.value)}>
+                    {currentDept?.programs?.map((p, i) => (
+                      <option key={i} value={p}>{p}</option>
+                    ))}
+                  </select>
+                )}
+              </div>
+            </div>
+          </div>
+
+          {/* 3. Google Meet / Live Virtual Classroom Integration */}
+          <div style={{ background: '#eff6ff', border: '1.5px solid #bfdbfe', borderRadius: '10px', padding: '1.2rem', marginBottom: '1.25rem' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.75rem' }}>
+              <span style={{ fontSize: '1.3rem' }}>🎥</span>
+              <strong style={{ fontSize: '0.92rem', color: '#1e3a8a' }}>Live Virtual Classroom (Google Meet / Zoom Embedding)</strong>
+            </div>
+
+            <div style={{ display: 'grid', gridTemplateColumns: '1.8fr 1.2fr', gap: '1rem' }}>
+              <div>
+                <label className="label" style={{ fontSize: '0.78rem' }}>Google Meet / Zoom Live Classroom URL *</label>
+                <input
+                  type="text"
+                  className="input"
+                  placeholder="e.g. https://meet.google.com/abc-defg-hij or Zoom Link"
+                  value={liveMeetingUrl}
+                  onChange={(e) => setLiveMeetingUrl(e.target.value)}
+                />
+                <span style={{ fontSize: '0.72rem', color: '#64748b', marginTop: '2px', display: 'block' }}>
+                  Students will receive a direct 1-click Join button on their dashboard & lesson player.
+                </span>
+              </div>
+
+              <div>
+                <label className="label" style={{ fontSize: '0.78rem' }}>Live Virtual Class Timetable Schedule</label>
+                <input
+                  type="text"
+                  className="input"
+                  placeholder="e.g. Mon, Wed & Fri: 7:30 PM - 9:30 PM EAT"
+                  value={liveScheduleText}
+                  onChange={(e) => setLiveScheduleText(e.target.value)}
+                />
+              </div>
+            </div>
           </div>
 
           {/* Description & Career Prospects */}
@@ -480,18 +570,18 @@ export function CreateCourse() {
           </div>
         </div>
 
-        {/* 2. Syllabus Topic Breakdown */}
+        {/* 4. Modular Syllabus Breakdown & Resource Attachments */}
         <div className="card mb-6" style={{ padding: '1.75rem', borderRadius: '14px' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.25rem' }}>
             <div>
               <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                 <span style={{ fontSize: '1.3rem' }}>📑</span>
                 <h3 style={{ fontSize: '1.15rem', fontWeight: 800, margin: 0, color: 'var(--color-primary)' }}>
-                  2. Modular Syllabus & Topic Breakdown
+                  2. Modules with Downloadable Notes & Resources
                 </h3>
               </div>
               <p style={{ fontSize: '0.8rem', color: '#64748b', margin: '0.25rem 0 0' }}>
-                Structure weekly practical modules, lab exercises, and expected competency outcomes.
+                Structure weekly practical modules, embed PDF lecture notes, lab guides, and Google Drive links.
               </p>
             </div>
             <button type="button" className="btn btn-secondary btn-sm" onClick={handleAddModule}>
@@ -499,7 +589,7 @@ export function CreateCourse() {
             </button>
           </div>
 
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
             {modules.map((mod, idx) => (
               <div
                 key={mod.id}
@@ -523,7 +613,7 @@ export function CreateCourse() {
                       style={{ background: 'none', border: 'none', color: '#ef4444', cursor: 'pointer', fontSize: '0.8rem', fontWeight: 700 }}
                       onClick={() => handleDeleteModule(idx)}
                     >
-                      🗑️ Remove
+                      🗑️ Remove Module
                     </button>
                   )}
                 </div>
@@ -545,7 +635,7 @@ export function CreateCourse() {
                   />
                 </div>
 
-                <div>
+                <div style={{ marginBottom: '0.75rem' }}>
                   <label className="label" style={{ fontSize: '0.74rem' }}>Key Topics (Comma separated)</label>
                   <input
                     type="text"
@@ -559,12 +649,64 @@ export function CreateCourse() {
                     }
                   />
                 </div>
+
+                {/* Module Resources & Attachments */}
+                <div style={{ background: '#ffffff', border: '1px solid #cbd5e1', borderRadius: '8px', padding: '0.75rem' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem' }}>
+                    <span style={{ fontSize: '0.78rem', fontWeight: 700, color: '#334155' }}>
+                      📄 Module Attachments (PDFs, Notes, Google Drive, Lab Code)
+                    </span>
+                    <button
+                      type="button"
+                      onClick={() => handleAddModuleResource(idx)}
+                      style={{ background: 'none', border: 'none', color: '#2563eb', fontSize: '0.75rem', cursor: 'pointer', fontWeight: 700 }}
+                    >
+                      + Add Resource File / URL
+                    </button>
+                  </div>
+
+                  {mod.resources && mod.resources.length > 0 ? (
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
+                      {mod.resources.map((res, rIdx) => (
+                        <div key={res.id || rIdx} style={{ display: 'grid', gridTemplateColumns: '2fr 3fr 30px', gap: '0.5rem', alignItems: 'center' }}>
+                          <input
+                            type="text"
+                            className="input"
+                            style={{ fontSize: '0.8rem', padding: '0.35rem 0.6rem' }}
+                            placeholder="File Title (e.g. Week 1 Slides PDF)"
+                            value={res.file_name}
+                            onChange={(e) => handleUpdateModuleResource(idx, rIdx, 'file_name', e.target.value)}
+                          />
+                          <input
+                            type="text"
+                            className="input"
+                            style={{ fontSize: '0.8rem', padding: '0.35rem 0.6rem' }}
+                            placeholder="Resource URL (PDF link, Google Drive, or Cloudflare R2)"
+                            value={res.file_url}
+                            onChange={(e) => handleUpdateModuleResource(idx, rIdx, 'file_url', e.target.value)}
+                          />
+                          <button
+                            type="button"
+                            onClick={() => handleDeleteModuleResource(idx, rIdx)}
+                            style={{ background: 'none', border: 'none', color: '#ef4444', cursor: 'pointer', fontSize: '0.85rem' }}
+                          >
+                            ✕
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <div style={{ fontSize: '0.74rem', color: '#94a3b8', fontStyle: 'italic' }}>
+                      No attachments added to this module yet. Click above to attach lecture notes or PDF workbooks.
+                    </div>
+                  )}
+                </div>
               </div>
             ))}
           </div>
         </div>
 
-        {/* 3. Video Lessons & Lab Resources */}
+        {/* 5. Video Lectures & Online Lab Materials */}
         <div className="card mb-6" style={{ padding: '1.75rem', borderRadius: '14px' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.25rem' }}>
             <div>
@@ -612,7 +754,7 @@ export function CreateCourse() {
                   )}
                 </div>
 
-                <div style={{ display: 'grid', gridTemplateColumns: '2fr 2.5fr 1fr', gap: '0.75rem' }}>
+                <div style={{ display: 'grid', gridTemplateColumns: '2fr 2.5fr 1fr', gap: '0.75rem', marginBottom: '0.5rem' }}>
                   <input
                     type="text"
                     className="input"
@@ -633,6 +775,16 @@ export function CreateCourse() {
                     placeholder="Minutes"
                     value={les.duration_minutes}
                     onChange={(e) => handleUpdateLesson(idx, { duration_minutes: Number(e.target.value) })}
+                  />
+                </div>
+
+                <div>
+                  <input
+                    type="text"
+                    className="input"
+                    placeholder="Google Meet Live Link for this specific lesson (optional)"
+                    value={les.meeting_url || ''}
+                    onChange={(e) => handleUpdateLesson(idx, { meeting_url: e.target.value })}
                   />
                 </div>
               </div>

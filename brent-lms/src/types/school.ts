@@ -266,6 +266,12 @@ export interface SyllabusModule {
   topics: string[]
   learning_outcomes: string[]
   hours: number
+  resources?: {
+    id: string
+    file_name: string
+    file_url: string
+    file_type?: string
+  }[]
 }
 
 export interface CourseUnit {
@@ -280,6 +286,14 @@ export interface CourseUnit {
   teacher_id: string
   teacher_name: string
   description: string
+  live_meeting_url?: string // e.g. "https://meet.google.com/abc-defg-hij" or Zoom link
+  live_schedule_text?: string // e.g. "Mon & Wed 7:30 PM - 9:30 PM EAT"
+  resources?: {
+    id: string
+    file_name: string
+    file_url: string
+    file_type?: string
+  }[]
   syllabus_modules: SyllabusModule[]
   lessons: {
     id: string
@@ -288,6 +302,13 @@ export interface CourseUnit {
     duration_minutes: number
     content?: string
     notes_file?: string
+    meeting_url?: string
+    resources?: {
+      id: string
+      file_name: string
+      file_url: string
+      file_type?: string
+    }[]
   }[]
   is_published: boolean
   created_at: string

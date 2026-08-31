@@ -89,14 +89,42 @@ export function LessonPlayer() {
         ? await supabase.from('quiz_attempts').select('*').in('quiz_id', quizIds).eq('student_id', profile.id)
         : { data: [] }
 
+      // Also merge any local CourseUnit syllabus module attachments & Google Meet classroom links
+      const storeUnits = schoolStore.getCourseUnits()
+      const matchingUnit = storeUnits.find(
+        (u) => u.id === lessonData.course_id || u.title?.toLowerCase() === courseRes.data?.title?.toLowerCase()
+      )
+
+      const storeResources: LessonResource[] = []
+      matchingUnit?.syllabus_modules?.forEach((m) => {
+        m.resources?.forEach((r) => {
+          storeResources.push({
+            id: r.id,
+            lesson_id: lessonData.id,
+            file_name: r.file_name,
+            file_url: r.file_url,
+            file_type: r.file_type || 'application/pdf',
+            uploaded_by: matchingUnit?.teacher_id || 'tch-lead',
+            edit_locked_at: '' as any,
+            created_at: new Date().toISOString(),
+          } as unknown as LessonResource)
+        })
+      })
+
+      const finalMeetingUrl = (lessonData as any).meeting_url || matchingUnit?.live_meeting_url || matchingUnit?.lessons?.find((l) => l.id === lessonId)?.meeting_url
+
       return {
-        lesson: lessonData as Lesson,
-        resources: (resourcesRes.data || []) as LessonResource[],
+        lesson: {
+          ...(lessonData as Lesson),
+          meeting_url: finalMeetingUrl,
+        } as Lesson & { meeting_url?: string },
+        resources: [...(resourcesRes.data || []), ...storeResources] as LessonResource[],
         quizzes: (quizzesRes.data || []) as Quiz[],
         course: courseRes.data as Course | null,
         courseLessons: (courseLessonsRes.data || []) as Array<{ id: string; title: string; order_index: number }>,
         enrollment: enrollmentRes.data as Enrollment | null,
         attempts: (attemptsRes.data || []) as QuizAttempt[],
+        unit: matchingUnit,
       }
     },
     enabled: !!lessonId,
@@ -289,6 +317,44 @@ export function LessonPlayer() {
         </div>
       ) : (
         <>
+          {/* Live Virtual Classroom Google Meet / Zoom Banner */}
+          {((lesson as any).meeting_url || data?.unit?.live_meeting_url) && (
+            <div
+              style={{
+                background: 'linear-gradient(135deg, #1e3a8a, #2563eb)',
+                color: '#ffffff',
+                borderRadius: '12px',
+                padding: '1.25rem 1.5rem',
+                marginBottom: '1.5rem',
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                flexWrap: 'wrap',
+                gap: '1rem',
+                boxShadow: '0 4px 15px rgba(37,99,235,0.25)',
+              }}
+            >
+              <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                <div style={{ fontSize: '2.2rem', background: 'rgba(255,255,255,0.2)', padding: '0.5rem', borderRadius: '50%' }}>🎥</div>
+                <div>
+                  <div style={{ fontSize: '1.05rem', fontWeight: 800 }}>Live Virtual Classroom & Interactive Lab</div>
+                  <div style={{ fontSize: '0.8rem', opacity: 0.9 }}>
+                    {data?.unit?.live_schedule_text || 'Interactive live session active. Click to join faculty instructor.'}
+                  </div>
+                </div>
+              </div>
+              <a
+                href={(lesson as any).meeting_url || data?.unit?.live_meeting_url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="btn"
+                style={{ background: '#ffffff', color: '#1e3a8a', fontWeight: 800, padding: '0.65rem 1.4rem', borderRadius: '8px', textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: '0.5rem' }}
+              >
+                <span>🎥</span> Join Google Meet Live Class ↗
+              </a>
+            </div>
+          )}
+
           {/* Universal Smart Video Player (With Auto-Resume & Auto-Completion) */}
           <YouTubeEmbed
             url={lesson.youtube_url}
