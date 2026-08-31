@@ -55,6 +55,7 @@ export function Sidebar({ isOpen, onClose }: { isOpen: boolean; onClose: () => v
     { to: '/noticeboard', label: 'College Noticeboard', icon: '📢' },
     { to: '/discipline', label: 'Discipline & Merits', icon: '⭐' },
     { to: '/admin/users', label: 'Staff & Faculty Accounts', icon: '👤' },
+    { to: '/teacher/courses', label: 'Create Courses & Assign Faculty', icon: '✨' },
     { to: '/admin/classes', label: 'Academic Programs & Cohorts', icon: '🏫' },
     { to: '/admin/subjects', label: 'Curriculum Course Units', icon: '🧪' },
     { to: '/admin/terms', label: 'Intake Batches & Schedules', icon: '📅' },

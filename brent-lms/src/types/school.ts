@@ -366,5 +366,12 @@ export interface CollegeSubject {
   created_at: string
 }
 
-
-
+export interface FacultyTeacher {
+  id: string
+  name: string
+  title: string
+  email: string
+  department: string
+  specialty: string
+  created_at: string
+}

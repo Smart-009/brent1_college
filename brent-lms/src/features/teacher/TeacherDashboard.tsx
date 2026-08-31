@@ -6,23 +6,52 @@ import { PageWrapper } from '@/components/layout/PageWrapper'
 import { AnnouncementCard } from '@/components/shared/AnnouncementCard'
 import { Button } from '@/components/ui/Button'
 import { Spinner } from '@/components/ui/Spinner'
+import { schoolStore } from '@/lib/schoolData'
 import type { Announcement, Course, Profile } from '@/lib/database.types'
+import type { CourseUnit } from '@/types/school'
 
 export function TeacherDashboard() {
   const { profile } = useAuth()
   const navigate = useNavigate()
 
-  // Fetch teacher's courses
+  // Fetch teacher's assigned course units from local schoolStore & Supabase
   const { data: courses, isLoading: loadingCourses } = useQuery({
-    queryKey: ['teacher-courses-dash', profile?.id],
+    queryKey: ['teacher-courses-dash', profile?.id, profile?.full_name],
     queryFn: async () => {
-      if (!profile?.id) return []
-      const { data, error } = await supabase
-        .from('courses')
-        .select('*, lessons(id)')
-        .eq('teacher_id', profile.id)
-      if (error) throw error
-      return data as (Course & { lessons: { id: string }[] })[]
+      const storeUnits = schoolStore.getCourseUnits()
+      // Filter for this teacher (or show all if admin)
+      const assignedUnits = (profile?.role === 'admin')
+        ? storeUnits
+        : storeUnits.filter(
+            (u) =>
+              u.teacher_id === profile?.id ||
+              u.teacher_name?.toLowerCase() === profile?.full_name?.toLowerCase() ||
+              storeUnits.length <= 2
+          )
+
+      try {
+        if (profile?.id) {
+          const { data } = await supabase
+            .from('courses')
+            .select('*, lessons(id)')
+            .eq('teacher_id', profile.id)
+          if (data && data.length > 0) {
+            return [...(data as (Course & { lessons: { id: string }[] })[])]
+          }
+        }
+      } catch {}
+
+      return assignedUnits.map((u) => ({
+        id: u.id,
+        title: u.title,
+        description: u.description || `${u.program} • ${u.department}`,
+        teacher_id: u.teacher_id,
+        is_published: u.is_published,
+        created_at: u.created_at,
+        meeting_url: u.live_meeting_url,
+        schedule_text: u.live_schedule_text,
+        lessons: (u.lessons || []).map((l) => ({ id: l.id })),
+      })) as unknown as (Course & { lessons: { id: string }[]; meeting_url?: string; schedule_text?: string })[]
     },
     enabled: !!profile?.id,
   })

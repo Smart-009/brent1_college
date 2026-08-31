@@ -5,14 +5,21 @@ import { PageWrapper } from '@/components/layout/PageWrapper'
 import { Button } from '@/components/ui/Button'
 import { supabase } from '@/lib/supabase'
 import { schoolStore } from '@/lib/schoolData'
-import type { CourseUnit, SyllabusModule, CollegeDepartment, CollegeSubject } from '@/types/school'
+import type { CourseUnit, SyllabusModule, CollegeDepartment, CollegeSubject, FacultyTeacher } from '@/types/school'
 
 export function CreateCourse() {
   const { profile } = useAuth()
   const navigate = useNavigate()
 
-  // Read current departments from store
+  // Read current departments & faculty from store
   const [departments, setDepartments] = useState<CollegeDepartment[]>(() => schoolStore.getDepartments())
+  const [teachersList, setTeachersList] = useState<FacultyTeacher[]>(() => schoolStore.getTeachers())
+
+  // Assigned Faculty Member / Instructor
+  const [selectedTeacherId, setSelectedTeacherId] = useState<string>(teachersList[0]?.id || 'tch-mwangi')
+  const [isCustomTeacher, setIsCustomTeacher] = useState(false)
+  const [customTeacherName, setCustomTeacherName] = useState('')
+  const [customTeacherTitle, setCustomTeacherTitle] = useState('Faculty Lecturer & Subject Lead')
 
   // Course Basic Information
   const [code, setCode] = useState('')
@@ -210,7 +217,27 @@ export function CreateCourse() {
         setDepartments(schoolStore.getDepartments())
       }
 
-      // 2. Build CourseUnit record
+      // 2. Determine assigned faculty teacher
+      let assignedTeacherId = selectedTeacherId
+      let assignedTeacherName = teachersList.find((t) => t.id === selectedTeacherId)?.name || profile?.full_name || 'Faculty Lecturer'
+
+      if (isCustomTeacher && customTeacherName.trim()) {
+        const newTch: FacultyTeacher = {
+          id: `tch-${Date.now()}`,
+          name: customTeacherName.trim(),
+          title: customTeacherTitle.trim() || 'Faculty Lecturer',
+          email: `${customTeacherName.toLowerCase().replace(/[^a-z0-9]/g, '.')}@eclat.institute`,
+          department: deptNameFinal,
+          specialty: title.trim(),
+          created_at: new Date().toISOString(),
+        }
+        await schoolStore.addTeacher(newTch)
+        assignedTeacherId = newTch.id
+        assignedTeacherName = newTch.name
+        setTeachersList(schoolStore.getTeachers())
+      }
+
+      // 3. Build CourseUnit record
       const cleanCode = code.trim().toUpperCase()
       const newUnit: CourseUnit = {
         id: `unit-${Date.now()}`,
@@ -220,8 +247,8 @@ export function CreateCourse() {
         program: programFinal,
         course_duration: courseDuration,
         credit_hours: Number(creditHours) || 40,
-        teacher_id: profile?.id || 'tch-lead',
-        teacher_name: profile?.full_name || 'Faculty Lecturer',
+        teacher_id: assignedTeacherId,
+        teacher_name: assignedTeacherName,
         description: description.trim() || `Comprehensive online course in ${title.trim()}.`,
         live_meeting_url: liveMeetingUrl.trim(),
         live_schedule_text: liveScheduleText.trim(),
@@ -231,10 +258,10 @@ export function CreateCourse() {
         created_at: new Date().toISOString(),
       }
 
-      // 3. Save CourseUnit to store
+      // 4. Save CourseUnit to store
       await schoolStore.addCourseUnit(newUnit)
 
-      // 4. Also register as a CollegeSubject (for Pricing, Bursar & Frontpage Catalog)
+      // 5. Also register as a CollegeSubject (for Pricing, Bursar & Frontpage Catalog)
       const careersList = careerOutcomes
         ? careerOutcomes.split(',').map((c) => c.trim()).filter(Boolean)
         : [title.trim() + ' Specialist', 'Certified Professional']
@@ -514,7 +541,68 @@ export function CreateCourse() {
             </div>
           </div>
 
-          {/* 3. Google Meet / Live Virtual Classroom Integration */}
+          {/* 3. Assigned Faculty Lecturer / Course Instructor (Admin Assigned) */}
+          <div style={{ background: '#f8fafc', border: '1.5px solid #e2e8f0', borderRadius: '10px', padding: '1.2rem', marginBottom: '1.25rem' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.85rem' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                <span style={{ fontSize: '1.2rem' }}>👨‍🏫</span>
+                <strong style={{ fontSize: '0.92rem', color: '#1e3a8a' }}>Assigned Faculty Instructor / Lecturer *</strong>
+              </div>
+              <button
+                type="button"
+                onClick={() => setIsCustomTeacher(!isCustomTeacher)}
+                style={{ background: 'none', border: 'none', color: '#2563eb', fontSize: '0.78rem', cursor: 'pointer', fontWeight: 700, textDecoration: 'underline' }}
+              >
+                {isCustomTeacher ? '← Select Existing Faculty' : '➕ Type New Instructor Name'}
+              </button>
+            </div>
+
+            {isCustomTeacher ? (
+              <div style={{ display: 'grid', gridTemplateColumns: '1.8fr 1.2fr', gap: '1rem' }}>
+                <div>
+                  <label className="label" style={{ fontSize: '0.78rem' }}>New Faculty Lecturer Full Name *</label>
+                  <input
+                    type="text"
+                    required
+                    className="input"
+                    placeholder="e.g. Dr. Sarah Chen, Ph.D. or Eng. David Mwangi"
+                    value={customTeacherName}
+                    onChange={(e) => setCustomTeacherName(e.target.value)}
+                  />
+                </div>
+                <div>
+                  <label className="label" style={{ fontSize: '0.78rem' }}>Academic Title / Role</label>
+                  <input
+                    type="text"
+                    className="input"
+                    placeholder="e.g. Senior Cybersecurity & Cloud Defense Lecturer"
+                    value={customTeacherTitle}
+                    onChange={(e) => setCustomTeacherTitle(e.target.value)}
+                  />
+                </div>
+              </div>
+            ) : (
+              <div>
+                <label className="label" style={{ fontSize: '0.78rem' }}>Select Accredited Faculty Member</label>
+                <select
+                  className="input"
+                  value={selectedTeacherId}
+                  onChange={(e) => setSelectedTeacherId(e.target.value)}
+                >
+                  {teachersList.map((t) => (
+                    <option key={t.id} value={t.id}>
+                      {t.name} — {t.title} ({t.department})
+                    </option>
+                  ))}
+                </select>
+                <span style={{ fontSize: '0.72rem', color: '#64748b', marginTop: '4px', display: 'block' }}>
+                  The course will appear on this teacher's Faculty Dashboard, Gradebook, and Attendance tracker.
+                </span>
+              </div>
+            )}
+          </div>
+
+          {/* 4. Google Meet / Live Virtual Classroom Integration */}
           <div style={{ background: '#eff6ff', border: '1.5px solid #bfdbfe', borderRadius: '10px', padding: '1.2rem', marginBottom: '1.25rem' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.75rem' }}>
               <span style={{ fontSize: '1.3rem' }}>🎥</span>

@@ -19,6 +19,7 @@ import type {
   CollegeDepartment,
   CollegeSubject,
   BiometricFeeClearancePass,
+  FacultyTeacher,
 } from '@/types/school'
 import { txEngine, IntegrityError } from './transactionManager'
 import { schoolEventBus } from './eventBus'
@@ -29,6 +30,15 @@ export const INITIAL_STUDENTS: StudentRecord[] = []
 export const INITIAL_TIMETABLE: TimetablePeriod[] = []
 export const INITIAL_EXAMS: ExamSession[] = []
 export const INITIAL_REPORT_CARDS: ReportCard[] = []
+
+export const INITIAL_FACULTY_TEACHERS: FacultyTeacher[] = [
+  { id: 'tch-mwangi', name: 'Eng. David Mwangi', title: 'Lead Software Architect', email: 'd.mwangi@eclat.institute', department: 'School of Software Engineering & Web Development', specialty: 'Full-Stack Web Dev & Python AI', created_at: new Date().toISOString() },
+  { id: 'tch-chen', name: 'Dr. Sarah Chen, Ph.D.', title: 'Senior Cybersecurity Lecturer', email: 's.chen@eclat.institute', department: 'Department of Cybersecurity & Cloud Defense', specialty: 'Cybersecurity & Ethical Hacking', created_at: new Date().toISOString() },
+  { id: 'tch-dubois', name: 'Prof. Alexandre Dubois', title: 'Director of World Languages', email: 'a.dubois@eclat.institute', department: 'Department of English & Modern Languages', specialty: 'French, German & Foreign Languages', created_at: new Date().toISOString() },
+  { id: 'tch-amina', name: 'Dr. Amina Al-Hassan', title: 'IELTS Academic Master Coach', email: 'a.hassan@eclat.institute', department: 'Department of IELTS & International Test Prep', specialty: 'IELTS Band 9.0 & Spoken Arabic', created_at: new Date().toISOString() },
+  { id: 'tch-mercy', name: 'CPA Mercy Kiprono', title: 'Corporate Finance Lead', email: 'm.kiprono@eclat.institute', department: 'Department of Business Tech & Computerized Accounting', specialty: 'QuickBooks & Tax Management', created_at: new Date().toISOString() },
+  { id: 'tch-kimani', name: 'Alex Kimani', title: 'Lead Product Designer', email: 'a.kimani@eclat.institute', department: 'Department of Computer Applications & Digital Skills', specialty: 'UI/UX Design & Office Packages', created_at: new Date().toISOString() },
+]
 export const INITIAL_DEPARTMENTS: CollegeDepartment[] = [
   {
     id: 'dept-swe',
@@ -960,6 +970,26 @@ class SchoolDataStore {
     }
     const allUnits = this.getCourseUnits()
     return allUnits.filter((u) => reg.registered_unit_ids.includes(u.id) || reg.registered_units.some((ru) => ru.code === u.code))
+  }
+
+  // --- Faculty Teachers & Course Assignments (ACID Protected) ---
+  getTeachers(): FacultyTeacher[] {
+    return this.get<FacultyTeacher[]>('faculty_teachers', INITIAL_FACULTY_TEACHERS)
+  }
+
+  async addTeacher(teacher: FacultyTeacher): Promise<void> {
+    await txEngine.executeAtomic(
+      `ADD_TEACHER_${teacher.id}`,
+      ['brent_school_faculty_teachers'],
+      () => {
+        const list = this.getTeachers()
+        if (!list.some((t) => t.id === teacher.id || t.name.toLowerCase() === teacher.name.toLowerCase())) {
+          list.push(teacher)
+          this.set('faculty_teachers', list)
+        }
+      }
+    )
+    schoolEventBus.publish('TEACHER_ADDED' as any, teacher)
   }
 
   // --- Admin Departments Management (ACID Protected) ---

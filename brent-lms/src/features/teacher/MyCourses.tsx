@@ -101,9 +101,15 @@ export function MyCourses() {
                 <h3 style={{ fontSize: '1.2rem', fontWeight: 700, margin: '0 0 0.5rem', color: 'var(--color-text-primary)' }}>
                   {unit.title}
                 </h3>
-                <p style={{ fontSize: '0.82rem', color: 'var(--color-text-secondary)', margin: '0 0 1rem' }}>
+                <p style={{ fontSize: '0.82rem', color: 'var(--color-text-secondary)', margin: '0 0 0.5rem' }}>
                   {unit.program} • <strong style={{ color: 'var(--color-primary)' }}>{unit.course_duration || unit.semester || 'Short Course'}</strong> • {unit.department}
                 </p>
+
+                {/* Assigned Faculty Lecturer Badge */}
+                <div style={{ display: 'inline-flex', alignItems: 'center', gap: '0.4rem', background: '#eff6ff', border: '1px solid #bfdbfe', padding: '3px 8px', borderRadius: '6px', fontSize: '0.78rem', color: '#1e3a8a', fontWeight: 600, marginBottom: '0.75rem' }}>
+                  <span>👨‍🏫 Assigned Lecturer:</span>
+                  <strong>{unit.teacher_name || 'Faculty Lecturer'}</strong>
+                </div>
 
                 {unit.description && (
                   <p style={{ fontSize: '0.85rem', color: 'var(--color-text-secondary)', lineHeight: '1.5', margin: '0 0 1rem' }}>
