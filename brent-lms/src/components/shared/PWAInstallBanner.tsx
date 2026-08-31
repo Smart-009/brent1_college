@@ -4,7 +4,7 @@ import { usePWAInstall } from '@/hooks/usePWAInstall'
 export function PWAInstallBanner() {
   const { isInstalled, isIOS, showInstallGuide, setShowInstallGuide, promptInstall } = usePWAInstall()
   const [dismissed, setDismissed] = useState(() => {
-    return sessionStorage.getItem('brent_pwa_dismissed') === 'true'
+    return sessionStorage.getItem('eclat_pwa_dismissed') === 'true' || sessionStorage.getItem('brent_pwa_dismissed') === 'true'
   })
 
   if (isInstalled || dismissed) {
@@ -13,7 +13,7 @@ export function PWAInstallBanner() {
 
   const handleDismiss = () => {
     setDismissed(true)
-    sessionStorage.setItem('brent_pwa_dismissed', 'true')
+    sessionStorage.setItem('eclat_pwa_dismissed', 'true')
   }
 
   return (
@@ -22,10 +22,10 @@ export function PWAInstallBanner() {
       <aside aria-label="Install App" className="pwa-banner">
         <div className="pwa-banner-content">
           <div className="pwa-banner-icon">
-            <img src="/logo.png" alt="Eclat Institute" width="36" height="36" />
+            <img src="/logo.png" alt="Éclat Institute" width="36" height="36" style={{ borderRadius: '50%', border: '1.5px solid #d4af37' }} />
           </div>
           <div className="pwa-banner-text">
-            <strong>Install Eclat Institute App on Chrome</strong>
+            <strong>Install Éclat Institute App</strong>
             <span>Get fast offline access, live lesson playback, and instant school notifications.</span>
           </div>
         </div>

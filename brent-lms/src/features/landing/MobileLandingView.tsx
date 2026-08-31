@@ -115,7 +115,7 @@ export function MobileLandingView({
                 height: '36px',
                 borderRadius: '50%',
                 objectFit: 'cover',
-                border: '2px solid #2563eb',
+                border: '2px solid #d4af37',
               }}
             />
             <span
@@ -126,14 +126,14 @@ export function MobileLandingView({
                 width: '10px',
                 height: '10px',
                 borderRadius: '50%',
-                background: '#22c55e',
+                background: '#d4af37',
                 border: '2px solid #0f172a',
               }}
             />
           </div>
           <div>
-            <div style={{ fontSize: '1.05rem', fontWeight: 900, color: '#ffffff', lineHeight: 1.1 }}>
-              ECLAT INSTITUTE
+            <div style={{ fontSize: '1.05rem', fontWeight: 900, color: '#d4af37', fontFamily: 'var(--font-heading)', lineHeight: 1.1, letterSpacing: '0.03em' }}>
+              ÉCLAT INSTITUTE
             </div>
             <div style={{ fontSize: '0.65rem', color: '#94a3b8', fontWeight: 600 }}>
               Sahl Mall • 4th St, Eastleigh

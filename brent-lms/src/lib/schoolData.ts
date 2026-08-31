@@ -333,7 +333,7 @@ class SchoolDataStore {
       return this.memCache.get(key)
     }
     try {
-      const stored = localStorage.getItem(`brent_school_${key}`)
+      const stored = localStorage.getItem(`eclat_school_${key}`) || localStorage.getItem(`brent_school_${key}`)
       const val = stored ? JSON.parse(stored) : fallback
       this.memCache.set(key, val)
       return val
@@ -346,7 +346,7 @@ class SchoolDataStore {
   private set<T>(key: string, value: T): void {
     this.memCache.set(key, value)
     try {
-      localStorage.setItem(`brent_school_${key}`, JSON.stringify(value))
+      localStorage.setItem(`eclat_school_${key}`, JSON.stringify(value))
     } catch (e) {
       console.warn('LocalStorage error:', e)
     }

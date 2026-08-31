@@ -13,9 +13,9 @@ function createWindow() {
     height: 860,
     minWidth: 1024,
     minHeight: 700,
-    title: 'Eclat Institute — Enterprise College Management System',
+    title: 'Éclat Institute — Enterprise College Management System',
     icon: path.join(__dirname, '../public/logo.png'),
-    backgroundColor: '#0f172a',
+    backgroundColor: '#0c0e12',
     webPreferences: {
       preload: path.join(__dirname, 'preload.cjs'),
       nodeIntegration: false,
@@ -27,9 +27,9 @@ function createWindow() {
   // Create Native College Menu
   const menuTemplate = [
     {
-      label: 'Eclat Institute',
+      label: 'Éclat Institute',
       submenu: [
-        { label: 'About Eclat Institute', click: () => shell.openExternal('https://eclatinstitute.ac.ke') },
+        { label: 'About Éclat Institute', click: () => shell.openExternal('https://eclatinstitute.ac.ke') },
         { type: 'separator' },
         { role: 'reload' },
         { role: 'forceReload' },

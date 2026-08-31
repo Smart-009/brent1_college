@@ -60,10 +60,10 @@ export function Navbar({ onToggleSidebar }: { onToggleSidebar: () => void }) {
       </button>
 
       <Link to="/" className="navbar-brand">
-        <img src="/logo.png" alt="Eclat Institute" className="navbar-logo" />
+        <img src="/logo.png" alt="Éclat Institute" className="navbar-logo" style={{ border: '2px solid #d4af37', borderRadius: '50%' }} />
         <div>
-          <div className="navbar-school-name">ECLAT INSTITUTE</div>
-          <span className="navbar-tagline">Shaping Minds, Inspiring Success</span>
+          <div className="navbar-school-name" style={{ fontFamily: 'var(--font-heading)', color: '#d4af37', letterSpacing: '0.04em', fontWeight: 800 }}>ÉCLAT INSTITUTE</div>
+          <span className="navbar-tagline" style={{ color: '#cbd5e1', letterSpacing: '0.08em', fontSize: '0.65rem' }}>Shaping Minds, Inspiring Success</span>
         </div>
       </Link>
 

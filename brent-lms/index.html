@@ -2,34 +2,35 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="icon" type="image/png" href="/logo.png" />
     <link rel="apple-touch-icon" href="/logo.png" />
     <link rel="apple-touch-icon" sizes="152x152" href="/logo.png" />
     <link rel="apple-touch-icon" sizes="180x180" href="/logo.png" />
     <link rel="apple-touch-icon" sizes="167x167" href="/logo.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover" />
-    <meta name="theme-color" content="#1E3A8A" />
+    <meta name="theme-color" content="#0c0e12" />
     <meta name="mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-    <meta name="apple-mobile-web-app-title" content="Eclat Institute" />
+    <meta name="apple-mobile-web-app-title" content="Éclat Institute" />
     <meta http-equiv="X-Content-Type-Options" content="nosniff" />
     <meta name="referrer" content="strict-origin-when-cross-origin" />
     <meta http-equiv="Permissions-Policy" content="camera=(), microphone=(), geolocation=(), payment=()" />
     <meta
       name="description"
-      content="Eclat Institute Nairobi — Comprehensive College Management System, Student SIS, Master Timetable, Semester Modular Examinations & Official Academic Transcripts, M-Pesa Fees, and E-Library."
+      content="Éclat Institute Nairobi — Comprehensive College Management System, Student SIS, Master Timetable, Semester Modular Examinations & Official Academic Transcripts, M-Pesa Fees, and E-Library."
     />
-    <title>Eclat Institute — College Management System & Learning Portal</title>
+    <title>Éclat Institute — College Management System & Learning Portal</title>
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800;900&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
     <!-- Prevent flash of wrong theme & force SW updates -->
     <script>
       (function() {
         try {
-          const theme = localStorage.getItem('bc-theme');
+          const theme = localStorage.getItem('eclat-theme') || localStorage.getItem('bc-theme');
           if (theme === 'dark') document.documentElement.setAttribute('data-theme', 'dark');
         } catch(e) {}
 

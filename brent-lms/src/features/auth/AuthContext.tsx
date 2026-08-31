@@ -76,11 +76,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [session, setSession] = useState<Session | null>(null)
   const [profile, setProfile] = useState<Profile | null>(() => {
     try {
-      const stored = localStorage.getItem('brent_demo_role') as Role | null
+      const stored = (localStorage.getItem('eclat_demo_role') || localStorage.getItem('brent_demo_role')) as Role | null
       // Only restore admin from demo role; others must authenticate cleanly
       if (stored === 'admin') {
         return ADMIN_PROFILE
       } else {
+        localStorage.removeItem('eclat_demo_role')
         localStorage.removeItem('brent_demo_role')
       }
     } catch {}
@@ -88,7 +89,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   })
   const [loading, setLoading] = useState(() => {
     try {
-      const stored = localStorage.getItem('brent_demo_role')
+      const stored = localStorage.getItem('eclat_demo_role') || localStorage.getItem('brent_demo_role')
       return !stored
     } catch {
       return false
@@ -124,7 +125,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       if (session?.user) {
         fetchProfile(session.user.id).finally(() => setLoading(false))
       } else {
-        const storedRole = localStorage.getItem('brent_demo_role') as Role | null
+        const storedRole = (localStorage.getItem('eclat_demo_role') || localStorage.getItem('brent_demo_role')) as Role | null
         if (storedRole && DEMO_PROFILES[storedRole]) {
           setProfile(DEMO_PROFILES[storedRole])
         }
@@ -140,7 +141,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       if (session?.user) {
         fetchProfile(session.user.id)
       } else {
-        const storedRole = localStorage.getItem('brent_demo_role') as Role | null
+        const storedRole = (localStorage.getItem('eclat_demo_role') || localStorage.getItem('brent_demo_role')) as Role | null
         if (storedRole && DEMO_PROFILES[storedRole]) {
           setProfile(DEMO_PROFILES[storedRole])
         } else {
@@ -153,7 +154,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, [])
 
   function signInAsDemo(role: Role) {
-    localStorage.setItem('brent_demo_role', role)
+    localStorage.setItem('eclat_demo_role', role)
+    localStorage.removeItem('brent_demo_role')
     setProfile(DEMO_PROFILES[role])
   }
 
@@ -213,7 +215,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       for (const email of candidates) {
         const { data, error } = await supabase.auth.signInWithPassword({ email, password })
         if (!error && data.user) {
-          localStorage.removeItem('brent_demo_role')
+          localStorage.removeItem('eclat_demo_role')
           await fetchProfile(data.user.id)
           return { error: null }
         }
@@ -225,7 +227,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     // 3. Check registered credentials in local credential store
     try {
-      const localCredsRaw = localStorage.getItem('brent_local_credentials')
+      const localCredsRaw = localStorage.getItem('eclat_local_credentials')
       if (localCredsRaw) {
         const parsed = JSON.parse(localCredsRaw)
         const userEntry = parsed[clean]
@@ -233,18 +235,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           if (userEntry.password && userEntry.password !== password) {
             return { error: 'Incorrect password for this student admission account.' }
           }
-          const studentProfile: Profile = {
-            id: userEntry.id || `usr-${clean}`,
-            full_name: userEntry.full_name,
-            admission_number: userEntry.admission_number,
-            role: userEntry.role || 'student',
-            first_login_at: new Date().toISOString(),
-            access_expires_at: null,
-            is_active: true,
-            created_at: userEntry.created_at || new Date().toISOString(),
+          if (userEntry.profile) {
+            localStorage.setItem('eclat_demo_role', userEntry.profile.role || 'student')
+            setProfile(userEntry.profile)
+            return { error: null }
           }
-          setProfile(studentProfile)
-          return { error: null }
         }
       }
     } catch {}

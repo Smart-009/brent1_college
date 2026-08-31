@@ -1,5 +1,5 @@
 // ============================================================
-// Eclat Institute — High Performance Reactive Event Bus
+// Éclat Institute — High Performance Reactive Event Bus
 // ============================================================
 
 type SchoolEventType =

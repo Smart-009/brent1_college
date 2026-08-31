@@ -96,7 +96,7 @@ export function ManageClasses() {
   // Local state initialized with storage or defaults
   const [localDepts, setLocalDepts] = useState<DepartmentProgram[]>(() => {
     try {
-      const saved = localStorage.getItem('brent_admin_departments')
+      const saved = localStorage.getItem('eclat_admin_departments') || localStorage.getItem('brent_admin_departments')
       if (saved) return JSON.parse(saved)
     } catch {
       // fallback
@@ -107,7 +107,7 @@ export function ManageClasses() {
   const saveLocalDepts = (items: DepartmentProgram[]) => {
     setLocalDepts(items)
     try {
-      localStorage.setItem('brent_admin_departments', JSON.stringify(items))
+      localStorage.setItem('eclat_admin_departments', JSON.stringify(items))
     } catch {
       // ignore
     }

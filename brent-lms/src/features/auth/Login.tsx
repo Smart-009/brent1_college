@@ -142,10 +142,10 @@ export function Login() {
         <div style={{ background: '#f8fafc', padding: 'clamp(1.25rem, 4vw, 2.5rem)', borderRight: '1px solid #e2e8f0', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
           <div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.85rem', marginBottom: '1.5rem' }}>
-              <img src="/logo.png" alt="Eclat Institute Logo" style={{ width: '48px', height: '48px', borderRadius: '50%', border: '2px solid #2563eb' }} />
+              <img src="/logo.png" alt="Éclat Institute Logo" style={{ width: '52px', height: '52px', borderRadius: '50%', border: '2px solid #d4af37', boxShadow: '0 2px 8px rgba(0,0,0,0.1)' }} />
               <div>
-                <div style={{ fontSize: '1.25rem', fontWeight: 900, color: '#0f172a', letterSpacing: '-0.02em', lineHeight: 1.1 }}>ECLAT INSTITUTE</div>
-                <div style={{ fontSize: '0.72rem', color: '#2563eb', fontWeight: 800 }}>SAHL MALL • 4TH STREET, EASTLEIGH</div>
+                <div style={{ fontSize: '1.3rem', fontWeight: 900, color: '#0f172a', fontFamily: 'var(--font-heading)', letterSpacing: '0.03em', lineHeight: 1.1 }}>ÉCLAT INSTITUTE</div>
+                <div style={{ fontSize: '0.72rem', color: '#c5a059', fontWeight: 800, letterSpacing: '0.04em' }}>SAHL MALL • 4TH STREET, EASTLEIGH</div>
               </div>
             </div>
 

@@ -1,5 +1,5 @@
 {
-  "name": "brent-college-root",
+  "name": "eclat-institute-root",
   "private": true,
   "scripts": {
     "dev": "npm --prefix brent-lms run dev",

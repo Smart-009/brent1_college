@@ -40,9 +40,9 @@ export function LayoutShell() {
           }}
         >
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-            <img src="/logo.png" alt="Eclat Institute Logo" style={{ width: '28px', height: '28px', borderRadius: '50%' }} />
+            <img src="/logo.png" alt="Éclat Institute Logo" style={{ width: '32px', height: '32px', borderRadius: '50%', border: '1.5px solid #d4af37' }} />
             <div>
-              <strong style={{ color: 'var(--color-text)' }}>Eclat Institute Nairobi</strong> • Sahl Mall, 4th Street, Eastleigh
+              <strong style={{ color: 'var(--color-text)', fontFamily: 'var(--font-heading)' }}>Éclat Institute Nairobi</strong> • Sahl Mall, 4th Street, Eastleigh
             </div>
           </div>
           <div style={{ display: 'flex', gap: '1.25rem', alignItems: 'center', flexWrap: 'wrap' }}>

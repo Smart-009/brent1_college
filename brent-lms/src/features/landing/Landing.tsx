@@ -686,15 +686,15 @@ export function Landing() {
           <Link to="/" style={{ display: 'flex', alignItems: 'center', gap: '0.65rem', textDecoration: 'none', minWidth: 0, flexShrink: 1 }}>
             <img
               src="/logo.png"
-              alt="Eclat Institute Logo"
-              style={{ width: '38px', height: '38px', borderRadius: '50%', objectFit: 'cover', boxShadow: '0 2px 8px rgba(0,0,0,0.12)', flexShrink: 0 }}
+              alt="Éclat Institute Logo"
+              style={{ width: '40px', height: '40px', borderRadius: '50%', objectFit: 'cover', border: '2px solid #d4af37', boxShadow: '0 2px 8px rgba(0,0,0,0.12)', flexShrink: 0 }}
             />
             <div style={{ minWidth: 0 }}>
-              <div style={{ fontSize: '1.15rem', fontWeight: 900, color: '#1e3a8a', letterSpacing: '-0.02em', lineHeight: 1.1, whiteSpace: 'nowrap' }}>
-                ECLAT INSTITUTE
+              <div style={{ fontSize: '1.2rem', fontWeight: 900, color: '#0f172a', fontFamily: 'var(--font-heading)', letterSpacing: '0.02em', lineHeight: 1.1, whiteSpace: 'nowrap' }}>
+                ÉCLAT INSTITUTE
               </div>
-              <div className="hidden sm:block" style={{ fontSize: '0.68rem', color: '#64748b', fontWeight: 700, letterSpacing: '0.05em', textTransform: 'uppercase', whiteSpace: 'nowrap' }}>
-                Eastleigh 4th Street • Nairobi
+              <div className="hidden sm:block" style={{ fontSize: '0.68rem', color: '#8c6e28', fontWeight: 700, letterSpacing: '0.06em', textTransform: 'uppercase', whiteSpace: 'nowrap' }}>
+                Sahl Mall, 4th Street • Eastleigh
               </div>
             </div>
           </Link>

@@ -1,21 +1,23 @@
 /* ============================================================
-   BRENT COLLEGE LMS — DESIGN SYSTEM
+   ÉCLAT INSTITUTE LMS — DESIGN SYSTEM
    index.css — tokens, resets, typography, base
    ============================================================ */
 
 /* ---- Google Font Fallback ---- */
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800;900&family=Inter:wght@400;500;600;700&display=swap');
 
 /* ---- Design Tokens ---- */
 :root {
-  /* Brand Colours */
-  --color-primary:        #1e3a8a;
-  --color-primary-dark:   #172554;
-  --color-primary-light:  #2563eb;
-  --color-secondary:      #1d4ed8;
-  --color-accent:         #b91c1c;
-  --color-accent-hover:   #991b1b;
-  --color-accent-light:   #fee2e2;
+  /* Brand Colours — Éclat Noir & Imperial Gold */
+  --color-primary:        #0f172a;
+  --color-primary-dark:   #090d16;
+  --color-primary-light:  #1e293b;
+  --color-secondary:      #1e293b;
+  --color-accent:         #c5a059;
+  --color-accent-hover:   #b38f2d;
+  --color-accent-light:   #fef3c7;
+  --color-gold:           #d4af37;
+  --color-gold-light:     #f5df88;
 
   /* Neutrals */
   --color-bg:             #f8fafc;
@@ -30,7 +32,7 @@
   --color-text:           #090d16;
   --color-text-primary:   #090d16;
   --color-text-secondary: #1e293b;
-  --color-muted:          #334155;
+  --color-muted:          #475569;
   --color-on-primary:     #ffffff;
 
   /* Feedback */
@@ -44,17 +46,17 @@
   --color-info-bg:        #dbeafe;
 
   /* Subject Colours */
-  --subject-math:         #1e3a8a;
+  --subject-math:         #0f172a;
   --subject-english:      #b91c1c;
   --subject-kiswahili:    #16a34a;
   --subject-science:      #d97706;
   --subject-ict:          #7c3aed;
   --subject-business:     #0891b2;
-  --subject-default:      #1d4ed8;
+  --subject-default:      #0f172a;
 
   /* Typography */
   --font-body:    'Inter', system-ui, -apple-system, sans-serif;
-  --font-heading: Georgia, 'Times New Roman', serif;
+  --font-heading: 'Cinzel', Georgia, 'Times New Roman', serif;
   --font-mono:    'JetBrains Mono', 'Courier New', monospace;
 
   /* Font Sizes */

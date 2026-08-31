@@ -1,5 +1,5 @@
 // ============================================================
-// Eclat Institute LMS — Database Types
+// Éclat Institute LMS — Database Types
 // ============================================================
 
 export type Role = 'admin' | 'teacher' | 'student' | 'parent' | 'bursar'

@@ -1,5 +1,5 @@
 // ============================================================
-// Brent College School Management System — Extended Type Definitions
+// Éclat Institute School Management System — Extended Type Definitions
 // ============================================================
 
 export interface GuardianInfo {
