@@ -616,23 +616,8 @@ export function MobileLandingView({
           }}
         >
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <span>🏢 M-Pesa Paybill: <strong style={{ color: '#60a5fa' }}>247247</strong></span>
-            <button
-              type="button"
-              onClick={copyPaybill}
-              style={{
-                background: '#1e293b',
-                color: '#93c5fd',
-                border: '1px solid #3b82f6',
-                borderRadius: '6px',
-                padding: '2px 8px',
-                fontSize: '0.7rem',
-                cursor: 'pointer',
-                fontWeight: 700,
-              }}
-            >
-              Copy
-            </button>
+            <span>💳 Payment: <strong style={{ color: '#60a5fa' }}>Card (Visa/Mastercard) • Paybill</strong></span>
+            <span style={{ fontSize: '0.72rem', color: '#34d399', fontWeight: 700 }}>$ USD</span>
           </div>
           <div>📞 Virtual Desk: <a href="tel:+254740027346" style={{ color: '#60a5fa', textDecoration: 'none', fontWeight: 700 }}>+254 740 027 346</a></div>
           <div>🌐 Delivery: <strong style={{ color: '#ffffff' }}>100% Online Live Classes & LMS (Worldwide)</strong></div>

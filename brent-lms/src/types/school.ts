@@ -148,7 +148,7 @@ export interface FeePaymentReceipt {
   admission_number: string
   amount: number
   amount_paid?: number
-  payment_method: 'M-Pesa' | 'Bank Transfer' | 'Cash Deposit' | 'Card'
+  payment_method: 'Card' | 'Bank Transfer' | 'Paybill' | 'PayPal' | 'M-Pesa' | 'Cash Deposit'
   reference_code: string // e.g. "QWE8736421" or Bank slip #
   payment_date: string
   paid_by: string

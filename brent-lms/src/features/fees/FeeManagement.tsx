@@ -30,10 +30,10 @@ export function FeeManagement() {
     student_id: '',
     admission_number: '',
     student_name: '',
-    total_fee: 4500,
-    amount: 4500,
-    payment_method: 'M-Pesa' as 'M-Pesa' | 'Bank Transfer' | 'Cash Deposit' | 'Card',
-    reference_code: `MPESA-${Math.random().toString(36).substring(2, 8).toUpperCase()}`,
+    total_fee: 75,
+    amount: 75,
+    payment_method: 'Card' as 'Card' | 'Bank Transfer' | 'Paybill' | 'PayPal' | 'M-Pesa' | 'Cash Deposit',
+    reference_code: `CARD-${Math.random().toString(36).substring(2, 8).toUpperCase()}`,
     paid_by: '',
     issued_by: defaultIssuer,
     biometric_verified: false,
@@ -638,9 +638,10 @@ export function FeeManagement() {
                       value={payData.payment_method}
                       onChange={(e) => setPayData({ ...payData, payment_method: e.target.value as any })}
                     >
-                      <option value="M-Pesa">M-Pesa Paybill</option>
-                      <option value="Bank Transfer">Bank Transfer (KCB / Equity)</option>
-                      <option value="Cash Deposit">Bank Cash Slip</option>
+                      <option value="Card">💳 Credit / Debit Card (Visa, Mastercard)</option>
+                      <option value="Bank Transfer">🏦 Direct Bank Wire Transfer</option>
+                      <option value="Paybill">📱 Paybill / Mobile Money</option>
+                      <option value="PayPal">🌐 PayPal / Stripe Gateway</option>
                     </select>
                   </div>
                 </div>
