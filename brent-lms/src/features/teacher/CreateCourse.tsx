@@ -52,13 +52,14 @@ export function CreateCourse() {
   }, [departments, selectedDeptId])
 
   // Modules Builder State
-  const [modules, setModules] = useState<SyllabusModule[]>([
+  const [modules, setModules] = useState<(SyllabusModule & { topics_input?: string })[]>([
     {
       id: `mod-${Date.now()}-1`,
       module_number: 1,
       title: 'Module 1: Foundations & Core Concepts',
       hours: 10,
       topics: ['Introduction to Core Architecture', 'Live Practical Code Lab'],
+      topics_input: 'Introduction to Core Architecture, Live Practical Code Lab',
       learning_outcomes: ['Understand fundamental architecture and setup environment'],
       resources: [
         {
@@ -98,13 +99,14 @@ export function CreateCourse() {
         title: `Module ${nextNum}: Advanced Practical Topic`,
         hours: 10,
         topics: ['Core concept analysis', 'Hands-on practical project lab'],
+        topics_input: 'Core concept analysis, Hands-on practical project lab',
         learning_outcomes: ['Demonstrate practical mastery and implement lab project'],
         resources: [],
       },
     ])
   }
 
-  const handleUpdateModule = (idx: number, updated: Partial<SyllabusModule>) => {
+  const handleUpdateModule = (idx: number, updated: Partial<SyllabusModule & { topics_input?: string }>) => {
     const list = [...modules]
     list[idx] = { ...list[idx], ...updated }
     setModules(list)
@@ -238,6 +240,20 @@ export function CreateCourse() {
       }
 
       // 3. Build CourseUnit record
+      const cleanModules: SyllabusModule[] = modules.map((m) => {
+        const raw = m.topics_input !== undefined ? m.topics_input : (m.topics || []).join(', ')
+        const parsedTopics = raw.split(',').map((t) => t.trim()).filter(Boolean)
+        return {
+          id: m.id,
+          module_number: m.module_number,
+          title: m.title,
+          hours: m.hours,
+          topics: parsedTopics.length > 0 ? parsedTopics : ['Core Lecture', 'Practical Lab'],
+          learning_outcomes: m.learning_outcomes,
+          resources: m.resources || [],
+        }
+      })
+
       const cleanCode = code.trim().toUpperCase()
       const newUnit: CourseUnit = {
         id: `unit-${Date.now()}`,
@@ -252,7 +268,7 @@ export function CreateCourse() {
         description: description.trim() || `Comprehensive online course in ${title.trim()}.`,
         live_meeting_url: liveMeetingUrl.trim(),
         live_schedule_text: liveScheduleText.trim(),
-        syllabus_modules: modules,
+        syllabus_modules: cleanModules,
         lessons,
         is_published: true,
         created_at: new Date().toISOString(),
@@ -733,12 +749,14 @@ export function CreateCourse() {
                     type="text"
                     className="input"
                     placeholder="Topic 1, Topic 2, Practical lab..."
-                    value={mod.topics.join(', ')}
-                    onChange={(e) =>
+                    value={mod.topics_input !== undefined ? mod.topics_input : mod.topics.join(', ')}
+                    onChange={(e) => {
+                      const val = e.target.value
                       handleUpdateModule(idx, {
-                        topics: e.target.value.split(',').map((t) => t.trim()).filter(Boolean),
+                        topics_input: val,
+                        topics: val.split(',').map((t) => t.trim()).filter(Boolean),
                       })
-                    }
+                    }}
                   />
                 </div>
 
