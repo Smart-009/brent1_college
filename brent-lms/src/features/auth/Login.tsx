@@ -256,22 +256,26 @@ export function Login() {
 
             <form onSubmit={handleSubmit}>
               <div style={{ marginBottom: '1.1rem' }}>
-                <label className="label" style={{ fontSize: '0.82rem' }}>
-                  {selectedRole === 'student' ? 'Student Admission Number / Email' : 'Staff Username / Email'}
+                <label className="label" style={{ fontSize: '0.84rem', fontWeight: 700, color: '#1e293b' }}>
+                  {selectedRole === 'student' ? 'Admission Number' : 'Username / Admission Number'}
                 </label>
                 <input
                   type="text"
                   required
+                  autoFocus
                   className="input"
                   value={admissionNumber}
                   onChange={(e) => setAdmissionNumber(e.target.value)}
-                  placeholder={selectedRole === 'student' ? 'e.g. EI-2026-001 or your email' : 'e.g. username or staff email'}
+                  placeholder={selectedRole === 'student' ? 'e.g. EI-2026-001' : 'e.g. admin or username'}
+                  style={{ fontSize: '0.95rem', padding: '0.75rem 0.9rem' }}
                 />
               </div>
 
               <div style={{ marginBottom: '1.3rem' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.35rem' }}>
-                  <label className="label" style={{ margin: 0, fontSize: '0.82rem' }}>Password</label>
+                  <label className="label" style={{ margin: 0, fontSize: '0.84rem', fontWeight: 700, color: '#1e293b' }}>
+                    Password
+                  </label>
                   <button
                     type="button"
                     style={{ background: 'none', border: 'none', color: '#2563eb', fontSize: '0.78rem', cursor: 'pointer', fontWeight: 600 }}
@@ -286,7 +290,8 @@ export function Login() {
                   className="input"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  placeholder="Enter your secure password"
+                  placeholder="Enter password"
+                  style={{ fontSize: '0.95rem', padding: '0.75rem 0.9rem' }}
                 />
               </div>
 
