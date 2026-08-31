@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react'
+﻿import { useState, useMemo } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 import { useAuth } from '@/hooks/useAuth'
 import { PageWrapper } from '@/components/layout/PageWrapper'
@@ -11,36 +11,55 @@ export function CreateCourse() {
   const { profile } = useAuth()
   const navigate = useNavigate()
 
-  // Read admin-configured departments and subjects
-  const [departments] = useState<CollegeDepartment[]>(() => schoolStore.getDepartments())
-  const [subjects] = useState<CollegeSubject[]>(() => schoolStore.getSubjects())
+  // Read current departments from store
+  const [departments, setDepartments] = useState<CollegeDepartment[]>(() => schoolStore.getDepartments())
 
+  // Course Basic Information
   const [code, setCode] = useState('')
   const [title, setTitle] = useState('')
-  const [selectedDeptId, setSelectedDeptId] = useState<string>(departments[0]?.id || '')
-  const [selectedSubjectId, setSelectedSubjectId] = useState<string>(subjects[0]?.id || '')
-  const [selectedProgram, setSelectedProgram] = useState<string>('')
-  const [courseDuration, setCourseDuration] = useState('3 Months Certificate Course')
+  const [feeUsd, setFeeUsd] = useState<number>(75)
+  const [category, setCategory] = useState('Tech & Programming')
+  const [icon, setIcon] = useState('💻')
+  const [courseDuration, setCourseDuration] = useState('3 Months (Certificate Course)')
   const [creditHours, setCreditHours] = useState(40)
   const [description, setDescription] = useState('')
+  const [careerOutcomes, setCareerOutcomes] = useState('')
+
+  // Department & Program Handling (Supports existing OR brand-new custom)
+  const [isCustomDept, setIsCustomDept] = useState(departments.length === 0)
+  const [selectedDeptId, setSelectedDeptId] = useState<string>(departments[0]?.id || '')
+  const [customDeptName, setCustomDeptName] = useState('')
+  const [customDeptCode, setCustomDeptCode] = useState('')
+
+  const [selectedProgram, setSelectedProgram] = useState<string>('')
 
   // Active department details
   const currentDept = useMemo(() => {
     return departments.find((d) => d.id === selectedDeptId) || departments[0]
   }, [departments, selectedDeptId])
 
-  // Filtered subjects for the selected department
-  const availableSubjects = useMemo(() => {
-    if (!currentDept) return subjects
-    const filtered = subjects.filter((s) => s.department_id === currentDept.id || s.department_name === currentDept.name)
-    return filtered.length > 0 ? filtered : subjects
-  }, [subjects, currentDept])
-
   // Modules Builder State
-  const [modules, setModules] = useState<SyllabusModule[]>([])
+  const [modules, setModules] = useState<SyllabusModule[]>([
+    {
+      id: `mod-${Date.now()}-1`,
+      module_number: 1,
+      title: 'Module 1: Foundations & Core Concepts',
+      hours: 10,
+      topics: ['Introduction to Core Architecture', 'Live Practical Code Lab'],
+      learning_outcomes: ['Understand fundamental architecture and setup environment'],
+    },
+  ])
 
   // Lessons State
-  const [lessons, setLessons] = useState<CourseUnit['lessons']>([])
+  const [lessons, setLessons] = useState<CourseUnit['lessons']>([
+    {
+      id: `les-${Date.now()}-1`,
+      title: 'Lesson 1: Introduction & Environment Setup',
+      video_url: '',
+      duration_minutes: 45,
+      content: 'Overview of the course prerequisites and software tools installation.',
+    },
+  ])
 
   const [error, setError] = useState<string | null>(null)
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -53,10 +72,10 @@ export function CreateCourse() {
       {
         id: `mod-${Date.now()}-${nextNum}`,
         module_number: nextNum,
-        title: `Module ${nextNum}: Topic Area`,
+        title: `Module ${nextNum}: Advanced Practical Topic`,
         hours: 10,
-        topics: ['Sub-topic 1', 'Practical lab exercise'],
-        learning_outcomes: ['Demonstrate practical mastery of this module'],
+        topics: ['Core concept analysis', 'Hands-on practical project lab'],
+        learning_outcomes: ['Demonstrate practical mastery and implement lab project'],
       },
     ])
   }
@@ -73,11 +92,12 @@ export function CreateCourse() {
 
   // Lesson actions
   const handleAddLesson = () => {
+    const nextNum = lessons.length + 1
     setLessons([
       ...lessons,
       {
-        id: `les-${Date.now()}-${lessons.length + 1}`,
-        title: `Lesson ${lessons.length + 1}: Practical Application`,
+        id: `les-${Date.now()}-${nextNum}`,
+        title: `Lesson ${nextNum}: Practical Application & Live Demo`,
         video_url: '',
         duration_minutes: 50,
         content: '',
@@ -98,41 +118,90 @@ export function CreateCourse() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setError(null)
+
     if (!code.trim() || !title.trim()) {
-      setError('Course Unit Code and Title are required.')
+      setError('Course Code (e.g. CYB-101) and Course Title are required.')
       return
     }
 
-    if (!currentDept) {
-      setError('An Academic Department must be selected. Please contact Admin if none exist.')
+    const deptNameFinal = isCustomDept
+      ? customDeptName.trim()
+      : (currentDept ? currentDept.name : 'Department of Computing & Tech')
+
+    if (!deptNameFinal) {
+      setError('Please provide an Academic Department name.')
       return
     }
+
+    const programFinal = selectedProgram || (currentDept?.programs?.[0] || 'Short Course Certificate Program')
 
     setIsSubmitting(true)
-    try {
-      const activeSubject = subjects.find((s) => s.id === selectedSubjectId) || subjects[0]
-      const chosenProgram = selectedProgram || currentDept.programs?.[0] || currentDept.name
 
+    try {
+      // 1. If custom department was introduced, persist it
+      let finalDeptId = selectedDeptId
+      if (isCustomDept && customDeptName.trim()) {
+        const newDeptCode = (customDeptCode.trim() || code.trim().split('-')[0] || 'DEPT').toUpperCase()
+        const newDept: CollegeDepartment = {
+          id: `dept-${Date.now()}`,
+          code: newDeptCode,
+          name: customDeptName.trim(),
+          hod_name: profile?.full_name || 'Department Faculty Lead',
+          programs: programFinal ? [programFinal] : ['Certificate Program'],
+          created_at: new Date().toISOString(),
+        }
+        await schoolStore.addDepartment(newDept)
+        finalDeptId = newDept.id
+        setDepartments(schoolStore.getDepartments())
+      }
+
+      // 2. Build CourseUnit record
+      const cleanCode = code.trim().toUpperCase()
       const newUnit: CourseUnit = {
         id: `unit-${Date.now()}`,
-        code: code.trim().toUpperCase(),
+        code: cleanCode,
         title: title.trim(),
-        department: currentDept.name,
-        program: chosenProgram,
+        department: deptNameFinal,
+        program: programFinal || title.trim(),
         course_duration: courseDuration,
-        credit_hours: Number(creditHours) || 30,
-        teacher_id: profile?.id || 'tch-current',
+        credit_hours: Number(creditHours) || 40,
+        teacher_id: profile?.id || 'tch-lead',
         teacher_name: profile?.full_name || 'Faculty Lecturer',
-        description: description.trim() || (activeSubject ? `Curriculum Discipline: ${activeSubject.name}` : ''),
+        description: description.trim() || `Comprehensive online course in ${title.trim()}.`,
         syllabus_modules: modules,
         lessons,
         is_published: true,
         created_at: new Date().toISOString(),
       }
 
+      // 3. Save CourseUnit to store
       await schoolStore.addCourseUnit(newUnit)
 
-      // Synchronize to Supabase Cloud Database
+      // 4. Also register as a CollegeSubject (for Pricing, Bursar & Frontpage Catalog)
+      const careersList = careerOutcomes
+        ? careerOutcomes.split(',').map((c) => c.trim()).filter(Boolean)
+        : [title.trim() + ' Specialist', 'Certified Professional']
+
+      const newSubject: CollegeSubject = {
+        id: `sub-${Date.now()}`,
+        code: cleanCode,
+        name: title.trim(),
+        description: description.trim() || `Accredited ${courseDuration} course program.`,
+        department_id: finalDeptId,
+        department_name: deptNameFinal,
+        fee: Number(feeUsd) || 75,
+        duration: courseDuration,
+        icon: icon || '💻',
+        badge: 'New Course',
+        category: category,
+        careers: careersList,
+        color_hex: '#1e3a8a',
+        created_at: new Date().toISOString(),
+      }
+
+      await schoolStore.addSubject(newSubject)
+
+      // 5. Cloud Supabase Insertion
       try {
         await supabase.from('courses').insert({
           title: newUnit.title,
@@ -140,32 +209,35 @@ export function CreateCourse() {
           teacher_id: profile?.id,
           is_published: true,
         })
-      } catch {}
+      } catch (cloudErr) {
+        console.warn('Cloud sync fallback to local store:', cloudErr)
+      }
 
-      // Broadcast live sync event for frontpage
+      // Broadcast storage event for live frontpage & catalog updates
       window.dispatchEvent(new Event('storage'))
 
       navigate('/teacher/courses')
     } catch (err: any) {
-      setError(err.message || 'Failed to create course unit.')
+      setError(err.message || 'Failed to create course. Please verify input fields.')
     } finally {
       setIsSubmitting(false)
     }
   }
 
-  if (profile?.role !== 'admin') {
+  // Allow both admin and teacher roles
+  if (profile?.role !== 'admin' && profile?.role !== 'teacher') {
     return (
       <PageWrapper title="Access Restricted">
         <div className="card" style={{ padding: '3rem 2rem', textAlign: 'center', maxWidth: '600px', margin: '2rem auto' }}>
           <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>🔒</div>
           <h3 style={{ fontSize: '1.25rem', fontWeight: 800, color: 'var(--color-primary)', marginBottom: '0.5rem' }}>
-            Administrator Access Only
+            Faculty & Admin Access Only
           </h3>
           <p style={{ color: 'var(--color-text-secondary)', fontSize: '0.9rem', lineHeight: '1.6', marginBottom: '1.5rem' }}>
-            Only College Administrators and the Academic Registrar are authorized to create or upload new courses and curriculum units.
+            Only Faculty Instructors and College Administrators can introduce or publish courses.
           </p>
-          <Button variant="primary" onClick={() => navigate('/admin')}>
-            ← Return to Dashboard
+          <Button variant="primary" onClick={() => navigate('/')}>
+            ← Return Home
           </Button>
         </div>
       </PageWrapper>
@@ -174,205 +246,256 @@ export function CreateCourse() {
 
   return (
     <PageWrapper
-      title="Curriculum & Short Course Builder"
-      subtitle="Select accredited departments and subjects established by Administration to build your professional short courses."
+      title="Create & Introduce New Course"
+      subtitle="Introduce brand-new accredited short courses, define tuition fees, build syllabus modules, and publish video lectures."
     >
       <Link to="/teacher/courses" className="lesson-back-link mb-4">
-        ← Back to Faculty Courses
+        ← Back to Course Catalog
       </Link>
 
-      {/* Admin Setup Warning if No Departments Exist */}
-      {departments.length === 0 && (
-        <div className="card mb-6" style={{ background: '#fffbeb', border: '1px solid #fde68a', color: '#92400e', padding: '1.5rem', borderRadius: '10px' }}>
-          <div style={{ display: 'flex', gap: '1rem', alignItems: 'flex-start' }}>
-            <span style={{ fontSize: '2rem' }}>🏛️</span>
-            <div>
-              <h3 style={{ margin: 0, fontSize: '1.1rem', fontWeight: 700, color: '#b45309' }}>
-                No Academic Departments Introduced Yet
-              </h3>
-              <p style={{ margin: '0.25rem 0 0.75rem', fontSize: '0.9rem', lineHeight: '1.5' }}>
-                Under institutional governance rules, the <strong>College Administrator</strong> is responsible for introducing Academic Departments and Subject Disciplines. Once introduced, they will appear in the dropdown menus below for course creation.
-              </p>
-              {profile?.role === 'admin' && (
-                <Link to="/admin/subjects" className="btn btn-primary btn-sm">
-                  + Configure Departments & Subjects in Admin Desk →
-                </Link>
-              )}
-            </div>
-          </div>
-        </div>
-      )}
-
-      <form onSubmit={handleSubmit} style={{ maxWidth: '920px', margin: '0 auto' }}>
+      <form onSubmit={handleSubmit} style={{ maxWidth: '960px', margin: '0 auto' }}>
         {error && (
-          <div className="card mb-4" style={{ background: '#fee2e2', border: '1px solid #f87171', color: '#991b1b', padding: '0.85rem 1.25rem' }}>
-            ⚠️ {error}
+          <div className="card mb-4" style={{ background: '#fee2e2', border: '1.5px solid #f87171', color: '#991b1b', padding: '1rem 1.25rem', borderRadius: '10px', display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
+            <span style={{ fontSize: '1.3rem' }}>⚠️</span>
+            <div>{error}</div>
           </div>
         )}
 
-        {/* 1. Unit Overview Details */}
-        <div className="card mb-6" style={{ padding: '1.5rem' }}>
-          <h3 style={{ fontSize: '1.1rem', fontWeight: 700, marginBottom: '1rem', color: 'var(--color-primary)' }}>
-            1. Department, Program & Subject Discipline Selection
-          </h3>
-
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '1rem' }}>
-            {/* Department Dropdown */}
-            <div>
-              <label className="label">Academic Department * (Admin Introduced)</label>
-              {departments.length === 0 ? (
-                <div style={{ fontSize: '0.85rem', color: '#dc2626', padding: '0.5rem', background: '#fee2e2', borderRadius: '4px' }}>
-                  No departments created yet.
-                </div>
-              ) : (
-                <select
-                  className="input"
-                  required
-                  value={selectedDeptId}
-                  onChange={(e) => {
-                    setSelectedDeptId(e.target.value)
-                    const targetDept = departments.find((d) => d.id === e.target.value)
-                    if (targetDept && targetDept.programs?.length > 0) {
-                      setSelectedProgram(targetDept.programs[0])
-                    }
-                  }}
-                >
-                  {departments.map((d) => (
-                    <option key={d.id} value={d.id}>
-                      {d.name} ({d.code})
-                    </option>
-                  ))}
-                </select>
-              )}
-            </div>
-
-            {/* Program Dropdown */}
-            <div>
-              <label className="label">Accredited Program / Cohort *</label>
-              {currentDept && currentDept.programs && currentDept.programs.length > 0 ? (
-                <select
-                  className="input"
-                  value={selectedProgram}
-                  onChange={(e) => setSelectedProgram(e.target.value)}
-                >
-                  {currentDept.programs.map((prog, idx) => (
-                    <option key={idx} value={prog}>
-                      {prog}
-                    </option>
-                  ))}
-                </select>
-              ) : (
-                <input
-                  type="text"
-                  className="input"
-                  placeholder="e.g. Certificate in Web & Cloud Systems"
-                  value={selectedProgram}
-                  onChange={(e) => setSelectedProgram(e.target.value)}
-                />
-              )}
-            </div>
+        {/* 1. Core Course Identification & Pricing */}
+        <div className="card mb-6" style={{ padding: '1.75rem', borderRadius: '14px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem', marginBottom: '1.25rem' }}>
+            <span style={{ fontSize: '1.4rem' }}>✨</span>
+            <h3 style={{ fontSize: '1.15rem', fontWeight: 800, margin: 0, color: 'var(--color-primary)' }}>
+              1. Course Identity & Tuition Fee
+            </h3>
           </div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '1rem' }}>
-            {/* Subject Area Dropdown */}
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 2.5fr 1fr', gap: '1rem', marginBottom: '1.25rem' }}>
             <div>
-              <label className="label">Subject Discipline * (Admin Introduced)</label>
-              {availableSubjects.length === 0 ? (
-                <div style={{ fontSize: '0.85rem', color: 'var(--color-text-secondary)', padding: '0.5rem' }}>
-                  No subjects configured.
-                </div>
-              ) : (
-                <select
-                  className="input"
-                  value={selectedSubjectId}
-                  onChange={(e) => setSelectedSubjectId(e.target.value)}
-                >
-                  {availableSubjects.map((s) => (
-                    <option key={s.id} value={s.id}>
-                      {s.code} — {s.name}
-                    </option>
-                  ))}
-                </select>
-              )}
-            </div>
-
-            {/* Course Duration Dropdown */}
-            <div>
-              <label className="label">Course Duration / Training Period *</label>
-              <select className="input" value={courseDuration} onChange={(e) => setCourseDuration(e.target.value)}>
-                <option value="1 Month (Intensive Bootcamp)">1 Month (Intensive Bootcamp)</option>
-                <option value="2 Months (Fast-Track Skills)">2 Months (Fast-Track Skills)</option>
-                <option value="3 Months (Certificate Course)">3 Months (Certificate Course)</option>
-                <option value="4 Months (Professional Short Course)">4 Months (Professional Short Course)</option>
-                <option value="6 Months (Modular Diploma)">6 Months (Modular Diploma)</option>
-                <option value="2 Weeks (Executive Masterclass)">2 Weeks (Executive Masterclass)</option>
-                <option value="1 Week (Accelerated Workshop)">1 Week (Accelerated Workshop)</option>
-                <option value="Self-Paced Short Course">Self-Paced Short Course</option>
-              </select>
-            </div>
-          </div>
-
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 2fr 120px', gap: '1rem', marginBottom: '1rem' }}>
-            <div>
-              <label className="label">Course Unit Code *</label>
+              <label className="label">Course Code *</label>
               <input
                 type="text"
                 required
                 className="input"
-                placeholder="e.g. CS 201"
+                placeholder="e.g. CYB-101"
                 value={code}
                 onChange={(e) => setCode(e.target.value)}
               />
             </div>
             <div>
-              <label className="label">Course Unit Title *</label>
+              <label className="label">Course Title *</label>
               <input
                 type="text"
                 required
                 className="input"
-                placeholder="e.g. Advanced Web & Mobile Applications with React"
+                placeholder="e.g. Cybersecurity & Ethical Hacking Masterclass"
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
               />
             </div>
             <div>
-              <label className="label">Credits</label>
+              <label className="label">Tuition Fee ($ USD) *</label>
+              <div style={{ position: 'relative' }}>
+                <span style={{ position: 'absolute', left: '10px', top: '50%', transform: 'translateY(-50%)', fontWeight: 800, color: '#16a34a' }}>$</span>
+                <input
+                  type="number"
+                  min="1"
+                  required
+                  className="input"
+                  style={{ paddingLeft: '1.75rem', fontWeight: 800, color: '#16a34a' }}
+                  value={feeUsd}
+                  onChange={(e) => setFeeUsd(Number(e.target.value))}
+                />
+              </div>
+              <span style={{ fontSize: '0.72rem', color: '#64748b', marginTop: '2px', display: 'block' }}>
+                Installment: 2x ${(feeUsd / 2).toFixed(2)}
+              </span>
+            </div>
+          </div>
+
+          <div style={{ display: 'grid', gridTemplateColumns: '1.5fr 1.5fr 1fr 100px', gap: '1rem', marginBottom: '1.25rem' }}>
+            {/* Category */}
+            <div>
+              <label className="label">Course Category *</label>
+              <select className="input" value={category} onChange={(e) => setCategory(e.target.value)}>
+                <option value="Tech & Programming">💻 Tech & Programming</option>
+                <option value="Languages & Communication">🗣️ Languages & Communication</option>
+                <option value="Business Tech & Accounting">📊 Business Tech & Accounting</option>
+                <option value="Computer & Digital Skills">🎨 Computer & Digital Skills</option>
+                <option value="Executive Masterclass">🌟 Executive Masterclass</option>
+              </select>
+            </div>
+
+            {/* Course Duration */}
+            <div>
+              <label className="label">Course Duration / Period *</label>
+              <select className="input" value={courseDuration} onChange={(e) => setCourseDuration(e.target.value)}>
+                <option value="1 Month (Intensive Bootcamp)">1 Month (Intensive Bootcamp)</option>
+                <option value="6 Weeks (Fast-Track Skills)">6 Weeks (Fast-Track Skills)</option>
+                <option value="2 Months (8 Weeks Comprehensive)">2 Months (8 Weeks Comprehensive)</option>
+                <option value="3 Months (Certificate Course)">3 Months (Certificate Course)</option>
+                <option value="4 Months (Professional Short Course)">4 Months (Professional Short Course)</option>
+                <option value="6 Months (Modular Diploma)">6 Months (Modular Diploma)</option>
+                <option value="Self-Paced Short Course">Self-Paced Short Course</option>
+              </select>
+            </div>
+
+            {/* Training Hours */}
+            <div>
+              <label className="label">Training Hours</label>
               <input
                 type="number"
-                min="1"
-                max="8"
+                min="5"
+                max="300"
                 className="input"
                 value={creditHours}
                 onChange={(e) => setCreditHours(Number(e.target.value))}
               />
             </div>
+
+            {/* Icon Picker */}
+            <div>
+              <label className="label">Icon</label>
+              <select className="input" value={icon} onChange={(e) => setIcon(e.target.value)}>
+                <option value="💻">💻</option>
+                <option value="🛡️">🛡️</option>
+                <option value="🤖">🤖</option>
+                <option value="🌐">🌐</option>
+                <option value="🗣️">🗣️</option>
+                <option value="📱">📱</option>
+                <option value="📊">📊</option>
+                <option value="🎨">🎨</option>
+                <option value="💼">💼</option>
+                <option value="🇩🇪">🇩🇪</option>
+                <option value="🇫🇷">🇫🇷</option>
+                <option value="🇰🇪">🇰🇪</option>
+                <option value="🌴">🌴</option>
+              </select>
+            </div>
           </div>
 
-          <div>
-            <label className="label">Course Scope & Prerequisites (Optional)</label>
-            <textarea
-              rows={2}
-              className="input"
-              placeholder="Brief summary of the course unit, prerequisites, and learning objectives..."
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-            />
+          {/* Department Selection & Custom Toggle */}
+          <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '10px', padding: '1rem', marginBottom: '1.25rem' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.75rem' }}>
+              <strong style={{ fontSize: '0.9rem', color: '#1e3a8a' }}>Academic Department & Accredited Program</strong>
+              <button
+                type="button"
+                onClick={() => setIsCustomDept(!isCustomDept)}
+                style={{ background: 'none', border: 'none', color: '#2563eb', fontSize: '0.78rem', cursor: 'pointer', fontWeight: 700, textDecoration: 'underline' }}
+              >
+                {isCustomDept ? '← Choose Existing Department' : '➕ Type New Custom Department'}
+              </button>
+            </div>
+
+            {isCustomDept ? (
+              <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: '0.75rem' }}>
+                <div>
+                  <label className="label" style={{ fontSize: '0.75rem' }}>New Custom Department Name *</label>
+                  <input
+                    type="text"
+                    required
+                    className="input"
+                    placeholder="e.g. Department of Cybersecurity & Cloud Defense"
+                    value={customDeptName}
+                    onChange={(e) => setCustomDeptName(e.target.value)}
+                  />
+                </div>
+                <div>
+                  <label className="label" style={{ fontSize: '0.75rem' }}>Dept Code</label>
+                  <input
+                    type="text"
+                    className="input"
+                    placeholder="e.g. CYB"
+                    value={customDeptCode}
+                    onChange={(e) => setCustomDeptCode(e.target.value)}
+                  />
+                </div>
+              </div>
+            ) : (
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem' }}>
+                <div>
+                  <label className="label" style={{ fontSize: '0.75rem' }}>Select Existing Department</label>
+                  <select
+                    className="input"
+                    value={selectedDeptId}
+                    onChange={(e) => {
+                      setSelectedDeptId(e.target.value)
+                      const target = departments.find((d) => d.id === e.target.value)
+                      if (target?.programs?.length) {
+                        setSelectedProgram(target.programs[0])
+                      }
+                    }}
+                  >
+                    {departments.map((d) => (
+                      <option key={d.id} value={d.id}>
+                        {d.name} ({d.code})
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                <div>
+                  <label className="label" style={{ fontSize: '0.75rem' }}>Program Track / Cohort</label>
+                  {currentDept?.programs?.length ? (
+                    <select className="input" value={selectedProgram} onChange={(e) => setSelectedProgram(e.target.value)}>
+                      {currentDept.programs.map((p, i) => (
+                        <option key={i} value={p}>{p}</option>
+                      ))}
+                    </select>
+                  ) : (
+                    <input
+                      type="text"
+                      className="input"
+                      placeholder="e.g. Certificate in Cybersecurity"
+                      value={selectedProgram}
+                      onChange={(e) => setSelectedProgram(e.target.value)}
+                    />
+                  )}
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* Description & Career Prospects */}
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+            <div>
+              <label className="label">Course Description & Objectives</label>
+              <textarea
+                rows={3}
+                className="input"
+                placeholder="Overview of syllabus, hands-on labs, and key technical learning goals..."
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+              />
+            </div>
+            <div>
+              <label className="label">Target Career Roles & Skills (Comma separated)</label>
+              <textarea
+                rows={3}
+                className="input"
+                placeholder="e.g. Cybersecurity Analyst, Security Auditor, Ethical Hacker, IT Security Officer"
+                value={careerOutcomes}
+                onChange={(e) => setCareerOutcomes(e.target.value)}
+              />
+            </div>
           </div>
         </div>
 
-        {/* 2. Modular Curriculum Syllabus Outline */}
-        <div className="card mb-6" style={{ padding: '1.5rem' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
+        {/* 2. Syllabus Topic Breakdown */}
+        <div className="card mb-6" style={{ padding: '1.75rem', borderRadius: '14px' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.25rem' }}>
             <div>
-              <h3 style={{ fontSize: '1.1rem', fontWeight: 700, margin: 0, color: 'var(--color-primary)' }}>
-                2. Modular Syllabus & Topic Breakdown
-              </h3>
-              <p style={{ fontSize: '0.8rem', color: 'var(--color-text-secondary)', margin: '0.2rem 0 0' }}>
-                Structure the instructional modules, lecture contact hours, and key topic areas.
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                <span style={{ fontSize: '1.3rem' }}>📑</span>
+                <h3 style={{ fontSize: '1.15rem', fontWeight: 800, margin: 0, color: 'var(--color-primary)' }}>
+                  2. Modular Syllabus & Topic Breakdown
+                </h3>
+              </div>
+              <p style={{ fontSize: '0.8rem', color: '#64748b', margin: '0.25rem 0 0' }}>
+                Structure weekly practical modules, lab exercises, and expected competency outcomes.
               </p>
             </div>
             <button type="button" className="btn btn-secondary btn-sm" onClick={handleAddModule}>
-              + Add Syllabus Module
+              + Add Module
             </button>
           </div>
 
@@ -381,29 +504,31 @@ export function CreateCourse() {
               <div
                 key={mod.id}
                 style={{
-                  background: 'var(--color-bg-secondary)',
-                  border: '1px solid var(--color-border)',
-                  borderRadius: '8px',
-                  padding: '1rem',
+                  background: '#f8fafc',
+                  border: '1.5px solid #e2e8f0',
+                  borderRadius: '10px',
+                  padding: '1.2rem',
                 }}
               >
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.65rem' }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                    <span className="badge badge-primary">Module {mod.module_number}</span>
-                    <strong style={{ fontSize: '0.95rem' }}>{mod.title}</strong>
+                    <span style={{ background: '#2563eb', color: '#fff', padding: '2px 8px', borderRadius: '6px', fontSize: '0.75rem', fontWeight: 800 }}>
+                      Module {mod.module_number}
+                    </span>
+                    <strong style={{ fontSize: '0.92rem', color: '#0f172a' }}>{mod.title}</strong>
                   </div>
                   {modules.length > 1 && (
                     <button
                       type="button"
-                      style={{ background: 'none', border: 'none', color: '#ef4444', cursor: 'pointer', fontSize: '0.8rem' }}
+                      style={{ background: 'none', border: 'none', color: '#ef4444', cursor: 'pointer', fontSize: '0.8rem', fontWeight: 700 }}
                       onClick={() => handleDeleteModule(idx)}
                     >
-                      🗑️ Remove Module
+                      🗑️ Remove
                     </button>
                   )}
                 </div>
 
-                <div style={{ display: 'grid', gridTemplateColumns: '3fr 1fr', gap: '0.75rem', marginBottom: '0.5rem' }}>
+                <div style={{ display: 'grid', gridTemplateColumns: '3fr 1fr', gap: '0.75rem', marginBottom: '0.65rem' }}>
                   <input
                     type="text"
                     className="input"
@@ -421,11 +546,11 @@ export function CreateCourse() {
                 </div>
 
                 <div>
-                  <label className="label" style={{ fontSize: '0.75rem' }}>Key Topics (Comma separated)</label>
+                  <label className="label" style={{ fontSize: '0.74rem' }}>Key Topics (Comma separated)</label>
                   <input
                     type="text"
                     className="input"
-                    placeholder="Topic 1, Topic 2, Lab practical..."
+                    placeholder="Topic 1, Topic 2, Practical lab..."
                     value={mod.topics.join(', ')}
                     onChange={(e) =>
                       handleUpdateModule(idx, {
@@ -439,19 +564,22 @@ export function CreateCourse() {
           </div>
         </div>
 
-        {/* 3. Lessons & Lecture Notes */}
-        <div className="card mb-6" style={{ padding: '1.5rem' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
+        {/* 3. Video Lessons & Lab Resources */}
+        <div className="card mb-6" style={{ padding: '1.75rem', borderRadius: '14px' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.25rem' }}>
             <div>
-              <h3 style={{ fontSize: '1.1rem', fontWeight: 700, margin: 0, color: 'var(--color-primary)' }}>
-                3. Video Lessons & Lab Resources
-              </h3>
-              <p style={{ fontSize: '0.8rem', color: 'var(--color-text-secondary)', margin: '0.2rem 0 0' }}>
-                Add video lectures (YouTube / Cloud links) and lecture materials for registered students.
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                <span style={{ fontSize: '1.3rem' }}>🎬</span>
+                <h3 style={{ fontSize: '1.15rem', fontWeight: 800, margin: 0, color: 'var(--color-primary)' }}>
+                  3. Video Lectures & Online Lab Materials
+                </h3>
+              </div>
+              <p style={{ fontSize: '0.8rem', color: '#64748b', margin: '0.25rem 0 0' }}>
+                Add YouTube, direct MP4, Vimeo, or Cloudflare R2 links for student streaming.
               </p>
             </div>
             <button type="button" className="btn btn-secondary btn-sm" onClick={handleAddLesson}>
-              + Add Video Lesson
+              + Add Video Lecture
             </button>
           </div>
 
@@ -460,21 +588,23 @@ export function CreateCourse() {
               <div
                 key={les.id}
                 style={{
-                  background: 'var(--color-bg-secondary)',
-                  border: '1px solid var(--color-border)',
-                  borderRadius: '8px',
-                  padding: '1rem',
+                  background: '#f8fafc',
+                  border: '1.5px solid #e2e8f0',
+                  borderRadius: '10px',
+                  padding: '1.2rem',
                 }}
               >
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.65rem' }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                    <span className="badge badge-info">Lesson {idx + 1}</span>
-                    <strong style={{ fontSize: '0.9rem' }}>{les.title}</strong>
+                    <span style={{ background: '#059669', color: '#fff', padding: '2px 8px', borderRadius: '6px', fontSize: '0.75rem', fontWeight: 800 }}>
+                      Lesson {idx + 1}
+                    </span>
+                    <strong style={{ fontSize: '0.92rem', color: '#0f172a' }}>{les.title}</strong>
                   </div>
                   {lessons.length > 1 && (
                     <button
                       type="button"
-                      style={{ background: 'none', border: 'none', color: '#ef4444', cursor: 'pointer', fontSize: '0.8rem' }}
+                      style={{ background: 'none', border: 'none', color: '#ef4444', cursor: 'pointer', fontSize: '0.8rem', fontWeight: 700 }}
                       onClick={() => handleDeleteLesson(idx)}
                     >
                       🗑️ Remove
@@ -482,7 +612,7 @@ export function CreateCourse() {
                   )}
                 </div>
 
-                <div style={{ display: 'grid', gridTemplateColumns: '2fr 2fr 1fr', gap: '0.75rem' }}>
+                <div style={{ display: 'grid', gridTemplateColumns: '2fr 2.5fr 1fr', gap: '0.75rem' }}>
                   <input
                     type="text"
                     className="input"
@@ -493,7 +623,7 @@ export function CreateCourse() {
                   <input
                     type="text"
                     className="input"
-                    placeholder="YouTube Video URL (optional)"
+                    placeholder="YouTube URL, MP4 or Cloudflare R2 Link"
                     value={les.video_url || ''}
                     onChange={(e) => handleUpdateLesson(idx, { video_url: e.target.value })}
                   />
@@ -511,12 +641,17 @@ export function CreateCourse() {
         </div>
 
         {/* Submit Bar */}
-        <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '1rem' }}>
-          <Link to="/teacher/courses" className="btn btn-secondary">
+        <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '1rem', paddingBottom: '3rem' }}>
+          <Link to="/teacher/courses" className="btn btn-secondary" style={{ padding: '0.75rem 1.5rem', fontWeight: 700 }}>
             Cancel
           </Link>
-          <button type="submit" className="btn btn-primary btn-lg" disabled={isSubmitting || departments.length === 0}>
-            {isSubmitting ? 'Saving Course Unit...' : '🚀 Publish & Save Course Unit'}
+          <button
+            type="submit"
+            className="btn btn-primary btn-lg"
+            disabled={isSubmitting}
+            style={{ padding: '0.75rem 2rem', fontWeight: 800, fontSize: '1rem', boxShadow: '0 4px 14px rgba(37, 99, 235, 0.35)' }}
+          >
+            {isSubmitting ? 'Publishing Course...' : '🚀 Publish Course to Academy & Student Portal'}
           </button>
         </div>
       </form>

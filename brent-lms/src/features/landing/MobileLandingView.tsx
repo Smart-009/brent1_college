@@ -6,7 +6,7 @@ import { SafariInstallModal } from '@/components/shared/SafariInstallModal'
 export interface CourseItem {
   id: string
   title: string
-  category: 'Tech & Programming' | 'Computer & Digital Skills' | 'Languages & Communication' | 'Business Tech & Accounting'
+  category: 'Tech & Programming' | 'Computer & Digital Skills' | 'Languages & Communication' | 'Business Tech & Accounting' | 'Executive Masterclass' | string
   tag: string
   tagColor: string
   duration: string
