@@ -11,7 +11,7 @@ export default defineConfig({
     react(),
     VitePWA({
       registerType: 'autoUpdate',
-      includeAssets: ['logo.png', 'favicon.svg', 'icons.svg'],
+      includeAssets: ['logo.png', 'favicon.ico', 'favicon.svg', 'icons.svg'],
       manifest: {
         name: 'Éclat Institute Management & Learning Portal',
         short_name: 'Éclat Institute',
