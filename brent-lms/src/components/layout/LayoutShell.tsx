@@ -47,7 +47,7 @@ export function LayoutShell() {
           </div>
           <div style={{ display: 'flex', gap: '1.25rem', alignItems: 'center', flexWrap: 'wrap' }}>
             <span>🏢 Paybill: <strong style={{ color: 'var(--color-primary)' }}>247247</strong></span>
-            <span>📞 Support: <strong style={{ color: 'var(--color-text)' }}>+254 722 264 380</strong></span>
+            <span>📞 Support: <strong style={{ color: 'var(--color-text)' }}>+254 740 027 346</strong></span>
             <span>✉️ <a href="mailto:admissions@eclatinstitute.ac.ke" style={{ color: 'var(--color-primary)', textDecoration: 'none' }}>admissions@eclatinstitute.ac.ke</a></span>
           </div>
         </footer>

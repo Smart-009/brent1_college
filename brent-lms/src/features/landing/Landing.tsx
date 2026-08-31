@@ -661,7 +661,7 @@ export function Landing() {
         </span>
         <span className="hidden sm:inline" style={{ opacity: 0.8 }}>|</span>
         <span className="hidden sm:inline">
-          📞 <strong>+254 722 264 380</strong>
+          📞 <strong>+254 740 027 346</strong>
         </span>
         <span className="hidden md:inline" style={{ opacity: 0.8 }}>|</span>
         <span className="hidden md:inline">
@@ -1592,14 +1592,14 @@ export function Landing() {
             <div style={{ fontSize: '0.92rem', color: '#475569', lineHeight: 1.7, marginTop: '1.25rem' }}>
               <div>🏢 <strong>Location:</strong> Sahl Mall, 4th Street, Eastleigh, Nairobi</div>
               <div>🕒 <strong>Opening Hours:</strong> Mon – Fri: 7:30 AM – 7:30 PM | Sat: 8:00 AM – 5:00 PM</div>
-              <div>📞 <strong>Admissions Hotline:</strong> +254 722 264 380</div>
+              <div>📞 <strong>Admissions Hotline:</strong> +254 740 027 346</div>
               <div>✉️ <strong>Direct Inquiries:</strong> admissions@eclatinstitute.ac.ke</div>
             </div>
             <button
               type="button"
               className="btn btn-secondary btn-sm mt-4"
               style={{ fontWeight: 700 }}
-              onClick={() => alert('Campus Visit Hotline: Call +254 722 264 380 to schedule a free tour of our practical labs at Sahl Mall, 4th Street, Eastleigh.')}
+              onClick={() => alert('Campus Visit Hotline: Call +254 740 027 346 to schedule a free tour of our practical labs at Sahl Mall, 4th Street, Eastleigh.')}
             >
               🗓️ Book Free Campus Tour
             </button>
@@ -1735,8 +1735,8 @@ export function Landing() {
             </h4>
             <div style={{ fontSize: '0.88rem', lineHeight: 1.75, color: '#cbd5e1' }}>
               <div style={{ marginBottom: '0.35rem' }}>📍 <span style={{ color: '#94a3b8' }}>Campus:</span> <strong style={{ color: '#f8fafc' }}>Sahl Mall, 4th Street, Eastleigh</strong></div>
-              <div style={{ marginBottom: '0.35rem' }}>📞 <span style={{ color: '#94a3b8' }}>Phone:</span> <strong style={{ color: '#f8fafc' }}>+254 722 264 380</strong></div>
-              <div style={{ marginBottom: '0.35rem' }}>💬 <span style={{ color: '#94a3b8' }}>WhatsApp:</span> <strong style={{ color: '#f8fafc' }}>+254 722 264 380</strong></div>
+              <div style={{ marginBottom: '0.35rem' }}>📞 <span style={{ color: '#94a3b8' }}>Phone:</span> <strong style={{ color: '#f8fafc' }}>+254 740 027 346</strong></div>
+              <div style={{ marginBottom: '0.35rem' }}>💬 <span style={{ color: '#94a3b8' }}>WhatsApp:</span> <strong style={{ color: '#f8fafc' }}>+254 740 027 346</strong></div>
               <div style={{ marginBottom: '0.5rem' }}>✉️ <span style={{ color: '#94a3b8' }}>Email:</span> <a href="mailto:admissions@eclatinstitute.ac.ke" style={{ color: '#93c5fd', textDecoration: 'underline' }}>admissions@eclatinstitute.ac.ke</a></div>
               
               <div style={{ marginTop: '0.75rem', padding: '0.7rem 0.9rem', background: '#131b2e', border: '1px solid #2e3d61', borderRadius: '8px', fontSize: '0.82rem' }}>
@@ -1772,7 +1772,7 @@ export function Landing() {
       <div className="floating-action-group">
         {/* WhatsApp Fast Chat */}
         <a
-          href="https://wa.me/254722264380?text=Hello%20Eclat%20Institute%20Admissions!%20I%20would%20like%20to%20inquire%20about%20the%20upcoming%20short%20courses%20at%20Sahl%20Mall."
+          href="https://wa.me/254740027346?text=Hello%20Eclat%20Institute%20Admissions!%20I%20would%20like%20to%20inquire%20about%20the%20upcoming%20short%20courses%20at%20Sahl%20Mall."
           target="_blank"
           rel="noopener noreferrer"
           style={{
@@ -1798,7 +1798,7 @@ export function Landing() {
 
         {/* Call Admissions Button */}
         <a
-          href="tel:+254722264380"
+          href="tel:+254740027346"
           style={{
             display: 'flex',
             alignItems: 'center',
@@ -2176,7 +2176,7 @@ export function Landing() {
             {/* Modal Actions */}
             <div style={{ display: 'flex', gap: '0.75rem', justifyContent: 'flex-end', flexWrap: 'wrap' }}>
               <a
-                href={`https://wa.me/254722264380?text=Hello%20Eclat%20Institute!%20I%20want%20to%20inquire%20about%20enrolling%20in%20${encodeURIComponent(selectedCourseForModal.title)}%20at%20Sahl%20Mall.`}
+                href={`https://wa.me/254740027346?text=Hello%20Eclat%20Institute!%20I%20want%20to%20inquire%20about%20enrolling%20in%20${encodeURIComponent(selectedCourseForModal.title)}%20at%20Sahl%20Mall.`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="btn"

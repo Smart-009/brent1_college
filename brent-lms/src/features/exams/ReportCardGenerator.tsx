@@ -81,7 +81,7 @@ export function ReportCardGenerator({ reportCard, onClose }: ReportCardGenerator
                     textTransform: 'uppercase',
                   }}
                 >
-                  ECLAT INSTITUTE
+                  ÉCLAT INSTITUTE
                 </h1>
                 <p
                   style={{
@@ -96,7 +96,7 @@ export function ReportCardGenerator({ reportCard, onClose }: ReportCardGenerator
                   Shaping Minds, Inspiring Success
                 </p>
                 <p style={{ margin: '0.25rem 0 0', fontSize: '0.75rem', color: '#334155', fontWeight: 600 }}>
-                  Sahl Mall, 4th Street, Eastleigh, Nairobi • P.O. Box 45892-00100 Nairobi • Tel: +254 722 264 380
+                  Sahl Mall, 4th Street, Eastleigh, Nairobi • P.O. Box 45892-00100 Nairobi • Tel: +254 740 027 346
                 </p>
               </div>
             </div>

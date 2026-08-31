@@ -276,7 +276,7 @@ export function MobileLandingView({
               🚀 Apply in 60s
             </button>
             <a
-              href="https://wa.me/254722264380?text=Hello%20Eclat%20Institute!%20I%20want%20to%20inquire%20about%20intakes%20at%20Sahl%20Mall."
+              href="https://wa.me/254740027346?text=Hello%20Eclat%20Institute!%20I%20want%20to%20inquire%20about%20intakes%20at%20Sahl%20Mall."
               target="_blank"
               rel="noopener noreferrer"
               style={{
@@ -637,7 +637,7 @@ export function MobileLandingView({
               Copy
             </button>
           </div>
-          <div>📞 Hotline: <a href="tel:+254722264380" style={{ color: '#60a5fa', textDecoration: 'none', fontWeight: 700 }}>+254 722 264 380</a></div>
+          <div>📞 Hotline: <a href="tel:+254740027346" style={{ color: '#60a5fa', textDecoration: 'none', fontWeight: 700 }}>+254 740 027 346</a></div>
           <div>📍 Campus: <strong style={{ color: '#ffffff' }}>Sahl Mall, 4th Street, Eastleigh, Nairobi</strong></div>
         </div>
       </div>

@@ -116,13 +116,13 @@ export function CertificateGenerator({
                   textTransform: 'uppercase',
                 }}
               >
-                ECLAT INSTITUTE NAIROBI
+                ÉCLAT INSTITUTE NAIROBI
               </h1>
               <div style={{ fontSize: '0.85rem', color: '#475569', fontWeight: 700, letterSpacing: '0.08em', marginTop: '2px' }}>
                 CENTRE FOR VOCATIONAL EXCELLENCE & PRACTICAL SKILLS
               </div>
               <div style={{ fontSize: '0.75rem', color: '#64748b', marginTop: '2px' }}>
-                Sahl Mall, 4th Street, Eastleigh, Nairobi • Tel: +254 722 264 380
+                Sahl Mall, 4th Street, Eastleigh, Nairobi • Tel: +254 740 027 346
               </div>
             </div>
 
