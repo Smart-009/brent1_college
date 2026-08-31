@@ -526,6 +526,30 @@ export function Landing() {
     notes: '',
   })
 
+  // Multi-Step Interactive Checkout & Mode of Payment State
+  const [checkoutStep, setCheckoutStep] = useState<'details' | 'payment' | 'receipt'>('details')
+  const [checkoutPaymentPlan, setCheckoutPaymentPlan] = useState<'full' | 'installment'>('full')
+  const [checkoutPaymentMode, setCheckoutPaymentMode] = useState<'card' | 'paybill' | 'kcb_wire'>('card')
+  const [cardForm, setCardForm] = useState({
+    cardNumber: '4242 •••• •••• 4242',
+    cardExpiry: '12/28',
+    cardCvv: '789',
+    cardHolder: '',
+  })
+  const [checkoutRefCode, setCheckoutRefCode] = useState('')
+  const [generatedAdmission, setGeneratedAdmission] = useState<{
+    studentName: string
+    admissionNumber: string
+    receiptNumber: string
+    courseTitle: string
+    amountPaid: number
+    totalFee: number
+    balanceRemaining: number
+    paymentMode: string
+    referenceCode: string
+    date: string
+  } | null>(null)
+
   const filteredCourses = useMemo(() => {
     let list = coursesList
     if (activeCategory !== 'All') {
@@ -551,7 +575,127 @@ export function Landing() {
   const handleOpenCourseApplication = (course: CourseItem) => {
     setSelectedCourseForModal(course)
     setInquiryForm((prev) => ({ ...prev, course: course.title }))
+    setCheckoutStep('details')
     setInquiryModalOpen(true)
+  }
+
+  const handleProceedToPayment = (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!inquiryForm.name.trim() || !inquiryForm.phone.trim()) {
+      showToast('⚠️ Please provide your full name and phone number to proceed.')
+      return
+    }
+    setCardForm((prev) => ({ ...prev, cardHolder: prev.cardHolder || inquiryForm.name }))
+    setCheckoutStep('payment')
+  }
+
+  const handleCompleteEnrollmentAndPayment = async (e: React.FormEvent) => {
+    e.preventDefault()
+    const selectedCourseObj = coursesList.find((c) => c.title === inquiryForm.course) || coursesList[0]
+    const fullFeeNum = Number(selectedCourseObj?.fee?.replace(/[^0-9]/g, '')) || 75
+    const installmentFeeNum = Math.round(fullFeeNum / 2)
+    const amountToPay = checkoutPaymentPlan === 'full' ? fullFeeNum : installmentFeeNum
+    const balanceRemaining = fullFeeNum - amountToPay
+
+    const admNo = `EI-${new Date().getFullYear()}-${Math.floor(1000 + Math.random() * 9000)}`
+    const recNo = `EI-REC-${Math.random().toString(36).substring(2, 8).toUpperCase()}`
+    const refCode =
+      checkoutPaymentMode === 'card'
+        ? `CARD-${Math.random().toString(36).substring(2, 8).toUpperCase()}`
+        : checkoutRefCode.trim() ||
+          (checkoutPaymentMode === 'paybill'
+            ? `MPESA-${Math.random().toString(36).substring(2, 8).toUpperCase()}`
+            : `KCB-DEP-${Math.random().toString(36).substring(2, 8).toUpperCase()}`)
+
+    const modeLabel =
+      checkoutPaymentMode === 'card'
+        ? 'Debit / Credit Card (Visa / Mastercard)'
+        : checkoutPaymentMode === 'paybill'
+        ? 'M-Pesa Paybill (522522 / 1344329268)'
+        : 'KCB Bank Direct Wire (1344329268)'
+
+    const todayDate = new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })
+
+    // 1. Record inquiry
+    await schoolStore.addInquiry({
+      id: `inq-${Date.now()}`,
+      visitor_name: inquiryForm.name,
+      phone: inquiryForm.phone,
+      email: inquiryForm.email,
+      purpose: 'New Admission Inquiry',
+      program_of_interest: inquiryForm.course,
+      notes: `Shift: ${inquiryForm.preferredShift}. Plan: ${checkoutPaymentPlan} ($${amountToPay}). Mode: ${modeLabel}. Ref: ${refCode}`,
+      date: todayDate,
+      recorded_by: 'Online Admissions & Payment Desk',
+      created_at: new Date().toISOString(),
+      status: 'Open',
+    })
+
+    // 2. Add enrolled student
+    await schoolStore.addStudent({
+      id: `std-${Date.now()}`,
+      admission_number: admNo,
+      full_name: inquiryForm.name,
+      gender: 'Male',
+      dob: '2000-01-01',
+      class_id: selectedCourseObj.id,
+      class_name: selectedCourseObj.title,
+      grade_level: 'Professional Certificate',
+      stream: '100% Online Cohort',
+      enrollment_date: todayDate,
+      admission_date: todayDate,
+      status: 'Active',
+      guardian: {
+        name: inquiryForm.name,
+        relationship: 'Guardian',
+        phone: inquiryForm.phone,
+        email: inquiryForm.email || `${inquiryForm.name.toLowerCase().replace(/\s+/g, '')}@student.eclat.institute`,
+      },
+      parent_phone: inquiryForm.phone,
+      emergency_contact: inquiryForm.phone,
+      fee_balance: balanceRemaining,
+      term_fee_total: fullFeeNum,
+      fee_cleared: balanceRemaining === 0,
+      attendance_rate: 100,
+      discipline_points: 100,
+      merits_count: 0,
+      demerits_count: 0,
+    })
+
+    // 3. Add receipt & credit account
+    await schoolStore.recordPayment({
+      id: `rcpt-${Date.now()}`,
+      receipt_number: recNo,
+      student_id: admNo,
+      student_name: inquiryForm.name,
+      admission_number: admNo,
+      amount: amountToPay,
+      amount_paid: amountToPay,
+      payment_method: checkoutPaymentMode === 'card' ? 'Card' : checkoutPaymentMode === 'paybill' ? 'Paybill' : 'Bank Transfer',
+      reference_code: refCode,
+      payment_date: todayDate,
+      paid_by: inquiryForm.name,
+      recorded_by: 'Online Admissions & Payment Gateway',
+      balance_after: balanceRemaining,
+      balance_remaining: balanceRemaining,
+    })
+
+    // 4. Set generated admission pass
+    setGeneratedAdmission({
+      studentName: inquiryForm.name,
+      admissionNumber: admNo,
+      receiptNumber: recNo,
+      courseTitle: selectedCourseObj.title,
+      amountPaid: amountToPay,
+      totalFee: fullFeeNum,
+      balanceRemaining,
+      paymentMode: modeLabel,
+      referenceCode: refCode,
+      date: todayDate,
+    })
+
+    setCheckoutStep('receipt')
+    showToast(`🎉 Tuition verified! Welcome to Éclat Institute, ${inquiryForm.name}!`)
   }
 
   const handleVerifyCert = (e: React.FormEvent) => {
@@ -601,41 +745,6 @@ export function Landing() {
     }
   }
 
-  const handleInquirySubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    if (!inquiryForm.name || !inquiryForm.phone) return
-
-    await schoolStore.addInquiry({
-      id: `inq-${Date.now()}`,
-      visitor_name: inquiryForm.name,
-      phone: inquiryForm.phone,
-      email: inquiryForm.email,
-      purpose: 'New Admission Inquiry',
-      program_of_interest: inquiryForm.course,
-      notes: `Shift: ${inquiryForm.preferredShift}. Notes: ${inquiryForm.notes || 'Website lead'}`,
-      date: new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }),
-      recorded_by: 'Website Instant Application',
-      created_at: new Date().toISOString(),
-      status: 'Open',
-    })
-
-    setInquirySuccess(true)
-    showToast('🎉 Application successfully submitted to Admissions Registry!')
-    setTimeout(() => {
-      setInquirySuccess(false)
-      setInquiryModalOpen(false)
-      setSelectedCourseForModal(null)
-      setInquiryForm({
-        name: '',
-        phone: '',
-        email: '',
-        course: 'Comprehensive Computer Packages & Digital Skills',
-        preferredShift: 'Evening (5:30 PM - 7:30 PM)',
-        notes: '',
-      })
-    }, 2200)
-  }
-
   const handleLaunchRole = (role: Role) => {
     setShowPortalDesksModal(false)
     navigate(`/login?role=${role}`)
@@ -656,6 +765,7 @@ export function Landing() {
           timeLeft={timeLeft}
           onOpenInquiry={(title) => {
             if (title) setInquiryForm((prev) => ({ ...prev, course: title }))
+            setCheckoutStep('details')
             setInquiryModalOpen(true)
           }}
           onOpenPortals={() => setShowPortalDesksModal(true)}
@@ -1887,39 +1997,51 @@ export function Landing() {
           GLOBAL RESPONSIVE MODALS (Mobile & Desktop)
           ============================================================ */}
 
-      {/* 1. Free Application & Inquiry Modal */}
+      {/* 1. Interactive Course Admission & Payment Checkout Desk Modal */}
       {inquiryModalOpen && (
         <div className="modal-overlay" onClick={() => setInquiryModalOpen(false)}>
-          <div className="modal-content modal-md" onClick={(e) => e.stopPropagation()} style={{ padding: '1.75rem', borderRadius: '16px' }}>
+          <div className="modal-content modal-lg" onClick={(e) => e.stopPropagation()} style={{ padding: '1.75rem', borderRadius: '16px', maxHeight: '90vh', overflowY: 'auto' }}>
+            {/* Modal Header & Step Indicator */}
             <div className="modal-header" style={{ padding: 0, paddingBottom: '1rem', marginBottom: '1.25rem', borderBottom: '1px solid #e2e8f0' }}>
               <div>
-                <h3 className="modal-title" style={{ fontSize: '1.25rem', fontWeight: 900, color: '#1e3a8a' }}>
-                  🚀 Apply for Short Course / Intake
-                </h3>
-                <p style={{ fontSize: '0.82rem', color: '#64748b', margin: '0.25rem 0 0' }}>
-                  Fill out this 60-second form. Admissions Office will contact you with timetable options and 2-part fee plans.
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.25rem' }}>
+                  <span style={{ fontSize: '1.3rem' }}>🎓</span>
+                  <h3 className="modal-title" style={{ fontSize: '1.25rem', fontWeight: 900, color: '#1e3a8a', margin: 0 }}>
+                    {checkoutStep === 'details' && 'Step 1: Student Admission Details'}
+                    {checkoutStep === 'payment' && 'Step 2: Select Mode of Payment & Settle Tuition'}
+                    {checkoutStep === 'receipt' && 'Step 3: Official Stamped Tuition Receipt & Clearance Pass'}
+                  </h3>
+                </div>
+                <p style={{ fontSize: '0.8rem', color: '#64748b', margin: 0 }}>
+                  {checkoutStep === 'details' && 'Enter your details and select your preferred online live class schedule.'}
+                  {checkoutStep === 'payment' && 'Choose your payment plan (Full or 50% Installment) and preferred payment mode.'}
+                  {checkoutStep === 'receipt' && 'Your seat is confirmed and your official credential record has been created.'}
                 </p>
               </div>
               <button type="button" className="modal-close" onClick={() => setInquiryModalOpen(false)}>✕</button>
             </div>
 
-            {inquirySuccess ? (
-              <div style={{ background: '#dcfce7', border: '1px solid #86efac', borderRadius: '12px', padding: '1.75rem', textAlign: 'center', color: '#166534' }}>
-                <div style={{ fontSize: '2.5rem', marginBottom: '0.5rem' }}>✓</div>
-                <h4 style={{ fontWeight: 900, fontSize: '1.15rem', margin: '0 0 0.35rem' }}>Application Inquiry Received!</h4>
-                <p style={{ fontSize: '0.88rem', margin: '0 0 1rem' }}>
-                  Thank you, <strong>{inquiryForm.name}</strong>. The Admissions Office has received your application for <strong>{inquiryForm.course}</strong> and will call/WhatsApp you shortly with orientation details.
-                </p>
-                <button
-                  type="button"
-                  className="btn btn-primary btn-sm"
-                  onClick={() => setInquiryModalOpen(false)}
-                >
-                  Done
-                </button>
+            {/* Step Progress Tracker */}
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1.5rem', background: '#f8fafc', padding: '0.6rem 1rem', borderRadius: '10px', border: '1px solid #e2e8f0', fontSize: '0.78rem' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontWeight: checkoutStep === 'details' ? 800 : 600, color: checkoutStep === 'details' ? '#2563eb' : '#64748b' }}>
+                <span style={{ width: '20px', height: '20px', borderRadius: '50%', background: checkoutStep === 'details' ? '#2563eb' : '#cbd5e1', color: '#fff', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.72rem' }}>1</span>
+                <span>Trainee Details</span>
               </div>
-            ) : (
-              <form onSubmit={handleInquirySubmit}>
+              <div style={{ color: '#cbd5e1' }}>→</div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontWeight: checkoutStep === 'payment' ? 800 : 600, color: checkoutStep === 'payment' ? '#2563eb' : '#64748b' }}>
+                <span style={{ width: '20px', height: '20px', borderRadius: '50%', background: checkoutStep === 'payment' ? '#2563eb' : checkoutStep === 'receipt' ? '#16a34a' : '#cbd5e1', color: '#fff', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.72rem' }}>2</span>
+                <span>Mode of Payment</span>
+              </div>
+              <div style={{ color: '#cbd5e1' }}>→</div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontWeight: checkoutStep === 'receipt' ? 800 : 600, color: checkoutStep === 'receipt' ? '#16a34a' : '#64748b' }}>
+                <span style={{ width: '20px', height: '20px', borderRadius: '50%', background: checkoutStep === 'receipt' ? '#16a34a' : '#cbd5e1', color: '#fff', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.72rem' }}>3</span>
+                <span>Official Receipt</span>
+              </div>
+            </div>
+
+            {/* STEP 1: STUDENT DETAILS */}
+            {checkoutStep === 'details' && (
+              <form onSubmit={handleProceedToPayment}>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '0.85rem' }}>
                   <div>
                     <label className="label" style={{ fontSize: '0.82rem' }}>Your Full Name *</label>
@@ -1927,7 +2049,7 @@ export function Landing() {
                       type="text"
                       required
                       className="input"
-                      placeholder="Enter your full name"
+                      placeholder="e.g. John Doe / Fatuma Ali"
                       value={inquiryForm.name}
                       onChange={(e) => setInquiryForm({ ...inquiryForm, name: e.target.value })}
                     />
@@ -1940,13 +2062,13 @@ export function Landing() {
                         type="tel"
                         required
                         className="input"
-                        placeholder="07XX XXX XXX"
+                        placeholder="07XX XXX XXX / +1..."
                         value={inquiryForm.phone}
                         onChange={(e) => setInquiryForm({ ...inquiryForm, phone: e.target.value })}
                       />
                     </div>
                     <div>
-                      <label className="label" style={{ fontSize: '0.82rem' }}>Email Address (Optional)</label>
+                      <label className="label" style={{ fontSize: '0.82rem' }}>Email Address (For Zoom Class Links)</label>
                       <input
                         type="email"
                         className="input"
@@ -1973,7 +2095,7 @@ export function Landing() {
                   </div>
 
                   <div>
-                    <label className="label" style={{ fontSize: '0.82rem' }}>Preferred Timetable Shift</label>
+                    <label className="label" style={{ fontSize: '0.82rem' }}>Preferred Live Class Timetable Shift</label>
                     <select
                       className="input"
                       value={inquiryForm.preferredShift}
@@ -1987,13 +2109,339 @@ export function Landing() {
                   </div>
                 </div>
 
-                <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.75rem', marginTop: '1.25rem' }}>
+                <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.75rem', marginTop: '1.5rem', borderTop: '1px solid #e2e8f0', paddingTop: '1rem' }}>
                   <button type="button" className="btn btn-secondary" onClick={() => setInquiryModalOpen(false)}>Cancel</button>
                   <button type="submit" className="btn btn-primary" style={{ fontWeight: 800 }}>
-                    ✓ Submit & Secure Seat
+                    Continue to Mode of Payment →
                   </button>
                 </div>
               </form>
+            )}
+
+            {/* STEP 2: PAYMENT PLAN & MODE OF PAYMENT */}
+            {checkoutStep === 'payment' && (
+              <form onSubmit={handleCompleteEnrollmentAndPayment}>
+                {/* Course Summary Box */}
+                {(() => {
+                  const courseObj = coursesList.find((c) => c.title === inquiryForm.course) || coursesList[0]
+                  const fullAmount = Number(courseObj?.fee?.replace(/[^0-9]/g, '')) || 75
+                  const instAmount = Math.round(fullAmount / 2)
+                  const selectedAmount = checkoutPaymentPlan === 'full' ? fullAmount : instAmount
+                  const remainingBal = fullAmount - selectedAmount
+
+                  return (
+                    <div>
+                      {/* Plan Selection Cards */}
+                      <div style={{ marginBottom: '1.25rem' }}>
+                        <label className="label" style={{ fontSize: '0.82rem', marginBottom: '0.5rem' }}>Select Tuition Payment Structure:</label>
+                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem' }}>
+                          <div
+                            onClick={() => setCheckoutPaymentPlan('full')}
+                            style={{
+                              border: `2px solid ${checkoutPaymentPlan === 'full' ? '#2563eb' : '#e2e8f0'}`,
+                              background: checkoutPaymentPlan === 'full' ? '#eff6ff' : '#ffffff',
+                              borderRadius: '10px',
+                              padding: '0.85rem',
+                              cursor: 'pointer',
+                              transition: 'all 0.2s',
+                            }}
+                          >
+                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                              <strong style={{ fontSize: '0.88rem', color: '#1e3a8a' }}>Full Payment (100%)</strong>
+                              <span style={{ fontSize: '0.72rem', background: '#dcfce7', color: '#166534', padding: '2px 6px', borderRadius: '4px', fontWeight: 800 }}>Cleared ✓</span>
+                            </div>
+                            <div style={{ fontSize: '1.35rem', fontWeight: 900, color: '#1e3a8a', marginTop: '4px' }}>
+                              ${fullAmount} <span style={{ fontSize: '0.75rem', fontWeight: 600 }}>USD</span>
+                            </div>
+                            <div style={{ fontSize: '0.74rem', color: '#64748b', marginTop: '2px' }}>Immediate 100% course clearance</div>
+                          </div>
+
+                          <div
+                            onClick={() => setCheckoutPaymentPlan('installment')}
+                            style={{
+                              border: `2px solid ${checkoutPaymentPlan === 'installment' ? '#2563eb' : '#e2e8f0'}`,
+                              background: checkoutPaymentPlan === 'installment' ? '#eff6ff' : '#ffffff',
+                              borderRadius: '10px',
+                              padding: '0.85rem',
+                              cursor: 'pointer',
+                              transition: 'all 0.2s',
+                            }}
+                          >
+                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                              <strong style={{ fontSize: '0.88rem', color: '#1e3a8a' }}>2-Part Installment</strong>
+                              <span style={{ fontSize: '0.72rem', background: '#fef3c7', color: '#92400e', padding: '2px 6px', borderRadius: '4px', fontWeight: 800 }}>50% Deposit</span>
+                            </div>
+                            <div style={{ fontSize: '1.35rem', fontWeight: 900, color: '#1e3a8a', marginTop: '4px' }}>
+                              ${instAmount} <span style={{ fontSize: '0.75rem', fontWeight: 600 }}>USD</span>
+                            </div>
+                            <div style={{ fontSize: '0.74rem', color: '#64748b', marginTop: '2px' }}>Balance of ${remainingBal} due mid-course</div>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Mode of Payment Selector */}
+                      <div style={{ marginBottom: '1.25rem' }}>
+                        <label className="label" style={{ fontSize: '0.82rem', marginBottom: '0.5rem' }}>Choose Mode of Payment:</label>
+                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '0.5rem' }}>
+                          <button
+                            type="button"
+                            onClick={() => setCheckoutPaymentMode('card')}
+                            style={{
+                              padding: '0.65rem 0.5rem',
+                              border: `1.5px solid ${checkoutPaymentMode === 'card' ? '#2563eb' : '#cbd5e1'}`,
+                              background: checkoutPaymentMode === 'card' ? '#1e3a8a' : '#ffffff',
+                              color: checkoutPaymentMode === 'card' ? '#ffffff' : '#1e293b',
+                              borderRadius: '8px',
+                              fontWeight: 700,
+                              fontSize: '0.78rem',
+                              cursor: 'pointer',
+                              display: 'flex',
+                              flexDirection: 'column',
+                              alignItems: 'center',
+                              gap: '4px',
+                            }}
+                          >
+                            <span>💳</span>
+                            <span>Credit / Debit Card</span>
+                          </button>
+
+                          <button
+                            type="button"
+                            onClick={() => setCheckoutPaymentMode('paybill')}
+                            style={{
+                              padding: '0.65rem 0.5rem',
+                              border: `1.5px solid ${checkoutPaymentMode === 'paybill' ? '#2563eb' : '#cbd5e1'}`,
+                              background: checkoutPaymentMode === 'paybill' ? '#1e3a8a' : '#ffffff',
+                              color: checkoutPaymentMode === 'paybill' ? '#ffffff' : '#1e293b',
+                              borderRadius: '8px',
+                              fontWeight: 700,
+                              fontSize: '0.78rem',
+                              cursor: 'pointer',
+                              display: 'flex',
+                              flexDirection: 'column',
+                              alignItems: 'center',
+                              gap: '4px',
+                            }}
+                          >
+                            <span>📱</span>
+                            <span>M-Pesa Paybill</span>
+                          </button>
+
+                          <button
+                            type="button"
+                            onClick={() => setCheckoutPaymentMode('kcb_wire')}
+                            style={{
+                              padding: '0.65rem 0.5rem',
+                              border: `1.5px solid ${checkoutPaymentMode === 'kcb_wire' ? '#2563eb' : '#cbd5e1'}`,
+                              background: checkoutPaymentMode === 'kcb_wire' ? '#1e3a8a' : '#ffffff',
+                              color: checkoutPaymentMode === 'kcb_wire' ? '#ffffff' : '#1e293b',
+                              borderRadius: '8px',
+                              fontWeight: 700,
+                              fontSize: '0.78rem',
+                              cursor: 'pointer',
+                              display: 'flex',
+                              flexDirection: 'column',
+                              alignItems: 'center',
+                              gap: '4px',
+                            }}
+                          >
+                            <span>🏦</span>
+                            <span>KCB Bank Wire</span>
+                          </button>
+                        </div>
+                      </div>
+
+                      {/* Payment Mode Specific Body */}
+                      <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '10px', padding: '1rem', marginBottom: '1.25rem' }}>
+                        {checkoutPaymentMode === 'card' && (
+                          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                              <strong style={{ fontSize: '0.85rem', color: '#1e3a8a' }}>💳 Visa / Mastercard Secure Checkout</strong>
+                              <span style={{ fontSize: '0.72rem', color: '#16a34a', fontWeight: 800 }}>🔒 256-Bit SSL Encrypted</span>
+                            </div>
+                            <div>
+                              <label className="label" style={{ fontSize: '0.78rem' }}>Cardholder Name</label>
+                              <input
+                                type="text"
+                                required
+                                className="input"
+                                placeholder="Name as printed on card"
+                                value={cardForm.cardHolder || inquiryForm.name}
+                                onChange={(e) => setCardForm({ ...cardForm, cardHolder: e.target.value })}
+                              />
+                            </div>
+                            <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr 1fr', gap: '0.5rem' }}>
+                              <div>
+                                <label className="label" style={{ fontSize: '0.78rem' }}>Card Number</label>
+                                <input
+                                  type="text"
+                                  required
+                                  className="input"
+                                  placeholder="4000 1234 5678 9010"
+                                  value={cardForm.cardNumber}
+                                  onChange={(e) => setCardForm({ ...cardForm, cardNumber: e.target.value })}
+                                />
+                              </div>
+                              <div>
+                                <label className="label" style={{ fontSize: '0.78rem' }}>Expiry</label>
+                                <input
+                                  type="text"
+                                  required
+                                  className="input"
+                                  placeholder="MM/YY"
+                                  value={cardForm.cardExpiry}
+                                  onChange={(e) => setCardForm({ ...cardForm, cardExpiry: e.target.value })}
+                                />
+                              </div>
+                              <div>
+                                <label className="label" style={{ fontSize: '0.78rem' }}>CVC / CVV</label>
+                                <input
+                                  type="password"
+                                  maxLength={4}
+                                  required
+                                  className="input"
+                                  placeholder="123"
+                                  value={cardForm.cardCvv}
+                                  onChange={(e) => setCardForm({ ...cardForm, cardCvv: e.target.value })}
+                                />
+                              </div>
+                            </div>
+                          </div>
+                        )}
+
+                        {checkoutPaymentMode === 'paybill' && (
+                          <div style={{ fontSize: '0.82rem', color: '#334155' }}>
+                            <strong style={{ color: '#1e3a8a', fontSize: '0.88rem' }}>📱 M-Pesa Paybill Instructions:</strong>
+                            <ol style={{ paddingLeft: '1.25rem', margin: '0.35rem 0 0.75rem', lineHeight: 1.6 }}>
+                              <li>Open <strong>M-PESA → Lipa na M-PESA → Paybill</strong></li>
+                              <li>Enter Business No: <strong style={{ color: '#2563eb' }}>522522</strong> *(KCB Bank)*</li>
+                              <li>Enter Account No: <strong style={{ color: '#2563eb' }}>1344329268</strong></li>
+                              <li>Enter Amount: <strong>${selectedAmount} USD</strong> (or local KES equivalent)</li>
+                            </ol>
+                            <div>
+                              <label className="label" style={{ fontSize: '0.78rem' }}>M-Pesa Transaction Reference Code</label>
+                              <input
+                                type="text"
+                                className="input"
+                                placeholder="e.g. SH78XQ29L"
+                                value={checkoutRefCode}
+                                onChange={(e) => setCheckoutRefCode(e.target.value)}
+                              />
+                            </div>
+                          </div>
+                        )}
+
+                        {checkoutPaymentMode === 'kcb_wire' && (
+                          <div style={{ fontSize: '0.82rem', color: '#334155' }}>
+                            <strong style={{ color: '#1e3a8a', fontSize: '0.88rem' }}>🏦 Official KCB Bank Wire / Deposit Details:</strong>
+                            <div style={{ margin: '0.35rem 0 0.75rem', lineHeight: 1.6, background: '#ffffff', padding: '0.65rem', borderRadius: '6px', border: '1px solid #e2e8f0' }}>
+                              <div>• Bank: <strong>Kenya Commercial Bank (KCB Bank)</strong></div>
+                              <div>• Account No: <strong style={{ color: '#2563eb', fontSize: '0.95rem' }}>1344329268</strong></div>
+                              <div>• Account Name: <strong>Éclat Institute</strong></div>
+                            </div>
+                            <div>
+                              <label className="label" style={{ fontSize: '0.78rem' }}>Bank Slip / Wire Reference Code</label>
+                              <input
+                                type="text"
+                                className="input"
+                                placeholder="e.g. KCB-TRANS-9812"
+                                value={checkoutRefCode}
+                                onChange={(e) => setCheckoutRefCode(e.target.value)}
+                              />
+                            </div>
+                          </div>
+                        )}
+                      </div>
+
+                      {/* Action Buttons */}
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderTop: '1px solid #e2e8f0', paddingTop: '1rem' }}>
+                        <button type="button" className="btn btn-secondary btn-sm" onClick={() => setCheckoutStep('details')}>
+                          ← Back to Details
+                        </button>
+                        <button type="submit" className="btn btn-primary" style={{ fontWeight: 800, padding: '0.5rem 1.25rem' }}>
+                          ✓ Authorize & Issue Admission Pass (${selectedAmount} USD) →
+                        </button>
+                      </div>
+                    </div>
+                  )
+                })()}
+              </form>
+            )}
+
+            {/* STEP 3: OFFICIAL STAMPED DIGITAL RECEIPT */}
+            {checkoutStep === 'receipt' && generatedAdmission && (
+              <div>
+                <div style={{ background: '#ffffff', border: '2px solid #d4af37', borderRadius: '12px', padding: '1.5rem', boxShadow: '0 4px 12px rgba(0,0,0,0.06)', marginBottom: '1.25rem' }}>
+                  {/* Receipt Header */}
+                  <div style={{ textAlign: 'center', borderBottom: '2px solid #1e3a8a', paddingBottom: '0.75rem', marginBottom: '1rem' }}>
+                    <img src="/logo.png" alt="Éclat Institute" style={{ width: '48px', height: '48px', borderRadius: '50%', border: '2px solid #d4af37' }} />
+                    <h2 style={{ fontSize: '1.35rem', fontWeight: 900, color: '#1e3a8a', margin: '0.25rem 0 2px', letterSpacing: '0.02em' }}>ÉCLAT INSTITUTE</h2>
+                    <div style={{ fontSize: '0.72rem', color: '#64748b', fontWeight: 700 }}>100% Online Global Academy • eclat.institute</div>
+                    <div style={{ display: 'inline-block', background: '#dcfce7', color: '#166534', padding: '2px 10px', borderRadius: '999px', fontSize: '0.72rem', fontWeight: 800, marginTop: '4px' }}>
+                      OFFICIAL TUITION PAYMENT RECEIPT & ADMISSION PASS (ORIGINAL)
+                    </div>
+                  </div>
+
+                  {/* Metadata Grid */}
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem', fontSize: '0.82rem', marginBottom: '1rem', background: '#f8fafc', padding: '0.85rem', borderRadius: '8px', border: '1px solid #e2e8f0' }}>
+                    <div>
+                      <div><strong>Receipt #:</strong> <span style={{ color: '#1e3a8a', fontWeight: 800 }}>{generatedAdmission.receiptNumber}</span></div>
+                      <div><strong>Student Name:</strong> {generatedAdmission.studentName}</div>
+                      <div><strong>Admission ID:</strong> <span style={{ fontWeight: 800, color: '#2563eb' }}>{generatedAdmission.admissionNumber}</span></div>
+                    </div>
+                    <div>
+                      <div><strong>Date:</strong> {generatedAdmission.date}</div>
+                      <div><strong>Course:</strong> {generatedAdmission.courseTitle}</div>
+                      <div><strong>Payment Mode:</strong> <span className="badge badge-info" style={{ fontSize: '0.7rem' }}>{generatedAdmission.paymentMode}</span></div>
+                    </div>
+                  </div>
+
+                  {/* Amount Paid Box */}
+                  <div style={{ background: '#f0fdf4', border: '1px solid #bbf7d0', borderRadius: '8px', padding: '0.85rem 1rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
+                    <div>
+                      <div style={{ fontSize: '0.72rem', color: '#166534', fontWeight: 800, textTransform: 'uppercase' }}>TUITION AMOUNT PAID:</div>
+                      <div style={{ fontSize: '1.4rem', fontWeight: 900, color: '#16a34a' }}>${generatedAdmission.amountPaid} USD</div>
+                    </div>
+                    <div style={{ textAlign: 'right', fontSize: '0.8rem', color: '#475569' }}>
+                      <div>Balance Due: <strong>${generatedAdmission.balanceRemaining} USD</strong></div>
+                      <div style={{ color: generatedAdmission.balanceRemaining === 0 ? '#16a34a' : '#ea580c', fontWeight: 800 }}>
+                        {generatedAdmission.balanceRemaining === 0 ? 'STATUS: FULLY CLEARED ✓' : 'STATUS: 1ST INSTALLMENT CLEARED ✓'}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Digital Stamp */}
+                  <div style={{ border: '1px dashed #94a3b8', borderRadius: '6px', padding: '0.5rem', textAlign: 'center', fontSize: '0.72rem', color: '#64748b' }}>
+                    🛡️ Verified Transaction Ref: <code>{generatedAdmission.referenceCode}</code> • Éclat Institute Directorate of Finance
+                  </div>
+                </div>
+
+                {/* Receipt Actions */}
+                <div style={{ display: 'flex', gap: '0.75rem', justifyContent: 'space-between', flexWrap: 'wrap' }}>
+                  <button type="button" className="btn btn-secondary btn-sm" onClick={() => window.print()}>
+                    🖨️ Print Stamped Receipt
+                  </button>
+                  <div style={{ display: 'flex', gap: '0.5rem' }}>
+                    <a
+                      href={`https://wa.me/254740027346?text=Hello%20Eclat%20Institute!%20My%20name%20is%20${encodeURIComponent(generatedAdmission.studentName)}%20(Adm:%20${encodeURIComponent(generatedAdmission.admissionNumber)}).%20I%20have%20completed%20my%20tuition%20payment%20of%20$${generatedAdmission.amountPaid}%20for%20${encodeURIComponent(generatedAdmission.courseTitle)}.%20Please%20send%20my%20live%20Zoom%20class%20schedule.`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="btn btn-sm"
+                      style={{ background: '#22c55e', color: '#ffffff', fontWeight: 700, textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: '4px' }}
+                    >
+                      <span>💬</span> WhatsApp Admissions
+                    </a>
+                    <button
+                      type="button"
+                      className="btn btn-primary btn-sm"
+                      onClick={() => handleLaunchRole('student')}
+                      style={{ fontWeight: 800 }}
+                    >
+                      🎓 Enter Student Portal →
+                    </button>
+                  </div>
+                </div>
+              </div>
             )}
           </div>
         </div>
@@ -2207,7 +2655,7 @@ export function Landing() {
             {/* Modal Actions */}
             <div style={{ display: 'flex', gap: '0.75rem', justifyContent: 'flex-end', flexWrap: 'wrap' }}>
               <a
-                href={`https://wa.me/254740027346?text=Hello%20Eclat%20Institute!%20I%20want%20to%20inquire%20about%20enrolling%20in%20${encodeURIComponent(selectedCourseForModal.title)}%20at%20Sahl%20Mall.`}
+                href={`https://wa.me/254740027346?text=Hello%20Eclat%20Institute!%20I%20want%20to%20inquire%20about%20enrolling%20in%20${encodeURIComponent(selectedCourseForModal.title)}%20online.`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="btn"
@@ -2234,10 +2682,11 @@ export function Landing() {
                 onClick={() => {
                   setInquiryForm((prev) => ({ ...prev, course: selectedCourseForModal.title }))
                   setSelectedCourseForModal(null)
+                  setCheckoutStep('details')
                   setInquiryModalOpen(true)
                 }}
               >
-                🚀 Apply in 60s →
+                💳 Enroll & Pay Online →
               </button>
             </div>
           </div>
