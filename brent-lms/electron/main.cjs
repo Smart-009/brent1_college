@@ -29,7 +29,7 @@ function createWindow() {
     {
       label: 'Éclat Institute',
       submenu: [
-        { label: 'About Éclat Institute', click: () => shell.openExternal('https://eclatinstitute.ac.ke') },
+        { label: 'About Éclat Institute', click: () => shell.openExternal('https://eclat.institute') },
         { type: 'separator' },
         { role: 'reload' },
         { role: 'forceReload' },

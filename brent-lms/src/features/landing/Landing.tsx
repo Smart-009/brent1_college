@@ -1620,7 +1620,7 @@ export function Landing() {
               <div>💻 <strong>Delivery Mode:</strong> 100% Online (Live Interactive Video + LMS Modules)</div>
               <div>🕒 <strong>Live Class Shifts:</strong> Morning (9:00 AM) | Evening (6:00 PM - 9:30 PM) | Weekends</div>
               <div>📞 <strong>Admissions Hotline:</strong> +254 740 027 346</div>
-              <div>✉️ <strong>Direct Inquiries:</strong> admissions@eclatinstitute.ac.ke</div>
+              <div>✉️ <strong>Direct Inquiries:</strong> admissions@eclat.institute</div>
             </div>
             <button
               type="button"
@@ -1689,7 +1689,7 @@ export function Landing() {
                   <div style={{ fontSize: '1.5rem', marginBottom: '0.35rem' }}>⚠️</div>
                   <div style={{ fontWeight: 800, fontSize: '1rem' }}>No Certificate Record Found</div>
                   <div style={{ fontSize: '0.84rem', color: '#fca5a5', marginTop: '0.25rem' }}>
-                    Please check the certificate serial number or contact the Academic Registrar at <span style={{ color: '#ffffff' }}>admissions@eclatinstitute.ac.ke</span>.
+                    Please check the certificate serial number or contact the Academic Registrar at <span style={{ color: '#ffffff' }}>admissions@eclat.institute</span>.
                   </div>
                 </div>
               )}
@@ -1764,7 +1764,7 @@ export function Landing() {
               <div style={{ marginBottom: '0.35rem' }}>📍 <span style={{ color: '#94a3b8' }}>Campus:</span> <strong style={{ color: '#f8fafc' }}>Sahl Mall, 4th Street, Eastleigh</strong></div>
               <div style={{ marginBottom: '0.35rem' }}>📞 <span style={{ color: '#94a3b8' }}>Phone:</span> <strong style={{ color: '#f8fafc' }}>+254 740 027 346</strong></div>
               <div style={{ marginBottom: '0.35rem' }}>💬 <span style={{ color: '#94a3b8' }}>WhatsApp:</span> <strong style={{ color: '#f8fafc' }}>+254 740 027 346</strong></div>
-              <div style={{ marginBottom: '0.5rem' }}>✉️ <span style={{ color: '#94a3b8' }}>Email:</span> <a href="mailto:admissions@eclatinstitute.ac.ke" style={{ color: '#93c5fd', textDecoration: 'underline' }}>admissions@eclatinstitute.ac.ke</a></div>
+              <div style={{ marginBottom: '0.5rem' }}>✉️ <span style={{ color: '#94a3b8' }}>Email:</span> <a href="mailto:admissions@eclat.institute" style={{ color: '#93c5fd', textDecoration: 'underline' }}>admissions@eclat.institute</a></div>
               
               <div style={{ marginTop: '0.75rem', padding: '0.7rem 0.9rem', background: '#131b2e', border: '1px solid #2e3d61', borderRadius: '8px', fontSize: '0.82rem' }}>
                 <div style={{ color: '#fcd34d', fontWeight: 700, marginBottom: '0.25rem' }}>🕒 Campus Opening Hours:</div>

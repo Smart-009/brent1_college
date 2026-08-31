@@ -115,7 +115,7 @@ export const BiometricClearancePassModal: React.FC<Props> = ({ pass, onClose }) 
                   ÉCLAT INSTITUTE
                 </h1>
                 <div style={{ fontSize: '0.8rem', color: '#64748b', fontWeight: 600 }}>
-                  Sahl Mall, 4th Street, Eastleigh, Nairobi • Tel: +254 740 027 346 • Web: eclatinstitute.ac.ke
+                  100% Online Institute • Nairobi Liaison • Tel: +254 740 027 346 • Web: eclat.institute
                 </div>
               </div>
             </div>

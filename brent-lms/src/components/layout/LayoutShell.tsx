@@ -42,13 +42,13 @@ export function LayoutShell() {
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
             <img src="/logo.png" alt="Éclat Institute Logo" style={{ width: '32px', height: '32px', borderRadius: '50%', border: '1.5px solid #d4af37' }} />
             <div>
-              <strong style={{ color: 'var(--color-text)', fontFamily: 'var(--font-heading)' }}>Éclat Institute Nairobi</strong> • Sahl Mall, 4th Street, Eastleigh
+              <strong style={{ color: 'var(--color-text)', fontFamily: 'var(--font-heading)' }}>Éclat Institute</strong> • 100% Online Tech & Languages Institute
             </div>
           </div>
           <div style={{ display: 'flex', gap: '1.25rem', alignItems: 'center', flexWrap: 'wrap' }}>
             <span>🏢 Paybill: <strong style={{ color: 'var(--color-primary)' }}>247247</strong></span>
             <span>📞 Support: <strong style={{ color: 'var(--color-text)' }}>+254 740 027 346</strong></span>
-            <span>✉️ <a href="mailto:admissions@eclatinstitute.ac.ke" style={{ color: 'var(--color-primary)', textDecoration: 'none' }}>admissions@eclatinstitute.ac.ke</a></span>
+            <span>✉️ <a href="mailto:admissions@eclat.institute" style={{ color: 'var(--color-primary)', textDecoration: 'none' }}>admissions@eclat.institute</a></span>
           </div>
         </footer>
       </main>
