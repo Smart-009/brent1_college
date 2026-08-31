@@ -113,7 +113,8 @@ export function StudentDirectory() {
       const matchSearch =
         s.full_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
         s.admission_number.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        s.guardian.name.toLowerCase().includes(searchTerm.toLowerCase())
+        (s.guardian?.name ? s.guardian.name.toLowerCase().includes(searchTerm.toLowerCase()) : false) ||
+        (s.emergency_contact ? s.emergency_contact.includes(searchTerm) : false)
 
       const matchClass = classFilter === 'All' || s.class_name.includes(classFilter)
       const matchFee =
@@ -546,7 +547,7 @@ export function StudentDirectory() {
                 <th>Student Name</th>
                 <th>Program & Year</th>
                 <th>Biometrics</th>
-                <th>Guardian Contact</th>
+                <th>Contact & Sponsor (Optional)</th>
                 <th>Attendance</th>
                 <th>Fee Status</th>
                 <th style={{ textAlign: 'right' }}>Admin Actions</th>
@@ -593,8 +594,17 @@ export function StudentDirectory() {
                       )}
                     </td>
                     <td>
-                      <div style={{ fontSize: '0.85rem', fontWeight: 500 }}>{std.guardian.name} ({std.guardian.relationship})</div>
-                      <div style={{ fontSize: '0.75rem', color: 'var(--color-text-secondary)' }}>{std.guardian.phone}</div>
+                      {std.guardian?.name && std.guardian.name !== 'Self-Sponsored Student' ? (
+                        <div>
+                          <div style={{ fontSize: '0.85rem', fontWeight: 500 }}>{std.guardian.name} ({std.guardian.relationship || 'Sponsor'})</div>
+                          <div style={{ fontSize: '0.75rem', color: 'var(--color-text-secondary)' }}>{std.guardian.phone || std.emergency_contact || 'No phone'}</div>
+                        </div>
+                      ) : (
+                        <div>
+                          <div style={{ fontSize: '0.82rem', fontWeight: 700, color: '#1e3a8a' }}>👤 Self-Sponsored</div>
+                          <div style={{ fontSize: '0.75rem', color: 'var(--color-text-secondary)' }}>{std.emergency_contact || std.guardian?.phone || 'Direct Enrolled'}</div>
+                        </div>
+                      )}
                     </td>
                     <td>
                       <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
@@ -755,20 +765,28 @@ export function StudentDirectory() {
                 </div>
               </div>
 
-              {/* Guardian Information */}
+              {/* Guardian / Contact Information */}
               <div className="card" style={{ padding: '1rem' }}>
                 <h4 style={{ fontSize: '0.9rem', fontWeight: 700, marginBottom: '0.75rem', color: 'var(--color-primary)' }}>
-                  👨‍👩‍👦 Guardian & Sponsor Details
+                  👨‍👩‍👦 Sponsor / Direct Contact Details
                 </h4>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', fontSize: '0.85rem' }}>
-                  <div><strong>Guardian Name:</strong> {selectedStudent.guardian.name || 'Not Provided'}</div>
-                  <div><strong>Relationship:</strong> {selectedStudent.guardian.relationship || 'Guardian'}</div>
-                  <div><strong>Phone Number:</strong> {selectedStudent.guardian.phone || 'Not Provided'}</div>
-                  {selectedStudent.guardian.email && <div><strong>Email Address:</strong> {selectedStudent.guardian.email}</div>}
-                  {selectedStudent.guardian.occupation && <div><strong>Occupation:</strong> {selectedStudent.guardian.occupation}</div>}
-                  {selectedStudent.guardian.address && <div><strong>Residential Address:</strong> {selectedStudent.guardian.address}</div>}
-                  {selectedStudent.emergency_contact && <div><strong>Emergency Hotline:</strong> {selectedStudent.emergency_contact}</div>}
-                </div>
+                {selectedStudent.guardian?.name && selectedStudent.guardian.name !== 'Self-Sponsored Student' ? (
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', fontSize: '0.85rem' }}>
+                    <div><strong>Guardian / Sponsor:</strong> {selectedStudent.guardian.name}</div>
+                    <div><strong>Relationship:</strong> {selectedStudent.guardian.relationship || 'Sponsor'}</div>
+                    <div><strong>Phone Number:</strong> {selectedStudent.guardian.phone || 'Not Provided'}</div>
+                    {selectedStudent.guardian.email && <div><strong>Email Address:</strong> {selectedStudent.guardian.email}</div>}
+                    {selectedStudent.guardian.occupation && <div><strong>Occupation:</strong> {selectedStudent.guardian.occupation}</div>}
+                    {selectedStudent.guardian.address && <div><strong>Residential Address:</strong> {selectedStudent.guardian.address}</div>}
+                    {selectedStudent.emergency_contact && <div><strong>Direct Student Phone:</strong> {selectedStudent.emergency_contact}</div>}
+                  </div>
+                ) : (
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', fontSize: '0.85rem' }}>
+                    <div style={{ color: '#166534', fontWeight: 700 }}>👤 Self-Sponsored Student</div>
+                    <div><strong>Student Contact Phone:</strong> {selectedStudent.emergency_contact || selectedStudent.guardian?.phone || 'Not on file'}</div>
+                    <div style={{ fontSize: '0.8rem', color: '#64748b' }}>No separate parent/guardian required for this independent account.</div>
+                  </div>
+                )}
               </div>
 
               {/* Financial & Fee Status — Dynamically calculated from live receipts & invoices */}
