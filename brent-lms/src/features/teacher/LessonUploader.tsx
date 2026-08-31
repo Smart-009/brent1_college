@@ -239,22 +239,22 @@ export function LessonUploader() {
             </div>
 
             <div className="form-group">
-              <label className="form-label" htmlFor="ytUrl">YouTube Video URL *</label>
+              <label className="form-label" htmlFor="ytUrl">Video Stream URL (YouTube, MP4, Cloudflare R2, or Vimeo) *</label>
               <input
                 id="ytUrl"
                 type="url"
-                placeholder="https://www.youtube.com/watch?v=..."
+                placeholder="https://www.youtube.com/watch?v=... OR https://.../lesson.mp4"
                 value={youtubeUrl}
                 onChange={(e) => setYoutubeUrl(e.target.value)}
                 required
               />
-              <span className="form-hint">Paste any YouTube video or unlisted lesson link.</span>
+              <span className="form-hint">Paste any YouTube unlisted link, direct MP4 cloud URL, or Vimeo stream.</span>
             </div>
 
             {/* Video Preview */}
-            {videoId && (
+            {youtubeUrl.trim() && (
               <div className="mt-4">
-                <label className="form-label">Video Preview:</label>
+                <label className="form-label">Video Stream Preview:</label>
                 <YouTubeEmbed url={youtubeUrl} />
               </div>
             )}
