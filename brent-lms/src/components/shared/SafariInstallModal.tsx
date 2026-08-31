@@ -42,12 +42,12 @@ export function SafariInstallModal({ isOpen, onClose, isIOS }: SafariInstallModa
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.85rem', marginBottom: '1.25rem' }}>
           <img
             src="/logo.png"
-            alt="Brent College"
+            alt="Eclat Institute"
             style={{ width: '48px', height: '48px', borderRadius: '12px', objectFit: 'cover', border: '2px solid #2563eb' }}
           />
           <div style={{ flex: 1 }}>
             <h3 style={{ margin: 0, fontSize: '1.2rem', fontWeight: 900, color: '#ffffff' }}>
-              Install Brent College App
+              Install Eclat Institute App
             </h3>
             <p style={{ margin: '2px 0 0', fontSize: '0.8rem', color: '#94a3b8' }}>
               {isIOS ? 'Download for Apple iPhone / iPad Safari' : 'Download for Web Browser'}
@@ -183,7 +183,7 @@ export function SafariInstallModal({ isOpen, onClose, isIOS }: SafariInstallModa
               3
             </div>
             <div style={{ fontSize: '0.86rem', lineHeight: 1.4 }}>
-              Tap <strong>"Add"</strong> in the top right corner. The Brent College app will appear on your Home Screen!
+              Tap <strong>"Add"</strong> in the top right corner. The Eclat Institute app will appear on your Home Screen!
             </div>
           </div>
         </div>

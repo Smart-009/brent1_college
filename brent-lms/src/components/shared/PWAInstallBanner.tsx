@@ -22,10 +22,10 @@ export function PWAInstallBanner() {
       <aside aria-label="Install App" className="pwa-banner">
         <div className="pwa-banner-content">
           <div className="pwa-banner-icon">
-            <img src="/logo.png" alt="Brent College" width="36" height="36" />
+            <img src="/logo.png" alt="Eclat Institute" width="36" height="36" />
           </div>
           <div className="pwa-banner-text">
-            <strong>Install Brent College App on Chrome</strong>
+            <strong>Install Eclat Institute App on Chrome</strong>
             <span>Get fast offline access, live lesson playback, and instant school notifications.</span>
           </div>
         </div>
@@ -61,10 +61,10 @@ export function PWAInstallBanner() {
             <div className="modal-header">
               <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
                 <div className="logo-square" style={{ width: '40px', height: '40px' }}>
-                  <img src="/logo.png" alt="Brent Logo" />
+                  <img src="/logo.png" alt="Eclat Logo" />
                 </div>
                 <div>
-                  <h3 className="modal-title">Install Brent College App</h3>
+                  <h3 className="modal-title">Install Eclat Institute App</h3>
                   <p style={{ margin: 0, fontSize: '0.85rem', color: 'var(--color-text-secondary)' }}>
                     Install directly via your web browser
                   </p>
@@ -94,7 +94,7 @@ export function PWAInstallBanner() {
                       Or click the <strong>3 vertical dots (⋮)</strong> in Chrome’s top right corner.
                     </li>
                     <li>
-                      Select <strong>"Install Brent College..."</strong> or <strong>"Save and share" → "Install app"</strong>.
+                      Select <strong>"Install Eclat Institute..."</strong> or <strong>"Save and share" → "Install app"</strong>.
                     </li>
                     <li>Click <strong>Install</strong> to launch the dedicated window!</li>
                   </ol>

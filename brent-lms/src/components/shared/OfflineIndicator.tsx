@@ -36,7 +36,7 @@ export function OfflineIndicator() {
       }}
     >
       <span>⚠️</span>
-      <span>You are currently working offline. Brent Portal is operating from local cached storage.</span>
+      <span>You are currently working offline. Eclat Portal is operating from local cached storage.</span>
     </div>
   )
 }

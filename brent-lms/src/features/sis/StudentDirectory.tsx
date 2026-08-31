@@ -130,7 +130,7 @@ export function StudentDirectory() {
     const url = URL.createObjectURL(blob)
     const link = document.createElement('a')
     link.setAttribute('href', url)
-    link.setAttribute('download', `Brent_College_Students_Registry_${new Date().toISOString().slice(0, 10)}.csv`)
+    link.setAttribute('download', `Eclat_Institute_Students_Registry_${new Date().toISOString().slice(0, 10)}.csv`)
     document.body.appendChild(link)
     link.click()
     document.body.removeChild(link)
@@ -214,7 +214,7 @@ export function StudentDirectory() {
       guardian_phone: student.guardian.phone,
       amount_due: student.fee_balance,
       channel: 'SMS',
-      message_text: `Dear ${student.guardian.name}, reminder from Brent College Accounts: ${student.full_name} (${student.admission_number}) has an outstanding tuition balance of KES ${student.fee_balance.toLocaleString()}. Pay via Paybill 247247, Acc: ${student.admission_number}. Thank you.`,
+      message_text: `Dear ${student.guardian.name}, reminder from Eclat Institute Accounts: ${student.full_name} (${student.admission_number}) has an outstanding tuition balance of KES ${student.fee_balance.toLocaleString()}. Pay via Paybill 247247, Acc: ${student.admission_number}. Thank you.`,
       sent_by: 'Bursar & Accounts Desk',
       sent_at: new Date().toLocaleString(),
       status: 'Delivered',
@@ -244,7 +244,7 @@ export function StudentDirectory() {
         guardian_phone: student.guardian.phone,
         amount_due: student.fee_balance,
         channel: 'SMS',
-        message_text: `Dear ${student.guardian.name}, reminder from Brent College Accounts: ${student.full_name} (${student.admission_number}) has an outstanding tuition balance of KES ${student.fee_balance.toLocaleString()}. Pay via Paybill 247247, Acc: ${student.admission_number}. Thank you.`,
+        message_text: `Dear ${student.guardian.name}, reminder from Eclat Institute Accounts: ${student.full_name} (${student.admission_number}) has an outstanding tuition balance of KES ${student.fee_balance.toLocaleString()}. Pay via Paybill 247247, Acc: ${student.admission_number}. Thank you.`,
         sent_by: 'Bursar & Accounts Desk (Bulk Dispatch)',
         sent_at: new Date().toLocaleString(),
         status: 'Delivered',
@@ -1017,7 +1017,7 @@ export function StudentDirectory() {
                     fontFamily: 'monospace',
                   }}
                 >
-                  Dear {reminderTarget.guardian.name}, reminder from Brent College Accounts: {reminderTarget.full_name} ({reminderTarget.admission_number}) has an outstanding tuition balance of KES {reminderTarget.fee_balance.toLocaleString()}. Kindly clear via Paybill 247247, Acc: {reminderTarget.admission_number} before the examination clearance deadline.
+                  Dear {reminderTarget.guardian.name}, reminder from Eclat Institute Accounts: {reminderTarget.full_name} ({reminderTarget.admission_number}) has an outstanding tuition balance of KES {reminderTarget.fee_balance.toLocaleString()}. Kindly clear via Paybill 247247, Acc: {reminderTarget.admission_number} before the examination clearance deadline.
                 </div>
               </div>
             </div>

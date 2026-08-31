@@ -245,7 +245,7 @@ const TESTIMONIALS = [
     course: 'Henna Artistry & Professional Make-up',
     avatar: '💄',
     quote:
-      'The hands-on practice on real models, bridal cone techniques, and facial contouring at Brent College gave me the confidence to open my own beauty studio in Eastleigh. My weekend bookings are full!',
+      'The hands-on practice on real models, bridal cone techniques, and facial contouring at Eclat Institute gave me the confidence to open my own beauty studio in Eastleigh. My weekend bookings are full!',
     rating: 5,
   },
   {
@@ -254,7 +254,7 @@ const TESTIMONIALS = [
     course: 'Professional Barista & Coffee Brewing',
     avatar: '☕',
     quote:
-      'The commercial espresso machines and latte art training at Brent were world class. Within two weeks of graduation, I was hired at a top cafe in Westlands, and I am now preparing for a barista role in Dubai!',
+      'The commercial espresso machines and latte art training at Eclat were world class. Within two weeks of graduation, I was hired at a top cafe in Westlands, and I am now preparing for a barista role in Dubai!',
     rating: 5,
   },
   {
@@ -263,7 +263,7 @@ const TESTIMONIALS = [
     course: 'IELTS Academic Preparation',
     avatar: '🌍',
     quote:
-      'The mock speaking tests and essay writing feedback from the IELTS instructors transformed my score from Band 6.0 to Band 8.0 in just 5 weeks. Highly recommend Brent College to anyone traveling abroad!',
+      'The mock speaking tests and essay writing feedback from the IELTS instructors transformed my score from Band 6.0 to Band 8.0 in just 5 weeks. Highly recommend Eclat Institute to anyone traveling abroad!',
     rating: 5,
   },
 ]
@@ -686,12 +686,12 @@ export function Landing() {
           <Link to="/" style={{ display: 'flex', alignItems: 'center', gap: '0.65rem', textDecoration: 'none', minWidth: 0, flexShrink: 1 }}>
             <img
               src="/logo.png"
-              alt="Brent College Logo"
+              alt="Eclat Institute Logo"
               style={{ width: '38px', height: '38px', borderRadius: '50%', objectFit: 'cover', boxShadow: '0 2px 8px rgba(0,0,0,0.12)', flexShrink: 0 }}
             />
             <div style={{ minWidth: 0 }}>
               <div style={{ fontSize: '1.15rem', fontWeight: 900, color: '#1e3a8a', letterSpacing: '-0.02em', lineHeight: 1.1, whiteSpace: 'nowrap' }}>
-                BRENT COLLEGE
+                ECLAT INSTITUTE
               </div>
               <div className="hidden sm:block" style={{ fontSize: '0.68rem', color: '#64748b', fontWeight: 700, letterSpacing: '0.05em', textTransform: 'uppercase', whiteSpace: 'nowrap' }}>
                 Eastleigh 4th Street • Nairobi
@@ -703,7 +703,7 @@ export function Landing() {
           <div style={{ display: 'flex', alignItems: 'center', gap: '1.25rem', flexShrink: 0 }}>
             <nav className="desktop-nav-links" style={{ fontSize: '0.92rem', fontWeight: 600 }}>
               <a href="#courses" style={{ color: '#334155', textDecoration: 'none', transition: 'color 0.2s' }}>Courses</a>
-              <a href="#why-brent" style={{ color: '#334155', textDecoration: 'none', transition: 'color 0.2s' }}>Why Choose Us</a>
+              <a href="#why-eclat" style={{ color: '#334155', textDecoration: 'none', transition: 'color 0.2s' }}>Why Choose Us</a>
               <a href="#testimonials" style={{ color: '#334155', textDecoration: 'none', transition: 'color 0.2s' }}>Graduate Outcomes</a>
               <a href="#intakes" style={{ color: '#334155', textDecoration: 'none', transition: 'color 0.2s' }}>Intakes & Fees</a>
             </nav>
@@ -728,7 +728,7 @@ export function Landing() {
                     whiteSpace: 'nowrap',
                   }}
                   onClick={promptInstall}
-                  title="Install Brent College App on your Phone"
+                  title="Install Eclat Institute App on your Phone"
                 >
                   <span>📲</span>
                   <span className="hidden xs:inline">App</span>
@@ -991,11 +991,11 @@ export function Landing() {
         </div>
       </section>
 
-      {/* Value Proposition / Why Choose Brent College */}
-      <section id="why-brent" style={{ padding: '5rem 1.5rem', maxWidth: '1240px', margin: '0 auto' }}>
+      {/* Value Proposition / Why Choose Eclat Institute */}
+      <section id="why-eclat" style={{ padding: '5rem 1.5rem', maxWidth: '1240px', margin: '0 auto' }}>
         <div style={{ textAlign: 'center', marginBottom: '3.5rem' }}>
           <span style={{ fontSize: '0.82rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.08em', color: '#2563eb' }}>
-            THE BRENT COLLEGE ADVANTAGE
+            THE ECLAT INSTITUTE ADVANTAGE
           </span>
           <h2 style={{ fontSize: '2.3rem', fontWeight: 900, color: '#0f172a', margin: '0.35rem 0 0.75rem' }}>
             Designed Specifically for Career Upgraders & Beginners
@@ -1593,7 +1593,7 @@ export function Landing() {
               <div>🏢 <strong>Location:</strong> Sahl Mall, 4th Street, Eastleigh, Nairobi</div>
               <div>🕒 <strong>Opening Hours:</strong> Mon – Fri: 7:30 AM – 7:30 PM | Sat: 8:00 AM – 5:00 PM</div>
               <div>📞 <strong>Admissions Hotline:</strong> +254 722 264 380</div>
-              <div>✉️ <strong>Direct Inquiries:</strong> admissions@brentcollege.ac.ke</div>
+              <div>✉️ <strong>Direct Inquiries:</strong> admissions@eclatinstitute.ac.ke</div>
             </div>
             <button
               type="button"
@@ -1617,7 +1617,7 @@ export function Landing() {
             Instant Graduate Certificate Verification
           </h2>
           <p style={{ fontSize: '0.92rem', color: '#cbd5e1', maxWidth: '600px', margin: '0 auto 2rem' }}>
-            Employers, embassies, and academic institutions in Kenya, the Middle East, and worldwide can instantly verify authentic Brent College credentials.
+            Employers, embassies, and academic institutions in Kenya, the Middle East, and worldwide can instantly verify authentic Eclat Institute credentials.
           </p>
 
           <form onSubmit={handleVerifyCert} style={{ display: 'flex', gap: '0.75rem', justifyContent: 'center', flexWrap: 'wrap', marginBottom: '2rem' }}>
@@ -1646,7 +1646,7 @@ export function Landing() {
                     <span style={{ fontSize: '1.75rem' }}>🛡️</span>
                     <div>
                       <div style={{ fontSize: '0.75rem', color: '#86efac', textTransform: 'uppercase', fontWeight: 800 }}>Official Verification Confirmation</div>
-                      <div style={{ fontSize: '1.1rem', fontWeight: 900, color: '#ffffff' }}>Authentic Brent College Credential</div>
+                      <div style={{ fontSize: '1.1rem', fontWeight: 900, color: '#ffffff' }}>Authentic Eclat Institute Credential</div>
                     </div>
                   </div>
                   <div style={{ borderTop: '1px solid rgba(255,255,255,0.15)', paddingTop: '0.75rem', fontSize: '0.88rem', lineHeight: 1.7 }}>
@@ -1662,7 +1662,7 @@ export function Landing() {
                   <div style={{ fontSize: '1.5rem', marginBottom: '0.35rem' }}>⚠️</div>
                   <div style={{ fontWeight: 800, fontSize: '1rem' }}>No Certificate Record Found</div>
                   <div style={{ fontSize: '0.84rem', color: '#fca5a5', marginTop: '0.25rem' }}>
-                    Please check the certificate serial number or contact the Academic Registrar at <span style={{ color: '#ffffff' }}>admissions@brentcollege.ac.ke</span>.
+                    Please check the certificate serial number or contact the Academic Registrar at <span style={{ color: '#ffffff' }}>admissions@eclatinstitute.ac.ke</span>.
                   </div>
                 </div>
               )}
@@ -1677,9 +1677,9 @@ export function Landing() {
           {/* Brand & Overview */}
           <div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.85rem', marginBottom: '1.25rem' }}>
-              <img src="/logo.png" alt="Brent College Logo" style={{ width: '44px', height: '44px', borderRadius: '50%', border: '2px solid #2563eb' }} />
+              <img src="/logo.png" alt="Eclat Institute Logo" style={{ width: '44px', height: '44px', borderRadius: '50%', border: '2px solid #2563eb' }} />
               <div>
-                <span style={{ fontSize: '1.2rem', fontWeight: 900, color: '#f8fafc', letterSpacing: '-0.01em' }}>BRENT COLLEGE</span>
+                <span style={{ fontSize: '1.2rem', fontWeight: 900, color: '#f8fafc', letterSpacing: '-0.01em' }}>ECLAT INSTITUTE</span>
                 <div style={{ fontSize: '0.75rem', color: '#93c5fd', fontWeight: 700 }}>PRACTICAL SHORT COURSES • NAIROBI</div>
               </div>
             </div>
@@ -1737,7 +1737,7 @@ export function Landing() {
               <div style={{ marginBottom: '0.35rem' }}>📍 <span style={{ color: '#94a3b8' }}>Campus:</span> <strong style={{ color: '#f8fafc' }}>Sahl Mall, 4th Street, Eastleigh</strong></div>
               <div style={{ marginBottom: '0.35rem' }}>📞 <span style={{ color: '#94a3b8' }}>Phone:</span> <strong style={{ color: '#f8fafc' }}>+254 722 264 380</strong></div>
               <div style={{ marginBottom: '0.35rem' }}>💬 <span style={{ color: '#94a3b8' }}>WhatsApp:</span> <strong style={{ color: '#f8fafc' }}>+254 722 264 380</strong></div>
-              <div style={{ marginBottom: '0.5rem' }}>✉️ <span style={{ color: '#94a3b8' }}>Email:</span> <a href="mailto:admissions@brentcollege.ac.ke" style={{ color: '#93c5fd', textDecoration: 'underline' }}>admissions@brentcollege.ac.ke</a></div>
+              <div style={{ marginBottom: '0.5rem' }}>✉️ <span style={{ color: '#94a3b8' }}>Email:</span> <a href="mailto:admissions@eclatinstitute.ac.ke" style={{ color: '#93c5fd', textDecoration: 'underline' }}>admissions@eclatinstitute.ac.ke</a></div>
               
               <div style={{ marginTop: '0.75rem', padding: '0.7rem 0.9rem', background: '#131b2e', border: '1px solid #2e3d61', borderRadius: '8px', fontSize: '0.82rem' }}>
                 <div style={{ color: '#fcd34d', fontWeight: 700, marginBottom: '0.25rem' }}>🕒 Campus Opening Hours:</div>
@@ -1752,7 +1752,7 @@ export function Landing() {
         {/* Bottom Bar */}
         <div style={{ borderTop: '1px solid #1e293b', paddingTop: '1.75rem', textAlign: 'center', fontSize: '0.85rem', color: '#94a3b8', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem', maxWidth: '1280px', margin: '0 auto' }}>
           <div>
-            © {new Date().getFullYear()} <strong style={{ color: '#e2e8f0' }}>Brent College Nairobi</strong>. All Rights Reserved. Shaping Minds, Inspiring Practical Success.
+            © {new Date().getFullYear()} <strong style={{ color: '#e2e8f0' }}>Eclat Institute Nairobi</strong>. All Rights Reserved. Shaping Minds, Inspiring Practical Success.
           </div>
           <div style={{ display: 'flex', gap: '1.25rem', alignItems: 'center' }}>
             <span style={{ fontSize: '0.82rem', color: '#93c5fd' }}>📍 Sahl Mall, 4th Street, Eastleigh</span>
@@ -1772,7 +1772,7 @@ export function Landing() {
       <div className="floating-action-group">
         {/* WhatsApp Fast Chat */}
         <a
-          href="https://wa.me/254722264380?text=Hello%20Brent%20College%20Admissions!%20I%20would%20like%20to%20inquire%20about%20the%20upcoming%20short%20courses%20at%20Sahl%20Mall."
+          href="https://wa.me/254722264380?text=Hello%20Eclat%20Institute%20Admissions!%20I%20would%20like%20to%20inquire%20about%20the%20upcoming%20short%20courses%20at%20Sahl%20Mall."
           target="_blank"
           rel="noopener noreferrer"
           style={{
@@ -2176,7 +2176,7 @@ export function Landing() {
             {/* Modal Actions */}
             <div style={{ display: 'flex', gap: '0.75rem', justifyContent: 'flex-end', flexWrap: 'wrap' }}>
               <a
-                href={`https://wa.me/254722264380?text=Hello%20Brent%20College!%20I%20want%20to%20inquire%20about%20enrolling%20in%20${encodeURIComponent(selectedCourseForModal.title)}%20at%20Sahl%20Mall.`}
+                href={`https://wa.me/254722264380?text=Hello%20Eclat%20Institute!%20I%20want%20to%20inquire%20about%20enrolling%20in%20${encodeURIComponent(selectedCourseForModal.title)}%20at%20Sahl%20Mall.`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="btn"

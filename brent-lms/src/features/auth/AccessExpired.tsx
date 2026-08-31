@@ -82,7 +82,7 @@ export function AccessExpired() {
         <input
           type="text"
           className="access-code-input"
-          placeholder="BRENT-XXXX-XXXX"
+          placeholder="ECLAT-XXXX-XXXX"
           value={code}
           onChange={(e) => setCode(e.target.value)}
           required
@@ -100,7 +100,7 @@ export function AccessExpired() {
       </div>
 
       <div style={{ marginTop: 'var(--space-6)', fontSize: 'var(--text-xs)', color: 'var(--color-muted)' }}>
-        Brent College • Eastleigh, Nairobi
+        Eclat Institute • Eastleigh, Nairobi
       </div>
     </div>
   )

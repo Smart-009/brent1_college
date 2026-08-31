@@ -1,5 +1,5 @@
 // ============================================================
-// Brent College — Native Desktop Application Main Process
+// Eclat Institute — Native Desktop Application Main Process
 // ============================================================
 
 const { app, BrowserWindow, Menu, shell } = require('electron')
@@ -13,7 +13,7 @@ function createWindow() {
     height: 860,
     minWidth: 1024,
     minHeight: 700,
-    title: 'Brent College — Enterprise College Management System',
+    title: 'Eclat Institute — Enterprise College Management System',
     icon: path.join(__dirname, '../public/logo.png'),
     backgroundColor: '#0f172a',
     webPreferences: {
@@ -27,9 +27,9 @@ function createWindow() {
   // Create Native College Menu
   const menuTemplate = [
     {
-      label: 'Brent College',
+      label: 'Eclat Institute',
       submenu: [
-        { label: 'About Brent College', click: () => shell.openExternal('https://brentcollege.ac.ke') },
+        { label: 'About Eclat Institute', click: () => shell.openExternal('https://eclatinstitute.ac.ke') },
         { type: 'separator' },
         { role: 'reload' },
         { role: 'forceReload' },

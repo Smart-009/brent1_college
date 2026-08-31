@@ -128,7 +128,7 @@ export function TeacherDashboard() {
   return (
     <PageWrapper
       title={`Welcome, ${profile?.full_name}! 👩‍🏫`}
-      subtitle="Brent College Teacher Portal • Content Management & Attendance"
+      subtitle="Eclat Institute Teacher Portal • Content Management & Attendance"
     >
       {/* Quick Action Bar */}
       <div className="card mb-6" style={{ background: '#e8edf8', border: '1px solid #c5d2f3' }}>

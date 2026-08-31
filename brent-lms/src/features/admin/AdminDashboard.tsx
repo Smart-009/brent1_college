@@ -81,7 +81,7 @@ export function AdminDashboard() {
   return (
     <PageWrapper
       title="School Administration Control Panel"
-      subtitle="Brent College • Student admissions, activation codes, school terms & content moderation."
+      subtitle="Eclat Institute • Student admissions, activation codes, school terms & content moderation."
     >
       {/* Quick Action Control Bar */}
       <div className="card mb-6" style={{ background: 'linear-gradient(135deg, #1a2a6e 0%, #243A8E 100%)', color: 'white' }}>

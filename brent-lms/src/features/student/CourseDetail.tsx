@@ -155,7 +155,7 @@ export function CourseDetail() {
           </p>
 
           <div className="flex items-center gap-4 text-sm text-muted mb-4 flex-wrap">
-            <span>👩‍🏫 Instructor: <strong>{course.teacher?.full_name || 'Brent Teacher'}</strong></span>
+            <span>👩‍🏫 Instructor: <strong>{course.teacher?.full_name || 'Eclat Teacher'}</strong></span>
             <span>📖 {totalLessons} Modules</span>
           </div>
 

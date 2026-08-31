@@ -109,7 +109,7 @@ export function MobileLandingView({
           <div style={{ position: 'relative' }}>
             <img
               src="/logo.png"
-              alt="Brent Logo"
+              alt="Eclat Logo"
               style={{
                 width: '36px',
                 height: '36px',
@@ -133,7 +133,7 @@ export function MobileLandingView({
           </div>
           <div>
             <div style={{ fontSize: '1.05rem', fontWeight: 900, color: '#ffffff', lineHeight: 1.1 }}>
-              BRENT COLLEGE
+              ECLAT INSTITUTE
             </div>
             <div style={{ fontSize: '0.65rem', color: '#94a3b8', fontWeight: 600 }}>
               Sahl Mall • 4th St, Eastleigh
@@ -276,7 +276,7 @@ export function MobileLandingView({
               🚀 Apply in 60s
             </button>
             <a
-              href="https://wa.me/254722264380?text=Hello%20Brent%20College!%20I%20want%20to%20inquire%20about%20intakes%20at%20Sahl%20Mall."
+              href="https://wa.me/254722264380?text=Hello%20Eclat%20Institute!%20I%20want%20to%20inquire%20about%20intakes%20at%20Sahl%20Mall."
               target="_blank"
               rel="noopener noreferrer"
               style={{

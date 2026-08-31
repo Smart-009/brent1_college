@@ -75,7 +75,7 @@ function RequireAuth({ children, allowedRoles }: { children: ReactElement; allow
 
 export function App() {
   return (
-    <Suspense fallback={<LoadingScreen message="Loading Brent College Portal..." />}>
+    <Suspense fallback={<LoadingScreen message="Loading Eclat Institute Portal..." />}>
       <Routes>
         {/* Public Landing & Login */}
         <Route path="/" element={<Landing />} />

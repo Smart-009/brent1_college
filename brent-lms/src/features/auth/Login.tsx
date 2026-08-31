@@ -13,7 +13,7 @@ export function Login() {
   const currentYear = new Date().getFullYear()
 
   const [selectedRole, setSelectedRole] = useState<Role>(paramRole === 'admin' ? 'admin' : 'student')
-  const [admissionNumber, setAdmissionNumber] = useState(paramRole === 'admin' ? 'Brent2026@admin' : `BC-${currentYear}-001`)
+  const [admissionNumber, setAdmissionNumber] = useState(paramRole === 'admin' ? 'Eclat2026@admin' : `BC-${currentYear}-001`)
   const [password, setPassword] = useState('')
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
@@ -34,7 +34,7 @@ export function Login() {
     if (paramRole && ['admin', 'bursar', 'teacher', 'student', 'parent'].includes(paramRole)) {
       setSelectedRole(paramRole)
       if (paramRole === 'admin') {
-        setAdmissionNumber('Brent2026@admin')
+        setAdmissionNumber('Eclat2026@admin')
         setPassword('')
       }
     }
@@ -72,7 +72,7 @@ export function Login() {
       role: 'admin',
       label: 'Principal / Admin',
       icon: '🏛️',
-      defaultId: 'Brent2026@admin',
+      defaultId: 'Eclat2026@admin',
       defaultName: 'College Principal',
       route: '/admin',
       desc: 'Full school administration, user provisioning, course pricing, and oversight.',
@@ -142,9 +142,9 @@ export function Login() {
         <div style={{ background: '#f8fafc', padding: 'clamp(1.25rem, 4vw, 2.5rem)', borderRight: '1px solid #e2e8f0', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
           <div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.85rem', marginBottom: '1.5rem' }}>
-              <img src="/logo.png" alt="Brent College Logo" style={{ width: '48px', height: '48px', borderRadius: '50%', border: '2px solid #2563eb' }} />
+              <img src="/logo.png" alt="Eclat Institute Logo" style={{ width: '48px', height: '48px', borderRadius: '50%', border: '2px solid #2563eb' }} />
               <div>
-                <div style={{ fontSize: '1.25rem', fontWeight: 900, color: '#0f172a', letterSpacing: '-0.02em', lineHeight: 1.1 }}>BRENT COLLEGE</div>
+                <div style={{ fontSize: '1.25rem', fontWeight: 900, color: '#0f172a', letterSpacing: '-0.02em', lineHeight: 1.1 }}>ECLAT INSTITUTE</div>
                 <div style={{ fontSize: '0.72rem', color: '#2563eb', fontWeight: 800 }}>SAHL MALL • 4TH STREET, EASTLEIGH</div>
               </div>
             </div>
@@ -268,7 +268,7 @@ export function Login() {
           </div>
 
           <div style={{ fontSize: '0.75rem', color: '#64748b', textAlign: 'center', marginTop: '1.25rem' }}>
-            🔒 256-Bit Encrypted Institutional Portal • Brent College Nairobi
+            🔒 256-Bit Encrypted Institutional Portal • Eclat Institute Nairobi
           </div>
         </div>
       </div>

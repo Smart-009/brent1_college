@@ -300,7 +300,7 @@ export function SchoolNoticeboard() {
                   Signed: <strong>{notice.author_name}</strong> • <em>{notice.author_role}</em>
                 </div>
                 <div style={{ fontWeight: 600, color: 'var(--color-primary)' }}>
-                  Brent College Nairobi
+                  Éclat Institute Nairobi
                 </div>
               </div>
             </div>

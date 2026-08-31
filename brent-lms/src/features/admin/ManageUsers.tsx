@@ -102,7 +102,7 @@ export function ManageUsers() {
 
       const cleanAdm = admissionNumber.trim().toUpperCase()
       const cleanKey = cleanAdm.toLowerCase().replace(/[^a-z0-9]/g, '')
-      const email = `${cleanKey}@brentcollege.internal`
+      const email = `${cleanKey}@eclatinstitute.internal`
       const generatedUserId = typeof crypto !== 'undefined' && crypto.randomUUID
         ? crypto.randomUUID()
         : `usr-${Date.now()}-${Math.floor(Math.random() * 10000)}`
@@ -416,7 +416,7 @@ export function ManageUsers() {
               onChange={(e) => setAdmissionNumber(e.target.value)}
               required
             />
-            <span className="form-hint">Must be unique within Brent College</span>
+            <span className="form-hint">Must be unique within Eclat Institute</span>
           </div>
 
           <div className="form-group">
@@ -424,7 +424,7 @@ export function ManageUsers() {
             <input
               id="tempPass"
               type="text"
-              placeholder={`Min 6 characters (e.g. Brent${new Date().getFullYear()}!)`}
+              placeholder={`Min 6 characters (e.g. Eclat${new Date().getFullYear()}!)`}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required

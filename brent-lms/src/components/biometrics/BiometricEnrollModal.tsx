@@ -1,5 +1,5 @@
 // ============================================================
-// Brent College — Student Biometric Fingerprint Enrollment Modal
+// Eclat Institute — Student Biometric Fingerprint Enrollment Modal
 // ============================================================
 
 import React, { useState, useEffect, useRef } from 'react'

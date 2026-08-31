@@ -8,7 +8,7 @@ export function Spinner({ size = 'md', className = '' }: { size?: SpinnerSize; c
 export function LoadingScreen({ message = 'Loading…' }: { message?: string }) {
   return (
     <div className="loading-screen">
-      <img src="/logo.png" alt="Brent College" style={{ width: 60, height: 60, borderRadius: '50%' }} />
+      <img src="/logo.png" alt="Eclat Institute" style={{ width: 60, height: 60, borderRadius: '50%' }} />
       <Spinner size="lg" />
       <p className="text-muted text-sm">{message}</p>
     </div>

@@ -67,7 +67,7 @@ export function ReportCardGenerator({ reportCard, onClose }: ReportCardGenerator
             <div style={{ display: 'flex', alignItems: 'center', gap: '1.25rem' }}>
               <img
                 src="/logo.png"
-                alt="Brent College Crest"
+                alt="Eclat Institute Crest"
                 style={{ width: '85px', height: '85px', objectFit: 'contain' }}
               />
               <div>
@@ -81,7 +81,7 @@ export function ReportCardGenerator({ reportCard, onClose }: ReportCardGenerator
                     textTransform: 'uppercase',
                   }}
                 >
-                  BRENT COLLEGE
+                  ECLAT INSTITUTE
                 </h1>
                 <p
                   style={{

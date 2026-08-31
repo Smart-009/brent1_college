@@ -38,7 +38,7 @@ export class ErrorBoundary extends Component<Props, State> {
           background: '#0f172a',
           color: '#f8fafc'
         }}>
-          <h1 style={{ fontSize: '1.8rem', color: '#60a5fa', marginBottom: '0.5rem' }}>Brent College Portal</h1>
+          <h1 style={{ fontSize: '1.8rem', color: '#60a5fa', marginBottom: '0.5rem' }}>Eclat Institute Portal</h1>
           <p style={{ color: '#94a3b8', maxWidth: '400px', marginBottom: '1.5rem', fontSize: '0.95rem' }}>
             A temporary display error occurred. Please click below to refresh.
           </p>

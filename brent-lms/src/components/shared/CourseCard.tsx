@@ -29,7 +29,7 @@ export function CourseCard({ course, enrollment, showProgress = true, onClick }:
         <h3 className="course-card-title">{course.title}</h3>
         <p className="course-card-desc">{course.description || 'No description available.'}</p>
         <div className="course-card-meta">
-          <span>👩‍🏫 {course.teacher?.full_name || 'Brent Teacher'}</span>
+          <span>👩‍🏫 {course.teacher?.full_name || 'Eclat Teacher'}</span>
           <span>•</span>
           <span>📖 {lessonCount} lessons</span>
         </div>

@@ -67,7 +67,7 @@ export function ChangePassword() {
           Set Your New Password
         </h2>
         <p style={{ fontSize: 'var(--text-sm)', color: 'var(--color-muted)', marginBottom: 'var(--space-6)' }}>
-          Welcome to Brent College LMS! Since this is your first login, please update your temporary password to secure your account.
+          Welcome to Éclat Institute LMS! Since this is your first login, please update your temporary password to secure your account.
         </p>
 
         {error && (

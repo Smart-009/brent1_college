@@ -595,7 +595,7 @@ export function SecretaryDesk() {
         <div className="modal-overlay" onClick={() => setSelectedStudentForLetter(null)}>
           <div className="modal-content modal-lg" onClick={(e) => e.stopPropagation()} style={{ background: '#ffffff', color: '#0f172a', padding: '2.5rem' }}>
             <div style={{ textAlign: 'center', borderBottom: '2px solid #1e3a8a', paddingBottom: '1rem', marginBottom: '1.5rem' }}>
-              <h2 style={{ color: '#1e3a8a', margin: 0, fontSize: '1.6rem', fontWeight: 900, textTransform: 'uppercase' }}>Brent College</h2>
+              <h2 style={{ color: '#1e3a8a', margin: 0, fontSize: '1.6rem', fontWeight: 900, textTransform: 'uppercase' }}>Eclat Institute</h2>
               <div style={{ fontSize: '0.85rem', color: '#475569', fontWeight: 600 }}>Directorate of Admissions & Student Affairs</div>
               <div style={{ display: 'inline-block', background: '#f1f5f9', padding: '4px 16px', borderRadius: '999px', fontSize: '0.85rem', fontWeight: 700, color: '#1e3a8a', marginTop: '0.5rem' }}>
                 OFFICIAL PROVISIONAL ADMISSION LETTER
@@ -605,7 +605,7 @@ export function SecretaryDesk() {
             <div style={{ fontSize: '0.9rem', lineHeight: '1.6', marginBottom: '1.5rem' }}>
               <p>Dear <strong>{selectedStudentForLetter.full_name}</strong> (Adm No: <strong>{selectedStudentForLetter.admission_number}</strong>),</p>
               <p>
-                We are pleased to inform you that you have been offered provisional admission to study <strong>{selectedStudentForLetter.class_name}</strong> at Brent College.
+                We are pleased to inform you that you have been offered provisional admission to study <strong>{selectedStudentForLetter.class_name}</strong> at Eclat Institute.
               </p>
               <p>
                 Your reporting date is effective from <strong>{selectedStudentForLetter.admission_date || selectedStudentForLetter.enrollment_date || `${new Date().getFullYear()} Intake Batch`}</strong>. Please ensure complete fee clearance with the Bursar's Office to finalize your unit registration and obtain your student identification badge.
@@ -631,7 +631,7 @@ export function SecretaryDesk() {
         <div className="modal-overlay" onClick={() => setSelectedStudentForIdCard(null)}>
           <div className="modal-content modal-sm" onClick={(e) => e.stopPropagation()} style={{ background: '#ffffff', color: '#0f172a', padding: '1.5rem', borderRadius: '12px' }}>
             <div style={{ background: 'linear-gradient(135deg, #1e3a8a 0%, #1e1b4b 100%)', color: '#fff', padding: '1rem', borderRadius: '8px 8px 0 0', textAlign: 'center' }}>
-              <h3 style={{ margin: 0, fontSize: '1.1rem', fontWeight: 800 }}>BRENT COLLEGE</h3>
+              <h3 style={{ margin: 0, fontSize: '1.1rem', fontWeight: 800 }}>ECLAT INSTITUTE</h3>
               <div style={{ fontSize: '0.7rem', opacity: 0.85 }}>STUDENT IDENTIFICATION PASS</div>
             </div>
             <div style={{ padding: '1.25rem', textAlign: 'center', background: '#f8fafc', borderRadius: '0 0 8px 8px', border: '1px solid #e2e8f0' }}>

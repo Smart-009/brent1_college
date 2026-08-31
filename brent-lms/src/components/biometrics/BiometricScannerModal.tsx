@@ -1,5 +1,5 @@
 // ============================================================
-// Brent College — Real Biometric Fingerprint Fee Verification Station
+// Eclat Institute — Real Biometric Fingerprint Fee Verification Station
 // ============================================================
 
 import React, { useState, useEffect, useRef } from 'react'
@@ -636,7 +636,7 @@ export const BiometricScannerModal: React.FC<Props> = ({
                     className="btn btn-secondary btn-sm"
                     style={{ fontSize: '0.8rem', padding: '0.4rem 0.75rem' }}
                     onClick={() => {
-                      const text = `Brent College Fee Statement:\nStudent: ${matchedStudent.full_name} (${matchedStudent.admission_number})\nClass: ${matchedStudent.class_name}\nTotal Billed: KES ${matchedStudent.term_fee_total.toLocaleString()}\nTotal Paid: KES ${Math.max(0, matchedStudent.term_fee_total - matchedStudent.fee_balance).toLocaleString()}\nBalance Due: KES ${matchedStudent.fee_balance.toLocaleString()}\nStatus: ${matchedStudent.fee_balance === 0 ? 'CLEARED' : 'PENDING'}\nPay via M-Pesa Paybill 247247, Acc: ${matchedStudent.admission_number}`
+                      const text = `Eclat Institute Fee Statement:\nStudent: ${matchedStudent.full_name} (${matchedStudent.admission_number})\nClass: ${matchedStudent.class_name}\nTotal Billed: KES ${matchedStudent.term_fee_total.toLocaleString()}\nTotal Paid: KES ${Math.max(0, matchedStudent.term_fee_total - matchedStudent.fee_balance).toLocaleString()}\nBalance Due: KES ${matchedStudent.fee_balance.toLocaleString()}\nStatus: ${matchedStudent.fee_balance === 0 ? 'CLEARED' : 'PENDING'}\nPay via M-Pesa Paybill 247247, Acc: ${matchedStudent.admission_number}`
                       navigator.clipboard.writeText(text)
                       alert('✓ Student fee statement copied to clipboard! You can paste and send via WhatsApp/SMS.')
                     }}

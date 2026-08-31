@@ -242,7 +242,7 @@ export function ResourceLibrary() {
           console.warn('Storage bucket upload notice:', uploadErr)
         }
       } else {
-        fileBlobUrl = 'https://brentcollege.internal/docs/' + encodeURIComponent(newTitle)
+        fileBlobUrl = 'https://eclatinstitute.internal/docs/' + encodeURIComponent(newTitle)
       }
 
       const item: AcademicResource = {
@@ -703,7 +703,7 @@ export function ResourceLibrary() {
                           whiteSpace: 'nowrap',
                         }}
                       >
-                        BRENT COLLEGE NAIROBI • LICENSED TO {profile?.full_name?.toUpperCase() || 'ENROLLED STUDENT'} • STRICTLY CONFIDENTIAL
+                        ECLAT INSTITUTE NAIROBI • LICENSED TO {profile?.full_name?.toUpperCase() || 'ENROLLED STUDENT'} • STRICTLY CONFIDENTIAL
                       </div>
                     ))}
                   </div>
@@ -749,7 +749,7 @@ export function ResourceLibrary() {
                   {/* Document Header */}
                   <div style={{ textAlign: 'center', borderBottom: `2px dashed ${readerTheme === 'dark' ? '#334155' : '#cbd5e1'}`, paddingBottom: '1.5rem', marginBottom: '2rem' }}>
                     <div style={{ fontSize: '1.2rem', fontWeight: 900, textTransform: 'uppercase', letterSpacing: '0.05em' }}>
-                      BRENT COLLEGE — PROFESSIONAL SHORT COURSES DIRECTORY
+                      ECLAT INSTITUTE — PROFESSIONAL SHORT COURSES DIRECTORY
                     </div>
                     <div style={{ fontSize: '0.9rem', fontWeight: 700, margin: '0.35rem 0' }}>
                       {readingResource.subject} • {readingResource.category} ({readingResource.year || new Date().getFullYear()})
@@ -800,7 +800,7 @@ export function ResourceLibrary() {
                       </div>
                       <div style={{ textAlign: 'center', opacity: 0.7, fontSize: '0.8rem', marginTop: '2rem' }}>
                         — END OF NOTES — <br />
-                        Brent College Directorate of Academic Resources
+                        Eclat Institute Directorate of Academic Resources
                       </div>
                     </div>
                   )}

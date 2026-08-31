@@ -142,7 +142,7 @@ export function BursarDesk() {
     const url = URL.createObjectURL(blob)
     const link = document.createElement('a')
     link.setAttribute('href', url)
-    link.setAttribute('download', `Brent_College_Bursar_Ledger_${new Date().toISOString().slice(0, 10)}.csv`)
+    link.setAttribute('download', `Eclat_Institute_Bursar_Ledger_${new Date().toISOString().slice(0, 10)}.csv`)
     document.body.appendChild(link)
     link.click()
     document.body.removeChild(link)
@@ -337,8 +337,8 @@ export function BursarDesk() {
       amount_due: balance,
       balance_due: balance,
       due_date: 'Immediate',
-      message_text: `Dear Guardian, this is a reminder from Brent College. A tuition balance of KES ${balance.toLocaleString()} is due. Please pay via Paybill 247247, Account: Student Adm No. Thank you.`,
-      message: `Dear Guardian, this is a reminder from Brent College. A tuition balance of KES ${balance.toLocaleString()} is due. Please pay via Paybill 247247, Account: Student Adm No. Thank you.`,
+      message_text: `Dear Guardian, this is a reminder from Eclat Institute. A tuition balance of KES ${balance.toLocaleString()} is due. Please pay via Paybill 247247, Account: Student Adm No. Thank you.`,
+      message: `Dear Guardian, this is a reminder from Eclat Institute. A tuition balance of KES ${balance.toLocaleString()} is due. Please pay via Paybill 247247, Account: Student Adm No. Thank you.`,
       sent_at: new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }),
       status: 'Delivered',
       channel: 'SMS',
@@ -513,7 +513,7 @@ export function BursarDesk() {
                 <div style={{ fontSize: '1.8rem', marginBottom: '0.35rem' }}>📜</div>
                 <h3 style={{ fontSize: '1rem', fontWeight: 700, margin: '0 0 0.35rem' }}>Provisional Letters</h3>
                 <p style={{ fontSize: '0.8rem', color: 'var(--color-text-secondary)', margin: 0 }}>
-                  Generate official admission calling letters with Brent College seal.
+                  Generate official admission calling letters with Eclat Institute seal.
                 </p>
               </div>
               <button type="button" className="btn btn-secondary btn-sm mt-3" onClick={() => setActiveTab('admissions')}>
@@ -1673,9 +1673,9 @@ export function BursarDesk() {
             {/* Printable Receipt Header */}
             <div style={{ textAlign: 'center', borderBottom: '2px solid #1e3a8a', paddingBottom: '1.25rem', marginBottom: '1.25rem' }}>
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.75rem', marginBottom: '0.5rem' }}>
-                <img src="/logo.png" alt="Brent College" style={{ width: '48px', height: '48px', borderRadius: '50%' }} />
+                <img src="/logo.png" alt="Eclat Institute" style={{ width: '48px', height: '48px', borderRadius: '50%' }} />
                 <div>
-                  <h2 style={{ color: '#1e3a8a', margin: 0, fontSize: '1.5rem', fontWeight: 900, letterSpacing: '-0.02em' }}>BRENT COLLEGE</h2>
+                  <h2 style={{ color: '#1e3a8a', margin: 0, fontSize: '1.5rem', fontWeight: 900, letterSpacing: '-0.02em' }}>ECLAT INSTITUTE</h2>
                   <div style={{ fontSize: '0.75rem', color: '#64748b', fontWeight: 700 }}>Sahl Mall, 4th Street, Eastleigh, Nairobi</div>
                 </div>
               </div>
@@ -1770,7 +1770,7 @@ export function BursarDesk() {
               {/* Official Digital Stamp */}
               <div style={{ background: '#f8fafc', border: '1px dashed #94a3b8', borderRadius: '8px', padding: '0.75rem', textAlign: 'center', fontSize: '0.75rem', color: '#475569' }}>
                 <div>🛡️ <strong>OFFICIAL STAMP & VERIFICATION</strong></div>
-                <div>Brent College Directorate of Finance • Eastleigh Sahl Mall Campus</div>
+                <div>Eclat Institute Directorate of Finance • Eastleigh Sahl Mall Campus</div>
                 <div style={{ color: '#16a34a', fontWeight: 800, marginTop: '2px' }}>STATUS: TRANSACTION VERIFIED & ACCOUNT CREDITED</div>
               </div>
 
@@ -1792,7 +1792,7 @@ export function BursarDesk() {
         <div className="modal-overlay" onClick={() => setSelectedStudentForLetter(null)}>
           <div className="modal-content modal-lg" onClick={(e) => e.stopPropagation()} style={{ background: '#ffffff', color: '#0f172a', padding: '2.5rem' }}>
             <div style={{ textAlign: 'center', borderBottom: '2px solid #1e3a8a', paddingBottom: '1rem', marginBottom: '1.5rem' }}>
-              <h2 style={{ color: '#1e3a8a', margin: 0, fontSize: '1.6rem', fontWeight: 900, textTransform: 'uppercase' }}>Brent College</h2>
+              <h2 style={{ color: '#1e3a8a', margin: 0, fontSize: '1.6rem', fontWeight: 900, textTransform: 'uppercase' }}>Eclat Institute</h2>
               <div style={{ fontSize: '0.85rem', color: '#475569', fontWeight: 600 }}>Directorate of Admissions & Student Affairs</div>
               <div style={{ display: 'inline-block', background: '#f1f5f9', padding: '4px 16px', borderRadius: '999px', fontSize: '0.85rem', fontWeight: 700, color: '#1e3a8a', marginTop: '0.5rem' }}>
                 OFFICIAL PROVISIONAL ADMISSION LETTER
@@ -1802,7 +1802,7 @@ export function BursarDesk() {
             <div style={{ fontSize: '0.9rem', lineHeight: '1.6', marginBottom: '1.5rem' }}>
               <p>Dear <strong>{selectedStudentForLetter.full_name}</strong> (Adm No: <strong>{selectedStudentForLetter.admission_number}</strong>),</p>
               <p>
-                We are pleased to inform you that you have been offered provisional admission to study <strong>{selectedStudentForLetter.class_name}</strong> at Brent College.
+                We are pleased to inform you that you have been offered provisional admission to study <strong>{selectedStudentForLetter.class_name}</strong> at Eclat Institute.
               </p>
               <p>
                 Your reporting date is effective from <strong>{selectedStudentForLetter.admission_date || selectedStudentForLetter.enrollment_date || currentAcademicYear}</strong>. Please ensure complete fee clearance with the Bursar's Office to finalize your unit registration and obtain your student identification badge.
@@ -1828,7 +1828,7 @@ export function BursarDesk() {
         <div className="modal-overlay" onClick={() => setSelectedStudentForIdCard(null)}>
           <div className="modal-content modal-sm" onClick={(e) => e.stopPropagation()} style={{ background: '#ffffff', color: '#0f172a', padding: '1.5rem', borderRadius: '12px' }}>
             <div style={{ background: 'linear-gradient(135deg, #1e3a8a 0%, #1e1b4b 100%)', color: '#fff', padding: '1rem', borderRadius: '8px 8px 0 0', textAlign: 'center' }}>
-              <h3 style={{ margin: 0, fontSize: '1.1rem', fontWeight: 800 }}>BRENT COLLEGE</h3>
+              <h3 style={{ margin: 0, fontSize: '1.1rem', fontWeight: 800 }}>ECLAT INSTITUTE</h3>
               <div style={{ fontSize: '0.7rem', opacity: 0.85 }}>STUDENT IDENTIFICATION PASS</div>
             </div>
             <div style={{ padding: '1.25rem', textAlign: 'center', background: '#f8fafc', borderRadius: '0 0 8px 8px', border: '1px solid #e2e8f0' }}>

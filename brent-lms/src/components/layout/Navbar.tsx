@@ -60,9 +60,9 @@ export function Navbar({ onToggleSidebar }: { onToggleSidebar: () => void }) {
       </button>
 
       <Link to="/" className="navbar-brand">
-        <img src="/logo.png" alt="Brent College" className="navbar-logo" />
+        <img src="/logo.png" alt="Eclat Institute" className="navbar-logo" />
         <div>
-          <div className="navbar-school-name">BRENT COLLEGE</div>
+          <div className="navbar-school-name">ECLAT INSTITUTE</div>
           <span className="navbar-tagline">Shaping Minds, Inspiring Success</span>
         </div>
       </Link>
@@ -86,7 +86,7 @@ export function Navbar({ onToggleSidebar }: { onToggleSidebar: () => void }) {
               fontWeight: 600,
             }}
             onClick={promptInstall}
-            title="Install Brent College Web App on Chrome"
+            title="Install Eclat Institute Web App on Chrome"
           >
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
               <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
@@ -178,7 +178,7 @@ export function Navbar({ onToggleSidebar }: { onToggleSidebar: () => void }) {
                 fontSize: '0.8rem',
               }}
               onClick={() => signOut().then(() => navigate('/login'))}
-              title="Sign Out of Brent College Portal"
+              title="Sign Out of Eclat Institute Portal"
             >
               <span>🚪</span>
               <span>Logout</span>

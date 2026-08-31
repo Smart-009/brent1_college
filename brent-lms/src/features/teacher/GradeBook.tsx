@@ -102,7 +102,7 @@ export function GradeBook() {
     const url = URL.createObjectURL(blob)
     const link = document.createElement('a')
     link.href = url
-    link.setAttribute('download', `Brent_College_Gradebook_${selectedCourseId}.csv`)
+    link.setAttribute('download', `Eclat_Institute_Gradebook_${selectedCourseId}.csv`)
     document.body.appendChild(link)
     link.click()
     document.body.removeChild(link)

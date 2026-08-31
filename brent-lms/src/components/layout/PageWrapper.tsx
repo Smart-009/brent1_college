@@ -9,7 +9,7 @@ interface PageWrapperProps {
 
 export function PageWrapper({ title, subtitle, action, children }: PageWrapperProps) {
   useEffect(() => {
-    document.title = `${title} | Brent College`
+    document.title = `${title} | Eclat Institute`
   }, [title])
 
   return (

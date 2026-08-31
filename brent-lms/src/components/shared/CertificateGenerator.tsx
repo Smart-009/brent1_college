@@ -103,7 +103,7 @@ export function CertificateGenerator({
             <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginBottom: '1.5rem' }}>
               <img
                 src="/logo.png"
-                alt="Brent College Crest"
+                alt="Eclat Institute Crest"
                 style={{ width: '70px', height: '70px', objectFit: 'contain', marginBottom: '0.5rem' }}
               />
               <h1
@@ -116,7 +116,7 @@ export function CertificateGenerator({
                   textTransform: 'uppercase',
                 }}
               >
-                BRENT COLLEGE NAIROBI
+                ECLAT INSTITUTE NAIROBI
               </h1>
               <div style={{ fontSize: '0.85rem', color: '#475569', fontWeight: 700, letterSpacing: '0.08em', marginTop: '2px' }}>
                 CENTRE FOR VOCATIONAL EXCELLENCE & PRACTICAL SKILLS

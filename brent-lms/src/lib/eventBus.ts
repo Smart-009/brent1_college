@@ -1,5 +1,5 @@
 // ============================================================
-// Brent College — High Performance Reactive Event Bus
+// Eclat Institute — High Performance Reactive Event Bus
 // ============================================================
 
 type SchoolEventType =

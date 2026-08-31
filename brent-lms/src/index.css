@@ -115,7 +115,7 @@ code {
   }
   body::before {
     visibility: visible !important;
-    content: "⚠️ PROPRIETARY & CONFIDENTIAL MATERIAL — BRENT COLLEGE. PRINTING AND EXPORTING ARE STRICTLY PROHIBITED BY DRM POLICY.";
+    content: "⚠️ PROPRIETARY & CONFIDENTIAL MATERIAL — ÉCLAT INSTITUTE. PRINTING AND EXPORTING ARE STRICTLY PROHIBITED BY DRM POLICY.";
     display: block !important;
     position: fixed;
     top: 30%;

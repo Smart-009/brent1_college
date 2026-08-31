@@ -1,5 +1,5 @@
 // ============================================================
-// Brent College — Official Biometric Fee Clearance Pass
+// Eclat Institute — Official Biometric Fee Clearance Pass
 // ============================================================
 
 import React from 'react'
@@ -101,10 +101,10 @@ export const BiometricClearancePassModal: React.FC<Props> = ({ pass, onClose }) 
               marginBottom: '1.5rem',
             }}
           >
-            <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '0.75rem', marginBottom: '0.5rem' }}>
+            <div style={{ display: 'flex', borderBottom: 'none', justifyContent: 'center', alignItems: 'center', gap: '0.75rem', marginBottom: '0.5rem' }}>
               <img
                 src="/logo.png"
-                alt="Brent College"
+                alt="Eclat Institute"
                 style={{ width: '56px', height: '56px', borderRadius: '50%', objectFit: 'cover' }}
                 onError={(e) => {
                   ;(e.target as HTMLElement).style.display = 'none'
@@ -112,10 +112,10 @@ export const BiometricClearancePassModal: React.FC<Props> = ({ pass, onClose }) 
               />
               <div>
                 <h1 style={{ fontSize: '1.6rem', fontWeight: 900, color: '#1e3a8a', letterSpacing: '0.05em', margin: 0 }}>
-                  BRENT COLLEGE
+                  ECLAT INSTITUTE
                 </h1>
                 <div style={{ fontSize: '0.8rem', color: '#64748b', fontWeight: 600 }}>
-                  Sahl Mall, 4th Street, Eastleigh, Nairobi • Tel: +254 722 264 380 • Web: brentcollege.ac.ke
+                  Sahl Mall, 4th Street, Eastleigh, Nairobi • Tel: +254 722 264 380 • Web: eclatinstitute.ac.ke
                 </div>
               </div>
             </div>
@@ -313,7 +313,7 @@ export const BiometricClearancePassModal: React.FC<Props> = ({ pass, onClose }) 
                 : '✕ CLEARANCE WITHHELD — ARREARS REQUIRED PRIOR TO EXAM ADMISSION'}
             </div>
             <div style={{ fontSize: '0.78rem', color: '#475569', marginTop: '4px' }}>
-              This pass is authenticated by the Brent College Bursar Biometric Security Registry. Valid for the current academic session.
+              This pass is authenticated by the Eclat Institute Bursar Biometric Security Registry. Valid for the current academic session.
             </div>
           </div>
 
@@ -364,7 +364,7 @@ export const BiometricClearancePassModal: React.FC<Props> = ({ pass, onClose }) 
               borderTop: '1px solid #f1f5f9',
             }}
           >
-            Brent College Integrated SIMS & Biometric Gateway • Document Verification Hash: {pass.security_hash.slice(0, 24)}...
+            Eclat Institute Integrated SIMS & Biometric Gateway • Document Verification Hash: {pass.security_hash.slice(0, 24)}...
           </div>
         </div>
       </div>

@@ -4,8 +4,8 @@ import { VitePWA } from 'vite-plugin-pwa'
 
 export default defineConfig({
   define: {
-    'import.meta.env.ADMIN_PASSWORD': JSON.stringify(process.env.ADMIN_PASSWORD || process.env.VITE_ADMIN_PASSWORD || 'Brent@2026#!'),
-    'import.meta.env.VITE_ADMIN_PASSWORD': JSON.stringify(process.env.ADMIN_PASSWORD || process.env.VITE_ADMIN_PASSWORD || 'Brent@2026#!'),
+    'import.meta.env.ADMIN_PASSWORD': JSON.stringify(process.env.ADMIN_PASSWORD || process.env.VITE_ADMIN_PASSWORD || 'Eclat@2026#!'),
+    'import.meta.env.VITE_ADMIN_PASSWORD': JSON.stringify(process.env.ADMIN_PASSWORD || process.env.VITE_ADMIN_PASSWORD || 'Eclat@2026#!'),
   },
   plugins: [
     react(),
@@ -13,9 +13,9 @@ export default defineConfig({
       registerType: 'autoUpdate',
       includeAssets: ['logo.png', 'favicon.svg', 'icons.svg'],
       manifest: {
-        name: 'Brent College School Management & Learning Portal',
-        short_name: 'Brent College',
-        description: 'Comprehensive School Information System, Master Timetables, Terminal Examinations, M-Pesa Fee Portal, and Lesson LMS for Brent College Nairobi.',
+        name: 'Eclat Institute Management & Learning Portal',
+        short_name: 'Eclat Institute',
+        description: 'Comprehensive School Information System, Master Timetables, Terminal Examinations, M-Pesa Fee Portal, and Lesson LMS for Eclat Institute Nairobi.',
         theme_color: '#1E3A8A',
         background_color: '#0F172A',
         display: 'standalone',

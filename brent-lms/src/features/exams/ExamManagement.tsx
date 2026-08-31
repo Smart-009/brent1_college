@@ -112,7 +112,7 @@ export function ExamManagement() {
           <div style={{ padding: '1rem', borderBottom: '1px solid var(--color-border)', background: 'var(--color-bg-secondary)' }}>
             <h3 style={{ fontSize: '1rem', fontWeight: 700, margin: 0 }}>Generated Semester 1 Official Transcripts & Grade Sheets</h3>
             <p style={{ margin: '0.25rem 0 0', fontSize: '0.8rem', color: 'var(--color-text-secondary)' }}>
-              Click on any student to view, print, or download their official Brent College transcript with GPA and Dean’s remarks.
+              Click on any student to view, print, or download their official Eclat Institute transcript with GPA and Dean’s remarks.
             </p>
           </div>
           <div className="table-responsive">

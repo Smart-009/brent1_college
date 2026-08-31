@@ -1,5 +1,5 @@
 // ============================================================
-// Brent College LMS — Enterprise System Unit Test Suite
+// Eclat Institute LMS — Enterprise System Unit Test Suite
 // ============================================================
 
 import test from 'node:test'
@@ -23,7 +23,7 @@ function generateActivationCode() {
   const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'
   const rand = (n) =>
     Array.from({ length: n }, () => chars[Math.floor(Math.random() * chars.length)]).join('')
-  return `BRENT-${rand(4)}-${rand(4)}`
+  return `ECLAT-${rand(4)}-${rand(4)}`
 }
 
 function isAccessExpired(accessExpiresAt) {
@@ -43,7 +43,7 @@ function truncate(text, maxLength) {
 
 function admissionToEmail(admissionNumber) {
   const clean = admissionNumber.toLowerCase().replace(/[^a-z0-9]/g, '')
-  return `${clean}@brentcollege.internal`
+  return `${clean}@eclatinstitute.internal`
 }
 
 function getInitials(fullName) {
@@ -61,10 +61,10 @@ function sanitizeInput(str) {
 
 // 2. AUTHENTICATION & SECURITY TESTS
 test('Authentication: Admin Credentials Verification', () => {
-  const adminUsername = 'Brent2026@admin'
-  const adminPassword = 'Brent@2026#!'
+  const adminUsername = 'Eclat2026@admin'
+  const adminPassword = 'Eclat@2026#!'
 
-  assert.equal(adminUsername.toLowerCase(), 'brent2026@admin')
+  assert.equal(adminUsername.toLowerCase(), 'eclat2026@admin')
   assert.ok(adminPassword.length >= 8)
   assert.ok(/[A-Z]/.test(adminPassword))
   assert.ok(/[0-9]/.test(adminPassword))
@@ -82,9 +82,9 @@ test('Authentication: Role Verification for All 5 System Roles', () => {
 })
 
 test('Authentication: Synthetic Internal Email Mapping', () => {
-  assert.equal(admissionToEmail('BC-2026-001'), 'bc2026001@brentcollege.internal')
-  assert.equal(admissionToEmail('Brent2026@admin'), 'brent2026admin@brentcollege.internal')
-  assert.equal(admissionToEmail('TCH/042/2026'), 'tch0422026@brentcollege.internal')
+  assert.equal(admissionToEmail('BC-2026-001'), 'bc2026001@eclatinstitute.internal')
+  assert.equal(admissionToEmail('Eclat2026@admin'), 'eclat2026admin@eclatinstitute.internal')
+  assert.equal(admissionToEmail('TCH/042/2026'), 'tch0422026@eclatinstitute.internal')
 })
 
 test('Security: Brute-Force Rate Limiting Lockout Condition', () => {
@@ -126,7 +126,7 @@ test('Utils: Extract YouTube Video ID from Various URL Formats', () => {
 
 test('Utils: Activation Code Format', () => {
   const code = generateActivationCode()
-  assert.match(code, /^BRENT-[A-Z0-9]{4}-[A-Z0-9]{4}$/)
+  assert.match(code, /^ECLAT-[A-Z0-9]{4}-[A-Z0-9]{4}$/)
 })
 
 test('Utils: Access Expiration Logic', () => {
@@ -224,7 +224,7 @@ test('E-Library: Supported Document Formats Validation', () => {
 // ============================================================
 
 function generateBiometricTemplate(studentId, admissionNumber, fingerName) {
-  const seed = `${studentId}:${admissionNumber}:${fingerName}:BRENT_SECURITY_V1`
+  const seed = `${studentId}:${admissionNumber}:${fingerName}:ECLAT_SECURITY_V1`
   let hash1 = 0x811c9dc5
   let hash2 = 0x5bd1e995
   for (let i = 0; i < seed.length; i++) {
@@ -248,12 +248,12 @@ function generateBiometricVerificationCode() {
 }
 
 function generateClearanceSecurityHash(studentId, passCode, feeStatus) {
-  const raw = `${studentId}:${passCode}:${feeStatus}:${new Date().getFullYear()}:BRENT_FIN_CLEARANCE`
+  const raw = `${studentId}:${passCode}:${feeStatus}:${new Date().getFullYear()}:ECLAT_FIN_CLEARANCE`
   let h = 0
   for (let i = 0; i < raw.length; i++) {
     h = (Math.imul(31, h) + raw.charCodeAt(i)) | 0
   }
-  return `BC-SEC-${Math.abs(h).toString(16).toUpperCase().padStart(8, '0')}`
+  return `EI-SEC-${Math.abs(h).toString(16).toUpperCase().padStart(8, '0')}`
 }
 
 function evaluateFeeClearance(student) {
@@ -315,7 +315,7 @@ test('Biometrics: Verification Authorization Code Format', () => {
 
 test('Biometrics: Clearance Security Hash Integrity', () => {
   const hash = generateClearanceSecurityHash('std-123', 'PASS-999', 'CLEARED')
-  assert.match(hash, /^BC-SEC-[0-9A-F]{8}$/)
+  assert.match(hash, /^EI-SEC-[0-9A-F]{8}$/)
 })
 
 test('Biometrics: Fee Clearance Evaluation Rules (Fully Cleared)', () => {

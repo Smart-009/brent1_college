@@ -106,7 +106,7 @@ export function truncate(text: string, maxLength: number): string {
 /** Create a synthetic email from an admission number */
 export function admissionToEmail(admissionNumber: string): string {
   const clean = admissionNumber.toLowerCase().replace(/[^a-z0-9]/g, '')
-  return `${clean}@brentcollege.internal`
+  return `${clean}@eclatinstitute.internal`
 }
 
 /** Get initials from a full name */

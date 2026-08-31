@@ -1,5 +1,5 @@
 // ============================================================
-// Brent College — Native Desktop Preload Bridge
+// Eclat Institute — Native Desktop Preload Bridge
 // ============================================================
 
 const { contextBridge, ipcRenderer } = require('electron')

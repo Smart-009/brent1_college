@@ -1,5 +1,5 @@
 // ============================================================
-// Brent College — Enterprise SIMS Clean Data Store (Zero Test Data)
+// Eclat Institute — Enterprise SIMS Clean Data Store (Zero Test Data)
 // ============================================================
 
 import type {
@@ -36,7 +36,7 @@ export const INITIAL_DEPARTMENTS: CollegeDepartment[] = [
     code: 'DEPT-COMP',
     description: 'Comprehensive computer packages, digital literacy, typing speed, and office automation.',
     hod_name: 'Mr. James Mwangi',
-    hod_email: 'j.mwangi@brentcollege.ac.ke',
+    hod_email: 'j.mwangi@eclatinstitute.ac.ke',
     programs: ['Computer Packages (Ms Office & Internet)', 'Full-Stack Software Engineering', 'Python & Data Analytics'],
     created_at: new Date().toISOString(),
   },
@@ -46,7 +46,7 @@ export const INITIAL_DEPARTMENTS: CollegeDepartment[] = [
     code: 'DEPT-BAR',
     description: 'Professional espresso extraction, milk frothing, latte art, coffee tasting and cafe operations.',
     hod_name: 'Chef Anthony Kilonzo',
-    hod_email: 'a.kilonzo@brentcollege.ac.ke',
+    hod_email: 'a.kilonzo@eclatinstitute.ac.ke',
     programs: ['Professional Barista Masterclass', 'Latte Art & Coffee Brewing Certification'],
     created_at: new Date().toISOString(),
   },
@@ -56,7 +56,7 @@ export const INITIAL_DEPARTMENTS: CollegeDepartment[] = [
     code: 'DEPT-LANG',
     description: 'Spoken and written English, Kiswahili Sanifu, and international foreign languages (Arabic, French, German, Spanish).',
     hod_name: 'Mme. Claire Dubois',
-    hod_email: 'c.dubois@brentcollege.ac.ke',
+    hod_email: 'c.dubois@eclatinstitute.ac.ke',
     programs: ['English Language Mastery & Business Fluency', 'Kiswahili Sanifu for Expatriates & Beginners', 'Arabic, French & German Diplomas'],
     created_at: new Date().toISOString(),
   },
@@ -66,7 +66,7 @@ export const INITIAL_DEPARTMENTS: CollegeDepartment[] = [
     code: 'DEPT-IELTS',
     description: 'Targeted IELTS Academic and General Training preparation targeting Band 7.0 - 9.0 scores.',
     hod_name: 'Dr. Robert Ochieng',
-    hod_email: 'r.ochieng@brentcollege.ac.ke',
+    hod_email: 'r.ochieng@eclatinstitute.ac.ke',
     programs: ['IELTS Academic Intensive (Target Band 7.5+)', 'IELTS General Training for Immigration'],
     created_at: new Date().toISOString(),
   },
@@ -76,7 +76,7 @@ export const INITIAL_DEPARTMENTS: CollegeDepartment[] = [
     code: 'DEPT-BEAUTY',
     description: 'Bridal and traditional henna art, everyday & glam make-up artistry, skin prep, and beauty aesthetics.',
     hod_name: 'Ms. Amina Yusuf',
-    hod_email: 'a.yusuf@brentcollege.ac.ke',
+    hod_email: 'a.yusuf@eclatinstitute.ac.ke',
     programs: ['Bridal Henna Designing Masterclass', 'Professional Make-up Artistry & Aesthetics'],
     created_at: new Date().toISOString(),
   },
@@ -86,7 +86,7 @@ export const INITIAL_DEPARTMENTS: CollegeDepartment[] = [
     code: 'DEPT-SEW',
     description: 'Hands-on pattern drafting, electric sewing machine operation, dressmaking, and African garment tailoring.',
     hod_name: 'Mrs. Grace Wanjiku',
-    hod_email: 'g.wanjiku@brentcollege.ac.ke',
+    hod_email: 'g.wanjiku@eclatinstitute.ac.ke',
     programs: ['Garment Construction & Tailoring', 'Pattern Drafting & Dressmaking Certificate'],
     created_at: new Date().toISOString(),
   },
@@ -96,7 +96,7 @@ export const INITIAL_DEPARTMENTS: CollegeDepartment[] = [
     code: 'DEPT-BIZ',
     description: 'Computerized accounting, QuickBooks, KRA tax returns, and cybersecurity network defense.',
     hod_name: 'Mr. David Mutua',
-    hod_email: 'd.mutua@brentcollege.ac.ke',
+    hod_email: 'd.mutua@eclatinstitute.ac.ke',
     programs: ['Computerized Accounting (QuickBooks & iTax)', 'Cybersecurity & Ethical Defense'],
     created_at: new Date().toISOString(),
   },

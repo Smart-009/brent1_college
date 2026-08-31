@@ -6,8 +6,8 @@ import type { Profile, Role } from '@/lib/database.types'
 
 export const ADMIN_PROFILE: Profile = {
   id: '40bcf126-5fa0-4df1-be4b-480088ce315a',
-  full_name: 'Brent College Principal & Administrator',
-  admission_number: 'Brent2026@admin',
+  full_name: 'Eclat Institute Principal & Administrator',
+  admission_number: 'Eclat2026@admin',
   role: 'admin',
   first_login_at: '2024-01-01T00:00:00Z',
   access_expires_at: null,
@@ -159,31 +159,37 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   async function signIn(inputIdentifier: string, password: string): Promise<{ error: string | null }> {
     const clean = inputIdentifier.trim().toLowerCase().replace(/[\s]/g, '')
-    const ADMIN_PASS = import.meta.env.VITE_ADMIN_PASSWORD || import.meta.env.ADMIN_PASSWORD || 'Brent@2026#!'
+    const ADMIN_PASS = import.meta.env.VITE_ADMIN_PASSWORD || import.meta.env.ADMIN_PASSWORD || 'Eclat@2026#!'
 
     // 1. Bulletproof admin credentials verification
     const isAdminIdentifier =
+      clean === 'eclat2026@admin' ||
       clean === 'brent2026@admin' ||
       clean === 'admin' ||
       clean === 'principal' ||
       clean === 'admin-001' ||
+      clean === 'eclat2026' ||
       clean === 'brent2026' ||
       clean.includes('admin') ||
+      clean.includes('eclat2026') ||
       clean.includes('brent2026')
 
     if (isAdminIdentifier) {
       const isCorrectPass =
+        password === 'Eclat@2026#!' ||
         password === 'Brent@2026#!' ||
         password === ADMIN_PASS ||
         password === 'muSta9F@009' ||
+        password === 'Eclat@2026#' ||
         password === 'Brent@2026#' ||
+        password === 'Eclat2026#!' ||
         password === 'Brent2026#!'
 
       if (isCorrectPass) {
         signInAsDemo('admin')
         return { error: null }
       } else {
-        return { error: 'Incorrect administrator password. Please enter Brent@2026#!' }
+        return { error: 'Incorrect administrator password. Please enter Eclat@2026#!' }
       }
     }
 
@@ -193,8 +199,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       candidates.push(clean)
     } else {
       const stripped = clean.replace(/[^a-z0-9]/g, '')
+      candidates.push(`${stripped}@eclatinstitute.internal`)
       candidates.push(`${stripped}@brentcollege.internal`)
       if (stripped.startsWith('admin')) {
+        candidates.push('admin@eclatinstitute.internal')
         candidates.push('admin@brentcollege.internal')
       }
     }
@@ -274,7 +282,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setProfile(null)
   }
 
-  const activeUser = session?.user ?? (profile ? ({ id: profile.id, email: `${profile.admission_number}@brentcollege.internal` } as unknown as User) : null)
+  const activeUser = session?.user ?? (profile ? ({ id: profile.id, email: `${profile.admission_number}@eclatinstitute.internal` } as unknown as User) : null)
 
   return (
     <AuthContext.Provider value={{ session, user: activeUser, profile, loading, signIn, signInAsDemo, signOut, refreshProfile }}>

@@ -1,5 +1,5 @@
 // ============================================================
-// Brent College — Real Biometric Security & Hardware Fingerprint Engine
+// Eclat Institute — Real Biometric Security & Hardware Fingerprint Engine
 // ============================================================
 
 import type { StudentRecord, BiometricFeeClearancePass } from '@/types/school'
@@ -85,7 +85,7 @@ export function base64ToBuffer(base64: string): ArrayBuffer {
  * Returns a valid WebAuthn Relying Party configuration that won't throw SecurityError on mobile IP hostnames.
  */
 export function getValidRelyingParty(): { id?: string; name: string } {
-  const name = 'Brent College Biometric Fee Clearance Station'
+  const name = 'Eclat Institute Biometric Fee Clearance Station'
   if (typeof window === 'undefined') return { name }
 
   const hostname = window.location.hostname
@@ -135,7 +135,7 @@ export function generateBiometricTemplate(admissionNumber: string, fingerName: s
   const cleanAdm = admissionNumber.toUpperCase().replace(/[^A-Z0-9]/g, '')
   const cleanFinger = fingerName.toUpperCase().replace(/\s+/g, '')
   let hash = 0
-  const combined = `${cleanAdm}:${cleanFinger}:BRENT-BIOMETRIC-VAULT-2026`
+  const combined = `${cleanAdm}:${cleanFinger}:ECLAT-BIOMETRIC-VAULT-2026`
 
   for (let i = 0; i < combined.length; i++) {
     const char = combined.charCodeAt(i)
@@ -145,7 +145,7 @@ export function generateBiometricTemplate(admissionNumber: string, fingerName: s
 
   const hex = Math.abs(hash).toString(16).padStart(8, '0').toUpperCase()
   const randomSuffix = Math.floor(1000 + (Math.abs(hash) % 9000))
-  return `FP-BR-${cleanAdm.slice(-4) || 'STD'}-${hex.slice(0, 4)}-${cleanFinger.slice(0, 2)}-${randomSuffix}`
+  return `FP-EI-${cleanAdm.slice(-4) || 'STD'}-${hex.slice(0, 4)}-${cleanFinger.slice(0, 2)}-${randomSuffix}`
 }
 
 /**
@@ -164,7 +164,7 @@ export function generateBiometricVerificationCode(): string {
  * Generates an encrypted security hash for verification certificates.
  */
 export function generateClearanceSecurityHash(admissionNumber: string, balance: number, dateStr: string): string {
-  const raw = `${admissionNumber}#${balance}#${dateStr}#BRENT-SEAL-VERIFIED`
+  const raw = `${admissionNumber}#${balance}#${dateStr}#ECLAT-SEAL-VERIFIED`
   let hash = 5381
   for (let i = 0; i < raw.length; i++) {
     hash = (hash * 33) ^ raw.charCodeAt(i)
@@ -629,7 +629,7 @@ export function createClearancePass(
 
   return {
     id: `pass-${Date.now()}`,
-    clearance_code: `BRENT-BIO-${now.getFullYear()}-${Math.floor(10000 + Math.random() * 90000)}`,
+    clearance_code: `ECLAT-BIO-${now.getFullYear()}-${Math.floor(10000 + Math.random() * 90000)}`,
     student_id: student.id,
     student_name: student.full_name,
     admission_number: student.admission_number,

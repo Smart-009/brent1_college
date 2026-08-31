@@ -29,11 +29,11 @@ export function UnitRegistrationSlip({
         <div style={{ textAlign: 'center', borderBottom: '2px solid #1e3a8a', paddingBottom: '1.25rem', marginBottom: '1.5rem' }}>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '1rem', marginBottom: '0.5rem' }}>
             <div style={{ width: '48px', height: '48px', borderRadius: '50%', background: '#1e3a8a', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.5rem', fontWeight: 800 }}>
-              BC
+              EI
             </div>
             <div>
               <h1 style={{ margin: 0, fontSize: '1.5rem', fontWeight: 900, color: '#1e3a8a', letterSpacing: '-0.02em', textTransform: 'uppercase' }}>
-                Brent College
+                Eclat Institute
               </h1>
               <div style={{ fontSize: '0.8rem', color: '#475569', fontWeight: 600 }}>
                 Sahl Mall, 4th Street, Eastleigh, Nairobi • Office of Academic Affairs
