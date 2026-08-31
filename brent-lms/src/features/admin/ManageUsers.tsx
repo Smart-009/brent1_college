@@ -78,7 +78,30 @@ export function ManageUsers() {
     },
   })
 
-  const availableClasses: Class[] = (classesData && classesData.length > 0) ? classesData : DEFAULT_PROGRAMS
+  const unitsFromStore: Class[] = schoolStore.getCourseUnits().map((u) => ({
+    id: u.id,
+    name: u.title,
+    grade_level: `${u.credit_hours} Credits (${u.course_duration || 'Short Course'})`,
+    academic_year: `${new Date().getFullYear()} Virtual Cohort`,
+    created_at: u.created_at,
+  }))
+
+  const subjectsFromStore: Class[] = schoolStore.getSubjects().map((s) => ({
+    id: s.id,
+    name: s.name,
+    grade_level: s.duration || 'Certificate Program',
+    academic_year: `${new Date().getFullYear()} Virtual Cohort`,
+    created_at: s.created_at,
+  }))
+
+  const dynamicCombined: Class[] = [...unitsFromStore, ...subjectsFromStore]
+  for (const def of DEFAULT_PROGRAMS) {
+    if (!dynamicCombined.some((c) => c.name.toLowerCase().trim() === def.name.toLowerCase().trim())) {
+      dynamicCombined.push(def)
+    }
+  }
+
+  const availableClasses: Class[] = dynamicCombined
 
   const toggleSelectClass = (cId: string) => {
     setSelectedClassIds((prev) =>

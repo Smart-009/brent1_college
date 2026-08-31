@@ -9,12 +9,14 @@ export function StudentDirectory() {
   const [departments] = useState(() => schoolStore.getDepartments())
   const [subjects] = useState(() => schoolStore.getSubjects())
 
-  // Dynamic program options derived from active departments and subjects
+  // Dynamic program options derived from active course units, departments and subjects
   const programOptions = useMemo(() => {
+    const fromUnits = schoolStore.getCourseUnits().map((u) => u.title)
+    const fromPrograms = schoolStore.getCourseUnits().map((u) => u.program).filter(Boolean)
     const fromSubjects = subjects.map((s) => s.name)
     const fromDepts = departments.flatMap((d) => d.programs || [])
-    return Array.from(new Set([...fromSubjects, ...fromDepts]))
-  }, [departments, subjects])
+    return Array.from(new Set([...fromUnits, ...fromPrograms, ...fromSubjects, ...fromDepts]))
+  }, [departments, subjects, students])
 
   const [searchTerm, setSearchTerm] = useState('')
   const [classFilter, setClassFilter] = useState('All')
@@ -39,8 +41,8 @@ export function StudentDirectory() {
     class_name: programOptions[0] || 'Comprehensive Computer Packages & Digital Skills',
     dob: '2005-01-01',
     status: 'Active',
-    fee_balance: 4500,
-    term_fee_total: 4500,
+    fee_balance: 75,
+    term_fee_total: 75,
     attendance_rate: 0,
     discipline_points: 0,
     merits_count: 0,
@@ -174,6 +176,36 @@ export function StudentDirectory() {
     }
 
     schoolStore.addStudent(record)
+
+    // Auto-link registered unit so course shows on student LMS immediately
+    const matchedUnit = schoolStore.getCourseUnits().find(
+      (u) => u.title.toLowerCase() === record.class_name.toLowerCase() || u.program.toLowerCase() === record.class_name.toLowerCase()
+    )
+    if (matchedUnit) {
+      schoolStore.registerStudentUnits({
+        id: `reg-${record.id}`,
+        receipt_number: `REG-${new Date().getFullYear()}-${Math.floor(1000 + Math.random() * 9000)}`,
+        student_id: record.id,
+        student_name: record.full_name,
+        admission_number: record.admission_number,
+        program: record.class_name,
+        academic_year: `${new Date().getFullYear()}`,
+        course_duration: matchedUnit.course_duration || '3 Months Certificate',
+        registered_unit_ids: [matchedUnit.id],
+        registered_units: [{
+          code: matchedUnit.code,
+          title: matchedUnit.title,
+          credit_hours: matchedUnit.credit_hours || 40,
+          teacher_name: matchedUnit.teacher_name || 'Faculty Lecturer',
+        }],
+        total_credits: matchedUnit.credit_hours || 40,
+        fee_clearance_status: 'Cleared',
+        registered_by: 'Academic Registrar & Admissions Desk',
+        registered_at: new Date().toISOString(),
+        exam_card_issued: true,
+      })
+    }
+
     setStudents(schoolStore.getStudents())
     setShowAddModal(false)
   }
@@ -187,6 +219,35 @@ export function StudentDirectory() {
       ...editingStudent,
       fee_cleared: editingStudent.fee_balance === 0,
     })
+
+    const matchedUnit = schoolStore.getCourseUnits().find(
+      (u) => u.title.toLowerCase() === editingStudent.class_name.toLowerCase() || u.program.toLowerCase() === editingStudent.class_name.toLowerCase()
+    )
+    if (matchedUnit) {
+      schoolStore.registerStudentUnits({
+        id: `reg-${editingStudent.id}`,
+        receipt_number: `REG-${new Date().getFullYear()}-${Math.floor(1000 + Math.random() * 9000)}`,
+        student_id: editingStudent.id,
+        student_name: editingStudent.full_name,
+        admission_number: editingStudent.admission_number,
+        program: editingStudent.class_name,
+        academic_year: `${new Date().getFullYear()}`,
+        course_duration: matchedUnit.course_duration || '3 Months Certificate',
+        registered_unit_ids: [matchedUnit.id],
+        registered_units: [{
+          code: matchedUnit.code,
+          title: matchedUnit.title,
+          credit_hours: matchedUnit.credit_hours || 40,
+          teacher_name: matchedUnit.teacher_name || 'Faculty Lecturer',
+        }],
+        total_credits: matchedUnit.credit_hours || 40,
+        fee_clearance_status: 'Cleared',
+        registered_by: 'Academic Registrar & Admissions Desk',
+        registered_at: new Date().toISOString(),
+        exam_card_issued: true,
+      })
+    }
+
     setStudents(schoolStore.getStudents())
     if (selectedStudent?.id === editingStudent.id) {
       setSelectedStudent(editingStudent)

@@ -112,18 +112,44 @@ const DEFAULT_DEPARTMENTS: DepartmentProgram[] = [
   },
 ]
 
+import { schoolStore } from '@/lib/schoolData'
+
 export function ManageClasses() {
   const queryClient = useQueryClient()
 
-  // Local state initialized with storage or defaults
+  // Local state initialized with dynamic courses from store and baseline
   const [localDepts, setLocalDepts] = useState<DepartmentProgram[]>(() => {
-    try {
-      const saved = localStorage.getItem('eclat_admin_departments') || localStorage.getItem('brent_admin_departments')
-      if (saved) return JSON.parse(saved)
-    } catch {
-      // fallback
+    const units = schoolStore.getCourseUnits().map((u) => ({
+      id: u.id,
+      name: u.title,
+      hod_name: u.teacher_name || 'Faculty Lecturer',
+      grade_level: `${u.credit_hours} Credits (${u.course_duration || 'Short Course'})`,
+      academic_year: `${CURRENT_YEAR} Virtual Cohort`,
+      fee_amount: 75,
+      duration: u.course_duration || '3 Months Certificate',
+      shifts: u.live_schedule_text || 'Live Online Batches & 24/7 LMS',
+      icon: '💻',
+    }))
+    const depts = schoolStore.getDepartments().flatMap((d) =>
+      (d.programs || []).map((prog) => ({
+        id: `prog-${prog.toLowerCase().replace(/[^a-z0-9]/g, '-')}`,
+        name: prog,
+        hod_name: d.hod_name || 'Department Faculty Lead',
+        grade_level: 'Vocational Short Course Certificate',
+        academic_year: `${CURRENT_YEAR} Practical Intake`,
+        fee_amount: 75,
+        duration: '4-8 Weeks',
+        shifts: 'Live Virtual Batches',
+        icon: '🏛️',
+      }))
+    )
+    const combined: DepartmentProgram[] = [...units, ...depts]
+    for (const def of DEFAULT_DEPARTMENTS) {
+      if (!combined.some((c) => c.name.toLowerCase().trim() === def.name.toLowerCase().trim())) {
+        combined.push(def)
+      }
     }
-    return DEFAULT_DEPARTMENTS
+    return combined
   })
 
   const saveLocalDepts = (items: DepartmentProgram[]) => {

@@ -43,8 +43,11 @@ export function MyCourses() {
       alert('Access Restricted: Only Administrators are authorized to change course publication status.')
       return
     }
-    await schoolStore.updateCourseUnit(unit.id, { is_published: !unit.is_published })
+    const currentPub = unit.is_published !== false
+    await schoolStore.updateCourseUnit(unit.id, { is_published: !currentPub })
     setCourseUnits(schoolStore.getCourseUnits())
+    window.dispatchEvent(new Event('storage'))
+    window.dispatchEvent(new CustomEvent('eclat-courses-updated'))
   }
 
   return (
@@ -76,7 +79,9 @@ export function MyCourses() {
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {courseUnits.map((unit) => (
+          {courseUnits.map((unit) => {
+            const isPub = unit.is_published !== false
+            return (
             <div key={unit.id} className="card" style={{ padding: '1.5rem', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
               <div>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '0.75rem' }}>
@@ -85,8 +90,8 @@ export function MyCourses() {
                       {unit.code}
                     </span>
                     <span className="badge badge-info">{unit.credit_hours} Credits</span>
-                    <span className={`badge ${unit.is_published ? 'badge-success' : 'badge-warning'}`}>
-                      {unit.is_published ? 'Published' : 'Draft'}
+                    <span className={`badge ${isPub ? 'badge-success' : 'badge-warning'}`}>
+                      {isPub ? 'Published' : 'Draft'}
                     </span>
                   </div>
                   {isAdmin && (
@@ -95,9 +100,9 @@ export function MyCourses() {
                         type="button"
                         style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: '0.85rem' }}
                         onClick={() => handleTogglePublish(unit)}
-                        title={unit.is_published ? 'Unpublish' : 'Publish'}
+                        title={isPub ? 'Click to set as Draft' : 'Click to Publish to Website & LMS'}
                       >
-                        {unit.is_published ? '🟢' : '⚪'}
+                        {isPub ? '🟢' : '⚪'}
                       </button>
                       <button
                         type="button"
@@ -169,7 +174,8 @@ export function MyCourses() {
                 </div>
               </div>
             </div>
-          ))}
+            )
+          })}
         </div>
       )}
 

@@ -1,11 +1,68 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { PageWrapper } from '@/components/layout/PageWrapper'
 import { schoolStore } from '@/lib/schoolData'
 import type { CollegeDepartment, CollegeSubject } from '@/types/school'
 
 export function ManageSubjects() {
   const [departments, setDepartments] = useState<CollegeDepartment[]>(() => schoolStore.getDepartments())
-  const [subjects, setSubjects] = useState<CollegeSubject[]>(() => schoolStore.getSubjects())
+  const [subjects, setSubjects] = useState<CollegeSubject[]>(() => {
+    const storeSubs = schoolStore.getSubjects()
+    const storeUnits = schoolStore.getCourseUnits()
+    const fromUnits: CollegeSubject[] = storeUnits
+      .filter((u) => !storeSubs.some((s) => s.code.toLowerCase() === u.code.toLowerCase() || s.name.toLowerCase() === u.title.toLowerCase()))
+      .map((u) => ({
+        id: u.id,
+        code: u.code,
+        name: u.title,
+        description: u.description || `${u.program} • ${u.department}`,
+        department_id: 'dept-curriculum',
+        department_name: u.department,
+        fee: 75,
+        duration: u.course_duration || '3 Months Certificate',
+        icon: '💻',
+        badge: 'Active Course',
+        category: 'Tech & Programming',
+        color_hex: '#1e3a8a',
+        created_at: u.created_at,
+      }))
+    return [...storeSubs, ...fromUnits]
+  })
+
+  // Synchronize on store update
+  useEffect(() => {
+    const refresh = () => {
+      setDepartments(schoolStore.getDepartments())
+      const storeSubs = schoolStore.getSubjects()
+      const storeUnits = schoolStore.getCourseUnits()
+      const fromUnits: CollegeSubject[] = storeUnits
+        .filter((u) => !storeSubs.some((s) => s.code.toLowerCase() === u.code.toLowerCase() || s.name.toLowerCase() === u.title.toLowerCase()))
+        .map((u) => ({
+          id: u.id,
+          code: u.code,
+          name: u.title,
+          description: u.description || `${u.program} • ${u.department}`,
+          department_id: 'dept-curriculum',
+          department_name: u.department,
+          fee: 75,
+          duration: u.course_duration || '3 Months Certificate',
+          icon: '💻',
+          badge: 'Active Course',
+          category: 'Tech & Programming',
+          color_hex: '#1e3a8a',
+          created_at: u.created_at,
+        }))
+      setSubjects([...storeSubs, ...fromUnits])
+    }
+    window.addEventListener('storage', refresh)
+    window.addEventListener('focus', refresh)
+    window.addEventListener('eclat-courses-updated', refresh)
+    return () => {
+      window.removeEventListener('storage', refresh)
+      window.removeEventListener('focus', refresh)
+      window.removeEventListener('eclat-courses-updated', refresh)
+    }
+  }, [])
+
   const [activeTab, setActiveTab] = useState<'departments' | 'subjects'>('departments')
 
   // Department Modal State

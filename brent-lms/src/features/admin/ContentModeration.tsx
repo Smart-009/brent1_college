@@ -5,21 +5,45 @@ import { PageWrapper } from '@/components/layout/PageWrapper'
 import { Button } from '@/components/ui/Button'
 import { Spinner } from '@/components/ui/Spinner'
 import { isEditable, formatDate } from '@/lib/utils'
+import { schoolStore } from '@/lib/schoolData'
 import type { Lesson, Course, Profile } from '@/lib/database.types'
 
 export function ContentModeration() {
   const navigate = useNavigate()
 
-  // Fetch all lessons across all courses
+  // Fetch all lessons across all courses (combining Supabase + CourseUnits store)
   const { data: lessons, isLoading } = useQuery({
     queryKey: ['admin-all-lessons'],
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from('lessons')
-        .select('*, course:courses(*, teacher:profiles!teacher_id(full_name))')
-        .order('created_at', { ascending: false })
-      if (error) throw error
-      return data as (Lesson & { course: Course & { teacher: Profile } })[]
+      const storeUnits = schoolStore.getCourseUnits()
+      const localLessons = storeUnits.flatMap((u) =>
+        (u.lessons || []).map((les) => ({
+          id: les.id,
+          title: les.title,
+          course_id: u.id,
+          video_url: les.video_url || '',
+          content: les.content || '',
+          duration_minutes: les.duration_minutes || 45,
+          created_at: u.created_at || new Date().toISOString(),
+          course: {
+            id: u.id,
+            title: u.title,
+            teacher: { full_name: u.teacher_name || 'Faculty Lecturer' },
+          },
+        }))
+      )
+
+      try {
+        const { data } = await supabase
+          .from('lessons')
+          .select('*, course:courses(*, teacher:profiles!teacher_id(full_name))')
+          .order('created_at', { ascending: false })
+        if (data && data.length > 0) {
+          return [...(data as any[]), ...localLessons]
+        }
+      } catch {}
+
+      return localLessons as any[]
     },
   })
 
