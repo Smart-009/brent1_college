@@ -2485,26 +2485,6 @@ export function Landing() {
               </div>
 
               <div
-                onClick={() => handleLaunchRole('bursar')}
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '0.85rem',
-                  padding: '0.85rem',
-                  background: '#f8fafc',
-                  border: '1px solid #cbd5e1',
-                  borderRadius: '10px',
-                  cursor: 'pointer',
-                }}
-              >
-                <span style={{ fontSize: '1.6rem' }}>💼</span>
-                <div>
-                  <div style={{ fontWeight: 800, color: '#059669', fontSize: '0.95rem' }}>Bursar & Admissions Registry</div>
-                  <div style={{ fontSize: '0.78rem', color: '#334155' }}>M-Pesa receipts, calling letters & fee ledger</div>
-                </div>
-              </div>
-
-              <div
                 onClick={() => handleLaunchRole('teacher')}
                 style={{
                   display: 'flex',
@@ -2525,7 +2505,7 @@ export function Landing() {
               </div>
 
               <div
-                onClick={() => handleLaunchRole('admin')}
+                onClick={() => handleLaunchRole('parent')}
                 style={{
                   display: 'flex',
                   alignItems: 'center',
@@ -2537,17 +2517,20 @@ export function Landing() {
                   cursor: 'pointer',
                 }}
               >
-                <span style={{ fontSize: '1.6rem' }}>🛡️</span>
+                <span style={{ fontSize: '1.6rem' }}>👨‍👩‍👧</span>
                 <div>
-                  <div style={{ fontWeight: 800, color: '#1e3a8a', fontSize: '0.95rem' }}>Principal & Admin Console</div>
-                  <div style={{ fontSize: '0.78rem', color: '#334155' }}>Course pricing, subjects, discipline & institutional overview</div>
+                  <div style={{ fontWeight: 800, color: '#059669', fontSize: '0.95rem' }}>Parent & Sponsor Portal</div>
+                  <div style={{ fontSize: '0.78rem', color: '#334155' }}>Track student fee statements, attendance & academic reports</div>
                 </div>
               </div>
             </div>
 
-            <div style={{ marginTop: '1.25rem', textAlign: 'center' }}>
-              <Link to="/login" className="btn btn-secondary btn-sm" style={{ width: '100%', color: '#ffffff', fontWeight: 700 }}>
-                Go to Standard Username / Password Login →
+            <div style={{ marginTop: '1.25rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderTop: '1px solid #e2e8f0', paddingTop: '0.85rem' }}>
+              <Link to="/login" style={{ fontSize: '0.8rem', color: '#2563eb', textDecoration: 'none', fontWeight: 700 }}>
+                Go to Standard Login →
+              </Link>
+              <Link to="/login?role=admin" style={{ fontSize: '0.75rem', color: '#64748b', textDecoration: 'underline' }}>
+                🔐 Staff Access
               </Link>
             </div>
           </div>

@@ -60,9 +60,9 @@ export default defineConfig({
             icons: [{ src: 'logo.png', sizes: '192x192' }],
           },
           {
-            name: 'Fees & M-Pesa',
+            name: 'Fees & Tuition',
             short_name: 'Fees',
-            description: 'Paybill 247247 tuition clearance and receipts',
+            description: 'Online tuition clearance, card checkout and receipts',
             url: '/fees',
             icons: [{ src: 'logo.png', sizes: '192x192' }],
           },

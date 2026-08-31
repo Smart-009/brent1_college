@@ -10,10 +10,10 @@ export function Login() {
   const [searchParams] = useSearchParams()
   const paramRole = searchParams.get('role') as Role | null
 
-  const currentYear = new Date().getFullYear()
-
-  const [selectedRole, setSelectedRole] = useState<Role>(paramRole === 'admin' ? 'admin' : 'student')
-  const [admissionNumber, setAdmissionNumber] = useState(paramRole === 'admin' ? 'Eclat2026@admin' : `BC-${currentYear}-001`)
+  // If URL has ?role=admin or ?role=bursar, start in staff mode
+  const [isStaffMode, setIsStaffMode] = useState<boolean>(paramRole === 'admin' || paramRole === 'bursar')
+  const [selectedRole, setSelectedRole] = useState<Role>(paramRole || 'student')
+  const [admissionNumber, setAdmissionNumber] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
@@ -33,64 +33,59 @@ export function Login() {
   useEffect(() => {
     if (paramRole && ['admin', 'bursar', 'teacher', 'student', 'parent'].includes(paramRole)) {
       setSelectedRole(paramRole)
-      if (paramRole === 'admin') {
-        setAdmissionNumber('Eclat2026@admin')
-        setPassword('')
+      if (paramRole === 'admin' || paramRole === 'bursar') {
+        setIsStaffMode(true)
       }
     }
   }, [paramRole])
 
-  const rolesConfig: { role: Role; label: string; icon: string; defaultId: string; defaultName: string; route: string; desc: string }[] = [
+  // Public Role Options
+  const publicRoles = [
     {
-      role: 'student',
-      label: 'Student / Trainee',
+      role: 'student' as Role,
+      label: 'Student / Trainee Portal',
       icon: '🎓',
-      defaultId: `BC-${currentYear}-001`,
-      defaultName: 'Enrolled Trainee',
       route: '/student',
       desc: 'Access your registered short course units, video lessons, and transcripts.',
     },
     {
-      role: 'bursar',
-      label: 'Bursar & Admissions',
-      icon: '💼',
-      defaultId: 'BUR-SEC-001',
-      defaultName: 'Admissions Registrar',
-      route: '/bursar',
-      desc: 'Issue official M-Pesa receipts, calling letters, and manage fee ledgers.',
-    },
-    {
-      role: 'teacher',
-      label: 'Faculty & HOD',
+      role: 'teacher' as Role,
+      label: 'Faculty & Lecturer Portal',
       icon: '👩‍🏫',
-      defaultId: 'TCH-001',
-      defaultName: 'Department Lecturer',
       route: '/teacher',
       desc: 'Upload practical lessons, mark attendance, and manage student gradebooks.',
     },
     {
-      role: 'admin',
-      label: 'Principal / Admin',
-      icon: '🏛️',
-      defaultId: 'Eclat2026@admin',
-      defaultName: 'College Principal',
-      route: '/admin',
-      desc: 'Full school administration, user provisioning, course pricing, and oversight.',
-    },
-    {
-      role: 'parent',
-      label: 'Parent / Sponsor',
+      role: 'parent' as Role,
+      label: 'Parent & Sponsor Portal',
       icon: '👨‍👩‍👧',
-      defaultId: `PAR-${currentYear}-001`,
-      defaultName: 'Student Sponsor',
       route: '/parent',
-      desc: 'Track student attendance, fee statements, and term academic reports.',
+      desc: 'Track student attendance, fee clearance, and academic reports.',
     },
   ]
 
-  const handleSelectRole = (cfg: (typeof rolesConfig)[0]) => {
-    setSelectedRole(cfg.role)
-    setAdmissionNumber(cfg.defaultId)
+  // Staff / Administration Role Options (Hidden from public by default)
+  const staffRoles = [
+    {
+      role: 'admin' as Role,
+      label: 'Principal & Directorate Terminal',
+      icon: '🏛️',
+      route: '/admin',
+      desc: 'Institutional administration, student directories, user provisioning, and pricing.',
+    },
+    {
+      role: 'bursar' as Role,
+      label: 'Finance & Admissions Registry',
+      icon: '💼',
+      route: '/bursar',
+      desc: 'Verify tuition payments, card settlements, M-Pesa receipts, and fee ledgers.',
+    },
+  ]
+
+  const activeRolesList = isStaffMode ? staffRoles : publicRoles
+
+  const handleSelectRole = (role: Role) => {
+    setSelectedRole(role)
     setError(null)
   }
 
@@ -101,8 +96,8 @@ export function Login() {
       return
     }
 
-    if (!admissionNumber || !password) {
-      setError('Please enter both your Admission/Staff Number and Password.')
+    if (!admissionNumber.trim() || !password) {
+      setError('Please enter your Admission Number or Staff Username and Password.')
       return
     }
 
@@ -127,16 +122,22 @@ export function Login() {
       setLockoutSeconds(0)
       if (selectedRole === 'admin' || cleanAdmission.toLowerCase().includes('admin')) {
         navigate('/admin')
+      } else if (selectedRole === 'bursar') {
+        navigate('/bursar')
       } else {
-        const activeCfg = rolesConfig.find((r) => r.role === selectedRole) || rolesConfig[0]
+        const allRoles = [...publicRoles, ...staffRoles]
+        const activeCfg = allRoles.find((r) => r.role === selectedRole) || allRoles[0]
         navigate(activeCfg.route)
       }
     }
   }
 
+  const currentActiveRole =
+    [...publicRoles, ...staffRoles].find((r) => r.role === selectedRole) || publicRoles[0]
+
   return (
     <div style={{ minHeight: '100vh', background: 'linear-gradient(135deg, #090d16 0%, #0f172a 50%, #1e293b 100%)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1.5rem 0.75rem calc(80px + env(safe-area-inset-bottom, 0px))', fontFamily: 'Inter, system-ui, sans-serif' }}>
-      <div style={{ maxWidth: '850px', width: '100%', background: '#ffffff', borderRadius: '20px', boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.5)', overflow: 'hidden', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))' }}>
+      <div style={{ maxWidth: '860px', width: '100%', background: '#ffffff', borderRadius: '20px', boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.5)', overflow: 'hidden', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(290px, 1fr))' }}>
         
         {/* Left Side: Workstation Selector */}
         <div style={{ background: '#f8fafc', padding: 'clamp(1.25rem, 4vw, 2.5rem)', borderRight: '1px solid #e2e8f0', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
@@ -149,24 +150,34 @@ export function Login() {
               </div>
             </div>
 
-            <h3 style={{ fontSize: '1.1rem', fontWeight: 800, color: '#0f172a', margin: '0 0 0.5rem' }}>
-              Select Official Workstation
-            </h3>
-            <p style={{ fontSize: '0.84rem', color: '#475569', margin: '0 0 1.25rem' }}>
-              Choose your institutional role to enter your dedicated management portal:
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem' }}>
+              <h3 style={{ fontSize: '1.1rem', fontWeight: 800, color: '#0f172a', margin: 0 }}>
+                {isStaffMode ? 'Staff Terminal' : 'Select Portal'}
+              </h3>
+              {isStaffMode && (
+                <span style={{ fontSize: '0.7rem', background: '#fee2e2', color: '#991b1b', padding: '2px 8px', borderRadius: '4px', fontWeight: 800 }}>
+                  RESTRICTED ACCESS
+                </span>
+              )}
+            </div>
+
+            <p style={{ fontSize: '0.82rem', color: '#475569', margin: '0 0 1.25rem' }}>
+              {isStaffMode
+                ? 'Authorized faculty and executive administrators only.'
+                : 'Select your portal to access live classrooms and course units:'}
             </p>
 
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.6rem' }}>
-              {rolesConfig.map((cfg) => (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.65rem' }}>
+              {activeRolesList.map((cfg) => (
                 <button
                   key={cfg.role}
                   type="button"
-                  onClick={() => handleSelectRole(cfg)}
+                  onClick={() => handleSelectRole(cfg.role)}
                   style={{
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'space-between',
-                    padding: '0.75rem 1rem',
+                    padding: '0.85rem 1rem',
                     borderRadius: '12px',
                     border: selectedRole === cfg.role ? '2px solid #2563eb' : '1px solid #cbd5e1',
                     background: selectedRole === cfg.role ? '#eff6ff' : '#ffffff',
@@ -178,25 +189,46 @@ export function Login() {
                   <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
                     <span style={{ fontSize: '1.4rem' }}>{cfg.icon}</span>
                     <div>
-                      <div style={{ fontWeight: 800, fontSize: '0.9rem', color: selectedRole === cfg.role ? '#1e3a8a' : '#0f172a' }}>
+                      <div style={{ fontWeight: 800, fontSize: '0.88rem', color: selectedRole === cfg.role ? '#1e3a8a' : '#0f172a' }}>
                         {cfg.label}
                       </div>
-                      <div style={{ fontSize: '0.74rem', color: '#475569' }}>
-                        ID: <code style={{ color: '#2563eb', fontWeight: 700 }}>{cfg.defaultId}</code>
+                      <div style={{ fontSize: '0.73rem', color: '#64748b', marginTop: '2px', lineHeight: 1.3 }}>
+                        {cfg.desc}
                       </div>
                     </div>
                   </div>
-                  {selectedRole === cfg.role && <span style={{ color: '#2563eb', fontWeight: 900 }}>✓</span>}
+                  {selectedRole === cfg.role && <span style={{ color: '#2563eb', fontWeight: 900, fontSize: '1.1rem', marginLeft: '6px' }}>✓</span>}
                 </button>
               ))}
             </div>
           </div>
 
-          <div style={{ marginTop: '2rem', paddingTop: '1rem', borderTop: '1px solid #e2e8f0', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <Link to="/" style={{ fontSize: '0.84rem', color: '#2563eb', textDecoration: 'none', fontWeight: 700 }}>
+          <div style={{ marginTop: '2rem', paddingTop: '1rem', borderTop: '1px solid #e2e8f0', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '0.5rem' }}>
+            <Link to="/" style={{ fontSize: '0.82rem', color: '#2563eb', textDecoration: 'none', fontWeight: 700 }}>
               ← Return to Main Website
             </Link>
-            <span style={{ fontSize: '0.78rem', color: '#64748b' }}>KCB Acc: 1344329268</span>
+
+            {/* Discrete Switcher for Staff vs Student */}
+            <button
+              type="button"
+              onClick={() => {
+                const nextMode = !isStaffMode
+                setIsStaffMode(nextMode)
+                setSelectedRole(nextMode ? 'admin' : 'student')
+                setError(null)
+              }}
+              style={{
+                background: 'none',
+                border: 'none',
+                color: '#64748b',
+                fontSize: '0.75rem',
+                cursor: 'pointer',
+                fontWeight: 600,
+                textDecoration: 'underline',
+              }}
+            >
+              {isStaffMode ? '🎓 Trainee & Student Portal' : '🔐 Staff Access'}
+            </button>
           </div>
         </div>
 
@@ -204,14 +236,14 @@ export function Login() {
         <div style={{ padding: 'clamp(1.25rem, 4vw, 2.5rem)', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
           <div>
             <div style={{ marginBottom: '1.5rem' }}>
-              <span style={{ fontSize: '0.75rem', color: '#2563eb', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.05em' }}>
-                INSTITUTIONAL LOGIN
+              <span style={{ fontSize: '0.75rem', color: isStaffMode ? '#dc2626' : '#2563eb', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                {isStaffMode ? 'ADMINISTRATIVE TERMINAL' : 'STUDENT & FACULTY LOGIN'}
               </span>
-              <h2 style={{ fontSize: '1.4rem', fontWeight: 900, color: '#0f172a', margin: '0.25rem 0 0.35rem' }}>
-                {rolesConfig.find((r) => r.role === selectedRole)?.label} Login
+              <h2 style={{ fontSize: '1.35rem', fontWeight: 900, color: '#0f172a', margin: '0.25rem 0 0.35rem' }}>
+                {currentActiveRole.label}
               </h2>
               <p style={{ fontSize: '0.82rem', color: '#475569', margin: 0 }}>
-                {rolesConfig.find((r) => r.role === selectedRole)?.desc}
+                Enter your registered credentials to sign in to your dashboard.
               </p>
             </div>
 
@@ -224,20 +256,22 @@ export function Login() {
 
             <form onSubmit={handleSubmit}>
               <div style={{ marginBottom: '1.1rem' }}>
-                <label className="label">Admission / Staff Number</label>
+                <label className="label" style={{ fontSize: '0.82rem' }}>
+                  {selectedRole === 'student' ? 'Student Admission Number / Email' : 'Staff Username / Email'}
+                </label>
                 <input
                   type="text"
                   required
                   className="input"
                   value={admissionNumber}
                   onChange={(e) => setAdmissionNumber(e.target.value)}
-                  placeholder="e.g. BC-2026-001"
+                  placeholder={selectedRole === 'student' ? 'e.g. EI-2026-001 or your email' : 'e.g. username or staff email'}
                 />
               </div>
 
               <div style={{ marginBottom: '1.3rem' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.35rem' }}>
-                  <label className="label" style={{ margin: 0 }}>Password</label>
+                  <label className="label" style={{ margin: 0, fontSize: '0.82rem' }}>Password</label>
                   <button
                     type="button"
                     style={{ background: 'none', border: 'none', color: '#2563eb', fontSize: '0.78rem', cursor: 'pointer', fontWeight: 600 }}
@@ -252,7 +286,7 @@ export function Login() {
                   className="input"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  placeholder="••••••••"
+                  placeholder="Enter your secure password"
                 />
               </div>
 
@@ -262,13 +296,13 @@ export function Login() {
                 disabled={loading}
                 style={{ fontWeight: 800, padding: '0.85rem', borderRadius: '12px', fontSize: '0.95rem' }}
               >
-                {loading ? 'Authenticating...' : `Sign In to ${rolesConfig.find((r) => r.role === selectedRole)?.label} →`}
+                {loading ? 'Authenticating...' : `Sign In to Portal →`}
               </button>
             </form>
           </div>
 
           <div style={{ fontSize: '0.75rem', color: '#64748b', textAlign: 'center', marginTop: '1.25rem' }}>
-            🔒 256-Bit Encrypted Institutional Portal • Éclat Institute
+            🔒 256-Bit SSL Encrypted • Éclat Institute Global Portal
           </div>
         </div>
       </div>
