@@ -1766,7 +1766,7 @@ export function Landing() {
               type="text"
               className="input"
               style={{ maxWidth: '400px', background: '#0f172a', border: '1.5px solid #334155', color: '#ffffff', fontSize: '0.95rem' }}
-              placeholder="Enter Certificate Serial (e.g. BC-2026-089)"
+              placeholder="Enter Certificate Serial (e.g. EI-2026-089)"
               value={certQuery}
               onChange={(e) => setCertQuery(e.target.value)}
             />

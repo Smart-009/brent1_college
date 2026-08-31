@@ -329,7 +329,7 @@ export function BursarDesk() {
       id: `rem-${Date.now()}`,
       student_id: `std-${Date.now()}`,
       student_name: studentName,
-      admission_number: 'BC-2026',
+      admission_number: 'EI-2026-001',
       guardian_name: 'Guardian / Sponsor',
       parent_name: 'Guardian / Sponsor',
       guardian_phone: phone,
@@ -1169,7 +1169,7 @@ export function BursarDesk() {
                       type="text"
                       required
                       className="input"
-                      placeholder="e.g. BC-2024-001"
+                      placeholder="e.g. EI-2026-001"
                       value={paymentData.admission_number}
                       onChange={(e) => {
                         const adm = e.target.value
@@ -1492,7 +1492,7 @@ export function BursarDesk() {
                       type="text"
                       required
                       className="input"
-                      placeholder="e.g. BC-2024-001"
+                      placeholder="e.g. EI-2026-001"
                       value={newInvoice.admission_number}
                       onChange={(e) => {
                         const adm = e.target.value

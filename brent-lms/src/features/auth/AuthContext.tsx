@@ -40,7 +40,7 @@ export const DEMO_PROFILES: Record<Role, Profile> = {
   student: {
     id: 'student-unregistered',
     full_name: 'Student Trainee',
-    admission_number: `BC-${new Date().getFullYear()}-001`,
+    admission_number: `EI-${new Date().getFullYear()}-001`,
     role: 'student',
     first_login_at: null,
     access_expires_at: null,

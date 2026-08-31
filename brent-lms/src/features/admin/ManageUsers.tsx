@@ -412,7 +412,7 @@ export function ManageUsers() {
             <input
               id="admNo"
               type="text"
-              placeholder={role === 'student' ? `BC-${new Date().getFullYear()}-001` : 'TCH-001'}
+              placeholder={role === 'student' ? `EI-${new Date().getFullYear()}-001` : 'TCH-001'}
               value={admissionNumber}
               onChange={(e) => setAdmissionNumber(e.target.value)}
               required

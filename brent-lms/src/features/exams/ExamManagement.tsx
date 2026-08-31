@@ -161,7 +161,7 @@ export function ExamManagement() {
                               grade: rc.mean_grade,
                               percentage: rc.mean_percentage,
                               issue_date: rc.issue_date || new Date().toLocaleDateString('en-GB'),
-                              certificate_no: `BC-${rc.admission_number.replace(/[^a-zA-Z0-9]/g, '')}`,
+                              certificate_no: `EI-${rc.admission_number.replace(/[^a-zA-Z0-9]/g, '')}`,
                               duration: '4 to 12 Weeks Intensive Practical Training',
                               trainer_name: 'Lead Vocational Instructor',
                               skills_acquired: rc.subjects.map((s) => s.subject_name),

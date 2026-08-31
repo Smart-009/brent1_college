@@ -88,12 +88,12 @@ export function StudentDashboard() {
         <CertificateGenerator 
           cert={{
             student_name: currentStudent?.full_name || profile?.full_name || 'Enrolled Trainee',
-            admission_number: currentStudent?.admission_number || profile?.admission_number || `BC-${new Date().getFullYear()}-001`,
+            admission_number: currentStudent?.admission_number || profile?.admission_number || `EI-${new Date().getFullYear()}-001`,
             course_title: currentStudent?.class_name || 'Comprehensive Practical Short Course',
             grade: studentTranscript?.mean_grade || 'Distinction (A)',
             percentage: studentTranscript?.mean_percentage || 90,
             issue_date: new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' }),
-            certificate_no: `BC-CERT-${(currentStudent?.admission_number || `${new Date().getFullYear()}`).replace(/[^a-zA-Z0-9]/g, '')}`,
+            certificate_no: `EI-CERT-${(currentStudent?.admission_number || `${new Date().getFullYear()}`).replace(/[^a-zA-Z0-9]/g, '')}`,
             duration: '4 to 12 Weeks Intensive Practical Training',
             trainer_name: 'Lead Vocational Instructor',
             skills_acquired: ['Hands-on Laboratory Mastery', 'Technical Workflow & Safety', 'Industry Standards'],

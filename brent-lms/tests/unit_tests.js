@@ -82,7 +82,7 @@ test('Authentication: Role Verification for All 5 System Roles', () => {
 })
 
 test('Authentication: Synthetic Internal Email Mapping', () => {
-  assert.equal(admissionToEmail('BC-2026-001'), 'bc2026001@eclatinstitute.internal')
+  assert.equal(admissionToEmail('EI-2026-001'), 'ei2026001@eclatinstitute.internal')
   assert.equal(admissionToEmail('Eclat2026@admin'), 'eclat2026admin@eclatinstitute.internal')
   assert.equal(admissionToEmail('TCH/042/2026'), 'tch0422026@eclatinstitute.internal')
 })
@@ -104,9 +104,9 @@ test('Security: Brute-Force Rate Limiting Lockout Condition', () => {
 })
 
 test('Security: Input Sanitization strips HTML Tags and dangerous chars', () => {
-  const unsafe1 = '<script>alert("hack")</script>BC-2026-001'
+  const unsafe1 = '<script>alert("hack")</script>EI-2026-001'
   const unsafe2 = '  John <img src=x onerror=alert(1)> Doe  '
-  assert.equal(sanitizeInput(unsafe1), 'scriptalert("hack")/scriptBC-2026-001')
+  assert.equal(sanitizeInput(unsafe1), 'scriptalert("hack")/scriptEI-2026-001')
   assert.equal(sanitizeInput(unsafe2), 'John img src=x onerror=alert(1) Doe')
 })
 
@@ -296,7 +296,7 @@ function evaluateFeeClearance(student) {
 
 test('Biometrics: Template Hash Determinism & Format', () => {
   const stdId = 'std-2026-001'
-  const admNo = 'BC-2026-001'
+  const admNo = 'EI-2026-001'
   const finger = 'Right Thumb'
 
   const hash1 = generateBiometricTemplate(stdId, admNo, finger)
@@ -322,7 +322,7 @@ test('Biometrics: Fee Clearance Evaluation Rules (Fully Cleared)', () => {
   const student = {
     id: 'std-1',
     full_name: 'Abdi Hassan',
-    admission_number: 'BC-2026-001',
+    admission_number: 'EI-2026-001',
     fee_balance: 0,
     term_fee_total: 15000,
     biometric_enrolled: true,
@@ -339,7 +339,7 @@ test('Biometrics: Fee Clearance Evaluation Rules (Conditional 75%+ Paid)', () =>
   const student = {
     id: 'std-2',
     full_name: 'Fatima Omar',
-    admission_number: 'BC-2026-002',
+    admission_number: 'EI-2026-002',
     fee_balance: 3000,
     term_fee_total: 15000, // 12000 paid = 80%
     biometric_enrolled: true,
@@ -356,7 +356,7 @@ test('Biometrics: Fee Clearance Evaluation Rules (Blocked < 75% Paid)', () => {
   const student = {
     id: 'std-3',
     full_name: 'Kevin Otieno',
-    admission_number: 'BC-2026-003',
+    admission_number: 'EI-2026-003',
     fee_balance: 10000,
     term_fee_total: 15000, // 5000 paid = 33%
     biometric_enrolled: true,
