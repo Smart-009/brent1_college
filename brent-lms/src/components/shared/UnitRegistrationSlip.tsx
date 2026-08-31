@@ -36,7 +36,7 @@ export function UnitRegistrationSlip({
                 Eclat Institute
               </h1>
               <div style={{ fontSize: '0.8rem', color: '#475569', fontWeight: 600 }}>
-                Sahl Mall, 4th Street, Eastleigh, Nairobi • Office of Academic Affairs
+                100% Online Global Academy • Office of Academic Affairs • eclat.institute
               </div>
             </div>
           </div>

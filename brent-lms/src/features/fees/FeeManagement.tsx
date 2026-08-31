@@ -741,8 +741,8 @@ export function FeeManagement() {
             <div style={{ padding: '2rem', background: '#fff', color: '#0f172a' }}>
               <div style={{ textAlign: 'center', borderBottom: '2px solid #1e3a8a', paddingBottom: '1rem', marginBottom: '1rem' }}>
                 <img src="/logo.png" alt="Eclat Institute" style={{ width: '52px', height: '52px', borderRadius: '50%' }} />
-                <h2 style={{ fontSize: '1.4rem', fontWeight: 900, color: '#1e3a8a', margin: '0.25rem 0' }}>ECLAT INSTITUTE</h2>
-                <div style={{ fontSize: '0.75rem', color: '#64748b', fontWeight: 700 }}>Sahl Mall, 4th Street, Eastleigh, Nairobi</div>
+                <h2 style={{ fontSize: '1.4rem', fontWeight: 900, color: '#1e3a8a', margin: '0.25rem 0' }}>ÉCLAT INSTITUTE</h2>
+                <div style={{ fontSize: '0.75rem', color: '#64748b', fontWeight: 700 }}>100% Online Global Academy • eclat.institute</div>
                 <div style={{ display: 'inline-block', background: '#f1f5f9', color: '#1e3a8a', padding: '2px 12px', borderRadius: '999px', fontSize: '0.75rem', fontWeight: 800, marginTop: '4px' }}>
                   OFFICIAL TUITION PAYMENT RECEIPT (ORIGINAL)
                 </div>

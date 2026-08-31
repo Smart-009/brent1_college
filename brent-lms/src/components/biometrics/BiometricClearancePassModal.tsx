@@ -115,7 +115,7 @@ export const BiometricClearancePassModal: React.FC<Props> = ({ pass, onClose }) 
                   ÉCLAT INSTITUTE
                 </h1>
                 <div style={{ fontSize: '0.8rem', color: '#64748b', fontWeight: 600 }}>
-                  100% Online Institute • Nairobi Liaison • Tel: +254 740 027 346 • Web: eclat.institute
+                  100% Online Global Academy • Tel: +254 740 027 346 • Web: eclat.institute
                 </div>
               </div>
             </div>

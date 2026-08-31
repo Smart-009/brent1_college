@@ -1675,8 +1675,8 @@ export function BursarDesk() {
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.75rem', marginBottom: '0.5rem' }}>
                 <img src="/logo.png" alt="Eclat Institute" style={{ width: '48px', height: '48px', borderRadius: '50%' }} />
                 <div>
-                  <h2 style={{ color: '#1e3a8a', margin: 0, fontSize: '1.5rem', fontWeight: 900, letterSpacing: '-0.02em' }}>ECLAT INSTITUTE</h2>
-                  <div style={{ fontSize: '0.75rem', color: '#64748b', fontWeight: 700 }}>Sahl Mall, 4th Street, Eastleigh, Nairobi</div>
+                  <h2 style={{ color: '#1e3a8a', margin: 0, fontSize: '1.5rem', fontWeight: 900, letterSpacing: '-0.02em' }}>ÉCLAT INSTITUTE</h2>
+                  <div style={{ fontSize: '0.75rem', color: '#64748b', fontWeight: 700 }}>100% Online Global Academy • eclat.institute</div>
                 </div>
               </div>
               <div style={{ display: 'inline-block', background: '#f1f5f9', color: '#1e3a8a', padding: '3px 14px', borderRadius: '999px', fontSize: '0.8rem', fontWeight: 800 }}>
@@ -1769,8 +1769,8 @@ export function BursarDesk() {
 
               {/* Official Digital Stamp */}
               <div style={{ background: '#f8fafc', border: '1px dashed #94a3b8', borderRadius: '8px', padding: '0.75rem', textAlign: 'center', fontSize: '0.75rem', color: '#475569' }}>
-                <div>🛡️ <strong>OFFICIAL STAMP & VERIFICATION</strong></div>
-                <div>Eclat Institute Directorate of Finance • Eastleigh Sahl Mall Campus</div>
+                <div>🛡️ <strong>OFFICIAL DIGITAL STAMP & VERIFICATION</strong></div>
+                <div>Éclat Institute Directorate of Finance • 100% Online Global Academy</div>
                 <div style={{ color: '#16a34a', fontWeight: 800, marginTop: '2px' }}>STATUS: TRANSACTION VERIFIED & ACCOUNT CREDITED</div>
               </div>
 

@@ -133,7 +133,7 @@ export function MobileLandingView({
               ÉCLAT INSTITUTE
             </div>
             <div style={{ fontSize: '0.65rem', color: '#94a3b8', fontWeight: 600 }}>
-              Sahl Mall • 4th St, Eastleigh
+              100% Online Global Academy
             </div>
           </div>
         </div>
@@ -634,8 +634,8 @@ export function MobileLandingView({
               Copy
             </button>
           </div>
-          <div>📞 Hotline: <a href="tel:+254740027346" style={{ color: '#60a5fa', textDecoration: 'none', fontWeight: 700 }}>+254 740 027 346</a></div>
-          <div>📍 Campus: <strong style={{ color: '#ffffff' }}>Sahl Mall, 4th Street, Eastleigh, Nairobi</strong></div>
+          <div>📞 Virtual Desk: <a href="tel:+254740027346" style={{ color: '#60a5fa', textDecoration: 'none', fontWeight: 700 }}>+254 740 027 346</a></div>
+          <div>🌐 Delivery: <strong style={{ color: '#ffffff' }}>100% Online Live Classes & LMS (Worldwide)</strong></div>
         </div>
       </div>
 

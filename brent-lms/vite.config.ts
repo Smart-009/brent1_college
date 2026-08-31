@@ -15,7 +15,7 @@ export default defineConfig({
       manifest: {
         name: 'Éclat Institute Management & Learning Portal',
         short_name: 'Éclat Institute',
-        description: 'Comprehensive School Information System, Master Timetables, Terminal Examinations, M-Pesa Fee Portal, and Lesson LMS for Éclat Institute Nairobi.',
+        description: 'Comprehensive Student Information System, Examination Desk, Online Fee Portal, and Virtual Class LMS for Éclat Institute.',
         theme_color: '#0c0e12',
         background_color: '#0c0e12',
         display: 'standalone',

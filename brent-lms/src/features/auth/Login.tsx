@@ -145,7 +145,7 @@ export function Login() {
               <img src="/logo.png" alt="Éclat Institute Logo" style={{ width: '52px', height: '52px', borderRadius: '50%', border: '2px solid #d4af37', boxShadow: '0 2px 8px rgba(0,0,0,0.1)' }} />
               <div>
                 <div style={{ fontSize: '1.3rem', fontWeight: 900, color: '#0f172a', fontFamily: 'var(--font-heading)', letterSpacing: '0.03em', lineHeight: 1.1 }}>ÉCLAT INSTITUTE</div>
-                <div style={{ fontSize: '0.72rem', color: '#c5a059', fontWeight: 800, letterSpacing: '0.04em' }}>SAHL MALL • 4TH STREET, EASTLEIGH</div>
+                <div style={{ fontSize: '0.72rem', color: '#c5a059', fontWeight: 800, letterSpacing: '0.04em' }}>100% ONLINE LEARNING ACADEMY</div>
               </div>
             </div>
 
@@ -268,7 +268,7 @@ export function Login() {
           </div>
 
           <div style={{ fontSize: '0.75rem', color: '#64748b', textAlign: 'center', marginTop: '1.25rem' }}>
-            🔒 256-Bit Encrypted Institutional Portal • Eclat Institute Nairobi
+            🔒 256-Bit Encrypted Institutional Portal • Éclat Institute
           </div>
         </div>
       </div>

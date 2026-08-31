@@ -331,11 +331,11 @@ export function ManageClasses() {
         </div>
 
         <div className="card" style={{ padding: '1.25rem', borderLeft: '4px solid #7c3aed' }}>
-          <div style={{ fontSize: '0.8rem', color: '#1e293b', fontWeight: 700 }}>Campus Location</div>
+          <div style={{ fontSize: '0.8rem', color: '#1e293b', fontWeight: 700 }}>Learning Mode</div>
           <div style={{ fontSize: '1.35rem', fontWeight: 900, color: '#7c3aed', marginTop: '0.4rem' }}>
-            Sahl Mall
+            100% Online
           </div>
-          <div style={{ fontSize: '0.75rem', color: '#334155', fontWeight: 600 }}>4th Street, Eastleigh, Nairobi</div>
+          <div style={{ fontSize: '0.75rem', color: '#334155', fontWeight: 600 }}>Live Virtual Classroom & 24/7 LMS</div>
         </div>
       </div>
 

@@ -52,8 +52,8 @@ export function CertificateGenerator({
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
             <span style={{ fontSize: '1.4rem' }}>🎓</span>
             <div>
-              <strong style={{ fontSize: '1rem', color: '#ffffff' }}>Official Vocational Certificate of Completion</strong>
-              <div style={{ fontSize: '0.78rem', color: '#93c5fd' }}>Verified Institutional Credential • Sahl Mall Nairobi</div>
+              <strong style={{ fontSize: '1rem', color: '#ffffff' }}>Official Professional Certificate of Completion</strong>
+              <div style={{ fontSize: '0.78rem', color: '#93c5fd' }}>Verified Institutional Credential • 100% Online Global Academy</div>
             </div>
           </div>
           <div style={{ display: 'flex', gap: '0.75rem' }}>
@@ -116,13 +116,13 @@ export function CertificateGenerator({
                   textTransform: 'uppercase',
                 }}
               >
-                ÉCLAT INSTITUTE NAIROBI
+                ÉCLAT INSTITUTE
               </h1>
               <div style={{ fontSize: '0.85rem', color: '#475569', fontWeight: 700, letterSpacing: '0.08em', marginTop: '2px' }}>
-                CENTRE FOR VOCATIONAL EXCELLENCE & PRACTICAL SKILLS
+                GLOBAL ONLINE ACADEMY FOR TECH & MODERN LANGUAGES
               </div>
               <div style={{ fontSize: '0.75rem', color: '#64748b', marginTop: '2px' }}>
-                Sahl Mall, 4th Street, Eastleigh, Nairobi • Tel: +254 740 027 346
+                100% Online Learning • Web: eclat.institute • Tel: +254 740 027 346
               </div>
             </div>
 
@@ -253,7 +253,7 @@ export function CertificateGenerator({
                 <strong>Date of Conferment:</strong> {cert.issue_date}
               </div>
               <div>
-                <strong>Campus:</strong> Sahl Mall, Eastleigh
+                <strong>Delivery Mode:</strong> 100% Online
               </div>
             </div>
           </div>

@@ -302,7 +302,7 @@ const TESTIMONIALS = [
     course: 'Arabic for Business & Middle East Careers',
     avatar: '🌴',
     quote:
-      'Taking the live online Arabic and Corporate Communication classes from home in Nairobi gave me the fluency required for international interviews. I am now working with an airline in Dubai!',
+      'Taking the live online Arabic and Corporate Communication classes from home gave me the fluency required for international interviews. I am now working with an international airline in Dubai!',
     rating: 5,
   },
 ]
@@ -721,7 +721,7 @@ export function Landing() {
                 ÉCLAT INSTITUTE
               </div>
               <div className="hidden sm:block" style={{ fontSize: '0.68rem', color: '#8c6e28', fontWeight: 700, letterSpacing: '0.06em', textTransform: 'uppercase', whiteSpace: 'nowrap' }}>
-                Sahl Mall, 4th Street • Eastleigh
+                100% Online Live & Cloud LMS
               </div>
             </div>
           </Link>
@@ -828,7 +828,7 @@ export function Landing() {
               marginBottom: '1.75rem',
             }}
           >
-            <span>⭐️⭐️⭐️⭐️⭐️</span> Rated 4.9/5 by 3,500+ Nairobi Short Course Graduates
+            <span>⭐️⭐️⭐️⭐️⭐️</span> Rated 4.9/5 by 3,500+ Online Students Worldwide
           </div>
 
           {/* Main Hero Headline */}
@@ -1549,7 +1549,7 @@ export function Landing() {
               <div style={{ fontSize: '0.85rem', fontWeight: 800, color: '#34d399', textTransform: 'uppercase' }}>Step 2</div>
               <h3 style={{ fontSize: '1.25rem', fontWeight: 800, margin: '0.35rem 0 0.5rem', color: '#ffffff' }}>Intensive Practical Training</h3>
               <p style={{ fontSize: '0.9rem', color: '#cbd5e1', lineHeight: 1.6, margin: 0 }}>
-                Attend hands-on lab sessions in our Eastleigh, Sahl Mall center. Build real-world portfolio projects under active industry mentorship.
+                Attend interactive live video sessions and global project breakout rooms. Build real-world portfolio projects under active industry mentorship.
               </p>
             </div>
 
@@ -1682,7 +1682,7 @@ export function Landing() {
                     <div>📜 <strong>Awarded Qualification:</strong> {certResult.courseTitle}</div>
                     <div>🗓️ <strong>Completion Date:</strong> {certResult.completionDate}</div>
                     <div>🔢 <strong>Certificate Reference:</strong> <span style={{ color: '#fde047', fontWeight: 800 }}>{certResult.certNumber}</span></div>
-                    <div>🏛️ <strong>Campus:</strong> Sahl Mall, 4th Street, Eastleigh, Nairobi</div>
+                    <div>🌐 <strong>Delivery Format:</strong> 100% Online (Verified Digital Credential)</div>
                   </div>
                 </div>
               ) : (
@@ -1768,10 +1768,10 @@ export function Landing() {
               <div style={{ marginBottom: '0.5rem' }}>✉️ <span style={{ color: '#94a3b8' }}>Email:</span> <a href="mailto:admissions@eclat.institute" style={{ color: '#93c5fd', textDecoration: 'underline' }}>admissions@eclat.institute</a></div>
               
               <div style={{ marginTop: '0.75rem', padding: '0.7rem 0.9rem', background: '#131b2e', border: '1px solid #2e3d61', borderRadius: '8px', fontSize: '0.82rem' }}>
-                <div style={{ color: '#fcd34d', fontWeight: 700, marginBottom: '0.25rem' }}>🕒 Campus Opening Hours:</div>
-                <div style={{ color: '#e2e8f0' }}>• Mon – Fri: <strong>7:30 AM – 7:30 PM</strong></div>
-                <div style={{ color: '#e2e8f0' }}>• Saturday: <strong>8:00 AM – 5:00 PM</strong></div>
-                <div style={{ color: '#fca5a5' }}>• Sunday: <em>Closed</em></div>
+                <div style={{ color: '#fcd34d', fontWeight: 700, marginBottom: '0.25rem' }}>🕒 Online Learning & Support:</div>
+                <div style={{ color: '#e2e8f0' }}>• Cloud LMS Portal: <strong>24/7 Unlimited Access</strong></div>
+                <div style={{ color: '#e2e8f0' }}>• Live Batches: <strong>Morning, Evening & Weekends</strong></div>
+                <div style={{ color: '#86efac' }}>• Student Support: <strong>Daily Virtual Desk</strong></div>
               </div>
             </div>
           </div>
@@ -1780,10 +1780,10 @@ export function Landing() {
         {/* Bottom Bar */}
         <div style={{ borderTop: '1px solid #1e293b', paddingTop: '1.75rem', textAlign: 'center', fontSize: '0.85rem', color: '#94a3b8', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem', maxWidth: '1280px', margin: '0 auto' }}>
           <div>
-            © {new Date().getFullYear()} <strong style={{ color: '#e2e8f0' }}>Eclat Institute Nairobi</strong>. All Rights Reserved. Shaping Minds, Inspiring Practical Success.
+            © {new Date().getFullYear()} <strong style={{ color: '#e2e8f0' }}>Éclat Institute</strong>. All Rights Reserved. Shaping Minds, Inspiring Practical Success.
           </div>
           <div style={{ display: 'flex', gap: '1.25rem', alignItems: 'center' }}>
-            <span style={{ fontSize: '0.82rem', color: '#93c5fd' }}>📍 Sahl Mall, 4th Street, Eastleigh</span>
+            <span style={{ fontSize: '0.82rem', color: '#93c5fd' }}>🌐 100% Online Global Academy</span>
             <button
               type="button"
               className="btn btn-primary btn-sm"
@@ -1905,7 +1905,7 @@ export function Landing() {
                 <div style={{ fontSize: '2.5rem', marginBottom: '0.5rem' }}>✓</div>
                 <h4 style={{ fontWeight: 900, fontSize: '1.15rem', margin: '0 0 0.35rem' }}>Application Inquiry Received!</h4>
                 <p style={{ fontSize: '0.88rem', margin: '0 0 1rem' }}>
-                  Thank you, <strong>{inquiryForm.name}</strong>. The Admissions Office has received your application for <strong>{inquiryForm.course}</strong> at Sahl Mall and will call/WhatsApp you shortly.
+                  Thank you, <strong>{inquiryForm.name}</strong>. The Admissions Office has received your application for <strong>{inquiryForm.course}</strong> and will call/WhatsApp you shortly with orientation details.
                 </p>
                 <button
                   type="button"
@@ -2135,9 +2135,9 @@ export function Landing() {
                 <div style={{ fontSize: '0.75rem', color: '#059669', fontWeight: 600 }}>{selectedCourseForModal.installment}</div>
               </div>
               <div>
-                <div style={{ fontSize: '0.72rem', color: '#64748b', fontWeight: 700, textTransform: 'uppercase' }}>Campus Location</div>
-                <div style={{ fontWeight: 800, color: '#0f172a', marginTop: '2px', fontSize: '0.88rem' }}>📍 Sahl Mall Campus</div>
-                <div style={{ fontSize: '0.75rem', color: '#475569' }}>4th Street, Eastleigh</div>
+                <div style={{ fontSize: '0.72rem', color: '#64748b', fontWeight: 700, textTransform: 'uppercase' }}>Learning Format</div>
+                <div style={{ fontWeight: 800, color: '#0f172a', marginTop: '2px', fontSize: '0.88rem' }}>🌐 100% Online</div>
+                <div style={{ fontSize: '0.75rem', color: '#475569' }}>Live Zoom & 24/7 LMS</div>
               </div>
             </div>
 

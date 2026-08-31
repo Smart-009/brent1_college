@@ -703,7 +703,7 @@ export function ResourceLibrary() {
                           whiteSpace: 'nowrap',
                         }}
                       >
-                        ECLAT INSTITUTE NAIROBI • LICENSED TO {profile?.full_name?.toUpperCase() || 'ENROLLED STUDENT'} • STRICTLY CONFIDENTIAL
+                        ÉCLAT INSTITUTE • LICENSED TO {profile?.full_name?.toUpperCase() || 'ENROLLED STUDENT'} • STRICTLY CONFIDENTIAL
                       </div>
                     ))}
                   </div>

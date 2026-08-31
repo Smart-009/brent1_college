@@ -100,7 +100,7 @@ export function AccessExpired() {
       </div>
 
       <div style={{ marginTop: 'var(--space-6)', fontSize: 'var(--text-xs)', color: 'var(--color-muted)' }}>
-        Eclat Institute • Eastleigh, Nairobi
+        Éclat Institute • 100% Online Global Academy
       </div>
     </div>
   )
