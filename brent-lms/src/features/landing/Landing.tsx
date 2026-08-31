@@ -36,8 +36,8 @@ const DEFAULT_COURSES_DATA: CourseItem[] = [
     tagColor: '#6366f1',
     duration: '12 Weeks (3 Months)',
     schedule: 'Live Online Evening Classes (7:30 PM - 9:30 PM) / Self-Paced',
-    fee: 'KES 12,500',
-    installment: '2 installments of KES 6,500',
+    fee: '$120',
+    installment: '2 installments of $60',
     careerOutcome: 'Junior Full-Stack Developer • Frontend Engineer • Remote Tech Contractor',
     skills: ['React 19 & JavaScript ES6+', 'Node.js & Express APIs', 'PostgreSQL & Database Queries', 'Git GitHub & Cloud Hosting', 'Full-Stack Portfolio Project'],
     icon: '💻',
@@ -57,8 +57,8 @@ const DEFAULT_COURSES_DATA: CourseItem[] = [
     tagColor: '#0284c7',
     duration: '8 Weeks (2 Months)',
     schedule: 'Live Virtual Cohorts (Mon & Wed 8:00 PM) / Saturday Intensive',
-    fee: 'KES 9,500',
-    installment: '2 installments of KES 5,000',
+    fee: '$95',
+    installment: '2 installments of $48',
     careerOutcome: 'Data Analyst • Business Intelligence Associate • Junior Python Developer',
     skills: ['Python Syntax & OOP', 'Pandas & NumPy Data Cleaning', 'SQL Queries & Relational DBs', 'Matplotlib & Seaborn Charts', 'Power BI Dashboards'],
     icon: '📊',
@@ -78,8 +78,8 @@ const DEFAULT_COURSES_DATA: CourseItem[] = [
     tagColor: '#0f172a',
     duration: '4 Weeks (1 Month)',
     schedule: 'Live Virtual Morning (9:00 AM) / Evening (6:00 PM) / 24/7 LMS',
-    fee: 'KES 4,500',
-    installment: '2 installments of KES 2,500',
+    fee: '$45',
+    installment: '2 installments of $23',
     careerOutcome: 'Office Administrator • Executive Virtual Assistant • Data Entry Specialist',
     skills: ['Ms Word & Document Styling', 'Advanced Ms Excel & Formulas', 'PowerPoint Slide Decks', 'Google Workspace Collaboration', 'Canva Pro Graphics & Social Media'],
     icon: '⚡',
@@ -99,8 +99,8 @@ const DEFAULT_COURSES_DATA: CourseItem[] = [
     tagColor: '#dc2626',
     duration: '6 Weeks',
     schedule: 'Live Virtual Weekend Masterclass (Sat & Sun 3:00 PM - 6:00 PM)',
-    fee: 'KES 9,000',
-    installment: '2 installments of KES 4,750',
+    fee: '$89',
+    installment: '2 installments of $45',
     careerOutcome: 'Junior SOC Analyst • IT Security Specialist • System Administrator',
     skills: ['Network Security & Protocols', 'Vulnerability Assessment', 'Ethical Hacking Fundamentals', 'Password & Encryption Standards', 'Incident Response'],
     icon: '🛡️',
@@ -113,22 +113,22 @@ const DEFAULT_COURSES_DATA: CourseItem[] = [
   },
   {
     id: 'c-acc',
-    title: 'Computerized Accounting, QuickBooks & KRA iTax',
+    title: 'Computerized Accounting, QuickBooks & International Tax',
     category: 'Business Tech & Accounting',
     tag: '📈 High Corporate Demand',
     tagColor: '#b45309',
     duration: '4 Weeks (1 Month)',
     schedule: 'Live Virtual Evening (6:00 PM - 8:00 PM) / Weekend Batches',
-    fee: 'KES 6,500',
-    installment: '2 installments of KES 3,500',
+    fee: '$65',
+    installment: '2 installments of $33',
     careerOutcome: 'Accounts Assistant • Payroll Specialist • Tax Consultant & Bookkeeper',
-    skills: ['QuickBooks Desktop & Online', 'KRA iTax Filing (VAT & PAYE)', 'Payroll & SHIF/NSSF Deductions', 'Bank Reconciliation', 'Financial Statements & Balance Sheets'],
+    skills: ['QuickBooks Desktop & Online', 'International Tax Filing & VAT', 'Payroll & Benefits Deductions', 'Bank Reconciliation', 'Financial Statements & Balance Sheets'],
     icon: '📈',
     popular: true,
     syllabus: [
       { week: 'Week 1', topic: 'Company File Setup & Chart of Accounts in QuickBooks', practicalLab: 'Configuring fiscal years, opening balances, and vendor databases.' },
       { week: 'Week 2', topic: 'Invoicing, Accounts Receivable & Bill Payments', practicalLab: 'Recording sales receipts, customer credit memos, and supplier reconciliations.' },
-      { week: 'Week 3', topic: 'Payroll Processing & Monthly KRA iTax Filing', practicalLab: 'Computing PAYE, NSSF, SHIF/Housing Levy deductions, and filing VAT returns.' },
+      { week: 'Week 3', topic: 'Payroll Processing & Monthly Tax Filing', practicalLab: 'Computing salary deductions, benefit computations, and filing VAT returns.' },
       { week: 'Week 4', topic: 'Bank Reconciliation & Financial Statement Generation', practicalLab: 'Balancing monthly bank accounts and generating Profit & Loss balance sheets.' },
     ],
   },
@@ -140,8 +140,8 @@ const DEFAULT_COURSES_DATA: CourseItem[] = [
     tagColor: '#8b5cf6',
     duration: '6 Weeks',
     schedule: 'Live Online Evening / Flexible Self-Paced Modules',
-    fee: 'KES 7,500',
-    installment: '2 installments of KES 4,000',
+    fee: '$75',
+    installment: '2 installments of $38',
     careerOutcome: 'UI/UX Designer • Product Designer • Freelance Figma Specialist',
     skills: ['User Research & Wireframing', 'Figma Components & Auto Layout', 'Interactive Clickable Prototypes', 'Design Systems & UI Kits', 'Developer Hand-off'],
     icon: '🎨',
@@ -159,8 +159,8 @@ const DEFAULT_COURSES_DATA: CourseItem[] = [
     tagColor: '#0284c7',
     duration: '6 to 8 Weeks',
     schedule: 'Live Virtual Evening (6:00 PM) / Morning Sessions (7:30 AM)',
-    fee: 'KES 5,500',
-    installment: '2 installments of KES 3,000',
+    fee: '$55',
+    installment: '2 installments of $28',
     careerOutcome: 'Corporate Communicator • Public Speaker • Executive Virtual Assistant',
     skills: ['Spoken English & Pronunciation', 'Business Email & Executive Memos', 'Public Speaking & Presentation', 'Grammar & Vocabulary Mastery', 'Boardroom Interview Confidence'],
     icon: '📢',
@@ -180,8 +180,8 @@ const DEFAULT_COURSES_DATA: CourseItem[] = [
     tagColor: '#2563eb',
     duration: '4 to 6 Weeks Intensive',
     schedule: 'Live Zoom Speaking Mock Tests & Writing Drills (Evening / Weekend)',
-    fee: 'KES 8,500',
-    installment: '2 installments of KES 4,500',
+    fee: '$85',
+    installment: '2 installments of $43',
     careerOutcome: 'Study Abroad (UK, Canada, USA, Europe) • Global Healthcare & Relocation Visas',
     skills: ['IELTS Speaking 1-on-1 Mocks', 'Listening Audio Comprehension Strategies', 'Academic Reading Speed Tactics', 'Task 1 & Task 2 Writing Masterclass', 'British Council Exam Rubric'],
     icon: '🎓',
@@ -201,8 +201,8 @@ const DEFAULT_COURSES_DATA: CourseItem[] = [
     tagColor: '#16a34a',
     duration: '4 to 6 Weeks',
     schedule: 'Live Interactive 1-on-1 & Small Group Video Sessions',
-    fee: 'KES 5,000',
-    installment: '2 installments of KES 2,750',
+    fee: '$49',
+    installment: '2 installments of $25',
     careerOutcome: 'NGO Field Officer • Expatriate Integration • East Africa Trade Liaison',
     skills: ['Everyday Mazungumzo & Greetings', 'Sarufi (Grammar & Noun Classes)', 'Market & Business Swahili', 'Reading & Written Composition', 'Cultural Communication & Etiquette'],
     icon: '🇰🇪',
@@ -222,8 +222,8 @@ const DEFAULT_COURSES_DATA: CourseItem[] = [
     tagColor: '#059669',
     duration: '8 Weeks (2 Months)',
     schedule: 'Live Evening (6:30 PM) / Weekend Virtual Cohorts',
-    fee: 'KES 7,500',
-    installment: '2 installments of KES 4,000',
+    fee: '$75',
+    installment: '2 installments of $38',
     careerOutcome: 'Bilingual Support Specialist • Middle East Corporate Liaison • Flight Attendant',
     skills: ['Arabic Script & Phonetics', 'Conversational Arabic for Everyday Life', 'Business & Commercial Vocabulary', 'Listening & Audio Comprehension', 'Gulf Cultural Etiquette'],
     icon: '🌴',
@@ -243,8 +243,8 @@ const DEFAULT_COURSES_DATA: CourseItem[] = [
     tagColor: '#3b82f6',
     duration: '8 Weeks (2 Months)',
     schedule: 'Live Online Video Masterclass (Tue & Thu 7:00 PM)',
-    fee: 'KES 7,500',
-    installment: '2 installments of KES 4,000',
+    fee: '$79',
+    installment: '2 installments of $40',
     careerOutcome: 'Embassy Assistant • International NGO Officer • Multilingual Customer Support',
     skills: ['French Phonetics & Accent', 'Grammar & Verb Conjugation', 'Conversational Fluency', 'Written Composition', 'DELF A1/A2 Exam Prep'],
     icon: '🇫🇷',
@@ -263,8 +263,8 @@ const DEFAULT_COURSES_DATA: CourseItem[] = [
     tagColor: '#f59e0b',
     duration: '8 Weeks (2 Months)',
     schedule: 'Live Online Coaching & Grammar Workshops (Mon & Fri 7:00 PM)',
-    fee: 'KES 8,000',
-    installment: '2 installments of KES 4,250',
+    fee: '$79',
+    installment: '2 installments of $40',
     careerOutcome: 'German University Candidate • Healthcare & Nurse Relocation in Germany',
     skills: ['German Grammar & Cases (Akkusativ, Dativ)', 'Conversational Speaking Drills', 'Reading Comprehension', 'Goethe-Zertifikat Exam Tactics', 'Workplace Communication'],
     icon: '🇩🇪',
@@ -390,8 +390,8 @@ export function Landing() {
       tagColor: '#0f172a',
       duration: u.course_duration || '4 Weeks Certificate',
       schedule: 'Live Online Batches & 24/7 LMS',
-      fee: 'KES 4,500',
-      installment: '2 installments',
+      fee: '$45',
+      installment: '2 installments of $23',
       careerOutcome: u.description || 'Certified Online Graduate',
       skills: u.syllabus_modules?.flatMap((m) => m.topics) || ['Live Interactive Virtual Classes', 'Verified E-Certificate'],
       icon: '💻',
@@ -428,8 +428,8 @@ export function Landing() {
         tagColor: '#0f172a',
         duration: u.course_duration || '4 Weeks Certificate',
         schedule: 'Live Online Batches & 24/7 LMS',
-        fee: 'KES 4,500',
-        installment: '2 installments',
+        fee: '$45',
+        installment: '2 installments of $23',
         careerOutcome: u.description || 'Certified Online Graduate',
         skills: u.syllabus_modules?.flatMap((m) => m.topics) || ['Live Interactive Virtual Classes', 'Verified E-Certificate'],
         icon: '💻',
@@ -457,8 +457,8 @@ export function Landing() {
             tagColor: '#0f172a',
             duration: '4 to 8 Weeks',
             schedule: 'Live Online Batches',
-            fee: 'KES 5,500',
-            installment: '2 installments of KES 3,000',
+            fee: '$55',
+            installment: '2 installments of $28',
             careerOutcome: c.description || 'Certified Online Graduate',
             skills: ['Live Zoom Interactive Training', 'Verified E-Certificate'],
             icon: '💻',
@@ -1074,10 +1074,10 @@ export function Landing() {
               💳
             </div>
             <h3 style={{ fontSize: '1.25rem', fontWeight: 800, color: '#0f172a', margin: '0 0 0.5rem' }}>
-              Zero-Stress M-Pesa Installments
+              Global Flexible Installments ($ USD)
             </h3>
             <p style={{ fontSize: '0.92rem', color: '#334155', lineHeight: 1.6, margin: 0 }}>
-              Affordable tech and language education with flexible installment plans directly via M-Pesa Paybill 247247 with automatic digital receipting.
+              Affordable international pricing in US Dollars. Pay tuition seamlessly via Visa, Mastercard, PayPal, Bank Wire, or Mobile Money with 2 to 3 flexible installments.
             </p>
           </div>
         </div>
@@ -1585,22 +1585,23 @@ export function Landing() {
         </div>
       </section>
 
-      {/* Intakes, Paybill & Campus Location Section */}
+      {/* Intakes, Global Payment & Admissions Section */}
       <section id="intakes" style={{ padding: '5rem 1.5rem', maxWidth: '1240px', margin: '0 auto' }}>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '2.5rem' }}>
-          {/* Paybill Card */}
+          {/* Global Payment Card */}
           <div style={{ background: 'linear-gradient(135deg, #065f46 0%, #047857 100%)', color: '#ffffff', borderRadius: '20px', padding: '2.5rem', boxShadow: '0 10px 25px rgba(5, 150, 105, 0.2)' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '1rem' }}>
-              <span style={{ fontSize: '2rem' }}>📱</span>
+              <span style={{ fontSize: '2rem' }}>💳</span>
               <div>
-                <h3 style={{ fontSize: '1.3rem', fontWeight: 900, color: '#ffffff', margin: 0 }}>Official M-Pesa Payment Guide</h3>
-                <div style={{ fontSize: '0.8rem', color: '#a7f3d0' }}>Instant automated fee receipts</div>
+                <h3 style={{ fontSize: '1.3rem', fontWeight: 900, color: '#ffffff', margin: 0 }}>International Tuition Payment Guide</h3>
+                <div style={{ fontSize: '0.8rem', color: '#a7f3d0' }}>Instant automated digital invoices & receipts</div>
               </div>
             </div>
             <div style={{ background: 'rgba(255, 255, 255, 0.12)', borderRadius: '12px', padding: '1.25rem', marginTop: '1.5rem', lineHeight: 1.8 }}>
-              <div>🏢 <strong>Paybill Number:</strong> <span style={{ fontSize: '1.25rem', fontWeight: 900, color: '#ffffff', letterSpacing: '0.05em' }}>247247</span></div>
-              <div>📑 <strong>Account:</strong> <span style={{ fontWeight: 800 }}>Student Admission Number</span> (or Your Full Name)</div>
-              <div>💰 <strong>Installments:</strong> Accepted in 2 to 3 flexible parts</div>
+              <div>🌐 <strong>Currency:</strong> <span style={{ fontSize: '1.15rem', fontWeight: 900, color: '#ffffff' }}>USD ($)</span> (or local equivalent)</div>
+              <div>💳 <strong>Accepted Methods:</strong> Visa, Mastercard, PayPal, Stripe, Bank Wire & Mobile Money</div>
+              <div>📑 <strong>Reference / Account:</strong> <span style={{ fontWeight: 800 }}>Student ID Number</span> (or Full Name)</div>
+              <div>💰 <strong>Installment Plan:</strong> Available in 2 to 3 flexible parts</div>
             </div>
             <p style={{ fontSize: '0.82rem', color: '#d1fae5', marginTop: '1.25rem', margin: '1.25rem 0 0' }}>
               * Official stamped digital receipts are issued instantly by the Bursar Desk upon payment confirmation.
@@ -1738,30 +1739,30 @@ export function Landing() {
           {/* Tuition Payment Details */}
           <div>
             <h4 style={{ color: '#f8fafc', fontSize: '1.05rem', fontWeight: 800, marginBottom: '1.25rem', borderBottom: '2px solid #16a34a', paddingBottom: '0.4rem', display: 'inline-block' }}>
-              M-Pesa & Fee Payments
+              International Tuition & Payments
             </h4>
             <div style={{ fontSize: '0.88rem', lineHeight: 1.75, color: '#cbd5e1' }}>
               <div style={{ background: '#0f291e', border: '1px solid #16a34a', borderRadius: '8px', padding: '0.75rem 1rem', marginBottom: '0.9rem' }}>
-                <div style={{ fontSize: '0.75rem', color: '#86efac', textTransform: 'uppercase', fontWeight: 700 }}>M-Pesa Direct Paybill</div>
-                <div style={{ fontSize: '1.45rem', fontWeight: 900, color: '#4ade80', letterSpacing: '0.05em', margin: '2px 0' }}>247247</div>
+                <div style={{ fontSize: '0.75rem', color: '#86efac', textTransform: 'uppercase', fontWeight: 700 }}>Global Multi-Currency Billing</div>
+                <div style={{ fontSize: '1.25rem', fontWeight: 900, color: '#4ade80', letterSpacing: '0.03em', margin: '2px 0' }}>USD ($) Accepted</div>
                 <div style={{ fontSize: '0.82rem', color: '#e2e8f0' }}>
-                  Account: <strong style={{ color: '#fef08a' }}>Student Admission Number</strong>
+                  Cards, PayPal, Bank Wire & Mobile Money
                 </div>
               </div>
-              <div style={{ marginBottom: '0.35rem' }}>🏦 <span style={{ color: '#94a3b8' }}>Bank:</span> <strong style={{ color: '#f8fafc' }}>Kenya Commercial Bank (KCB)</strong></div>
-              <div style={{ marginBottom: '0.35rem' }}>📍 <span style={{ color: '#94a3b8' }}>Branch:</span> <strong style={{ color: '#f8fafc' }}>Eastleigh Branch, Nairobi</strong></div>
-              <div style={{ marginBottom: '0.35rem' }}>💳 <span style={{ color: '#94a3b8' }}>Installments:</span> <strong style={{ color: '#f8fafc' }}>2–3 flexible parts accepted</strong></div>
-              <div>📜 <span style={{ color: '#94a3b8' }}>Receipts:</span> <strong style={{ color: '#f8fafc' }}>Official stamped digital receipts</strong></div>
+              <div style={{ marginBottom: '0.35rem' }}>💳 <span style={{ color: '#94a3b8' }}>Cards:</span> <strong style={{ color: '#f8fafc' }}>Visa & Mastercard</strong></div>
+              <div style={{ marginBottom: '0.35rem' }}>🌐 <span style={{ color: '#94a3b8' }}>Online:</span> <strong style={{ color: '#f8fafc' }}>PayPal, Stripe & Wire Transfer</strong></div>
+              <div style={{ marginBottom: '0.35rem' }}>💰 <span style={{ color: '#94a3b8' }}>Installments:</span> <strong style={{ color: '#f8fafc' }}>2–3 flexible parts accepted</strong></div>
+              <div>📜 <span style={{ color: '#94a3b8' }}>Receipts:</span> <strong style={{ color: '#f8fafc' }}>Official digital receipts with QR</strong></div>
             </div>
           </div>
 
-          {/* Campus Location & Hours */}
+          {/* Virtual Admissions & Support */}
           <div>
             <h4 style={{ color: '#f8fafc', fontSize: '1.05rem', fontWeight: 800, marginBottom: '1.25rem', borderBottom: '2px solid #ea580c', paddingBottom: '0.4rem', display: 'inline-block' }}>
-              Admissions & Campus
+              Virtual Admissions & Support
             </h4>
             <div style={{ fontSize: '0.88rem', lineHeight: 1.75, color: '#cbd5e1' }}>
-              <div style={{ marginBottom: '0.35rem' }}>📍 <span style={{ color: '#94a3b8' }}>Campus:</span> <strong style={{ color: '#f8fafc' }}>Sahl Mall, 4th Street, Eastleigh</strong></div>
+              <div style={{ marginBottom: '0.35rem' }}>🌐 <span style={{ color: '#94a3b8' }}>Delivery:</span> <strong style={{ color: '#f8fafc' }}>100% Online (Worldwide)</strong></div>
               <div style={{ marginBottom: '0.35rem' }}>📞 <span style={{ color: '#94a3b8' }}>Phone:</span> <strong style={{ color: '#f8fafc' }}>+254 740 027 346</strong></div>
               <div style={{ marginBottom: '0.35rem' }}>💬 <span style={{ color: '#94a3b8' }}>WhatsApp:</span> <strong style={{ color: '#f8fafc' }}>+254 740 027 346</strong></div>
               <div style={{ marginBottom: '0.5rem' }}>✉️ <span style={{ color: '#94a3b8' }}>Email:</span> <a href="mailto:admissions@eclat.institute" style={{ color: '#93c5fd', textDecoration: 'underline' }}>admissions@eclat.institute</a></div>

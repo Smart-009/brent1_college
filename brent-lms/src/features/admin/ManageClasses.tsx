@@ -373,7 +373,7 @@ export function ManageClasses() {
                       Course Tuition Fee
                     </span>
                     <strong style={{ color: '#16a34a', fontSize: '1.1rem', fontWeight: 900 }}>
-                      KES {d.fee_amount ? d.fee_amount.toLocaleString() : '4,500'}
+                      ${d.fee_amount ? d.fee_amount.toLocaleString() : '75'}
                     </strong>
                   </div>
 
@@ -502,12 +502,12 @@ export function ManageClasses() {
                   />
                 </div>
                 <div className="form-group" style={{ margin: 0 }}>
-                  <label className="form-label" htmlFor="feeAmount">Course Tuition Fee (KES) *</label>
+                  <label className="form-label" htmlFor="feeAmount">Course Tuition Fee ($ USD) *</label>
                   <input
                     id="feeAmount"
                     type="number"
-                    min="500"
-                    placeholder="e.g. 9500"
+                    min="1"
+                    placeholder="e.g. 95"
                     value={feeAmount}
                     onChange={(e) => setFeeAmount(Number(e.target.value))}
                     required

@@ -115,9 +115,9 @@ export function BursarDesk() {
       'Student Name',
       'Program',
       'Course Duration / Cohort',
-      'Total Billed (KES)',
-      'Total Paid (KES)',
-      'Balance (KES)',
+      'Total Billed ($ USD)',
+      'Total Paid ($ USD)',
+      'Balance ($ USD)',
       'Payment Status',
       'Issue Date',
       'Due Date',
@@ -337,8 +337,8 @@ export function BursarDesk() {
       amount_due: balance,
       balance_due: balance,
       due_date: 'Immediate',
-      message_text: `Dear Guardian, this is a reminder from Eclat Institute. A tuition balance of KES ${balance.toLocaleString()} is due. Please pay via Paybill 247247, Account: Student Adm No. Thank you.`,
-      message: `Dear Guardian, this is a reminder from Eclat Institute. A tuition balance of KES ${balance.toLocaleString()} is due. Please pay via Paybill 247247, Account: Student Adm No. Thank you.`,
+      message_text: `Dear Student/Guardian, this is a tuition reminder from Éclat Institute. An outstanding balance of $${balance.toLocaleString()} is due. Please settle via the online student portal. Thank you.`,
+      message: `Dear Student/Guardian, this is a tuition reminder from Éclat Institute. An outstanding balance of $${balance.toLocaleString()} is due. Please settle via the online student portal. Thank you.`,
       sent_at: new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }),
       status: 'Delivered',
       channel: 'SMS',
@@ -425,14 +425,14 @@ export function BursarDesk() {
         </div>
       </div>
 
-      {/* Tab 1: Overview */}
+      {/* Tab: Overview */}
       {activeTab === 'overview' && (
         <div>
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
             <div className="card" style={{ padding: '1.25rem', borderLeft: '4px solid var(--color-primary)' }}>
               <div style={{ fontSize: '0.8rem', color: 'var(--color-text-secondary)', fontWeight: 600 }}>Total Billed Revenue</div>
               <div style={{ fontSize: '1.85rem', fontWeight: 800, color: 'var(--color-primary)', marginTop: '0.25rem' }}>
-                KES {totalBilled.toLocaleString()}
+                ${totalBilled.toLocaleString()}
               </div>
               <div style={{ fontSize: '0.75rem', color: 'var(--color-text-secondary)', marginTop: '0.2rem' }}>Across {invoices.length} Student Invoices</div>
             </div>
@@ -440,7 +440,7 @@ export function BursarDesk() {
             <div className="card" style={{ padding: '1.25rem', borderLeft: '4px solid #16a34a' }}>
               <div style={{ fontSize: '0.8rem', color: 'var(--color-text-secondary)', fontWeight: 600 }}>Total Collections</div>
               <div style={{ fontSize: '1.85rem', fontWeight: 800, color: '#16a34a', marginTop: '0.25rem' }}>
-                KES {totalCollected.toLocaleString()}
+                ${totalCollected.toLocaleString()}
               </div>
               <div style={{ fontSize: '0.75rem', color: '#16a34a', marginTop: '0.2rem' }}>Collection Rate: {collectionRate}%</div>
             </div>
@@ -448,7 +448,7 @@ export function BursarDesk() {
             <div className="card" style={{ padding: '1.25rem', borderLeft: '4px solid #ea580c' }}>
               <div style={{ fontSize: '0.8rem', color: 'var(--color-text-secondary)', fontWeight: 600 }}>Outstanding Fee Balance</div>
               <div style={{ fontSize: '1.85rem', fontWeight: 800, color: '#ea580c', marginTop: '0.25rem' }}>
-                KES {totalOutstanding.toLocaleString()}
+                ${totalOutstanding.toLocaleString()}
               </div>
               <div style={{ fontSize: '0.75rem', color: 'var(--color-text-secondary)', marginTop: '0.2rem' }}>Pending Payments</div>
             </div>
@@ -569,10 +569,10 @@ export function BursarDesk() {
                       <td>{inv.admission_number}</td>
                       <td>{inv.student_name}</td>
                       <td>{inv.class_name} • {inv.term}</td>
-                      <td>KES {inv.total_amount.toLocaleString()}</td>
-                      <td style={{ color: '#16a34a', fontWeight: 600 }}>KES {inv.paid_amount.toLocaleString()}</td>
+                      <td>${inv.total_amount.toLocaleString()}</td>
+                      <td style={{ color: '#16a34a', fontWeight: 600 }}>${inv.paid_amount.toLocaleString()}</td>
                       <td style={{ color: inv.balance > 0 ? '#dc2626' : '#16a34a', fontWeight: 700 }}>
-                        KES {inv.balance.toLocaleString()}
+                        ${inv.balance.toLocaleString()}
                       </td>
                       <td>
                         <span className={`badge ${inv.status === 'Paid' ? 'badge-success' : inv.status === 'Partial' ? 'badge-warning' : 'badge-danger'}`}>
@@ -662,12 +662,12 @@ export function BursarDesk() {
                       <td><strong>{rcpt.receipt_number}</strong></td>
                       <td>{rcpt.admission_number}</td>
                       <td>{rcpt.student_name}</td>
-                      <td style={{ color: '#16a34a', fontWeight: 700 }}>KES {(rcpt.amount_paid ?? rcpt.amount).toLocaleString()}</td>
+                      <td style={{ color: '#16a34a', fontWeight: 700 }}>${(rcpt.amount_paid ?? rcpt.amount).toLocaleString()}</td>
                       <td>
                         {(rcpt.balance_remaining ?? rcpt.balance_after ?? 0) === 0 ? (
-                          <span className="badge badge-success">✓ Cleared (KES 0)</span>
+                          <span className="badge badge-success">✓ Cleared ($0)</span>
                         ) : (
-                          <span className="badge badge-warning">KES {(rcpt.balance_remaining ?? rcpt.balance_after ?? 0).toLocaleString()}</span>
+                          <span className="badge badge-warning">${(rcpt.balance_remaining ?? rcpt.balance_after ?? 0).toLocaleString()}</span>
                         )}
                       </td>
                       <td><span className="badge badge-info">{rcpt.payment_method}</span></td>
@@ -891,7 +891,7 @@ export function BursarDesk() {
                       <td>{std.admission_date || std.enrollment_date || currentAcademicYear}</td>
                       <td>
                         <span className={`badge ${std.fee_cleared ? 'badge-success' : 'badge-warning'}`}>
-                          {std.fee_cleared ? '✓ Cleared' : `KES ${std.fee_balance.toLocaleString()} Due`}
+                          {std.fee_cleared ? '✓ Cleared' : `$${std.fee_balance.toLocaleString()} Due`}
                         </span>
                       </td>
                       <td>
@@ -1040,7 +1040,7 @@ export function BursarDesk() {
                     <td><strong>{s.full_name}</strong></td>
                     <td>{s.admission_number}</td>
                     <td style={{ color: s.fee_cleared ? '#16a34a' : '#dc2626', fontWeight: 700 }}>
-                      {s.fee_cleared ? 'Cleared (KES 0)' : `KES ${s.fee_balance.toLocaleString()}`}
+                      {s.fee_cleared ? 'Cleared ($0)' : `$${s.fee_balance.toLocaleString()}`}
                     </td>
                     <td>{s.guardian?.phone || s.emergency_contact || 'Not on file'}</td>
                     <td>
@@ -1202,7 +1202,7 @@ export function BursarDesk() {
 
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
                   <div>
-                    <label className="label">Total Fee / Payable Balance (KES) *</label>
+                    <label className="label">Total Fee / Payable Balance ($ USD) *</label>
                     <input
                       type="number"
                       required
@@ -1213,7 +1213,7 @@ export function BursarDesk() {
                     />
                   </div>
                   <div>
-                    <label className="label">Amount Paid Now (KES) *</label>
+                    <label className="label">Amount Paid Now ($ USD) *</label>
                     <input
                       type="number"
                       required
@@ -1242,9 +1242,9 @@ export function BursarDesk() {
                   </div>
                   <div style={{ fontSize: '1rem', fontWeight: 800 }}>
                     {(paymentData.total_fee - paymentData.amount) <= 0 ? (
-                      <span style={{ color: '#16a34a' }}>✓ KES 0.00 (FULL FEE CLEARED)</span>
+                      <span style={{ color: '#16a34a' }}>✓ $0.00 (FULL FEE CLEARED)</span>
                     ) : (
-                      <span style={{ color: '#d97706' }}>KES {(paymentData.total_fee - paymentData.amount).toLocaleString()}</span>
+                      <span style={{ color: '#d97706' }}>${(paymentData.total_fee - paymentData.amount).toLocaleString()}</span>
                     )}
                   </div>
                 </div>
@@ -1560,13 +1560,13 @@ export function BursarDesk() {
                     />
                   </div>
                   <div>
-                    <label className="label">Amount (KES) *</label>
+                    <label className="label">Amount ($ USD) *</label>
                     <input
                       type="number"
                       required
-                      min="100"
+                      min="1"
                       className="input"
-                      placeholder="Enter amount (e.g. 25000)"
+                      placeholder="Enter amount (e.g. 120)"
                       value={newInvoice.total_amount || ''}
                       onChange={(e) => setNewInvoice({ ...newInvoice, total_amount: Number(e.target.value) })}
                     />
@@ -1703,16 +1703,16 @@ export function BursarDesk() {
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <span style={{ fontSize: '0.9rem', fontWeight: 800, color: '#166534', textTransform: 'uppercase' }}>AMOUNT PAID:</span>
                 <span style={{ fontSize: '1.6rem', fontWeight: 900, color: '#16a34a' }}>
-                  KES {(selectedReceipt.amount_paid ?? selectedReceipt.amount).toLocaleString()}
+                  ${(selectedReceipt.amount_paid ?? selectedReceipt.amount).toLocaleString()}
                 </span>
               </div>
               <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.85rem', color: '#475569', marginTop: '0.5rem', borderTop: '1px dashed #cbd5e1', paddingTop: '0.5rem' }}>
                 <span>Outstanding Balance Remaining:</span>
                 <span>
                   {(selectedReceipt.balance_remaining ?? selectedReceipt.balance_after ?? 0) === 0 ? (
-                    <strong style={{ color: '#16a34a' }}>KES 0.00 (FEE CLEARED ✓)</strong>
+                    <strong style={{ color: '#16a34a' }}>$0.00 (FEE CLEARED ✓)</strong>
                   ) : (
-                    <strong style={{ color: '#dc2626' }}>KES {(selectedReceipt.balance_remaining ?? selectedReceipt.balance_after ?? 0).toLocaleString()}</strong>
+                    <strong style={{ color: '#dc2626' }}>${(selectedReceipt.balance_remaining ?? selectedReceipt.balance_after ?? 0).toLocaleString()}</strong>
                   )}
                 </span>
               </div>

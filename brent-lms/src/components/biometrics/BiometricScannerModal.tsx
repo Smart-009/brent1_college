@@ -465,15 +465,15 @@ export const BiometricScannerModal: React.FC<Props> = ({
                 <div className="card" style={{ padding: '0.8rem 0.6rem', background: '#fff', border: '1px solid var(--color-border)', borderRadius: '10px' }}>
                   <div style={{ fontSize: '0.7rem', color: 'var(--color-text-secondary)', fontWeight: 700, letterSpacing: '0.04em' }}>TOTAL BILLED</div>
                   <div style={{ fontSize: '1.25rem', fontWeight: 800, color: 'var(--color-primary)', marginTop: '3px' }}>
-                    KES {matchedStudent.term_fee_total.toLocaleString()}
+                    ${matchedStudent.term_fee_total.toLocaleString()}
                   </div>
-                  <div style={{ fontSize: '0.68rem', color: 'var(--color-text-secondary)', marginTop: '2px' }}>Term Schedule</div>
+                  <div style={{ fontSize: '0.68rem', color: 'var(--color-text-secondary)', marginTop: '2px' }}>Course Schedule</div>
                 </div>
 
                 <div className="card" style={{ padding: '0.8rem 0.6rem', background: '#fff', border: '1px solid var(--color-border)', borderRadius: '10px' }}>
                   <div style={{ fontSize: '0.7rem', color: 'var(--color-text-secondary)', fontWeight: 700, letterSpacing: '0.04em' }}>TOTAL PAID</div>
                   <div style={{ fontSize: '1.25rem', fontWeight: 800, color: '#16a34a', marginTop: '3px' }}>
-                    KES {Math.max(0, matchedStudent.term_fee_total - matchedStudent.fee_balance).toLocaleString()}
+                    ${Math.max(0, matchedStudent.term_fee_total - matchedStudent.fee_balance).toLocaleString()}
                   </div>
                   <div style={{ fontSize: '0.68rem', color: '#16a34a', fontWeight: 600, marginTop: '2px' }}>
                     {Math.round(((matchedStudent.term_fee_total - matchedStudent.fee_balance) / (matchedStudent.term_fee_total || 1)) * 100)}% Complete
@@ -490,7 +490,7 @@ export const BiometricScannerModal: React.FC<Props> = ({
                       marginTop: '3px',
                     }}
                   >
-                    KES {matchedStudent.fee_balance.toLocaleString()}
+                    ${matchedStudent.fee_balance.toLocaleString()}
                   </div>
                   <div style={{ fontSize: '0.68rem', color: matchedStudent.fee_balance === 0 ? '#16a34a' : '#dc2626', fontWeight: 600, marginTop: '2px' }}>
                     {matchedStudent.fee_balance === 0 ? 'No Arrears' : 'Payment Due'}
@@ -537,7 +537,7 @@ export const BiometricScannerModal: React.FC<Props> = ({
                 <div style={{ fontSize: '0.78rem', color: '#475569', marginTop: '0.25rem', lineHeight: '1.4' }}>
                   {feeEval.status === 'CLEARED'
                     ? 'Student is 100% in good financial standing. Authorized for practical labs, term examinations, and official certificate release.'
-                    : `Student has an outstanding fee balance of KES ${matchedStudent.fee_balance.toLocaleString()}. Please settle via M-Pesa Paybill 247247 or bursar desk.`}
+                    : `Student has an outstanding fee balance of $${matchedStudent.fee_balance.toLocaleString()}. Please settle via the online portal.`}
                 </div>
               </div>
 
@@ -566,7 +566,7 @@ export const BiometricScannerModal: React.FC<Props> = ({
                                 <div style={{ fontSize: '0.68rem', color: 'var(--color-text-secondary)' }}>{rc.reference_code}</div>
                               </td>
                               <td style={{ padding: '0.35rem 0.75rem', textAlign: 'right', fontWeight: 800, color: '#16a34a' }}>
-                                KES {rc.amount.toLocaleString()}
+                                ${rc.amount.toLocaleString()}
                               </td>
                             </tr>
                           ))}
@@ -618,7 +618,7 @@ export const BiometricScannerModal: React.FC<Props> = ({
                         onRecordPayment(matchedStudent)
                       }}
                     >
-                      💳 Pay Fee Balance (KES {matchedStudent.fee_balance.toLocaleString()})
+                      💳 Pay Fee Balance (${matchedStudent.fee_balance.toLocaleString()})
                     </button>
                   )}
 
@@ -636,12 +636,12 @@ export const BiometricScannerModal: React.FC<Props> = ({
                     className="btn btn-secondary btn-sm"
                     style={{ fontSize: '0.8rem', padding: '0.4rem 0.75rem' }}
                     onClick={() => {
-                      const text = `Eclat Institute Fee Statement:\nStudent: ${matchedStudent.full_name} (${matchedStudent.admission_number})\nClass: ${matchedStudent.class_name}\nTotal Billed: KES ${matchedStudent.term_fee_total.toLocaleString()}\nTotal Paid: KES ${Math.max(0, matchedStudent.term_fee_total - matchedStudent.fee_balance).toLocaleString()}\nBalance Due: KES ${matchedStudent.fee_balance.toLocaleString()}\nStatus: ${matchedStudent.fee_balance === 0 ? 'CLEARED' : 'PENDING'}\nPay via M-Pesa Paybill 247247, Acc: ${matchedStudent.admission_number}`
+                      const text = `Éclat Institute Fee Statement:\nStudent: ${matchedStudent.full_name} (${matchedStudent.admission_number})\nClass: ${matchedStudent.class_name}\nTotal Billed: $${matchedStudent.term_fee_total.toLocaleString()}\nTotal Paid: $${Math.max(0, matchedStudent.term_fee_total - matchedStudent.fee_balance).toLocaleString()}\nBalance Due: $${matchedStudent.fee_balance.toLocaleString()}\nStatus: ${matchedStudent.fee_balance === 0 ? 'CLEARED' : 'PENDING'}`
                       navigator.clipboard.writeText(text)
-                      alert('✓ Student fee statement copied to clipboard! You can paste and send via WhatsApp/SMS.')
+                      alert('✓ Student fee statement copied to clipboard!')
                     }}
                   >
-                    📋 Copy SMS Statement
+                    📋 Copy Statement
                   </button>
                 </div>
               </div>

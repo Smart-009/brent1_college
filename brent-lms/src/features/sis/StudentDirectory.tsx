@@ -94,8 +94,8 @@ export function StudentDirectory() {
       'Guardian Phone',
       'Guardian Email',
       'Emergency Contact',
-      'Fee Billed (KES)',
-      'Fee Balance (KES)',
+      'Fee Billed ($ USD)',
+      'Fee Balance ($ USD)',
       'Fee Status',
       'Attendance Rate (%)',
       'Discipline Index (100)',
@@ -214,7 +214,7 @@ export function StudentDirectory() {
       guardian_phone: student.guardian.phone,
       amount_due: student.fee_balance,
       channel: 'SMS',
-      message_text: `Dear ${student.guardian.name}, reminder from Eclat Institute Accounts: ${student.full_name} (${student.admission_number}) has an outstanding tuition balance of KES ${student.fee_balance.toLocaleString()}. Pay via Paybill 247247, Acc: ${student.admission_number}. Thank you.`,
+      message_text: `Dear ${student.guardian.name}, reminder from Eclat Institute Accounts: ${student.full_name} (${student.admission_number}) has an outstanding tuition balance of $${student.fee_balance.toLocaleString()}. Kindly settle via the online student portal. Thank you.`,
       sent_by: 'Bursar & Accounts Desk',
       sent_at: new Date().toLocaleString(),
       status: 'Delivered',
@@ -244,7 +244,7 @@ export function StudentDirectory() {
         guardian_phone: student.guardian.phone,
         amount_due: student.fee_balance,
         channel: 'SMS',
-        message_text: `Dear ${student.guardian.name}, reminder from Eclat Institute Accounts: ${student.full_name} (${student.admission_number}) has an outstanding tuition balance of KES ${student.fee_balance.toLocaleString()}. Pay via Paybill 247247, Acc: ${student.admission_number}. Thank you.`,
+        message_text: `Dear ${student.guardian.name}, reminder from Eclat Institute Accounts: ${student.full_name} (${student.admission_number}) has an outstanding tuition balance of $${student.fee_balance.toLocaleString()}. Kindly settle via the online student portal. Thank you.`,
         sent_by: 'Bursar & Accounts Desk (Bulk Dispatch)',
         sent_at: new Date().toLocaleString(),
         status: 'Delivered',
@@ -344,7 +344,7 @@ export function StudentDirectory() {
             {students.filter((s) => s.fee_balance > 0).length}
           </div>
           <div style={{ fontSize: '0.75rem', color: 'var(--color-text-secondary)', marginTop: '0.2rem' }}>
-            Total Overdue: KES {students.reduce((acc, s) => acc + s.fee_balance, 0).toLocaleString()}
+            Total Overdue: ${students.reduce((acc, s) => acc + s.fee_balance, 0).toLocaleString()}
           </div>
         </div>
       </div>
@@ -487,7 +487,7 @@ export function StudentDirectory() {
                       ) : (
                         <div style={{ display: 'flex', flexDirection: 'column', gap: '0.2rem' }}>
                           <span className="badge badge-warning">
-                            KES {std.fee_balance.toLocaleString()} Due
+                            ${std.fee_balance.toLocaleString()} Due
                           </span>
                           <button
                             type="button"
@@ -624,12 +624,12 @@ export function StudentDirectory() {
                       💳 Tuition & Financial Ledger
                     </h4>
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', fontSize: '0.85rem' }}>
-                      <div><strong>Total Semester Billed:</strong> KES {totalBilled.toLocaleString()}</div>
-                      <div><strong>Total Paid to Date:</strong> <span style={{ fontWeight: 700, color: totalPaid > 0 ? '#16a34a' : 'inherit' }}>KES {totalPaid.toLocaleString()}</span></div>
+                      <div><strong>Total Course Billed:</strong> ${totalBilled.toLocaleString()}</div>
+                      <div><strong>Total Paid to Date:</strong> <span style={{ fontWeight: 700, color: totalPaid > 0 ? '#16a34a' : 'inherit' }}>${totalPaid.toLocaleString()}</span></div>
                       <div>
                         <strong>Outstanding Balance:</strong>{' '}
                         <span style={{ fontWeight: 700, color: currentBalance > 0 ? '#dc2626' : '#16a34a' }}>
-                          KES {currentBalance.toLocaleString()}
+                          ${currentBalance.toLocaleString()}
                         </span>
                       </div>
                       <div>
@@ -637,9 +637,9 @@ export function StudentDirectory() {
                         {isFullyPaid ? (
                           <span className="badge badge-success">✓ Fully Cleared</span>
                         ) : totalPaid > 0 ? (
-                          <span className="badge badge-warning">Partial Payment (KES {currentBalance.toLocaleString()} Due)</span>
+                          <span className="badge badge-warning">Partial Payment (${currentBalance.toLocaleString()} Due)</span>
                         ) : (
-                          <span className="badge badge-danger">Unpaid (KES {currentBalance.toLocaleString()} Due)</span>
+                          <span className="badge badge-danger">Unpaid (${currentBalance.toLocaleString()} Due)</span>
                         )}
                       </div>
                       <div>
@@ -660,7 +660,7 @@ export function StudentDirectory() {
                           {studentReceipts.map((rc) => (
                             <div key={rc.id} style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.76rem', padding: '0.2rem 0' }}>
                               <span>{rc.receipt_number} ({rc.payment_method})</span>
-                              <strong style={{ color: '#16a34a' }}>KES {rc.amount.toLocaleString()}</strong>
+                              <strong style={{ color: '#16a34a' }}>${rc.amount.toLocaleString()}</strong>
                             </div>
                           ))}
                         </div>
@@ -936,7 +936,7 @@ export function StudentDirectory() {
                   </h4>
                   <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '0.75rem' }}>
                     <div>
-                      <label className="label">Total Term Fee (KES)</label>
+                      <label className="label">Total Course Fee ($ USD)</label>
                       <input
                         type="number"
                         className="input"
@@ -947,7 +947,7 @@ export function StudentDirectory() {
                       />
                     </div>
                     <div>
-                      <label className="label">Outstanding Balance (KES)</label>
+                      <label className="label">Outstanding Balance ($ USD)</label>
                       <input
                         type="number"
                         className="input"
@@ -1000,7 +1000,7 @@ export function StudentDirectory() {
                 <div><strong>Student:</strong> {reminderTarget.full_name} ({reminderTarget.admission_number})</div>
                 <div><strong>Guardian / Sponsor:</strong> {reminderTarget.guardian.name}</div>
                 <div><strong>Recipient Phone:</strong> 📲 {reminderTarget.guardian.phone}</div>
-                <div><strong>Outstanding Balance:</strong> <span style={{ color: '#ea580c', fontWeight: 700 }}>KES {reminderTarget.fee_balance.toLocaleString()}</span></div>
+                <div><strong>Outstanding Balance:</strong> <span style={{ color: '#ea580c', fontWeight: 700 }}>${reminderTarget.fee_balance.toLocaleString()}</span></div>
               </div>
 
               <div>
@@ -1017,7 +1017,7 @@ export function StudentDirectory() {
                     fontFamily: 'monospace',
                   }}
                 >
-                  Dear {reminderTarget.guardian.name}, reminder from Eclat Institute Accounts: {reminderTarget.full_name} ({reminderTarget.admission_number}) has an outstanding tuition balance of KES {reminderTarget.fee_balance.toLocaleString()}. Kindly clear via Paybill 247247, Acc: {reminderTarget.admission_number} before the examination clearance deadline.
+                  Dear {reminderTarget.guardian.name}, reminder from Éclat Institute Accounts: {reminderTarget.full_name} ({reminderTarget.admission_number}) has an outstanding tuition balance of ${reminderTarget.fee_balance.toLocaleString()}. Kindly settle via the online student portal before the clearance deadline.
                 </div>
               </div>
             </div>

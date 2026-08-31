@@ -260,14 +260,14 @@ export const BiometricClearancePassModal: React.FC<Props> = ({ pass, onClose }) 
             <div>
               <div style={{ fontSize: '0.75rem', color: '#64748b', fontWeight: 600 }}>TOTAL BILLED</div>
               <div style={{ fontSize: '1.15rem', fontWeight: 700, color: '#1e3a8a', marginTop: '2px' }}>
-                KES {pass.total_billed.toLocaleString()}
+                ${pass.total_billed.toLocaleString()}
               </div>
             </div>
 
             <div>
               <div style={{ fontSize: '0.75rem', color: '#64748b', fontWeight: 600 }}>TOTAL PAID TO DATE</div>
               <div style={{ fontSize: '1.15rem', fontWeight: 700, color: '#16a34a', marginTop: '2px' }}>
-                KES {pass.total_paid.toLocaleString()}
+                ${pass.total_paid.toLocaleString()}
               </div>
             </div>
 
@@ -281,7 +281,7 @@ export const BiometricClearancePassModal: React.FC<Props> = ({ pass, onClose }) 
                   marginTop: '2px',
                 }}
               >
-                {pass.fee_balance === 0 ? 'KES 0.00 (CLEARED ✓)' : `KES ${pass.fee_balance.toLocaleString()}`}
+                {pass.fee_balance === 0 ? '$0.00 (CLEARED ✓)' : `$${pass.fee_balance.toLocaleString()}`}
               </div>
             </div>
           </div>

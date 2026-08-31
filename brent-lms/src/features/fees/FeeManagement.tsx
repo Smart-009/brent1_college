@@ -151,17 +151,17 @@ export function FeeManagement() {
       {/* Financial Metrics */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
         <div className="card" style={{ padding: '1.25rem', borderLeft: '4px solid var(--color-primary)' }}>
-          <div style={{ fontSize: '0.8rem', color: 'var(--color-text-secondary)', fontWeight: 600 }}>Total Billed Term 1</div>
+          <div style={{ fontSize: '0.8rem', color: 'var(--color-text-secondary)', fontWeight: 600 }}>Total Billed</div>
           <div style={{ fontSize: '1.65rem', fontWeight: 700, color: 'var(--color-primary)', marginTop: '0.25rem' }}>
-            KES {totalBilled.toLocaleString()}
+            ${totalBilled.toLocaleString()}
           </div>
-          <div style={{ fontSize: '0.75rem', color: 'var(--color-text-secondary)', marginTop: '0.2rem' }}>All Enrolled Streams</div>
+          <div style={{ fontSize: '0.75rem', color: 'var(--color-text-secondary)', marginTop: '0.2rem' }}>All Enrolled Cohorts</div>
         </div>
 
         <div className="card" style={{ padding: '1.25rem', borderLeft: '4px solid #16a34a' }}>
           <div style={{ fontSize: '0.8rem', color: 'var(--color-text-secondary)', fontWeight: 600 }}>Total Fees Collected</div>
           <div style={{ fontSize: '1.65rem', fontWeight: 700, color: '#16a34a', marginTop: '0.25rem' }}>
-            KES {totalCollected.toLocaleString()}
+            ${totalCollected.toLocaleString()}
           </div>
           <div style={{ fontSize: '0.75rem', color: '#16a34a', marginTop: '0.2rem' }}>
             {Math.round((totalCollected / (totalBilled || 1)) * 100)}% Collection Rate
@@ -171,13 +171,13 @@ export function FeeManagement() {
         <div className="card" style={{ padding: '1.25rem', borderLeft: '4px solid #ea580c' }}>
           <div style={{ fontSize: '0.8rem', color: 'var(--color-text-secondary)', fontWeight: 600 }}>Outstanding Fee Balance</div>
           <div style={{ fontSize: '1.65rem', fontWeight: 700, color: '#ea580c', marginTop: '0.25rem' }}>
-            KES {totalOutstanding.toLocaleString()}
+            ${totalOutstanding.toLocaleString()}
           </div>
-          <div style={{ fontSize: '0.75rem', color: '#ea580c', marginTop: '0.2rem' }}>Reminders sent to parents</div>
+          <div style={{ fontSize: '0.75rem', color: '#ea580c', marginTop: '0.2rem' }}>Automatic email statements sent</div>
         </div>
 
         <div className="card" style={{ padding: '1.25rem', borderLeft: '4px solid #059669' }}>
-          <div style={{ fontSize: '0.8rem', color: 'var(--color-text-secondary)', fontWeight: 600 }}>Eclat M-Pesa Paybill</div>
+          <div style={{ fontSize: '0.8rem', color: 'var(--color-text-secondary)', fontWeight: 600 }}>International Payments</div>
           <div style={{ fontSize: '1.5rem', fontWeight: 700, color: '#059669', marginTop: '0.25rem' }}>
             247247
           </div>
@@ -250,10 +250,10 @@ export function FeeManagement() {
                     <td>{inv.admission_number}</td>
                     <td><span className="badge badge-info">{inv.class_name}</span></td>
                     <td>{inv.term} {inv.academic_year}</td>
-                    <td>KES {inv.total_amount.toLocaleString()}</td>
-                    <td style={{ color: '#16a34a', fontWeight: 600 }}>KES {inv.paid_amount.toLocaleString()}</td>
+                    <td>${inv.total_amount.toLocaleString()}</td>
+                    <td style={{ color: '#16a34a', fontWeight: 600 }}>${inv.paid_amount.toLocaleString()}</td>
                     <td style={{ color: inv.balance > 0 ? '#ea580c' : '#16a34a', fontWeight: 700 }}>
-                      KES {inv.balance.toLocaleString()}
+                      ${inv.balance.toLocaleString()}
                     </td>
                     <td>
                       <span className={`badge ${inv.status === 'Paid' ? 'badge-success' : 'badge-warning'}`}>
@@ -322,7 +322,7 @@ export function FeeManagement() {
                     <td style={{ fontWeight: 700, color: 'var(--color-primary)' }}>{rec.receipt_number}</td>
                     <td style={{ fontWeight: 600 }}>{rec.student_name}</td>
                     <td>{rec.admission_number}</td>
-                    <td style={{ fontWeight: 700, color: '#16a34a' }}>KES {rec.amount.toLocaleString()}</td>
+                    <td style={{ fontWeight: 700, color: '#16a34a' }}>${rec.amount.toLocaleString()}</td>
                     <td><span className="badge badge-info">{rec.payment_method}</span></td>
                     <td style={{ fontFamily: 'monospace', fontWeight: 600 }}>{rec.reference_code}</td>
                     <td>
@@ -524,35 +524,35 @@ export function FeeManagement() {
             <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', fontSize: '0.88rem' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', padding: '0.4rem 0', borderBottom: '1px solid var(--color-border)' }}>
                 <span>💻 Full-Stack Web Development & React 19 (12 Weeks)</span>
-                <strong>KES 12,500</strong>
+                <strong>$120</strong>
               </div>
               <div style={{ display: 'flex', justifyContent: 'space-between', padding: '0.4rem 0', borderBottom: '1px solid var(--color-border)' }}>
                 <span>📊 Python Programming, SQL & Data Analytics (8 Weeks)</span>
-                <strong>KES 9,500</strong>
+                <strong>$95</strong>
               </div>
               <div style={{ display: 'flex', justifyContent: 'space-between', padding: '0.4rem 0', borderBottom: '1px solid var(--color-border)' }}>
                 <span>⚡ Comprehensive Computer Packages & Digital Skills (4 Weeks)</span>
-                <strong>KES 4,500</strong>
+                <strong>$45</strong>
               </div>
               <div style={{ display: 'flex', justifyContent: 'space-between', padding: '0.4rem 0', borderBottom: '1px solid var(--color-border)' }}>
                 <span>🛡️ Cybersecurity Fundamentals & Network Defense (6 Weeks)</span>
-                <strong>KES 9,000</strong>
+                <strong>$89</strong>
               </div>
               <div style={{ display: 'flex', justifyContent: 'space-between', padding: '0.4rem 0', borderBottom: '1px solid var(--color-border)' }}>
-                <span>📈 Computerized Accounting (QuickBooks & iTax) (4 Weeks)</span>
-                <strong>KES 6,500</strong>
+                <span>📈 Computerized Accounting (QuickBooks & International Tax) (4 Weeks)</span>
+                <strong>$65</strong>
               </div>
               <div style={{ display: 'flex', justifyContent: 'space-between', padding: '0.4rem 0', borderBottom: '1px solid var(--color-border)' }}>
                 <span>🌍 IELTS Exam Prep Target Band 7.5 - 9.0 (4-6 Weeks)</span>
-                <strong>KES 8,500</strong>
+                <strong>$85</strong>
               </div>
               <div style={{ display: 'flex', justifyContent: 'space-between', padding: '0.4rem 0', borderBottom: '1px solid var(--color-border)' }}>
                 <span>🗣️ English Language Mastery & Public Speaking (6-8 Weeks)</span>
-                <strong>KES 5,500</strong>
+                <strong>$55</strong>
               </div>
               <div style={{ display: 'flex', justifyContent: 'space-between', padding: '0.4rem 0', borderBottom: '1px solid var(--color-border)' }}>
                 <span>🌴 Arabic, French & German Foreign Languages (8 Weeks)</span>
-                <strong>KES 7,500</strong>
+                <strong>$79</strong>
               </div>
             </div>
           </div>
@@ -621,11 +621,11 @@ export function FeeManagement() {
 
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem' }}>
                   <div>
-                    <label className="label">Amount Paid (KES) *</label>
+                    <label className="label">Amount Paid ($ USD) *</label>
                     <input
                       type="number"
                       required
-                      min="100"
+                      min="1"
                       className="input"
                       value={payData.amount}
                       onChange={(e) => setPayData({ ...payData, amount: Number(e.target.value) })}
@@ -795,20 +795,20 @@ export function FeeManagement() {
               <div style={{ background: '#f0fdf4', border: '1px solid #bbf7d0', borderRadius: '8px', padding: '1.25rem', textAlign: 'center', marginBottom: '1rem' }}>
                 <div style={{ fontSize: '0.75rem', textTransform: 'uppercase', color: '#166534', fontWeight: 700 }}>Amount Received</div>
                 <div style={{ fontSize: '1.8rem', fontWeight: 900, color: '#16a34a' }}>
-                  KES {(selectedReceipt.amount_paid ?? selectedReceipt.amount).toLocaleString()}
+                  ${(selectedReceipt.amount_paid ?? selectedReceipt.amount).toLocaleString()}
                 </div>
                 <div style={{ fontSize: '0.85rem', marginTop: '0.5rem', color: '#475569' }}>
                   Outstanding Balance: {' '}
                   {(selectedReceipt.balance_remaining ?? selectedReceipt.balance_after ?? 0) === 0 ? (
-                    <strong style={{ color: '#16a34a' }}>KES 0.00 (FEE FULLY CLEARED ✓)</strong>
+                    <strong style={{ color: '#16a34a' }}>$0.00 (FEE FULLY CLEARED ✓)</strong>
                   ) : (
-                    <strong style={{ color: '#dc2626' }}>KES {(selectedReceipt.balance_remaining ?? selectedReceipt.balance_after ?? 0).toLocaleString()}</strong>
+                    <strong style={{ color: '#dc2626' }}>${(selectedReceipt.balance_remaining ?? selectedReceipt.balance_after ?? 0).toLocaleString()}</strong>
                   )}
                 </div>
               </div>
 
               <div style={{ textAlign: 'center', fontSize: '0.75rem', color: '#64748b', borderTop: '1px dashed #cbd5e1', paddingTop: '0.75rem' }}>
-                Thank you for your payment. Eclat Institute • Sahl Mall, 4th Street, Eastleigh, Nairobi.
+                Thank you for your payment. Éclat Institute • 100% Online Tech & Languages.
               </div>
             </div>
           </div>

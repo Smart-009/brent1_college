@@ -301,9 +301,9 @@ export function ManageSubjects() {
         <div>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
             <div>
-              <h3 style={{ fontSize: '1.2rem', fontWeight: 700, margin: 0 }}>Short Courses, Tuition Fees & Curriculum</h3>
+              <h3 style={{ fontSize: '1.2rem', fontWeight: 700, margin: 0 }}>Online Programs, Tuition Fees & Curriculum</h3>
               <p style={{ fontSize: '0.85rem', color: 'var(--color-text-secondary)', margin: '0.2rem 0 0' }}>
-                Admin & Principal controls: Update course pricing (KES), duration, descriptions, and department allocations.
+                Admin controls: Update international course pricing ($ USD), duration, descriptions, and department allocations.
               </p>
             </div>
             <button
@@ -312,20 +312,20 @@ export function ManageSubjects() {
               onClick={() => setShowSubModal(true)}
               disabled={departments.length === 0}
             >
-              + Introduce New Short Course
+              + Introduce New Course
             </button>
           </div>
 
           {departments.length === 0 && (
             <div className="card mb-4" style={{ padding: '1rem', background: '#fffbeb', border: '1px solid #fde68a', color: '#92400e' }}>
-              ⚠️ Please introduce at least one Academic Department first before configuring Subject Disciplines.
+              ⚠️ Please introduce at least one Academic Department first before configuring Course Disciplines.
             </div>
           )}
 
           {subjects.length === 0 ? (
             <div className="card" style={{ padding: '3rem', textAlign: 'center', maxWidth: '600px', margin: '2rem auto' }}>
               <div style={{ fontSize: '2.5rem', marginBottom: '0.5rem' }}>🧪</div>
-              <h4 style={{ fontSize: '1.1rem', fontWeight: 700 }}>No Short Courses Configured</h4>
+              <h4 style={{ fontSize: '1.1rem', fontWeight: 700 }}>No Courses Configured</h4>
               <p style={{ fontSize: '0.85rem', color: 'var(--color-text-secondary)' }}>
                 Add online programs (e.g. Full-Stack Web Dev, Python Analytics, IELTS Prep, English Mastery) to set custom fees.
               </p>
@@ -337,9 +337,9 @@ export function ManageSubjects() {
                   <thead>
                     <tr>
                       <th>Code</th>
-                      <th>Short Course / Discipline</th>
+                      <th>Course / Discipline</th>
                       <th>Department</th>
-                      <th>Tuition Fee (KES)</th>
+                      <th>Tuition Fee ($ USD)</th>
                       <th>Duration</th>
                       <th>Badge / Tag</th>
                       <th style={{ textAlign: 'right' }}>Actions</th>
@@ -365,7 +365,7 @@ export function ManageSubjects() {
                         <td><span className="badge badge-info">{sub.department_name}</span></td>
                         <td>
                           <span style={{ fontSize: '0.95rem', fontWeight: 800, color: '#16a34a' }}>
-                            KES {(sub.fee || 5000).toLocaleString()}
+                            ${(sub.fee || 75).toLocaleString()}
                           </span>
                         </td>
                         <td>
@@ -473,7 +473,7 @@ export function ManageSubjects() {
 
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem' }}>
                   <div>
-                    <label className="label">Tuition Fee (KES) *</label>
+                    <label className="label">Tuition Fee ($ USD) *</label>
                     <input
                       type="number"
                       required
@@ -564,7 +564,7 @@ export function ManageSubjects() {
 
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
                   <div>
-                    <label className="label">Tuition Fee (KES) *</label>
+                    <label className="label">Tuition Fee ($ USD) *</label>
                     <input
                       type="number"
                       required

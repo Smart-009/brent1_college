@@ -234,15 +234,15 @@ export function LessonPlayer() {
               Student: {currentStudent?.full_name || profile?.full_name} ({currentStudent?.admission_number || profile?.admission_number})
             </div>
             <div style={{ fontSize: '1.2rem', fontWeight: 800, color: '#dc2626', margin: '0.25rem 0' }}>
-              Outstanding Balance: KES {currentStudent ? currentStudent.fee_balance.toLocaleString() : '14,000'}
+              Outstanding Balance: ${currentStudent ? currentStudent.fee_balance.toLocaleString() : '85'}
             </div>
             <div style={{ fontSize: '0.8rem', color: '#166534', fontWeight: 700 }}>
-              Pay via M-Pesa Paybill: <strong>247247</strong> • Acc: <strong>{currentStudent?.admission_number || profile?.admission_number}</strong>
+              Settle tuition balance via the Student Bursar Portal or Cards/Bank/Mobile Money
             </div>
           </div>
           <div style={{ display: 'flex', justifyContent: 'center', gap: '1rem', flexWrap: 'wrap' }}>
             <Link to="/fees" className="btn btn-primary">
-              💳 Go to Tuition & M-Pesa Clearance Desk
+              💳 Settle Tuition Balance
             </Link>
             <Link to="/student" className="btn btn-secondary">
               Return to Dashboard

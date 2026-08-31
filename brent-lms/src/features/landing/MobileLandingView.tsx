@@ -273,7 +273,7 @@ export function MobileLandingView({
               🚀 Apply in 60s
             </button>
             <a
-              href="https://wa.me/254740027346?text=Hello%20Eclat%20Institute!%20I%20want%20to%20inquire%20about%20intakes%20at%20Sahl%20Mall."
+              href="https://wa.me/254740027346?text=Hello%20Eclat%20Institute!%20I%20want%20to%20inquire%20about%20online%20courses%20and%20intakes."
               target="_blank"
               rel="noopener noreferrer"
               style={{

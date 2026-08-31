@@ -146,7 +146,7 @@ export function ParentDashboard() {
           <div className="card" style={{ padding: '1.25rem', borderLeft: '4px solid #16a34a' }}>
             <div style={{ fontSize: '0.8rem', color: 'var(--color-text-secondary)', fontWeight: 600 }}>Fee Clearance Status</div>
             <div style={{ fontSize: '1.65rem', fontWeight: 700, color: activeWard.fee_cleared ? '#16a34a' : '#ea580c', marginTop: '0.25rem' }}>
-              {activeWard.fee_cleared ? 'Cleared' : `KES ${activeWard.fee_balance.toLocaleString()}`}
+              {activeWard.fee_cleared ? 'Cleared' : `$${activeWard.fee_balance.toLocaleString()}`}
             </div>
             <div style={{ fontSize: '0.75rem', color: 'var(--color-text-secondary)', marginTop: '0.2rem' }}>
               {activeWard.fee_cleared ? '0.00 Balance Outstanding' : 'Due for Current Course Period'}

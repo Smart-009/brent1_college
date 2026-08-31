@@ -162,10 +162,10 @@ export function StudentDashboard() {
         <div className="card" style={{ padding: '1.25rem', borderLeft: '4px solid #16a34a' }}>
           <div style={{ fontSize: '0.8rem', color: 'var(--color-text-secondary)', fontWeight: 600 }}>Fee Clearance</div>
           <div style={{ fontSize: '1.75rem', fontWeight: 800, color: currentStudent?.fee_cleared ? '#16a34a' : '#ea580c', marginTop: '0.25rem' }}>
-            {currentStudent ? (currentStudent.fee_cleared ? 'Cleared' : `KES ${currentStudent.fee_balance.toLocaleString()}`) : 'KES 0'}
+            {currentStudent ? (currentStudent.fee_cleared ? 'Cleared' : `$${currentStudent.fee_balance.toLocaleString()}`) : '$0'}
           </div>
           <div style={{ fontSize: '0.75rem', color: 'var(--color-text-secondary)', marginTop: '0.2rem' }}>
-            {currentStudent?.fee_cleared ? 'Exam Card Active' : 'M-Pesa Paybill 247247'}
+            {currentStudent?.fee_cleared ? 'Exam Card Active' : 'Pay Online / Bursar'}
           </div>
         </div>
 
