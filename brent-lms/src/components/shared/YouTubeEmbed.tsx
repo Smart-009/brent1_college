@@ -1,11 +1,21 @@
-import { useState, useRef, useEffect } from 'react'
+import { useState, useRef, useEffect, useCallback } from 'react'
 import { extractYouTubeId } from '@/lib/utils'
 
 interface YouTubeEmbedProps {
   url: string
   title?: string
+  lessonId?: string
+  studentId?: string
   autoPlay?: boolean
   onEnded?: () => void
+  onProgress?: (currentTime: number, duration: number) => void
+}
+
+declare global {
+  interface Window {
+    YT: any
+    onYouTubeIframeAPIReady: () => void
+  }
 }
 
 function extractVimeoId(url: string): string | null {
@@ -32,16 +42,74 @@ function isDirectVideoUrl(url: string): boolean {
 }
 
 function formatTime(seconds: number): string {
-  if (isNaN(seconds)) return '00:00'
+  if (isNaN(seconds) || seconds < 0) return '00:00'
   const mins = Math.floor(seconds / 60)
   const secs = Math.floor(seconds % 60)
   return `${mins < 10 ? '0' : ''}${mins}:${secs < 10 ? '0' : ''}${secs}`
 }
 
-export function YouTubeEmbed({ url, title = 'Lesson Video', autoPlay = false, onEnded }: YouTubeEmbedProps) {
+export function YouTubeEmbed({
+  url,
+  title = 'Lesson Video',
+  lessonId,
+  studentId,
+  autoPlay = false,
+  onEnded,
+  onProgress,
+}: YouTubeEmbedProps) {
   const videoId = extractYouTubeId(url)
   const vimeoId = extractVimeoId(url)
   const isDirect = isDirectVideoUrl(url)
+
+  const storageKey = lessonId ? `eclat_progress_${lessonId}_${studentId || 'default'}` : null
+
+  // Resume state
+  const [initialStartTime, setInitialStartTime] = useState<number>(0)
+  const [resumedNotice, setResumedNotice] = useState<string | null>(null)
+  const [completedNotice, setCompletedNotice] = useState(false)
+  const hasTriggeredCompleteRef = useRef(false)
+
+  // Retrieve saved timestamp
+  useEffect(() => {
+    if (!storageKey) return
+    try {
+      const saved = localStorage.getItem(storageKey)
+      if (saved) {
+        const parsed = parseFloat(saved)
+        if (!isNaN(parsed) && parsed > 5) {
+          setInitialStartTime(parsed)
+          setResumedNotice(`▶ Resumed playback from ${formatTime(parsed)}`)
+          const timer = setTimeout(() => setResumedNotice(null), 5000)
+          return () => clearTimeout(timer)
+        }
+      }
+    } catch {
+      // Ignore storage errors
+    }
+  }, [storageKey])
+
+  const saveProgress = useCallback(
+    (time: number, totalDuration: number) => {
+      if (!storageKey) return
+      try {
+        if (totalDuration > 0 && time >= totalDuration * 0.92) {
+          // Video finished (>= 92%)
+          if (!hasTriggeredCompleteRef.current) {
+            hasTriggeredCompleteRef.current = true
+            setCompletedNotice(true)
+            localStorage.removeItem(storageKey)
+            if (onEnded) onEnded()
+          }
+        } else if (time > 3) {
+          localStorage.setItem(storageKey, time.toFixed(1))
+        }
+        if (onProgress) onProgress(time, totalDuration)
+      } catch {
+        // Ignore storage errors
+      }
+    },
+    [storageKey, onEnded, onProgress]
+  )
 
   // Direct Custom Video Player State
   const videoRef = useRef<HTMLVideoElement>(null)
@@ -57,16 +125,24 @@ export function YouTubeEmbed({ url, title = 'Lesson Video', autoPlay = false, on
   const containerRef = useRef<HTMLDivElement>(null)
   const controlsTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
-  // Handle direct video time update
-  const handleTimeUpdate = () => {
+  // Direct Video Handlers
+  const handleLoadedMetadata = () => {
     if (videoRef.current) {
-      setCurrentTime(videoRef.current.currentTime)
+      const dur = videoRef.current.duration
+      setDuration(dur)
+      if (initialStartTime > 0 && initialStartTime < dur - 5) {
+        videoRef.current.currentTime = initialStartTime
+        setCurrentTime(initialStartTime)
+      }
     }
   }
 
-  const handleLoadedMetadata = () => {
+  const handleTimeUpdate = () => {
     if (videoRef.current) {
-      setDuration(videoRef.current.duration)
+      const curr = videoRef.current.currentTime
+      const dur = videoRef.current.duration || duration
+      setCurrentTime(curr)
+      saveProgress(curr, dur)
     }
   }
 
@@ -86,12 +162,16 @@ export function YouTubeEmbed({ url, title = 'Lesson Video', autoPlay = false, on
     if (videoRef.current) {
       videoRef.current.currentTime = targetTime
       setCurrentTime(targetTime)
+      saveProgress(targetTime, duration)
     }
   }
 
   const handleSkip = (seconds: number) => {
     if (videoRef.current) {
-      videoRef.current.currentTime = Math.max(0, Math.min(videoRef.current.currentTime + seconds, duration))
+      const newT = Math.max(0, Math.min(videoRef.current.currentTime + seconds, duration))
+      videoRef.current.currentTime = newT
+      setCurrentTime(newT)
+      saveProgress(newT, duration)
     }
   }
 
@@ -138,11 +218,101 @@ export function YouTubeEmbed({ url, title = 'Lesson Video', autoPlay = false, on
     }, 2800)
   }
 
-  useEffect(() => {
-    return () => {
-      if (controlsTimeoutRef.current) clearTimeout(controlsTimeoutRef.current)
+  const handleRestart = () => {
+    if (videoRef.current) {
+      videoRef.current.currentTime = 0
+      videoRef.current.play()
     }
-  }, [])
+    if (storageKey) localStorage.removeItem(storageKey)
+    setResumedNotice(null)
+    setInitialStartTime(0)
+  }
+
+  // --- YouTube IFrame API Integration for Auto-Resume & End Detection ---
+  const ytPlayerContainerRef = useRef<HTMLDivElement>(null)
+  const ytPlayerRef = useRef<any>(null)
+  const ytPollIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null)
+
+  useEffect(() => {
+    if (!videoId || isDirect) return
+
+    // Ensure YT API script is loaded
+    if (!window.YT) {
+      const tag = document.createElement('script')
+      tag.src = 'https://www.youtube.com/iframe_api'
+      const firstScriptTag = document.getElementsByTagName('script')[0]
+      firstScriptTag?.parentNode?.insertBefore(tag, firstScriptTag)
+    }
+
+    const initYTPlayer = () => {
+      if (!ytPlayerContainerRef.current || !window.YT || !window.YT.Player) return
+
+      const startSeconds = Math.floor(initialStartTime)
+
+      try {
+        ytPlayerRef.current = new window.YT.Player(ytPlayerContainerRef.current, {
+          videoId,
+          playerVars: {
+            rel: 0,
+            modestbranding: 1,
+            iv_load_policy: 3,
+            playsinline: 1,
+            controls: 1,
+            enablejsapi: 1,
+            fs: 1,
+            start: startSeconds > 0 ? startSeconds : 0,
+            origin: typeof window !== 'undefined' ? window.location.origin : '',
+          },
+          events: {
+            onStateChange: (event: any) => {
+              // 1 = PLAYING
+              if (event.data === 1) {
+                if (ytPollIntervalRef.current) clearInterval(ytPollIntervalRef.current)
+                ytPollIntervalRef.current = setInterval(() => {
+                  if (ytPlayerRef.current && ytPlayerRef.current.getCurrentTime) {
+                    const c = ytPlayerRef.current.getCurrentTime() || 0
+                    const d = ytPlayerRef.current.getDuration() || 0
+                    saveProgress(c, d)
+                  }
+                }, 2500)
+              } else {
+                if (ytPollIntervalRef.current) clearInterval(ytPollIntervalRef.current)
+              }
+
+              // 0 = ENDED
+              if (event.data === 0) {
+                if (!hasTriggeredCompleteRef.current) {
+                  hasTriggeredCompleteRef.current = true
+                  setCompletedNotice(true)
+                  if (storageKey) localStorage.removeItem(storageKey)
+                  if (onEnded) onEnded()
+                }
+              }
+            },
+          },
+        })
+      } catch {
+        // Fallback to normal iframe if YT API fails
+      }
+    }
+
+    if (window.YT && window.YT.Player) {
+      initYTPlayer()
+    } else {
+      window.onYouTubeIframeAPIReady = () => {
+        initYTPlayer()
+      }
+    }
+
+    return () => {
+      if (ytPollIntervalRef.current) clearInterval(ytPollIntervalRef.current)
+      if (ytPlayerRef.current && ytPlayerRef.current.destroy) {
+        try {
+          ytPlayerRef.current.destroy()
+        } catch {}
+      }
+    }
+  }, [videoId, isDirect, initialStartTime, saveProgress, storageKey, onEnded])
 
   // 1. DIRECT MP4 / CLOUDFLARE R2 / CUSTOM WHITELABEL PLAYER
   if (isDirect) {
@@ -177,7 +347,7 @@ export function YouTubeEmbed({ url, title = 'Lesson Video', autoPlay = false, on
           onPause={() => setIsPlaying(false)}
           onEnded={() => {
             setIsPlaying(false)
-            if (onEnded) onEnded()
+            saveProgress(duration, duration)
           }}
           onClick={togglePlay}
           style={{
@@ -191,31 +361,59 @@ export function YouTubeEmbed({ url, title = 'Lesson Video', autoPlay = false, on
           }}
         />
 
-        {/* Top Institute Badge */}
-        <div
-          style={{
-            position: 'absolute',
-            top: '12px',
-            left: '14px',
-            background: 'rgba(15, 23, 42, 0.75)',
-            backdropFilter: 'blur(8px)',
-            color: '#f8fafc',
-            padding: '4px 10px',
-            borderRadius: '6px',
-            fontSize: '0.72rem',
-            fontWeight: 800,
-            display: 'flex',
-            alignItems: 'center',
-            gap: '6px',
-            border: '1px solid rgba(255, 255, 255, 0.12)',
-            zIndex: 10,
-            pointerEvents: 'none',
-            opacity: showControls ? 1 : 0,
-            transition: 'opacity 0.25s',
-          }}
-        >
-          <span>🎓</span>
-          <span>ÉCLAT INSTITUTE • HD STREAM</span>
+        {/* Top Badges & Notifications */}
+        <div style={{ position: 'absolute', top: '12px', left: '14px', right: '14px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', pointerEvents: 'none', zIndex: 10 }}>
+          <div
+            style={{
+              background: 'rgba(15, 23, 42, 0.85)',
+              backdropFilter: 'blur(8px)',
+              color: '#f8fafc',
+              padding: '4px 10px',
+              borderRadius: '6px',
+              fontSize: '0.72rem',
+              fontWeight: 800,
+              display: 'flex',
+              alignItems: 'center',
+              gap: '6px',
+              border: '1px solid rgba(255, 255, 255, 0.12)',
+            }}
+          >
+            <span>🎓</span>
+            <span>ÉCLAT INSTITUTE • HD STREAM</span>
+          </div>
+
+          {resumedNotice && (
+            <div
+              style={{
+                background: '#2563eb',
+                color: '#ffffff',
+                padding: '4px 10px',
+                borderRadius: '6px',
+                fontSize: '0.72rem',
+                fontWeight: 700,
+                boxShadow: '0 4px 12px rgba(37, 99, 235, 0.4)',
+                pointerEvents: 'auto',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px',
+              }}
+            >
+              <span>{resumedNotice}</span>
+              <button
+                type="button"
+                onClick={handleRestart}
+                style={{ background: 'rgba(255,255,255,0.2)', border: 'none', color: '#fff', borderRadius: '4px', padding: '2px 6px', fontSize: '0.68rem', cursor: 'pointer' }}
+              >
+                Restart ↺
+              </button>
+            </div>
+          )}
+
+          {completedNotice && (
+            <div style={{ background: '#16a34a', color: '#ffffff', padding: '4px 10px', borderRadius: '6px', fontSize: '0.72rem', fontWeight: 800 }}>
+              ✓ Video Module Completed
+            </div>
+          )}
         </div>
 
         {/* Buffering Spinner */}
@@ -275,7 +473,6 @@ export function YouTubeEmbed({ url, title = 'Lesson Video', autoPlay = false, on
           {/* Bottom Button Row */}
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '8px' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-              {/* Play / Pause */}
               <button
                 type="button"
                 onClick={togglePlay}
@@ -297,7 +494,6 @@ export function YouTubeEmbed({ url, title = 'Lesson Video', autoPlay = false, on
                 {isPlaying ? '⏸' : '▶'}
               </button>
 
-              {/* Rewind 10s */}
               <button
                 type="button"
                 onClick={() => handleSkip(-10)}
@@ -316,7 +512,6 @@ export function YouTubeEmbed({ url, title = 'Lesson Video', autoPlay = false, on
                 -10s
               </button>
 
-              {/* Forward 10s */}
               <button
                 type="button"
                 onClick={() => handleSkip(10)}
@@ -364,7 +559,6 @@ export function YouTubeEmbed({ url, title = 'Lesson Video', autoPlay = false, on
 
             {/* Right Controls: Speed & Fullscreen */}
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-              {/* Playback Speed Selector */}
               <select
                 value={playbackRate}
                 onChange={(e) => handleSpeedChange(Number(e.target.value))}
@@ -386,7 +580,6 @@ export function YouTubeEmbed({ url, title = 'Lesson Video', autoPlay = false, on
                 <option value={2} style={{ color: '#000' }}>2.0x</option>
               </select>
 
-              {/* Fullscreen */}
               <button
                 type="button"
                 onClick={toggleFullscreen}
@@ -425,9 +618,11 @@ export function YouTubeEmbed({ url, title = 'Lesson Video', autoPlay = false, on
     )
   }
 
-  // 3. YOUTUBE ULTRA-CLEAN AD-FREE EMBED
+  // 3. YOUTUBE ULTRA-CLEAN AD-FREE EMBED WITH SMART RESUME & END DETECTION
   if (videoId) {
     const origin = typeof window !== 'undefined' ? window.location.origin : ''
+    const startParam = initialStartTime > 0 ? `&start=${Math.floor(initialStartTime)}` : ''
+
     return (
       <div
         className="video-wrapper"
@@ -445,32 +640,66 @@ export function YouTubeEmbed({ url, title = 'Lesson Video', autoPlay = false, on
             position: 'absolute',
             top: '12px',
             left: '14px',
-            background: 'rgba(15, 23, 42, 0.85)',
-            backdropFilter: 'blur(8px)',
-            color: '#f8fafc',
-            padding: '4px 10px',
-            borderRadius: '6px',
-            fontSize: '0.72rem',
-            fontWeight: 800,
+            right: '14px',
             display: 'flex',
+            justifyContent: 'space-between',
             alignItems: 'center',
-            gap: '6px',
-            border: '1px solid rgba(255, 255, 255, 0.12)',
             zIndex: 10,
             pointerEvents: 'none',
           }}
         >
-          <span>🎓</span>
-          <span>ÉCLAT INSTITUTE • ONLINE CLASS</span>
+          <div
+            style={{
+              background: 'rgba(15, 23, 42, 0.85)',
+              backdropFilter: 'blur(8px)',
+              color: '#f8fafc',
+              padding: '4px 10px',
+              borderRadius: '6px',
+              fontSize: '0.72rem',
+              fontWeight: 800,
+              display: 'flex',
+              alignItems: 'center',
+              gap: '6px',
+              border: '1px solid rgba(255, 255, 255, 0.12)',
+            }}
+          >
+            <span>🎓</span>
+            <span>ÉCLAT INSTITUTE • ONLINE CLASS</span>
+          </div>
+
+          {resumedNotice && (
+            <div
+              style={{
+                background: '#2563eb',
+                color: '#ffffff',
+                padding: '4px 10px',
+                borderRadius: '6px',
+                fontSize: '0.72rem',
+                fontWeight: 700,
+                boxShadow: '0 4px 12px rgba(37, 99, 235, 0.4)',
+              }}
+            >
+              {resumedNotice}
+            </div>
+          )}
+
+          {completedNotice && (
+            <div style={{ background: '#16a34a', color: '#ffffff', padding: '4px 10px', borderRadius: '6px', fontSize: '0.72rem', fontWeight: 800 }}>
+              ✓ Video Module Completed
+            </div>
+          )}
         </div>
 
-        <iframe
-          src={`https://www.youtube-nocookie.com/embed/${videoId}?rel=0&modestbranding=1&iv_load_policy=3&playsinline=1&controls=1&enablejsapi=1&fs=1&color=white${origin ? `&origin=${encodeURIComponent(origin)}` : ''}`}
-          title={title}
-          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-          allowFullScreen
-          style={{ width: '100%', height: '100%', border: 0 }}
-        />
+        {/* Dynamic YouTube Iframe / Container */}
+        <div ref={ytPlayerContainerRef} style={{ width: '100%', height: '100%' }}>
+          <iframe
+            src={`https://www.youtube-nocookie.com/embed/${videoId}?rel=0&modestbranding=1&iv_load_policy=3&playsinline=1&controls=1&enablejsapi=1&fs=1&color=white${startParam}${origin ? `&origin=${encodeURIComponent(origin)}` : ''}`}
+            title={title}
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+            allowFullScreen
+            style={{ width: '100%', height: '100%', border: 0 }}
+          />
+        </div>
       </div>
     )
   }

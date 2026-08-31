@@ -194,6 +194,44 @@ export function LessonPlayer() {
     }
   }
 
+  const [videoCompletedToast, setVideoCompletedToast] = useState(false)
+
+  // Handle smart auto-completion when student finishes video
+  const handleVideoComplete = async () => {
+    setVideoCompletedToast(true)
+    setTimeout(() => setVideoCompletedToast(false), 8000)
+
+    if (!profile?.id || !lessonId || !lesson.course_id) return
+
+    // If lesson has no quizzes, automatically mark the whole lesson as completed in Supabase
+    if (!quizzes || quizzes.length === 0) {
+      const currentCompleted = enrollment?.completed_lesson_ids || []
+      const updatedCompleted = Array.from(new Set([...currentCompleted, lessonId]))
+      const isAllCompleted = courseLessons && courseLessons.length > 0 && updatedCompleted.length >= courseLessons.length
+
+      await supabase.from('enrollments').upsert({
+        student_id: profile.id,
+        course_id: lesson.course_id,
+        completed_lesson_ids: updatedCompleted,
+        completed_at: isAllCompleted ? new Date().toISOString() : enrollment?.completed_at || null,
+      })
+
+      await supabase.rpc('award_badge', { p_student_id: profile.id, p_criteria_type: 'first_lesson' })
+      await supabase.rpc('award_badge', { p_student_id: profile.id, p_criteria_type: 'lessons_count' })
+      if (isAllCompleted) {
+        await supabase.rpc('award_badge', { p_student_id: profile.id, p_criteria_type: 'course_complete' })
+      }
+
+      await supabase.from('notifications').insert({
+        user_id: profile.id,
+        message: `Video finished & module cleared: ${lesson.title} 🎓`,
+        link: `/student/courses/${lesson.course_id}`,
+      })
+
+      queryClient.invalidateQueries({ queryKey: ['lesson-player-instant-v3'] })
+    }
+  }
+
   // Find next lesson
   const currentIndex = courseLessons?.findIndex((l) => l.id === lessonId) ?? -1
   const nextLesson = currentIndex !== -1 && courseLessons && currentIndex < courseLessons.length - 1
@@ -251,8 +289,50 @@ export function LessonPlayer() {
         </div>
       ) : (
         <>
-          {/* YouTube Video Player */}
-          <YouTubeEmbed url={lesson.youtube_url} title={lesson.title} />
+          {/* Universal Smart Video Player (With Auto-Resume & Auto-Completion) */}
+          <YouTubeEmbed
+            url={lesson.youtube_url}
+            title={lesson.title}
+            lessonId={lesson.id}
+            studentId={profile?.id}
+            onEnded={handleVideoComplete}
+          />
+
+          {/* Video Completion Floating Banner */}
+          {videoCompletedToast && (
+            <div
+              style={{
+                background: '#dcfce7',
+                border: '2px solid #86efac',
+                borderRadius: '10px',
+                padding: '1rem 1.25rem',
+                marginTop: '1rem',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                flexWrap: 'wrap',
+                gap: '0.75rem',
+                boxShadow: '0 4px 12px rgba(22, 101, 52, 0.1)',
+              }}
+            >
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                <span style={{ fontSize: '1.8rem' }}>🎉</span>
+                <div>
+                  <strong style={{ color: '#166534', fontSize: '0.95rem' }}>Video Lecture Finished!</strong>
+                  <div style={{ color: '#15803d', fontSize: '0.8rem', marginTop: '2px' }}>
+                    {quizzes && quizzes.length > 0
+                      ? 'Great job watching! Complete the quick quiz below to test your understanding.'
+                      : 'Module progress recorded! You can now proceed to the next module.'}
+                  </div>
+                </div>
+              </div>
+              {nextLesson && (
+                <Button variant="primary" size="sm" onClick={() => navigate(`/student/lesson/${nextLesson.id}`)}>
+                  Next Module: {nextLesson.title} →
+                </Button>
+              )}
+            </div>
+          )}
 
       {/* PDF & HTML Learning Resources */}
       {resources && resources.length > 0 && (
