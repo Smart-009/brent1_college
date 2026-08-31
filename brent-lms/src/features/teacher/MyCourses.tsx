@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '@/hooks/useAuth'
 import { PageWrapper } from '@/components/layout/PageWrapper'
@@ -12,6 +12,19 @@ export function MyCourses() {
   const navigate = useNavigate()
   const [courseUnits, setCourseUnits] = useState<CourseUnit[]>(() => schoolStore.getCourseUnits())
   const [selectedUnit, setSelectedUnit] = useState<CourseUnit | null>(null)
+
+  // Realtime synchronization on store updates
+  useEffect(() => {
+    const refresh = () => setCourseUnits(schoolStore.getCourseUnits())
+    window.addEventListener('storage', refresh)
+    window.addEventListener('focus', refresh)
+    window.addEventListener('eclat-courses-updated', refresh)
+    return () => {
+      window.removeEventListener('storage', refresh)
+      window.removeEventListener('focus', refresh)
+      window.removeEventListener('eclat-courses-updated', refresh)
+    }
+  }, [])
 
   const handleDelete = async (id: string, code: string) => {
     if (!isAdmin) {

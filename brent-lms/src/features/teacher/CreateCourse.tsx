@@ -315,6 +315,7 @@ export function CreateCourse() {
 
       // Broadcast storage event for live frontpage & catalog updates
       window.dispatchEvent(new Event('storage'))
+      window.dispatchEvent(new CustomEvent('eclat-courses-updated'))
 
       navigate('/teacher/courses')
     } catch (err: any) {

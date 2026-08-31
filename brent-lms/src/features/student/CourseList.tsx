@@ -14,11 +14,13 @@ export function CourseList() {
   const studentIdentifier = profile?.admission_number || profile?.id || ''
   const registrationSlip = schoolStore.getRegistrationForStudent(studentIdentifier)
   const registeredUnits = schoolStore.getRegisteredUnitsForStudent(studentIdentifier)
+  const allUnits = schoolStore.getCourseUnits()
+  const displayedUnits = registeredUnits.length > 0 ? registeredUnits : allUnits.filter((u) => u.is_published !== false)
 
   return (
     <PageWrapper
-      title="My Registered Course Units"
-      subtitle="Access online modules, lecture materials, and video sessions for your officially cleared units."
+      title="My Accredited Course Units & LMS"
+      subtitle="Access online modules, lecture materials, and live interactive video sessions."
     >
       {/* Unit Registration Clearance Banner */}
       {registrationSlip ? (
@@ -37,7 +39,7 @@ export function CourseList() {
                 Official Clearance Slip: {registrationSlip.receipt_number}
               </div>
               <h2 style={{ fontSize: '1.5rem', fontWeight: 800, margin: '0.25rem 0' }}>
-                {registeredUnits.length} Course Units Registered ({registrationSlip.total_credits} Credits)
+                {displayedUnits.length} Course Units Registered ({registrationSlip.total_credits} Credits)
               </h2>
               <p style={{ fontSize: '0.85rem', color: '#cbd5e1', margin: 0 }}>
                 Training Period: <strong>{registrationSlip.course_duration || registrationSlip.semester || 'Short Course'}</strong> • Fee Status: <strong style={{ color: '#86efac' }}>{registrationSlip.fee_clearance_status}</strong>
@@ -53,37 +55,20 @@ export function CourseList() {
             </button>
           </div>
         </div>
-      ) : (
-        <div className="card mb-6" style={{ padding: '2rem', background: '#fffbeb', border: '1px solid #fde68a', color: '#92400e', borderRadius: '12px' }}>
-          <div style={{ display: 'flex', gap: '1rem', alignItems: 'flex-start' }}>
-            <div style={{ fontSize: '2rem' }}>⚠️</div>
-            <div>
-              <h3 style={{ margin: 0, fontSize: '1.1rem', fontWeight: 700, color: '#b45309' }}>
-                Pending Semester Unit Registration
-              </h3>
-              <p style={{ margin: '0.35rem 0 0', fontSize: '0.9rem', lineHeight: '1.5' }}>
-                You have not been formally registered for course units for this semester. Formal unit registration is processed by the <strong>College Registrar / Admissions Desk</strong> upon tuition fee clearance.
-              </p>
-              <div style={{ marginTop: '0.75rem', fontSize: '0.82rem', color: '#78350f' }}>
-                📍 Please visit the Admissions Desk or contact the College Bursar with your fee payment receipt to receive your official <strong>Unit Registration & Examination Slip</strong>.
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
+      ) : null}
 
       {/* List of Cleared Course Units */}
-      {registeredUnits.length === 0 ? (
+      {displayedUnits.length === 0 ? (
         <div className="card" style={{ padding: '3.5rem 2rem', textAlign: 'center', maxWidth: '640px', margin: '1rem auto' }}>
           <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>📚</div>
-          <h3 style={{ fontSize: '1.25rem', fontWeight: 700, margin: '0 0 0.5rem' }}>No Cleared Units Available</h3>
+          <h3 style={{ fontSize: '1.25rem', fontWeight: 700, margin: '0 0 0.5rem' }}>No Active Units Available</h3>
           <p style={{ color: 'var(--color-text-secondary)', fontSize: '0.9rem', lineHeight: '1.6', margin: 0 }}>
-            Once Management completes your semester unit registration, all accredited modules, lecture videos, and learning materials will appear here.
+            Once Management publishes your accredited course units, all modules, lecture videos, and learning materials will appear here.
           </p>
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {registeredUnits.map((unit) => (
+          {displayedUnits.map((unit) => (
             <div key={unit.id} className="card" style={{ padding: '1.5rem', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
               <div>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem' }}>

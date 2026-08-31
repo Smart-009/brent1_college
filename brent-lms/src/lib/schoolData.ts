@@ -895,10 +895,14 @@ class SchoolDataStore {
       ['brent_school_course_units'],
       () => {
         const list = this.getCourseUnits()
-        if (list.some((u) => u.code.toLowerCase() === unit.code.toLowerCase())) {
-          throw new IntegrityError(`Unit Code "${unit.code}" is already registered.`)
+        const existingIdx = list.findIndex(
+          (u) => u.id === unit.id || u.code.toLowerCase() === unit.code.toLowerCase()
+        )
+        if (existingIdx !== -1) {
+          list[existingIdx] = unit
+        } else {
+          list.unshift(unit)
         }
-        list.unshift(unit)
         this.set('course_units', list)
       }
     )
@@ -1003,10 +1007,14 @@ class SchoolDataStore {
       ['brent_school_departments'],
       () => {
         const list = this.getDepartments()
-        if (list.some((d) => d.code.toLowerCase() === dept.code.toLowerCase() || d.name.toLowerCase() === dept.name.toLowerCase())) {
-          throw new IntegrityError(`Department "${dept.name}" (${dept.code}) already exists.`)
+        const existingIdx = list.findIndex(
+          (d) => d.id === dept.id || d.code.toLowerCase() === dept.code.toLowerCase() || d.name.toLowerCase() === dept.name.toLowerCase()
+        )
+        if (existingIdx !== -1) {
+          list[existingIdx] = { ...list[existingIdx], ...dept }
+        } else {
+          list.unshift(dept)
         }
-        list.push(dept)
         this.set('departments', list)
       }
     )
@@ -1050,10 +1058,14 @@ class SchoolDataStore {
       ['brent_school_subjects'],
       () => {
         const list = this.getSubjects()
-        if (list.some((s) => s.code.toLowerCase() === sub.code.toLowerCase())) {
-          throw new IntegrityError(`Subject Code "${sub.code}" already exists.`)
+        const existingIdx = list.findIndex(
+          (s) => s.id === sub.id || s.code.toLowerCase() === sub.code.toLowerCase() || s.name.toLowerCase() === sub.name.toLowerCase()
+        )
+        if (existingIdx !== -1) {
+          list[existingIdx] = sub
+        } else {
+          list.unshift(sub)
         }
-        list.push(sub)
         this.set('subjects', list)
       }
     )
