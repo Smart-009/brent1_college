@@ -1,5 +1,6 @@
 import { useState, useMemo } from 'react'
 import { schoolStore } from '@/lib/schoolData'
+import { supabase } from '@/lib/supabase'
 import type { StudentRecord, PaymentReminder } from '@/types/school'
 import { BiometricEnrollModal } from '@/components/biometrics/BiometricEnrollModal'
 import { BiometricScannerModal } from '@/components/biometrics/BiometricScannerModal'
@@ -31,6 +32,56 @@ export function StudentDirectory() {
   const [reminderTarget, setReminderTarget] = useState<StudentRecord | null>(null)
   const [bulkReminderSuccess, setBulkReminderSuccess] = useState<string | null>(null)
 
+  // Student Login Credentials State & Modal
+  const [credentialsModalData, setCredentialsModalData] = useState<{
+    studentName: string
+    admissionNumber: string
+    password: string
+    program: string
+    phone?: string
+    isNew?: boolean
+  } | null>(null)
+  const [studentPasswordInput, setStudentPasswordInput] = useState('Student@2026')
+  const [studentPhoneInput, setStudentPhoneInput] = useState('')
+  const [editPasswordInput, setEditPasswordInput] = useState('')
+  const [copiedNotification, setCopiedNotification] = useState(false)
+
+  // Helper to persist student login credentials
+  const saveStudentCredentials = (adm: string, fullName: string, password: string) => {
+    const cleanAdm = adm.trim().toLowerCase().replace(/[^a-z0-9]/g, '')
+    const profileObj = {
+      id: `usr-${cleanAdm}`,
+      full_name: fullName,
+      admission_number: adm,
+      role: 'student',
+      first_login_at: null,
+      access_expires_at: null,
+      is_active: true,
+      created_at: new Date().toISOString(),
+    }
+
+    try {
+      const raw = localStorage.getItem('eclat_local_credentials') || localStorage.getItem('brent_local_credentials') || '{}'
+      const creds = JSON.parse(raw)
+      creds[cleanAdm] = {
+        password: password.trim(),
+        profile: profileObj,
+      }
+      localStorage.setItem('eclat_local_credentials', JSON.stringify(creds))
+      localStorage.setItem('brent_local_credentials', JSON.stringify(creds))
+    } catch {}
+
+    try {
+      supabase.from('profiles').upsert({
+        id: profileObj.id,
+        full_name: fullName,
+        admission_number: adm,
+        role: 'student',
+        is_active: true,
+      })
+    } catch {}
+  }
+
   // New Student Form State
   const [newStudent, setNewStudent] = useState<Partial<StudentRecord>>({
     full_name: '',
@@ -49,7 +100,7 @@ export function StudentDirectory() {
     demerits_count: 0,
     guardian: {
       name: '',
-      relationship: 'Father',
+      relationship: 'Self',
       phone: '',
       email: '',
       occupation: '',
@@ -139,12 +190,13 @@ export function StudentDirectory() {
   }
 
   // --- Add Student ---
-  const handleAddStudent = (e: React.FormEvent) => {
+  const handleAddStudent = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!newStudent.full_name || !newStudent.admission_number) return
 
-    const billed = Number(newStudent.term_fee_total) || 4500
+    const billed = Number(newStudent.term_fee_total) || 75
     const balance = newStudent.fee_balance !== undefined ? Number(newStudent.fee_balance) : billed
+    const chosenPassword = studentPasswordInput.trim() || 'Student@2026'
 
     const record: StudentRecord = {
       id: `std-${Date.now()}`,
@@ -153,18 +205,18 @@ export function StudentDirectory() {
       gender: newStudent.gender as 'Male' | 'Female',
       dob: newStudent.dob || '2005-01-01',
       class_id: 'cls-custom',
-      class_name: newStudent.class_name || 'Comprehensive Computer Packages & Digital Skills',
+      class_name: newStudent.class_name || programOptions[0] || 'Comprehensive Computer Packages & Digital Skills',
       grade_level: newStudent.grade_level || '4 to 12 Weeks (Short Course Certificate)',
       stream: newStudent.stream || 'Practical Lab Trainee',
       enrollment_date: new Date().toISOString().split('T')[0],
       status: 'Active',
-      guardian: newStudent.guardian || {
-        name: '',
-        relationship: 'Father',
-        phone: '',
-        email: '',
+      guardian: {
+        name: newStudent.guardian?.name?.trim() || 'Self-Sponsored Student',
+        relationship: newStudent.guardian?.relationship || 'Self',
+        phone: studentPhoneInput.trim() || newStudent.guardian?.phone?.trim() || '',
+        email: newStudent.guardian?.email?.trim() || '',
       },
-      emergency_contact: newStudent.guardian?.phone || '',
+      emergency_contact: studentPhoneInput.trim() || newStudent.guardian?.phone?.trim() || '',
       blood_group: newStudent.blood_group || undefined,
       fee_balance: balance,
       term_fee_total: billed,
@@ -175,14 +227,17 @@ export function StudentDirectory() {
       demerits_count: 0,
     }
 
-    schoolStore.addStudent(record)
+    await schoolStore.addStudent(record)
+
+    // Save student login credentials for direct portal login
+    saveStudentCredentials(record.admission_number, record.full_name, chosenPassword)
 
     // Auto-link registered unit so course shows on student LMS immediately
     const matchedUnit = schoolStore.getCourseUnits().find(
       (u) => u.title.toLowerCase() === record.class_name.toLowerCase() || u.program.toLowerCase() === record.class_name.toLowerCase()
     )
     if (matchedUnit) {
-      schoolStore.registerStudentUnits({
+      await schoolStore.registerStudentUnits({
         id: `reg-${record.id}`,
         receipt_number: `REG-${new Date().getFullYear()}-${Math.floor(1000 + Math.random() * 9000)}`,
         student_id: record.id,
@@ -208,23 +263,37 @@ export function StudentDirectory() {
 
     setStudents(schoolStore.getStudents())
     setShowAddModal(false)
+
+    // Open Student Login Pass & Credentials Modal
+    setCredentialsModalData({
+      studentName: record.full_name,
+      admissionNumber: record.admission_number,
+      password: chosenPassword,
+      program: record.class_name,
+      phone: studentPhoneInput.trim() || newStudent.guardian?.phone?.trim() || '',
+      isNew: true,
+    })
   }
 
   // --- Edit Student ---
-  const handleSaveEdit = (e: React.FormEvent) => {
+  const handleSaveEdit = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!editingStudent) return
 
-    schoolStore.updateStudent(editingStudent.id, {
+    await schoolStore.updateStudent(editingStudent.id, {
       ...editingStudent,
       fee_cleared: editingStudent.fee_balance === 0,
     })
+
+    if (editPasswordInput.trim()) {
+      saveStudentCredentials(editingStudent.admission_number, editingStudent.full_name, editPasswordInput.trim())
+    }
 
     const matchedUnit = schoolStore.getCourseUnits().find(
       (u) => u.title.toLowerCase() === editingStudent.class_name.toLowerCase() || u.program.toLowerCase() === editingStudent.class_name.toLowerCase()
     )
     if (matchedUnit) {
-      schoolStore.registerStudentUnits({
+      await schoolStore.registerStudentUnits({
         id: `reg-${editingStudent.id}`,
         receipt_number: `REG-${new Date().getFullYear()}-${Math.floor(1000 + Math.random() * 9000)}`,
         student_id: editingStudent.id,
@@ -253,6 +322,7 @@ export function StudentDirectory() {
       setSelectedStudent(editingStudent)
     }
     setEditingStudent(null)
+    setEditPasswordInput('')
   }
 
   // --- Delete Student ---
@@ -573,8 +643,40 @@ export function StudentDirectory() {
                         </button>
                         <button
                           type="button"
+                          className="btn btn-sm"
+                          style={{ background: '#f8fafc', border: '1px solid #cbd5e1', color: '#1e3a8a', fontWeight: 700 }}
+                          onClick={() => {
+                            const cleanAdm = std.admission_number.trim().toLowerCase().replace(/[^a-z0-9]/g, '')
+                            let currentPass = 'Student@2026'
+                            try {
+                              const raw = localStorage.getItem('eclat_local_credentials') || localStorage.getItem('brent_local_credentials')
+                              if (raw) {
+                                const parsed = JSON.parse(raw)
+                                if (parsed[cleanAdm]?.password) {
+                                  currentPass = parsed[cleanAdm].password
+                                }
+                              }
+                            } catch {}
+                            setCredentialsModalData({
+                              studentName: std.full_name,
+                              admissionNumber: std.admission_number,
+                              password: currentPass,
+                              program: std.class_name,
+                              phone: std.guardian?.phone || '',
+                              isNew: false,
+                            })
+                          }}
+                          title="View / Copy Student Login Credentials"
+                        >
+                          🔑 Pass
+                        </button>
+                        <button
+                          type="button"
                           className="btn btn-primary btn-sm"
-                          onClick={() => setEditingStudent(std)}
+                          onClick={() => {
+                            setEditingStudent(std)
+                            setEditPasswordInput('')
+                          }}
                           title="Edit Student Information"
                         >
                           ✏️ Edit
@@ -818,7 +920,7 @@ export function StudentDirectory() {
             </div>
 
             <div className="modal-footer" style={{ display: 'flex', justifyContent: 'space-between' }}>
-              <div style={{ display: 'flex', gap: '0.5rem' }}>
+              <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
                 <button
                   type="button"
                   className="btn btn-secondary"
@@ -828,9 +930,38 @@ export function StudentDirectory() {
                 </button>
                 <button
                   type="button"
+                  className="btn"
+                  style={{ background: '#f0fdf4', color: '#166534', border: '1px solid #bbf7d0', fontWeight: 700 }}
+                  onClick={() => {
+                    const cleanAdm = selectedStudent.admission_number.trim().toLowerCase().replace(/[^a-z0-9]/g, '')
+                    let currentPass = 'Student@2026'
+                    try {
+                      const raw = localStorage.getItem('eclat_local_credentials') || localStorage.getItem('brent_local_credentials')
+                      if (raw) {
+                        const parsed = JSON.parse(raw)
+                        if (parsed[cleanAdm]?.password) {
+                          currentPass = parsed[cleanAdm].password
+                        }
+                      }
+                    } catch {}
+                    setCredentialsModalData({
+                      studentName: selectedStudent.full_name,
+                      admissionNumber: selectedStudent.admission_number,
+                      password: currentPass,
+                      program: selectedStudent.class_name,
+                      phone: selectedStudent.guardian?.phone || '',
+                      isNew: false,
+                    })
+                  }}
+                >
+                  🔑 View Login Pass
+                </button>
+                <button
+                  type="button"
                   className="btn btn-primary"
                   onClick={() => {
                     setEditingStudent(selectedStudent)
+                    setEditPasswordInput('')
                     setSelectedStudent(null)
                   }}
                 >
@@ -921,12 +1052,15 @@ export function StudentDirectory() {
                 <div style={{ display: 'grid', gridTemplateColumns: '1.5fr 1fr', gap: '0.75rem' }}>
                   <div>
                     <label className="label">Program / Diploma Title</label>
-                    <input
-                      type="text"
+                    <select
                       className="input"
                       value={editingStudent.class_name}
                       onChange={(e) => setEditingStudent({ ...editingStudent, class_name: e.target.value })}
-                    />
+                    >
+                      {programOptions.map((prog) => (
+                        <option key={prog} value={prog}>{prog}</option>
+                      ))}
+                    </select>
                   </div>
                   <div>
                     <label className="label">Academic Year / Semester</label>
@@ -939,18 +1073,36 @@ export function StudentDirectory() {
                   </div>
                 </div>
 
-                {/* Guardian Details */}
+                {/* Reset Login Password */}
+                <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', padding: '0.85rem', borderRadius: '6px' }}>
+                  <label className="label" style={{ fontSize: '0.8rem', fontWeight: 700, color: '#1e3a8a' }}>
+                    🔑 Reset Student Login Password (Optional)
+                  </label>
+                  <input
+                    type="text"
+                    className="input"
+                    placeholder="Leave blank to keep existing password, or enter new password"
+                    value={editPasswordInput}
+                    onChange={(e) => setEditPasswordInput(e.target.value)}
+                  />
+                  <div style={{ fontSize: '0.72rem', color: '#64748b', marginTop: '0.25rem' }}>
+                    Updating this password allows the student to log in at <code>/login</code> immediately with the new password.
+                  </div>
+                </div>
+
+                {/* Guardian Details (Optional) */}
                 <div style={{ borderTop: '1px solid var(--color-border)', paddingTop: '0.75rem' }}>
                   <h4 style={{ fontSize: '0.85rem', fontWeight: 700, marginBottom: '0.5rem', color: 'var(--color-primary)' }}>
-                    Guardian & Sponsor Information
+                    Guardian & Sponsor Information (Optional)
                   </h4>
                   <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '0.75rem' }}>
                     <div>
-                      <label className="label">Guardian Name</label>
+                      <label className="label">Guardian Name (Optional)</label>
                       <input
                         type="text"
                         className="input"
-                        value={editingStudent.guardian.name}
+                        placeholder="Optional"
+                        value={editingStudent.guardian?.name || ''}
                         onChange={(e) =>
                           setEditingStudent({
                             ...editingStudent,
@@ -960,11 +1112,12 @@ export function StudentDirectory() {
                       />
                     </div>
                     <div>
-                      <label className="label">Guardian Phone</label>
+                      <label className="label">Guardian Phone (Optional)</label>
                       <input
                         type="text"
                         className="input"
-                        value={editingStudent.guardian.phone}
+                        placeholder="Optional"
+                        value={editingStudent.guardian?.phone || ''}
                         onChange={(e) =>
                           setEditingStudent({
                             ...editingStudent,
@@ -974,10 +1127,11 @@ export function StudentDirectory() {
                       />
                     </div>
                     <div>
-                      <label className="label">Guardian Email</label>
+                      <label className="label">Guardian Email (Optional)</label>
                       <input
                         type="email"
                         className="input"
+                        placeholder="Optional"
                         value={editingStudent.guardian.email}
                         onChange={(e) =>
                           setEditingStudent({
@@ -1175,17 +1329,61 @@ export function StudentDirectory() {
                   </div>
                 </div>
 
+                {/* Student Login Credentials Section */}
+                <div style={{ background: '#f8fafc', border: '1.5px solid #cbd5e1', borderRadius: '8px', padding: '0.85rem' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.4rem' }}>
+                    <label className="label" style={{ fontSize: '0.82rem', fontWeight: 800, color: '#1e3a8a', margin: 0 }}>
+                      🔑 Student Portal Login Password *
+                    </label>
+                    <button
+                      type="button"
+                      className="btn btn-xs btn-secondary"
+                      onClick={() => setStudentPasswordInput(`Eclat@${Math.floor(1000 + Math.random() * 9000)}!`)}
+                    >
+                      🎲 Generate Secure Password
+                    </button>
+                  </div>
+                  <input
+                    type="text"
+                    required
+                    className="input"
+                    placeholder="Enter student login password (e.g. Student@2026)"
+                    value={studentPasswordInput}
+                    onChange={(e) => setStudentPasswordInput(e.target.value)}
+                  />
+                  <div style={{ fontSize: '0.72rem', color: '#64748b', marginTop: '0.3rem' }}>
+                    The student will log in at <code>/login</code> using Admission Number <strong>{newStudent.admission_number}</strong> and this password.
+                  </div>
+                </div>
+
+                {/* Student Direct Contact */}
+                <div>
+                  <label className="label">Student Phone / WhatsApp (Optional)</label>
+                  <input
+                    type="tel"
+                    className="input"
+                    placeholder="+254 700 000 000 or international phone"
+                    value={studentPhoneInput}
+                    onChange={(e) => setStudentPhoneInput(e.target.value)}
+                  />
+                </div>
+
+                {/* Guardian Details (100% Optional) */}
                 <div style={{ borderTop: '1px solid var(--color-border)', paddingTop: '0.75rem' }}>
-                  <h4 style={{ fontSize: '0.85rem', fontWeight: 600, marginBottom: '0.5rem' }}>Guardian / Sponsor Information</h4>
+                  <h4 style={{ fontSize: '0.85rem', fontWeight: 700, marginBottom: '0.35rem', color: 'var(--color-primary)' }}>
+                    Guardian / Sponsor Information (Optional)
+                  </h4>
+                  <p style={{ fontSize: '0.75rem', color: 'var(--color-text-secondary)', margin: '0 0 0.5rem' }}>
+                    Leave blank for adult, self-sponsored, or corporate professionals.
+                  </p>
                   <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem' }}>
                     <div>
-                      <label className="label">Guardian Name *</label>
+                      <label className="label">Guardian Name (Optional)</label>
                       <input
                         type="text"
-                        required
                         className="input"
-                        placeholder="Enter guardian full name"
-                        value={newStudent.guardian?.name}
+                        placeholder="Optional"
+                        value={newStudent.guardian?.name || ''}
                         onChange={(e) =>
                           setNewStudent({
                             ...newStudent,
@@ -1195,13 +1393,12 @@ export function StudentDirectory() {
                       />
                     </div>
                     <div>
-                      <label className="label">Guardian Phone *</label>
+                      <label className="label">Guardian Phone (Optional)</label>
                       <input
                         type="tel"
-                        required
                         className="input"
-                        placeholder="+254 700 000 000"
-                        value={newStudent.guardian?.phone}
+                        placeholder="Optional"
+                        value={newStudent.guardian?.phone || ''}
                         onChange={(e) =>
                           setNewStudent({
                             ...newStudent,
@@ -1216,9 +1413,123 @@ export function StudentDirectory() {
 
               <div className="modal-footer">
                 <button type="button" className="btn btn-secondary" onClick={() => setShowAddModal(false)}>Cancel</button>
-                <button type="submit" className="btn btn-primary">Save & Enroll Student</button>
+                <button type="submit" className="btn btn-primary">Save, Enroll & Generate Login Pass</button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {/* Student Login Credentials Pass Modal */}
+      {credentialsModalData && (
+        <div className="modal-overlay" onClick={() => setCredentialsModalData(null)}>
+          <div className="modal-content modal-md" onClick={(e) => e.stopPropagation()} style={{ maxWidth: '540px' }}>
+            <div className="modal-header" style={{ background: 'linear-gradient(135deg, #1e3a8a 0%, #1e1b4b 100%)', color: '#ffffff', borderTopLeftRadius: '8px', borderTopRightRadius: '8px', padding: '1.25rem 1.5rem' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
+                <span style={{ fontSize: '1.6rem' }}>🎓</span>
+                <div>
+                  <h3 className="modal-title" style={{ color: '#ffffff', fontSize: '1.2rem', margin: 0 }}>
+                    {credentialsModalData.isNew ? 'Student Enrolled & Login Pass Created' : 'Student Login Credentials & Portal Pass'}
+                  </h3>
+                  <div style={{ fontSize: '0.78rem', color: '#93c5fd' }}>
+                    Official Student LMS & Portal Authentication Pass
+                  </div>
+                </div>
+              </div>
+              <button type="button" className="modal-close" style={{ color: '#ffffff' }} onClick={() => setCredentialsModalData(null)}>✕</button>
+            </div>
+
+            <div className="modal-body" style={{ padding: '1.5rem', display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
+              {credentialsModalData.isNew && (
+                <div style={{ background: '#ecfdf5', border: '1px solid #6ee7b7', color: '#065f46', padding: '0.85rem 1rem', borderRadius: '8px', fontSize: '0.85rem', display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
+                  <span style={{ fontSize: '1.3rem' }}>✅</span>
+                  <div>
+                    <strong>Student Account Activated!</strong> Enrolled into <strong>{credentialsModalData.program}</strong>. The student can log in immediately.
+                  </div>
+                </div>
+              )}
+
+              {/* Credentials Card */}
+              <div style={{ background: '#f8fafc', border: '1.5px solid #cbd5e1', borderRadius: '10px', padding: '1.25rem' }}>
+                <div style={{ fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.08em', color: '#64748b', fontWeight: 800, marginBottom: '0.75rem' }}>
+                  ÉCLAT INSTITUTE • STUDENT PORTAL CREDENTIALS
+                </div>
+
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid #e2e8f0', paddingBottom: '0.5rem' }}>
+                    <span style={{ fontSize: '0.85rem', color: '#475569', fontWeight: 600 }}>Student Name:</span>
+                    <span style={{ fontSize: '0.95rem', fontWeight: 800, color: '#0f172a' }}>{credentialsModalData.studentName}</span>
+                  </div>
+
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid #e2e8f0', paddingBottom: '0.5rem' }}>
+                    <span style={{ fontSize: '0.85rem', color: '#475569', fontWeight: 600 }}>Admission Number / Username:</span>
+                    <span style={{ fontSize: '1.05rem', fontWeight: 900, color: '#1e3a8a', fontFamily: 'monospace' }}>{credentialsModalData.admissionNumber}</span>
+                  </div>
+
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid #e2e8f0', paddingBottom: '0.5rem' }}>
+                    <span style={{ fontSize: '0.85rem', color: '#475569', fontWeight: 600 }}>Login Password:</span>
+                    <span style={{ fontSize: '1.05rem', fontWeight: 900, color: '#15803d', fontFamily: 'monospace', background: '#dcfce7', padding: '2px 8px', borderRadius: '4px' }}>
+                      {credentialsModalData.password}
+                    </span>
+                  </div>
+
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <span style={{ fontSize: '0.85rem', color: '#475569', fontWeight: 600 }}>Portal URL:</span>
+                    <a href="https://eclat.institute/login" target="_blank" rel="noreferrer" style={{ fontSize: '0.85rem', color: '#2563eb', fontWeight: 700 }}>
+                      eclat.institute/login
+                    </a>
+                  </div>
+                </div>
+              </div>
+
+              {/* Quick Action Buttons */}
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem' }}>
+                <button
+                  type="button"
+                  className="btn btn-primary"
+                  onClick={() => {
+                    const text = `🎓 ÉCLAT INSTITUTE STUDENT PORTAL LOGIN\n\nStudent Name: ${credentialsModalData.studentName}\nAdmission Number: ${credentialsModalData.admissionNumber}\nPassword: ${credentialsModalData.password}\nEnrolled Program: ${credentialsModalData.program}\n\nLogin Link: https://eclat.institute/login`
+                    navigator.clipboard.writeText(text)
+                    setCopiedNotification(true)
+                    setTimeout(() => setCopiedNotification(false), 3000)
+                  }}
+                >
+                  {copiedNotification ? '✓ Copied to Clipboard!' : '📋 Copy Login Details'}
+                </button>
+
+                {credentialsModalData.phone ? (
+                  <a
+                    href={`https://api.whatsapp.com/send?phone=${credentialsModalData.phone.replace(/[^0-9]/g, '')}&text=${encodeURIComponent(
+                      `🎓 *ÉCLAT INSTITUTE STUDENT PORTAL LOGIN*\n\nHello *${credentialsModalData.studentName}*,\nYour student account has been set up for *${credentialsModalData.program}*.\n\n*Admission Number / Username:* ${credentialsModalData.admissionNumber}\n*Password:* ${credentialsModalData.password}\n*Portal Link:* https://eclat.institute/login\n\nPlease log in to access your video lessons and live virtual classes.`
+                    )}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="btn"
+                    style={{ background: '#25D366', color: '#ffffff', fontWeight: 700, textAlign: 'center', textDecoration: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.35rem' }}
+                  >
+                    📲 Send via WhatsApp
+                  </a>
+                ) : (
+                  <button
+                    type="button"
+                    className="btn btn-secondary"
+                    onClick={() => window.print()}
+                  >
+                    🖨️ Print Login Pass
+                  </button>
+                )}
+              </div>
+            </div>
+
+            <div className="modal-footer" style={{ justifyContent: 'flex-end' }}>
+              <button
+                type="button"
+                className="btn btn-secondary"
+                onClick={() => setCredentialsModalData(null)}
+              >
+                Close Pass
+              </button>
+            </div>
           </div>
         </div>
       )}

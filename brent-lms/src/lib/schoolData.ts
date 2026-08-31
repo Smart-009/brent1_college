@@ -436,23 +436,27 @@ class SchoolDataStore {
       ['brent_school_students', 'brent_school_invoices'],
       () => {
         const list = this.get<StudentRecord[]>('students', INITIAL_STUDENTS)
-        if (list.some((s) => s.admission_number.toLowerCase() === student.admission_number.toLowerCase())) {
-          throw new IntegrityError(`Admission Number "${student.admission_number}" is already registered in the system.`)
-        }
+        const existingIdx = list.findIndex(
+          (s) => s.id === student.id || s.admission_number.toLowerCase() === student.admission_number.toLowerCase()
+        )
 
-        const billed = Number(student.term_fee_total) || 4500
+        const billed = Number(student.term_fee_total) || 75
         const newRecord: StudentRecord = {
           ...student,
           term_fee_total: billed,
-          fee_balance: billed,
-          fee_cleared: false,
+          fee_balance: student.fee_balance !== undefined ? Number(student.fee_balance) : billed,
+          fee_cleared: student.fee_balance === 0,
           attendance_rate: Number(student.attendance_rate) || 0,
           discipline_points: Number(student.discipline_points) || 0,
-          merits_count: 0,
-          demerits_count: 0,
+          merits_count: student.merits_count || 0,
+          demerits_count: student.demerits_count || 0,
         }
 
-        list.unshift(newRecord)
+        if (existingIdx !== -1) {
+          list[existingIdx] = { ...list[existingIdx], ...newRecord }
+        } else {
+          list.unshift(newRecord)
+        }
         this.set('students', list)
 
         // Automatically create unpaid/pending invoice for the new student

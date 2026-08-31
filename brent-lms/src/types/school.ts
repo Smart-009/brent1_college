@@ -4,7 +4,7 @@
 
 export interface GuardianInfo {
   name: string
-  relationship: 'Father' | 'Mother' | 'Guardian' | 'Sponsor'
+  relationship: 'Father' | 'Mother' | 'Guardian' | 'Sponsor' | 'Self' | 'Other'
   phone: string
   email: string
   occupation?: string
