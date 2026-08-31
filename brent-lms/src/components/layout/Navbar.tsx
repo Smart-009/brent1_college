@@ -5,6 +5,7 @@ import { supabase } from '@/lib/supabase'
 import type { Notification } from '@/lib/database.types'
 import { RoleBadge } from '@/components/ui/Badge'
 import { RoleSwitcher } from '@/components/shared/RoleSwitcher'
+import { dispatchSchoolBellAlert } from '@/components/shared/ClassBellReminderModal'
 import { usePWAInstall } from '@/hooks/usePWAInstall'
 import { formatDateTime } from '@/lib/utils'
 
@@ -70,6 +71,31 @@ export function Navbar({ onToggleSidebar }: { onToggleSidebar: () => void }) {
       <div className="navbar-spacer" />
 
       <div className="navbar-actions">
+        {/* Live School Bell Alert Button */}
+        <button
+          type="button"
+          onClick={() => dispatchSchoolBellAlert()}
+          className="btn btn-sm"
+          style={{
+            background: 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)',
+            color: '#ffffff',
+            border: 'none',
+            borderRadius: '8px',
+            padding: '4px 10px',
+            fontSize: '0.78rem',
+            fontWeight: 800,
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: '5px',
+            cursor: 'pointer',
+            boxShadow: '0 2px 8px rgba(245, 158, 11, 0.4)',
+          }}
+          title="School Bell & Live Class Schedule Alarm"
+        >
+          <span>🔔</span>
+          <span className="hide-on-mobile">School Bell</span>
+        </button>
+
         {/* PWA Install Button in Header */}
         {!isInstalled && (
           <button

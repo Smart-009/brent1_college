@@ -5,6 +5,7 @@ import { Sidebar } from './Sidebar'
 import { PWAInstallBanner } from '@/components/shared/PWAInstallBanner'
 import { OfflineIndicator } from '@/components/shared/OfflineIndicator'
 import { DesktopCommandPalette } from '@/components/shared/DesktopCommandPalette'
+import { ClassBellReminderModal } from '@/components/shared/ClassBellReminderModal'
 import { MobileAppBottomNav } from './MobileAppBottomNav'
 
 export function LayoutShell() {
@@ -15,6 +16,7 @@ export function LayoutShell() {
       <OfflineIndicator />
       <PWAInstallBanner />
       <DesktopCommandPalette />
+      <ClassBellReminderModal />
       <Navbar onToggleSidebar={() => setSidebarOpen(!sidebarOpen)} />
       <div className={`sidebar-backdrop ${sidebarOpen ? 'open' : ''}`} onClick={() => setSidebarOpen(false)} />
       <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
