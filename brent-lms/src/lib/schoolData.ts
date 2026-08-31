@@ -25,8 +25,38 @@ import { txEngine, IntegrityError } from './transactionManager'
 import { schoolEventBus } from './eventBus'
 import { generateBiometricTemplate } from './biometricEngine'
 
-// Clean initial state (Zero seeded mock records)
-export const INITIAL_STUDENTS: StudentRecord[] = []
+// Official Enrolled Students
+export const INITIAL_STUDENTS: StudentRecord[] = [
+  {
+    id: 'std-ei2026001',
+    admission_number: 'EI-2026-001',
+    full_name: 'Abdifatah',
+    gender: 'Male',
+    dob: '2004-01-01',
+    class_id: 'sub-graphics',
+    class_name: 'Graphics Design & Animation',
+    grade_level: '2 Months (Fast-Track Skills)',
+    stream: '100% Online Cohort',
+    enrollment_date: '2026-09-01',
+    admission_date: '2026-09-01',
+    status: 'Active',
+    guardian: {
+      name: 'Self-Sponsored Student',
+      relationship: 'Self',
+      phone: '',
+      email: '',
+    },
+    emergency_contact: '',
+    fee_balance: 0,
+    term_fee_total: 75,
+    fee_cleared: true,
+    attendance_rate: 100,
+    discipline_points: 100,
+    merits_count: 0,
+    demerits_count: 0,
+    biometric_enrolled: false,
+  },
+]
 export const INITIAL_TIMETABLE: TimetablePeriod[] = []
 export const INITIAL_EXAMS: ExamSession[] = []
 export const INITIAL_REPORT_CARDS: ReportCard[] = []
@@ -217,6 +247,22 @@ export const INITIAL_SUBJECTS: CollegeSubject[] = [
     category: 'Computer & Digital Skills',
     careers: ['UI/UX Designer', 'Product Designer', 'Freelance Figma Designer'],
     color_hex: '#8b5cf6',
+    created_at: new Date().toISOString(),
+  },
+  {
+    id: 'sub-graphics',
+    name: 'Graphics Design & Animation',
+    code: 'GRF-101',
+    department_id: 'dept-comp',
+    department_name: 'Department of Computer Applications & Digital Skills',
+    description: '100% Online: Adobe Photoshop, Illustrator, Premiere Pro, motion graphics, 2D animation, branding, and visual identity.',
+    fee: 75,
+    duration: '8 Weeks (2 Months)',
+    icon: '🖌️',
+    badge: 'High Demand Creative',
+    category: 'Computer & Digital Skills',
+    careers: ['Graphic Designer', 'Motion Animator', 'Brand Identity Specialist', 'Freelance Creative Director'],
+    color_hex: '#ec4899',
     created_at: new Date().toISOString(),
   },
   {
