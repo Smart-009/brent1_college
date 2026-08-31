@@ -6,7 +6,7 @@ import { SafariInstallModal } from '@/components/shared/SafariInstallModal'
 export interface CourseItem {
   id: string
   title: string
-  category: 'Computer Courses' | 'Barista Training' | 'Languages (English & Kiswahili)' | 'Henna & Make-up' | 'Sewing & Tailoring' | 'IELTS Prep' | 'Business & Accounting'
+  category: 'Tech & Programming' | 'Computer & Digital Skills' | 'Languages & Communication' | 'Business Tech & Accounting'
   tag: string
   tagColor: string
   duration: string
@@ -30,14 +30,11 @@ interface MobileLandingProps {
 }
 
 const CATEGORIES = [
-  { id: 'All', label: '🔥 All Programs', icon: '🔥' },
-  { id: 'Computer Courses', label: '💻 Computers & Tech', icon: '💻' },
-  { id: 'Barista Training', label: '☕ Barista Coffee', icon: '☕' },
-  { id: 'Languages (English & Kiswahili)', label: '🗣️ Languages', icon: '🗣️' },
-  { id: 'Henna & Make-up', label: '💄 Henna & Beauty', icon: '💄' },
-  { id: 'Sewing & Tailoring', label: '✂️ Sewing & Fashion', icon: '✂️' },
-  { id: 'IELTS Prep', label: '🌍 IELTS Prep', icon: '🌍' },
-  { id: 'Business & Accounting', label: '📊 QuickBooks & iTax', icon: '📊' },
+  { id: 'All', label: '🔥 All Online Programs', icon: '🔥' },
+  { id: 'Tech & Programming', label: '💻 Software & Python', icon: '💻' },
+  { id: 'Languages & Communication', label: '🗣️ Languages & IELTS', icon: '🗣️' },
+  { id: 'Computer & Digital Skills', label: '⚡ Computer Packages', icon: '⚡' },
+  { id: 'Business Tech & Accounting', label: '📊 Accounting & Tax', icon: '📊' },
 ]
 
 export function MobileLandingView({
@@ -209,7 +206,7 @@ export function MobileLandingView({
                 letterSpacing: '0.04em',
               }}
             >
-              ● Intake Ongoing
+              ● 100% Online Intake
             </span>
             <span style={{ fontSize: '0.75rem', color: '#93c5fd', fontWeight: 600 }}>
               Early Bird 15% Off
@@ -217,10 +214,10 @@ export function MobileLandingView({
           </div>
 
           <h2 style={{ fontSize: '1.2rem', fontWeight: 800, color: '#ffffff', lineHeight: 1.25, marginBottom: '0.4rem' }}>
-            Practical Skills for High-Income Careers
+            Master Tech & Global Languages 100% Online
           </h2>
           <p style={{ fontSize: '0.8rem', color: '#cbd5e1', lineHeight: 1.4, marginBottom: '0.85rem' }}>
-            Day, Evening & Saturday batches with 100% practical lab training and certification.
+            Live interactive Zoom classes, 24/7 video LMS modules, virtual coding labs, and verified global e-certificates.
           </p>
 
           {/* Countdown timer strip */}
@@ -402,10 +399,10 @@ export function MobileLandingView({
       <div id="courses" style={{ padding: '1.25rem 1rem 0.5rem', scrollMarginTop: '70px' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.65rem' }}>
           <h3 style={{ fontSize: '1.1rem', fontWeight: 800, color: '#ffffff', margin: 0 }}>
-            Featured Courses ({filteredCourses.length})
+            Online Programs ({filteredCourses.length})
           </h3>
           <span style={{ fontSize: '0.72rem', color: '#94a3b8', fontWeight: 600 }}>
-            Eastleigh Campus
+            Virtual Campus
           </span>
         </div>
 
@@ -413,7 +410,7 @@ export function MobileLandingView({
         <div style={{ position: 'relative', marginBottom: '0.75rem' }}>
           <input
             type="text"
-            placeholder="🔍 Search course, e.g. Barista, Excel, IELTS..."
+            placeholder="🔍 Search course, e.g. Python, IELTS, React, Excel, Arabic..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             style={{

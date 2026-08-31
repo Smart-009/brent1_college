@@ -523,32 +523,36 @@ export function FeeManagement() {
             </p>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', fontSize: '0.88rem' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', padding: '0.4rem 0', borderBottom: '1px solid var(--color-border)' }}>
-                <span>💻 Computer Packages & Digital Skills (4 Weeks)</span>
-                <strong>KES 4,500</strong>
+                <span>💻 Full-Stack Web Development & React 19 (12 Weeks)</span>
+                <strong>KES 12,500</strong>
               </div>
               <div style={{ display: 'flex', justifyContent: 'space-between', padding: '0.4rem 0', borderBottom: '1px solid var(--color-border)' }}>
-                <span>☕ Professional Barista & Coffee Artistry (4-6 Weeks)</span>
+                <span>📊 Python Programming, SQL & Data Analytics (8 Weeks)</span>
                 <strong>KES 9,500</strong>
               </div>
               <div style={{ display: 'flex', justifyContent: 'space-between', padding: '0.4rem 0', borderBottom: '1px solid var(--color-border)' }}>
-                <span>🗣️ English Language Mastery (4-8 Weeks)</span>
-                <strong>KES 4,000</strong>
+                <span>⚡ Comprehensive Computer Packages & Digital Skills (4 Weeks)</span>
+                <strong>KES 4,500</strong>
               </div>
               <div style={{ display: 'flex', justifyContent: 'space-between', padding: '0.4rem 0', borderBottom: '1px solid var(--color-border)' }}>
-                <span>🇰🇪 Kiswahili Sanifu for Expatriates (4-8 Weeks)</span>
-                <strong>KES 3,800</strong>
+                <span>🛡️ Cybersecurity Fundamentals & Network Defense (6 Weeks)</span>
+                <strong>KES 9,000</strong>
               </div>
               <div style={{ display: 'flex', justifyContent: 'space-between', padding: '0.4rem 0', borderBottom: '1px solid var(--color-border)' }}>
-                <span>💄 Henna Artistry & Bridal Make-up (4-6 Weeks)</span>
-                <strong>KES 8,000</strong>
+                <span>📈 Computerized Accounting (QuickBooks & iTax) (4 Weeks)</span>
+                <strong>KES 6,500</strong>
               </div>
               <div style={{ display: 'flex', justifyContent: 'space-between', padding: '0.4rem 0', borderBottom: '1px solid var(--color-border)' }}>
-                <span>✂️ Fashion Design & Sewing Tailoring (8-12 Weeks)</span>
-                <strong>KES 10,000</strong>
+                <span>🌍 IELTS Exam Prep Target Band 7.5 - 9.0 (4-6 Weeks)</span>
+                <strong>KES 8,500</strong>
               </div>
               <div style={{ display: 'flex', justifyContent: 'space-between', padding: '0.4rem 0', borderBottom: '1px solid var(--color-border)' }}>
-                <span>🌍 IELTS Intensive Exam Prep Band 7.5+ (4-6 Weeks)</span>
-                <strong>KES 12,000</strong>
+                <span>🗣️ English Language Mastery & Public Speaking (6-8 Weeks)</span>
+                <strong>KES 5,500</strong>
+              </div>
+              <div style={{ display: 'flex', justifyContent: 'space-between', padding: '0.4rem 0', borderBottom: '1px solid var(--color-border)' }}>
+                <span>🌴 Arabic, French & German Foreign Languages (8 Weeks)</span>
+                <strong>KES 7,500</strong>
               </div>
             </div>
           </div>

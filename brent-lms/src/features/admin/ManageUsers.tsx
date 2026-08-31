@@ -27,13 +27,14 @@ export function ManageUsers() {
 
   // Default institutional programs fallback
   const DEFAULT_PROGRAMS: Class[] = [
-    { id: 'prog-comp', name: 'Comprehensive Computer Packages & Digital Skills', grade_level: 'Vocational Certificate', academic_year: `${new Date().getFullYear()} Intake`, created_at: '' },
-    { id: 'prog-barista', name: 'Professional Barista & Coffee Brewing Artistry', grade_level: 'Master Barista Certification', academic_year: `${new Date().getFullYear()} Intake`, created_at: '' },
-    { id: 'prog-lang', name: 'Languages & Communication (English & Kiswahili)', grade_level: 'Fluency Certificate', academic_year: `${new Date().getFullYear()} Intake`, created_at: '' },
-    { id: 'prog-henna', name: 'Henna Artistry, Cosmetology & Bridal Makeup', grade_level: 'Beauty Certificate', academic_year: `${new Date().getFullYear()} Intake`, created_at: '' },
-    { id: 'prog-tailor', name: 'Professional Tailoring, Sewing & Garment Cutting', grade_level: 'Fashion Certificate', academic_year: `${new Date().getFullYear()} Intake`, created_at: '' },
-    { id: 'prog-ielts', name: 'IELTS Academic & General Exam Training', grade_level: 'Band 7.5+ Target', academic_year: `${new Date().getFullYear()} Intake`, created_at: '' },
-    { id: 'prog-acc', name: 'Accounting: QuickBooks, Tally & KRA iTax Filing', grade_level: 'Business Skills', academic_year: `${new Date().getFullYear()} Intake`, created_at: '' },
+    { id: 'prog-swe', name: 'Full-Stack Web Development & Modern JavaScript (React 19 & Node.js)', grade_level: 'Full-Stack Certificate', academic_year: `${new Date().getFullYear()} Virtual Cohort`, created_at: '' },
+    { id: 'prog-data', name: 'Python Programming, SQL & Data Analytics', grade_level: 'Data Science Certificate', academic_year: `${new Date().getFullYear()} Virtual Cohort`, created_at: '' },
+    { id: 'prog-comp', name: 'Comprehensive Computer Packages & Digital Office Skills', grade_level: 'Digital Literacy Certificate', academic_year: `${new Date().getFullYear()} Virtual Cohort`, created_at: '' },
+    { id: 'prog-cyber', name: 'Cybersecurity Fundamentals & Ethical Defense', grade_level: 'Security Certificate', academic_year: `${new Date().getFullYear()} Virtual Cohort`, created_at: '' },
+    { id: 'prog-ielts', name: 'IELTS Academic & General Exam Prep (Target Band 7.5 - 9.0)', grade_level: 'International English Certificate', academic_year: `${new Date().getFullYear()} Virtual Cohort`, created_at: '' },
+    { id: 'prog-eng', name: 'English Language Mastery & Executive Public Speaking', grade_level: 'Corporate Fluency Certificate', academic_year: `${new Date().getFullYear()} Virtual Cohort`, created_at: '' },
+    { id: 'prog-acc', name: 'Computerized Accounting (QuickBooks & KRA iTax Filing)', grade_level: 'Corporate Accounting Certificate', academic_year: `${new Date().getFullYear()} Virtual Cohort`, created_at: '' },
+    { id: 'prog-foreign', name: 'Foreign Languages (Arabic, French, German)', grade_level: 'Diplomatic Diploma', academic_year: `${new Date().getFullYear()} Virtual Cohort`, created_at: '' },
   ]
 
   // Fetch all profiles

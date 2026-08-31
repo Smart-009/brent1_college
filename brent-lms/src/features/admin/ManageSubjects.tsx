@@ -327,7 +327,7 @@ export function ManageSubjects() {
               <div style={{ fontSize: '2.5rem', marginBottom: '0.5rem' }}>🧪</div>
               <h4 style={{ fontSize: '1.1rem', fontWeight: 700 }}>No Short Courses Configured</h4>
               <p style={{ fontSize: '0.85rem', color: 'var(--color-text-secondary)' }}>
-                Add short courses (e.g. Barista Training, Computer Packages, Henna Artistry) to set custom fees.
+                Add online programs (e.g. Full-Stack Web Dev, Python Analytics, IELTS Prep, English Mastery) to set custom fees.
               </p>
             </div>
           ) : (

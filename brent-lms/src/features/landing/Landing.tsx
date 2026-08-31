@@ -13,7 +13,7 @@ import type { Role } from '@/lib/database.types'
 interface CourseItem {
   id: string
   title: string
-  category: 'Computer Courses' | 'Barista Training' | 'Languages (English & Kiswahili)' | 'Henna & Make-up' | 'Sewing & Tailoring' | 'IELTS Prep' | 'Business & Accounting'
+  category: 'Tech & Programming' | 'Computer & Digital Skills' | 'Languages & Communication' | 'Business Tech & Accounting'
   tag: string
   tagColor: string
   duration: string
@@ -29,241 +29,280 @@ interface CourseItem {
 
 const DEFAULT_COURSES_DATA: CourseItem[] = [
   {
-    id: 'c-comp',
-    title: 'Comprehensive Computer Packages & Digital Skills',
-    category: 'Computer Courses',
-    tag: '💻 Essential Tech',
-    tagColor: '#1e3a8a',
-    duration: '4 Weeks (1 Month)',
-    schedule: 'Morning (8:30 AM) / Afternoon / Evening',
-    fee: 'KES 4,500',
-    installment: '2 installments of KES 2,500',
-    careerOutcome: 'Office Administrator • Data Entry Specialist • Digital Assistant',
-    skills: ['Ms Word & Excel Pro', 'PowerPoint Presentations', 'Ms Access Databases', 'Typing Speed & Internet Research', 'Canva Graphic Design'],
-    icon: '💻',
-    popular: true,
-    syllabus: [
-      { week: 'Week 1', topic: 'Keyboard Speed Typing & Ms Word Document Design', practicalLab: 'Drafting corporate letters, tables, and professional CV formatting.' },
-      { week: 'Week 2', topic: 'Advanced Ms Excel & Automated Data Spreadsheets', practicalLab: 'IF statements, VLOOKUP, payroll calculations, and financial charts.' },
-      { week: 'Week 3', topic: 'Ms PowerPoint Presentations & Access Databases', practicalLab: 'Animated slide decks, relational customer database creation & queries.' },
-      { week: 'Week 4', topic: 'Internet Security, Email Etiquette & Canva Graphics', practicalLab: 'Cloud Google Drive workflows, official correspondence, and banner design.' },
-    ],
-  },
-  {
-    id: 'c-barista',
-    title: 'Professional Barista & Coffee Brewing Artistry',
-    category: 'Barista Training',
-    tag: '☕ High International Demand',
-    tagColor: '#78350f',
-    duration: '4 to 6 Weeks',
-    schedule: 'Morning / Afternoon / Saturday Masterclass',
-    fee: 'KES 9,500',
-    installment: '2 installments of KES 5,000',
-    careerOutcome: 'Head Barista • Cafe Supervisor • Hospitality Specialist (Kenya & Gulf)',
-    skills: ['Espresso Calibration & Extraction', 'Silky Milk Steaming & Frothing', 'Free-Pour Latte Art', 'Coffee Origin & Cupping', 'Commercial Espresso Machines'],
-    icon: '☕',
-    popular: true,
-    syllabus: [
-      { week: 'Week 1', topic: 'Coffee Botany, Cupping & Grinder Dial-In', practicalLab: 'Calibrating burr grinders, adjusting extraction time and brew ratios.' },
-      { week: 'Week 2', topic: 'Commercial Espresso Brewing & Tamping Precision', practicalLab: 'Dialing in single and double shot espresso extractions under bar pressure.' },
-      { week: 'Week 3', topic: 'Milk Chemistry & Free-Pour Latte Art', practicalLab: 'Steaming micro-foam and pouring hearts, rosettas, and tulips.' },
-      { week: 'Week 4', topic: 'Manual Brewing (V60, Chemex, Aeropress) & Cafe Workflow', practicalLab: 'Speed orders simulation, machine descaling, and hygiene protocols.' },
-    ],
-  },
-  {
-    id: 'c-eng',
-    title: 'English Language Mastery & Business Communication',
-    category: 'Languages (English & Kiswahili)',
-    tag: '🗣️ Public Speaking & Fluency',
-    tagColor: '#0284c7',
-    duration: '6 to 8 Weeks',
-    schedule: 'Morning / Evening (5:30 PM) / Weekend',
-    fee: 'KES 5,500',
-    installment: '2 installments of KES 3,000',
-    careerOutcome: 'Executive Assistant • Public Speaker • Corporate Communicator',
-    skills: ['Spoken English & Pronunciation', 'Business Email & Report Writing', 'Public Speaking & Presentation', 'Grammar & Vocabulary Mastery', 'Confidence in Interviews'],
-    icon: '📢',
-    popular: true,
-    syllabus: [
-      { week: 'Week 1', topic: 'Grammar Fundamentals & Phonetic Pronunciation', practicalLab: 'Vowel and consonant articulation drills and conversational sentence structures.' },
-      { week: 'Week 2', topic: 'Spoken Fluency & Vocabulary Expansion', practicalLab: 'Interactive pair dialogues, storytelling, and eliminating hesitation.' },
-      { week: 'Week 3', topic: 'Business Writing & Corporate Email Etiquette', practicalLab: 'Drafting formal executive memos, customer support emails, and reports.' },
-      { week: 'Week 4', topic: 'Public Speaking, Presentations & Interview Skills', practicalLab: 'Mock boardroom presentations and behavioral interview simulations.' },
-    ],
-  },
-  {
-    id: 'c-kisw',
-    title: 'Kiswahili Sanifu for Expatriates & Beginners',
-    category: 'Languages (English & Kiswahili)',
-    tag: '🇰🇪 Conversational & Formal Swahili',
-    tagColor: '#16a34a',
-    duration: '4 to 6 Weeks',
-    schedule: 'Morning / Evening / Saturday Classes',
-    fee: 'KES 5,000',
-    installment: '2 installments of KES 2,750',
-    careerOutcome: 'Expatriate Integration • Field Researcher • Tourism & Community Lead',
-    skills: ['Everyday Mazungumzo & Greetings', 'Sarufi (Grammar & Noun Classes)', 'Market & Business Swahili', 'Reading & Writing Skills', 'Cultural Immersion & Etiquette'],
-    icon: '🇰🇪',
-    popular: true,
-    syllabus: [
-      { week: 'Week 1', topic: 'Salamu, Utambulisho & Noun Classes (Ngeli)', practicalLab: 'Greetings, introductions, and everyday interactive vocabulary.' },
-      { week: 'Week 2', topic: 'Sarufi ya Kiswahili & Tense Conjugation', practicalLab: 'Past, present, future tenses, negation (kukanusha), and sentence building.' },
-      { week: 'Week 3', topic: 'Biashara & Mazungumzo ya Masokoni', practicalLab: 'Real-life market bargaining, asking directions, and transportation dialogues.' },
-      { week: 'Week 4', topic: 'Insha, Hotuba & Formal Swahili Discourse', practicalLab: 'Formal speech delivery, translation exercises, and cultural etiquette.' },
-    ],
-  },
-  {
-    id: 'c-lang',
-    title: 'Foreign Languages Mastery (Arabic, French, German, Spanish)',
-    category: 'Languages (English & Kiswahili)',
-    tag: '🌐 International Diplomas',
-    tagColor: '#059669',
-    duration: '8 Weeks (2 Months)',
-    schedule: 'Day / Evening (5:30 PM) / Saturday',
-    fee: 'KES 7,500',
-    installment: '2 installments of KES 4,000',
-    careerOutcome: 'Bilingual Customer Support • Flight Attendant • Embassy / NGO Staff',
-    skills: ['Conversational Grammar', 'Phonetics & Native Pronunciation', 'Reading & Written Composition', 'Diplomatic & Business Vocabulary', 'A1 to B2 Certification'],
-    icon: '🗣️',
-    popular: true,
-    syllabus: [
-      { week: 'Week 1', topic: 'Alphabet, Phonetics & Fundamental Vocabulary', practicalLab: 'Pronunciation drills, self-introductions, and basic conversation.' },
-      { week: 'Week 2', topic: 'Grammatical Foundations & Verb Conjugations', practicalLab: 'Constructing compound sentences and everyday life dialogues.' },
-      { week: 'Week 3', topic: 'Listening Audio Comprehension & Reading', practicalLab: 'Native speaker audio sessions and conversational role-plays.' },
-      { week: 'Week 4', topic: 'Commercial & Diplomatic Vocabulary Mastery', practicalLab: 'Business scenarios, customer care simulations, and A1/A2 mock tests.' },
-    ],
-  },
-  {
-    id: 'c-henna',
-    title: 'Henna Artistry, Bridal Design & Professional Make-up',
-    category: 'Henna & Make-up',
-    tag: '✨ Beauty & Glamour',
-    tagColor: '#db2777',
-    duration: '4 to 8 Weeks (1-2 Months)',
-    schedule: 'Morning (9:00 AM) / Saturday Intensive',
-    fee: 'KES 6,500',
-    installment: '2 installments of KES 3,500',
-    careerOutcome: 'Certified Make-up Artist (MUA) • Bridal Henna Designer • Salon Entrepreneur',
-    skills: ['Traditional & Modern Arabic Henna', 'Bridal & Party Henna Application', 'Skin Prep, Foundation & Contouring', 'Eye Make-up & Brow Sculpting', 'Lash Application & Bridal Glam'],
-    icon: '💄',
-    popular: true,
-    syllabus: [
-      { week: 'Week 1', topic: 'Henna Cone Grip, Mixing & Fine Linework', practicalLab: 'Executing clean swirls, leaves, geometric grids, and mandala centerpieces.' },
-      { week: 'Week 2', topic: 'Arabic & Sudanese Floral Cuff Artistry', practicalLab: 'Full palm and wrist coverage on live practice models with natural Henna cones.' },
-      { week: 'Week 3', topic: 'Bridal Henna & Feet Application Masterclass', practicalLab: 'Intricate bridal layout, shading, white henna, and glitter accentuation.' },
-      { week: 'Week 4', topic: 'Professional Makeup (Contour, Brows & Lashes)', practicalLab: 'Skin tone matching, high-definition contouring, cut-crease eyes & bridal makeup.' },
-    ],
-  },
-  {
-    id: 'c-sewing',
-    title: 'Fashion Design, Sewing & Garment Tailoring',
-    category: 'Sewing & Tailoring',
-    tag: '🧵 Hands-On Craft',
-    tagColor: '#ea580c',
-    duration: '8 to 12 Weeks (2-3 Months)',
-    schedule: 'Morning / Afternoon Lab Shifts',
-    fee: 'KES 7,500',
-    installment: '2 installments of KES 4,000',
-    careerOutcome: 'Bespoke Tailor • Fashion Designer • Boutique & Apparel Entrepreneur',
-    skills: ['Body Measurement & Pattern Drafting', 'Electric & Manual Machine Operation', 'Cutting, Stitching & Finishing', 'Dressmaking & African Kitenge Outfits', 'Zippers, Pockets & Alterations'],
-    icon: '✂️',
-    popular: true,
-    syllabus: [
-      { week: 'Week 1', topic: 'Sewing Machine Operation & Seam Techniques', practicalLab: 'Threading industrial machines, speed control, straight & curved seam lines.' },
-      { week: 'Week 2', topic: 'Body Measurements & Paper Pattern Drafting', practicalLab: 'Taking precision measurements and cutting paper blocks for skirts and tops.' },
-      { week: 'Week 3', topic: 'Fabric Cutting, Zippers & Pocket Assembly', practicalLab: 'Invisible zipper insertion, collar attachment, and side pocket stitching.' },
-      { week: 'Week 4', topic: 'Bespoke Dressmaking & African Kitenge Outfits', practicalLab: 'Complete garment stitching, fitting, pressing, and finishing bespoke designs.' },
-    ],
-  },
-  {
-    id: 'c-ielts',
-    title: 'IELTS Academic & General Training Exam Preparation',
-    category: 'IELTS Prep',
-    tag: '🌍 Target Band 7.5 - 9.0',
-    tagColor: '#2563eb',
-    duration: '4 to 6 Weeks Intensive',
-    schedule: 'Evening (5:30 PM - 7:30 PM) / Weekend',
-    fee: 'KES 8,500',
-    installment: '2 installments of KES 4,500',
-    careerOutcome: 'Study Abroad (UK, Canada, USA, Australia) • Global Healthcare & Work Visas',
-    skills: ['IELTS Speaking Mock Interviews', 'Listening Audio Strategies', 'Academic Reading Speed Techniques', 'Task 1 & Task 2 Essay Writing', 'Official Cambridge Mock Tests'],
-    icon: '🎓',
-    popular: true,
-    syllabus: [
-      { week: 'Week 1', topic: 'IELTS Speaking Section & Part 1-3 Mastery', practicalLab: 'Mock interviews, cue card fluency training, and accent clarity coaching.' },
-      { week: 'Week 2', topic: 'Listening Section & Audio Trick Traps', practicalLab: 'Real-time Cambridge audio tests with multi-accent comprehension strategies.' },
-      { week: 'Week 3', topic: 'Academic & General Reading Speed Tactics', practicalLab: 'Skimming, scanning, True/False/Not Given drills, and paragraph matching.' },
-      { week: 'Week 4', topic: 'Task 1 Graph Analysis & Task 2 Essay Masterclass', practicalLab: 'Timed writing evaluations with certified British Council grading rubric.' },
-    ],
-  },
-  {
     id: 'c-coding',
-    title: 'Full-Stack Web Development & Cloud Systems',
-    category: 'Computer Courses',
-    tag: '🚀 Tech Career',
+    title: 'Full-Stack Web Development & Modern JavaScript (React 19 & Node.js)',
+    category: 'Tech & Programming',
+    tag: '💻 High-Salary Tech Career',
     tagColor: '#6366f1',
     duration: '12 Weeks (3 Months)',
-    schedule: 'Day / Evening / Weekend',
-    fee: 'KES 12,000',
+    schedule: 'Live Online Evening Classes (7:30 PM - 9:30 PM) / Self-Paced',
+    fee: 'KES 12,500',
     installment: '2 installments of KES 6,500',
-    careerOutcome: 'Junior Web Developer • Software Engineer',
-    skills: ['React 19 & JavaScript', 'Node.js Backend APIs', 'PostgreSQL Databases', 'Git & Cloud Hosting'],
+    careerOutcome: 'Junior Full-Stack Developer • Frontend Engineer • Remote Tech Contractor',
+    skills: ['React 19 & JavaScript ES6+', 'Node.js & Express APIs', 'PostgreSQL & Database Queries', 'Git GitHub & Cloud Hosting', 'Full-Stack Portfolio Project'],
     icon: '💻',
+    popular: true,
     syllabus: [
-      { week: 'Week 1', topic: 'HTML5 Semantic Layouts, Modern CSS & Flex/Grid', practicalLab: 'Building responsive commercial web landing pages and portfolio templates.' },
-      { week: 'Week 2', topic: 'JavaScript ES6+, DOM Manipulation & State', practicalLab: 'Interactive web applications, API fetching, and client-side data handling.' },
-      { week: 'Week 3', topic: 'React 19 Components, Hooks & Backend Node.js APIs', practicalLab: 'Developing full RESTful APIs with database CRUD operations.' },
-      { week: 'Week 4', topic: 'PostgreSQL Database Queries & Cloud Server Deployment', practicalLab: 'Deploying secure production web apps to Vercel and cloud containers.' },
+      { week: 'Week 1-3', topic: 'HTML5 Semantic Layouts, Modern Tailwind CSS & JavaScript ES6+', practicalLab: 'Live coding responsive web landing pages and portfolio projects.' },
+      { week: 'Week 4-6', topic: 'React 19 State, Hooks, Component Architectures & APIs', practicalLab: 'Building dynamic interactive dashboards with real-time API integrations.' },
+      { week: 'Week 7-9', topic: 'Node.js Backend, Express REST APIs & Authentication', practicalLab: 'Developing secure authentication systems and CRUD endpoints.' },
+      { week: 'Week 10-12', topic: 'PostgreSQL Relational DBs & Cloud Server Deployment', practicalLab: 'Deploying full-stack production applications to Vercel and cloud containers.' },
+    ],
+  },
+  {
+    id: 'c-python',
+    title: 'Python Programming, SQL & Data Analytics',
+    category: 'Tech & Programming',
+    tag: '📊 Data & AI Fundamentals',
+    tagColor: '#0284c7',
+    duration: '8 Weeks (2 Months)',
+    schedule: 'Live Virtual Cohorts (Mon & Wed 8:00 PM) / Saturday Intensive',
+    fee: 'KES 9,500',
+    installment: '2 installments of KES 5,000',
+    careerOutcome: 'Data Analyst • Business Intelligence Associate • Junior Python Developer',
+    skills: ['Python Syntax & OOP', 'Pandas & NumPy Data Cleaning', 'SQL Queries & Relational DBs', 'Matplotlib & Seaborn Charts', 'Power BI Dashboards'],
+    icon: '📊',
+    popular: true,
+    syllabus: [
+      { week: 'Week 1-2', topic: 'Python Programming Fundamentals & Data Structures', practicalLab: 'Writing Python scripts, automation loops, and algorithmic problem solving.' },
+      { week: 'Week 3-4', topic: 'SQL Relational Queries & Database Aggregations', practicalLab: 'Querying complex multi-table datasets, filtering, and JOIN operations.' },
+      { week: 'Week 5-6', topic: 'Data Wrangling & Statistical Analysis with Pandas', practicalLab: 'Cleaning messy real-world corporate data and handling missing metrics.' },
+      { week: 'Week 7-8', topic: 'Interactive Visualizations & Business Intelligence', practicalLab: 'Publishing interactive analytics dashboards and executive reports.' },
+    ],
+  },
+  {
+    id: 'c-comp',
+    title: 'Comprehensive Computer Packages & Modern Digital Literacy',
+    category: 'Computer & Digital Skills',
+    tag: '⚡ Essential Office Tech',
+    tagColor: '#0f172a',
+    duration: '4 Weeks (1 Month)',
+    schedule: 'Live Virtual Morning (9:00 AM) / Evening (6:00 PM) / 24/7 LMS',
+    fee: 'KES 4,500',
+    installment: '2 installments of KES 2,500',
+    careerOutcome: 'Office Administrator • Executive Virtual Assistant • Data Entry Specialist',
+    skills: ['Ms Word & Document Styling', 'Advanced Ms Excel & Formulas', 'PowerPoint Slide Decks', 'Google Workspace Collaboration', 'Canva Pro Graphics & Social Media'],
+    icon: '⚡',
+    popular: true,
+    syllabus: [
+      { week: 'Week 1', topic: 'Touch Typing & Advanced Ms Word Corporate Documentation', practicalLab: 'Formatting official business memos, contracts, and dynamic tables of contents.' },
+      { week: 'Week 2', topic: 'Advanced Ms Excel Spreadsheets, VLOOKUP & Data Formulas', practicalLab: 'Automated payroll formulas, IF statements, budgeting sheets, and pivot charts.' },
+      { week: 'Week 3', topic: 'PowerPoint Pitch Decks & Cloud Google Workspace', practicalLab: 'Creating high-impact executive slide decks and collaborative cloud workflows.' },
+      { week: 'Week 4', topic: 'Canva Graphic Design, AI Productivity Tools & Cybersecurity', practicalLab: 'Designing social media flyers, resume branding, and digital safety practices.' },
+    ],
+  },
+  {
+    id: 'c-cyber',
+    title: 'Cybersecurity Fundamentals & Ethical Defense',
+    category: 'Tech & Programming',
+    tag: '🛡️ Security & Defense',
+    tagColor: '#dc2626',
+    duration: '6 Weeks',
+    schedule: 'Live Virtual Weekend Masterclass (Sat & Sun 3:00 PM - 6:00 PM)',
+    fee: 'KES 9,000',
+    installment: '2 installments of KES 4,750',
+    careerOutcome: 'Junior SOC Analyst • IT Security Specialist • System Administrator',
+    skills: ['Network Security & Protocols', 'Vulnerability Assessment', 'Ethical Hacking Fundamentals', 'Password & Encryption Standards', 'Incident Response'],
+    icon: '🛡️',
+    popular: true,
+    syllabus: [
+      { week: 'Week 1-2', topic: 'Networking Protocols, TCP/IP, OSI & Firewall Architecture', practicalLab: 'Packet sniffing with Wireshark and analyzing network traffic security.' },
+      { week: 'Week 3-4', topic: 'Common Cyber Attack Vectors, Malware & Social Engineering', practicalLab: 'Identifying phishing payloads, vulnerability scanning, and risk reports.' },
+      { week: 'Week 5-6', topic: 'Defensive Hardening, Cryptography & Incident Response', practicalLab: 'Configuring secure server policies, SSL/TLS, and security audit checklists.' },
     ],
   },
   {
     id: 'c-acc',
-    title: 'Computerized Accounting & QuickBooks Financials',
-    category: 'Business & Accounting',
-    tag: '📊 High Employability',
+    title: 'Computerized Accounting, QuickBooks & KRA iTax',
+    category: 'Business Tech & Accounting',
+    tag: '📈 High Corporate Demand',
     tagColor: '#b45309',
     duration: '4 Weeks (1 Month)',
-    schedule: 'Morning (8:30 AM) / Evening',
+    schedule: 'Live Virtual Evening (6:00 PM - 8:00 PM) / Weekend Batches',
     fee: 'KES 6,500',
     installment: '2 installments of KES 3,500',
-    careerOutcome: 'Accounts Assistant • Payroll Officer',
-    skills: ['QuickBooks Pro & Online', 'KRA iTax VAT & PAYE Filing', 'Payroll Preparation', 'Balance Sheet Balancing'],
+    careerOutcome: 'Accounts Assistant • Payroll Specialist • Tax Consultant & Bookkeeper',
+    skills: ['QuickBooks Desktop & Online', 'KRA iTax Filing (VAT & PAYE)', 'Payroll & SHIF/NSSF Deductions', 'Bank Reconciliation', 'Financial Statements & Balance Sheets'],
     icon: '📈',
+    popular: true,
     syllabus: [
       { week: 'Week 1', topic: 'Company File Setup & Chart of Accounts in QuickBooks', practicalLab: 'Configuring fiscal years, opening balances, and vendor databases.' },
       { week: 'Week 2', topic: 'Invoicing, Accounts Receivable & Bill Payments', practicalLab: 'Recording sales receipts, customer credit memos, and supplier reconciliations.' },
-      { week: 'Week 3', topic: 'Payroll Processing & Monthly KRA iTax Filing', practicalLab: 'Computing PAYE, NSSF, NHIF/SHIF deductions, and filing VAT returns.' },
+      { week: 'Week 3', topic: 'Payroll Processing & Monthly KRA iTax Filing', practicalLab: 'Computing PAYE, NSSF, SHIF/Housing Levy deductions, and filing VAT returns.' },
       { week: 'Week 4', topic: 'Bank Reconciliation & Financial Statement Generation', practicalLab: 'Balancing monthly bank accounts and generating Profit & Loss balance sheets.' },
+    ],
+  },
+  {
+    id: 'c-uiux',
+    title: 'UI/UX Product Design & Figma Masterclass',
+    category: 'Computer & Digital Skills',
+    tag: '🎨 Creative Tech',
+    tagColor: '#8b5cf6',
+    duration: '6 Weeks',
+    schedule: 'Live Online Evening / Flexible Self-Paced Modules',
+    fee: 'KES 7,500',
+    installment: '2 installments of KES 4,000',
+    careerOutcome: 'UI/UX Designer • Product Designer • Freelance Figma Specialist',
+    skills: ['User Research & Wireframing', 'Figma Components & Auto Layout', 'Interactive Clickable Prototypes', 'Design Systems & UI Kits', 'Developer Hand-off'],
+    icon: '🎨',
+    syllabus: [
+      { week: 'Week 1-2', topic: 'UX Design Thinking, User Persona & Wireframing', practicalLab: 'Low-fidelity wireframing and user journey mapping for mobile apps.' },
+      { week: 'Week 3-4', topic: 'Figma Mastery: Auto Layout, Components & Tokens', practicalLab: 'Building scalable UI component design systems and responsive web screens.' },
+      { week: 'Week 5-6', topic: 'High-Fidelity Prototyping, Micro-interactions & Hand-off', practicalLab: 'Delivering interactive animated prototypes and developer design tokens.' },
+    ],
+  },
+  {
+    id: 'c-eng',
+    title: 'English Language Mastery & Executive Corporate Communication',
+    category: 'Languages & Communication',
+    tag: '🗣️ Public Speaking & Fluency',
+    tagColor: '#0284c7',
+    duration: '6 to 8 Weeks',
+    schedule: 'Live Virtual Evening (6:00 PM) / Morning Sessions (7:30 AM)',
+    fee: 'KES 5,500',
+    installment: '2 installments of KES 3,000',
+    careerOutcome: 'Corporate Communicator • Public Speaker • Executive Virtual Assistant',
+    skills: ['Spoken English & Pronunciation', 'Business Email & Executive Memos', 'Public Speaking & Presentation', 'Grammar & Vocabulary Mastery', 'Boardroom Interview Confidence'],
+    icon: '📢',
+    popular: true,
+    syllabus: [
+      { week: 'Week 1-2', topic: 'Grammar Fundamentals & Phonetic Pronunciation', practicalLab: 'Live speaking video breakout rooms and articulation drills.' },
+      { week: 'Week 3-4', topic: 'Spoken Fluency & Vocabulary Expansion', practicalLab: 'Interactive pair dialogues, impromptu speeches, and eliminating hesitation.' },
+      { week: 'Week 5-6', topic: 'Business Writing & Corporate Email Etiquette', practicalLab: 'Drafting formal executive memos, corporate proposals, and reports.' },
+      { week: 'Week 7-8', topic: 'Public Speaking, Presentations & Interview Skills', practicalLab: 'Live virtual presentations and executive interview simulations.' },
+    ],
+  },
+  {
+    id: 'c-ielts',
+    title: 'IELTS Academic & General Training Exam Prep (Band 7.5 - 9.0)',
+    category: 'Languages & Communication',
+    tag: '🌍 Study Abroad & Global Visas',
+    tagColor: '#2563eb',
+    duration: '4 to 6 Weeks Intensive',
+    schedule: 'Live Zoom Speaking Mock Tests & Writing Drills (Evening / Weekend)',
+    fee: 'KES 8,500',
+    installment: '2 installments of KES 4,500',
+    careerOutcome: 'Study Abroad (UK, Canada, USA, Europe) • Global Healthcare & Relocation Visas',
+    skills: ['IELTS Speaking 1-on-1 Mocks', 'Listening Audio Comprehension Strategies', 'Academic Reading Speed Tactics', 'Task 1 & Task 2 Writing Masterclass', 'British Council Exam Rubric'],
+    icon: '🎓',
+    popular: true,
+    syllabus: [
+      { week: 'Week 1', topic: 'IELTS Speaking Section & Part 1-3 Fluency Mastery', practicalLab: '1-on-1 live mock interviews with certified feedback and scoring.' },
+      { week: 'Week 2', topic: 'Listening Section & Audio Trap Strategies', practicalLab: 'Real-time Cambridge audio practice tests with multi-accent comprehension.' },
+      { week: 'Week 3', topic: 'Academic & General Reading Speed Tactics', practicalLab: 'Skimming, scanning, True/False/Not Given drills, and paragraph matching.' },
+      { week: 'Week 4-6', topic: 'Task 1 Graph Analysis & Task 2 Essay Masterclass', practicalLab: 'Individual essay corrections with British Council Band 8+ rubric.' },
+    ],
+  },
+  {
+    id: 'c-kisw',
+    title: 'Spoken & Written Kiswahili Sanifu (Beginners & Expatriates)',
+    category: 'Languages & Communication',
+    tag: '🇰🇪 Conversational Swahili',
+    tagColor: '#16a34a',
+    duration: '4 to 6 Weeks',
+    schedule: 'Live Interactive 1-on-1 & Small Group Video Sessions',
+    fee: 'KES 5,000',
+    installment: '2 installments of KES 2,750',
+    careerOutcome: 'NGO Field Officer • Expatriate Integration • East Africa Trade Liaison',
+    skills: ['Everyday Mazungumzo & Greetings', 'Sarufi (Grammar & Noun Classes)', 'Market & Business Swahili', 'Reading & Written Composition', 'Cultural Communication & Etiquette'],
+    icon: '🇰🇪',
+    popular: true,
+    syllabus: [
+      { week: 'Week 1', topic: 'Salamu, Utambulisho & Noun Classes (Ngeli)', practicalLab: 'Live conversational drills and everyday interactive greetings.' },
+      { week: 'Week 2', topic: 'Sarufi ya Kiswahili & Tense Conjugation', practicalLab: 'Past, present, future tenses, negation (kukanusha), and sentence building.' },
+      { week: 'Week 3', topic: 'Biashara & Mazungumzo ya Masokoni', practicalLab: 'Real-life business scenarios, negotiation dialogues, and directions.' },
+      { week: 'Week 4-6', topic: 'Insha, Hotuba & Formal Swahili Discourse', practicalLab: 'Formal speech delivery, translation exercises, and cultural etiquette.' },
+    ],
+  },
+  {
+    id: 'c-arabic',
+    title: 'Arabic Language for Business & Middle East Careers',
+    category: 'Languages & Communication',
+    tag: '🌴 Gulf & International Career',
+    tagColor: '#059669',
+    duration: '8 Weeks (2 Months)',
+    schedule: 'Live Evening (6:30 PM) / Weekend Virtual Cohorts',
+    fee: 'KES 7,500',
+    installment: '2 installments of KES 4,000',
+    careerOutcome: 'Bilingual Support Specialist • Middle East Corporate Liaison • Flight Attendant',
+    skills: ['Arabic Script & Phonetics', 'Conversational Arabic for Everyday Life', 'Business & Commercial Vocabulary', 'Listening & Audio Comprehension', 'Gulf Cultural Etiquette'],
+    icon: '🌴',
+    popular: true,
+    syllabus: [
+      { week: 'Week 1-2', topic: 'Alphabet, Pronunciation & Basic Introductions', practicalLab: 'Writing Arabic script and practicing conversational greetings.' },
+      { week: 'Week 3-4', topic: 'Everyday Dialogue, Numbers & Travel Vocabulary', practicalLab: 'Role-playing airport, hotel, and restaurant interactions in Arabic.' },
+      { week: 'Week 5-6', topic: 'Grammar Foundations & Business Expressions', practicalLab: 'Forming compound sentences and corporate correspondence.' },
+      { week: 'Week 7-8', topic: 'Listening Audio Comprehension & Speaking Exam', practicalLab: 'Live conversational assessment with native speakers.' },
+    ],
+  },
+  {
+    id: 'c-french',
+    title: 'French Language Proficiency (DELF A1 - B2 Preparation)',
+    category: 'Languages & Communication',
+    tag: '🇫🇷 International Diploma',
+    tagColor: '#3b82f6',
+    duration: '8 Weeks (2 Months)',
+    schedule: 'Live Online Video Masterclass (Tue & Thu 7:00 PM)',
+    fee: 'KES 7,500',
+    installment: '2 installments of KES 4,000',
+    careerOutcome: 'Embassy Assistant • International NGO Officer • Multilingual Customer Support',
+    skills: ['French Phonetics & Accent', 'Grammar & Verb Conjugation', 'Conversational Fluency', 'Written Composition', 'DELF A1/A2 Exam Prep'],
+    icon: '🇫🇷',
+    syllabus: [
+      { week: 'Week 1-2', topic: 'Les Salutations, Alphabet & Prononciation', practicalLab: 'Live pronunciation coaching and self-introduction dialogues.' },
+      { week: 'Week 3-4', topic: 'Grammaire & Conjugaison des Verbes', practicalLab: 'Building past and present sentences in interactive breakout rooms.' },
+      { week: 'Week 5-6', topic: 'Compréhension Orale & Expression Écrite', practicalLab: 'Listening to native audio clips and drafting French formal emails.' },
+      { week: 'Week 7-8', topic: 'Préparation à l’Examen DELF & Simulation', practicalLab: 'Mock DELF listening, reading, and speaking tests.' },
+    ],
+  },
+  {
+    id: 'c-german',
+    title: 'German Language for Work & Studies (Goethe A1/A2 Prep)',
+    category: 'Languages & Communication',
+    tag: '🇩🇪 German University & Work Pathway',
+    tagColor: '#f59e0b',
+    duration: '8 Weeks (2 Months)',
+    schedule: 'Live Online Coaching & Grammar Workshops (Mon & Fri 7:00 PM)',
+    fee: 'KES 8,000',
+    installment: '2 installments of KES 4,250',
+    careerOutcome: 'German University Candidate • Healthcare & Nurse Relocation in Germany',
+    skills: ['German Grammar & Cases (Akkusativ, Dativ)', 'Conversational Speaking Drills', 'Reading Comprehension', 'Goethe-Zertifikat Exam Tactics', 'Workplace Communication'],
+    icon: '🇩🇪',
+    syllabus: [
+      { week: 'Week 1-2', topic: 'Aussprache, Begrüßungen & Grundwortschatz', practicalLab: 'German phonetics, numbers, and basic conversational sentences.' },
+      { week: 'Week 3-4', topic: 'Deutsche Grammatik: Artikel & Fälle', practicalLab: 'Mastering der/die/das and sentence structure in live interactive sessions.' },
+      { week: 'Week 5-6', topic: 'Hörverstehen & Leseverstehen im Alltag', practicalLab: 'Audio comprehension exercises and reading workplace memos.' },
+      { week: 'Week 7-8', topic: 'Goethe-Zertifikat Prüfungsvorbereitung', practicalLab: 'Complete timed simulation of the Goethe A1/A2 examination.' },
     ],
   },
 ]
 
 const TESTIMONIALS = [
   {
-    name: 'Zahra Hassan',
-    role: 'Professional Make-up Artist & Henna Studio Owner',
-    course: 'Henna Artistry & Professional Make-up',
-    avatar: '💄',
+    name: 'Brian Kiprono',
+    role: 'Remote Frontend Developer at FinTech Startup',
+    course: 'Full-Stack Web Development',
+    avatar: '💻',
     quote:
-      'The hands-on practice on real models, bridal cone techniques, and facial contouring at Eclat Institute gave me the confidence to open my own beauty studio in Eastleigh. My weekend bookings are full!',
+      'The 100% online React and Node.js course at Éclat Institute was phenomenal. The live evening coding labs and GitHub code reviews prepared me to build real-world apps. Within 1 month of finishing, I landed a remote developer role!',
     rating: 5,
   },
   {
-    name: 'John Macharia',
-    role: 'Head Barista at Urban Roast Cafe',
-    course: 'Professional Barista & Coffee Brewing',
-    avatar: '☕',
-    quote:
-      'The commercial espresso machines and latte art training at Eclat were world class. Within two weeks of graduation, I was hired at a top cafe in Westlands, and I am now preparing for a barista role in Dubai!',
-    rating: 5,
-  },
-  {
-    name: 'Emmanuel Kipkoech',
-    role: 'Achieved IELTS Band 8.0 (Relocating to Canada)',
+    name: 'Faith Chebet',
+    role: 'Achieved IELTS Band 8.5 (Nursing Relocation to the UK)',
     course: 'IELTS Academic Preparation',
-    avatar: '🌍',
+    avatar: '🎓',
     quote:
-      'The mock speaking tests and essay writing feedback from the IELTS instructors transformed my score from Band 6.0 to Band 8.0 in just 5 weeks. Highly recommend Eclat Institute to anyone traveling abroad!',
+      'The 1-on-1 live Zoom mock speaking sessions and detailed essay feedback transformed my confidence. I scored an overall Band 8.5 and my UK visa application was approved seamlessly. Best online program!',
+    rating: 5,
+  },
+  {
+    name: 'Abdi Mohammed',
+    role: 'Bilingual Corporate Specialist in Dubai',
+    course: 'Arabic for Business & Middle East Careers',
+    avatar: '🌴',
+    quote:
+      'Taking the live online Arabic and Corporate Communication classes from home in Nairobi gave me the fluency required for international interviews. I am now working with an airline in Dubai!',
     rating: 5,
   },
 ]
@@ -343,28 +382,24 @@ export function Landing() {
     const customCourses: CourseItem[] = units.map((u) => ({
       id: u.id,
       title: u.title,
-      category: (u.department?.toLowerCase().includes('computer') || u.program?.toLowerCase().includes('computer')) ? 'Computer Courses'
-        : (u.department?.toLowerCase().includes('barista') || u.program?.toLowerCase().includes('barista')) ? 'Barista Training'
-        : (u.department?.toLowerCase().includes('language') || u.program?.toLowerCase().includes('language')) ? 'Languages (English & Kiswahili)'
-        : (u.department?.toLowerCase().includes('henna') || u.department?.toLowerCase().includes('beauty')) ? 'Henna & Make-up'
-        : (u.department?.toLowerCase().includes('tailor') || u.department?.toLowerCase().includes('sewing')) ? 'Sewing & Tailoring'
-        : (u.department?.toLowerCase().includes('ielts') || u.program?.toLowerCase().includes('ielts')) ? 'IELTS Prep'
-        : (u.department?.toLowerCase().includes('account') || u.department?.toLowerCase().includes('business')) ? 'Business & Accounting'
-        : (u.department as any) || 'Computer Courses',
-      tag: `🏛️ ${u.program || u.department || 'Accredited Course'}`,
-      tagColor: '#1e3a8a',
+      category: (u.department?.toLowerCase().includes('soft') || u.department?.toLowerCase().includes('python') || u.department?.toLowerCase().includes('cyber') || u.program?.toLowerCase().includes('code') || u.program?.toLowerCase().includes('web') || u.title?.toLowerCase().includes('react')) ? 'Tech & Programming'
+        : (u.department?.toLowerCase().includes('lang') || u.department?.toLowerCase().includes('ielts') || u.department?.toLowerCase().includes('kisw') || u.program?.toLowerCase().includes('english') || u.program?.toLowerCase().includes('arabic') || u.program?.toLowerCase().includes('french')) ? 'Languages & Communication'
+        : (u.department?.toLowerCase().includes('account') || u.department?.toLowerCase().includes('biz') || u.program?.toLowerCase().includes('tax') || u.program?.toLowerCase().includes('quickbooks')) ? 'Business Tech & Accounting'
+        : 'Computer & Digital Skills',
+      tag: `🏛️ ${u.program || u.department || 'Online Course'}`,
+      tagColor: '#0f172a',
       duration: u.course_duration || '4 Weeks Certificate',
-      schedule: 'Morning / Afternoon / Evening',
+      schedule: 'Live Online Batches & 24/7 LMS',
       fee: 'KES 4,500',
       installment: '2 installments',
-      careerOutcome: u.description || 'Certified Professional Graduate',
-      skills: u.syllabus_modules?.flatMap((m) => m.topics) || ['Practical Lab Training', 'Certification'],
-      icon: '📖',
+      careerOutcome: u.description || 'Certified Online Graduate',
+      skills: u.syllabus_modules?.flatMap((m) => m.topics) || ['Live Interactive Virtual Classes', 'Verified E-Certificate'],
+      icon: '💻',
       popular: true,
       syllabus: u.syllabus_modules?.map((m, idx) => ({
         week: `Week ${idx + 1}`,
         topic: m.title,
-        practicalLab: m.learning_outcomes?.[0] || 'Hands-on practical sessions in college laboratory.',
+        practicalLab: m.learning_outcomes?.[0] || 'Live online hands-on exercises and project labs.',
       })),
     }))
 
@@ -385,28 +420,24 @@ export function Landing() {
       const customCourses: CourseItem[] = units.map((u) => ({
         id: u.id,
         title: u.title,
-        category: (u.department?.toLowerCase().includes('computer') || u.program?.toLowerCase().includes('computer')) ? 'Computer Courses'
-          : (u.department?.toLowerCase().includes('barista') || u.program?.toLowerCase().includes('barista')) ? 'Barista Training'
-          : (u.department?.toLowerCase().includes('language') || u.program?.toLowerCase().includes('language')) ? 'Languages (English & Kiswahili)'
-          : (u.department?.toLowerCase().includes('henna') || u.department?.toLowerCase().includes('beauty')) ? 'Henna & Make-up'
-          : (u.department?.toLowerCase().includes('tailor') || u.department?.toLowerCase().includes('sewing')) ? 'Sewing & Tailoring'
-          : (u.department?.toLowerCase().includes('ielts') || u.program?.toLowerCase().includes('ielts')) ? 'IELTS Prep'
-          : (u.department?.toLowerCase().includes('account') || u.department?.toLowerCase().includes('business')) ? 'Business & Accounting'
-          : (u.department as any) || 'Computer Courses',
-        tag: `🏛️ ${u.program || u.department || 'Accredited Course'}`,
-        tagColor: '#1e3a8a',
+        category: (u.department?.toLowerCase().includes('soft') || u.department?.toLowerCase().includes('python') || u.department?.toLowerCase().includes('cyber') || u.program?.toLowerCase().includes('code') || u.program?.toLowerCase().includes('web') || u.title?.toLowerCase().includes('react')) ? 'Tech & Programming'
+          : (u.department?.toLowerCase().includes('lang') || u.department?.toLowerCase().includes('ielts') || u.department?.toLowerCase().includes('kisw') || u.program?.toLowerCase().includes('english') || u.program?.toLowerCase().includes('arabic') || u.program?.toLowerCase().includes('french')) ? 'Languages & Communication'
+          : (u.department?.toLowerCase().includes('account') || u.department?.toLowerCase().includes('biz') || u.program?.toLowerCase().includes('tax') || u.program?.toLowerCase().includes('quickbooks')) ? 'Business Tech & Accounting'
+          : 'Computer & Digital Skills',
+        tag: `🏛️ ${u.program || u.department || 'Online Course'}`,
+        tagColor: '#0f172a',
         duration: u.course_duration || '4 Weeks Certificate',
-        schedule: 'Morning / Afternoon / Evening',
+        schedule: 'Live Online Batches & 24/7 LMS',
         fee: 'KES 4,500',
         installment: '2 installments',
-        careerOutcome: u.description || 'Certified Professional Graduate',
-        skills: u.syllabus_modules?.flatMap((m) => m.topics) || ['Practical Lab Training', 'Certification'],
-        icon: '📖',
+        careerOutcome: u.description || 'Certified Online Graduate',
+        skills: u.syllabus_modules?.flatMap((m) => m.topics) || ['Live Interactive Virtual Classes', 'Verified E-Certificate'],
+        icon: '💻',
         popular: true,
         syllabus: u.syllabus_modules?.map((m, idx) => ({
           week: `Week ${idx + 1}`,
           topic: m.title,
-          practicalLab: m.learning_outcomes?.[0] || 'Hands-on practical sessions in college laboratory.',
+          practicalLab: m.learning_outcomes?.[0] || 'Live online hands-on exercises and project labs.',
         })),
       }))
 
@@ -418,27 +449,23 @@ export function Landing() {
           cloudMapped = cloudCourses.map((c: any) => ({
             id: c.id,
             title: c.title,
-            category: (c.title?.toLowerCase().includes('computer') || c.title?.toLowerCase().includes('tech') || c.description?.toLowerCase().includes('computer')) ? 'Computer Courses'
-              : (c.title?.toLowerCase().includes('barista') || c.title?.toLowerCase().includes('coffee')) ? 'Barista Training'
-              : (c.title?.toLowerCase().includes('language') || c.title?.toLowerCase().includes('english') || c.title?.toLowerCase().includes('kiswahili')) ? 'Languages (English & Kiswahili)'
-              : (c.title?.toLowerCase().includes('henna') || c.title?.toLowerCase().includes('makeup') || c.title?.toLowerCase().includes('beauty')) ? 'Henna & Make-up'
-              : (c.title?.toLowerCase().includes('tailor') || c.title?.toLowerCase().includes('sewing')) ? 'Sewing & Tailoring'
-              : (c.title?.toLowerCase().includes('ielts')) ? 'IELTS Prep'
-              : (c.title?.toLowerCase().includes('quickbooks') || c.title?.toLowerCase().includes('accounting') || c.title?.toLowerCase().includes('tax')) ? 'Business & Accounting'
-              : 'Computer Courses',
-            tag: '🌟 Accredited Course',
-            tagColor: '#1e3a8a',
-            duration: '4 to 6 Weeks',
-            schedule: 'Morning / Afternoon / Evening',
-            fee: 'KES 4,500',
-            installment: '2 installments of KES 2,500',
-            careerOutcome: c.description || 'Certified Professional Trainee',
-            skills: ['100% Practical Lab Training', 'Institutional Certification'],
-            icon: '📖',
+            category: (c.title?.toLowerCase().includes('code') || c.title?.toLowerCase().includes('web') || c.title?.toLowerCase().includes('python') || c.title?.toLowerCase().includes('cyber') || c.title?.toLowerCase().includes('software')) ? 'Tech & Programming'
+              : (c.title?.toLowerCase().includes('language') || c.title?.toLowerCase().includes('english') || c.title?.toLowerCase().includes('kiswahili') || c.title?.toLowerCase().includes('ielts') || c.title?.toLowerCase().includes('arabic') || c.title?.toLowerCase().includes('french') || c.title?.toLowerCase().includes('german')) ? 'Languages & Communication'
+              : (c.title?.toLowerCase().includes('quickbooks') || c.title?.toLowerCase().includes('accounting') || c.title?.toLowerCase().includes('tax')) ? 'Business Tech & Accounting'
+              : 'Computer & Digital Skills',
+            tag: '🌟 Online Certified Course',
+            tagColor: '#0f172a',
+            duration: '4 to 8 Weeks',
+            schedule: 'Live Online Batches',
+            fee: 'KES 5,500',
+            installment: '2 installments of KES 3,000',
+            careerOutcome: c.description || 'Certified Online Graduate',
+            skills: ['Live Zoom Interactive Training', 'Verified E-Certificate'],
+            icon: '💻',
             popular: true,
             syllabus: [
-              { week: 'Week 1-2', topic: 'Fundamentals & Practical Lab Sessions', practicalLab: 'Core foundation exercises and lab work.' },
-              { week: 'Week 3-4', topic: 'Advanced Practical Projects & Examination', practicalLab: 'Real-world project simulations.' },
+              { week: 'Week 1-2', topic: 'Live Interactive Masterclasses', practicalLab: 'Live coding and interactive language sessions.' },
+              { week: 'Week 3-4', topic: 'Capstone Practical Project & Exam', practicalLab: 'Online project submission and certification assessment.' },
             ],
           }))
         }
@@ -816,15 +843,15 @@ export function Landing() {
               color: '#ffffff',
             }}
           >
-            Gain In-Demand Practical Skills. <br />
+            Master In-Demand Tech & Global Languages. <br />
             <span
               style={{
-                background: 'linear-gradient(90deg, #60a5fa 0%, #38bdf8 50%, #93c5fd 100%)',
+                background: 'linear-gradient(90deg, #d4af37 0%, #f5df88 50%, #d4af37 100%)',
                 WebkitBackgroundClip: 'text',
                 WebkitTextFillColor: 'transparent',
               }}
             >
-              Accelerate Your Career in 4 to 12 Weeks.
+              100% Online • Live Virtual Labs • Global Certification
             </span>
           </h1>
 
@@ -838,7 +865,7 @@ export function Landing() {
               fontWeight: 500,
             }}
           >
-            Nairobi’s premier short course college at Sahl Mall, 4th Street, Eastleigh. Master Computer Packages, Barista Artistry, English & Kiswahili Fluency, Henna & Bridal Make-up, Sewing & Tailoring, and IELTS Exam Preparation with 100% hands-on practical training!
+            Kenya & East Africa’s premier virtual institute. Master Software Engineering (React & Node), Python Data Analytics, Cybersecurity, Computer Packages, and World Languages (English, IELTS, Kiswahili, Arabic, French, German) with live interactive classes and 24/7 LMS access!
           </p>
 
           {/* Hero CTAs */}
@@ -847,19 +874,19 @@ export function Landing() {
               type="button"
               className="btn btn-lg"
               style={{
-                background: '#2563eb',
-                color: '#ffffff',
+                background: '#d4af37',
+                color: '#0c0e12',
                 fontWeight: 800,
                 padding: '1rem 2.5rem',
                 fontSize: '1.08rem',
                 borderRadius: '12px',
-                boxShadow: '0 10px 28px rgba(37, 99, 235, 0.45)',
+                boxShadow: '0 10px 28px rgba(212, 175, 55, 0.4)',
                 border: 'none',
                 cursor: 'pointer',
               }}
               onClick={() => setInquiryModalOpen(true)}
             >
-              🚀 Apply for Upcoming Intake →
+              🚀 Enroll in 100% Online Intake →
             </button>
 
             <a
@@ -877,7 +904,7 @@ export function Landing() {
                 textDecoration: 'none',
               }}
             >
-              📚 Browse All Short Courses
+              📚 Browse Online Programs
             </a>
 
             {!isInstalled && (
@@ -903,9 +930,9 @@ export function Landing() {
           {/* Live Intake Countdown Alert */}
           <div
             style={{
-              background: 'rgba(30, 58, 138, 0.55)',
+              background: 'rgba(15, 23, 42, 0.75)',
               backdropFilter: 'blur(12px)',
-              border: '1px solid rgba(147, 197, 253, 0.35)',
+              border: '1px solid rgba(212, 175, 55, 0.35)',
               borderRadius: '16px',
               padding: '1.25rem 1.5rem',
               maxWidth: '820px',
@@ -918,35 +945,35 @@ export function Landing() {
             }}
           >
             <div style={{ textAlign: 'left' }}>
-              <div style={{ fontSize: '0.8rem', color: '#93c5fd', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.05em' }}>
-                ⚡ NEXT SHORT COURSE INTAKE REGISTRATION
+              <div style={{ fontSize: '0.8rem', color: '#f5df88', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                ⚡ 100% ONLINE INTAKE REGISTRATION OPEN
               </div>
               <div style={{ fontSize: '1.05rem', fontWeight: 800, color: '#ffffff', marginTop: '2px' }}>
-                Ongoing Monthly Intake — Morning, Afternoon & Evening Batches
+                Live Virtual Cohorts — Evening & Weekend Interactive Batches
               </div>
               <div style={{ fontSize: '0.78rem', color: '#cbd5e1', marginTop: '2px' }}>
-                📍 Sahl Mall Campus, 4th Street, Eastleigh • Limited Practical Lab Seats
+                🌐 Study from anywhere in Kenya, Africa & Worldwide • 24/7 LMS Access
               </div>
             </div>
 
             <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
-              <div style={{ background: '#090d16', border: '1px solid #1e3a8a', padding: '0.4rem 0.65rem', borderRadius: '8px', textAlign: 'center', minWidth: '48px' }}>
-                <div style={{ fontSize: '1.2rem', fontWeight: 900, color: '#60a5fa' }}>{String(timeLeft.days).padStart(2, '0')}</div>
+              <div style={{ background: '#090d16', border: '1px solid #d4af37', padding: '0.4rem 0.65rem', borderRadius: '8px', textAlign: 'center', minWidth: '48px' }}>
+                <div style={{ fontSize: '1.2rem', fontWeight: 900, color: '#d4af37' }}>{String(timeLeft.days).padStart(2, '0')}</div>
                 <div style={{ fontSize: '0.65rem', color: '#94a3b8', textTransform: 'uppercase' }}>Days</div>
               </div>
-              <span style={{ fontWeight: 900, color: '#93c5fd' }}>:</span>
-              <div style={{ background: '#090d16', border: '1px solid #1e3a8a', padding: '0.4rem 0.65rem', borderRadius: '8px', textAlign: 'center', minWidth: '48px' }}>
-                <div style={{ fontSize: '1.2rem', fontWeight: 900, color: '#60a5fa' }}>{String(timeLeft.hours).padStart(2, '0')}</div>
+              <span style={{ fontWeight: 900, color: '#d4af37' }}>:</span>
+              <div style={{ background: '#090d16', border: '1px solid #d4af37', padding: '0.4rem 0.65rem', borderRadius: '8px', textAlign: 'center', minWidth: '48px' }}>
+                <div style={{ fontSize: '1.2rem', fontWeight: 900, color: '#d4af37' }}>{String(timeLeft.hours).padStart(2, '0')}</div>
                 <div style={{ fontSize: '0.65rem', color: '#94a3b8', textTransform: 'uppercase' }}>Hours</div>
               </div>
-              <span style={{ fontWeight: 900, color: '#93c5fd' }}>:</span>
-              <div style={{ background: '#090d16', border: '1px solid #1e3a8a', padding: '0.4rem 0.65rem', borderRadius: '8px', textAlign: 'center', minWidth: '48px' }}>
-                <div style={{ fontSize: '1.2rem', fontWeight: 900, color: '#60a5fa' }}>{String(timeLeft.minutes).padStart(2, '0')}</div>
+              <span style={{ fontWeight: 900, color: '#d4af37' }}>:</span>
+              <div style={{ background: '#090d16', border: '1px solid #d4af37', padding: '0.4rem 0.65rem', borderRadius: '8px', textAlign: 'center', minWidth: '48px' }}>
+                <div style={{ fontSize: '1.2rem', fontWeight: 900, color: '#d4af37' }}>{String(timeLeft.minutes).padStart(2, '0')}</div>
                 <div style={{ fontSize: '0.65rem', color: '#94a3b8', textTransform: 'uppercase' }}>Mins</div>
               </div>
-              <span style={{ fontWeight: 900, color: '#93c5fd' }}>:</span>
-              <div style={{ background: '#090d16', border: '1px solid #1e3a8a', padding: '0.4rem 0.65rem', borderRadius: '8px', textAlign: 'center', minWidth: '48px' }}>
-                <div style={{ fontSize: '1.2rem', fontWeight: 900, color: '#38bdf8' }}>{String(timeLeft.seconds).padStart(2, '0')}</div>
+              <span style={{ fontWeight: 900, color: '#d4af37' }}>:</span>
+              <div style={{ background: '#090d16', border: '1px solid #d4af37', padding: '0.4rem 0.65rem', borderRadius: '8px', textAlign: 'center', minWidth: '48px' }}>
+                <div style={{ fontSize: '1.2rem', fontWeight: 900, color: '#22c55e' }}>{String(timeLeft.seconds).padStart(2, '0')}</div>
                 <div style={{ fontSize: '0.65rem', color: '#94a3b8', textTransform: 'uppercase' }}>Secs</div>
               </div>
             </div>
@@ -968,24 +995,24 @@ export function Landing() {
             }}
           >
             <div>
-              <div style={{ fontSize: '2.4rem', fontWeight: 900, color: '#60a5fa', lineHeight: 1 }}>92%</div>
-              <div style={{ fontSize: '0.9rem', color: '#e2e8f0', fontWeight: 700, marginTop: '0.35rem' }}>Graduate Employment</div>
-              <div style={{ fontSize: '0.75rem', color: '#94a3b8' }}>Within 6 months of graduation</div>
+              <div style={{ fontSize: '2.4rem', fontWeight: 900, color: '#d4af37', lineHeight: 1 }}>100%</div>
+              <div style={{ fontSize: '0.9rem', color: '#e2e8f0', fontWeight: 700, marginTop: '0.35rem' }}>Virtual & Online</div>
+              <div style={{ fontSize: '0.75rem', color: '#94a3b8' }}>Learn from anywhere, any device</div>
             </div>
             <div>
-              <div style={{ fontSize: '2.4rem', fontWeight: 900, color: '#34d399', lineHeight: 1 }}>100%</div>
-              <div style={{ fontSize: '0.9rem', color: '#e2e8f0', fontWeight: 700, marginTop: '0.35rem' }}>Practical Lab Focus</div>
-              <div style={{ fontSize: '0.75rem', color: '#94a3b8' }}>Real-world projects, zero fluff</div>
+              <div style={{ fontSize: '2.4rem', fontWeight: 900, color: '#34d399', lineHeight: 1 }}>Live</div>
+              <div style={{ fontSize: '0.9rem', color: '#e2e8f0', fontWeight: 700, marginTop: '0.35rem' }}>Interactive Coaching</div>
+              <div style={{ fontSize: '0.75rem', color: '#94a3b8' }}>Real-time code labs & speaking mocks</div>
             </div>
             <div>
-              <div style={{ fontSize: '2.4rem', fontWeight: 900, color: '#fbbf24', lineHeight: 1 }}>3 Shifts</div>
-              <div style={{ fontSize: '0.9rem', color: '#e2e8f0', fontWeight: 700, marginTop: '0.35rem' }}>Flexible Timetables</div>
-              <div style={{ fontSize: '0.75rem', color: '#94a3b8' }}>Day, Evening & Saturday classes</div>
+              <div style={{ fontSize: '2.4rem', fontWeight: 900, color: '#38bdf8', lineHeight: 1 }}>24/7</div>
+              <div style={{ fontSize: '0.9rem', color: '#e2e8f0', fontWeight: 700, marginTop: '0.35rem' }}>LMS Portal Access</div>
+              <div style={{ fontSize: '0.75rem', color: '#94a3b8' }}>Class recordings, notes & quizzes</div>
             </div>
             <div>
-              <div style={{ fontSize: '2.4rem', fontWeight: 900, color: '#f472b6', lineHeight: 1 }}>KES 0</div>
-              <div style={{ fontSize: '0.9rem', color: '#e2e8f0', fontWeight: 700, marginTop: '0.35rem' }}>Free Career Mentorship</div>
-              <div style={{ fontSize: '0.75rem', color: '#94a3b8' }}>CV reviews & hiring partner network</div>
+              <div style={{ fontSize: '2.4rem', fontWeight: 900, color: '#f5df88', lineHeight: 1 }}>Verified</div>
+              <div style={{ fontSize: '0.9rem', color: '#e2e8f0', fontWeight: 700, marginTop: '0.35rem' }}>Global E-Certificates</div>
+              <div style={{ fontSize: '0.75rem', color: '#94a3b8' }}>QR verifiable & LinkedIn ready</div>
             </div>
           </div>
         </div>
@@ -994,27 +1021,27 @@ export function Landing() {
       {/* Value Proposition / Why Choose Eclat Institute */}
       <section id="why-eclat" style={{ padding: '5rem 1.5rem', maxWidth: '1240px', margin: '0 auto' }}>
         <div style={{ textAlign: 'center', marginBottom: '3.5rem' }}>
-          <span style={{ fontSize: '0.82rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.08em', color: '#2563eb' }}>
-            THE ECLAT INSTITUTE ADVANTAGE
+          <span style={{ fontSize: '0.82rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.08em', color: '#b45309' }}>
+            THE ÉCLAT ONLINE ADVANTAGE
           </span>
-          <h2 style={{ fontSize: '2.3rem', fontWeight: 900, color: '#0f172a', margin: '0.35rem 0 0.75rem' }}>
-            Designed Specifically for Career Upgraders & Beginners
+          <h2 style={{ fontSize: '2.3rem', fontWeight: 900, color: '#0f172a', margin: '0.35rem 0 0.75rem', fontFamily: 'var(--font-heading)' }}>
+            Tech & Language Mastery Built for Modern Learners
           </h2>
           <p style={{ fontSize: '1.05rem', color: '#334155', maxWidth: '700px', margin: '0 auto', fontWeight: 500 }}>
-            We eliminate outdated theoretical memorization and focus exclusively on what top employers and clients demand today.
+            No traffic, no rigid classroom constraints. Master cutting-edge programming frameworks and international languages with live expert mentorship.
           </p>
         </div>
 
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '2rem' }}>
           <div style={{ background: '#ffffff', border: '1px solid #cbd5e1', borderRadius: '16px', padding: '2rem', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.04)' }}>
             <div style={{ width: '52px', height: '52px', borderRadius: '12px', background: '#eff6ff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.75rem', marginBottom: '1.25rem' }}>
-              🛠️
+              💻
             </div>
             <h3 style={{ fontSize: '1.25rem', fontWeight: 800, color: '#0f172a', margin: '0 0 0.5rem' }}>
-              Project-Based Practical Labs
+              Live Virtual Coding & Language Labs
             </h3>
             <p style={{ fontSize: '0.92rem', color: '#334155', lineHeight: 1.6, margin: 0 }}>
-              Every single lecture is paired with hands-on practice. Learn on professional espresso machines, commercial sewing equipment, and computer lab suites.
+              Interactive live screen-sharing, breakout speaking rooms, live GitHub code reviews, and direct instructor feedback on your projects.
             </p>
           </div>
 
@@ -1023,10 +1050,10 @@ export function Landing() {
               ⏰
             </div>
             <h3 style={{ fontSize: '1.25rem', fontWeight: 800, color: '#0f172a', margin: '0 0 0.5rem' }}>
-              Learn Without Leaving Your Job
+              Flexible Evening & Weekend Batches
             </h3>
             <p style={{ fontSize: '0.92rem', color: '#334155', lineHeight: 1.6, margin: 0 }}>
-              Choose from convenient Morning, Afternoon, Evening (5:30 PM - 7:30 PM), or intensive Saturday Weekend batches. Never compromise your current schedule while upskilling.
+              Attend live online evening sessions (6:00 PM – 9:30 PM) or weekend masterclasses. Missed a class? Watch HD video replays anytime on the portal.
             </p>
           </div>
 
@@ -1035,10 +1062,10 @@ export function Landing() {
               📜
             </div>
             <h3 style={{ fontSize: '1.25rem', fontWeight: 800, color: '#0f172a', margin: '0 0 0.5rem' }}>
-              Accredited Industry Certificates
+              Verified Digital E-Certificates
             </h3>
             <p style={{ fontSize: '0.92rem', color: '#334155', lineHeight: 1.6, margin: 0 }}>
-              Graduate with institutional certificates recognized by employers throughout Kenya and East Africa. Showcase verified credentials for immediate employment.
+              Receive cryptographically signed digital certificates with instant QR verification for LinkedIn, remote jobs, and international visa applications.
             </p>
           </div>
 
@@ -1050,7 +1077,7 @@ export function Landing() {
               Zero-Stress M-Pesa Installments
             </h3>
             <p style={{ fontSize: '0.92rem', color: '#334155', lineHeight: 1.6, margin: 0 }}>
-              Quality vocational education should be accessible. Pay your tuition in 2 to 3 manageable installments directly via M-Pesa Paybill 247247 with instant receipt generation.
+              Affordable tech and language education with flexible installment plans directly via M-Pesa Paybill 247247 with automatic digital receipting.
             </p>
           </div>
         </div>
@@ -1061,14 +1088,14 @@ export function Landing() {
         <div style={{ maxWidth: '1240px', margin: '0 auto' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', flexWrap: 'wrap', gap: '1.5rem', marginBottom: '2rem' }}>
             <div>
-              <span style={{ fontSize: '0.82rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.08em', color: '#2563eb' }}>
-                PROFESSIONAL SHORT COURSES DIRECTORY
+              <span style={{ fontSize: '0.82rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.08em', color: '#b45309' }}>
+                ONLINE PROGRAMS DIRECTORY
               </span>
-              <h2 style={{ fontSize: '2.2rem', fontWeight: 900, color: '#0f172a', margin: '0.35rem 0 0' }}>
-                Explore In-Demand Short Courses
+              <h2 style={{ fontSize: '2.2rem', fontWeight: 900, color: '#0f172a', margin: '0.35rem 0 0', fontFamily: 'var(--font-heading)' }}>
+                Tech & Language Online Programs
               </h2>
               <p style={{ fontSize: '1rem', color: '#64748b', margin: '0.35rem 0 0' }}>
-                Select a course to view duration, tuition fees, and immediate career outcomes.
+                Select an online course to view live schedules, curriculum breakdown, and career pathways.
               </p>
             </div>
 
@@ -1077,7 +1104,7 @@ export function Landing() {
               <input
                 type="text"
                 className="input"
-                placeholder="🔍 Search course (e.g. Barista, IELTS, Sewing, Henna)..."
+                placeholder="🔍 Search course (e.g. Python, IELTS, React, Excel, Arabic)..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 style={{
@@ -1115,14 +1142,14 @@ export function Landing() {
           {/* Category Filter Pills & Result Counter */}
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem', marginBottom: '2.5rem' }}>
             <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
-              {['All', 'Languages (English & Kiswahili)', 'Computer Courses', 'Barista Training', 'Henna & Make-up', 'Sewing & Tailoring', 'IELTS Prep', 'Business & Accounting'].map((cat) => (
+              {['All', 'Tech & Programming', 'Languages & Communication', 'Computer & Digital Skills', 'Business Tech & Accounting'].map((cat) => (
                 <button
                   key={cat}
                   type="button"
                   style={{
-                    background: activeCategory === cat ? '#1e3a8a' : '#f1f5f9',
-                    color: activeCategory === cat ? '#ffffff' : '#475569',
-                    border: `1px solid ${activeCategory === cat ? '#1e3a8a' : '#cbd5e1'}`,
+                    background: activeCategory === cat ? '#0f172a' : '#f1f5f9',
+                    color: activeCategory === cat ? '#d4af37' : '#475569',
+                    border: `1px solid ${activeCategory === cat ? '#d4af37' : '#cbd5e1'}`,
                     borderRadius: '999px',
                     padding: '0.5rem 1.15rem',
                     fontSize: '0.85rem',
@@ -1580,18 +1607,18 @@ export function Landing() {
             </p>
           </div>
 
-          {/* Campus Location Card */}
+          {/* Virtual Admissions & Support Desk Card */}
           <div style={{ background: '#ffffff', border: '1px solid #e2e8f0', borderRadius: '20px', padding: '2.5rem', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.05)' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '1rem' }}>
-              <span style={{ fontSize: '2rem' }}>📍</span>
+              <span style={{ fontSize: '2rem' }}>🌐</span>
               <div>
-                <h3 style={{ fontSize: '1.3rem', fontWeight: 900, color: '#0f172a', margin: 0 }}>Eastleigh Main Campus</h3>
-                <div style={{ fontSize: '0.8rem', color: '#64748b' }}>Sahl Mall, 4th Street, Nairobi</div>
+                <h3 style={{ fontSize: '1.3rem', fontWeight: 900, color: '#0f172a', margin: 0 }}>Online Admissions & Virtual Support</h3>
+                <div style={{ fontSize: '0.8rem', color: '#64748b' }}>Live Zoom Classes • 24/7 Digital Learning Portal</div>
               </div>
             </div>
             <div style={{ fontSize: '0.92rem', color: '#475569', lineHeight: 1.7, marginTop: '1.25rem' }}>
-              <div>🏢 <strong>Location:</strong> Sahl Mall, 4th Street, Eastleigh, Nairobi</div>
-              <div>🕒 <strong>Opening Hours:</strong> Mon – Fri: 7:30 AM – 7:30 PM | Sat: 8:00 AM – 5:00 PM</div>
+              <div>💻 <strong>Delivery Mode:</strong> 100% Online (Live Interactive Video + LMS Modules)</div>
+              <div>🕒 <strong>Live Class Shifts:</strong> Morning (9:00 AM) | Evening (6:00 PM - 9:30 PM) | Weekends</div>
               <div>📞 <strong>Admissions Hotline:</strong> +254 740 027 346</div>
               <div>✉️ <strong>Direct Inquiries:</strong> admissions@eclatinstitute.ac.ke</div>
             </div>
@@ -1599,9 +1626,9 @@ export function Landing() {
               type="button"
               className="btn btn-secondary btn-sm mt-4"
               style={{ fontWeight: 700 }}
-              onClick={() => alert('Campus Visit Hotline: Call +254 740 027 346 to schedule a free tour of our practical labs at Sahl Mall, 4th Street, Eastleigh.')}
+              onClick={() => alert('Online Class Orientation: Call or WhatsApp +254 740 027 346 to receive a guest Zoom link for a free live class demo!')}
             >
-              🗓️ Book Free Campus Tour
+              🎥 Request Free Live Class Demo
             </button>
           </div>
         </div>
@@ -1677,34 +1704,34 @@ export function Landing() {
           {/* Brand & Overview */}
           <div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.85rem', marginBottom: '1.25rem' }}>
-              <img src="/logo.png" alt="Eclat Institute Logo" style={{ width: '44px', height: '44px', borderRadius: '50%', border: '2px solid #2563eb' }} />
+              <img src="/logo.png" alt="Éclat Institute Logo" style={{ width: '44px', height: '44px', borderRadius: '50%', border: '2px solid #d4af37' }} />
               <div>
-                <span style={{ fontSize: '1.2rem', fontWeight: 900, color: '#f8fafc', letterSpacing: '-0.01em' }}>ECLAT INSTITUTE</span>
-                <div style={{ fontSize: '0.75rem', color: '#93c5fd', fontWeight: 700 }}>PRACTICAL SHORT COURSES • NAIROBI</div>
+                <span style={{ fontSize: '1.2rem', fontWeight: 900, color: '#f8fafc', fontFamily: 'var(--font-heading)', letterSpacing: '0.02em' }}>ÉCLAT INSTITUTE</span>
+                <div style={{ fontSize: '0.75rem', color: '#d4af37', fontWeight: 700 }}>100% ONLINE TECH & LANGUAGES</div>
               </div>
             </div>
             <p style={{ fontSize: '0.9rem', lineHeight: 1.65, color: '#cbd5e1', marginBottom: '1.25rem' }}>
-              Nairobi’s premier vocational hub for career short courses. Hands-on practical training in barista coffee brewing, computer packages, languages (English & Kiswahili), fashion tailoring, henna artistry, and IELTS preparation.
+              Kenya & East Africa’s premier virtual institute. Live online interactive coaching in Full-Stack Software Engineering, Python Data Analytics, Cybersecurity, Computer Packages, IELTS Exam Prep, English Fluency, Arabic, French, and German.
             </p>
             <div style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', background: '#131b2e', border: '1px solid #2e3d61', padding: '0.45rem 0.85rem', borderRadius: '8px', fontSize: '0.82rem', color: '#cbd5e1', fontWeight: 600 }}>
-              <span>🛡️ Certified Short Courses Institution</span>
+              <span>🛡️ Verified Global Online Certifications</span>
             </div>
           </div>
 
-          {/* Short Courses Directory */}
+          {/* Online Programs Directory */}
           <div>
-            <h4 style={{ color: '#f8fafc', fontSize: '1.05rem', fontWeight: 800, marginBottom: '1.25rem', borderBottom: '2px solid #2563eb', paddingBottom: '0.4rem', display: 'inline-block' }}>
-              Specialized Short Courses
+            <h4 style={{ color: '#f8fafc', fontSize: '1.05rem', fontWeight: 800, marginBottom: '1.25rem', borderBottom: '2px solid #d4af37', paddingBottom: '0.4rem', display: 'inline-block' }}>
+              Online Tech & Language Programs
             </h4>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '0.65rem', fontSize: '0.88rem' }}>
-              <a href="#courses" style={{ color: '#cbd5e1', textDecoration: 'none', transition: 'color 0.2s' }}>💻 Computer Packages & Digital Skills</a>
-              <a href="#courses" style={{ color: '#cbd5e1', textDecoration: 'none', transition: 'color 0.2s' }}>☕ Professional Barista & Coffee Brewing Artistry</a>
-              <a href="#courses" style={{ color: '#cbd5e1', textDecoration: 'none', transition: 'color 0.2s' }}>🗣️ English Language Mastery & Fluency</a>
-              <a href="#courses" style={{ color: '#cbd5e1', textDecoration: 'none', transition: 'color 0.2s' }}>🇰🇪 Kiswahili Sanifu (Expatriates & Beginners)</a>
-              <a href="#courses" style={{ color: '#cbd5e1', textDecoration: 'none', transition: 'color 0.2s' }}>🌐 Foreign Languages (Arabic, French, German)</a>
-              <a href="#courses" style={{ color: '#cbd5e1', textDecoration: 'none', transition: 'color 0.2s' }}>💄 Henna Artistry & Professional Make-up</a>
-              <a href="#courses" style={{ color: '#cbd5e1', textDecoration: 'none', transition: 'color 0.2s' }}>✂️ Fashion Design, Sewing & Garment Tailoring</a>
-              <a href="#courses" style={{ color: '#cbd5e1', textDecoration: 'none', transition: 'color 0.2s' }}>🌍 IELTS Exam Preparation (Band 7.5+)</a>
+              <a href="#courses" style={{ color: '#cbd5e1', textDecoration: 'none', transition: 'color 0.2s' }}>💻 Full-Stack Web Development (React 19 & Node.js)</a>
+              <a href="#courses" style={{ color: '#cbd5e1', textDecoration: 'none', transition: 'color 0.2s' }}>📊 Python Programming & Data Analytics</a>
+              <a href="#courses" style={{ color: '#cbd5e1', textDecoration: 'none', transition: 'color 0.2s' }}>⚡ Comprehensive Computer Packages & Digital Literacy</a>
+              <a href="#courses" style={{ color: '#cbd5e1', textDecoration: 'none', transition: 'color 0.2s' }}>🛡️ Cybersecurity Fundamentals & Network Defense</a>
+              <a href="#courses" style={{ color: '#cbd5e1', textDecoration: 'none', transition: 'color 0.2s' }}>📈 Computerized Accounting (QuickBooks & iTax)</a>
+              <a href="#courses" style={{ color: '#cbd5e1', textDecoration: 'none', transition: 'color 0.2s' }}>🎓 IELTS Exam Preparation (Target Band 7.5 - 9.0)</a>
+              <a href="#courses" style={{ color: '#cbd5e1', textDecoration: 'none', transition: 'color 0.2s' }}>🗣️ English Language Mastery & Public Speaking</a>
+              <a href="#courses" style={{ color: '#cbd5e1', textDecoration: 'none', transition: 'color 0.2s' }}>🌴 Arabic, French & German Diplomas</a>
             </div>
           </div>
 
