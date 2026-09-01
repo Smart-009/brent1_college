@@ -111,34 +111,6 @@ export function MobileAppBottomNav() {
         )}
       </Link>
 
-      {/* Fees / M-Pesa Tab */}
-      <Link
-        to="/fees"
-        className={`mobile-nav-item ${currentPath === '/fees' ? 'active' : ''}`}
-        style={{
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          justifyContent: 'center',
-          flex: 1,
-          height: '100%',
-          textDecoration: 'none',
-          color: currentPath === '/fees' ? '#60a5fa' : '#94a3b8',
-          transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
-          fontSize: '0.7rem',
-          fontWeight: currentPath === '/fees' ? 800 : 500,
-          gap: '2px',
-          userSelect: 'none',
-          transform: currentPath === '/fees' ? 'scale(1.05)' : 'scale(1)',
-        }}
-      >
-        <span style={{ fontSize: '1.25rem', lineHeight: 1 }}>💳</span>
-        <span>Fees ($ USD)</span>
-        {currentPath === '/fees' && (
-          <span style={{ width: '4px', height: '4px', borderRadius: '50%', background: '#60a5fa', boxShadow: '0 0 8px #60a5fa' }} />
-        )}
-      </Link>
-
       {/* E-Library Tab */}
       <Link
         to="/library"
