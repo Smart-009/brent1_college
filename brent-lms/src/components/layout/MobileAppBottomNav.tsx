@@ -139,10 +139,10 @@ export function MobileAppBottomNav() {
         )}
       </Link>
 
-      {/* Timetable Tab */}
+      {/* E-Library Tab */}
       <Link
-        to="/timetable"
-        className={`mobile-nav-item ${currentPath === '/timetable' ? 'active' : ''}`}
+        to="/library"
+        className={`mobile-nav-item ${currentPath === '/library' ? 'active' : ''}`}
         style={{
           display: 'flex',
           flexDirection: 'column',
@@ -151,18 +151,18 @@ export function MobileAppBottomNav() {
           flex: 1,
           height: '100%',
           textDecoration: 'none',
-          color: currentPath === '/timetable' ? '#60a5fa' : '#94a3b8',
+          color: currentPath === '/library' ? '#60a5fa' : '#94a3b8',
           transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
           fontSize: '0.7rem',
-          fontWeight: currentPath === '/timetable' ? 800 : 500,
+          fontWeight: currentPath === '/library' ? 800 : 500,
           gap: '2px',
           userSelect: 'none',
-          transform: currentPath === '/timetable' ? 'scale(1.05)' : 'scale(1)',
+          transform: currentPath === '/library' ? 'scale(1.05)' : 'scale(1)',
         }}
       >
-        <span style={{ fontSize: '1.25rem', lineHeight: 1 }}>📅</span>
-        <span>Timetable</span>
-        {currentPath === '/timetable' && (
+        <span style={{ fontSize: '1.25rem', lineHeight: 1 }}>📖</span>
+        <span>E-Library</span>
+        {currentPath === '/library' && (
           <span style={{ width: '4px', height: '4px', borderRadius: '50%', background: '#60a5fa', boxShadow: '0 0 8px #60a5fa' }} />
         )}
       </Link>

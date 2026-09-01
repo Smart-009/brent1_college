@@ -7,24 +7,22 @@ export function Sidebar({ isOpen, onClose }: { isOpen: boolean; onClose: () => v
   const navigate = useNavigate()
   if (!profile) return null
 
-  // Role-Specific Navigation Definitions
+  // Streamlined Role-Specific Navigation Definitions
   const studentNav = [
-    { to: '/student', label: 'Student Dashboard', icon: '🏠' },
-    { to: '/student/courses', label: 'My Units & Lessons', icon: '📚' },
-    { to: '/timetable', label: 'My Lecture Timetable', icon: '📅' },
-    { to: '/exams', label: 'My Academic Transcript', icon: '📜' },
-    { to: '/fees', label: 'My Fee Statement & Paybill', icon: '💳' },
+    { to: '/student', label: 'My Student Dashboard', icon: '🏠' },
+    { to: '/student/courses', label: 'My Enrolled Lessons & LMS', icon: '📚' },
     { to: '/library', label: 'E-Library & Past Papers', icon: '📖' },
+    { to: '/fees', label: 'My Fee Statement & Paybill', icon: '💳' },
+    { to: '/exams', label: 'Official Transcript & Certificate', icon: '📜' },
     { to: '/noticeboard', label: 'Student Noticeboard', icon: '📢' },
   ]
 
   const teacherNav = [
     { to: '/teacher', label: 'Faculty Dashboard', icon: '👩‍🏫' },
-    { to: '/teacher/courses', label: 'My Courses & Modules', icon: '📖' },
+    { to: '/teacher/courses', label: 'My Courses & Upload Lessons', icon: '📖' },
     { to: '/teacher/attendance', label: 'Mark Class Attendance', icon: '📋' },
     { to: '/teacher/gradebook', label: 'Continuous Gradebook', icon: '💯' },
-    { to: '/timetable', label: 'Faculty Timetable', icon: '📅' },
-    { to: '/discipline', label: 'Student Merits Registry', icon: '⭐' },
+    { to: '/library', label: 'E-Library & Courseware', icon: '📖' },
     { to: '/noticeboard', label: 'College Noticeboard', icon: '📢' },
   ]
 
@@ -32,33 +30,25 @@ export function Sidebar({ isOpen, onClose }: { isOpen: boolean; onClose: () => v
     { to: '/parent', label: 'Ward Overview & Attendance', icon: '👨‍👩‍👧' },
     { to: '/exams', label: 'Ward Academic Transcript', icon: '📄' },
     { to: '/fees', label: 'Fee Clearance & Payments ($ USD)', icon: '💳' },
-    { to: '/timetable', label: "Ward's Lecture Schedule", icon: '📅' },
     { to: '/noticeboard', label: 'College Circulars', icon: '📢' },
   ]
 
   const bursarNav = [
     { to: '/bursar', label: 'Bursar & Admissions Desk', icon: '💼' },
-    { to: '/students', label: 'Student SIS & Admissions', icon: '🎓' },
-    { to: '/fees', label: 'Fee Structures & Invoices', icon: '💳' },
-    { to: '/timetable', label: 'Lecture Timetable', icon: '📅' },
+    { to: '/students', label: 'Student Directory & Admissions', icon: '🎓' },
+    { to: '/fees', label: 'Fee Invoices & Payments', icon: '💳' },
     { to: '/noticeboard', label: 'Publish Circulars & Notices', icon: '📢' },
   ]
 
   const adminNav = [
-    { to: '/admin', label: 'Principal Executive Desk', icon: '⚙️' },
-    { to: '/students', label: 'Students SIS Directory', icon: '🎓' },
-    { to: '/bursar', label: 'Bursar & Admissions Desk', icon: '💼' },
-    { to: '/timetable', label: 'Master Lecture Timetable', icon: '📅' },
-    { to: '/exams', label: 'Exams & Transcripts Board', icon: '📜' },
-    { to: '/fees', label: 'Tuition Fees Management', icon: '💳' },
-    { to: '/library', label: 'E-Library & Courseware', icon: '📖' },
-    { to: '/noticeboard', label: 'College Noticeboard', icon: '📢' },
-    { to: '/discipline', label: 'Discipline & Merits', icon: '⭐' },
+    { to: '/admin', label: 'Admin Dashboard', icon: '⚙️' },
+    { to: '/admin/classes', label: 'Academic Programs & Courses', icon: '🏫' },
+    { to: '/students', label: 'Student Directory & Admissions', icon: '🎓' },
+    { to: '/library', label: 'E-Library & Cloud Drive', icon: '📖' },
+    { to: '/fees', label: 'Tuition Fees & Bursar Desk', icon: '💳' },
+    { to: '/exams', label: 'Transcripts & Certificates', icon: '📜' },
     { to: '/admin/users', label: 'Staff & Faculty Accounts', icon: '👤' },
-    { to: '/teacher/courses', label: 'Create Courses & Assign Faculty', icon: '✨' },
-    { to: '/admin/classes', label: 'Academic Programs & Cohorts', icon: '🏫' },
-    { to: '/admin/subjects', label: 'Curriculum Course Units', icon: '🧪' },
-    { to: '/admin/terms', label: 'Intake Batches & Schedules', icon: '📅' },
+    { to: '/noticeboard', label: 'College Noticeboard', icon: '📢' },
   ]
 
   const roleNavMap: Record<string, { label: string; links: typeof studentNav }> = {
