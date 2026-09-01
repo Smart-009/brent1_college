@@ -46,6 +46,18 @@ export function ManageTerms() {
     },
   })
 
+  // Delete intake cycle mutation
+  const deleteMutation = useMutation({
+    mutationFn: async (id: string) => {
+      if (!window.confirm('Are you sure you want to delete this intake batch schedule?')) return
+      const { error } = await supabase.from('school_terms').delete().eq('id', id)
+      if (error) throw error
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['admin-terms'] })
+    },
+  })
+
   return (
     <PageWrapper
       title="Intake Batches & Cohort Schedules"
@@ -63,9 +75,26 @@ export function ManageTerms() {
       ) : terms && terms.length > 0 ? (
         <div className="grid grid-3">
           {terms.map((t) => (
-            <div key={t.id} className="card">
+            <div key={t.id} className="card" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
               <div className="card-body">
-                <span className="badge badge-primary">{t.academic_year}</span>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <span className="badge badge-primary">{t.academic_year}</span>
+                  <button
+                    type="button"
+                    onClick={() => deleteMutation.mutate(t.id)}
+                    style={{
+                      background: 'none',
+                      border: 'none',
+                      color: '#dc2626',
+                      cursor: 'pointer',
+                      fontSize: '0.8rem',
+                      fontWeight: 700,
+                    }}
+                    title="Delete intake batch"
+                  >
+                    🗑️
+                  </button>
+                </div>
                 <h3 className="course-card-title mt-2">{t.name}</h3>
                 <div className="text-sm text-muted mt-2">
                   🗓️ {formatDate(t.start_date)} — {formatDate(t.end_date)}

@@ -412,62 +412,70 @@ export function ExamManagement() {
       )}
 
       {/* Tab 3: Merit Ranking */}
-      {activeTab === 'ranking' && (
-        <div className="card" style={{ padding: '1.5rem' }}>
-          <h3 style={{ fontSize: '1.1rem', fontWeight: 700, marginBottom: '0.5rem' }}>
-            Diploma in Computer Science & ICT (Year 2) — Master Academic Merit Board
-          </h3>
-          <p style={{ fontSize: '0.85rem', color: 'var(--color-text-secondary)', marginBottom: '1.25rem' }}>
-            Broadsheet of all 7 semester modular units (CS 201, CS 202, CS 203, NET 204, MAT 201, ENT 101, CMS 101)
-          </p>
+      {activeTab === 'ranking' && (() => {
+        // Collect all distinct subject codes across report cards
+        const allSubCodes = Array.from(
+          new Set(
+            reportCards.flatMap((rc) => rc.subjects.map((s) => s.subject_code || s.subject_name.slice(0, 8)))
+          )
+        )
+        const displayCodes = allSubCodes.length > 0 ? allSubCodes.slice(0, 6) : ['MOD-101', 'MOD-102', 'MOD-103']
 
-          <div className="table-responsive">
-            <table className="table" style={{ fontSize: '0.85rem' }}>
-              <thead>
-                <tr>
-                  <th>Pos</th>
-                  <th>Student Name</th>
-                  <th>CS 201</th>
-                  <th>CS 202</th>
-                  <th>CS 203</th>
-                  <th>NET 204</th>
-                  <th>MAT 201</th>
-                  <th>ENT 101</th>
-                  <th>CMS 101</th>
-                  <th>Total</th>
-                  <th>Mean %</th>
-                  <th>Classification</th>
-                </tr>
-              </thead>
-              <tbody>
-                {reportCards.map((rc) => {
-                  const getSubScore = (code: string) => {
-                    const found = rc.subjects.find((s) => s.subject_code.includes(code))
-                    return found ? `${found.total_score}% (${found.grade})` : '-'
-                  }
+        return (
+          <div className="card" style={{ padding: '1.5rem' }}>
+            <h3 style={{ fontSize: '1.1rem', fontWeight: 700, marginBottom: '0.5rem' }}>
+              Academic Merit & Performance Broadsheet
+            </h3>
+            <p style={{ fontSize: '0.85rem', color: 'var(--color-text-secondary)', marginBottom: '1.25rem' }}>
+              Official evaluation broadsheet across all active vocational cohorts and modular training units.
+            </p>
 
-                  return (
-                    <tr key={rc.id}>
-                      <td style={{ fontWeight: 700 }}>#{rc.class_position}</td>
-                      <td style={{ fontWeight: 600 }}>{rc.student_name}</td>
-                      <td>{getSubScore('CS 201')}</td>
-                      <td>{getSubScore('CS 202')}</td>
-                      <td>{getSubScore('CS 203')}</td>
-                      <td>{getSubScore('NET 204')}</td>
-                      <td>{getSubScore('MAT 201')}</td>
-                      <td>{getSubScore('ENT 101')}</td>
-                      <td>{getSubScore('CMS 101')}</td>
-                      <td style={{ fontWeight: 700 }}>{rc.total_marks}</td>
-                      <td style={{ fontWeight: 700, color: 'var(--color-primary)' }}>{rc.mean_percentage}%</td>
-                      <td><span className="badge badge-success">{rc.mean_grade}</span></td>
+            {reportCards.length === 0 ? (
+              <div style={{ padding: '2rem', textAlign: 'center', color: 'var(--color-text-secondary)' }}>
+                No student assessment records logged yet. Evaluate students to populate the merit broadsheet.
+              </div>
+            ) : (
+              <div className="table-responsive">
+                <table className="table" style={{ fontSize: '0.85rem' }}>
+                  <thead>
+                    <tr>
+                      <th>Pos</th>
+                      <th>Student Name</th>
+                      {displayCodes.map((code) => (
+                        <th key={code}>{code}</th>
+                      ))}
+                      <th>Total</th>
+                      <th>Mean %</th>
+                      <th>Classification</th>
                     </tr>
-                  )
-                })}
-              </tbody>
-            </table>
+                  </thead>
+                  <tbody>
+                    {reportCards.map((rc) => {
+                      const getSubScore = (code: string) => {
+                        const found = rc.subjects.find((s) => (s.subject_code && s.subject_code.includes(code)) || (s.subject_name && s.subject_name.includes(code)))
+                        return found ? `${found.total_score}% (${found.grade})` : '-'
+                      }
+
+                      return (
+                        <tr key={rc.id}>
+                          <td style={{ fontWeight: 700 }}>#{rc.class_position}</td>
+                          <td style={{ fontWeight: 600 }}>{rc.student_name}</td>
+                          {displayCodes.map((code) => (
+                            <td key={code}>{getSubScore(code)}</td>
+                          ))}
+                          <td style={{ fontWeight: 700 }}>{rc.total_marks}</td>
+                          <td style={{ fontWeight: 700, color: 'var(--color-primary)' }}>{rc.mean_percentage}%</td>
+                          <td><span className="badge badge-success">{rc.mean_grade}</span></td>
+                        </tr>
+                      )
+                    })}
+                  </tbody>
+                </table>
+              </div>
+            )}
           </div>
-        </div>
-      )}
+        )
+      })()}
 
       {/* Official Report Card Printable Modal */}
       {selectedReportCard && (
