@@ -4,6 +4,7 @@
 
 import React from 'react'
 import type { BiometricFeeClearancePass } from '@/types/school'
+import { INSTITUTION_CONFIG } from '@/config/institution'
 
 interface Props {
   pass: BiometricFeeClearancePass
@@ -104,18 +105,18 @@ export const BiometricClearancePassModal: React.FC<Props> = ({ pass, onClose }) 
             <div style={{ display: 'flex', borderBottom: 'none', justifyContent: 'center', alignItems: 'center', gap: '0.75rem', marginBottom: '0.5rem' }}>
               <img
                 src="/logo.png"
-                alt="Eclat Institute"
+                alt={INSTITUTION_CONFIG.name}
                 style={{ width: '56px', height: '56px', borderRadius: '50%', objectFit: 'cover' }}
                 onError={(e) => {
                   ;(e.target as HTMLElement).style.display = 'none'
                 }}
               />
               <div>
-                <h1 style={{ fontSize: '1.6rem', fontWeight: 900, color: '#0f172a', fontFamily: 'var(--font-heading)', letterSpacing: '0.05em', margin: 0 }}>
-                  ÉCLAT INSTITUTE
+                <h1 style={{ fontSize: '1.6rem', fontWeight: 900, color: '#0f172a', fontFamily: 'var(--font-heading)', letterSpacing: '0.05em', margin: 0, textTransform: 'uppercase' }}>
+                  {INSTITUTION_CONFIG.name}
                 </h1>
                 <div style={{ fontSize: '0.8rem', color: '#64748b', fontWeight: 600 }}>
-                  100% Online Global Academy • Tel: +254 740 027 346 • Web: eclat.institute
+                  {INSTITUTION_CONFIG.tagline} • Tel: {INSTITUTION_CONFIG.contact.phone} • Web: {INSTITUTION_CONFIG.domain}
                 </div>
               </div>
             </div>

@@ -1,3 +1,5 @@
+import { INSTITUTION_CONFIG } from '@/config/institution'
+
 export interface CertificateData {
   student_name: string
   admission_number: string
@@ -116,13 +118,13 @@ export function CertificateGenerator({
                   textTransform: 'uppercase',
                 }}
               >
-                ÉCLAT INSTITUTE
+                {INSTITUTION_CONFIG.name}
               </h1>
-              <div style={{ fontSize: '0.85rem', color: '#475569', fontWeight: 700, letterSpacing: '0.08em', marginTop: '2px' }}>
-                GLOBAL ONLINE ACADEMY FOR TECH & MODERN LANGUAGES
+              <div style={{ fontSize: '0.85rem', color: '#475569', fontWeight: 700, letterSpacing: '0.08em', marginTop: '2px', textTransform: 'uppercase' }}>
+                {INSTITUTION_CONFIG.tagline}
               </div>
               <div style={{ fontSize: '0.75rem', color: '#64748b', marginTop: '2px' }}>
-                100% Online Learning • Web: eclat.institute • Tel: +254 740 027 346
+                Web: {INSTITUTION_CONFIG.domain} • Tel: {INSTITUTION_CONFIG.contact.phone}
               </div>
             </div>
 

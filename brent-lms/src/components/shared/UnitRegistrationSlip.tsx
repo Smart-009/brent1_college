@@ -1,4 +1,5 @@
 import type { UnitRegistrationReceipt } from '@/types/school'
+import { INSTITUTION_CONFIG } from '@/config/institution'
 
 export function UnitRegistrationSlip({
   receipt,
@@ -33,10 +34,10 @@ export function UnitRegistrationSlip({
             </div>
             <div>
               <h1 style={{ margin: 0, fontSize: '1.5rem', fontWeight: 900, color: '#1e3a8a', letterSpacing: '-0.02em', textTransform: 'uppercase' }}>
-                Eclat Institute
+                {INSTITUTION_CONFIG.name}
               </h1>
               <div style={{ fontSize: '0.8rem', color: '#475569', fontWeight: 600 }}>
-                100% Online Global Academy • Office of Academic Affairs • eclat.institute
+                {INSTITUTION_CONFIG.tagline} • Office of Academic Affairs • {INSTITUTION_CONFIG.domain}
               </div>
             </div>
           </div>

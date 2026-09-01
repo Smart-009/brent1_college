@@ -2,12 +2,13 @@ import { createContext, useContext, useEffect, useState, type ReactNode } from '
 import type { Session, User } from '@supabase/supabase-js'
 import { supabase } from '@/lib/supabase'
 import { schoolStore } from '@/lib/schoolData'
+import { INSTITUTION_CONFIG } from '@/config/institution'
 import type { Profile, Role } from '@/lib/database.types'
 
 export const ADMIN_PROFILE: Profile = {
   id: '40bcf126-5fa0-4df1-be4b-480088ce315a',
-  full_name: 'Eclat Institute Principal & Administrator',
-  admission_number: 'Eclat2026@admin',
+  full_name: `${INSTITUTION_CONFIG.name} Principal & Administrator`,
+  admission_number: 'admin',
   role: 'admin',
   first_login_at: '2024-01-01T00:00:00Z',
   access_expires_at: null,
@@ -158,36 +159,22 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   async function signIn(inputIdentifier: string, password: string): Promise<{ error: string | null }> {
     const rawInput = inputIdentifier.trim()
     const cleanAlpha = rawInput.toLowerCase().replace(/[^a-z0-9]/g, '')
-    const ADMIN_PASS = import.meta.env.VITE_ADMIN_PASSWORD || import.meta.env.ADMIN_PASSWORD || 'Eclat@2026#!'
+    const configuredAdminPass = INSTITUTION_CONFIG.auth.adminDefaultPassword
 
-    // 1. Bulletproof admin credentials verification
+    // 1. Admin credentials verification
     const isAdminIdentifier =
-      cleanAlpha === 'eclat2026admin' ||
-      cleanAlpha === 'brent2026admin' ||
       cleanAlpha === 'admin' ||
       cleanAlpha === 'principal' ||
       cleanAlpha === 'admin001' ||
-      cleanAlpha === 'eclat2026' ||
-      cleanAlpha === 'brent2026' ||
       cleanAlpha.includes('admin') ||
       rawInput.toLowerCase().includes('admin')
 
     if (isAdminIdentifier) {
-      const isCorrectPass =
-        password === 'Eclat@2026#!' ||
-        password === 'Brent@2026#!' ||
-        password === ADMIN_PASS ||
-        password === 'muSta9F@009' ||
-        password === 'Eclat@2026#' ||
-        password === 'Brent@2026#' ||
-        password === 'Eclat2026#!' ||
-        password === 'Brent2026#!'
-
-      if (isCorrectPass) {
+      if (password === configuredAdminPass) {
         signInAsDemo('admin')
         return { error: null }
       } else {
-        return { error: 'Incorrect administrator password. Please enter Eclat@2026#!' }
+        return { error: 'Incorrect administrator password.' }
       }
     }
 
@@ -196,8 +183,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     if (rawInput.includes('@')) {
       candidates.push(rawInput.toLowerCase())
     } else {
-      candidates.push(`${cleanAlpha}@eclatinstitute.internal`)
-      candidates.push(`${cleanAlpha}@brentcollege.internal`)
+      candidates.push(`${cleanAlpha}@${INSTITUTION_CONFIG.auth.internalEmailDomain}`)
     }
 
     let lastError: string | null = null
@@ -224,10 +210,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         const userEntry = parsed[cleanAlpha] || parsed[rawInput.toLowerCase()] || parsed[rawInput]
         if (userEntry) {
           if (userEntry.password && userEntry.password !== password) {
-            // Check if user entered the universal student password
-            if (password !== 'Student@2026' && password !== 'Eclat@2026#!' && password !== 'Eclat@2026') {
-              return { error: 'Incorrect password for this student admission account.' }
-            }
+            return { error: 'Incorrect password for this student admission account.' }
           }
           if (userEntry.profile) {
             localStorage.setItem('eclat_active_profile', JSON.stringify(userEntry.profile))
@@ -285,7 +268,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setProfile(null)
   }
 
-  const activeUser = session?.user ?? (profile ? ({ id: profile.id, email: `${profile.admission_number}@eclatinstitute.internal` } as unknown as User) : null)
+  const activeUser = session?.user ?? (profile ? ({ id: profile.id, email: `${profile.admission_number}@${INSTITUTION_CONFIG.auth.internalEmailDomain}` } as unknown as User) : null)
 
   return (
     <AuthContext.Provider value={{ session, user: activeUser, profile, loading, signIn, signInAsDemo, signOut, refreshProfile }}>

@@ -62,6 +62,7 @@ export function LessonPlayer() {
   const [activeHtmlUrl, setActiveHtmlUrl] = useState<string | null>(null)
   const [activeDocUrl, setActiveDocUrl] = useState<string | null>(null)
   const [docEngine, setDocEngine] = useState<'cloud' | 'direct'>('cloud')
+  const [videoCompletedToast, setVideoCompletedToast] = useState(false)
 
   // Combined instant parallel query (eliminates network waterfall delays)
   const { data, isLoading, error } = useQuery({
@@ -397,8 +398,6 @@ export function LessonPlayer() {
       queryClient.invalidateQueries({ queryKey: ['lesson-player-instant-v3'] })
     }
   }
-
-  const [videoCompletedToast, setVideoCompletedToast] = useState(false)
 
   // Handle smart auto-completion when student finishes video
   const handleVideoComplete = async () => {

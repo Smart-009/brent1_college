@@ -17,6 +17,7 @@ import { BiometricScannerModal } from '@/components/biometrics/BiometricScannerM
 import { BiometricEnrollModal } from '@/components/biometrics/BiometricEnrollModal'
 import { BiometricClearancePassModal } from '@/components/biometrics/BiometricClearancePassModal'
 import { generateBiometricVerificationCode } from '@/lib/biometricEngine'
+import { INSTITUTION_CONFIG } from '@/config/institution'
 
 export function BursarDesk() {
   const [invoices, setInvoices] = useState<FeeInvoice[]>(() => schoolStore.getInvoices())
@@ -1921,10 +1922,10 @@ export function BursarDesk() {
             {/* Printable Receipt Header */}
             <div style={{ textAlign: 'center', borderBottom: '2px solid #1e3a8a', paddingBottom: '1.25rem', marginBottom: '1.25rem' }}>
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.75rem', marginBottom: '0.5rem' }}>
-                <img src="/logo.png" alt="Eclat Institute" style={{ width: '48px', height: '48px', borderRadius: '50%' }} />
+                <img src="/logo.png" alt={INSTITUTION_CONFIG.name} style={{ width: '48px', height: '48px', borderRadius: '50%' }} />
                 <div>
-                  <h2 style={{ color: '#1e3a8a', margin: 0, fontSize: '1.5rem', fontWeight: 900, letterSpacing: '-0.02em' }}>ÉCLAT INSTITUTE</h2>
-                  <div style={{ fontSize: '0.75rem', color: '#64748b', fontWeight: 700 }}>100% Online Global Academy • eclat.institute</div>
+                  <h2 style={{ color: '#1e3a8a', margin: 0, fontSize: '1.5rem', fontWeight: 900, letterSpacing: '-0.02em', textTransform: 'uppercase' }}>{INSTITUTION_CONFIG.name}</h2>
+                  <div style={{ fontSize: '0.75rem', color: '#64748b', fontWeight: 700 }}>{INSTITUTION_CONFIG.tagline} • {INSTITUTION_CONFIG.domain}</div>
                 </div>
               </div>
               <div style={{ display: 'inline-block', background: '#f1f5f9', color: '#1e3a8a', padding: '3px 14px', borderRadius: '999px', fontSize: '0.8rem', fontWeight: 800 }}>

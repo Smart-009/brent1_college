@@ -1,4 +1,5 @@
 import type { ReportCard } from '@/types/school'
+import { INSTITUTION_CONFIG } from '@/config/institution'
 
 interface ReportCardGeneratorProps {
   reportCard: ReportCard
@@ -81,7 +82,7 @@ export function ReportCardGenerator({ reportCard, onClose }: ReportCardGenerator
                     textTransform: 'uppercase',
                   }}
                 >
-                  ÉCLAT INSTITUTE
+                  {INSTITUTION_CONFIG.name}
                 </h1>
                 <p
                   style={{
@@ -93,10 +94,10 @@ export function ReportCardGenerator({ reportCard, onClose }: ReportCardGenerator
                     textTransform: 'uppercase',
                   }}
                 >
-                  Shaping Minds, Inspiring Success
+                  {INSTITUTION_CONFIG.tagline}
                 </p>
                 <p style={{ margin: '0.25rem 0 0', fontSize: '0.75rem', color: '#334155', fontWeight: 600 }}>
-                  100% Online Global Academy • Web: eclat.institute • Tel: +254 740 027 346
+                  Web: {INSTITUTION_CONFIG.domain} • Tel: {INSTITUTION_CONFIG.contact.phone}
                 </p>
               </div>
             </div>

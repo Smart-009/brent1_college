@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { usePWAInstall } from '@/hooks/usePWAInstall'
 import { SafariInstallModal } from '@/components/shared/SafariInstallModal'
+import { INSTITUTION_CONFIG, getWhatsAppInquiryUrl } from '@/config/institution'
 
 export interface CourseItem {
   id: string
@@ -71,13 +72,13 @@ export function MobileLandingView({
   })
 
   const copyAccount = () => {
-    navigator.clipboard.writeText('1344329268')
-    showToast('✅ KCB Bank Acc 1344329268 copied to clipboard!')
+    navigator.clipboard.writeText(INSTITUTION_CONFIG.bank.accountNumber)
+    showToast(`✅ ${INSTITUTION_CONFIG.bank.name} Acc ${INSTITUTION_CONFIG.bank.accountNumber} copied to clipboard!`)
   }
 
   const copyPaybill = () => {
-    navigator.clipboard.writeText('522522')
-    showToast('✅ KCB Paybill 522522 (Acc: 1344329268) copied!')
+    navigator.clipboard.writeText(INSTITUTION_CONFIG.bank.paybillNumber)
+    showToast(`✅ ${INSTITUTION_CONFIG.bank.name} Paybill ${INSTITUTION_CONFIG.bank.paybillNumber} (Acc: ${INSTITUTION_CONFIG.bank.accountNumber}) copied!`)
   }
 
   return (
@@ -279,7 +280,7 @@ export function MobileLandingView({
               🚀 Apply in 60s
             </button>
             <a
-              href="https://wa.me/254740027346?text=Hello%20Eclat%20Institute!%20I%20want%20to%20inquire%20about%20online%20courses%20and%20intakes."
+              href={getWhatsAppInquiryUrl()}
               target="_blank"
               rel="noopener noreferrer"
               style={{
@@ -622,7 +623,7 @@ export function MobileLandingView({
           }}
         >
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <span>🏦 KCB Bank Acc: <strong style={{ color: '#67e8f9' }}>1344329268</strong></span>
+            <span>🏦 {INSTITUTION_CONFIG.bank.name} Acc: <strong style={{ color: '#67e8f9' }}>{INSTITUTION_CONFIG.bank.accountNumber}</strong></span>
             <button
               type="button"
               onClick={copyAccount}
@@ -640,9 +641,9 @@ export function MobileLandingView({
               Copy
             </button>
           </div>
-          <div>📱 M-Pesa Paybill: <strong>522522</strong> • Acc: <strong style={{ color: '#fde047' }}>1344329268</strong></div>
+          <div>📱 M-Pesa Paybill: <strong>{INSTITUTION_CONFIG.bank.paybillNumber}</strong> • Acc: <strong style={{ color: '#fde047' }}>{INSTITUTION_CONFIG.bank.accountNumber}</strong></div>
           <div>💳 Card: <strong>Visa / Mastercard Accepted</strong> ($ USD)</div>
-          <div>📞 Virtual Desk: <a href="tel:+254740027346" style={{ color: '#60a5fa', textDecoration: 'none', fontWeight: 700 }}>+254 740 027 346</a></div>
+          <div>📞 Virtual Desk: <a href={`tel:${INSTITUTION_CONFIG.contact.phoneRaw}`} style={{ color: '#60a5fa', textDecoration: 'none', fontWeight: 700 }}>{INSTITUTION_CONFIG.contact.phone}</a></div>
           <div>🌐 Delivery: <strong style={{ color: '#ffffff' }}>100% Online Live Classes & LMS</strong></div>
         </div>
       </div>

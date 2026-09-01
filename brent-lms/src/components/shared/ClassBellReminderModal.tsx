@@ -1,4 +1,4 @@
-﻿import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { ringSchoolBell, playChime } from '@/lib/soundEffects'
 import { useAuth } from '@/hooks/useAuth'
 import { schoolStore } from '@/lib/schoolData'
@@ -14,48 +14,60 @@ interface LiveClassSchedule {
   course: string
 }
 
-const SCHEDULED_CLASSES: LiveClassSchedule[] = [
-  {
-    id: 'c-morning',
-    title: 'Interactive Morning Practical Code & Digital Skills Lab',
-    shift: 'Morning Batch (8:30 AM - 11:30 AM)',
-    startTime: '08:30',
-    endTime: '11:30',
-    instructor: 'Eng. Alex Mwangi • Faculty of Computing',
-    joinUrl: 'https://meet.google.com/new',
-    course: 'Full-Stack Web Development & Tech Masterclass',
-  },
-  {
-    id: 'c-afternoon',
-    title: 'Python Data Analytics & Machine Learning Live Session',
-    shift: 'Afternoon Batch (2:00 PM - 5:00 PM)',
-    startTime: '14:00',
-    endTime: '17:00',
-    instructor: 'Dr. Sarah Al-Mansoor • AI & Analytics Dept',
-    joinUrl: 'https://meet.google.com/new',
-    course: 'Python Programming & Data Analytics',
-  },
-  {
-    id: 'c-evening',
-    title: 'Global Evening Executive Live Lecture & Tech Masterclass',
-    shift: 'Evening Executive Batch (5:30 PM - 7:30 PM)',
-    startTime: '17:30',
-    endTime: '19:30',
-    instructor: 'Prof. David Ochieng • Directorate of Tech',
-    joinUrl: 'https://meet.google.com/new',
-    course: 'Full-Stack Web Development & Cybersecurity',
-  },
-  {
-    id: 'c-night',
-    title: 'Languages & International IELTS Fluency Live Workshop',
-    shift: 'Night Executive Batch (7:30 PM - 9:30 PM)',
-    startTime: '19:30',
-    endTime: '21:30',
-    instructor: 'Madame Claire Dubois • Dept of Languages',
-    joinUrl: 'https://meet.google.com/new',
-    course: 'IELTS Academic & Foreign Languages',
-  },
-]
+function getDynamicScheduledClasses(): LiveClassSchedule[] {
+  const units = schoolStore.getCourseUnits()
+  const timetable = schoolStore.getTimetable()
+
+  if (timetable.length > 0) {
+    return timetable.map((p) => ({
+      id: p.id,
+      title: `${p.subject_name} (${p.class_name})`,
+      shift: `${p.day_of_week} Cohort (${p.start_time} - ${p.end_time})`,
+      startTime: p.start_time,
+      endTime: p.end_time,
+      instructor: p.teacher_name || 'Faculty Lecturer',
+      joinUrl: p.room || 'https://meet.google.com',
+      course: p.subject_name,
+    }))
+  }
+
+  // Generate dynamic schedule from active course units
+  const defaultShifts = [
+    { shift: 'Morning Batch (8:30 AM - 11:30 AM)', startTime: '08:30', endTime: '11:30' },
+    { shift: 'Afternoon Batch (2:00 PM - 5:00 PM)', startTime: '14:00', endTime: '17:00' },
+    { shift: 'Evening Executive Batch (5:30 PM - 7:30 PM)', startTime: '17:30', endTime: '19:30' },
+    { shift: 'Night Executive Batch (7:30 PM - 9:30 PM)', startTime: '19:30', endTime: '21:30' },
+  ]
+
+  if (units.length > 0) {
+    return units.slice(0, 4).map((unit, idx) => {
+      const shiftCfg = defaultShifts[idx % defaultShifts.length]
+      return {
+        id: `c-bell-${unit.id}`,
+        title: unit.title,
+        shift: shiftCfg.shift,
+        startTime: shiftCfg.startTime,
+        endTime: shiftCfg.endTime,
+        instructor: unit.teacher_name || 'Faculty Instructor',
+        joinUrl: unit.live_meeting_url || 'https://meet.google.com',
+        course: unit.title,
+      }
+    })
+  }
+
+  return [
+    {
+      id: 'c-morning',
+      title: 'Practical Coding & Skills Lab',
+      shift: 'Morning Batch (8:30 AM - 11:30 AM)',
+      startTime: '08:30',
+      endTime: '11:30',
+      instructor: 'Faculty Lecturer',
+      joinUrl: 'https://meet.google.com',
+      course: 'Interactive Lab Session',
+    },
+  ]
+}
 
 export function ClassBellReminderModal() {
   const { profile } = useAuth()
@@ -82,13 +94,14 @@ export function ClassBellReminderModal() {
   // Periodic automatic class time detector
   useEffect(() => {
     const checkSchedule = () => {
+      const scheduledClasses = getDynamicScheduledClasses()
       const now = new Date()
       const currentHours = now.getHours().toString().padStart(2, '0')
       const currentMinutes = now.getMinutes().toString().padStart(2, '0')
       const currentTimeStr = `${currentHours}:${currentMinutes}`
 
       // Check if current time matches any class start time
-      const matchingClass = SCHEDULED_CLASSES.find((c) => c.startTime === currentTimeStr)
+      const matchingClass = scheduledClasses.find((c) => c.startTime === currentTimeStr)
 
       if (matchingClass) {
         const timeSinceLastRing = Date.now() - lastRingTimestamp.current
@@ -107,7 +120,8 @@ export function ClassBellReminderModal() {
   // Listen for custom trigger event (e.g. from navbar test button)
   useEffect(() => {
     const handleManualRing = () => {
-      const randomClass = SCHEDULED_CLASSES[Math.floor(Math.random() * SCHEDULED_CLASSES.length)]
+      const scheduledClasses = getDynamicScheduledClasses()
+      const randomClass = scheduledClasses[Math.floor(Math.random() * scheduledClasses.length)]
       triggerBellAlert(randomClass)
     }
 

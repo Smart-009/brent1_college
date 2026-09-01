@@ -6,6 +6,7 @@ import { BiometricScannerModal } from '@/components/biometrics/BiometricScannerM
 import { BiometricEnrollModal } from '@/components/biometrics/BiometricEnrollModal'
 import { BiometricClearancePassModal } from '@/components/biometrics/BiometricClearancePassModal'
 import { generateBiometricVerificationCode } from '@/lib/biometricEngine'
+import { INSTITUTION_CONFIG } from '@/config/institution'
 
 export function FeeManagement() {
   const { profile } = useAuth()
@@ -301,13 +302,13 @@ export function FeeManagement() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
           <div className="card" style={{ padding: '1.5rem' }}>
             <h3 style={{ fontSize: '1.1rem', fontWeight: 800, margin: '0 0 0.75rem', color: 'var(--color-primary)' }}>
-              💳 Pay via M-Pesa / KCB Paybill
+              💳 Pay via M-Pesa / {INSTITUTION_CONFIG.bank.name} Paybill
             </h3>
             <div style={{ fontSize: '0.88rem', color: 'var(--color-text-secondary)', lineHeight: '1.6', display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
               <div><strong>1. Go to M-Pesa:</strong> Lipa na M-Pesa → Paybill</div>
-              <div><strong>2. Business Number:</strong> <span style={{ color: 'var(--color-primary)', fontWeight: 800 }}>522522</span> (KCB Bank)</div>
-              <div><strong>3. Account Number:</strong> <span style={{ color: 'var(--color-primary)', fontWeight: 800 }}>1344329268</span></div>
-              <div><strong>4. Account Name:</strong> Éclat Institute Online Academy</div>
+              <div><strong>2. Business Number:</strong> <span style={{ color: 'var(--color-primary)', fontWeight: 800 }}>{INSTITUTION_CONFIG.bank.paybillNumber}</span> ({INSTITUTION_CONFIG.bank.name})</div>
+              <div><strong>3. Account Number:</strong> <span style={{ color: 'var(--color-primary)', fontWeight: 800 }}>{INSTITUTION_CONFIG.bank.accountNumber}</span></div>
+              <div><strong>4. Account Name:</strong> {INSTITUTION_CONFIG.bank.accountName}</div>
             </div>
           </div>
 
@@ -316,10 +317,10 @@ export function FeeManagement() {
               🏦 International Bank Wire / Card
             </h3>
             <div style={{ fontSize: '0.88rem', color: 'var(--color-text-secondary)', lineHeight: '1.6', display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
-              <div><strong>Bank Name:</strong> Kenya Commercial Bank (KCB)</div>
-              <div><strong>Account Number:</strong> 1344329268</div>
-              <div><strong>Branch:</strong> Direct Corporate Clearing</div>
-              <div><strong>Currency:</strong> USD ($) / KES</div>
+              <div><strong>Bank Name:</strong> {INSTITUTION_CONFIG.bank.name}</div>
+              <div><strong>Account Number:</strong> {INSTITUTION_CONFIG.bank.accountNumber}</div>
+              <div><strong>Branch:</strong> {INSTITUTION_CONFIG.bank.branch}</div>
+              <div><strong>Currency:</strong> {INSTITUTION_CONFIG.pricing.currencyCode} ({INSTITUTION_CONFIG.pricing.currencySymbol})</div>
             </div>
           </div>
         </div>
@@ -528,11 +529,11 @@ export function FeeManagement() {
         </div>
 
         <div className="card" style={{ padding: '1.25rem', borderLeft: '4px solid #059669' }}>
-          <div style={{ fontSize: '0.8rem', color: 'var(--color-text-secondary)', fontWeight: 600 }}>KCB Bank / Paybill</div>
+          <div style={{ fontSize: '0.8rem', color: 'var(--color-text-secondary)', fontWeight: 600 }}>{INSTITUTION_CONFIG.bank.name} / Paybill</div>
           <div style={{ fontSize: '1.25rem', fontWeight: 800, color: '#059669', marginTop: '0.25rem' }}>
-            1344329268
+            {INSTITUTION_CONFIG.bank.accountNumber}
           </div>
-          <div style={{ fontSize: '0.75rem', color: 'var(--color-text-secondary)', marginTop: '0.2rem' }}>Paybill: 522522 • Card Online</div>
+          <div style={{ fontSize: '0.75rem', color: 'var(--color-text-secondary)', marginTop: '0.2rem' }}>Paybill: {INSTITUTION_CONFIG.bank.paybillNumber} • Card Online</div>
         </div>
       </div>
 
@@ -993,7 +994,7 @@ export function FeeManagement() {
               Vocational Short Course Tuition & Practical Lab Schedules
             </h3>
             <p style={{ fontSize: '0.85rem', color: 'var(--color-text-secondary)', marginBottom: '1rem' }}>
-              Standard 4 to 12-Week Short Course Fees • Payable in Easy Installments via Card or KCB Acc 1344329268
+              Standard 4 to 12-Week Short Course Fees • Payable in Easy Installments via Card or {INSTITUTION_CONFIG.bank.name} Acc {INSTITUTION_CONFIG.bank.accountNumber}
             </p>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', fontSize: '0.88rem' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', padding: '0.4rem 0', borderBottom: '1px solid var(--color-border)' }}>
@@ -1041,17 +1042,17 @@ export function FeeManagement() {
                 <div style={{ color: '#64748b', fontSize: '0.82rem' }}>Instant clearance in USD ($) via official student checkout portal.</div>
               </div>
               <div style={{ marginBottom: '0.85rem', background: '#ffffff', padding: '0.85rem', borderRadius: '8px', border: '1px solid #e2e8f0' }}>
-                <strong>🏦 2. KCB Bank Direct Wire / Deposit:</strong>
-                <div>• Bank: <strong>Kenya Commercial Bank (KCB Bank)</strong></div>
-                <div>• Account No: <strong style={{ color: '#2563eb' }}>1344329268</strong></div>
-                <div>• Account Name: <strong>Éclat Institute</strong></div>
+                <strong>🏦 2. {INSTITUTION_CONFIG.bank.name} Direct Wire / Deposit:</strong>
+                <div>• Bank: <strong>{INSTITUTION_CONFIG.bank.name}</strong></div>
+                <div>• Account No: <strong style={{ color: '#2563eb' }}>{INSTITUTION_CONFIG.bank.accountNumber}</strong></div>
+                <div>• Account Name: <strong>{INSTITUTION_CONFIG.bank.accountName}</strong></div>
               </div>
               <div style={{ background: '#ffffff', padding: '0.85rem', borderRadius: '8px', border: '1px solid #e2e8f0' }}>
-                <strong>📱 3. M-Pesa Paybill (Via KCB):</strong>
+                <strong>📱 3. M-Pesa Paybill (Via {INSTITUTION_CONFIG.bank.name}):</strong>
                 <ol style={{ paddingLeft: '1.25rem', margin: '0.25rem 0 0' }}>
                   <li>Select <strong>Lipa na M-PESA → Paybill</strong></li>
-                  <li>Enter Business No: <strong>522522</strong> (KCB Bank)</li>
-                  <li>Enter Account No: <strong>1344329268</strong></li>
+                  <li>Enter Business No: <strong>{INSTITUTION_CONFIG.bank.paybillNumber}</strong> ({INSTITUTION_CONFIG.bank.name})</li>
+                  <li>Enter Account No: <strong>{INSTITUTION_CONFIG.bank.accountNumber}</strong></li>
                   <li>Reference / SMS: <strong>Student Admission ID</strong></li>
                 </ol>
               </div>
@@ -1226,9 +1227,9 @@ export function FeeManagement() {
 
             <div style={{ padding: '2rem', background: '#fff', color: '#0f172a' }}>
               <div style={{ textAlign: 'center', borderBottom: '2px solid #1e3a8a', paddingBottom: '1rem', marginBottom: '1rem' }}>
-                <img src="/logo.png" alt="Eclat Institute" style={{ width: '52px', height: '52px', borderRadius: '50%' }} />
-                <h2 style={{ fontSize: '1.4rem', fontWeight: 900, color: '#1e3a8a', margin: '0.25rem 0' }}>ÉCLAT INSTITUTE</h2>
-                <div style={{ fontSize: '0.75rem', color: '#64748b', fontWeight: 700 }}>100% Online Global Academy • eclat.institute</div>
+                <img src="/logo.png" alt={INSTITUTION_CONFIG.name} style={{ width: '52px', height: '52px', borderRadius: '50%' }} />
+                <h2 style={{ fontSize: '1.4rem', fontWeight: 900, color: '#1e3a8a', margin: '0.25rem 0', textTransform: 'uppercase' }}>{INSTITUTION_CONFIG.name}</h2>
+                <div style={{ fontSize: '0.75rem', color: '#64748b', fontWeight: 700 }}>{INSTITUTION_CONFIG.tagline} • {INSTITUTION_CONFIG.domain}</div>
                 <div style={{ display: 'inline-block', background: '#f1f5f9', color: '#1e3a8a', padding: '2px 12px', borderRadius: '999px', fontSize: '0.75rem', fontWeight: 800, marginTop: '4px' }}>
                   OFFICIAL TUITION PAYMENT RECEIPT (ORIGINAL)
                 </div>

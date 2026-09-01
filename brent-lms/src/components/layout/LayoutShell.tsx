@@ -7,6 +7,7 @@ import { OfflineIndicator } from '@/components/shared/OfflineIndicator'
 import { DesktopCommandPalette } from '@/components/shared/DesktopCommandPalette'
 import { ClassBellReminderModal } from '@/components/shared/ClassBellReminderModal'
 import { MobileAppBottomNav } from './MobileAppBottomNav'
+import { INSTITUTION_CONFIG } from '@/config/institution'
 
 export function LayoutShell() {
   const [sidebarOpen, setSidebarOpen] = useState(false)
@@ -42,15 +43,15 @@ export function LayoutShell() {
           }}
         >
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-            <img src="/logo.png" alt="Éclat Institute Logo" style={{ width: '32px', height: '32px', borderRadius: '50%', border: '1.5px solid #d4af37' }} />
+            <img src="/logo.png" alt={`${INSTITUTION_CONFIG.name} Logo`} style={{ width: '32px', height: '32px', borderRadius: '50%', border: '1.5px solid #d4af37' }} />
             <div>
-              <strong style={{ color: 'var(--color-text)', fontFamily: 'var(--font-heading)' }}>Éclat Institute</strong> • 100% Online Tech & Languages Institute
+              <strong style={{ color: 'var(--color-text)', fontFamily: 'var(--font-heading)' }}>{INSTITUTION_CONFIG.name}</strong> • {INSTITUTION_CONFIG.tagline}
             </div>
           </div>
           <div style={{ display: 'flex', gap: '1.25rem', alignItems: 'center', flexWrap: 'wrap' }}>
-            <span>🏦 KCB Bank Acc: <strong style={{ color: 'var(--color-primary)' }}>1344329268</strong></span>
-            <span>📞 Support: <strong style={{ color: 'var(--color-text)' }}>+254 740 027 346</strong></span>
-            <span>✉️ <a href="mailto:admissions@eclat.institute" style={{ color: 'var(--color-primary)', textDecoration: 'none' }}>admissions@eclat.institute</a></span>
+            <span>🏦 {INSTITUTION_CONFIG.bank.name} Acc: <strong style={{ color: 'var(--color-primary)' }}>{INSTITUTION_CONFIG.bank.accountNumber}</strong></span>
+            <span>📞 Support: <strong style={{ color: 'var(--color-text)' }}>{INSTITUTION_CONFIG.contact.phone}</strong></span>
+            <span>✉️ <a href={`mailto:${INSTITUTION_CONFIG.contact.email}`} style={{ color: 'var(--color-primary)', textDecoration: 'none' }}>{INSTITUTION_CONFIG.contact.email}</a></span>
           </div>
         </footer>
       </main>

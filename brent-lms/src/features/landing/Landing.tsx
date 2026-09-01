@@ -8,6 +8,7 @@ import { MobileAppBottomNav } from '@/components/layout/MobileAppBottomNav'
 import { MobileLandingView } from './MobileLandingView'
 import { supabase } from '@/lib/supabase'
 import { schoolStore } from '@/lib/schoolData'
+import { INSTITUTION_CONFIG, getWhatsAppInquiryUrl } from '@/config/institution'
 import type { Role } from '@/lib/database.types'
 
 interface CourseItem {
@@ -682,8 +683,8 @@ export function Landing() {
       checkoutPaymentMode === 'card'
         ? 'Debit / Credit Card (Visa / Mastercard)'
         : checkoutPaymentMode === 'paybill'
-        ? 'M-Pesa Paybill (522522 / 1344329268)'
-        : 'KCB Bank Direct Wire (1344329268)'
+        ? `M-Pesa Paybill (${INSTITUTION_CONFIG.bank.paybillNumber} / ${INSTITUTION_CONFIG.bank.accountNumber})`
+        : `${INSTITUTION_CONFIG.bank.name} Direct Wire (${INSTITUTION_CONFIG.bank.accountNumber})`
 
     const todayDate = new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })
 
@@ -1633,8 +1634,8 @@ export function Landing() {
                   </div>
 
                   <div style={{ background: 'rgba(255,255,255,0.08)', borderRadius: '8px', padding: '0.75rem', fontSize: '0.8rem', color: '#e2e8f0', lineHeight: 1.5 }}>
-                    <div>🏦 <strong>Bank:</strong> KCB Bank (Acc: <span style={{ color: '#67e8f9', fontWeight: 800 }}>1344329268</span>)</div>
-                    <div>📱 <strong>Paybill:</strong> 522522 (Account: 1344329268)</div>
+                    <div>🏦 <strong>Bank:</strong> {INSTITUTION_CONFIG.bank.name} (Acc: <span style={{ color: '#67e8f9', fontWeight: 800 }}>{INSTITUTION_CONFIG.bank.accountNumber}</span>)</div>
+                    <div>📱 <strong>Paybill:</strong> {INSTITUTION_CONFIG.bank.paybillNumber} (Account: {INSTITUTION_CONFIG.bank.accountNumber})</div>
                     <div>💳 <strong>Card:</strong> Visa / Mastercard Accepted</div>
                   </div>
                 </div>
@@ -1782,8 +1783,8 @@ export function Landing() {
             <div style={{ background: 'rgba(255, 255, 255, 0.12)', borderRadius: '12px', padding: '1.25rem', marginTop: '1.5rem', lineHeight: 1.8 }}>
               <div>🌐 <strong>Currency:</strong> <span style={{ fontSize: '1.15rem', fontWeight: 900, color: '#ffffff' }}>USD ($)</span> (or local equivalent)</div>
               <div>💳 <strong>Card Payment:</strong> Debit / Credit Card (Visa & Mastercard)</div>
-              <div>🏦 <strong>Bank Wire / Direct Deposit:</strong> KCB Bank • Acc: <span style={{ fontWeight: 900, color: '#fef08a' }}>1344329268</span></div>
-              <div>📱 <strong>M-Pesa Paybill:</strong> Business No: <strong style={{ color: '#ffffff' }}>522522</strong> • Account: <strong style={{ color: '#fef08a' }}>1344329268</strong></div>
+              <div>🏦 <strong>Bank Wire / Direct Deposit:</strong> {INSTITUTION_CONFIG.bank.name} • Acc: <span style={{ fontWeight: 900, color: '#fef08a' }}>{INSTITUTION_CONFIG.bank.accountNumber}</span></div>
+              <div>📱 <strong>M-Pesa Paybill:</strong> Business No: <strong style={{ color: '#ffffff' }}>{INSTITUTION_CONFIG.bank.paybillNumber}</strong> • Account: <strong style={{ color: '#fef08a' }}>{INSTITUTION_CONFIG.bank.accountNumber}</strong></div>
               <div>📑 <strong>Reference:</strong> Student Full Name or Admission ID</div>
               <div>💰 <strong>Installment Plan:</strong> Available in 2 to 3 flexible parts</div>
             </div>
@@ -1804,14 +1805,14 @@ export function Landing() {
             <div style={{ fontSize: '0.92rem', color: '#475569', lineHeight: 1.7, marginTop: '1.25rem' }}>
               <div>💻 <strong>Delivery Mode:</strong> 100% Online (Live Interactive Video + LMS Modules)</div>
               <div>🕒 <strong>Live Class Shifts:</strong> Morning (9:00 AM) | Evening (6:00 PM - 9:30 PM) | Weekends</div>
-              <div>📞 <strong>Admissions Hotline:</strong> +254 740 027 346</div>
-              <div>✉️ <strong>Direct Inquiries:</strong> admissions@eclat.institute</div>
+              <div>📞 <strong>Admissions Hotline:</strong> {INSTITUTION_CONFIG.contact.phone}</div>
+              <div>✉️ <strong>Direct Inquiries:</strong> {INSTITUTION_CONFIG.contact.email}</div>
             </div>
             <button
               type="button"
               className="btn btn-secondary btn-sm mt-4"
               style={{ fontWeight: 700 }}
-              onClick={() => alert('Online Class Orientation: Call or WhatsApp +254 740 027 346 to receive a guest Zoom link for a free live class demo!')}
+              onClick={() => alert(`Online Class Orientation: Call or WhatsApp ${INSTITUTION_CONFIG.contact.phone} to receive a guest Zoom link for a free live class demo!`)}
             >
               🎥 Request Free Live Class Demo
             </button>
@@ -1984,7 +1985,7 @@ export function Landing() {
       <div className="floating-action-group">
         {/* WhatsApp Fast Chat */}
         <a
-          href="https://wa.me/254740027346?text=Hello%20Eclat%20Institute%20Admissions!%20I%20would%20like%20to%20inquire%20about%20the%20upcoming%20short%20courses%20at%20Sahl%20Mall."
+          href={getWhatsAppInquiryUrl()}
           target="_blank"
           rel="noopener noreferrer"
           style={{
@@ -2010,7 +2011,7 @@ export function Landing() {
 
         {/* Call Admissions Button */}
         <a
-          href="tel:+254740027346"
+          href={`tel:${INSTITUTION_CONFIG.contact.phoneRaw}`}
           style={{
             display: 'flex',
             alignItems: 'center',
@@ -2385,8 +2386,8 @@ export function Landing() {
                             <strong style={{ color: '#1e3a8a', fontSize: '0.88rem' }}>📱 M-Pesa Paybill Instructions:</strong>
                             <ol style={{ paddingLeft: '1.25rem', margin: '0.35rem 0 0.75rem', lineHeight: 1.6 }}>
                               <li>Open <strong>M-PESA → Lipa na M-PESA → Paybill</strong></li>
-                              <li>Enter Business No: <strong style={{ color: '#2563eb' }}>522522</strong> *(KCB Bank)*</li>
-                              <li>Enter Account No: <strong style={{ color: '#2563eb' }}>1344329268</strong></li>
+                              <li>Enter Business No: <strong style={{ color: '#2563eb' }}>{INSTITUTION_CONFIG.bank.paybillNumber}</strong> *({INSTITUTION_CONFIG.bank.name})*</li>
+                              <li>Enter Account No: <strong style={{ color: '#2563eb' }}>{INSTITUTION_CONFIG.bank.accountNumber}</strong></li>
                               <li>Enter Amount: <strong>${selectedAmount} USD</strong> (or local KES equivalent)</li>
                             </ol>
                             <div>
@@ -2404,11 +2405,11 @@ export function Landing() {
 
                         {checkoutPaymentMode === 'kcb_wire' && (
                           <div style={{ fontSize: '0.82rem', color: '#334155' }}>
-                            <strong style={{ color: '#1e3a8a', fontSize: '0.88rem' }}>🏦 Official KCB Bank Wire / Deposit Details:</strong>
+                            <strong style={{ color: '#1e3a8a', fontSize: '0.88rem' }}>🏦 Official {INSTITUTION_CONFIG.bank.name} Wire / Deposit Details:</strong>
                             <div style={{ margin: '0.35rem 0 0.75rem', lineHeight: 1.6, background: '#ffffff', padding: '0.65rem', borderRadius: '6px', border: '1px solid #e2e8f0' }}>
-                              <div>• Bank: <strong>Kenya Commercial Bank (KCB Bank)</strong></div>
-                              <div>• Account No: <strong style={{ color: '#2563eb', fontSize: '0.95rem' }}>1344329268</strong></div>
-                              <div>• Account Name: <strong>Éclat Institute</strong></div>
+                              <div>• Bank: <strong>{INSTITUTION_CONFIG.bank.name}</strong></div>
+                              <div>• Account No: <strong style={{ color: '#2563eb', fontSize: '0.95rem' }}>{INSTITUTION_CONFIG.bank.accountNumber}</strong></div>
+                              <div>• Account Name: <strong>{INSTITUTION_CONFIG.bank.accountName}</strong></div>
                             </div>
                             <div>
                               <label className="label" style={{ fontSize: '0.78rem' }}>Bank Slip / Wire Reference Code</label>
@@ -2445,9 +2446,9 @@ export function Landing() {
                 <div style={{ background: '#ffffff', border: '2px solid #d4af37', borderRadius: '12px', padding: '1.5rem', boxShadow: '0 4px 12px rgba(0,0,0,0.06)', marginBottom: '1.25rem' }}>
                   {/* Receipt Header */}
                   <div style={{ textAlign: 'center', borderBottom: '2px solid #1e3a8a', paddingBottom: '0.75rem', marginBottom: '1rem' }}>
-                    <img src="/logo.png" alt="Éclat Institute" style={{ width: '48px', height: '48px', borderRadius: '50%', border: '2px solid #d4af37' }} />
-                    <h2 style={{ fontSize: '1.35rem', fontWeight: 900, color: '#1e3a8a', margin: '0.25rem 0 2px', letterSpacing: '0.02em' }}>ÉCLAT INSTITUTE</h2>
-                    <div style={{ fontSize: '0.72rem', color: '#64748b', fontWeight: 700 }}>100% Online Global Academy • eclat.institute</div>
+                    <img src="/logo.png" alt={INSTITUTION_CONFIG.name} style={{ width: '48px', height: '48px', borderRadius: '50%', border: '2px solid #d4af37' }} />
+                    <h2 style={{ fontSize: '1.35rem', fontWeight: 900, color: '#1e3a8a', margin: '0.25rem 0 2px', letterSpacing: '0.02em', textTransform: 'uppercase' }}>{INSTITUTION_CONFIG.name}</h2>
+                    <div style={{ fontSize: '0.72rem', color: '#64748b', fontWeight: 700 }}>{INSTITUTION_CONFIG.tagline} • {INSTITUTION_CONFIG.domain}</div>
                     <div style={{ display: 'inline-block', background: '#dcfce7', color: '#166534', padding: '2px 10px', borderRadius: '999px', fontSize: '0.72rem', fontWeight: 800, marginTop: '4px' }}>
                       OFFICIAL TUITION PAYMENT RECEIPT & ADMISSION PASS (ORIGINAL)
                     </div>
@@ -2483,7 +2484,7 @@ export function Landing() {
 
                   {/* Digital Stamp */}
                   <div style={{ border: '1px dashed #94a3b8', borderRadius: '6px', padding: '0.5rem', textAlign: 'center', fontSize: '0.72rem', color: '#64748b' }}>
-                    🛡️ Verified Transaction Ref: <code>{generatedAdmission.referenceCode}</code> • Éclat Institute Directorate of Finance
+                    🛡️ Verified Transaction Ref: <code>{generatedAdmission.referenceCode}</code> • {INSTITUTION_CONFIG.name} Directorate of Finance
                   </div>
                 </div>
 
@@ -2494,7 +2495,7 @@ export function Landing() {
                   </button>
                   <div style={{ display: 'flex', gap: '0.5rem' }}>
                     <a
-                      href={`https://wa.me/254740027346?text=Hello%20Eclat%20Institute!%20My%20name%20is%20${encodeURIComponent(generatedAdmission.studentName)}%20(Adm:%20${encodeURIComponent(generatedAdmission.admissionNumber)}).%20I%20have%20completed%20my%20tuition%20payment%20of%20$${generatedAdmission.amountPaid}%20for%20${encodeURIComponent(generatedAdmission.courseTitle)}.%20Please%20send%20my%20live%20Zoom%20class%20schedule.`}
+                      href={getWhatsAppInquiryUrl(`Hello ${INSTITUTION_CONFIG.name}! My name is ${generatedAdmission.studentName} (Adm: ${generatedAdmission.admissionNumber}). I have completed my tuition payment of $${generatedAdmission.amountPaid} for ${generatedAdmission.courseTitle}. Please send my live class schedule.`)}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="btn btn-sm"
@@ -2709,7 +2710,7 @@ export function Landing() {
             {/* Modal Actions */}
             <div style={{ display: 'flex', gap: '0.75rem', justifyContent: 'flex-end', flexWrap: 'wrap' }}>
               <a
-                href={`https://wa.me/254740027346?text=Hello%20Eclat%20Institute!%20I%20want%20to%20inquire%20about%20enrolling%20in%20${encodeURIComponent(selectedCourseForModal.title)}%20online.`}
+                href={getWhatsAppInquiryUrl(`Hello ${INSTITUTION_CONFIG.name}! I want to inquire about enrolling in ${selectedCourseForModal.title} online.`)}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="btn"
