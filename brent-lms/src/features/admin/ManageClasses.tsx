@@ -117,40 +117,58 @@ import { schoolStore } from '@/lib/schoolData'
 export function ManageClasses() {
   const queryClient = useQueryClient()
 
-  // Local state initialized with dynamic courses from store and baseline
-  const [localDepts, setLocalDepts] = useState<DepartmentProgram[]>(() => {
-    const units = schoolStore.getCourseUnits().map((u) => ({
-      id: u.id,
-      name: u.title,
-      hod_name: u.teacher_name || 'Faculty Lecturer',
-      grade_level: `${u.credit_hours} Credits (${u.course_duration || 'Short Course'})`,
-      academic_year: `${CURRENT_YEAR} Virtual Cohort`,
-      fee_amount: 75,
-      duration: u.course_duration || '3 Months Certificate',
-      shifts: u.live_schedule_text || 'Live Online Batches & 24/7 LMS',
-      icon: '💻',
-    }))
+  // Load initial departments from schoolStore and local storage
+  const loadPrograms = (): DepartmentProgram[] => {
+    let savedList: DepartmentProgram[] = []
+    try {
+      const saved = localStorage.getItem('eclat_admin_departments')
+      if (saved) savedList = JSON.parse(saved)
+    } catch {}
+
+    const units = schoolStore.getCourseUnits().map((u) => {
+      const savedMatch = savedList.find((s) => s.id === u.id)
+      return {
+        id: u.id,
+        name: savedMatch?.name || u.title,
+        hod_name: savedMatch?.hod_name || u.teacher_name || 'Faculty Lecturer',
+        grade_level: savedMatch?.grade_level || `${u.credit_hours || 45} Credits (${u.course_duration || '3 Months'})`,
+        academic_year: savedMatch?.academic_year || `${CURRENT_YEAR} Virtual Cohort`,
+        fee_amount: savedMatch?.fee_amount || u.fee || 75,
+        duration: savedMatch?.duration || u.course_duration || '3 Months (Certificate Course)',
+        shifts: savedMatch?.shifts || u.live_schedule_text || 'Mon, Wed & Fri: 7:30 PM - 9:30 PM EAT',
+        icon: savedMatch?.icon || '💻',
+      }
+    })
+
     const depts = schoolStore.getDepartments().flatMap((d) =>
-      (d.programs || []).map((prog) => ({
-        id: `prog-${prog.toLowerCase().replace(/[^a-z0-9]/g, '-')}`,
-        name: prog,
-        hod_name: d.hod_name || 'Department Faculty Lead',
-        grade_level: 'Vocational Short Course Certificate',
-        academic_year: `${CURRENT_YEAR} Practical Intake`,
-        fee_amount: 75,
-        duration: '4-8 Weeks',
-        shifts: 'Live Virtual Batches',
-        icon: '🏛️',
-      }))
+      (d.programs || []).map((prog) => {
+        const progId = `prog-${prog.toLowerCase().replace(/[^a-z0-9]/g, '-')}`
+        const savedMatch = savedList.find((s) => s.id === progId || s.id === d.id)
+        return {
+          id: progId,
+          name: savedMatch?.name || prog,
+          hod_name: savedMatch?.hod_name || d.hod_name || 'Department Faculty Lead',
+          grade_level: savedMatch?.grade_level || 'Vocational Short Course Certificate',
+          academic_year: savedMatch?.academic_year || `${CURRENT_YEAR} Virtual Cohort`,
+          fee_amount: savedMatch?.fee_amount || 75,
+          duration: savedMatch?.duration || '4-8 Weeks',
+          shifts: savedMatch?.shifts || 'Live Virtual Batches',
+          icon: savedMatch?.icon || '🏛️',
+        }
+      })
     )
+
     const combined: DepartmentProgram[] = [...units, ...depts]
     for (const def of DEFAULT_DEPARTMENTS) {
-      if (!combined.some((c) => c.name.toLowerCase().trim() === def.name.toLowerCase().trim())) {
-        combined.push(def)
+      if (!combined.some((c) => c.id === def.id || c.name.toLowerCase().trim() === def.name.toLowerCase().trim())) {
+        const savedMatch = savedList.find((s) => s.id === def.id)
+        combined.push(savedMatch ? { ...def, ...savedMatch } : def)
       }
     }
     return combined
-  })
+  }
+
+  const [localDepts, setLocalDepts] = useState<DepartmentProgram[]>(loadPrograms)
 
   const saveLocalDepts = (items: DepartmentProgram[]) => {
     setLocalDepts(items)
@@ -170,11 +188,11 @@ export function ManageClasses() {
   const [name, setName] = useState('')
   const [hodName, setHodName] = useState('')
   const [gradeLevel, setGradeLevel] = useState('Vocational Short Course Certificate')
-  const [academicYear, setAcademicYear] = useState(`${CURRENT_YEAR} Practical Intake`)
-  const [feeAmount, setFeeAmount] = useState<number>(4500)
-  const [duration, setDuration] = useState('4-6 Weeks')
-  const [shifts, setShifts] = useState('Morning / Evening Shifts')
-  const [icon, setIcon] = useState('🎓')
+  const [academicYear, setAcademicYear] = useState(`${CURRENT_YEAR} Virtual Cohort`)
+  const [feeAmount, setFeeAmount] = useState<number>(75)
+  const [duration, setDuration] = useState('3 Months (Certificate Course)')
+  const [shifts, setShifts] = useState('Mon, Wed & Fri: 7:30 PM - 9:30 PM EAT')
+  const [icon, setIcon] = useState('💻')
 
   // Fetch departments from Supabase (merging with local state)
   const { isLoading } = useQuery({
@@ -183,25 +201,31 @@ export function ManageClasses() {
       try {
         const { data, error } = await supabase.from('classes').select('*').order('name')
         if (!error && data && data.length > 0) {
-          // Merge data from supabase if present
-          const merged = data.map((d: any) => ({
-            id: d.id,
-            name: d.name,
-            grade_level: d.grade_level || 'Vocational Short Course Certificate',
-            academic_year: d.academic_year || `${CURRENT_YEAR} Practical Intake`,
-            hod_name: d.hod_name || 'Lead Instructor',
-            fee_amount: d.fee_amount || 4500,
-            duration: d.duration || '4-6 Weeks',
-            shifts: d.shifts || 'Morning / Evening Shifts',
-            icon: d.icon || '🎓',
-          }))
+          const currentItems = loadPrograms()
+          const merged = currentItems.map((item) => {
+            const dbMatch = data.find((d: any) => d.id === item.id || d.name.toLowerCase() === item.name.toLowerCase())
+            if (dbMatch) {
+              return {
+                ...item,
+                name: dbMatch.name || item.name,
+                grade_level: dbMatch.grade_level || item.grade_level,
+                academic_year: dbMatch.academic_year || item.academic_year,
+                hod_name: dbMatch.hod_name || item.hod_name,
+                fee_amount: dbMatch.fee_amount || item.fee_amount,
+                duration: dbMatch.duration || item.duration,
+                shifts: dbMatch.shifts || item.shifts,
+                icon: dbMatch.icon || item.icon,
+              }
+            }
+            return item
+          })
           saveLocalDepts(merged)
           return merged
         }
       } catch {
         // use local
       }
-      return localDepts
+      return loadPrograms()
     },
   })
 
@@ -211,11 +235,11 @@ export function ManageClasses() {
     setName(dept.name)
     setHodName(dept.hod_name || '')
     setGradeLevel(dept.grade_level || 'Vocational Short Course Certificate')
-    setAcademicYear(dept.academic_year || `${CURRENT_YEAR} Practical Intake`)
-    setFeeAmount(dept.fee_amount || 4500)
-    setDuration(dept.duration || '4-6 Weeks')
-    setShifts(dept.shifts || 'Morning / Evening Shifts')
-    setIcon(dept.icon || '🎓')
+    setAcademicYear(dept.academic_year || `${CURRENT_YEAR} Virtual Cohort`)
+    setFeeAmount(dept.fee_amount || 75)
+    setDuration(dept.duration || '3 Months (Certificate Course)')
+    setShifts(dept.shifts || 'Mon, Wed & Fri: 7:30 PM - 9:30 PM EAT')
+    setIcon(dept.icon || '💻')
   }
 
   // Open Create Modal
@@ -224,11 +248,11 @@ export function ManageClasses() {
     setName('')
     setHodName('')
     setGradeLevel('Vocational Short Course Certificate')
-    setAcademicYear(`${CURRENT_YEAR} Practical Intake`)
-    setFeeAmount(4500)
-    setDuration('4-6 Weeks')
-    setShifts('Morning (8:30AM) / Evening (5:30PM)')
-    setIcon('🎓')
+    setAcademicYear(`${CURRENT_YEAR} Virtual Cohort`)
+    setFeeAmount(75)
+    setDuration('3 Months (Certificate Course)')
+    setShifts('Mon, Wed & Fri: 7:30 PM - 9:30 PM EAT')
+    setIcon('💻')
     setShowAddModal(true)
   }
 
@@ -239,53 +263,98 @@ export function ManageClasses() {
 
       if (editingDept) {
         // Update existing department
-        const updatedList = localDepts.map((d) =>
-          d.id === editingDept.id
-            ? {
-                ...d,
-                name: name.trim(),
-                hod_name: hodName.trim() || 'Lead Instructor',
-                grade_level: gradeLevel.trim() || 'Vocational Short Course Certificate',
-                academic_year: academicYear.trim() || `${CURRENT_YEAR} Practical Intake`,
-                fee_amount: Number(feeAmount) || 0,
-                duration: duration.trim(),
-                shifts: shifts.trim(),
-                icon: icon.trim() || '🎓',
-              }
-            : d
-        )
-        saveLocalDepts(updatedList)
-
-        try {
-          await supabase
-            .from('classes')
-            .update({
-              name: name.trim(),
-              grade_level: gradeLevel.trim() || null,
-              academic_year: academicYear.trim() || `${CURRENT_YEAR}`,
-            })
-            .eq('id', editingDept.id)
-        } catch {
-          // ignore error if supabase schema lacks columns
-        }
-      } else {
-        // Create new department
-        const newDept: DepartmentProgram = {
-          id: `dept-${Date.now()}`,
+        const updatedItem: DepartmentProgram = {
+          ...editingDept,
           name: name.trim(),
-          hod_name: hodName.trim() || 'Lead Instructor',
+          hod_name: hodName.trim() || 'Faculty Instructor',
           grade_level: gradeLevel.trim() || 'Vocational Short Course Certificate',
-          academic_year: academicYear.trim() || `${CURRENT_YEAR} Practical Intake`,
-          fee_amount: Number(feeAmount) || 0,
+          academic_year: academicYear.trim() || `${CURRENT_YEAR} Virtual Cohort`,
+          fee_amount: Number(feeAmount) || 75,
           duration: duration.trim(),
           shifts: shifts.trim(),
           icon: icon.trim() || '🎓',
         }
+
+        const updatedList = localDepts.map((d) => (d.id === editingDept.id ? updatedItem : d))
+        saveLocalDepts(updatedList)
+
+        // 1. Persist directly to central SIMS schoolStore
+        await schoolStore.updateCourseUnit(editingDept.id, {
+          title: name.trim(),
+          teacher_name: hodName.trim() || 'Faculty Instructor',
+          fee: Number(feeAmount) || 75,
+          course_duration: duration.trim(),
+          live_schedule_text: shifts.trim(),
+        })
+
+        await schoolStore.updateDepartment(editingDept.id, {
+          name: name.trim(),
+          hod_name: hodName.trim() || 'Faculty Instructor',
+        })
+
+        // 2. Persist to Supabase Database
+        try {
+          await supabase
+            .from('classes')
+            .upsert({
+              id: editingDept.id,
+              name: name.trim(),
+              grade_level: gradeLevel.trim() || null,
+              academic_year: academicYear.trim() || `${CURRENT_YEAR}`,
+            })
+        } catch {
+          // ignore
+        }
+
+        try {
+          await supabase
+            .from('courses')
+            .update({
+              title: name.trim(),
+            })
+            .eq('id', editingDept.id)
+        } catch {
+          // ignore
+        }
+      } else {
+        // Create new department
+        const newId = `unit-prog-${Date.now()}`
+        const newDept: DepartmentProgram = {
+          id: newId,
+          name: name.trim(),
+          hod_name: hodName.trim() || 'Faculty Instructor',
+          grade_level: gradeLevel.trim() || 'Vocational Short Course Certificate',
+          academic_year: academicYear.trim() || `${CURRENT_YEAR} Virtual Cohort`,
+          fee_amount: Number(feeAmount) || 75,
+          duration: duration.trim(),
+          shifts: shifts.trim(),
+          icon: icon.trim() || '🎓',
+        }
+
         const updatedList = [newDept, ...localDepts]
         saveLocalDepts(updatedList)
 
+        // Persist to central schoolStore
+        await schoolStore.addCourseUnit({
+          id: newId,
+          code: `CRS-${Date.now().toString().slice(-4)}`,
+          title: name.trim(),
+          department: 'Academic Programs',
+          program: name.trim(),
+          course_duration: duration.trim(),
+          credit_hours: 45,
+          fee: Number(feeAmount) || 75,
+          tuition_fee_usd: Number(feeAmount) || 75,
+          teacher_name: hodName.trim() || 'Faculty Instructor',
+          live_schedule_text: shifts.trim(),
+          is_published: true,
+          created_at: new Date().toISOString(),
+        } as any)
+
+        // Persist to Supabase
         try {
           await supabase.from('classes').insert({
+            id: newId,
             name: name.trim(),
             grade_level: gradeLevel.trim() || null,
             academic_year: academicYear.trim() || `${CURRENT_YEAR}`,
@@ -308,8 +377,18 @@ export function ManageClasses() {
       const updatedList = localDepts.filter((d) => d.id !== id)
       saveLocalDepts(updatedList)
 
+      // Delete from schoolStore
+      await schoolStore.deleteCourseUnit(id)
+      await schoolStore.deleteDepartment(id)
+
+      // Delete from Supabase
       try {
         await supabase.from('classes').delete().eq('id', id)
+      } catch {
+        // ignore
+      }
+      try {
+        await supabase.from('courses').delete().eq('id', id)
       } catch {
         // ignore
       }
