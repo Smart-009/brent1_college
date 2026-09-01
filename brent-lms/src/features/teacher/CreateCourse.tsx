@@ -268,6 +268,7 @@ export function CreateCourse() {
         description: description.trim() || `Comprehensive online course in ${title.trim()}.`,
         live_meeting_url: liveMeetingUrl.trim(),
         live_schedule_text: liveScheduleText.trim(),
+        fee: Number(feeUsd) || 60,
         syllabus_modules: cleanModules,
         lessons,
         is_published: true,

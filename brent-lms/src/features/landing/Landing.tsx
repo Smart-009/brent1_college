@@ -386,7 +386,7 @@ export function Landing() {
       const matchedSub = storeSubjects.find(
         (s) => s.code.toLowerCase() === u.code.toLowerCase() || s.name.toLowerCase() === u.title.toLowerCase()
       )
-      const feeVal = matchedSub?.fee || 75
+      const feeVal = u.fee || matchedSub?.fee || 60
       const catVal = matchedSub?.category || (
         (u.department?.toLowerCase().includes('soft') || u.department?.toLowerCase().includes('python') || u.department?.toLowerCase().includes('cyber') || u.program?.toLowerCase().includes('code') || u.program?.toLowerCase().includes('web') || u.title?.toLowerCase().includes('react')) ? 'Tech & Programming'
         : (u.department?.toLowerCase().includes('lang') || u.department?.toLowerCase().includes('ielts') || u.department?.toLowerCase().includes('kisw') || u.program?.toLowerCase().includes('english') || u.program?.toLowerCase().includes('arabic') || u.program?.toLowerCase().includes('french')) ? 'Languages & Communication'
@@ -406,7 +406,7 @@ export function Landing() {
         installment: `2 installments of $${Math.ceil(feeVal / 2)}`,
         careerOutcome: u.description || (matchedSub?.description || 'Certified Online Graduate'),
         skills: matchedSub?.careers || u.syllabus_modules?.flatMap((m) => m.topics) || ['Live Interactive Virtual Classes', 'Verified E-Certificate'],
-        icon: matchedSub?.icon || '💻',
+        icon: matchedSub?.icon || '🎨',
         popular: true,
         syllabus: u.syllabus_modules?.map((m, idx) => ({
           week: `Week ${idx + 1}`,
@@ -426,8 +426,8 @@ export function Landing() {
         tagColor: '#0f172a',
         duration: s.duration || '3 Months Certificate',
         schedule: 'Live Online Batches & 24/7 LMS',
-        fee: `$${s.fee || 75}`,
-        installment: `2 installments of $${Math.ceil((s.fee || 75) / 2)}`,
+        fee: `$${s.fee || 60}`,
+        installment: `2 installments of $${Math.ceil((s.fee || 60) / 2)}`,
         careerOutcome: s.description || `${s.name} Certified Specialist`,
         skills: s.careers || ['Live Virtual Classes', 'Verified E-Certificate'],
         icon: s.icon || '💻',
@@ -458,7 +458,7 @@ export function Landing() {
         const matchedSub = storeSubjects.find(
           (s) => s.code.toLowerCase() === u.code.toLowerCase() || s.name.toLowerCase() === u.title.toLowerCase()
         )
-        const feeVal = matchedSub?.fee || 75
+        const feeVal = u.fee || matchedSub?.fee || 60
         const catVal = matchedSub?.category || (
           (u.department?.toLowerCase().includes('soft') || u.department?.toLowerCase().includes('python') || u.department?.toLowerCase().includes('cyber') || u.program?.toLowerCase().includes('code') || u.program?.toLowerCase().includes('web') || u.title?.toLowerCase().includes('react')) ? 'Tech & Programming'
           : (u.department?.toLowerCase().includes('lang') || u.department?.toLowerCase().includes('ielts') || u.department?.toLowerCase().includes('kisw') || u.program?.toLowerCase().includes('english') || u.program?.toLowerCase().includes('arabic') || u.program?.toLowerCase().includes('french')) ? 'Languages & Communication'

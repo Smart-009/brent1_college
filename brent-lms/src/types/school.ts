@@ -290,6 +290,7 @@ export interface CourseUnit {
   teacher_id: string
   teacher_name: string
   description: string
+  fee?: number // USD tuition fee e.g. 60
   live_meeting_url?: string // e.g. "https://meet.google.com/abc-defg-hij" or Zoom link
   live_schedule_text?: string // e.g. "Mon & Wed 7:30 PM - 9:30 PM EAT"
   resources?: {

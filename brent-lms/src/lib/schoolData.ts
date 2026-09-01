@@ -48,7 +48,7 @@ export const INITIAL_STUDENTS: StudentRecord[] = [
     },
     emergency_contact: '',
     fee_balance: 0,
-    term_fee_total: 75,
+    term_fee_total: 60,
     fee_cleared: true,
     attendance_rate: 100,
     discipline_points: 100,
@@ -256,7 +256,7 @@ export const INITIAL_SUBJECTS: CollegeSubject[] = [
     department_id: 'dept-comp',
     department_name: 'Department of Computer Applications & Digital Skills',
     description: '100% Online: Adobe Photoshop, Illustrator, Premiere Pro, motion graphics, 2D animation, branding, and visual identity.',
-    fee: 75,
+    fee: 60,
     duration: '8 Weeks (2 Months)',
     icon: '🖌️',
     badge: 'High Demand Creative',
@@ -360,6 +360,91 @@ export const INITIAL_SUBJECTS: CollegeSubject[] = [
     careers: ['German University Candidate', 'Healthcare & Nurse Relocation in Germany'],
     color_hex: '#f59e0b',
     created_at: new Date().toISOString(),
+  },
+]
+
+export const INITIAL_COURSE_UNITS: CourseUnit[] = [
+  {
+    id: 'unit-grd1',
+    code: 'GRD1',
+    title: 'Graphics Design & Animation',
+    department: 'Department of Computer Applications & Digital Skills',
+    program: 'Creative Design & Arts',
+    course_duration: '3 Months (Certificate Course)',
+    credit_hours: 40,
+    teacher_id: 'tch-kimani',
+    teacher_name: 'Alex Kimani',
+    description: 'Comprehensive online course in Graphics Design & Animation covering Canva, Adobe Photoshop, Illustrator, and motion graphics.',
+    live_meeting_url: 'https://meet.google.com/new',
+    live_schedule_text: 'Mon, Wed & Fri: 7:30 PM - 9:30 PM EAT',
+    fee: 60,
+    is_published: true,
+    created_at: new Date().toISOString(),
+    syllabus_modules: [
+      {
+        id: 'mod-grd-1',
+        module_number: 1,
+        title: 'Module 1: Foundations & Core Concepts',
+        hours: 10,
+        topics: ['Design Theory', 'Color Psychology', 'Typography & Visual Hierarchy'],
+        learning_outcomes: ['Understand fundamental design principles and workspace setup'],
+        resources: [
+          {
+            id: 'res-grd-1',
+            file_name: 'Module 1 - Visual Design Foundations (PDF)',
+            file_url: 'https://eclat.institute/docs/syllabus.pdf',
+            file_type: 'PDF',
+          },
+        ],
+      },
+      {
+        id: 'mod-grd-2',
+        module_number: 2,
+        title: 'Module 2: Learning Canva',
+        hours: 10,
+        topics: ['Canva Pro Features', 'Social Media Graphics', 'Brand Kits & Templates'],
+        learning_outcomes: ['Design professional social media graphics and brand identities using Canva'],
+        resources: [],
+      },
+      {
+        id: 'mod-grd-3',
+        module_number: 3,
+        title: 'Module 3: Adobe Photoshop',
+        hours: 10,
+        topics: ['Photoshop Tools', 'Layers & Masking', 'Photo Retouching & Compositing'],
+        learning_outcomes: ['Master image editing, masking, and commercial visual production in Photoshop'],
+        resources: [],
+      },
+    ],
+    lessons: [
+      {
+        id: 'les-grd-1',
+        title: 'Lesson 1: Introduction to Graphic Design & Tools Setup',
+        video_url: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
+        duration_minutes: 45,
+        content: 'Welcome to Graphics Design & Animation! In this session we explore core design theory, setup software and begin hands-on practical design.',
+        meeting_url: 'https://meet.google.com/new',
+        resources: [],
+      },
+      {
+        id: 'les-grd-2',
+        title: 'Lesson 2: Mastering Canva Pro for Brand Kits',
+        video_url: '',
+        duration_minutes: 60,
+        content: 'Practical workflow for creating high-impact brand kits, flyers, posters, and social media carousels in Canva.',
+        meeting_url: 'https://meet.google.com/new',
+        resources: [],
+      },
+      {
+        id: 'les-grd-3',
+        title: 'Lesson 3: Adobe Photoshop Foundations & Layer Mastery',
+        video_url: '',
+        duration_minutes: 60,
+        content: 'Deep dive into Photoshop layers, selection tools, masking, color grading, and commercial asset exports.',
+        meeting_url: 'https://meet.google.com/new',
+        resources: [],
+      },
+    ],
   },
 ]
 
@@ -961,7 +1046,7 @@ class SchoolDataStore {
 
   // --- Course Units & Curriculum Builder (ACID Protected) ---
   getCourseUnits(): CourseUnit[] {
-    return this.get<CourseUnit[]>('course_units', [])
+    return this.get<CourseUnit[]>('course_units', INITIAL_COURSE_UNITS)
   }
 
   async addCourseUnit(unit: CourseUnit): Promise<void> {

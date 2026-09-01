@@ -60,11 +60,87 @@ export function LessonPlayer() {
 
   // Combined instant parallel query (eliminates network waterfall delays)
   const { data, isLoading, error } = useQuery({
-    queryKey: ['lesson-player-instant-v3', lessonId, profile?.id],
+    queryKey: ['lesson-player-instant-v4', lessonId, profile?.id],
     queryFn: async () => {
       if (!lessonId) return null
 
-      // Step 1: Fetch lesson record
+      // Check local store units first
+      const storeUnits = schoolStore.getCourseUnits()
+      const localUnit = storeUnits.find(
+        (u) => u.id === lessonId || u.lessons?.some((l) => l.id === lessonId)
+      )
+
+      if (localUnit) {
+        const localLesson = localUnit.lessons?.find((l) => l.id === lessonId) || localUnit.lessons?.[0]
+        const activeLessonId = localLesson?.id || lessonId
+        const activeTitle = localLesson?.title || localUnit.title
+        const activeVideoUrl = localLesson?.video_url || ''
+        const activeContent = localLesson?.content || localUnit.description
+        const activeMeetingUrl = localLesson?.meeting_url || localUnit.live_meeting_url
+
+        const storeResources: LessonResource[] = []
+        localUnit.syllabus_modules?.forEach((m) => {
+          m.resources?.forEach((r) => {
+            storeResources.push({
+              id: r.id,
+              lesson_id: activeLessonId,
+              file_name: r.file_name,
+              file_url: r.file_url,
+              file_type: r.file_type || 'application/pdf',
+              uploaded_by: localUnit.teacher_name || 'Lecturer',
+              edit_locked_at: '' as any,
+              created_at: new Date().toISOString(),
+            } as unknown as LessonResource)
+          })
+        })
+
+        const courseLessons = (localUnit.lessons || []).map((l, idx) => ({
+          id: l.id,
+          title: l.title,
+          order_index: idx + 1,
+        }))
+
+        return {
+          lesson: {
+            id: activeLessonId,
+            course_id: localUnit.id,
+            title: activeTitle,
+            description: activeContent,
+            youtube_url: activeVideoUrl,
+            order_index: 1,
+            created_at: localUnit.created_at,
+            edit_locked_at: '',
+            meeting_url: activeMeetingUrl,
+          } as Lesson & { meeting_url?: string },
+          resources: storeResources,
+          quizzes: [] as Quiz[],
+          course: {
+            id: localUnit.id,
+            title: localUnit.title,
+            description: localUnit.description,
+            subject_id: 'sub-graphics',
+            teacher_id: localUnit.teacher_id || 'tch-lead',
+            class_id: null,
+            is_published: true,
+            created_at: localUnit.created_at,
+            updated_at: localUnit.created_at,
+            teacher: { full_name: localUnit.teacher_name } as any,
+          } as Course,
+          courseLessons: courseLessons.length > 0 ? courseLessons : [{ id: activeLessonId, title: activeTitle, order_index: 1 }],
+          enrollment: {
+            id: 'enr-local',
+            student_id: profile?.id || 'std',
+            course_id: localUnit.id,
+            completed_lesson_ids: [],
+            enrolled_at: new Date().toISOString(),
+            completed_at: null,
+          } as Enrollment,
+          attempts: [] as QuizAttempt[],
+          unit: localUnit,
+        }
+      }
+
+      // Step 1: Fetch lesson record from Supabase
       const { data: lessonData, error: lessonErr } = await supabase
         .from('lessons')
         .select('*')
@@ -90,7 +166,6 @@ export function LessonPlayer() {
         : { data: [] }
 
       // Also merge any local CourseUnit syllabus module attachments & Google Meet classroom links
-      const storeUnits = schoolStore.getCourseUnits()
       const matchingUnit = storeUnits.find(
         (u) => u.id === lessonData.course_id || u.title?.toLowerCase() === courseRes.data?.title?.toLowerCase()
       )
