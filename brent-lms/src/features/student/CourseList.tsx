@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { Link } from 'react-router-dom'
 import { useAuth } from '@/hooks/useAuth'
 import { PageWrapper } from '@/components/layout/PageWrapper'
 import { schoolStore } from '@/lib/schoolData'
@@ -181,26 +182,24 @@ export function CourseList() {
                         <div>
                           <strong style={{ fontSize: '0.9rem' }}>Lesson {idx + 1}: {les.title}</strong>
                           <div style={{ fontSize: '0.75rem', color: 'var(--color-text-secondary)' }}>
-                            ⏱️ Duration: {les.duration_minutes} minutes
+                            ⏱️ Duration: {les.duration_minutes} minutes {les.video_url ? '• 🎥 Video Available' : ''}
                           </div>
                         </div>
                         {les.video_url ? (
-                          registrationSlip?.fee_clearance_status === 'Cleared' || (schoolStore.getStudents().find(s => s.admission_number === profile?.admission_number)?.fee_cleared) ? (
-                            <a
-                              href={les.video_url}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="btn btn-secondary btn-xs"
-                            >
-                              ▶️ Watch Video
-                            </a>
-                          ) : (
-                            <span className="badge badge-warning" style={{ fontSize: '0.75rem' }}>
-                              🔒 Locked: Fee Clearance Required
-                            </span>
-                          )
+                          <Link
+                            to={`/student/lesson/${les.id}`}
+                            className="btn btn-primary btn-xs"
+                            style={{ display: 'inline-flex', alignItems: 'center', gap: '3px' }}
+                          >
+                            ▶️ Play Video in LMS
+                          </Link>
                         ) : (
-                          <span style={{ fontSize: '0.75rem', color: 'var(--color-text-secondary)' }}>Lecture Notes</span>
+                          <Link
+                            to={`/student/lesson/${les.id}`}
+                            className="btn btn-secondary btn-xs"
+                          >
+                            📖 Read Notes
+                          </Link>
                         )}
                       </div>
                     ))}

@@ -220,9 +220,54 @@ export function MyCourses() {
                 </h4>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
                   {selectedUnit.lessons?.map((l, idx) => (
-                    <div key={l.id} style={{ display: 'flex', justifyContent: 'space-between', padding: '0.65rem 0.85rem', background: 'var(--color-bg-secondary)', borderRadius: '6px' }}>
-                      <span style={{ fontSize: '0.85rem', fontWeight: 600 }}>Lesson {idx + 1}: {l.title}</span>
-                      <span style={{ fontSize: '0.8rem', color: 'var(--color-text-secondary)' }}>⏱️ {l.duration_minutes} mins</span>
+                    <div
+                      key={l.id}
+                      style={{
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        alignItems: 'center',
+                        flexWrap: 'wrap',
+                        gap: '0.5rem',
+                        padding: '0.75rem 0.85rem',
+                        background: 'var(--color-bg-secondary)',
+                        borderRadius: '6px',
+                        border: '1px solid var(--color-border)',
+                      }}
+                    >
+                      <div>
+                        <div style={{ fontSize: '0.88rem', fontWeight: 700, color: 'var(--color-text-primary)' }}>
+                          Lesson {idx + 1}: {l.title}
+                        </div>
+                        <div style={{ fontSize: '0.75rem', color: 'var(--color-text-secondary)', marginTop: '2px' }}>
+                          ⏱️ {l.duration_minutes} mins {l.video_url ? '• 🎥 Video Uploaded' : '• 📝 Lecture Notes'}
+                        </div>
+                      </div>
+
+                      <div style={{ display: 'flex', gap: '0.4rem', alignItems: 'center' }}>
+                        {l.video_url ? (
+                          <Link
+                            to={`/student/lesson/${l.id}`}
+                            className="btn btn-xs btn-primary"
+                            style={{ display: 'inline-flex', alignItems: 'center', gap: '3px' }}
+                          >
+                            ▶️ Play Video in LMS
+                          </Link>
+                        ) : (
+                          <Link
+                            to={`/student/lesson/${l.id}`}
+                            className="btn btn-xs btn-secondary"
+                          >
+                            📖 View Lesson
+                          </Link>
+                        )}
+                        <Link
+                          to={`/teacher/lesson/edit/${l.id}?courseId=${selectedUnit.id}`}
+                          className="btn btn-xs btn-outline"
+                          title="Edit Lesson & Video URL"
+                        >
+                          ✏️
+                        </Link>
+                      </div>
                     </div>
                   ))}
                 </div>
