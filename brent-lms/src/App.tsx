@@ -1,7 +1,8 @@
-import { lazy, Suspense } from 'react'
+import { lazy, Suspense, useEffect } from 'react'
 import { Routes, Route, Navigate } from 'react-router-dom'
 import type { ReactElement } from 'react'
 import { useAuth } from '@/hooks/useAuth'
+import { schoolStore } from '@/lib/schoolData'
 import { LayoutShell } from '@/components/layout/LayoutShell'
 import { LoadingScreen } from '@/components/ui/Spinner'
 
@@ -74,6 +75,10 @@ function RequireAuth({ children, allowedRoles }: { children: ReactElement; allow
 }
 
 export function App() {
+  useEffect(() => {
+    schoolStore.syncWithCloud().catch(() => {})
+  }, [])
+
   return (
     <Suspense fallback={<LoadingScreen message="Loading Eclat Institute Portal..." />}>
       <Routes>

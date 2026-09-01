@@ -24,6 +24,7 @@ import type {
 import { txEngine, IntegrityError } from './transactionManager'
 import { schoolEventBus } from './eventBus'
 import { generateBiometricTemplate } from './biometricEngine'
+import { supabase } from './supabase'
 
 // Official Enrolled Students
 export const INITIAL_STUDENTS: StudentRecord[] = []
@@ -424,9 +425,165 @@ export const INITIAL_INQUIRIES: SecretaryInquiry[] = []
 // ============================================================
 class SchoolDataStore {
   private memCache = new Map<string, any>()
+  private syncChannel: any = null
+  private isSyncing = false
 
   constructor() {
     this.cleanLegacyMockData()
+    this.setupRealtimeSync()
+    this.syncWithCloud().catch(() => {})
+  }
+
+  private setupRealtimeSync() {
+    try {
+      this.syncChannel = supabase.channel('eclat-cloud-sync')
+        .on('broadcast', { event: 'store_data_sync' }, () => {
+          this.syncWithCloud(true).catch(() => {})
+        })
+        .subscribe()
+    } catch {}
+  }
+
+  broadcastChange(type: string, data?: any) {
+    try {
+      if (this.syncChannel) {
+        this.syncChannel.send({
+          type: 'broadcast',
+          event: 'store_data_sync',
+          payload: { type, data, timestamp: Date.now() },
+        })
+      }
+      window.dispatchEvent(new Event('storage'))
+      window.dispatchEvent(new CustomEvent('eclat-courses-updated'))
+    } catch {}
+  }
+
+  async syncWithCloud(force: boolean = false): Promise<void> {
+    if (this.isSyncing && !force) return
+    this.isSyncing = true
+
+    try {
+      // 1. Sync Courses & Lessons from Supabase
+      const { data: cloudCourses } = await supabase
+        .from('courses')
+        .select('*, lessons(*)')
+        .order('created_at', { ascending: false })
+
+      if (cloudCourses && cloudCourses.length > 0) {
+        const localUnits = this.getCourseUnits()
+        let unitsUpdated = false
+
+        for (const cc of cloudCourses) {
+          let parsedDesc: any = {}
+          try {
+            if (cc.description && cc.description.startsWith('{')) {
+              parsedDesc = JSON.parse(cc.description)
+            }
+          } catch {}
+
+          const unitLessons = (cc.lessons || []).map((l: any) => ({
+            id: l.id,
+            title: l.title,
+            video_url: l.youtube_url || '',
+            duration_minutes: 45,
+            content: l.description || '',
+            resources: [],
+          }))
+
+          const existingIdx = localUnits.findIndex(
+            (u) => u.id === cc.id || u.title.toLowerCase() === cc.title.toLowerCase() || (parsedDesc.unit_id && u.id === parsedDesc.unit_id)
+          )
+
+          const mappedUnit: CourseUnit = {
+            id: parsedDesc.unit_id || cc.id,
+            code: parsedDesc.code || `CRS-${cc.id.substring(0, 4).toUpperCase()}`,
+            title: cc.title,
+            department: parsedDesc.department || 'School of Computing & Tech',
+            program: parsedDesc.program || `${cc.title} Diploma`,
+            course_duration: parsedDesc.course_duration || '3 Months Certificate',
+            credit_hours: parsedDesc.credit_hours || 40,
+            teacher_id: cc.teacher_id || 'tch-faculty',
+            teacher_name: parsedDesc.teacher_name || 'Faculty Lecturer',
+            description: parsedDesc.description || (cc.description && !cc.description.startsWith('{') ? cc.description : `Comprehensive online training in ${cc.title}.`),
+            live_meeting_url: parsedDesc.live_meeting_url || '',
+            live_schedule_text: parsedDesc.live_schedule_text || '',
+            fee: parsedDesc.fee || 60,
+            syllabus_modules: parsedDesc.syllabus_modules || [],
+            lessons: unitLessons.length > 0 ? unitLessons : (parsedDesc.lessons || []),
+            is_published: cc.is_published ?? true,
+            created_at: cc.created_at,
+          }
+
+          if (existingIdx !== -1) {
+            localUnits[existingIdx] = {
+              ...mappedUnit,
+              ...localUnits[existingIdx],
+              lessons: unitLessons.length > 0 ? unitLessons : (localUnits[existingIdx].lessons || mappedUnit.lessons),
+            }
+          } else {
+            localUnits.push(mappedUnit)
+            unitsUpdated = true
+          }
+        }
+
+        if (unitsUpdated) {
+          this.set('course_units', localUnits)
+          schoolEventBus.publish('COURSE_UNIT_CREATED' as any)
+        }
+      }
+
+      // 2. Sync Profiles from Supabase to Students
+      const { data: profiles } = await supabase.from('profiles').select('*')
+      if (profiles && profiles.length > 0) {
+        const studentProfiles = profiles.filter((p) => p.role === 'student')
+        if (studentProfiles.length > 0) {
+          const localStudents = this.getStudents()
+          let stdUpdated = false
+
+          for (const sp of studentProfiles) {
+            const exists = localStudents.find(
+              (s) => s.admission_number.toLowerCase() === sp.admission_number.toLowerCase() || s.id === sp.id
+            )
+            if (!exists) {
+              localStudents.push({
+                id: sp.id,
+                admission_number: sp.admission_number,
+                full_name: sp.full_name,
+                gender: 'Male',
+                dob: '2004-01-01',
+                class_id: 'class-main',
+                class_name: 'Online Vocational Program',
+                grade_level: '2026 Virtual Intake',
+                stream: '100% Online Cohort',
+                enrollment_date: sp.created_at?.split('T')[0] || new Date().toISOString().split('T')[0],
+                admission_date: sp.created_at?.split('T')[0] || new Date().toISOString().split('T')[0],
+                status: sp.is_active ? 'Active' : 'Suspended',
+                guardian: { name: 'Self-Sponsored', relationship: 'Self', phone: '', email: '' },
+                emergency_contact: '',
+                fee_balance: 0,
+                term_fee_total: 60,
+                fee_cleared: true,
+                attendance_rate: 100,
+                discipline_points: 100,
+                merits_count: 0,
+                demerits_count: 0,
+                biometric_enrolled: false,
+              })
+              stdUpdated = true
+            }
+          }
+
+          if (stdUpdated) {
+            this.set('students', localStudents)
+            schoolEventBus.publish('STUDENT_UPDATED')
+          }
+        }
+      }
+    } catch (err) {
+      console.warn('Cloud store sync notice:', err)
+    } finally {
+      this.isSyncing = false
+    }
   }
 
   private cleanLegacyMockData() {
@@ -586,6 +743,17 @@ class SchoolDataStore {
     schoolEventBus.publish('STUDENT_ADDED', student)
     schoolEventBus.publish('INVOICE_CREATED')
     schoolEventBus.publish('STUDENT_UPDATED')
+    this.broadcastChange('STUDENT_ADDED', student)
+
+    try {
+      supabase.from('profiles').upsert({
+        id: student.id,
+        full_name: student.full_name,
+        admission_number: student.admission_number,
+        role: 'student',
+        is_active: student.status === 'Active',
+      }).then(() => {})
+    } catch {}
   }
 
   async updateStudent(id: string, updated: Partial<StudentRecord>): Promise<void> {
@@ -609,6 +777,7 @@ class SchoolDataStore {
       }
     )
     schoolEventBus.publish('STUDENT_UPDATED', updated)
+    this.broadcastChange('STUDENT_UPDATED', updated)
   }
 
   async deleteStudent(id: string): Promise<void> {
@@ -621,6 +790,7 @@ class SchoolDataStore {
       }
     )
     schoolEventBus.publish('STUDENT_DELETED', id)
+    this.broadcastChange('STUDENT_DELETED', { id })
   }
 
   async clearAllStudents(): Promise<void> {
@@ -632,6 +802,7 @@ class SchoolDataStore {
       }
     )
     schoolEventBus.publish('STUDENT_UPDATED')
+    this.broadcastChange('STUDENTS_CLEARED')
   }
 
   async grantCertificate(id: string, granted: boolean = true, grade: string = 'Distinction (A)'): Promise<void> {
@@ -1205,6 +1376,41 @@ class SchoolDataStore {
       }
     )
     schoolEventBus.publish('COURSE_UNIT_CREATED' as any, unit)
+    this.broadcastChange('COURSE_UNIT_CREATED', unit)
+
+    // Asynchronously push to Supabase courses & lessons
+    try {
+      const { data: courseRow } = await supabase.from('courses').upsert({
+        title: unit.title,
+        description: JSON.stringify({
+          unit_id: unit.id,
+          code: unit.code,
+          department: unit.department,
+          program: unit.program,
+          course_duration: unit.course_duration,
+          credit_hours: unit.credit_hours,
+          fee: unit.fee,
+          teacher_name: unit.teacher_name,
+          syllabus_modules: unit.syllabus_modules,
+          lessons: unit.lessons,
+          description: unit.description,
+          live_meeting_url: unit.live_meeting_url,
+          live_schedule_text: unit.live_schedule_text,
+        }),
+        is_published: unit.is_published ?? true,
+      }).select().single()
+
+      if (courseRow && unit.lessons?.length) {
+        const lessonRows = unit.lessons.map((les, idx) => ({
+          course_id: courseRow.id,
+          title: les.title,
+          description: les.content || '',
+          youtube_url: les.video_url || '',
+          order_index: idx,
+        }))
+        await supabase.from('lessons').insert(lessonRows)
+      }
+    } catch {}
   }
 
   async updateCourseUnit(id: string, updated: Partial<CourseUnit>): Promise<void> {
@@ -1221,6 +1427,7 @@ class SchoolDataStore {
       }
     )
     schoolEventBus.publish('COURSE_UNIT_UPDATED' as any, updated)
+    this.broadcastChange('COURSE_UNIT_UPDATED', updated)
   }
 
   async deleteCourseUnit(id: string): Promise<void> {
@@ -1232,6 +1439,7 @@ class SchoolDataStore {
         this.set('course_units', list)
       }
     )
+    this.broadcastChange('COURSE_UNIT_DELETED', { id })
   }
 
   // --- Formal Unit Registration by Management (With Official Receipts) ---
