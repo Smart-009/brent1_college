@@ -940,7 +940,7 @@ class SchoolDataStore {
         (r) => (r.student_id && r.student_id === s.id) || (r.admission_number && r.admission_number.toLowerCase() === s.admission_number.toLowerCase())
       )
       const totalPaid = studentReceipts.reduce((acc, r) => acc + (Number(r.amount) || 0), 0)
-      const billed = Number(s.term_fee_total) || 4500
+      const billed = Number(s.term_fee_total) || 60
       const liveBalance = Math.max(0, billed - totalPaid)
       const isCleared = liveBalance === 0 && totalPaid >= billed && billed > 0
       return {
@@ -1283,7 +1283,7 @@ class SchoolDataStore {
           (inv.admission_number && inv.admission_number.toLowerCase() === std.admission_number.toLowerCase())
       )
       if (!hasInv) {
-        const billed = Number(std.term_fee_total) || 4500
+        const billed = Number(std.term_fee_total) || 60
         invoiceList.push({
           id: `inv-${std.id}`,
           invoice_number: `INV-${new Date().getFullYear()}-${Math.floor(1000 + Math.random() * 9000)}`,
@@ -1318,7 +1318,7 @@ class SchoolDataStore {
           (r.admission_number && r.admission_number.toLowerCase() === inv.admission_number.toLowerCase())
       )
       const paid = matchingReceipts.reduce((acc, r) => acc + (Number(r.amount) || 0), 0)
-      const total = Number(inv.total_amount) || 4500
+      const total = Number(inv.total_amount) || 60
       const balance = Math.max(0, total - paid)
       const status: 'Paid' | 'Partial' | 'Overdue' | 'Pending' =
         balance === 0 && paid > 0 ? 'Paid' : paid > 0 ? 'Partial' : 'Pending'

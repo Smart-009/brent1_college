@@ -1388,7 +1388,7 @@ export function BursarDesk() {
                         const std = students.find((s) => s.id === e.target.value)
                         if (std) {
                           const existingInv = invoices.find((inv) => inv.student_id === std.id || inv.admission_number === std.admission_number)
-                          const fee = existingInv ? existingInv.balance : (std.fee_balance !== undefined ? std.fee_balance : (std.term_fee_total || 4500))
+                          const fee = existingInv ? existingInv.balance : (std.fee_balance !== undefined ? std.fee_balance : (std.term_fee_total || 60))
                           setPaymentData({
                             ...paymentData,
                             student_id: std.id,
@@ -1424,7 +1424,7 @@ export function BursarDesk() {
                         const adm = e.target.value
                         const std = students.find((s) => s.admission_number.toLowerCase() === adm.toLowerCase())
                         const existingInv = invoices.find((inv) => inv.admission_number.toLowerCase() === adm.toLowerCase())
-                        const fee = existingInv ? existingInv.balance : (std ? (std.fee_balance !== undefined ? std.fee_balance : (std.term_fee_total || 4500)) : paymentData.total_fee)
+                        const fee = existingInv ? existingInv.balance : (std ? (std.fee_balance !== undefined ? std.fee_balance : (std.term_fee_total || 60)) : paymentData.total_fee)
                         setPaymentData({
                           ...paymentData,
                           admission_number: adm,

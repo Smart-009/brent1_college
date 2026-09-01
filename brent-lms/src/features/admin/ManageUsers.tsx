@@ -184,6 +184,7 @@ export function ManageUsers() {
           class_ids: selectedClassIds,
           created_at: new Date().toISOString(),
         }
+        localStorage.setItem('brent_local_credentials', JSON.stringify(parsed))
         localStorage.setItem('eclat_local_credentials', JSON.stringify(parsed))
       } catch (storeErr) {
         console.warn('Local credential storage error:', storeErr)
@@ -196,7 +197,7 @@ export function ManageUsers() {
           (s) => s.admission_number.toUpperCase() === cleanAdm
         )
         if (!existingStudent) {
-          const progFee = 4500
+          const progFee = 60
           await schoolStore.addStudent({
             id: registeredUserId,
             admission_number: cleanAdm,

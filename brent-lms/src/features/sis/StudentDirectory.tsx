@@ -836,7 +836,7 @@ export function StudentDirectory() {
                   (r) => r.student_id === selectedStudent.id || r.admission_number === selectedStudent.admission_number
                 )
                 const totalPaid = studentReceipts.reduce((acc, r) => acc + (Number(r.amount) || 0), 0)
-                const totalBilled = selectedStudent.term_fee_total || 4500
+                const totalBilled = selectedStudent.term_fee_total || 60
                 const currentBalance = Math.max(0, totalBilled - totalPaid)
                 const isFullyPaid = currentBalance === 0 && totalPaid > 0
 
