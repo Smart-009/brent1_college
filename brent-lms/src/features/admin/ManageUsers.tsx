@@ -263,6 +263,19 @@ export function ManageUsers() {
     },
   })
 
+  const handleDeleteUser = async (u: Profile) => {
+    if (window.confirm(`Are you sure you want to completely remove "${u.full_name}" (${u.admission_number})? All associated academic, fee, and registration records will be permanently deleted.`)) {
+      if (u.role === 'student') {
+        await schoolStore.deleteStudent(u.id)
+      } else {
+        try {
+          await supabase.from('profiles').delete().eq('id', u.id)
+        } catch {}
+      }
+      queryClient.invalidateQueries({ queryKey: ['admin-manage-users'] })
+    }
+  }
+
   const filteredUsers = users?.filter((u) => {
     const matchesTab = activeRoleTab === 'all' ? true : u.role === activeRoleTab
     const matchesSearch =
@@ -351,6 +364,7 @@ export function ManageUsers() {
                   <th>Role</th>
                   <th>Status / Access</th>
                   <th>Created</th>
+                  <th style={{ textAlign: 'right' }}>Action</th>
                 </tr>
               </thead>
               <tbody>
@@ -379,6 +393,19 @@ export function ManageUsers() {
                         )}
                       </td>
                       <td className="text-xs text-muted">{formatDate(u.created_at)}</td>
+                      <td style={{ textAlign: 'right' }}>
+                        {u.role !== 'admin' && (
+                          <button
+                            type="button"
+                            className="btn btn-xs"
+                            style={{ background: '#fee2e2', color: '#dc2626', border: '1px solid #fca5a5' }}
+                            onClick={() => handleDeleteUser(u)}
+                            title="Completely remove user and cascade delete all associated records"
+                          >
+                            🗑️ Delete
+                          </button>
+                        )}
+                      </td>
                     </tr>
                   )
                 })}

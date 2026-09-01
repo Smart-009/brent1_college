@@ -781,27 +781,132 @@ class SchoolDataStore {
   }
 
   async deleteStudent(id: string): Promise<void> {
+    const students = this.getStudents()
+    const student = students.find((s) => s.id === id || s.admission_number.toLowerCase() === id.toLowerCase())
+    const targetId = student?.id || id
+    const targetAdm = student?.admission_number || ''
+    const cleanAdm = targetAdm.toLowerCase().replace(/[^a-z0-9]/g, '')
+
     await txEngine.executeAtomic(
-      `DELETE_STUDENT_${id}`,
-      ['brent_school_students'],
+      `CASCADE_DELETE_STUDENT_${targetId}`,
+      [
+        'brent_school_students',
+        'brent_school_invoices',
+        'brent_school_receipts',
+        'brent_school_unit_registrations',
+        'brent_school_report_cards',
+        'brent_school_exams',
+        'brent_school_reminders',
+        'brent_school_discipline',
+      ],
       () => {
-        const list = this.getStudents().filter((s) => s.id !== id)
-        this.set('students', list)
+        const matchesStudent = (rec: { student_id?: string; admission_number?: string }) => {
+          if (!rec) return false
+          if (rec.student_id && (rec.student_id === targetId || rec.student_id === id)) return true
+          if (targetAdm && rec.admission_number && rec.admission_number.toLowerCase() === targetAdm.toLowerCase()) return true
+          return false
+        }
+
+        // 1. Purge Student Record
+        const filteredStudents = this.getStudents().filter(
+          (s) => s.id !== targetId && s.id !== id && (!targetAdm || s.admission_number.toLowerCase() !== targetAdm.toLowerCase())
+        )
+        this.set('students', filteredStudents)
+
+        // 2. Cascade Purge Invoices
+        const filteredInvoices = this.getInvoices().filter((inv) => !matchesStudent(inv))
+        this.set('invoices', filteredInvoices)
+
+        // 3. Cascade Purge Receipts
+        const filteredReceipts = this.getReceipts().filter((r) => !matchesStudent(r))
+        this.set('receipts', filteredReceipts)
+
+        // 4. Cascade Purge Unit Registrations
+        const filteredRegistrations = this.getUnitRegistrations().filter((reg) => !matchesStudent(reg))
+        this.set('unit_registrations', filteredRegistrations)
+
+        // 5. Cascade Purge Report Cards / Transcripts
+        const filteredReports = this.getReportCards().filter((rc) => !matchesStudent(rc))
+        this.set('report_cards', filteredReports)
+
+        // 6. Cascade Purge Payment Reminders
+        const filteredReminders = this.getReminders().filter((rem) => !matchesStudent(rem))
+        this.set('reminders', filteredReminders)
+
+        // 7. Cascade Purge Discipline Records
+        const filteredDiscipline = this.getDiscipline().filter((d) => !matchesStudent(d))
+        this.set('discipline', filteredDiscipline)
+
+        // 8. Cascade Purge Biometric Clearance Logs
+        const filteredLogs = this.getBiometricClearanceLogs().filter((log) => !matchesStudent(log))
+        this.set('biometric_clearance_logs', filteredLogs)
+
+        // 10. Clean Local Credentials Store
+        try {
+          const rawCreds = localStorage.getItem('eclat_local_credentials') || localStorage.getItem('brent_local_credentials')
+          if (rawCreds) {
+            const creds = JSON.parse(rawCreds)
+            if (targetAdm && creds[targetAdm.toLowerCase()]) delete creds[targetAdm.toLowerCase()]
+            if (cleanAdm && creds[cleanAdm]) delete creds[cleanAdm]
+            if (creds[targetId]) delete creds[targetId]
+            localStorage.setItem('eclat_local_credentials', JSON.stringify(creds))
+            localStorage.setItem('brent_local_credentials', JSON.stringify(creds))
+          }
+        } catch {}
       }
     )
-    schoolEventBus.publish('STUDENT_DELETED', id)
-    this.broadcastChange('STUDENT_DELETED', { id })
+
+    // 11. Cloud Cascade Deletion via Supabase
+    try {
+      if (targetId) {
+        supabase.from('profiles').delete().eq('id', targetId).then(() => {})
+      }
+      if (targetAdm) {
+        supabase.from('profiles').delete().eq('admission_number', targetAdm).then(() => {})
+      }
+    } catch {}
+
+    schoolEventBus.publish('STUDENT_DELETED', targetId)
+    schoolEventBus.publish('STUDENT_UPDATED')
+    schoolEventBus.publish('INVOICE_CREATED')
+    schoolEventBus.publish('PAYMENT_RECORDED')
+    this.broadcastChange('STUDENT_DELETED', { id: targetId, admission_number: targetAdm })
   }
 
   async clearAllStudents(): Promise<void> {
     await txEngine.executeAtomic(
-      'CLEAR_ALL_STUDENTS',
-      ['brent_school_students'],
+      'CLEAR_ALL_STUDENTS_CASCADE',
+      [
+        'brent_school_students',
+        'brent_school_invoices',
+        'brent_school_receipts',
+        'brent_school_unit_registrations',
+        'brent_school_report_cards',
+        'brent_school_reminders',
+        'brent_school_discipline',
+      ],
       () => {
         this.set('students', [])
+        this.set('invoices', [])
+        this.set('receipts', [])
+        this.set('unit_registrations', [])
+        this.set('report_cards', [])
+        this.set('reminders', [])
+        this.set('discipline', [])
+        this.set('biometric_clearance_logs', [])
+
+        localStorage.removeItem('eclat_local_credentials')
+        localStorage.removeItem('brent_local_credentials')
       }
     )
+
+    try {
+      supabase.from('profiles').delete().eq('role', 'student').then(() => {})
+    } catch {}
+
     schoolEventBus.publish('STUDENT_UPDATED')
+    schoolEventBus.publish('INVOICE_CREATED')
+    schoolEventBus.publish('PAYMENT_RECORDED')
     this.broadcastChange('STUDENTS_CLEARED')
   }
 
