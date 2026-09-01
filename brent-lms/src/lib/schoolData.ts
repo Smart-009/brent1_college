@@ -851,14 +851,23 @@ class SchoolDataStore {
 
   private cleanLegacyMockData() {
     try {
-      const isCleaned = localStorage.getItem('eclat_launch_pure_v8')
+      const isCleaned = localStorage.getItem('eclat_launch_pure_v9')
       if (!isCleaned) {
-        const storedRole = localStorage.getItem('brent_demo_role')
-        if (storedRole && storedRole !== 'admin') {
-          localStorage.removeItem('brent_demo_role')
+        const activeProfileRaw = localStorage.getItem('eclat_active_profile') || sessionStorage.getItem('eclat_active_profile')
+        if (activeProfileRaw) {
+          try {
+            const parsed = JSON.parse(activeProfileRaw)
+            if (parsed.role === 'student' && (parsed.admission_number?.includes('001') || parsed.full_name?.toLowerCase().includes('trainee'))) {
+              localStorage.removeItem('eclat_active_profile')
+              sessionStorage.removeItem('eclat_active_profile')
+            }
+          } catch {}
         }
+        localStorage.removeItem('brent_demo_role')
         localStorage.removeItem('brent_school_students')
         localStorage.removeItem('eclat_school_students')
+        localStorage.removeItem('brent_school_course_units')
+        localStorage.removeItem('eclat_school_course_units')
         localStorage.removeItem('brent_school_unit_registrations')
         localStorage.removeItem('eclat_school_unit_registrations')
         localStorage.removeItem('brent_school_invoices')
@@ -873,7 +882,7 @@ class SchoolDataStore {
         localStorage.removeItem('brent_school_notices')
         localStorage.removeItem('brent_school_reminders')
         localStorage.removeItem('brent_school_inquiries')
-        localStorage.setItem('eclat_launch_pure_v8', 'true')
+        localStorage.setItem('eclat_launch_pure_v9', 'true')
       }
     } catch {}
   }

@@ -130,6 +130,24 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return () => subscription.unsubscribe()
   }, [])
 
+  // Auto-logout deleted student accounts across devices
+  useEffect(() => {
+    if (profile && profile.role === 'student' && profile.admission_number) {
+      const students = schoolStore.getStudents()
+      const cleanAdm = profile.admission_number.toLowerCase().replace(/[^a-z0-9]/g, '')
+      const match = students.find(
+        (s) =>
+          s.admission_number.toLowerCase().replace(/[^a-z0-9]/g, '') === cleanAdm ||
+          s.id === profile.id
+      )
+      if (!match) {
+        localStorage.removeItem('eclat_active_profile')
+        sessionStorage.removeItem('eclat_active_profile')
+        setProfile(null)
+      }
+    }
+  }, [profile])
+
   function signInAsDemo(role: Role) {
     const demoProf = DEMO_PROFILES[role]
     localStorage.setItem('eclat_active_profile', JSON.stringify(demoProf))
