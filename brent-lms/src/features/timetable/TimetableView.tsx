@@ -1,10 +1,13 @@
 import { useState, useMemo } from 'react'
+import { useAuth } from '@/hooks/useAuth'
 import { schoolStore } from '@/lib/schoolData'
 import type { TimetablePeriod } from '@/types/school'
 
 const DAYS_OF_WEEK = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'] as const
 
 export function TimetableView() {
+  const { profile } = useAuth()
+  const isStudent = profile?.role === 'student'
   const [subjects] = useState(() => schoolStore.getSubjects())
   const [selectedDay, setSelectedDay] = useState<string>('Monday')
   const [selectedClass, setSelectedClass] = useState<string>('All')
@@ -124,13 +127,15 @@ export function TimetableView() {
           >
             🖨️ Print Master Timetable
           </button>
-          <button
-            type="button"
-            className="btn btn-primary"
-            onClick={() => setShowAddModal(true)}
-          >
-            + Add Lecture Period
-          </button>
+          {!isStudent && (
+            <button
+              type="button"
+              className="btn btn-primary"
+              onClick={() => setShowAddModal(true)}
+            >
+              + Add Lecture Period
+            </button>
+          )}
           <div style={{ display: 'inline-flex', background: 'var(--color-bg-secondary)', padding: '3px', borderRadius: 'var(--radius-md)' }}>
             <button
               type="button"
@@ -272,24 +277,26 @@ export function TimetableView() {
                         <span style={{ fontSize: '0.7rem', fontWeight: 700, color: p.color_hex || '#2563eb' }}>
                           {p.subject_code} • P{p.period_number}
                         </span>
-                        <div style={{ display: 'inline-flex', gap: '2px' }}>
-                          <button
-                            type="button"
-                            style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: '0.75rem' }}
-                            onClick={() => setEditingPeriod(p)}
-                            title="Edit Period"
-                          >
-                            ✏️
-                          </button>
-                          <button
-                            type="button"
-                            style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: '0.75rem' }}
-                            onClick={() => handleDeletePeriod(p.id)}
-                            title="Delete Period"
-                          >
-                            🗑️
-                          </button>
-                        </div>
+                        {!isStudent && (
+                          <div style={{ display: 'inline-flex', gap: '2px' }}>
+                            <button
+                              type="button"
+                              style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: '0.75rem' }}
+                              onClick={() => setEditingPeriod(p)}
+                              title="Edit Period"
+                            >
+                              ✏️
+                            </button>
+                            <button
+                              type="button"
+                              style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: '0.75rem' }}
+                              onClick={() => handleDeletePeriod(p.id)}
+                              title="Delete Period"
+                            >
+                              🗑️
+                            </button>
+                          </div>
+                        )}
                       </div>
                       <div style={{ fontWeight: 600, fontSize: '0.85rem', marginTop: '0.2rem' }}>{p.subject_name}</div>
                       <div style={{ fontSize: '0.75rem', color: 'var(--color-text-secondary)', marginTop: '0.25rem' }}>

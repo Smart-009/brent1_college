@@ -9,6 +9,7 @@ import { generateBiometricVerificationCode } from '@/lib/biometricEngine'
 
 export function FeeManagement() {
   const { profile } = useAuth()
+  const isStudent = profile?.role === 'student'
   const defaultIssuer = profile?.full_name
     ? `${profile.full_name} (${profile.role === 'admin' ? 'Principal' : 'Bursar & Accounts Directorate'})`
     : 'Mrs. Grace Odhiambo (Bursar & Accounts Directorate)'
@@ -25,13 +26,26 @@ export function FeeManagement() {
   const [studentToEnroll, setStudentToEnroll] = useState<StudentRecord | null>(null)
   const [selectedPass, setSelectedPass] = useState<BiometricFeeClearancePass | null>(null)
 
+  const currentStudent = students.find(
+    (s) => s.admission_number.toLowerCase() === profile?.admission_number?.toLowerCase() || s.id === profile?.id
+  ) || null
+
+  const myReceipts = receipts.filter(
+    (r) => r.admission_number.toLowerCase() === profile?.admission_number?.toLowerCase() || r.student_id === currentStudent?.id
+  )
+
+  const myBilled = currentStudent?.term_fee_total ?? 60
+  const myPaid = myReceipts.reduce((sum, r) => sum + r.amount, 0)
+  const myBalance = currentStudent?.fee_balance ?? Math.max(0, myBilled - myPaid)
+  const isCleared = currentStudent?.fee_cleared ?? (myBalance === 0)
+
   // Payment Form
   const [payData, setPayData] = useState({
     student_id: '',
     admission_number: '',
     student_name: '',
-    total_fee: 75,
-    amount: 75,
+    total_fee: 60,
+    amount: 60,
     payment_method: 'Card' as 'Card' | 'Bank Transfer' | 'Paybill' | 'PayPal' | 'M-Pesa' | 'Cash Deposit',
     reference_code: `CARD-${Math.random().toString(36).substring(2, 8).toUpperCase()}`,
     paid_by: '',
@@ -94,6 +108,216 @@ export function FeeManagement() {
     setStudents(schoolStore.getStudents())
     setShowPayModal(false)
     setSelectedReceipt(newReceipt)
+  }
+
+  // -------------------------------------------------------------
+  // Dedicated Student Personal Fee Statement
+  // -------------------------------------------------------------
+  if (isStudent) {
+    return (
+      <div className="page-container">
+        <div className="page-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '1rem', marginBottom: '1.5rem' }}>
+          <div>
+            <h1 className="page-title">My Tuition Statement & Payment Portal</h1>
+            <p className="page-subtitle">
+              View your course fees, payment receipts, tuition clearance status, and direct payment channels.
+            </p>
+          </div>
+          <div>
+            <button
+              type="button"
+              className="btn btn-secondary"
+              onClick={() => window.print()}
+            >
+              🖨️ Print Statement
+            </button>
+          </div>
+        </div>
+
+        {/* Student Tuition Status Card */}
+        <div
+          className="card mb-6"
+          style={{
+            background: 'linear-gradient(135deg, #1e3a8a 0%, #0f172a 100%)',
+            color: '#ffffff',
+            padding: '1.75rem 2rem',
+            borderRadius: '12px',
+            border: 'none',
+          }}
+        >
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1.5rem' }}>
+            <div>
+              <div style={{ fontSize: '0.8rem', textTransform: 'uppercase', letterSpacing: '0.08em', color: '#93c5fd', fontWeight: 700 }}>
+                Tuition Fee Clearance Status
+              </div>
+              <h2 style={{ fontSize: '1.75rem', fontWeight: 900, color: '#ffffff', margin: '0.35rem 0' }}>
+                {isCleared ? '✓ Tuition 100% Cleared' : `$${myBalance} Outstanding Balance`}
+              </h2>
+              <p style={{ color: '#cbd5e1', fontSize: '0.85rem', margin: 0 }}>
+                Student: <strong>{currentStudent?.full_name || profile?.full_name}</strong> • Admission: <strong>{currentStudent?.admission_number || profile?.admission_number}</strong> • Program: <strong>{currentStudent?.class_name || 'Graphics Design & Animation'}</strong>
+              </p>
+            </div>
+            <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
+              <div style={{ background: 'rgba(255,255,255,0.1)', padding: '0.75rem 1.25rem', borderRadius: '8px', textAlign: 'center' }}>
+                <div style={{ fontSize: '0.75rem', color: '#93c5fd', fontWeight: 600 }}>Total Billed</div>
+                <div style={{ fontSize: '1.35rem', fontWeight: 800, color: '#ffffff' }}>${myBilled}</div>
+              </div>
+              <div style={{ background: 'rgba(255,255,255,0.1)', padding: '0.75rem 1.25rem', borderRadius: '8px', textAlign: 'center' }}>
+                <div style={{ fontSize: '0.75rem', color: '#86efac', fontWeight: 600 }}>Amount Paid</div>
+                <div style={{ fontSize: '1.35rem', fontWeight: 800, color: '#86efac' }}>${myBilled - myBalance}</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Payment Channels Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+          <div className="card" style={{ padding: '1.5rem' }}>
+            <h3 style={{ fontSize: '1.1rem', fontWeight: 800, margin: '0 0 0.75rem', color: 'var(--color-primary)' }}>
+              💳 Pay via M-Pesa / KCB Paybill
+            </h3>
+            <div style={{ fontSize: '0.88rem', color: 'var(--color-text-secondary)', lineHeight: '1.6', display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
+              <div><strong>1. Go to M-Pesa:</strong> Lipa na M-Pesa → Paybill</div>
+              <div><strong>2. Business Number:</strong> <span style={{ color: 'var(--color-primary)', fontWeight: 800 }}>522522</span> (KCB Bank)</div>
+              <div><strong>3. Account Number:</strong> <span style={{ color: 'var(--color-primary)', fontWeight: 800 }}>1344329268</span></div>
+              <div><strong>4. Account Name:</strong> Éclat Institute Online Academy</div>
+            </div>
+          </div>
+
+          <div className="card" style={{ padding: '1.5rem' }}>
+            <h3 style={{ fontSize: '1.1rem', fontWeight: 800, margin: '0 0 0.75rem', color: 'var(--color-primary)' }}>
+              🏦 International Bank Wire / Card
+            </h3>
+            <div style={{ fontSize: '0.88rem', color: 'var(--color-text-secondary)', lineHeight: '1.6', display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
+              <div><strong>Bank Name:</strong> Kenya Commercial Bank (KCB)</div>
+              <div><strong>Account Number:</strong> 1344329268</div>
+              <div><strong>Branch:</strong> Direct Corporate Clearing</div>
+              <div><strong>Currency:</strong> USD ($) / KES</div>
+            </div>
+          </div>
+        </div>
+
+        {/* Payment Receipts History */}
+        <div className="card" style={{ overflow: 'hidden' }}>
+          <div style={{ padding: '1.25rem', borderBottom: '1px solid var(--color-border)', background: 'var(--color-bg-secondary)' }}>
+            <h3 style={{ fontSize: '1rem', fontWeight: 800, margin: 0 }}>Official Payment Receipts</h3>
+          </div>
+          <div className="table-responsive">
+            <table className="table">
+              <thead>
+                <tr>
+                  <th>Receipt No.</th>
+                  <th>Date</th>
+                  <th>Method</th>
+                  <th>Reference</th>
+                  <th>Amount Paid</th>
+                  <th>Balance Remaining</th>
+                  <th style={{ textAlign: 'right' }}>Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                {myReceipts.length === 0 ? (
+                  <tr>
+                    <td colSpan={7} style={{ textAlign: 'center', padding: '2rem', color: 'var(--color-text-secondary)' }}>
+                      No separate receipt records found. Your tuition account is cleared under your direct admission package.
+                    </td>
+                  </tr>
+                ) : (
+                  myReceipts.map((rec) => (
+                    <tr key={rec.id}>
+                      <td style={{ fontWeight: 700, color: 'var(--color-primary)' }}>{rec.receipt_number}</td>
+                      <td>{rec.payment_date}</td>
+                      <td><span className="badge badge-info">{rec.payment_method}</span></td>
+                      <td><code>{rec.reference_code}</code></td>
+                      <td style={{ fontWeight: 800, color: '#16a34a' }}>${rec.amount}</td>
+                      <td>${rec.balance_remaining}</td>
+                      <td style={{ textAlign: 'right' }}>
+                        <button
+                          type="button"
+                          className="btn btn-sm btn-secondary"
+                          onClick={() => setSelectedReceipt(rec)}
+                        >
+                          🖨️ View Receipt
+                        </button>
+                      </td>
+                    </tr>
+                  ))
+                )}
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        {selectedReceipt && (
+          <div
+            className="modal-overlay"
+            style={{
+              position: 'fixed',
+              top: 0,
+              left: 0,
+              right: 0,
+              bottom: 0,
+              background: 'rgba(0,0,0,0.6)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              zIndex: 2000,
+              padding: '1rem',
+            }}
+            onClick={() => setSelectedReceipt(null)}
+          >
+            <div
+              className="card"
+              style={{ maxWidth: '520px', width: '100%', padding: '2rem', background: '#ffffff', color: '#0f172a' }}
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div style={{ textAlign: 'center', borderBottom: '2px solid #1e3a8a', paddingBottom: '1rem', marginBottom: '1.25rem' }}>
+                <h2 style={{ fontSize: '1.3rem', fontWeight: 900, color: '#1e3a8a', margin: 0 }}>ÉCLAT INSTITUTE</h2>
+                <div style={{ fontSize: '0.8rem', color: '#64748b' }}>OFFICIAL TUITION PAYMENT RECEIPT</div>
+              </div>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.6rem', fontSize: '0.9rem' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                  <span>Receipt Number:</span>
+                  <strong>{selectedReceipt.receipt_number}</strong>
+                </div>
+                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                  <span>Student Name:</span>
+                  <strong>{selectedReceipt.student_name}</strong>
+                </div>
+                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                  <span>Admission No:</span>
+                  <strong>{selectedReceipt.admission_number}</strong>
+                </div>
+                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                  <span>Payment Date:</span>
+                  <strong>{selectedReceipt.payment_date}</strong>
+                </div>
+                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                  <span>Payment Method:</span>
+                  <strong>{selectedReceipt.payment_method}</strong>
+                </div>
+                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                  <span>Transaction Ref:</span>
+                  <code>{selectedReceipt.reference_code}</code>
+                </div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', borderTop: '1px solid #e2e8f0', paddingTop: '0.6rem', fontSize: '1.1rem' }}>
+                  <span style={{ fontWeight: 700 }}>Amount Paid:</span>
+                  <strong style={{ color: '#16a34a' }}>${selectedReceipt.amount}</strong>
+                </div>
+              </div>
+              <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.75rem', marginTop: '1.75rem' }}>
+                <button type="button" className="btn btn-secondary" onClick={() => window.print()}>
+                  🖨️ Print
+                </button>
+                <button type="button" className="btn btn-primary" onClick={() => setSelectedReceipt(null)}>
+                  Close
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+    )
   }
 
   return (
