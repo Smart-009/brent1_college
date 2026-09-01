@@ -335,6 +335,14 @@ export function StudentDirectory() {
     }
   }
 
+  const handleClearAllStudents = async () => {
+    if (window.confirm('Are you sure you want to remove all students from the active registry? This will clear all stored student records.')) {
+      await schoolStore.clearAllStudents()
+      setStudents(schoolStore.getStudents())
+      setSelectedStudent(null)
+    }
+  }
+
   // --- Send Single Payment Reminder ---
   const handleDispatchReminder = (student: StudentRecord) => {
     const reminder: PaymentReminder = {
@@ -423,6 +431,17 @@ export function StudentDirectory() {
           >
             📢 Send Overdue Payment Reminders
           </button>
+          {students.length > 0 && (
+            <button
+              type="button"
+              className="btn btn-outline"
+              style={{ color: '#ef4444', borderColor: '#fca5a5' }}
+              onClick={handleClearAllStudents}
+              title="Remove all students from the active directory"
+            >
+              🗑️ Clear All Students
+            </button>
+          )}
           <button
             type="button"
             className="btn btn-primary"

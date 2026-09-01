@@ -26,49 +26,12 @@ import { schoolEventBus } from './eventBus'
 import { generateBiometricTemplate } from './biometricEngine'
 
 // Official Enrolled Students
-export const INITIAL_STUDENTS: StudentRecord[] = [
-  {
-    id: 'std-ei2026001',
-    admission_number: 'EI-2026-001',
-    full_name: 'Abdifatah',
-    gender: 'Male',
-    dob: '2004-01-01',
-    class_id: 'sub-graphics',
-    class_name: 'Graphics Design & Animation',
-    grade_level: '2 Months (Fast-Track Skills)',
-    stream: '100% Online Cohort',
-    enrollment_date: '2026-09-01',
-    admission_date: '2026-09-01',
-    status: 'Active',
-    guardian: {
-      name: 'Self-Sponsored Student',
-      relationship: 'Self',
-      phone: '',
-      email: '',
-    },
-    emergency_contact: '',
-    fee_balance: 0,
-    term_fee_total: 60,
-    fee_cleared: true,
-    attendance_rate: 100,
-    discipline_points: 100,
-    merits_count: 0,
-    demerits_count: 0,
-    biometric_enrolled: false,
-  },
-]
+export const INITIAL_STUDENTS: StudentRecord[] = []
 export const INITIAL_TIMETABLE: TimetablePeriod[] = []
 export const INITIAL_EXAMS: ExamSession[] = []
 export const INITIAL_REPORT_CARDS: ReportCard[] = []
 
-export const INITIAL_FACULTY_TEACHERS: FacultyTeacher[] = [
-  { id: 'tch-mwangi', name: 'Eng. David Mwangi', title: 'Lead Software Architect', email: 'd.mwangi@eclat.institute', department: 'School of Software Engineering & Web Development', specialty: 'Full-Stack Web Dev & Python AI', created_at: new Date().toISOString() },
-  { id: 'tch-chen', name: 'Dr. Sarah Chen, Ph.D.', title: 'Senior Cybersecurity Lecturer', email: 's.chen@eclat.institute', department: 'Department of Cybersecurity & Cloud Defense', specialty: 'Cybersecurity & Ethical Hacking', created_at: new Date().toISOString() },
-  { id: 'tch-dubois', name: 'Prof. Alexandre Dubois', title: 'Director of World Languages', email: 'a.dubois@eclat.institute', department: 'Department of English & Modern Languages', specialty: 'French, German & Foreign Languages', created_at: new Date().toISOString() },
-  { id: 'tch-amina', name: 'Dr. Amina Al-Hassan', title: 'IELTS Academic Master Coach', email: 'a.hassan@eclat.institute', department: 'Department of IELTS & International Test Prep', specialty: 'IELTS Band 9.0 & Spoken Arabic', created_at: new Date().toISOString() },
-  { id: 'tch-mercy', name: 'CPA Mercy Kiprono', title: 'Corporate Finance Lead', email: 'm.kiprono@eclat.institute', department: 'Department of Business Tech & Computerized Accounting', specialty: 'QuickBooks & Tax Management', created_at: new Date().toISOString() },
-  { id: 'tch-kimani', name: 'Alex Kimani', title: 'Lead Product Designer', email: 'a.kimani@eclat.institute', department: 'Department of Computer Applications & Digital Skills', specialty: 'UI/UX Design & Office Packages', created_at: new Date().toISOString() },
-]
+export const INITIAL_FACULTY_TEACHERS: FacultyTeacher[] = []
 export const INITIAL_DEPARTMENTS: CollegeDepartment[] = [
   {
     id: 'dept-swe',
@@ -660,6 +623,17 @@ class SchoolDataStore {
     schoolEventBus.publish('STUDENT_DELETED', id)
   }
 
+  async clearAllStudents(): Promise<void> {
+    await txEngine.executeAtomic(
+      'CLEAR_ALL_STUDENTS',
+      ['brent_school_students'],
+      () => {
+        this.set('students', [])
+      }
+    )
+    schoolEventBus.publish('STUDENT_UPDATED')
+  }
+
   async grantCertificate(id: string, granted: boolean = true, grade: string = 'Distinction (A)'): Promise<void> {
     await txEngine.executeAtomic(
       `GRANT_CERTIFICATE_${id}`,
@@ -1247,6 +1221,29 @@ class SchoolDataStore {
       }
     )
     schoolEventBus.publish('TEACHER_ADDED' as any, teacher)
+  }
+
+  async deleteTeacher(id: string): Promise<void> {
+    await txEngine.executeAtomic(
+      `DELETE_TEACHER_${id}`,
+      ['brent_school_faculty_teachers'],
+      () => {
+        const list = this.getTeachers().filter((t) => t.id !== id)
+        this.set('faculty_teachers', list)
+      }
+    )
+    schoolEventBus.publish('TEACHER_UPDATED' as any)
+  }
+
+  async clearAllTeachers(): Promise<void> {
+    await txEngine.executeAtomic(
+      'CLEAR_ALL_TEACHERS',
+      ['brent_school_faculty_teachers'],
+      () => {
+        this.set('faculty_teachers', [])
+      }
+    )
+    schoolEventBus.publish('TEACHER_UPDATED' as any)
   }
 
   // --- Admin Departments Management (ACID Protected) ---

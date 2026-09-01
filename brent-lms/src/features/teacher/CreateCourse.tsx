@@ -16,8 +16,8 @@ export function CreateCourse() {
   const [teachersList, setTeachersList] = useState<FacultyTeacher[]>(() => schoolStore.getTeachers())
 
   // Assigned Faculty Member / Instructor
-  const [selectedTeacherId, setSelectedTeacherId] = useState<string>(teachersList[0]?.id || 'tch-mwangi')
-  const [isCustomTeacher, setIsCustomTeacher] = useState(false)
+  const [selectedTeacherId, setSelectedTeacherId] = useState<string>(teachersList[0]?.id || '')
+  const [isCustomTeacher, setIsCustomTeacher] = useState(teachersList.length === 0)
   const [customTeacherName, setCustomTeacherName] = useState('')
   const [customTeacherTitle, setCustomTeacherTitle] = useState('Faculty Lecturer & Subject Lead')
 
