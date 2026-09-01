@@ -7,6 +7,23 @@ export function MobileAppBottomNav() {
 
   const currentPath = location.pathname
 
+  const getHomeLink = () => {
+    if (!profile) return '/'
+    if (profile.role === 'admin') return '/admin'
+    if (profile.role === 'teacher') return '/teacher'
+    if (profile.role === 'bursar') return '/bursar'
+    if (profile.role === 'parent') return '/parent'
+    return '/student'
+  }
+
+  const getCoursesLink = () => {
+    if (!profile) return '/courses'
+    if (profile.role === 'student') return '/student/courses'
+    if (profile.role === 'teacher') return '/teacher/courses'
+    if (profile.role === 'admin') return '/admin/classes'
+    return '/courses'
+  }
+
   const getPortalLink = () => {
     if (!profile) return '/login'
     if (profile.role === 'admin') return '/admin'
@@ -18,6 +35,8 @@ export function MobileAppBottomNav() {
 
   const portalLabel = profile ? 'My Portal' : 'Login'
   const isPortalActive = profile ? currentPath.startsWith('/' + profile.role) || currentPath.startsWith('/students') : currentPath === '/login'
+  const isCoursesActive = currentPath === '/courses' || currentPath === '/student/courses' || currentPath === '/teacher/courses' || currentPath === '/admin/classes'
+  const isHomeActive = currentPath === '/' || (profile && currentPath === getHomeLink())
 
   return (
     <nav
@@ -43,13 +62,13 @@ export function MobileAppBottomNav() {
     >
       {/* Home Tab */}
       <Link
-        to="/"
+        to={getHomeLink()}
         onClick={() => {
-          if (currentPath === '/') {
+          if (currentPath === '/' || (profile && currentPath === getHomeLink())) {
             window.scrollTo({ top: 0, behavior: 'smooth' })
           }
         }}
-        className={`mobile-nav-item ${currentPath === '/' ? 'active' : ''}`}
+        className={`mobile-nav-item ${isHomeActive ? 'active' : ''}`}
         style={{
           display: 'flex',
           flexDirection: 'column',
@@ -58,27 +77,27 @@ export function MobileAppBottomNav() {
           flex: 1,
           height: '100%',
           textDecoration: 'none',
-          color: currentPath === '/' ? '#60a5fa' : '#94a3b8',
+          color: isHomeActive ? '#60a5fa' : '#94a3b8',
           transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
           fontSize: '0.7rem',
-          fontWeight: currentPath === '/' ? 800 : 500,
+          fontWeight: isHomeActive ? 800 : 500,
           gap: '2px',
           userSelect: 'none',
-          transform: currentPath === '/' ? 'scale(1.05)' : 'scale(1)',
+          transform: isHomeActive ? 'scale(1.05)' : 'scale(1)',
         }}
       >
         <span style={{ fontSize: '1.25rem', lineHeight: 1 }}>🏠</span>
-        <span>Home</span>
-        {currentPath === '/' && (
+        <span>{profile ? 'Dashboard' : 'Home'}</span>
+        {isHomeActive && (
           <span style={{ width: '4px', height: '4px', borderRadius: '50%', background: '#60a5fa', boxShadow: '0 0 8px #60a5fa' }} />
         )}
       </Link>
 
       {/* Courses Tab */}
       <Link
-        to="/courses"
+        to={getCoursesLink()}
         onClick={(e) => {
-          if (currentPath === '/' || currentPath === '/courses') {
+          if (!profile && (currentPath === '/' || currentPath === '/courses')) {
             e.preventDefault()
             const el = document.getElementById('courses')
             if (el) {
@@ -86,7 +105,7 @@ export function MobileAppBottomNav() {
             }
           }
         }}
-        className={`mobile-nav-item ${currentPath === '/courses' ? 'active' : ''}`}
+        className={`mobile-nav-item ${isCoursesActive ? 'active' : ''}`}
         style={{
           display: 'flex',
           flexDirection: 'column',
@@ -95,18 +114,18 @@ export function MobileAppBottomNav() {
           flex: 1,
           height: '100%',
           textDecoration: 'none',
-          color: currentPath === '/courses' ? '#60a5fa' : '#94a3b8',
+          color: isCoursesActive ? '#60a5fa' : '#94a3b8',
           transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
           fontSize: '0.7rem',
-          fontWeight: currentPath === '/courses' ? 800 : 500,
+          fontWeight: isCoursesActive ? 800 : 500,
           gap: '2px',
           userSelect: 'none',
-          transform: currentPath === '/courses' ? 'scale(1.05)' : 'scale(1)',
+          transform: isCoursesActive ? 'scale(1.05)' : 'scale(1)',
         }}
       >
         <span style={{ fontSize: '1.25rem', lineHeight: 1 }}>📚</span>
-        <span>Courses</span>
-        {currentPath === '/courses' && (
+        <span>{profile?.role === 'student' ? 'My Units' : 'Courses'}</span>
+        {isCoursesActive && (
           <span style={{ width: '4px', height: '4px', borderRadius: '50%', background: '#60a5fa', boxShadow: '0 0 8px #60a5fa' }} />
         )}
       </Link>
