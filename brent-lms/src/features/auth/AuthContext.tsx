@@ -238,7 +238,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         role: 'student',
         first_login_at: new Date().toISOString(),
         access_expires_at: null,
-        is_active: true,
+        is_active: student.status === 'Active',
         created_at: student.admission_date || new Date().toISOString(),
       }
       localStorage.setItem('eclat_active_profile', JSON.stringify(studentProfile))
@@ -247,72 +247,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       return { error: null }
     }
 
-    // 5. Universal Student Admission Number Auto-Authentication (for new mobile/remote devices)
-    const isAdmissionFormat =
-      cleanAlpha.startsWith('ei') ||
-      cleanAlpha.startsWith('std') ||
-      cleanAlpha.startsWith('adm') ||
-      rawInput.toUpperCase().startsWith('EI-') ||
-      rawInput.toUpperCase().startsWith('STD-')
-
-    if (isAdmissionFormat && password.length >= 4) {
-      const formattedAdm = rawInput.includes('-')
-        ? rawInput.toUpperCase()
-        : cleanAlpha.startsWith('ei')
-        ? `EI-2026-${cleanAlpha.replace('ei', '').padStart(3, '0')}`
-        : rawInput.toUpperCase()
-
-      const newStudentProfile: Profile = {
-        id: `usr-${cleanAlpha}`,
-        full_name: 'Student ' + formattedAdm,
-        admission_number: formattedAdm,
-        role: 'student',
-        first_login_at: new Date().toISOString(),
-        access_expires_at: null,
-        is_active: true,
-        created_at: new Date().toISOString(),
-      }
-
-      // Auto-register in student store on this device
-      try {
-        await schoolStore.addStudent({
-          id: `std-${cleanAlpha}`,
-          admission_number: formattedAdm,
-          full_name: 'Student ' + formattedAdm,
-          gender: 'Male',
-          dob: '2004-01-01',
-          class_id: 'sub-graphics',
-          class_name: 'Graphics Design & Animation',
-          grade_level: '2 Months (Fast-Track Skills)',
-          stream: '100% Online Cohort',
-          enrollment_date: new Date().toISOString().split('T')[0],
-          admission_date: new Date().toISOString().split('T')[0],
-          status: 'Active',
-          guardian: {
-            name: 'Self-Sponsored Student',
-            relationship: 'Self',
-            phone: '',
-            email: '',
-          },
-          emergency_contact: '',
-          fee_balance: 0,
-          term_fee_total: 75,
-          fee_cleared: true,
-          attendance_rate: 100,
-          discipline_points: 100,
-          merits_count: 0,
-          demerits_count: 0,
-          biometric_enrolled: false,
-        })
-      } catch {}
-
-      localStorage.setItem('eclat_active_profile', JSON.stringify(newStudentProfile))
-      sessionStorage.setItem('eclat_active_profile', JSON.stringify(newStudentProfile))
-      setProfile(newStudentProfile)
-      return { error: null }
+    return {
+      error: lastError || 'Account not found or has been removed. Please contact the Admissions Office or Administrator to activate your account.',
     }
-
-    return { error: lastError || 'Account not found. Please contact the Admissions Office or Administrator to register your account.' }
   }
 
   async function signOut() {

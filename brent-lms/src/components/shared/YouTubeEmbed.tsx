@@ -228,91 +228,34 @@ export function YouTubeEmbed({
     setInitialStartTime(0)
   }
 
-  // --- YouTube IFrame API Integration for Auto-Resume & End Detection ---
-  const ytPlayerContainerRef = useRef<HTMLDivElement>(null)
-  const ytPlayerRef = useRef<any>(null)
-  const ytPollIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null)
-
+  // --- YouTube PostMessage Integration for Auto-Resume & End Detection ---
   useEffect(() => {
     if (!videoId || isDirect) return
 
-    // Ensure YT API script is loaded
-    if (!window.YT) {
-      const tag = document.createElement('script')
-      tag.src = 'https://www.youtube.com/iframe_api'
-      const firstScriptTag = document.getElementsByTagName('script')[0]
-      firstScriptTag?.parentNode?.insertBefore(tag, firstScriptTag)
-    }
-
-    const initYTPlayer = () => {
-      if (!ytPlayerContainerRef.current || !window.YT || !window.YT.Player) return
-
-      const startSeconds = Math.floor(initialStartTime)
-
+    const handleMessage = (event: MessageEvent) => {
       try {
-        ytPlayerRef.current = new window.YT.Player(ytPlayerContainerRef.current, {
-          videoId,
-          playerVars: {
-            rel: 0,
-            modestbranding: 1,
-            iv_load_policy: 3,
-            playsinline: 1,
-            controls: 1,
-            enablejsapi: 1,
-            fs: 1,
-            start: startSeconds > 0 ? startSeconds : 0,
-            origin: typeof window !== 'undefined' ? window.location.origin : '',
-          },
-          events: {
-            onStateChange: (event: any) => {
-              // 1 = PLAYING
-              if (event.data === 1) {
-                if (ytPollIntervalRef.current) clearInterval(ytPollIntervalRef.current)
-                ytPollIntervalRef.current = setInterval(() => {
-                  if (ytPlayerRef.current && ytPlayerRef.current.getCurrentTime) {
-                    const c = ytPlayerRef.current.getCurrentTime() || 0
-                    const d = ytPlayerRef.current.getDuration() || 0
-                    saveProgress(c, d)
-                  }
-                }, 2500)
-              } else {
-                if (ytPollIntervalRef.current) clearInterval(ytPollIntervalRef.current)
+        if (typeof event.data === 'string') {
+          const data = JSON.parse(event.data)
+          if (data.event === 'infoDelivery' && data.info) {
+            const c = data.info.currentTime || 0
+            const d = data.info.duration || 0
+            if (c > 0 && d > 0) saveProgress(c, d)
+            if (data.info.playerState === 0) {
+              if (!hasTriggeredCompleteRef.current) {
+                hasTriggeredCompleteRef.current = true
+                setCompletedNotice(true)
+                if (storageKey) localStorage.removeItem(storageKey)
+                if (onEnded) onEnded()
               }
-
-              // 0 = ENDED
-              if (event.data === 0) {
-                if (!hasTriggeredCompleteRef.current) {
-                  hasTriggeredCompleteRef.current = true
-                  setCompletedNotice(true)
-                  if (storageKey) localStorage.removeItem(storageKey)
-                  if (onEnded) onEnded()
-                }
-              }
-            },
-          },
-        })
-      } catch {
-        // Fallback to normal iframe if YT API fails
-      }
+            }
+          }
+        }
+      } catch {}
     }
 
-    if (window.YT && window.YT.Player) {
-      initYTPlayer()
-    } else {
-      window.onYouTubeIframeAPIReady = () => {
-        initYTPlayer()
-      }
-    }
-
-    return () => {
-      if (ytPollIntervalRef.current) clearInterval(ytPollIntervalRef.current)
-      if (ytPlayerRef.current && ytPlayerRef.current.destroy) {
-        try {
-          ytPlayerRef.current.destroy()
-        } catch {}
-      }
-    }
-  }, [videoId, isDirect, initialStartTime, saveProgress, storageKey, onEnded])
+    window.addEventListener('message', handleMessage)
+    return () => window.removeEventListener('message', handleMessage)
+  }, [videoId, isDirect, saveProgress, storageKey, onEnded])
 
   // 1. DIRECT MP4 / CLOUDFLARE R2 / CUSTOM WHITELABEL PLAYER
   if (isDirect) {
@@ -620,85 +563,100 @@ export function YouTubeEmbed({
 
   // 3. YOUTUBE ULTRA-CLEAN AD-FREE EMBED WITH SMART RESUME & END DETECTION
   if (videoId) {
-    const origin = typeof window !== 'undefined' ? window.location.origin : ''
     const startParam = initialStartTime > 0 ? `&start=${Math.floor(initialStartTime)}` : ''
 
     return (
-      <div
-        className="video-wrapper"
-        style={{
-          position: 'relative',
-          borderRadius: '12px',
-          overflow: 'hidden',
-          boxShadow: '0 8px 24px rgba(0, 0, 0, 0.25)',
-          background: '#090d16',
-        }}
-      >
-        {/* Custom Academy Watermark Overlay */}
+      <div>
         <div
+          className="video-wrapper"
           style={{
-            position: 'absolute',
-            top: '12px',
-            left: '14px',
-            right: '14px',
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            zIndex: 10,
-            pointerEvents: 'none',
+            position: 'relative',
+            borderRadius: '12px',
+            overflow: 'hidden',
+            boxShadow: '0 8px 24px rgba(0, 0, 0, 0.25)',
+            background: '#090d16',
           }}
         >
+          {/* Custom Academy Watermark Overlay */}
           <div
             style={{
-              background: 'rgba(15, 23, 42, 0.85)',
-              backdropFilter: 'blur(8px)',
-              color: '#f8fafc',
-              padding: '4px 10px',
-              borderRadius: '6px',
-              fontSize: '0.72rem',
-              fontWeight: 800,
+              position: 'absolute',
+              top: '12px',
+              left: '14px',
+              right: '14px',
               display: 'flex',
+              justifyContent: 'space-between',
               alignItems: 'center',
-              gap: '6px',
-              border: '1px solid rgba(255, 255, 255, 0.12)',
+              zIndex: 10,
+              pointerEvents: 'none',
             }}
           >
-            <span>🎓</span>
-            <span>ÉCLAT INSTITUTE • ONLINE CLASS</span>
-          </div>
-
-          {resumedNotice && (
             <div
               style={{
-                background: '#2563eb',
-                color: '#ffffff',
+                background: 'rgba(15, 23, 42, 0.85)',
+                backdropFilter: 'blur(8px)',
+                color: '#f8fafc',
                 padding: '4px 10px',
                 borderRadius: '6px',
                 fontSize: '0.72rem',
-                fontWeight: 700,
-                boxShadow: '0 4px 12px rgba(37, 99, 235, 0.4)',
+                fontWeight: 800,
+                display: 'flex',
+                alignItems: 'center',
+                gap: '6px',
+                border: '1px solid rgba(255, 255, 255, 0.12)',
               }}
             >
-              {resumedNotice}
+              <span>🎓</span>
+              <span>ÉCLAT INSTITUTE • ONLINE CLASS</span>
             </div>
-          )}
 
-          {completedNotice && (
-            <div style={{ background: '#16a34a', color: '#ffffff', padding: '4px 10px', borderRadius: '6px', fontSize: '0.72rem', fontWeight: 800 }}>
-              ✓ Video Module Completed
-            </div>
-          )}
-        </div>
+            {resumedNotice && (
+              <div
+                style={{
+                  background: '#2563eb',
+                  color: '#ffffff',
+                  padding: '4px 10px',
+                  borderRadius: '6px',
+                  fontSize: '0.72rem',
+                  fontWeight: 700,
+                  boxShadow: '0 4px 12px rgba(37, 99, 235, 0.4)',
+                }}
+              >
+                {resumedNotice}
+              </div>
+            )}
 
-        {/* Dynamic YouTube Iframe / Container */}
-        <div ref={ytPlayerContainerRef} style={{ width: '100%', height: '100%' }}>
+            {completedNotice && (
+              <div style={{ background: '#16a34a', color: '#ffffff', padding: '4px 10px', borderRadius: '6px', fontSize: '0.72rem', fontWeight: 800 }}>
+                ✓ Video Module Completed
+              </div>
+            )}
+          </div>
+
+          {/* Responsive Embedded YouTube Player */}
           <iframe
-            src={`https://www.youtube-nocookie.com/embed/${videoId}?rel=0&modestbranding=1&iv_load_policy=3&playsinline=1&controls=1&enablejsapi=1&fs=1&color=white${startParam}${origin ? `&origin=${encodeURIComponent(origin)}` : ''}`}
+            src={`https://www.youtube.com/embed/${videoId}?autoplay=${autoPlay ? 1 : 0}&playsinline=1&rel=0&modestbranding=1&enablejsapi=1&fs=1${startParam}`}
             title={title}
             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
             allowFullScreen
-            style={{ width: '100%', height: '100%', border: 0 }}
+            style={{ width: '100%', height: '100%', border: 0, position: 'absolute', top: 0, left: 0 }}
           />
+        </div>
+
+        {/* Video Direct Open Assistant Bar */}
+        <div style={{ marginTop: '0.6rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '0.5rem', padding: '0 0.25rem' }}>
+          <span style={{ fontSize: '0.78rem', color: 'var(--color-text-secondary)' }}>
+            💡 Video streaming directly via Éclat Institute 24/7 LMS.
+          </span>
+          <a
+            href={`https://www.youtube.com/watch?v=${videoId}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="btn btn-xs"
+            style={{ background: '#f8fafc', color: '#0f172a', border: '1px solid #cbd5e1', textDecoration: 'none', borderRadius: '6px', fontWeight: 600, padding: '4px 10px' }}
+          >
+            ▶ Open in YouTube App / Tab ↗
+          </a>
         </div>
       </div>
     )

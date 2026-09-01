@@ -4,15 +4,34 @@
 
 /** Extract YouTube video ID from any YouTube URL format */
 export function extractYouTubeId(url: string): string | null {
-  if (!url) return null
+  if (!url || typeof url !== 'string') return null
+  const trimmed = url.trim()
+
+  // 1. Direct 11-character video ID
+  if (/^[A-Za-z0-9_-]{11}$/.test(trimmed)) return trimmed
+
+  // 2. Query search parameter (handles ?v=, &v= anywhere in URL)
+  try {
+    const urlObj = new URL(trimmed.startsWith('http') ? trimmed : `https://${trimmed}`)
+    const vParam = urlObj.searchParams.get('v')
+    if (vParam && /^[A-Za-z0-9_-]{11}$/.test(vParam)) {
+      return vParam
+    }
+  } catch {}
+
+  // 3. Robust Regex Patterns (shorts, embed, youtu.be, live, desktop/mobile)
   const patterns = [
-    /(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/|youtube\.com\/v\/)([^&?/\s]{11})/,
-    /^([A-Za-z0-9_-]{11})$/,
+    /(?:v=|youtu\.be\/|youtube\.com\/(?:embed|shorts|live|v)\/)([^&?/\s]{11})/,
+    /(?:youtube-nocookie\.com\/embed\/)([^&?/\s]{11})/,
+    /[?&]v=([^&?/\s]{11})/,
+    /([A-Za-z0-9_-]{11})/,
   ]
+
   for (const pattern of patterns) {
-    const match = url.match(pattern)
-    if (match) return match[1]
+    const match = trimmed.match(pattern)
+    if (match && match[1] && match[1].length === 11) return match[1]
   }
+
   return null
 }
 
