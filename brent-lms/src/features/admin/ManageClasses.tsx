@@ -28,7 +28,7 @@ const DEFAULT_DEPARTMENTS: DepartmentProgram[] = [
     hod_name: 'Eng. Alex Mwangi',
     grade_level: 'Full-Stack Engineering Certificate',
     academic_year: `${CURRENT_YEAR} Virtual Cohort`,
-    fee_amount: 12500,
+    fee_amount: 120,
     duration: '12 Weeks (3 Months)',
     shifts: 'Live Online Evening (7:30PM) / Self-Paced',
     icon: '💻',
@@ -39,7 +39,7 @@ const DEFAULT_DEPARTMENTS: DepartmentProgram[] = [
     hod_name: 'Dr. Brian Ochieng',
     grade_level: 'Data Science & Analytics Certificate',
     academic_year: `${CURRENT_YEAR} Virtual Cohort`,
-    fee_amount: 9500,
+    fee_amount: 95,
     duration: '8 Weeks (2 Months)',
     shifts: 'Live Virtual Weekend / Evening Batches',
     icon: '📊',
@@ -50,7 +50,7 @@ const DEFAULT_DEPARTMENTS: DepartmentProgram[] = [
     hod_name: 'Mr. James Mutua',
     grade_level: 'Digital Literacy Certificate',
     academic_year: `${CURRENT_YEAR} Virtual Cohort`,
-    fee_amount: 4500,
+    fee_amount: 45,
     duration: '4-6 Weeks',
     shifts: 'Morning (9:00AM) / Evening (6:00PM)',
     icon: '⚡',
@@ -61,7 +61,7 @@ const DEFAULT_DEPARTMENTS: DepartmentProgram[] = [
     hod_name: 'Mr. David Kiprono',
     grade_level: 'IT Security Certificate',
     academic_year: `${CURRENT_YEAR} Virtual Cohort`,
-    fee_amount: 9000,
+    fee_amount: 90,
     duration: '6 Weeks',
     shifts: 'Weekend Intensive Live Virtual',
     icon: '🛡️',
@@ -72,7 +72,7 @@ const DEFAULT_DEPARTMENTS: DepartmentProgram[] = [
     hod_name: 'Mrs. Grace Wanjiku',
     grade_level: 'Corporate Accounting Certificate',
     academic_year: `${CURRENT_YEAR} Virtual Cohort`,
-    fee_amount: 6500,
+    fee_amount: 65,
     duration: '4-6 Weeks',
     shifts: 'Evening (6:00PM) / Saturday Masterclass',
     icon: '📈',
@@ -83,7 +83,7 @@ const DEFAULT_DEPARTMENTS: DepartmentProgram[] = [
     hod_name: 'Prof. Eric Thorne',
     grade_level: 'International English Certificate',
     academic_year: `${CURRENT_YEAR} Virtual Cohort`,
-    fee_amount: 8500,
+    fee_amount: 85,
     duration: '4-6 Weeks',
     shifts: 'Live Evening (5:30PM) / Weekend Intensive',
     icon: '🌍',
@@ -94,7 +94,7 @@ const DEFAULT_DEPARTMENTS: DepartmentProgram[] = [
     hod_name: 'Mme. Claire Dubois',
     grade_level: 'Corporate Fluency Certificate',
     academic_year: `${CURRENT_YEAR} Virtual Cohort`,
-    fee_amount: 5500,
+    fee_amount: 55,
     duration: '6-8 Weeks',
     shifts: 'Morning (7:30AM) / Evening (6:30PM)',
     icon: '🗣️',
@@ -105,7 +105,7 @@ const DEFAULT_DEPARTMENTS: DepartmentProgram[] = [
     hod_name: 'Mwalimu Amina Yusuf',
     grade_level: 'International Diploma A1-B2',
     academic_year: `${CURRENT_YEAR} Virtual Cohort`,
-    fee_amount: 7500,
+    fee_amount: 75,
     duration: '8 Weeks',
     shifts: 'Live Online Video Masterclass',
     icon: '🌐',
@@ -119,53 +119,32 @@ export function ManageClasses() {
 
   // Load initial departments from schoolStore and local storage
   const loadPrograms = (): DepartmentProgram[] => {
-    let savedList: DepartmentProgram[] = []
     try {
-      const saved = localStorage.getItem('eclat_admin_departments')
-      if (saved) savedList = JSON.parse(saved)
+      const saved = localStorage.getItem('brent_admin_departments') || localStorage.getItem('eclat_admin_departments')
+      if (saved) {
+        const parsed = JSON.parse(saved)
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          return parsed
+        }
+      }
     } catch {}
 
     const units = schoolStore.getCourseUnits().map((u) => {
-      const savedMatch = savedList.find((s) => s.id === u.id)
       return {
         id: u.id,
-        name: savedMatch?.name || u.title,
-        hod_name: savedMatch?.hod_name || u.teacher_name || 'Faculty Lecturer',
-        grade_level: savedMatch?.grade_level || `${u.credit_hours || 45} Credits (${u.course_duration || '3 Months'})`,
-        academic_year: savedMatch?.academic_year || `${CURRENT_YEAR} Virtual Cohort`,
-        fee_amount: savedMatch?.fee_amount || u.fee || 75,
-        duration: savedMatch?.duration || u.course_duration || '3 Months (Certificate Course)',
-        shifts: savedMatch?.shifts || u.live_schedule_text || 'Mon, Wed & Fri: 7:30 PM - 9:30 PM EAT',
-        icon: savedMatch?.icon || '💻',
+        name: u.title,
+        hod_name: u.teacher_name || 'Faculty Lecturer',
+        grade_level: `${u.credit_hours || 45} Credits (${u.course_duration || '3 Months'})`,
+        academic_year: `${CURRENT_YEAR} Virtual Cohort`,
+        fee_amount: u.fee || 75,
+        duration: u.course_duration || '3 Months (Certificate Course)',
+        shifts: u.live_schedule_text || 'Mon, Wed & Fri: 7:30 PM - 9:30 PM EAT',
+        icon: '💻',
       }
     })
 
-    const depts = schoolStore.getDepartments().flatMap((d) =>
-      (d.programs || []).map((prog) => {
-        const progId = `prog-${prog.toLowerCase().replace(/[^a-z0-9]/g, '-')}`
-        const savedMatch = savedList.find((s) => s.id === progId || s.id === d.id)
-        return {
-          id: progId,
-          name: savedMatch?.name || prog,
-          hod_name: savedMatch?.hod_name || d.hod_name || 'Department Faculty Lead',
-          grade_level: savedMatch?.grade_level || 'Vocational Short Course Certificate',
-          academic_year: savedMatch?.academic_year || `${CURRENT_YEAR} Virtual Cohort`,
-          fee_amount: savedMatch?.fee_amount || 75,
-          duration: savedMatch?.duration || '4-8 Weeks',
-          shifts: savedMatch?.shifts || 'Live Virtual Batches',
-          icon: savedMatch?.icon || '🏛️',
-        }
-      })
-    )
-
-    const combined: DepartmentProgram[] = [...units, ...depts]
-    for (const def of DEFAULT_DEPARTMENTS) {
-      if (!combined.some((c) => c.id === def.id || c.name.toLowerCase().trim() === def.name.toLowerCase().trim())) {
-        const savedMatch = savedList.find((s) => s.id === def.id)
-        combined.push(savedMatch ? { ...def, ...savedMatch } : def)
-      }
-    }
-    return combined
+    if (units.length > 0) return units
+    return DEFAULT_DEPARTMENTS
   }
 
   const [localDepts, setLocalDepts] = useState<DepartmentProgram[]>(loadPrograms)
@@ -173,6 +152,7 @@ export function ManageClasses() {
   const saveLocalDepts = (items: DepartmentProgram[]) => {
     setLocalDepts(items)
     try {
+      localStorage.setItem('brent_admin_departments', JSON.stringify(items))
       localStorage.setItem('eclat_admin_departments', JSON.stringify(items))
     } catch {
       // ignore
