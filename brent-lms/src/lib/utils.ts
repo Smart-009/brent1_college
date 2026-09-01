@@ -161,7 +161,7 @@ export function sanitizeInput(str: string): string {
 export function isSafeUrl(url: string): boolean {
   if (!url) return false
   const trimmed = url.trim()
-  if (trimmed.startsWith('/') || trimmed.startsWith('blob:') || trimmed.startsWith('data:image/')) return true
+  if (trimmed.startsWith('/') || trimmed.startsWith('blob:') || trimmed.startsWith('data:')) return true
   try {
     const parsed = new URL(trimmed)
     return parsed.protocol === 'http:' || parsed.protocol === 'https:'
@@ -169,3 +169,71 @@ export function isSafeUrl(url: string): boolean {
     return false
   }
 }
+
+/**
+ * Detects if a URL is a Google Drive / Google Docs / Slides / Sheets URL
+ * and returns the interactive preview embed URL.
+ */
+export function getGoogleDrivePreviewUrl(url: string): string | null {
+  if (!url || typeof url !== 'string') return null
+  const trimmed = url.trim()
+
+  // 1. Google Drive file URL: /file/d/{id}/...
+  const driveFileMatch = trimmed.match(/drive\.google\.com\/file\/d\/([a-zA-Z0-9_-]+)/)
+  if (driveFileMatch && driveFileMatch[1]) {
+    return `https://drive.google.com/file/d/${driveFileMatch[1]}/preview`
+  }
+
+  // 2. Google Drive open?id={id} or uc?id={id}
+  const driveIdMatch = trimmed.match(/drive\.google\.com\/(?:open|uc)\?(?:.*&)?id=([a-zA-Z0-9_-]+)/)
+  if (driveIdMatch && driveIdMatch[1]) {
+    return `https://drive.google.com/file/d/${driveIdMatch[1]}/preview`
+  }
+
+  // 3. Google Docs Document
+  const docsMatch = trimmed.match(/docs\.google\.com\/document\/d\/([a-zA-Z0-9_-]+)/)
+  if (docsMatch && docsMatch[1]) {
+    return `https://docs.google.com/document/d/${docsMatch[1]}/preview`
+  }
+
+  // 4. Google Slides Presentation
+  const slidesMatch = trimmed.match(/docs\.google\.com\/presentation\/d\/([a-zA-Z0-9_-]+)/)
+  if (slidesMatch && slidesMatch[1]) {
+    return `https://docs.google.com/presentation/d/${slidesMatch[1]}/preview`
+  }
+
+  // 5. Google Sheets Spreadsheet
+  const sheetsMatch = trimmed.match(/docs\.google\.com\/spreadsheets\/d\/([a-zA-Z0-9_-]+)/)
+  if (sheetsMatch && sheetsMatch[1]) {
+    return `https://docs.google.com/spreadsheets/d/${sheetsMatch[1]}/preview`
+  }
+
+  return null
+}
+
+/**
+ * Transforms any document/file URL (Google Drive, cloud PDF/DOCX, direct data URL)
+ * into a suitable in-app embed preview URL.
+ */
+export function getEmbeddableDocumentUrl(url: string, engine: 'cloud' | 'direct' = 'cloud'): string {
+  if (!url) return ''
+
+  // If it's a Google Drive / Docs link, always use the Google Drive preview embed
+  const gDrivePreview = getGoogleDrivePreviewUrl(url)
+  if (gDrivePreview) {
+    return gDrivePreview
+  }
+
+  // If it's a base64 Data URL or blob URL, return as-is
+  if (url.startsWith('data:') || url.startsWith('blob:')) {
+    return url
+  }
+
+  // If cloud engine is selected for standard http/https files (like Supabase, AWS, external PDFs)
+  if (engine === 'cloud' && url.startsWith('http')) {
+    return `https://docs.google.com/viewer?url=${encodeURIComponent(url)}&embedded=true`
+  }
+
+  return url
+}
+

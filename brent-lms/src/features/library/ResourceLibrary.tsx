@@ -2,6 +2,7 @@ import { useState, useMemo, useEffect } from 'react'
 import { useAuth } from '@/hooks/useAuth'
 import { schoolStore } from '@/lib/schoolData'
 import { supabase } from '@/lib/supabase'
+import { getEmbeddableDocumentUrl } from '@/lib/utils'
 import type { AcademicResource } from '@/types/school'
 
 const CATEGORIES = ['All', 'Past Papers', 'Revision Notes', 'Textbooks', 'Syllabus', 'Lab Manuals']
@@ -127,12 +128,14 @@ export function ResourceLibrary() {
 
   // Upload Modal State (for admin only)
   const [showUploadModal, setShowUploadModal] = useState(false)
+  const [uploadSource, setUploadSource] = useState<'file' | 'gdrive'>('file')
   const [selectedFile, setSelectedFile] = useState<File | null>(null)
+  const [googleDriveUrl, setGoogleDriveUrl] = useState('')
   const [newTitle, setNewTitle] = useState('')
   const [newCategory, setNewCategory] = useState<AcademicResource['category']>('Past Papers')
   const [newSubject, setNewSubject] = useState(storeSubjects[0] || 'General Studies')
   const [newClassLevel, setNewClassLevel] = useState('Short Course / Certificate')
-  const [newYear, setNewYear] = useState(() => new Date().getFullYear())
+  const [newYear, setNewYear] = useState<number | string>('')
 
   const filteredResources = useMemo(() => {
     return resources.filter((res) => {
@@ -195,22 +198,31 @@ export function ResourceLibrary() {
 
     setIsUploading(true)
     try {
-      const fileSizeFormatted = selectedFile
+      const isGDrive = uploadSource === 'gdrive' && googleDriveUrl.trim().length > 0
+      let fileSizeFormatted = selectedFile
         ? `${(selectedFile.size / (1024 * 1024)).toFixed(1)} MB`
+        : isGDrive
+        ? 'Google Drive Cloud'
         : '1.8 MB'
 
-      const rawExt = selectedFile ? selectedFile.name.split('.').pop()?.toUpperCase() : 'PDF'
-      const fileExt: AcademicResource['file_type'] =
-        rawExt === 'DOCX' || rawExt === 'DOC'
-          ? 'DOCX'
-          : rawExt === 'PPTX' || rawExt === 'PPT'
-          ? 'PPTX'
-          : rawExt === 'EPUB'
-          ? 'EPUB'
-          : 'PDF'
-
+      let fileExt: AcademicResource['file_type'] = 'PDF'
       let fileBlobUrl = ''
-      if (selectedFile) {
+
+      if (isGDrive) {
+        fileBlobUrl = googleDriveUrl.trim()
+        fileSizeFormatted = 'Google Drive Cloud'
+        fileExt = 'PDF'
+      } else if (selectedFile) {
+        const rawExt = selectedFile.name.split('.').pop()?.toUpperCase()
+        fileExt =
+          rawExt === 'DOCX' || rawExt === 'DOC'
+            ? 'DOCX'
+            : rawExt === 'PPTX' || rawExt === 'PPT'
+            ? 'PPTX'
+            : rawExt === 'EPUB'
+            ? 'EPUB'
+            : 'PDF'
+
         // Read file as Base64 Data URL so it is self-contained and immediately viewable everywhere
         const base64DataUrl = await new Promise<string>((resolve) => {
           const reader = new FileReader()
@@ -255,7 +267,7 @@ export function ResourceLibrary() {
         file_size: fileSizeFormatted,
         file_type: fileExt,
         downloads_count: 0,
-        year: Number(newYear) || new Date().getFullYear(),
+        year: newYear ? Number(newYear) : undefined,
         uploaded_by: profile?.full_name || 'Academic Administrator',
         created_at: new Date().toISOString(),
       }
@@ -720,13 +732,10 @@ export function ResourceLibrary() {
                     </div>
                   ) : (
                     <iframe
-                      src={
-                        docEngine === 'cloud' && readingResource.file_url?.startsWith('http')
-                          ? `https://docs.google.com/viewer?url=${encodeURIComponent(readingResource.file_url)}&embedded=true`
-                          : readingResource.file_url
-                      }
+                      src={getEmbeddableDocumentUrl(readingResource.file_url, docEngine)}
                       title={readingResource.title}
                       style={{ width: '100%', height: '100%', minHeight: '75vh', border: 'none', background: '#ffffff' }}
+                      allow="autoplay"
                     />
                   )}
                 </div>
@@ -855,73 +864,146 @@ export function ResourceLibrary() {
             </div>
             <form onSubmit={handleUploadResource}>
               <div className="modal-body" style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-                {/* Local Storage File Picker */}
+                {/* Source Selection Tabs */}
                 <div>
-                  <label className="label">Upload Document / File from Device *</label>
-                  <div
-                    style={{
-                      border: '2px dashed #3b82f6',
-                      borderRadius: '12px',
-                      padding: '1.25rem',
-                      textAlign: 'center',
-                      background: selectedFile ? '#eff6ff' : '#f8fafc',
-                      cursor: 'pointer',
-                      transition: 'all 0.2s',
-                    }}
-                    onClick={() => document.getElementById('libFilePicker')?.click()}
-                  >
-                    <input
-                      id="libFilePicker"
-                      type="file"
-                      style={{ display: 'none' }}
-                      accept=".pdf, .docx, .doc, .ppt, .pptx, .xlsx, .xls, .zip, .html, .txt, image/*"
-                      onChange={handleFileChange}
-                    />
-                    <div style={{ fontSize: '2rem', marginBottom: '0.35rem' }}>
-                      {selectedFile ? '📄' : '📁'}
-                    </div>
-                    {selectedFile ? (
-                      <div>
-                        <div style={{ fontWeight: 800, color: '#1e3a8a', fontSize: '0.92rem' }}>
-                          {selectedFile.name}
-                        </div>
-                        <div style={{ fontSize: '0.75rem', color: '#16a34a', fontWeight: 600, marginTop: '2px' }}>
-                          ✓ Ready to upload • {(selectedFile.size / (1024 * 1024)).toFixed(2)} MB
-                        </div>
-                        <button
-                          type="button"
-                          onClick={(e) => {
-                            e.stopPropagation()
-                            setSelectedFile(null)
-                          }}
-                          style={{
-                            background: 'none',
-                            border: 'none',
-                            color: '#dc2626',
-                            fontSize: '0.75rem',
-                            fontWeight: 700,
-                            cursor: 'pointer',
-                            marginTop: '0.4rem',
-                          }}
-                        >
-                          ✕ Choose different file
-                        </button>
-                      </div>
-                    ) : (
-                      <div>
-                        <div style={{ fontWeight: 700, color: '#1e293b', fontSize: '0.9rem' }}>
-                          Click or Drag to Upload from Local Storage
-                        </div>
-                        <div style={{ fontSize: '0.75rem', color: '#64748b', marginTop: '2px' }}>
-                          Accepts PDF, Word (DOCX), PowerPoint, Excel, ZIP or HTML files
-                        </div>
-                        <div style={{ display: 'inline-block', background: '#2563eb', color: '#ffffff', padding: '4px 12px', borderRadius: '6px', fontSize: '0.75rem', fontWeight: 700, marginTop: '0.6rem' }}>
-                          Browse Files
-                        </div>
-                      </div>
-                    )}
+                  <label className="label">Resource Source</label>
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.5rem', marginBottom: '0.5rem' }}>
+                    <button
+                      type="button"
+                      onClick={() => setUploadSource('file')}
+                      style={{
+                        padding: '0.6rem 0.85rem',
+                        borderRadius: '8px',
+                        border: uploadSource === 'file' ? '2px solid #2563eb' : '1px solid #cbd5e1',
+                        background: uploadSource === 'file' ? '#eff6ff' : '#f8fafc',
+                        color: uploadSource === 'file' ? '#1e3a8a' : '#475569',
+                        fontWeight: 700,
+                        fontSize: '0.82rem',
+                        cursor: 'pointer',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        gap: '0.4rem',
+                      }}
+                    >
+                      <span>📁</span> Device Upload
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setUploadSource('gdrive')}
+                      style={{
+                        padding: '0.6rem 0.85rem',
+                        borderRadius: '8px',
+                        border: uploadSource === 'gdrive' ? '2px solid #2563eb' : '1px solid #cbd5e1',
+                        background: uploadSource === 'gdrive' ? '#eff6ff' : '#f8fafc',
+                        color: uploadSource === 'gdrive' ? '#1e3a8a' : '#475569',
+                        fontWeight: 700,
+                        fontSize: '0.82rem',
+                        cursor: 'pointer',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        gap: '0.4rem',
+                      }}
+                    >
+                      <span>☁️</span> Google Drive Link
+                    </button>
                   </div>
                 </div>
+
+                {uploadSource === 'file' ? (
+                  /* Local Storage File Picker */
+                  <div>
+                    <label className="label">Select File from Device *</label>
+                    <div
+                      style={{
+                        border: '2px dashed #3b82f6',
+                        borderRadius: '12px',
+                        padding: '1.25rem',
+                        textAlign: 'center',
+                        background: selectedFile ? '#eff6ff' : '#f8fafc',
+                        cursor: 'pointer',
+                        transition: 'all 0.2s',
+                      }}
+                      onClick={() => document.getElementById('libFilePicker')?.click()}
+                    >
+                      <input
+                        id="libFilePicker"
+                        type="file"
+                        style={{ display: 'none' }}
+                        accept=".pdf, .docx, .doc, .ppt, .pptx, .xlsx, .xls, .zip, .html, .txt, image/*"
+                        onChange={handleFileChange}
+                      />
+                      <div style={{ fontSize: '2rem', marginBottom: '0.35rem' }}>
+                        {selectedFile ? '📄' : '📁'}
+                      </div>
+                      {selectedFile ? (
+                        <div>
+                          <div style={{ fontWeight: 800, color: '#1e3a8a', fontSize: '0.92rem' }}>
+                            {selectedFile.name}
+                          </div>
+                          <div style={{ fontSize: '0.75rem', color: '#16a34a', fontWeight: 600, marginTop: '2px' }}>
+                            ✓ Ready to upload • {(selectedFile.size / (1024 * 1024)).toFixed(2)} MB
+                          </div>
+                          <button
+                            type="button"
+                            onClick={(e) => {
+                              e.stopPropagation()
+                              setSelectedFile(null)
+                            }}
+                            style={{
+                              background: 'none',
+                              border: 'none',
+                              color: '#dc2626',
+                              fontSize: '0.75rem',
+                              fontWeight: 700,
+                              cursor: 'pointer',
+                              marginTop: '0.4rem',
+                            }}
+                          >
+                            ✕ Choose different file
+                          </button>
+                        </div>
+                      ) : (
+                        <div>
+                          <div style={{ fontWeight: 700, color: '#1e293b', fontSize: '0.9rem' }}>
+                            Click or Drag to Upload from Local Storage
+                          </div>
+                          <div style={{ fontSize: '0.75rem', color: '#64748b', marginTop: '2px' }}>
+                            Accepts PDF, Word (DOCX), PowerPoint, Excel, ZIP or HTML files
+                          </div>
+                          <div style={{ display: 'inline-block', background: '#2563eb', color: '#ffffff', padding: '4px 12px', borderRadius: '6px', fontSize: '0.75rem', fontWeight: 700, marginTop: '0.6rem' }}>
+                            Browse Files
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                ) : (
+                  /* Google Drive Link Input */
+                  <div>
+                    <label className="label">Google Drive or Cloud Document Share Link *</label>
+                    <div style={{ background: '#eff6ff', border: '1.5px dashed #3b82f6', borderRadius: '10px', padding: '1rem', display: 'flex', flexDirection: 'column', gap: '0.6rem' }}>
+                      <div style={{ fontSize: '0.78rem', color: '#1e3a8a', lineHeight: 1.4 }}>
+                        💡 <strong>In-App Viewer:</strong> Paste any public or shared link from Google Drive, Google Docs, Slides, or Sheets. Students will be able to read and interact with the document seamlessly inside the LMS!
+                      </div>
+                      <input
+                        type="url"
+                        required={uploadSource === 'gdrive'}
+                        className="input"
+                        style={{ background: '#ffffff' }}
+                        placeholder="https://drive.google.com/file/d/.../view?usp=sharing"
+                        value={googleDriveUrl}
+                        onChange={(e) => {
+                          setGoogleDriveUrl(e.target.value)
+                          if (!newTitle.trim() && e.target.value.includes('drive.google.com')) {
+                            setNewTitle('Google Drive Document')
+                          }
+                        }}
+                      />
+                    </div>
+                  </div>
+                )}
 
                 <div>
                   <label className="label">Resource Title *</label>
@@ -951,12 +1033,13 @@ export function ResourceLibrary() {
                     </select>
                   </div>
                   <div>
-                    <label className="label">Examination Year</label>
+                    <label className="label">Examination Year (Optional)</label>
                     <input
                       type="number"
                       className="input"
+                      placeholder="e.g. 2026 (Optional)"
                       value={newYear}
-                      onChange={(e) => setNewYear(Number(e.target.value))}
+                      onChange={(e) => setNewYear(e.target.value ? Number(e.target.value) : '')}
                     />
                   </div>
                 </div>

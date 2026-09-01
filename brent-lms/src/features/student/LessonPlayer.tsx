@@ -10,6 +10,7 @@ import { QuizWidget } from '@/components/shared/QuizWidget'
 import { Button } from '@/components/ui/Button'
 import { Spinner } from '@/components/ui/Spinner'
 import { schoolStore } from '@/lib/schoolData'
+import { getEmbeddableDocumentUrl } from '@/lib/utils'
 import type { Lesson, Course, Quiz, LessonResource, Enrollment, QuizAttempt } from '@/lib/database.types'
 
 function HtmlViewer({ fileUrl, title }: { fileUrl: string; title: string }) {
@@ -679,11 +680,7 @@ export function LessonPlayer() {
                         </div>
                       </div>
                       <iframe
-                        src={
-                          docEngine === 'cloud' && res.file_url?.startsWith('http')
-                            ? `https://docs.google.com/viewer?url=${encodeURIComponent(res.file_url)}&embedded=true`
-                            : res.file_url
-                        }
+                        src={getEmbeddableDocumentUrl(res.file_url, docEngine)}
                         title={res.file_name}
                         style={{
                           width: '100%',
@@ -692,6 +689,7 @@ export function LessonPlayer() {
                           borderRadius: 8,
                           background: '#ffffff',
                         }}
+                        allow="autoplay"
                       />
                     </div>
                   )}
