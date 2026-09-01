@@ -1810,6 +1810,34 @@ class SchoolDataStore {
     this.broadcastChange('COURSE_UNIT_UPDATED', updated)
   }
 
+  async updateLesson(courseId: string, lessonId: string, updatedLesson: { title?: string; video_url?: string; content?: string; duration_minutes?: number; meeting_url?: string }): Promise<void> {
+    await txEngine.executeAtomic(
+      `UPDATE_LESSON_${lessonId}`,
+      ['brent_school_course_units'],
+      () => {
+        const list = this.getCourseUnits()
+        let found = false
+        for (const unit of list) {
+          if (unit.id === courseId || !courseId || unit.lessons?.some((l) => l.id === lessonId)) {
+            if (unit.lessons) {
+              const lesIdx = unit.lessons.findIndex((l) => l.id === lessonId)
+              if (lesIdx !== -1) {
+                unit.lessons[lesIdx] = { ...unit.lessons[lesIdx], ...updatedLesson }
+                found = true
+                break
+              }
+            }
+          }
+        }
+        if (found) {
+          this.set('course_units', list)
+        }
+      }
+    )
+    schoolEventBus.publish('COURSE_UNIT_UPDATED' as any, { courseId, lessonId })
+    this.broadcastChange('COURSE_UNIT_UPDATED', { courseId, lessonId })
+  }
+
   async deleteCourseUnit(id: string): Promise<void> {
     await txEngine.executeAtomic(
       `DELETE_COURSE_UNIT_${id}`,

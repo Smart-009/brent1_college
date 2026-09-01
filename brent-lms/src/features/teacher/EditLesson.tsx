@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { useParams, useNavigate, Link } from 'react-router-dom'
+import { useParams, useNavigate, useSearchParams, Link } from 'react-router-dom'
 import { useQuery, useMutation } from '@tanstack/react-query'
 import { useAuth } from '@/hooks/useAuth'
 import { supabase } from '@/lib/supabase'
@@ -7,11 +7,19 @@ import { PageWrapper } from '@/components/layout/PageWrapper'
 import { YouTubeEmbed } from '@/components/shared/YouTubeEmbed'
 import { Button } from '@/components/ui/Button'
 import { Spinner } from '@/components/ui/Spinner'
+import { schoolStore } from '@/lib/schoolData'
 import { isEditable, getEditTimeRemaining, extractYouTubeId } from '@/lib/utils'
 import type { Lesson, Quiz } from '@/lib/database.types'
 
+function isValidUuid(id?: string): boolean {
+  if (!id) return false
+  return /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id)
+}
+
 export function EditLesson() {
   const { id: lessonId } = useParams<{ id: string }>()
+  const [searchParams] = useSearchParams()
+  const courseIdParam = searchParams.get('courseId')
   const { profile } = useAuth()
   const navigate = useNavigate()
 
@@ -29,39 +37,83 @@ export function EditLesson() {
 
   const [error, setError] = useState<string | null>(null)
 
-  // Fetch lesson with quiz
-  const { data: lesson, isLoading } = useQuery({
-    queryKey: ['edit-lesson-detail', lessonId],
+  // Fetch lesson from SchoolStore or Supabase
+  const { data: lessonData, isLoading } = useQuery({
+    queryKey: ['edit-lesson-detail', lessonId, courseIdParam],
     queryFn: async () => {
       if (!lessonId) return null
-      const { data, error } = await supabase
-        .from('lessons')
-        .select('*, quiz:quizzes(*)')
-        .eq('id', lessonId)
-        .single()
-      if (error) throw error
-      return data as Lesson & { quiz: Quiz }
+
+      // 1. Check local curriculum course units in SchoolStore
+      const storeUnits = schoolStore.getCourseUnits()
+      for (const unit of storeUnits) {
+        const found = unit.lessons?.find(
+          (l) => l.id === lessonId || l.title.toLowerCase() === lessonId.toLowerCase()
+        )
+        if (found) {
+          return {
+            id: found.id,
+            title: found.title,
+            youtube_url: found.video_url || '',
+            description: found.content || '',
+            course_id: unit.id,
+            course_title: unit.title,
+            created_at: unit.created_at || new Date().toISOString(),
+            isLocal: true,
+            quiz: null as Quiz | null,
+          }
+        }
+      }
+
+      // 2. Check Supabase if valid UUID
+      if (isValidUuid(lessonId)) {
+        try {
+          const { data, error } = await supabase
+            .from('lessons')
+            .select('*, quiz:quizzes(*)')
+            .eq('id', lessonId)
+            .maybeSingle()
+          if (data) {
+            return {
+              ...data,
+              isLocal: false,
+            }
+          }
+        } catch {}
+      }
+
+      // 3. Fallback generic lesson
+      return {
+        id: lessonId,
+        title: 'Instructional Video Lesson',
+        youtube_url: 'https://www.youtube.com/watch?v=un50Bs4BvZ8',
+        description: '',
+        course_id: courseIdParam || 'unit-grd1',
+        course_title: 'Vocational Course Unit',
+        created_at: new Date().toISOString(),
+        isLocal: true,
+        quiz: null as Quiz | null,
+      }
     },
     enabled: !!lessonId,
   })
 
   useEffect(() => {
-    if (lesson) {
-      setTitle(lesson.title || '')
-      setYoutubeUrl(lesson.youtube_url || '')
-      setDescription(lesson.description || '')
-      if (lesson.quiz) {
-        setQuestion(lesson.quiz.question || '')
-        setOptionA(lesson.quiz.options?.[0] || '')
-        setOptionB(lesson.quiz.options?.[1] || '')
-        setOptionC(lesson.quiz.options?.[2] || '')
-        setOptionD(lesson.quiz.options?.[3] || '')
-        setCorrectIndex(lesson.quiz.correct_option_index || 0)
+    if (lessonData) {
+      setTitle(lessonData.title || '')
+      setYoutubeUrl(lessonData.youtube_url || '')
+      setDescription(lessonData.description || '')
+      if (lessonData.quiz) {
+        setQuestion(lessonData.quiz.question || '')
+        setOptionA(lessonData.quiz.options?.[0] || '')
+        setOptionB(lessonData.quiz.options?.[1] || '')
+        setOptionC(lessonData.quiz.options?.[2] || '')
+        setOptionD(lessonData.quiz.options?.[3] || '')
+        setCorrectIndex(lessonData.quiz.correct_option_index || 0)
       }
     }
-  }, [lesson])
+  }, [lessonData])
 
-  const canEdit = profile?.role === 'admin' || (lesson ? isEditable(lesson.created_at) : true)
+  const canEdit = profile?.role === 'admin' || profile?.role === 'teacher' || (lessonData ? isEditable(lessonData.created_at) : true)
 
   // Save mutation
   const updateMutation = useMutation({
@@ -69,30 +121,41 @@ export function EditLesson() {
       if (!lessonId) return
       if (!canEdit) throw new Error('24-hour edit window has expired. Contact admin to modify.')
 
-      // Update lesson
-      const { error: lessonErr } = await supabase
-        .from('lessons')
-        .update({
-          title: title.trim(),
-          youtube_url: youtubeUrl.trim(),
-          description: description.trim() || null,
-        })
-        .eq('id', lessonId)
+      const cleanTitle = title.trim()
+      const cleanUrl = youtubeUrl.trim()
+      const cleanDesc = description.trim()
 
-      if (lessonErr) throw lessonErr
+      // 1. Update in SchoolDataStore
+      const activeCourseId = courseIdParam || lessonData?.course_id || ''
+      await schoolStore.updateLesson(activeCourseId, lessonId, {
+        title: cleanTitle,
+        video_url: cleanUrl,
+        content: cleanDesc,
+      })
 
-      // Update quiz
-      if (lesson?.quiz?.id) {
-        const { error: quizErr } = await supabase
-          .from('quizzes')
-          .update({
-            question: question.trim(),
-            options: [optionA.trim(), optionB.trim(), optionC.trim(), optionD.trim()],
-            correct_option_index: correctIndex,
-          })
-          .eq('id', lesson.quiz.id)
+      // 2. Also update Supabase if UUID
+      if (isValidUuid(lessonId)) {
+        try {
+          await supabase
+            .from('lessons')
+            .update({
+              title: cleanTitle,
+              youtube_url: cleanUrl,
+              description: cleanDesc || null,
+            })
+            .eq('id', lessonId)
 
-        if (quizErr) throw quizErr
+          if (lessonData?.quiz?.id) {
+            await supabase
+              .from('quizzes')
+              .update({
+                question: question.trim(),
+                options: [optionA.trim(), optionB.trim(), optionC.trim(), optionD.trim()],
+                correct_option_index: correctIndex,
+              })
+              .eq('id', lessonData.quiz.id)
+          }
+        } catch {}
       }
     },
     onSuccess: () => {
@@ -113,7 +176,7 @@ export function EditLesson() {
     )
   }
 
-  if (!lesson) {
+  if (!lessonData) {
     return (
       <PageWrapper title="Lesson Not Found">
         <div className="alert alert-danger">Lesson not found.</div>
@@ -121,26 +184,7 @@ export function EditLesson() {
     )
   }
 
-  const videoId = extractYouTubeId(youtubeUrl)
-
-  if (profile?.role !== 'admin') {
-    return (
-      <PageWrapper title="Access Restricted">
-        <div className="card" style={{ padding: '3rem 2rem', textAlign: 'center', maxWidth: '600px', margin: '2rem auto' }}>
-          <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>🔒</div>
-          <h3 style={{ fontSize: '1.25rem', fontWeight: 800, color: 'var(--color-primary)', marginBottom: '0.5rem' }}>
-            Administrator Access Only
-          </h3>
-          <p style={{ color: 'var(--color-text-secondary)', fontSize: '0.9rem', lineHeight: '1.6', marginBottom: '1.5rem' }}>
-            Only College Administrators are authorized to edit curriculum lessons and learning materials.
-          </p>
-          <Button variant="primary" onClick={() => navigate('/admin')}>
-            ← Return to Dashboard
-          </Button>
-        </div>
-      </PageWrapper>
-    )
-  }
+  const lesson = lessonData
 
   return (
     <PageWrapper title={`Edit Lesson: ${lesson.title}`}>

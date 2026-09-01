@@ -261,7 +261,7 @@ export function MyCourses() {
                           </Link>
                         )}
                         <Link
-                          to={`/teacher/lesson/edit/${l.id}?courseId=${selectedUnit.id}`}
+                          to={`/teacher/lesson/${l.id}/edit?courseId=${selectedUnit.id}`}
                           className="btn btn-xs btn-outline"
                           title="Edit Lesson & Video URL"
                         >

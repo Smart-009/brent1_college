@@ -162,7 +162,15 @@ export function App() {
           <Route
             path="/teacher/lesson/:id/edit"
             element={
-              <RequireAuth allowedRoles={['admin']}>
+              <RequireAuth allowedRoles={['admin', 'teacher']}>
+                <EditLesson />
+              </RequireAuth>
+            }
+          />
+          <Route
+            path="/teacher/lesson/edit/:id"
+            element={
+              <RequireAuth allowedRoles={['admin', 'teacher']}>
                 <EditLesson />
               </RequireAuth>
             }
