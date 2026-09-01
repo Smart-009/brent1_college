@@ -14,57 +14,114 @@ interface LiveClassSchedule {
   course: string
 }
 
-function getDynamicScheduledClasses(): LiveClassSchedule[] {
-  const units = schoolStore.getCourseUnits()
-  const timetable = schoolStore.getTimetable()
+interface LiveClassSchedule {
+  id: string
+  title: string
+  shift: string
+  startTime: string
+  warningTime: string
+  endTime: string
+  instructor: string
+  joinUrl: string
+  course: string
+  days: string[]
+}
 
-  if (timetable.length > 0) {
-    return timetable.map((p) => ({
-      id: p.id,
-      title: `${p.subject_name} (${p.class_name})`,
-      shift: `${p.day_of_week} Cohort (${p.start_time} - ${p.end_time})`,
-      startTime: p.start_time,
-      endTime: p.end_time,
-      instructor: p.teacher_name || 'Faculty Lecturer',
-      joinUrl: p.room || 'https://meet.google.com',
-      course: p.subject_name,
-    }))
+function parseTimeFromText(scheduleText: string): { startTime: string; warningTime: string; endTime: string; days: string[] } {
+  const days: string[] = []
+  const textLower = scheduleText.toLowerCase()
+  if (textLower.includes('mon')) days.push('Monday')
+  if (textLower.includes('tue')) days.push('Tuesday')
+  if (textLower.includes('wed')) days.push('Wednesday')
+  if (textLower.includes('thu')) days.push('Thursday')
+  if (textLower.includes('fri')) days.push('Friday')
+  if (textLower.includes('sat')) days.push('Saturday')
+  if (textLower.includes('sun')) days.push('Sunday')
+  if (days.length === 0) days.push('Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday')
+
+  // Match times like 7:30 PM, 08:30 AM, 5:30 PM, etc.
+  const timeMatches = scheduleText.match(/(\d{1,2}):(\d{2})\s*(AM|PM|am|pm)?/gi)
+  let startH = 19
+  let startM = 30
+  let endH = 21
+  let endM = 30
+
+  if (timeMatches && timeMatches.length >= 1) {
+    const parseSingle = (raw: string) => {
+      const parts = raw.trim().split(/[:\s]/)
+      let h = parseInt(parts[0], 10)
+      const m = parseInt(parts[1], 10) || 0
+      const isPM = /pm/i.test(raw)
+      const isAM = /am/i.test(raw)
+      if (isPM && h < 12) h += 12
+      if (isAM && h === 12) h = 0
+      return { h, m }
+    }
+    const s = parseSingle(timeMatches[0])
+    startH = s.h
+    startM = s.m
+
+    if (timeMatches.length >= 2) {
+      const e = parseSingle(timeMatches[1])
+      endH = e.h
+      endM = e.m
+    } else {
+      endH = (startH + 2) % 24
+      endM = startM
+    }
   }
 
-  // Generate dynamic schedule from active course units
-  const defaultShifts = [
-    { shift: 'Morning Batch (8:30 AM - 11:30 AM)', startTime: '08:30', endTime: '11:30' },
-    { shift: 'Afternoon Batch (2:00 PM - 5:00 PM)', startTime: '14:00', endTime: '17:00' },
-    { shift: 'Evening Executive Batch (5:30 PM - 7:30 PM)', startTime: '17:30', endTime: '19:30' },
-    { shift: 'Night Executive Batch (7:30 PM - 9:30 PM)', startTime: '19:30', endTime: '21:30' },
-  ]
+  // 10 minutes prior warning time
+  let warnH = startH
+  let warnM = startM - 10
+  if (warnM < 0) {
+    warnM += 60
+    warnH = (warnH - 1 + 24) % 24
+  }
+
+  return {
+    startTime: `${startH.toString().padStart(2, '0')}:${startM.toString().padStart(2, '0')}`,
+    warningTime: `${warnH.toString().padStart(2, '0')}:${warnM.toString().padStart(2, '0')}`,
+    endTime: `${endH.toString().padStart(2, '0')}:${endM.toString().padStart(2, '0')}`,
+    days,
+  }
+}
+
+function getStudentScheduledClasses(profile: any): LiveClassSchedule[] {
+  const studentIdentifier = profile?.admission_number || profile?.id || ''
+  const myUnits = profile ? schoolStore.getRegisteredUnitsForStudent(studentIdentifier) : []
+  const units = myUnits.length > 0 ? myUnits : schoolStore.getCourseUnits().filter((u) => u.is_published !== false)
 
   if (units.length > 0) {
-    return units.slice(0, 4).map((unit, idx) => {
-      const shiftCfg = defaultShifts[idx % defaultShifts.length]
+    return units.map((unit) => {
+      const sched = parseTimeFromText(unit.live_schedule_text || 'Mon, Wed & Fri: 7:30 PM - 9:30 PM EAT')
       return {
         id: `c-bell-${unit.id}`,
         title: unit.title,
-        shift: shiftCfg.shift,
-        startTime: shiftCfg.startTime,
-        endTime: shiftCfg.endTime,
+        shift: unit.live_schedule_text || 'Mon, Wed & Fri: 7:30 PM - 9:30 PM EAT',
+        startTime: sched.startTime,
+        warningTime: sched.warningTime,
+        endTime: sched.endTime,
         instructor: unit.teacher_name || 'Faculty Instructor',
         joinUrl: unit.live_meeting_url || 'https://meet.google.com',
         course: unit.title,
+        days: sched.days,
       }
     })
   }
 
   return [
     {
-      id: 'c-morning',
-      title: 'Practical Coding & Skills Lab',
-      shift: 'Morning Batch (8:30 AM - 11:30 AM)',
-      startTime: '08:30',
-      endTime: '11:30',
-      instructor: 'Faculty Lecturer',
+      id: 'c-default',
+      title: 'Full-Stack Web Development & Modern JavaScript',
+      shift: 'Mon, Wed & Fri: 7:30 PM - 9:30 PM EAT',
+      startTime: '19:30',
+      warningTime: '19:20',
+      endTime: '21:30',
+      instructor: 'Faculty Instructor',
       joinUrl: 'https://meet.google.com',
-      course: 'Interactive Lab Session',
+      course: 'Online Short Course Live Class',
+      days: ['Monday', 'Wednesday', 'Friday'],
     },
   ]
 }
@@ -72,62 +129,128 @@ function getDynamicScheduledClasses(): LiveClassSchedule[] {
 export function ClassBellReminderModal() {
   const { profile } = useAuth()
   const [activeAlert, setActiveAlert] = useState<LiveClassSchedule | null>(null)
+  const [alertType, setAlertType] = useState<'starting_now' | '10min_warning'>('starting_now')
   const [isRinging, setIsRinging] = useState(false)
   const [bellMuted, setBellMuted] = useState(false)
-  const [hasPromptedAudio, setHasPromptedAudio] = useState(false)
+  const [notificationGranted, setNotificationGranted] = useState(false)
   const lastRingTimestamp = useRef<number>(0)
 
-  // Trigger bell sound and open modal
-  const triggerBellAlert = (schedule: LiveClassSchedule) => {
+  // Request native OS background push & notification permission
+  useEffect(() => {
+    if ('Notification' in window) {
+      if (Notification.permission === 'granted') {
+        setNotificationGranted(true)
+      } else if (Notification.permission !== 'denied') {
+        Notification.requestPermission().then((permission) => {
+          setNotificationGranted(permission === 'granted')
+        })
+      }
+    }
+  }, [])
+
+  // Send native OS background notification (rings even if app is minimized or in background)
+  const sendBackgroundNotification = (title: string, body: string, url: string) => {
+    if (!('Notification' in window) || Notification.permission !== 'granted') return
+
+    try {
+      if ('serviceWorker' in navigator && navigator.serviceWorker.controller) {
+        navigator.serviceWorker.ready.then((registration) => {
+          registration.showNotification(title, {
+            body,
+            icon: '/logo.png',
+            badge: '/logo.png',
+            vibrate: [300, 100, 300, 100, 600],
+            data: { url },
+            tag: 'class-bell-reminder',
+            renotify: true,
+          } as any)
+        })
+      } else {
+        new Notification(title, {
+          body,
+          icon: '/logo.png',
+        })
+      }
+    } catch (err) {
+      console.warn('Background notification error:', err)
+    }
+  }
+
+  // Trigger bell sound, native notification, and open reminder modal
+  const triggerBellAlert = (schedule: LiveClassSchedule, type: 'starting_now' | '10min_warning' = 'starting_now') => {
     setActiveAlert(schedule)
+    setAlertType(type)
     setIsRinging(true)
 
     if (!bellMuted) {
-      ringSchoolBell(3.2)
+      ringSchoolBell(3.5)
     }
+
+    const notifTitle = type === '10min_warning'
+      ? `🔔 Class in 10 Mins: ${schedule.course}`
+      : `🔔 Live Class Starting Now: ${schedule.course}`
+
+    const notifBody = type === '10min_warning'
+      ? `Your session with ${schedule.instructor} starts in 10 minutes (${schedule.startTime}). Prepare your workspace!`
+      : `Class is live now! Click to join your interactive video lecture with ${schedule.instructor}.`
+
+    sendBackgroundNotification(notifTitle, notifBody, schedule.joinUrl)
 
     setTimeout(() => {
       setIsRinging(false)
-    }, 3500)
+    }, 4000)
   }
 
-  // Periodic automatic class time detector
+  // Periodic automatic class time detector configured to student's program and time
   useEffect(() => {
     const checkSchedule = () => {
-      const scheduledClasses = getDynamicScheduledClasses()
+      const scheduledClasses = getStudentScheduledClasses(profile)
       const now = new Date()
+      const currentDay = now.toLocaleDateString('en-US', { weekday: 'long' })
       const currentHours = now.getHours().toString().padStart(2, '0')
       const currentMinutes = now.getMinutes().toString().padStart(2, '0')
       const currentTimeStr = `${currentHours}:${currentMinutes}`
 
-      // Check if current time matches any class start time
-      const matchingClass = scheduledClasses.find((c) => c.startTime === currentTimeStr)
+      for (const cls of scheduledClasses) {
+        if (!cls.days.includes(currentDay)) continue
 
-      if (matchingClass) {
         const timeSinceLastRing = Date.now() - lastRingTimestamp.current
-        // Avoid re-ringing within 2 minutes
-        if (timeSinceLastRing > 120000) {
+        if (timeSinceLastRing < 120000) continue // Prevent re-ringing within 2 minutes
+
+        // 1. Check exact Start Time
+        if (cls.startTime === currentTimeStr) {
           lastRingTimestamp.current = Date.now()
-          triggerBellAlert(matchingClass)
+          triggerBellAlert(cls, 'starting_now')
+          break
+        }
+
+        // 2. Check 10-Minute Prior Warning Time
+        if (cls.warningTime === currentTimeStr) {
+          lastRingTimestamp.current = Date.now()
+          triggerBellAlert(cls, '10min_warning')
+          break
         }
       }
     }
 
-    const interval = setInterval(checkSchedule, 30000) // Check every 30s
+    const interval = setInterval(checkSchedule, 20000) // Check every 20 seconds
     return () => clearInterval(interval)
-  }, [bellMuted])
+  }, [profile, bellMuted])
 
-  // Listen for custom trigger event (e.g. from navbar test button)
+  // Listen for manual trigger (e.g. from School Bell button in Navbar)
   useEffect(() => {
     const handleManualRing = () => {
-      const scheduledClasses = getDynamicScheduledClasses()
-      const randomClass = scheduledClasses[Math.floor(Math.random() * scheduledClasses.length)]
-      triggerBellAlert(randomClass)
+      if ('Notification' in window && Notification.permission !== 'granted') {
+        Notification.requestPermission().then((p) => setNotificationGranted(p === 'granted'))
+      }
+      const scheduledClasses = getStudentScheduledClasses(profile)
+      const activeOrFirst = scheduledClasses[0]
+      triggerBellAlert(activeOrFirst, 'starting_now')
     }
 
     window.addEventListener('eclat-ring-school-bell', handleManualRing)
     return () => window.removeEventListener('eclat-ring-school-bell', handleManualRing)
-  }, [bellMuted])
+  }, [profile, bellMuted])
 
   if (!activeAlert) {
     return null
@@ -202,8 +325,19 @@ export function ClassBellReminderModal() {
         </div>
 
         {/* Title */}
-        <div style={{ display: 'inline-block', background: '#fef3c7', color: '#92400e', padding: '3px 12px', borderRadius: '999px', fontSize: '0.75rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '0.5rem' }}>
-          ⚡ Live Virtual Class Reminder
+        <div style={{
+          display: 'inline-block',
+          background: alertType === '10min_warning' ? '#fef3c7' : '#dcfce7',
+          color: alertType === '10min_warning' ? '#92400e' : '#166534',
+          padding: '4px 14px',
+          borderRadius: '999px',
+          fontSize: '0.75rem',
+          fontWeight: 800,
+          textTransform: 'uppercase',
+          letterSpacing: '0.05em',
+          marginBottom: '0.5rem',
+        }}>
+          {alertType === '10min_warning' ? '⏳ 10-Minute Prior Warning Alert' : '⚡ Live Virtual Class Starting Now!'}
         </div>
         <h2 style={{ fontSize: '1.45rem', fontWeight: 900, color: '#1e3a8a', margin: '0 0 0.5rem', lineHeight: 1.3 }}>
           {activeAlert.title}
@@ -228,7 +362,7 @@ export function ClassBellReminderModal() {
           }}
         >
           <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid #f1f5f9', paddingBottom: '0.4rem' }}>
-            <span style={{ color: '#64748b' }}>Course Program:</span>
+            <span style={{ color: '#64748b' }}>Your Enrolled Program:</span>
             <strong style={{ color: '#1e3a8a' }}>{activeAlert.course}</strong>
           </div>
           <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid #f1f5f9', paddingBottom: '0.4rem' }}>
@@ -236,8 +370,10 @@ export function ClassBellReminderModal() {
             <strong style={{ color: '#334155' }}>{activeAlert.instructor}</strong>
           </div>
           <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-            <span style={{ color: '#64748b' }}>Class Status:</span>
-            <span style={{ color: '#16a34a', fontWeight: 800 }}>● Live in Session / Starting Now</span>
+            <span style={{ color: '#64748b' }}>Scheduled Class Time:</span>
+            <span style={{ color: '#2563eb', fontWeight: 800 }}>
+              {activeAlert.startTime} - {activeAlert.endTime}
+            </span>
           </div>
         </div>
 
