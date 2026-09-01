@@ -5,7 +5,7 @@ import { supabase } from '@/lib/supabase'
 import { getEmbeddableDocumentUrl } from '@/lib/utils'
 import type { AcademicResource } from '@/types/school'
 
-const CATEGORIES = ['All', 'Past Papers', 'Revision Notes', 'Textbooks', 'Syllabus', 'Lab Manuals']
+const CATEGORIES = ['All', '⭐ Starred / Saved Books', 'Textbooks', 'Lab Manuals & Code', 'Revision Notes', 'Past Papers', 'Syllabus']
 
 export function ResourceLibrary() {
   const { profile } = useAuth()
@@ -21,6 +21,50 @@ export function ResourceLibrary() {
   const [selectedCat, setSelectedCat] = useState('All')
   const [selectedSub, setSelectedSub] = useState('All')
   const [isUploading, setIsUploading] = useState(false)
+
+  // Starred / Saved Favorites State
+  const [bookmarkedIds, setBookmarkedIds] = useState<string[]>(() => {
+    try {
+      const stored = localStorage.getItem('eclat_library_bookmarks')
+      return stored ? JSON.parse(stored) : []
+    } catch {
+      return []
+    }
+  })
+
+  const toggleBookmark = (id: string, e?: React.MouseEvent) => {
+    if (e) e.stopPropagation()
+    setBookmarkedIds((prev) => {
+      const next = prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id]
+      localStorage.setItem('eclat_library_bookmarks', JSON.stringify(next))
+      return next
+    })
+  }
+
+  // Text-to-Speech (TTS) Voice Reader State
+  const [isSpeaking, setIsSpeaking] = useState(false)
+  const [speechRate, setSpeechRate] = useState<number>(1)
+
+  const stopSpeech = () => {
+    if ('speechSynthesis' in window) {
+      window.speechSynthesis.cancel()
+      setIsSpeaking(false)
+    }
+  }
+
+  const speakText = (text: string) => {
+    if (!('speechSynthesis' in window)) {
+      alert('Speech synthesis is not supported on this browser.')
+      return
+    }
+    stopSpeech()
+    const utterance = new SpeechSynthesisUtterance(text)
+    utterance.rate = speechRate
+    utterance.onend = () => setIsSpeaking(false)
+    utterance.onerror = () => setIsSpeaking(false)
+    setIsSpeaking(true)
+    window.speechSynthesis.speak(utterance)
+  }
 
   // Fetch live resources from Supabase database on mount
   useEffect(() => {
@@ -144,12 +188,18 @@ export function ResourceLibrary() {
         res.subject.toLowerCase().includes(search.toLowerCase()) ||
         res.uploaded_by.toLowerCase().includes(search.toLowerCase())
 
-      const matchCat = selectedCat === 'All' || res.category === selectedCat
+      const matchCat =
+        selectedCat === 'All'
+          ? true
+          : selectedCat === '⭐ Starred / Saved Books'
+          ? bookmarkedIds.includes(res.id)
+          : res.category === selectedCat || (selectedCat === 'Lab Manuals & Code' && (res.category === 'Lab Manuals' || res.category.includes('Lab')))
+
       const matchSub = selectedSub === 'All' || res.subject.toLowerCase().includes(selectedSub.toLowerCase())
 
       return matchSearch && matchCat && matchSub
     })
-  }, [resources, search, selectedCat, selectedSub])
+  }, [resources, search, selectedCat, selectedSub, bookmarkedIds])
 
   const handleOpenReader = (res: AcademicResource) => {
     // Increment read counter locally & in Supabase
@@ -405,8 +455,26 @@ export function ResourceLibrary() {
             >
               <div>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '0.5rem', marginBottom: '0.75rem' }}>
-                  <span className="badge badge-primary" style={{ fontWeight: 700 }}>{res.category}</span>
-                  <span className="badge badge-neutral" style={{ fontSize: '0.75rem' }}>{res.file_type} • {res.file_size}</span>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', flexWrap: 'wrap' }}>
+                    <span className="badge badge-primary" style={{ fontWeight: 700 }}>{res.category}</span>
+                    <span className="badge badge-neutral" style={{ fontSize: '0.75rem' }}>{res.file_type} • {res.file_size}</span>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={(e) => toggleBookmark(res.id, e)}
+                    style={{
+                      background: 'none',
+                      border: 'none',
+                      cursor: 'pointer',
+                      fontSize: '1.25rem',
+                      lineHeight: 1,
+                      color: bookmarkedIds.includes(res.id) ? '#f59e0b' : '#94a3b8',
+                      transition: 'transform 0.15s ease',
+                    }}
+                    title={bookmarkedIds.includes(res.id) ? 'Remove from Saved Books' : 'Save to My Starred Books'}
+                  >
+                    {bookmarkedIds.includes(res.id) ? '⭐' : '☆'}
+                  </button>
                 </div>
 
                 <h3 style={{ fontSize: '1.1rem', fontWeight: 700, margin: '0 0 0.5rem', color: 'var(--color-primary)', lineHeight: 1.35 }}>
@@ -436,6 +504,18 @@ export function ResourceLibrary() {
                     >
                       🗑️
                     </button>
+                  )}
+                  {/(python|web|code|software|data|react|javascript|sql|lab)/i.test(res.subject + ' ' + res.title + ' ' + res.category) && (
+                    <a
+                      href="https://stackblitz.com"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="btn btn-secondary btn-sm"
+                      style={{ display: 'inline-flex', alignItems: 'center', gap: '4px', textDecoration: 'none' }}
+                      title="Open Interactive Code Sandbox"
+                    >
+                      ⚡ Lab Sandbox
+                    </a>
                   )}
                   <button
                     type="button"
@@ -541,23 +621,69 @@ export function ResourceLibrary() {
 
               {/* Reader Controls */}
               <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', flexWrap: 'wrap' }}>
-                {/* DRM Protection Indicator Badge */}
-                <span
+                {/* Bookmark Toggle in Reader */}
+                <button
+                  type="button"
+                  onClick={() => toggleBookmark(readingResource.id)}
+                  className="btn btn-ghost btn-sm"
                   style={{
-                    background: 'rgba(239, 68, 68, 0.15)',
-                    color: '#dc2626',
-                    border: '1px solid rgba(239, 68, 68, 0.3)',
-                    padding: '3px 9px',
-                    borderRadius: '999px',
-                    fontSize: '0.72rem',
-                    fontWeight: 800,
-                    display: 'inline-flex',
-                    alignItems: 'center',
-                    gap: '4px',
+                    color: bookmarkedIds.includes(readingResource.id) ? '#f59e0b' : 'inherit',
+                    fontSize: '1rem',
+                    padding: '4px 8px',
                   }}
+                  title={bookmarkedIds.includes(readingResource.id) ? 'Saved in My Books' : 'Save Book'}
                 >
-                  🔒 DRM Shield Active
-                </span>
+                  {bookmarkedIds.includes(readingResource.id) ? '⭐ Saved' : '☆ Save'}
+                </button>
+
+                {/* Text to Speech Voice Audio Button */}
+                <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      if (isSpeaking) {
+                        stopSpeech()
+                      } else {
+                        const noteText = `${readingResource.title}. Category: ${readingResource.category}. Subject: ${readingResource.subject}. Key study concepts and practical training takeaways for Éclat Institute Trainees. Review the foundational principles, modular syntax, and best practices.`
+                        speakText(noteText)
+                      }
+                    }}
+                    style={{
+                      background: isSpeaking ? '#ef4444' : 'rgba(59, 130, 246, 0.15)',
+                      color: isSpeaking ? '#ffffff' : '#3b82f6',
+                      border: '1px solid rgba(59, 130, 246, 0.3)',
+                      padding: '4px 10px',
+                      borderRadius: '6px',
+                      cursor: 'pointer',
+                      fontSize: '0.75rem',
+                      fontWeight: 700,
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: '4px',
+                    }}
+                  >
+                    <span>{isSpeaking ? '⏹️ Stop Voice' : '🔊 Listen Aloud'}</span>
+                  </button>
+
+                  {isSpeaking && (
+                    <select
+                      value={speechRate}
+                      onChange={(e) => setSpeechRate(Number(e.target.value))}
+                      style={{
+                        padding: '2px 4px',
+                        fontSize: '0.7rem',
+                        borderRadius: '4px',
+                        background: 'transparent',
+                        color: 'inherit',
+                        border: '1px solid #94a3b8',
+                      }}
+                    >
+                      <option value={1}>1x Speed</option>
+                      <option value={1.25}>1.25x</option>
+                      <option value={1.5}>1.5x</option>
+                    </select>
+                  )}
+                </div>
 
                 {/* View Mode & Engine Switcher */}
                 <div style={{ display: 'flex', gap: '2px', background: readerTheme === 'dark' ? '#0f172a' : '#e2e8f0', borderRadius: '6px', padding: '2px' }}>
@@ -578,7 +704,7 @@ export function ResourceLibrary() {
                       setDocEngine('cloud')
                     }}
                   >
-                    🌐 Cloud Reader
+                    🌐 Cloud View
                   </button>
                   <button
                     type="button"
@@ -597,7 +723,7 @@ export function ResourceLibrary() {
                       setDocEngine('direct')
                     }}
                   >
-                    📄 Direct Stream
+                    📄 Stream
                   </button>
                   <button
                     type="button"
@@ -613,7 +739,7 @@ export function ResourceLibrary() {
                     }}
                     onClick={() => setReaderMode('notes')}
                   >
-                    📝 Study Notes
+                    🤖 AI Study Notes
                   </button>
                 </div>
 
