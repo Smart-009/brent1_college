@@ -1923,12 +1923,51 @@ class SchoolDataStore {
   }
 
   getRegisteredUnitsForStudent(identifier: string): CourseUnit[] {
-    const reg = this.getRegistrationForStudent(identifier)
-    if (!reg || !reg.registered_unit_ids || reg.registered_unit_ids.length === 0) {
-      return []
-    }
+    if (!identifier) return []
+    const clean = identifier.trim().toLowerCase()
     const allUnits = this.getCourseUnits()
-    return allUnits.filter((u) => reg.registered_unit_ids.includes(u.id) || reg.registered_units.some((ru) => ru.code === u.code))
+
+    // 1. Check formal unit registration slip
+    const reg = this.getRegistrationForStudent(identifier)
+    if (reg && reg.registered_unit_ids && reg.registered_unit_ids.length > 0) {
+      return allUnits.filter(
+        (u) =>
+          reg.registered_unit_ids.includes(u.id) ||
+          reg.registered_units?.some((ru) => ru.code?.toLowerCase() === u.code?.toLowerCase())
+      )
+    }
+
+    // 2. Check student record enrolled_courses & class_name
+    const students = this.getStudents()
+    const student = students.find(
+      (s) => s.id.toLowerCase() === clean || s.admission_number.toLowerCase() === clean
+    )
+
+    if (student) {
+      if (student.enrolled_courses && student.enrolled_courses.length > 0) {
+        const enrolledSet = new Set(student.enrolled_courses.map((c) => c.toLowerCase().trim()))
+        const matched = allUnits.filter(
+          (u) =>
+            enrolledSet.has(u.id.toLowerCase()) ||
+            enrolledSet.has(u.code.toLowerCase()) ||
+            enrolledSet.has(u.title.toLowerCase())
+        )
+        if (matched.length > 0) return matched
+      }
+
+      if (student.class_name) {
+        const classNameLower = student.class_name.toLowerCase().trim()
+        const matched = allUnits.filter(
+          (u) =>
+            u.title.toLowerCase().includes(classNameLower) ||
+            classNameLower.includes(u.title.toLowerCase()) ||
+            (u.program && classNameLower.includes(u.program.toLowerCase()))
+        )
+        if (matched.length > 0) return matched
+      }
+    }
+
+    return []
   }
 
   // --- Faculty Teachers & Course Assignments (ACID Protected) ---

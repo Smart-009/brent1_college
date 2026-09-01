@@ -21,6 +21,7 @@ export interface StudentRecord {
   class_name: string
   grade_level: string // e.g. "Year 1", "Year 2", "Form 3", "Diploma Year 1"
   stream: string // e.g. "A", "B", "Alpha", "Blue"
+  enrolled_courses?: string[]
   enrollment_date: string
   admission_date?: string
   status: 'Active' | 'Suspended' | 'Alumni' | 'Transferred'

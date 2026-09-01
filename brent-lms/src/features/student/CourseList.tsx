@@ -10,18 +10,21 @@ export function CourseList() {
   const { profile } = useAuth()
   const [selectedUnit, setSelectedUnit] = useState<CourseUnit | null>(null)
   const [showSlipModal, setShowSlipModal] = useState(false)
+  const [viewMode, setViewMode] = useState<'my_courses' | 'all_catalog'>('my_courses')
 
   // Fetch registration for the current student
   const studentIdentifier = profile?.admission_number || profile?.id || ''
   const registrationSlip = schoolStore.getRegistrationForStudent(studentIdentifier)
   const registeredUnits = schoolStore.getRegisteredUnitsForStudent(studentIdentifier)
-  const allUnits = schoolStore.getCourseUnits()
-  const displayedUnits = registeredUnits.length > 0 ? registeredUnits : allUnits.filter((u) => u.is_published !== false)
+  const allUnits = schoolStore.getCourseUnits().filter((u) => u.is_published !== false)
+  const displayedUnits = viewMode === 'my_courses' 
+    ? (registeredUnits.length > 0 ? registeredUnits : allUnits.slice(0, 1))
+    : allUnits
 
   return (
     <PageWrapper
       title="My Accredited Course Units & LMS"
-      subtitle="Access online modules, lecture materials, and live interactive video sessions."
+      subtitle="Access your enrolled training course, lecture materials, and live interactive video sessions."
     >
       {/* Unit Registration Clearance Banner */}
       {registrationSlip ? (
@@ -40,7 +43,7 @@ export function CourseList() {
                 Official Clearance Slip: {registrationSlip.receipt_number}
               </div>
               <h2 style={{ fontSize: '1.5rem', fontWeight: 800, margin: '0.25rem 0' }}>
-                {displayedUnits.length} Course Units Registered ({registrationSlip.total_credits} Credits)
+                {registeredUnits.length} Course Unit(s) Enrolled ({registrationSlip.total_credits || 45} Credits)
               </h2>
               <p style={{ fontSize: '0.85rem', color: '#cbd5e1', margin: 0 }}>
                 Training Period: <strong>{registrationSlip.course_duration || registrationSlip.semester || 'Short Course'}</strong> • Fee Status: <strong style={{ color: '#86efac' }}>{registrationSlip.fee_clearance_status}</strong>
@@ -58,13 +61,31 @@ export function CourseList() {
         </div>
       ) : null}
 
+      {/* Tabs */}
+      <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '1.5rem' }}>
+        <button
+          type="button"
+          className={`btn btn-sm ${viewMode === 'my_courses' ? 'btn-primary' : 'btn-ghost'}`}
+          onClick={() => setViewMode('my_courses')}
+        >
+          🎓 My Enrolled Course ({displayedUnits.length})
+        </button>
+        <button
+          type="button"
+          className={`btn btn-sm ${viewMode === 'all_catalog' ? 'btn-primary' : 'btn-ghost'}`}
+          onClick={() => setViewMode('all_catalog')}
+        >
+          🌐 Browse Full College Catalog ({allUnits.length})
+        </button>
+      </div>
+
       {/* List of Cleared Course Units */}
       {displayedUnits.length === 0 ? (
         <div className="card" style={{ padding: '3.5rem 2rem', textAlign: 'center', maxWidth: '640px', margin: '1rem auto' }}>
           <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>📚</div>
-          <h3 style={{ fontSize: '1.25rem', fontWeight: 700, margin: '0 0 0.5rem' }}>No Active Units Available</h3>
+          <h3 style={{ fontSize: '1.25rem', fontWeight: 700, margin: '0 0 0.5rem' }}>No Enrolled Units Found</h3>
           <p style={{ color: 'var(--color-text-secondary)', fontSize: '0.9rem', lineHeight: '1.6', margin: 0 }}>
-            Once Management publishes your accredited course units, all modules, lecture videos, and learning materials will appear here.
+            You are not currently enrolled in any course units. Please contact the administrator or bursar desk to register your course.
           </p>
         </div>
       ) : (

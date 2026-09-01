@@ -284,67 +284,76 @@ export function StudentDashboard() {
       </div>
 
       {/* Online LMS Courses Section */}
-      <div className="mb-8">
-        <div className="flex justify-between items-center mb-4">
-          <h2 style={{ fontSize: 'var(--text-xl)', color: 'var(--color-primary)', margin: 0 }}>
-            📖 Active Online Course Units & Live Classes
-          </h2>
-          <Link to="/student/courses" className="btn btn-sm btn-outline">
-            Browse All Units ({schoolStore.getCourseUnits().length}) →
-          </Link>
-        </div>
+      {(() => {
+        const studentIdentifier = currentStudent?.admission_number || profile?.admission_number || profile?.id || ''
+        const studentUnits = schoolStore.getRegisteredUnitsForStudent(studentIdentifier)
+        const allPublished = schoolStore.getCourseUnits().filter((u) => u.is_published !== false)
+        const myUnits = studentUnits.length > 0 ? studentUnits : allPublished.slice(0, 1)
 
-        {schoolStore.getCourseUnits().length === 0 && (!enrollments || enrollments.length === 0) ? (
-          <div className="card" style={{ padding: '2rem', textAlign: 'center', color: 'var(--color-text-secondary)' }}>
-            No courses published yet. Check back soon!
-          </div>
-        ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {schoolStore.getCourseUnits().slice(0, 6).map((unit) => (
-              <div key={unit.id} className="card" style={{ padding: '1.25rem', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
-                <div>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.4rem' }}>
-                    <span className="badge badge-primary" style={{ fontWeight: 800 }}>{unit.code}</span>
-                    <span className="badge badge-info">{unit.credit_hours} Credits</span>
-                  </div>
-                  <h3 style={{ fontSize: '1.05rem', fontWeight: 700, margin: '0.25rem 0', color: 'var(--color-text-primary)' }}>
-                    {unit.title}
-                  </h3>
-                  <div style={{ fontSize: '0.78rem', color: 'var(--color-text-secondary)', marginBottom: '0.65rem' }}>
-                    👨‍🏫 {unit.teacher_name} • {unit.department}
-                  </div>
-                  {unit.live_schedule_text && (
-                    <div style={{ fontSize: '0.75rem', background: '#eff6ff', color: '#1e3a8a', padding: '3px 6px', borderRadius: '4px', marginBottom: '0.65rem' }}>
-                      📅 {unit.live_schedule_text}
-                    </div>
-                  )}
-                </div>
+        return (
+          <div className="mb-8">
+            <div className="flex justify-between items-center mb-4">
+              <h2 style={{ fontSize: 'var(--text-xl)', color: 'var(--color-primary)', margin: 0 }}>
+                📖 My Enrolled Course Unit ({myUnits.length})
+              </h2>
+              <Link to="/student/courses" className="btn btn-sm btn-outline">
+                View My LMS & Course Modules →
+              </Link>
+            </div>
 
-                <div style={{ display: 'flex', gap: '0.4rem', marginTop: '0.75rem', borderTop: '1px solid var(--color-border)', paddingTop: '0.65rem' }}>
-                  {unit.live_meeting_url && (
-                    <a
-                      href={unit.live_meeting_url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="btn btn-xs"
-                      style={{ background: '#059669', color: '#ffffff', fontWeight: 700, flex: 1, textAlign: 'center' }}
-                    >
-                      🎥 Live Meet ↗
-                    </a>
-                  )}
-                  <Link
-                    to={`/student/lesson/${unit.lessons?.[0]?.id || unit.id}`}
-                    className="btn btn-xs btn-primary"
-                    style={{ flex: 1, textAlign: 'center' }}
-                  >
-                    📚 Open LMS
-                  </Link>
-                </div>
+            {myUnits.length === 0 ? (
+              <div className="card" style={{ padding: '2rem', textAlign: 'center', color: 'var(--color-text-secondary)' }}>
+                No active course units enrolled yet. Please contact the administrator or bursar desk.
               </div>
-            ))}
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {myUnits.map((unit) => (
+                  <div key={unit.id} className="card" style={{ padding: '1.25rem', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+                    <div>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.4rem' }}>
+                        <span className="badge badge-primary" style={{ fontWeight: 800 }}>{unit.code}</span>
+                        <span className="badge badge-info">{unit.credit_hours} Credits</span>
+                      </div>
+                      <h3 style={{ fontSize: '1.05rem', fontWeight: 700, margin: '0.25rem 0', color: 'var(--color-text-primary)' }}>
+                        {unit.title}
+                      </h3>
+                      <div style={{ fontSize: '0.78rem', color: 'var(--color-text-secondary)', marginBottom: '0.65rem' }}>
+                        👨‍🏫 {unit.teacher_name} • {unit.department}
+                      </div>
+                      {unit.live_schedule_text && (
+                        <div style={{ fontSize: '0.75rem', background: '#eff6ff', color: '#1e3a8a', padding: '3px 6px', borderRadius: '4px', marginBottom: '0.65rem' }}>
+                          📅 {unit.live_schedule_text}
+                        </div>
+                      )}
+                    </div>
+
+                    <div style={{ display: 'flex', gap: '0.4rem', marginTop: '0.75rem', borderTop: '1px solid var(--color-border)', paddingTop: '0.65rem' }}>
+                      {unit.live_meeting_url && (
+                        <a
+                          href={unit.live_meeting_url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="btn btn-xs"
+                          style={{ background: '#059669', color: '#ffffff', fontWeight: 700, flex: 1, textAlign: 'center' }}
+                        >
+                          🎥 Live Meet ↗
+                        </a>
+                      )}
+                      <Link
+                        to={`/student/lesson/${unit.lessons?.[0]?.id || unit.id}`}
+                        className="btn btn-xs btn-primary"
+                        style={{ flex: 1, textAlign: 'center' }}
+                      >
+                        📚 Open LMS
+                      </Link>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
-        )}
-      </div>
+        )
+      })()}
 
       {/* Announcements */}
       {announcements && announcements.length > 0 && (
