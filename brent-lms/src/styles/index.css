@@ -108,22 +108,22 @@
 }
 
 /* ============================================================
-   NATIVE MOBILE APP TOUCH GESTURES & INTERACTION ENGINE
+   NATIVE MOBILE APP TOUCH GESTURES & SMOOTH SCROLL ENGINE
    ============================================================ */
 html, body {
   -webkit-tap-highlight-color: transparent !important;
-  -webkit-touch-callout: none;
-  overscroll-behavior-y: contain;
+  overflow-y: auto !important;
+  -webkit-overflow-scrolling: touch !important;
 }
 
-button, a, input, select, textarea, .btn, .card, .mobile-nav-item, .chip {
+button, .btn, .mobile-nav-item {
   -webkit-tap-highlight-color: transparent !important;
-  touch-action: manipulation;
+  cursor: pointer;
 }
 
 button:active, .btn:active {
-  transform: scale(0.96);
-  transition: transform 0.08s cubic-bezier(0.4, 0, 0.2, 1);
+  transform: scale(0.97);
+  transition: transform 0.08s ease;
 }
 
 .card {
