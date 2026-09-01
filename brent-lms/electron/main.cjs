@@ -6,6 +6,8 @@ const { app, BrowserWindow, Menu, shell } = require('electron')
 const path = require('path')
 
 const isDev = !app.isPackaged && process.env.NODE_ENV !== 'production'
+const institutionName = process.env.VITE_INSTITUTION_NAME || 'Éclat Institute'
+const websiteUrl = process.env.VITE_WEBSITE_URL || 'https://eclat.institute'
 
 function createWindow() {
   const mainWindow = new BrowserWindow({
@@ -13,7 +15,7 @@ function createWindow() {
     height: 860,
     minWidth: 1024,
     minHeight: 700,
-    title: 'Éclat Institute — Enterprise College Management System',
+    title: `${institutionName} — Enterprise College Management System`,
     icon: path.join(__dirname, '../public/logo.png'),
     backgroundColor: '#0c0e12',
     webPreferences: {
@@ -27,9 +29,9 @@ function createWindow() {
   // Create Native College Menu
   const menuTemplate = [
     {
-      label: 'Éclat Institute',
+      label: institutionName,
       submenu: [
-        { label: 'About Éclat Institute', click: () => shell.openExternal('https://eclat.institute') },
+        { label: `About ${institutionName}`, click: () => shell.openExternal(websiteUrl) },
         { type: 'separator' },
         { role: 'reload' },
         { role: 'forceReload' },

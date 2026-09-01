@@ -721,7 +721,7 @@ export function Landing() {
         name: inquiryForm.name,
         relationship: 'Guardian',
         phone: inquiryForm.phone,
-        email: inquiryForm.email || `${inquiryForm.name.toLowerCase().replace(/\s+/g, '')}@student.eclat.institute`,
+        email: inquiryForm.email || `${inquiryForm.name.toLowerCase().replace(/\s+/g, '')}@student.${INSTITUTION_CONFIG.domain}`,
       },
       parent_phone: inquiryForm.phone,
       emergency_contact: inquiryForm.phone,
@@ -870,11 +870,11 @@ export function Landing() {
         </span>
         <span className="hidden sm:inline" style={{ opacity: 0.8 }}>|</span>
         <span className="hidden sm:inline">
-          📞 <strong>+254 740 027 346</strong>
+          📞 <strong>{INSTITUTION_CONFIG.contact.phone}</strong>
         </span>
         <span className="hidden md:inline" style={{ opacity: 0.8 }}>|</span>
         <span className="hidden md:inline">
-          🏦 KCB Bank: <strong>1344329268</strong>
+          🏦 {INSTITUTION_CONFIG.bank.name}: <strong>{INSTITUTION_CONFIG.bank.accountNumber}</strong>
         </span>
       </div>
 
@@ -1875,7 +1875,7 @@ export function Landing() {
                   <div style={{ fontSize: '1.5rem', marginBottom: '0.35rem' }}>⚠️</div>
                   <div style={{ fontWeight: 800, fontSize: '1rem' }}>No Certificate Record Found</div>
                   <div style={{ fontSize: '0.84rem', color: '#fca5a5', marginTop: '0.25rem' }}>
-                    Please check the certificate serial number or contact the Academic Registrar at <span style={{ color: '#ffffff' }}>admissions@eclat.institute</span>.
+                    Please check the certificate serial number or contact the Academic Registrar at <span style={{ color: '#ffffff' }}>{INSTITUTION_CONFIG.contact.admissionsEmail}</span>.
                   </div>
                 </div>
               )}
@@ -1947,10 +1947,10 @@ export function Landing() {
               Virtual Admissions & Support
             </h4>
             <div style={{ fontSize: '0.88rem', lineHeight: 1.75, color: '#cbd5e1' }}>
-              <div style={{ marginBottom: '0.35rem' }}>🌐 <span style={{ color: '#94a3b8' }}>Delivery:</span> <strong style={{ color: '#f8fafc' }}>100% Online (Worldwide)</strong></div>
-              <div style={{ marginBottom: '0.35rem' }}>📞 <span style={{ color: '#94a3b8' }}>Phone:</span> <strong style={{ color: '#f8fafc' }}>+254 740 027 346</strong></div>
-              <div style={{ marginBottom: '0.35rem' }}>💬 <span style={{ color: '#94a3b8' }}>WhatsApp:</span> <strong style={{ color: '#f8fafc' }}>+254 740 027 346</strong></div>
-              <div style={{ marginBottom: '0.5rem' }}>✉️ <span style={{ color: '#94a3b8' }}>Email:</span> <a href="mailto:admissions@eclat.institute" style={{ color: '#93c5fd', textDecoration: 'underline' }}>admissions@eclat.institute</a></div>
+              <div style={{ marginBottom: '0.35rem' }}>🌐 <span style={{ color: '#94a3b8' }}>Delivery:</span> <strong style={{ color: '#f8fafc' }}>{INSTITUTION_CONFIG.tagline} (Worldwide)</strong></div>
+              <div style={{ marginBottom: '0.35rem' }}>📞 <span style={{ color: '#94a3b8' }}>Phone:</span> <strong style={{ color: '#f8fafc' }}>{INSTITUTION_CONFIG.contact.phone}</strong></div>
+              <div style={{ marginBottom: '0.35rem' }}>💬 <span style={{ color: '#94a3b8' }}>WhatsApp:</span> <strong style={{ color: '#f8fafc' }}>{INSTITUTION_CONFIG.contact.phone}</strong></div>
+              <div style={{ marginBottom: '0.5rem' }}>✉️ <span style={{ color: '#94a3b8' }}>Email:</span> <a href={`mailto:${INSTITUTION_CONFIG.contact.admissionsEmail}`} style={{ color: '#93c5fd', textDecoration: 'underline' }}>{INSTITUTION_CONFIG.contact.admissionsEmail}</a></div>
               
               <div style={{ marginTop: '0.75rem', padding: '0.7rem 0.9rem', background: '#131b2e', border: '1px solid #2e3d61', borderRadius: '8px', fontSize: '0.82rem' }}>
                 <div style={{ color: '#fcd34d', fontWeight: 700, marginBottom: '0.25rem' }}>🕒 Online Learning & Support:</div>

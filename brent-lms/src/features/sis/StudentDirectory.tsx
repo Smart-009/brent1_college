@@ -4,6 +4,7 @@ import { supabase } from '@/lib/supabase'
 import type { StudentRecord, PaymentReminder } from '@/types/school'
 import { BiometricEnrollModal } from '@/components/biometrics/BiometricEnrollModal'
 import { BiometricScannerModal } from '@/components/biometrics/BiometricScannerModal'
+import { INSTITUTION_CONFIG } from '@/config/institution'
 
 export function StudentDirectory() {
   const [students, setStudents] = useState<StudentRecord[]>(() => schoolStore.getStudents())
@@ -1552,8 +1553,8 @@ export function StudentDirectory() {
 
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                     <span style={{ fontSize: '0.85rem', color: '#475569', fontWeight: 600 }}>Portal URL:</span>
-                    <a href="https://eclat.institute/login" target="_blank" rel="noreferrer" style={{ fontSize: '0.85rem', color: '#2563eb', fontWeight: 700 }}>
-                      eclat.institute/login
+                    <a href={INSTITUTION_CONFIG.portalUrl} target="_blank" rel="noreferrer" style={{ fontSize: '0.85rem', color: '#2563eb', fontWeight: 700 }}>
+                      {INSTITUTION_CONFIG.domain}/login
                     </a>
                   </div>
                 </div>
@@ -1565,7 +1566,7 @@ export function StudentDirectory() {
                   type="button"
                   className="btn btn-primary"
                   onClick={() => {
-                    const text = `🎓 ÉCLAT INSTITUTE STUDENT PORTAL LOGIN\n\nStudent Name: ${credentialsModalData.studentName}\nAdmission Number: ${credentialsModalData.admissionNumber}\nPassword: ${credentialsModalData.password}\nEnrolled Program: ${credentialsModalData.program}\n\nLogin Link: https://eclat.institute/login`
+                    const text = `🎓 ${INSTITUTION_CONFIG.name.toUpperCase()} STUDENT PORTAL LOGIN\n\nStudent Name: ${credentialsModalData.studentName}\nAdmission Number: ${credentialsModalData.admissionNumber}\nPassword: ${credentialsModalData.password}\nEnrolled Program: ${credentialsModalData.program}\n\nLogin Link: ${INSTITUTION_CONFIG.portalUrl}`
                     navigator.clipboard.writeText(text)
                     setCopiedNotification(true)
                     setTimeout(() => setCopiedNotification(false), 3000)
@@ -1577,7 +1578,7 @@ export function StudentDirectory() {
                 {credentialsModalData.phone ? (
                   <a
                     href={`https://api.whatsapp.com/send?phone=${credentialsModalData.phone.replace(/[^0-9]/g, '')}&text=${encodeURIComponent(
-                      `🎓 *ÉCLAT INSTITUTE STUDENT PORTAL LOGIN*\n\nHello *${credentialsModalData.studentName}*,\nYour student account has been set up for *${credentialsModalData.program}*.\n\n*Admission Number / Username:* ${credentialsModalData.admissionNumber}\n*Password:* ${credentialsModalData.password}\n*Portal Link:* https://eclat.institute/login\n\nPlease log in to access your video lessons and live virtual classes.`
+                      `🎓 *${INSTITUTION_CONFIG.name.toUpperCase()} STUDENT PORTAL LOGIN*\n\nHello *${credentialsModalData.studentName}*,\nYour student account has been set up for *${credentialsModalData.program}*.\n\n*Admission Number / Username:* ${credentialsModalData.admissionNumber}\n*Password:* ${credentialsModalData.password}\n*Portal Link:* ${INSTITUTION_CONFIG.portalUrl}\n\nPlease log in to access your video lessons and live virtual classes.`
                     )}`}
                     target="_blank"
                     rel="noopener noreferrer"

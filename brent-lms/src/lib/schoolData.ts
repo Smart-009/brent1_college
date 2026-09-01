@@ -25,6 +25,7 @@ import { txEngine, IntegrityError } from './transactionManager'
 import { schoolEventBus } from './eventBus'
 import { generateBiometricTemplate } from './biometricEngine'
 import { supabase } from './supabase'
+import { INSTITUTION_CONFIG } from '@/config/institution'
 
 // Official Enrolled Students
 export const INITIAL_STUDENTS: StudentRecord[] = []
@@ -40,7 +41,7 @@ export const INITIAL_DEPARTMENTS: CollegeDepartment[] = [
     code: 'DEPT-SWE',
     description: '100% Online full-stack web engineering, React 19, Node.js, JavaScript, and cloud systems.',
     hod_name: 'Eng. Alex Mwangi',
-    hod_email: 'a.mwangi@eclatinstitute.ac.ke',
+    hod_email: `a.mwangi@${INSTITUTION_CONFIG.domain}`,
     programs: ['Full-Stack Web Development (React & Node.js)', 'JavaScript & Cloud Deployment Masterclass'],
     created_at: new Date().toISOString(),
   },
@@ -50,7 +51,7 @@ export const INITIAL_DEPARTMENTS: CollegeDepartment[] = [
     code: 'DEPT-DATA',
     description: 'Python coding, SQL database analytics, Pandas data science, and business intelligence dashboards.',
     hod_name: 'Dr. Brian Ochieng',
-    hod_email: 'b.ochieng@eclatinstitute.ac.ke',
+    hod_email: `b.ochieng@${INSTITUTION_CONFIG.domain}`,
     programs: ['Python for Beginners & Data Analytics', 'SQL & Power BI Business Intelligence'],
     created_at: new Date().toISOString(),
   },
@@ -60,7 +61,7 @@ export const INITIAL_DEPARTMENTS: CollegeDepartment[] = [
     code: 'DEPT-COMP',
     description: 'Essential computer packages, Ms Office 365, Google Workspace, speed typing, and digital workflows.',
     hod_name: 'Mr. James Mutua',
-    hod_email: 'j.mutua@eclatinstitute.ac.ke',
+    hod_email: `j.mutua@${INSTITUTION_CONFIG.domain}`,
     programs: ['Comprehensive Computer Packages & Digital Skills', 'UI/UX Design & Canva Pro Graphics'],
     created_at: new Date().toISOString(),
   },
@@ -70,7 +71,7 @@ export const INITIAL_DEPARTMENTS: CollegeDepartment[] = [
     code: 'DEPT-CYBER',
     description: 'Cyber threat detection, ethical hacking fundamentals, network protocols, and security audits.',
     hod_name: 'Mr. David Kiprono',
-    hod_email: 'd.kiprono@eclatinstitute.ac.ke',
+    hod_email: `d.kiprono@${INSTITUTION_CONFIG.domain}`,
     programs: ['Cybersecurity Fundamentals & Threat Defense', 'Network Administration & Server Security'],
     created_at: new Date().toISOString(),
   },
@@ -80,7 +81,7 @@ export const INITIAL_DEPARTMENTS: CollegeDepartment[] = [
     code: 'DEPT-BIZTECH',
     description: 'QuickBooks Online & Desktop, KRA iTax VAT & PAYE filing, digital bookkeeping, and payroll.',
     hod_name: 'Mrs. Grace Wanjiku',
-    hod_email: 'g.wanjiku@eclatinstitute.ac.ke',
+    hod_email: `g.wanjiku@${INSTITUTION_CONFIG.domain}`,
     programs: ['Computerized Accounting (QuickBooks & iTax)', 'Corporate Financial Modeling'],
     created_at: new Date().toISOString(),
   },
@@ -90,7 +91,7 @@ export const INITIAL_DEPARTMENTS: CollegeDepartment[] = [
     code: 'DEPT-LANG',
     description: 'English fluency, public speaking, business communication, Arabic, French, and German online certification.',
     hod_name: 'Mme. Claire Dubois',
-    hod_email: 'c.dubois@eclatinstitute.ac.ke',
+    hod_email: `c.dubois@${INSTITUTION_CONFIG.domain}`,
     programs: ['English Language Mastery & Corporate Speaking', 'Foreign Languages (Arabic, French, German)'],
     created_at: new Date().toISOString(),
   },
@@ -100,7 +101,7 @@ export const INITIAL_DEPARTMENTS: CollegeDepartment[] = [
     code: 'DEPT-IELTS',
     description: 'Targeted online IELTS Academic & General Training preparation targeting Band 7.5 - 9.0 scores.',
     hod_name: 'Prof. Eric Thorne',
-    hod_email: 'e.thorne@eclatinstitute.ac.ke',
+    hod_email: `e.thorne@${INSTITUTION_CONFIG.domain}`,
     programs: ['IELTS Academic Intensive (Band 7.5+ Target)', 'IELTS General Training for Immigration'],
     created_at: new Date().toISOString(),
   },
@@ -110,7 +111,7 @@ export const INITIAL_DEPARTMENTS: CollegeDepartment[] = [
     code: 'DEPT-KISW',
     description: 'Online spoken and written Kiswahili for expatriates, tourists, beginners, and corporate professionals.',
     hod_name: 'Mwalimu Amina Yusuf',
-    hod_email: 'a.yusuf@eclatinstitute.ac.ke',
+    hod_email: `a.yusuf@${INSTITUTION_CONFIG.domain}`,
     programs: ['Kiswahili Sanifu for Beginners & Expatriates', 'Advanced Swahili Translation & Discourse'],
     created_at: new Date().toISOString(),
   },
