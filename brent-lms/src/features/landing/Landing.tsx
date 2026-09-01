@@ -1323,7 +1323,7 @@ export function Landing() {
           {/* Category Filter Pills & Result Counter */}
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem', marginBottom: '2.5rem' }}>
             <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
-              {['All', 'Tech & Programming', 'Languages & Communication', 'Computer & Digital Skills', 'Business Tech & Accounting'].map((cat) => (
+              {['All', 'Tech & Programming', 'Creative Design & Arts', 'Languages & Communication', 'Computer & Digital Skills', 'Business Tech & Accounting'].map((cat) => (
                 <button
                   key={cat}
                   type="button"
