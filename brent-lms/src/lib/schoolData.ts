@@ -588,26 +588,29 @@ class SchoolDataStore {
 
   private cleanLegacyMockData() {
     try {
-      const isCleaned = localStorage.getItem('brent_launch_clean_slate_v6_pure')
+      const isCleaned = localStorage.getItem('eclat_launch_pure_v8')
       if (!isCleaned) {
         const storedRole = localStorage.getItem('brent_demo_role')
         if (storedRole && storedRole !== 'admin') {
           localStorage.removeItem('brent_demo_role')
         }
         localStorage.removeItem('brent_school_students')
+        localStorage.removeItem('eclat_school_students')
+        localStorage.removeItem('brent_school_unit_registrations')
+        localStorage.removeItem('eclat_school_unit_registrations')
+        localStorage.removeItem('brent_school_invoices')
+        localStorage.removeItem('eclat_school_invoices')
+        localStorage.removeItem('brent_school_receipts')
+        localStorage.removeItem('eclat_school_receipts')
         localStorage.removeItem('brent_school_timetable')
         localStorage.removeItem('brent_school_exams')
         localStorage.removeItem('brent_school_report_cards')
-        localStorage.removeItem('brent_school_invoices')
-        localStorage.removeItem('brent_school_receipts')
         localStorage.removeItem('brent_school_resources')
         localStorage.removeItem('brent_school_discipline')
         localStorage.removeItem('brent_school_notices')
         localStorage.removeItem('brent_school_reminders')
         localStorage.removeItem('brent_school_inquiries')
-        localStorage.removeItem('brent_school_course_units')
-        localStorage.removeItem('brent_school_unit_registrations')
-        localStorage.setItem('brent_launch_clean_slate_v6_pure', 'true')
+        localStorage.setItem('eclat_launch_pure_v8', 'true')
       }
     } catch {}
   }
@@ -1549,7 +1552,46 @@ class SchoolDataStore {
 
   // --- Formal Unit Registration by Management (With Official Receipts) ---
   getUnitRegistrations(): UnitRegistrationReceipt[] {
-    return this.get<UnitRegistrationReceipt[]>('unit_registrations', [])
+    const raw = this.get<UnitRegistrationReceipt[]>('unit_registrations', [])
+    const students = this.getStudents()
+    if (students.length === 0) return []
+    const studentAdms = new Set(students.map((s) => s.admission_number.toLowerCase()))
+    const studentIds = new Set(students.map((s) => s.id.toLowerCase()))
+
+    return raw.filter(
+      (r) =>
+        (r.student_id && studentIds.has(r.student_id.toLowerCase())) ||
+        (r.admission_number && studentAdms.has(r.admission_number.toLowerCase()))
+    )
+  }
+
+  async deleteUnitRegistration(identifier: string): Promise<void> {
+    await txEngine.executeAtomic(
+      `DELETE_UNIT_REGISTRATION_${identifier}`,
+      ['brent_school_unit_registrations'],
+      () => {
+        const clean = identifier.toLowerCase()
+        const raw = this.get<UnitRegistrationReceipt[]>('unit_registrations', [])
+        const list = raw.filter(
+          (r) => r.id.toLowerCase() !== clean && r.receipt_number.toLowerCase() !== clean
+        )
+        this.set('unit_registrations', list)
+      }
+    )
+    schoolEventBus.publish('UNIT_REGISTRATION_COMPLETED' as any)
+    this.broadcastChange('UNIT_REGISTRATION_DELETED', { identifier })
+  }
+
+  async clearAllUnitRegistrations(): Promise<void> {
+    await txEngine.executeAtomic(
+      'CLEAR_ALL_UNIT_REGISTRATIONS',
+      ['brent_school_unit_registrations'],
+      () => {
+        this.set('unit_registrations', [])
+      }
+    )
+    schoolEventBus.publish('UNIT_REGISTRATION_COMPLETED' as any)
+    this.broadcastChange('UNIT_REGISTRATIONS_CLEARED')
   }
 
   async registerStudentUnits(receipt: UnitRegistrationReceipt): Promise<void> {
@@ -1569,6 +1611,7 @@ class SchoolDataStore {
       }
     )
     schoolEventBus.publish('UNIT_REGISTRATION_COMPLETED' as any, receipt)
+    this.broadcastChange('UNIT_REGISTRATION_CREATED', receipt)
   }
 
   getRegistrationForStudent(identifier: string): UnitRegistrationReceipt | null {

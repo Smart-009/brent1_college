@@ -385,6 +385,20 @@ export function BursarDesk() {
     setSelectedSlipForView(receipt)
   }
 
+  const handleDeleteUnitReg = async (id: string, slipNumber: string) => {
+    if (window.confirm(`Are you sure you want to delete registration clearance slip "${slipNumber}"?`)) {
+      await schoolStore.deleteUnitRegistration(id)
+      setUnitRegistrations(schoolStore.getUnitRegistrations())
+    }
+  }
+
+  const handleClearAllUnitReg = async () => {
+    if (window.confirm('Are you sure you want to delete all unit registration clearance slips? This action cannot be undone.')) {
+      await schoolStore.clearAllUnitRegistrations()
+      setUnitRegistrations([])
+    }
+  }
+
   // Handle Add Inquiry
   const handleAddInquiry = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -1133,9 +1147,22 @@ export function BursarDesk() {
                 Register students for approved instructional course units and issue official assessment clearance slips.
               </p>
             </div>
-            <button type="button" className="btn btn-primary" onClick={() => setShowUnitRegModal(true)}>
-              + Register Units for Trainee
-            </button>
+            <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
+              {unitRegistrations.length > 0 && (
+                <button
+                  type="button"
+                  className="btn btn-sm"
+                  style={{ background: '#fee2e2', color: '#dc2626', border: '1px solid #fca5a5' }}
+                  onClick={handleClearAllUnitReg}
+                  title="Remove all unit registration clearance slips"
+                >
+                  🗑️ Clear All Slips
+                </button>
+              )}
+              <button type="button" className="btn btn-primary" onClick={() => setShowUnitRegModal(true)}>
+                + Register Units for Trainee
+              </button>
+            </div>
           </div>
 
           {unitRegistrations.length === 0 ? (
@@ -1157,7 +1184,7 @@ export function BursarDesk() {
                     <th>Total Credits</th>
                     <th>Fee Status</th>
                     <th>Date</th>
-                    <th>Action</th>
+                    <th style={{ textAlign: 'right' }}>Action</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -1175,10 +1202,21 @@ export function BursarDesk() {
                         </span>
                       </td>
                       <td>{reg.registered_at}</td>
-                      <td>
-                        <button type="button" className="btn btn-sm btn-secondary" onClick={() => setSelectedSlipForView(reg)}>
-                          📄 Print Clearance Slip
-                        </button>
+                      <td style={{ textAlign: 'right' }}>
+                        <div style={{ display: 'inline-flex', gap: '0.4rem', justifyContent: 'flex-end' }}>
+                          <button type="button" className="btn btn-sm btn-secondary" onClick={() => setSelectedSlipForView(reg)}>
+                            📄 Print Slip
+                          </button>
+                          <button
+                            type="button"
+                            className="btn btn-sm"
+                            style={{ background: '#fee2e2', color: '#dc2626', border: '1px solid #fca5a5' }}
+                            onClick={() => handleDeleteUnitReg(reg.id, reg.receipt_number)}
+                            title="Delete this registration slip"
+                          >
+                            🗑️
+                          </button>
+                        </div>
                       </td>
                     </tr>
                   ))}
