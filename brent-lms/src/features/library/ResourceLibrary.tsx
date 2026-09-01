@@ -386,43 +386,75 @@ export function ResourceLibrary() {
       </div>
 
       {/* Filter and Search Bar */}
-      <div className="card mb-6" style={{ padding: '1.25rem' }}>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1rem' }}>
-          <div>
-            <label className="label" style={{ fontSize: '0.75rem' }}>Search E-Library</label>
+      <div className="card mb-6" style={{ padding: '1.25rem', borderRadius: '16px', background: 'var(--color-surface)', boxShadow: '0 4px 20px rgba(0,0,0,0.06)' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+          {/* Main Search Bar */}
+          <div style={{ position: 'relative', width: '100%' }}>
+            <span style={{ position: 'absolute', left: '16px', top: '50%', transform: 'translateY(-50%)', fontSize: '1.1rem', opacity: 0.6 }}>
+              🔍
+            </span>
             <input
               type="text"
               className="input"
-              placeholder="Search past exam questions, manuals..."
+              style={{
+                paddingLeft: '46px',
+                paddingRight: search ? '40px' : '16px',
+                paddingTop: '0.85rem',
+                paddingBottom: '0.85rem',
+                fontSize: '0.95rem',
+                borderRadius: '12px',
+                border: '2px solid var(--color-border)',
+                background: 'var(--color-bg)',
+              }}
+              placeholder="Search e-library by document title, subject, category, author, or keyword..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
             />
+            {search && (
+              <button
+                type="button"
+                onClick={() => setSearch('')}
+                style={{
+                  position: 'absolute',
+                  right: '14px',
+                  top: '50%',
+                  transform: 'translateY(-50%)',
+                  background: 'none',
+                  border: 'none',
+                  cursor: 'pointer',
+                  color: '#94a3b8',
+                  fontSize: '1rem',
+                  fontWeight: 700,
+                }}
+              >
+                ✕
+              </button>
+            )}
           </div>
 
-          <div>
-            <label className="label" style={{ fontSize: '0.75rem' }}>Resource Type</label>
-            <select
-              className="input"
-              value={selectedCat}
-              onChange={(e) => setSelectedCat(e.target.value)}
-            >
-              {CATEGORIES.map((c) => (
-                <option key={c} value={c}>{c}</option>
-              ))}
-            </select>
-          </div>
-
-          <div>
-            <label className="label" style={{ fontSize: '0.75rem' }}>Subject Discipline</label>
-            <select
-              className="input"
-              value={selectedSub}
-              onChange={(e) => setSelectedSub(e.target.value)}
-            >
-              {dynamicSubjects.map((s) => (
-                <option key={s} value={s}>{s}</option>
-              ))}
-            </select>
+          {/* Quick Filter Tag Buttons */}
+          <div style={{ display: 'flex', gap: '0.5rem', overflowX: 'auto', paddingBottom: '4px', scrollbarWidth: 'none' }}>
+            {['All', 'Revision Notes', 'Past Papers', 'Lab Manuals', 'Textbooks', '⭐ Starred / Saved Books'].map((cat) => (
+              <button
+                key={cat}
+                type="button"
+                onClick={() => setSelectedCat(cat)}
+                style={{
+                  padding: '0.45rem 0.9rem',
+                  borderRadius: '999px',
+                  fontSize: '0.8rem',
+                  fontWeight: selectedCat === cat ? 800 : 600,
+                  whiteSpace: 'nowrap',
+                  border: selectedCat === cat ? '2px solid #2563eb' : '1px solid var(--color-border)',
+                  background: selectedCat === cat ? '#eff6ff' : 'var(--color-surface)',
+                  color: selectedCat === cat ? '#1e3a8a' : 'var(--color-text)',
+                  cursor: 'pointer',
+                  transition: 'all 0.15s ease',
+                }}
+              >
+                {cat}
+              </button>
+            ))}
           </div>
         </div>
       </div>
@@ -1190,26 +1222,16 @@ export function ResourceLibrary() {
                     <input
                       type="text"
                       required
-                      list="category-suggestions"
                       className="input"
                       style={{ fontSize: '0.9rem', padding: '0.75rem' }}
-                      placeholder="e.g. Revision Notes, Past Paper, E-Book"
+                      placeholder="Type category (e.g. Revision Notes, Past Papers, Lab Manual)"
                       value={newCategory}
                       onChange={(e) => setNewCategory(e.target.value as any)}
                     />
-                    <datalist id="category-suggestions">
-                      <option value="Revision Notes" />
-                      <option value="Past Papers" />
-                      <option value="Lab Manuals" />
-                      <option value="Textbooks & E-Books" />
-                      <option value="Syllabus & Course Outline" />
-                      <option value="Cheatsheets & Study Guides" />
-                      <option value="Assignments & Practical Projects" />
-                    </datalist>
                   </div>
                   <div style={{ flex: '1 1 140px', minWidth: '120px' }}>
                     <label className="label" style={{ fontWeight: 700, fontSize: '0.82rem', marginBottom: '0.35rem' }}>
-                      Exam Year
+                      Exam Year (Optional)
                     </label>
                     <input
                       type="number"
@@ -1224,31 +1246,17 @@ export function ResourceLibrary() {
 
                 <div>
                   <label className="label" style={{ fontWeight: 700, fontSize: '0.82rem', marginBottom: '0.35rem' }}>
-                    Subject / Program Name *
+                    Subject / Course Name *
                   </label>
                   <input
                     type="text"
                     required
-                    list="subject-suggestions"
                     className="input"
                     style={{ fontSize: '0.9rem', padding: '0.75rem' }}
-                    placeholder="e.g. Web Development, Python, French, Graphic Design..."
+                    placeholder="Type subject (e.g. Full-Stack Web Development, Python, French, Accounting)"
                     value={newSubject}
                     onChange={(e) => setNewSubject(e.target.value)}
                   />
-                  <datalist id="subject-suggestions">
-                    {storeSubjects.map((sub) => (
-                      <option key={sub} value={sub} />
-                    ))}
-                    <option value="Full-Stack Web Development" />
-                    <option value="Python Programming & Data Analytics" />
-                    <option value="Comprehensive Computer Packages" />
-                    <option value="Cybersecurity Fundamentals" />
-                    <option value="Computerized Accounting (QuickBooks & iTax)" />
-                    <option value="English Language & Corporate Fluency" />
-                    <option value="Foreign Languages (Arabic, French, German)" />
-                    <option value="IELTS Academic & General Prep" />
-                  </datalist>
                 </div>
 
                 <div>
