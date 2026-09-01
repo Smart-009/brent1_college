@@ -42,6 +42,14 @@ export function BursarDesk() {
   const [studentToEnroll, setStudentToEnroll] = useState<StudentRecord | null>(null)
   const [selectedClearancePass, setSelectedClearancePass] = useState<BiometricFeeClearancePass | null>(null)
   const [selectedReceipt, setSelectedReceipt] = useState<FeePaymentReceipt | null>(null)
+  const [editingReceipt, setEditingReceipt] = useState<FeePaymentReceipt | null>(null)
+  const [editFormData, setEditFormData] = useState({
+    amount: 60,
+    payment_method: 'M-Pesa' as 'Card' | 'Bank Transfer' | 'Paybill' | 'PayPal' | 'M-Pesa' | 'Cash Deposit',
+    reference_code: '',
+    paid_by: '',
+    update_notes: '',
+  })
   const [selectedStudentForLetter, setSelectedStudentForLetter] = useState<StudentRecord | null>(null)
   const [selectedStudentForIdCard, setSelectedStudentForIdCard] = useState<StudentRecord | null>(null)
   const [selectedSlipForView, setSelectedSlipForView] = useState<UnitRegistrationReceipt | null>(null)
@@ -51,6 +59,58 @@ export function BursarDesk() {
   const defaultIssuer = profile?.full_name
     ? `${profile.full_name} (${profile.role === 'admin' ? 'Principal' : 'Bursar & Accounts Directorate'})`
     : 'Mrs. Grace Odhiambo (Bursar & Accounts Directorate)'
+
+  const handleOpenEditReceipt = (rec: FeePaymentReceipt) => {
+    setEditingReceipt(rec)
+    setEditFormData({
+      amount: rec.amount_paid ?? rec.amount,
+      payment_method: rec.payment_method,
+      reference_code: rec.reference_code,
+      paid_by: rec.paid_by,
+      update_notes: rec.update_notes || '',
+    })
+  }
+
+  const handleSaveUpdateReceipt = async (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!editingReceipt) return
+
+    await schoolStore.updateReceipt(
+      editingReceipt.id,
+      {
+        amount: Number(editFormData.amount),
+        amount_paid: Number(editFormData.amount),
+        payment_method: editFormData.payment_method,
+        reference_code: editFormData.reference_code,
+        paid_by: editFormData.paid_by,
+        update_notes: editFormData.update_notes,
+      },
+      profile?.full_name || 'Principal / Administrator'
+    )
+
+    setReceipts(schoolStore.getReceipts())
+    setInvoices(schoolStore.getInvoices())
+    setStudents(schoolStore.getStudents())
+    setEditingReceipt(null)
+  }
+
+  const handleDeleteReceipt = async (recId: string, recNum: string) => {
+    if (window.confirm(`Are you sure you want to delete Receipt "${recNum}"?`)) {
+      await schoolStore.deleteReceipt(recId)
+      setReceipts(schoolStore.getReceipts())
+      setInvoices(schoolStore.getInvoices())
+      setStudents(schoolStore.getStudents())
+    }
+  }
+
+  const handleClearAllReceipts = async () => {
+    if (window.confirm('Are you sure you want to clear all receipts from the system?')) {
+      await schoolStore.clearAllReceipts()
+      setReceipts(schoolStore.getReceipts())
+      setInvoices(schoolStore.getInvoices())
+      setStudents(schoolStore.getStudents())
+    }
+  }
 
   // Payment Form
   const [paymentData, setPaymentData] = useState({
@@ -610,14 +670,24 @@ export function BursarDesk() {
       {/* Tab 3: Receipts */}
       {activeTab === 'receipts' && (
         <div className="card" style={{ padding: '1.5rem' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem', marginBottom: '1.5rem' }}>
             <div>
-              <h3 style={{ fontSize: '1.2rem', fontWeight: 700, margin: 0 }}>Fee Payment Receipts & Ledger</h3>
+              <h3 style={{ fontSize: '1.2rem', fontWeight: 700, margin: 0 }}>Fee Payment Receipts & Ledger ({receipts.length})</h3>
               <p style={{ fontSize: '0.85rem', color: 'var(--color-text-secondary)', margin: '0.25rem 0 0' }}>
                 Official verified payment receipts issued via M-Pesa, Bank, or Cash with optional biometric authentication.
               </p>
             </div>
-            <div style={{ display: 'flex', gap: '0.5rem' }}>
+            <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
+              {receipts.length > 0 && (
+                <button
+                  type="button"
+                  className="btn btn-outline"
+                  style={{ color: '#ef4444', borderColor: '#fca5a5' }}
+                  onClick={handleClearAllReceipts}
+                >
+                  🗑️ Clear All Receipts
+                </button>
+              )}
               <button
                 type="button"
                 className="btn btn-secondary"
@@ -650,16 +720,29 @@ export function BursarDesk() {
                     <th>Remaining Balance</th>
                     <th>Method</th>
                     <th>Ref / M-Pesa Code</th>
-                    <th>Biometric Auth</th>
+                    <th>Status / Audit</th>
                     <th>Issued By</th>
                     <th>Date</th>
-                    <th>Action</th>
+                    <th style={{ textAlign: 'right' }}>Actions</th>
                   </tr>
                 </thead>
                 <tbody>
                   {receipts.map((rcpt) => (
                     <tr key={rcpt.id}>
-                      <td><strong>{rcpt.receipt_number}</strong></td>
+                      <td>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
+                          <strong style={{ color: 'var(--color-primary)' }}>{rcpt.receipt_number}</strong>
+                          {rcpt.is_updated && (
+                            <span
+                              className="badge"
+                              style={{ background: '#fef3c7', color: '#b45309', border: '1px solid #fde68a', fontSize: '0.68rem', fontWeight: 800 }}
+                              title={`Updated by ${rcpt.updated_by || 'Admin'} on ${rcpt.updated_at ? new Date(rcpt.updated_at).toLocaleString() : 'recently'}`}
+                            >
+                              ✏️ Updated
+                            </span>
+                          )}
+                        </div>
+                      </td>
                       <td>{rcpt.admission_number}</td>
                       <td>{rcpt.student_name}</td>
                       <td style={{ color: '#16a34a', fontWeight: 700 }}>${(rcpt.amount_paid ?? rcpt.amount).toLocaleString()}</td>
@@ -673,20 +756,32 @@ export function BursarDesk() {
                       <td><span className="badge badge-info">{rcpt.payment_method}</span></td>
                       <td><code>{rcpt.reference_code}</code></td>
                       <td>
-                        {rcpt.biometric_verified ? (
+                        {rcpt.is_updated ? (
+                          <span style={{ fontSize: '0.72rem', color: '#b45309', fontWeight: 700 }}>
+                            Adjusted by {rcpt.updated_by?.split(' ')[0] || 'Admin'}
+                          </span>
+                        ) : rcpt.biometric_verified ? (
                           <span className="badge badge-success" style={{ fontSize: '0.72rem' }}>
                             🔒 🖐️ Verified
                           </span>
                         ) : (
-                          <span style={{ fontSize: '0.75rem', color: 'var(--color-text-secondary)' }}>Standard</span>
+                          <span style={{ fontSize: '0.75rem', color: 'var(--color-text-secondary)' }}>Original</span>
                         )}
                       </td>
                       <td style={{ fontSize: '0.82rem', color: '#475569' }}><strong>{rcpt.recorded_by || rcpt.received_by || defaultIssuer}</strong></td>
                       <td>{rcpt.payment_date}</td>
-                      <td>
-                        <button type="button" className="btn btn-sm btn-secondary" onClick={() => setSelectedReceipt(rcpt)}>
-                          🖨️ View & Print
-                        </button>
+                      <td style={{ textAlign: 'right' }}>
+                        <div style={{ display: 'inline-flex', gap: '0.35rem' }}>
+                          <button type="button" className="btn btn-xs btn-secondary" onClick={() => setSelectedReceipt(rcpt)} title="View / Print Receipt">
+                            🧾
+                          </button>
+                          <button type="button" className="btn btn-xs btn-primary" onClick={() => handleOpenEditReceipt(rcpt)} title="Edit Receipt">
+                            ✏️ Edit
+                          </button>
+                          <button type="button" className="btn btn-xs" style={{ background: '#fee2e2', color: '#dc2626', border: '1px solid #fca5a5' }} onClick={() => handleDeleteReceipt(rcpt.id, rcpt.receipt_number)} title="Delete Receipt">
+                            🗑️
+                          </button>
+                        </div>
                       </td>
                     </tr>
                   ))}
@@ -1904,6 +1999,97 @@ export function BursarDesk() {
           pass={selectedClearancePass}
           onClose={() => setSelectedClearancePass(null)}
         />
+      )}
+
+      {/* Edit & Update Receipt Modal */}
+      {editingReceipt && (
+        <div className="modal-overlay" onClick={() => setEditingReceipt(null)}>
+          <div className="modal-content" onClick={(e) => e.stopPropagation()} style={{ maxWidth: '480px' }}>
+            <div className="modal-header">
+              <div>
+                <h3 className="modal-title">✏️ Update Payment Receipt</h3>
+                <p style={{ margin: 0, fontSize: '0.8rem', color: 'var(--color-text-secondary)' }}>
+                  Receipt #{editingReceipt.receipt_number} • {editingReceipt.student_name} ({editingReceipt.admission_number})
+                </p>
+              </div>
+              <button type="button" className="modal-close" onClick={() => setEditingReceipt(null)}>✕</button>
+            </div>
+
+            <form onSubmit={handleSaveUpdateReceipt}>
+              <div className="modal-body" style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                <div className="form-group">
+                  <label className="form-label" style={{ fontWeight: 700 }}>Amount Paid ($ USD)</label>
+                  <input
+                    type="number"
+                    className="form-input"
+                    value={editFormData.amount}
+                    onChange={(e) => setEditFormData({ ...editFormData, amount: Number(e.target.value) })}
+                    min="1"
+                    required
+                  />
+                </div>
+
+                <div className="form-group">
+                  <label className="form-label" style={{ fontWeight: 700 }}>Payment Method</label>
+                  <select
+                    className="form-input"
+                    value={editFormData.payment_method}
+                    onChange={(e) => setEditFormData({ ...editFormData, payment_method: e.target.value as any })}
+                  >
+                    <option value="M-Pesa">M-Pesa</option>
+                    <option value="Card">Card</option>
+                    <option value="Bank Transfer">Bank Transfer</option>
+                    <option value="Paybill">Paybill</option>
+                    <option value="PayPal">PayPal</option>
+                    <option value="Cash Deposit">Cash Deposit</option>
+                  </select>
+                </div>
+
+                <div className="form-group">
+                  <label className="form-label" style={{ fontWeight: 700 }}>Transaction / Reference Code</label>
+                  <input
+                    type="text"
+                    className="form-input"
+                    value={editFormData.reference_code}
+                    onChange={(e) => setEditFormData({ ...editFormData, reference_code: e.target.value })}
+                    required
+                  />
+                </div>
+
+                <div className="form-group">
+                  <label className="form-label" style={{ fontWeight: 700 }}>Payer Name / Paid By</label>
+                  <input
+                    type="text"
+                    className="form-input"
+                    value={editFormData.paid_by}
+                    onChange={(e) => setEditFormData({ ...editFormData, paid_by: e.target.value })}
+                    required
+                  />
+                </div>
+
+                <div className="form-group">
+                  <label className="form-label" style={{ fontWeight: 700 }}>Reason for Update / Audit Note</label>
+                  <input
+                    type="text"
+                    className="form-input"
+                    placeholder="e.g. Corrected deposit ref, adjusted fee balance"
+                    value={editFormData.update_notes}
+                    onChange={(e) => setEditFormData({ ...editFormData, update_notes: e.target.value })}
+                  />
+                </div>
+              </div>
+
+              <div className="modal-footer" style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.75rem' }}>
+                <button type="button" className="btn btn-secondary" onClick={() => setEditingReceipt(null)}>
+                  Cancel
+                </button>
+                <button type="submit" className="btn btn-primary" style={{ fontWeight: 700 }}>
+                  Save & Mark Updated ✓
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
       )}
     </div>
   )

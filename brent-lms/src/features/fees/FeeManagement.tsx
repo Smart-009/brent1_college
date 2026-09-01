@@ -26,6 +26,15 @@ export function FeeManagement() {
   const [studentToEnroll, setStudentToEnroll] = useState<StudentRecord | null>(null)
   const [selectedPass, setSelectedPass] = useState<BiometricFeeClearancePass | null>(null)
 
+  const [editingReceipt, setEditingReceipt] = useState<FeePaymentReceipt | null>(null)
+  const [editFormData, setEditFormData] = useState({
+    amount: 60,
+    payment_method: 'M-Pesa' as 'Card' | 'Bank Transfer' | 'Paybill' | 'PayPal' | 'M-Pesa' | 'Cash Deposit',
+    reference_code: '',
+    paid_by: '',
+    update_notes: '',
+  })
+
   const currentStudent = students.find(
     (s) => s.admission_number.toLowerCase() === profile?.admission_number?.toLowerCase() || s.id === profile?.id
   ) || null
@@ -58,6 +67,58 @@ export function FeeManagement() {
   const totalCollected = receipts.reduce((acc, r) => acc + r.amount, 0)
   const totalOutstanding = invoices.reduce((acc, inv) => acc + inv.balance, 0)
   const totalBilled = invoices.reduce((acc, inv) => acc + inv.total_amount, 0)
+
+  const handleOpenEdit = (rec: FeePaymentReceipt) => {
+    setEditingReceipt(rec)
+    setEditFormData({
+      amount: rec.amount_paid ?? rec.amount,
+      payment_method: rec.payment_method,
+      reference_code: rec.reference_code,
+      paid_by: rec.paid_by,
+      update_notes: rec.update_notes || '',
+    })
+  }
+
+  const handleSaveUpdate = async (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!editingReceipt) return
+
+    await schoolStore.updateReceipt(
+      editingReceipt.id,
+      {
+        amount: Number(editFormData.amount),
+        amount_paid: Number(editFormData.amount),
+        payment_method: editFormData.payment_method,
+        reference_code: editFormData.reference_code,
+        paid_by: editFormData.paid_by,
+        update_notes: editFormData.update_notes,
+      },
+      profile?.full_name || 'Principal / Administrator'
+    )
+
+    setReceipts(schoolStore.getReceipts())
+    setInvoices(schoolStore.getInvoices())
+    setStudents(schoolStore.getStudents())
+    setEditingReceipt(null)
+  }
+
+  const handleDeleteReceipt = async (recId: string, recNum: string) => {
+    if (window.confirm(`Are you sure you want to cancel and delete Receipt "${recNum}"? Student balances will be updated accordingly.`)) {
+      await schoolStore.deleteReceipt(recId)
+      setReceipts(schoolStore.getReceipts())
+      setInvoices(schoolStore.getInvoices())
+      setStudents(schoolStore.getStudents())
+    }
+  }
+
+  const handleClearAllReceipts = async () => {
+    if (window.confirm('Are you sure you want to remove all receipts from the system? This action will reset the receipts ledger.')) {
+      await schoolStore.clearAllReceipts()
+      setReceipts(schoolStore.getReceipts())
+      setInvoices(schoolStore.getInvoices())
+      setStudents(schoolStore.getStudents())
+    }
+  }
 
   const handleRecordPayment = (e: React.FormEvent) => {
     e.preventDefault()
@@ -524,60 +585,124 @@ export function FeeManagement() {
       {/* Tab 2: Receipts */}
       {activeTab === 'receipts' && (
         <div className="card" style={{ overflow: 'hidden' }}>
-          <div className="table-responsive">
-            <table className="table">
-              <thead>
-                <tr>
-                  <th>Receipt #</th>
-                  <th>Student Name</th>
-                  <th>Adm No.</th>
-                  <th>Amount Paid</th>
-                  <th>Method</th>
-                  <th>Ref Code</th>
-                  <th>Biometric Auth</th>
-                  <th>Date & Time</th>
-                  <th>Paid By</th>
-                  <th style={{ textAlign: 'right' }}>Print</th>
-                </tr>
-              </thead>
-              <tbody>
-                {receipts.map((rec) => (
-                  <tr key={rec.id}>
-                    <td style={{ fontWeight: 700, color: 'var(--color-primary)' }}>{rec.receipt_number}</td>
-                    <td style={{ fontWeight: 600 }}>{rec.student_name}</td>
-                    <td>{rec.admission_number}</td>
-                    <td style={{ fontWeight: 700, color: '#16a34a' }}>${rec.amount.toLocaleString()}</td>
-                    <td><span className="badge badge-info">{rec.payment_method}</span></td>
-                    <td style={{ fontFamily: 'monospace', fontWeight: 600 }}>{rec.reference_code}</td>
-                    <td>
-                      {rec.biometric_verified ? (
-                        <span
-                          className="badge badge-success"
-                          style={{ display: 'inline-flex', alignItems: 'center', gap: '0.25rem', fontSize: '0.72rem' }}
-                          title={`Verified via ${rec.biometric_finger_used || 'Fingerprint'}`}
-                        >
-                          🔒 🖐️ Verified
-                        </span>
-                      ) : (
-                        <span style={{ fontSize: '0.75rem', color: 'var(--color-text-secondary)' }}>Standard</span>
-                      )}
-                    </td>
-                    <td style={{ fontSize: '0.8rem', color: 'var(--color-text-secondary)' }}>{rec.payment_date}</td>
-                    <td>{rec.paid_by}</td>
-                    <td style={{ textAlign: 'right' }}>
-                      <button
-                        type="button"
-                        className="btn btn-secondary btn-sm"
-                        onClick={() => setSelectedReceipt(rec)}
-                      >
-                        🧾 Receipt
-                      </button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+          <div style={{ padding: '1rem 1.25rem', borderBottom: '1px solid var(--color-border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '0.75rem', background: 'var(--color-bg-secondary)' }}>
+            <div>
+              <h3 style={{ fontSize: '1rem', fontWeight: 800, margin: 0 }}>Official Fee Payment Receipts ({receipts.length})</h3>
+              <p style={{ fontSize: '0.8rem', color: 'var(--color-text-secondary)', margin: '0.2rem 0 0' }}>
+                All audited payment transactions, M-Pesa receipts, and administrative adjustments.
+              </p>
+            </div>
+            {receipts.length > 0 && (
+              <button
+                type="button"
+                className="btn btn-sm btn-outline"
+                style={{ color: '#ef4444', borderColor: '#fca5a5' }}
+                onClick={handleClearAllReceipts}
+              >
+                🗑️ Clear All Receipts
+              </button>
+            )}
           </div>
+
+          {receipts.length === 0 ? (
+            <div style={{ padding: '3.5rem 1.5rem', textAlign: 'center', color: 'var(--color-text-secondary)' }}>
+              <div style={{ fontSize: '2.5rem', marginBottom: '0.5rem' }}>🧾</div>
+              <h4 style={{ margin: '0 0 0.4rem', fontWeight: 700 }}>No Payment Receipts Recorded</h4>
+              <p style={{ fontSize: '0.85rem', margin: 0 }}>All newly recorded student payments will be logged here in real-time.</p>
+            </div>
+          ) : (
+            <div className="table-responsive">
+              <table className="table">
+                <thead>
+                  <tr>
+                    <th>Receipt #</th>
+                    <th>Student Name</th>
+                    <th>Adm No.</th>
+                    <th>Amount Paid</th>
+                    <th>Method</th>
+                    <th>Ref Code</th>
+                    <th>Status / Audit</th>
+                    <th>Date</th>
+                    <th>Paid By</th>
+                    <th style={{ textAlign: 'right' }}>Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {receipts.map((rec) => (
+                    <tr key={rec.id}>
+                      <td>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                          <strong style={{ color: 'var(--color-primary)' }}>{rec.receipt_number}</strong>
+                          {rec.is_updated && (
+                            <span
+                              className="badge"
+                              style={{ background: '#fef3c7', color: '#b45309', border: '1px solid #fde68a', fontSize: '0.7rem', fontWeight: 800 }}
+                              title={`Updated by ${rec.updated_by || 'Admin'} on ${rec.updated_at ? new Date(rec.updated_at).toLocaleString() : 'recently'}${rec.update_notes ? ` • Note: ${rec.update_notes}` : ''}`}
+                            >
+                              ✏️ Updated
+                            </span>
+                          )}
+                        </div>
+                      </td>
+                      <td style={{ fontWeight: 600 }}>{rec.student_name}</td>
+                      <td>{rec.admission_number}</td>
+                      <td style={{ fontWeight: 800, color: '#16a34a' }}>${(rec.amount_paid ?? rec.amount).toLocaleString()}</td>
+                      <td><span className="badge badge-info">{rec.payment_method}</span></td>
+                      <td style={{ fontFamily: 'monospace', fontWeight: 600 }}>{rec.reference_code}</td>
+                      <td>
+                        {rec.is_updated ? (
+                          <span style={{ fontSize: '0.75rem', color: '#b45309', fontWeight: 600 }}>
+                            Adjusted by {rec.updated_by?.split(' ')[0] || 'Admin'}
+                          </span>
+                        ) : rec.biometric_verified ? (
+                          <span
+                            className="badge badge-success"
+                            style={{ display: 'inline-flex', alignItems: 'center', gap: '0.25rem', fontSize: '0.72rem' }}
+                            title={`Verified via ${rec.biometric_finger_used || 'Fingerprint'}`}
+                          >
+                            🔒 🖐️ Verified
+                          </span>
+                        ) : (
+                          <span style={{ fontSize: '0.75rem', color: 'var(--color-text-secondary)' }}>Original</span>
+                        )}
+                      </td>
+                      <td style={{ fontSize: '0.8rem', color: 'var(--color-text-secondary)' }}>{rec.payment_date}</td>
+                      <td>{rec.paid_by}</td>
+                      <td style={{ textAlign: 'right' }}>
+                        <div style={{ display: 'inline-flex', gap: '0.35rem' }}>
+                          <button
+                            type="button"
+                            className="btn btn-secondary btn-xs"
+                            onClick={() => setSelectedReceipt(rec)}
+                            title="View & Print Receipt"
+                          >
+                            🧾
+                          </button>
+                          <button
+                            type="button"
+                            className="btn btn-primary btn-xs"
+                            onClick={() => handleOpenEdit(rec)}
+                            title="Edit & Update Receipt"
+                          >
+                            ✏️ Edit
+                          </button>
+                          <button
+                            type="button"
+                            className="btn btn-xs"
+                            style={{ background: '#fee2e2', color: '#dc2626', border: '1px solid #fca5a5' }}
+                            onClick={() => handleDeleteReceipt(rec.id, rec.receipt_number)}
+                            title="Delete Receipt"
+                          >
+                            🗑️
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
         </div>
       )}
 
@@ -1100,6 +1225,97 @@ export function FeeManagement() {
           pass={selectedPass}
           onClose={() => setSelectedPass(null)}
         />
+      )}
+
+      {/* Edit & Update Receipt Modal */}
+      {editingReceipt && (
+        <div className="modal-overlay" onClick={() => setEditingReceipt(null)}>
+          <div className="modal-content" onClick={(e) => e.stopPropagation()} style={{ maxWidth: '480px' }}>
+            <div className="modal-header">
+              <div>
+                <h3 className="modal-title">✏️ Update Payment Receipt</h3>
+                <p style={{ margin: 0, fontSize: '0.8rem', color: 'var(--color-text-secondary)' }}>
+                  Receipt #{editingReceipt.receipt_number} • {editingReceipt.student_name} ({editingReceipt.admission_number})
+                </p>
+              </div>
+              <button type="button" className="modal-close" onClick={() => setEditingReceipt(null)}>✕</button>
+            </div>
+
+            <form onSubmit={handleSaveUpdate}>
+              <div className="modal-body" style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                <div className="form-group">
+                  <label className="form-label" style={{ fontWeight: 700 }}>Amount Paid ($ USD)</label>
+                  <input
+                    type="number"
+                    className="form-input"
+                    value={editFormData.amount}
+                    onChange={(e) => setEditFormData({ ...editFormData, amount: Number(e.target.value) })}
+                    min="1"
+                    required
+                  />
+                </div>
+
+                <div className="form-group">
+                  <label className="form-label" style={{ fontWeight: 700 }}>Payment Method</label>
+                  <select
+                    className="form-input"
+                    value={editFormData.payment_method}
+                    onChange={(e) => setEditFormData({ ...editFormData, payment_method: e.target.value as any })}
+                  >
+                    <option value="M-Pesa">M-Pesa</option>
+                    <option value="Card">Card</option>
+                    <option value="Bank Transfer">Bank Transfer</option>
+                    <option value="Paybill">Paybill</option>
+                    <option value="PayPal">PayPal</option>
+                    <option value="Cash Deposit">Cash Deposit</option>
+                  </select>
+                </div>
+
+                <div className="form-group">
+                  <label className="form-label" style={{ fontWeight: 700 }}>Transaction / Reference Code</label>
+                  <input
+                    type="text"
+                    className="form-input"
+                    value={editFormData.reference_code}
+                    onChange={(e) => setEditFormData({ ...editFormData, reference_code: e.target.value })}
+                    required
+                  />
+                </div>
+
+                <div className="form-group">
+                  <label className="form-label" style={{ fontWeight: 700 }}>Payer Name / Paid By</label>
+                  <input
+                    type="text"
+                    className="form-input"
+                    value={editFormData.paid_by}
+                    onChange={(e) => setEditFormData({ ...editFormData, paid_by: e.target.value })}
+                    required
+                  />
+                </div>
+
+                <div className="form-group">
+                  <label className="form-label" style={{ fontWeight: 700 }}>Reason for Update / Audit Note</label>
+                  <input
+                    type="text"
+                    className="form-input"
+                    placeholder="e.g. Corrected fee deposit ref, adjusted fee balance"
+                    value={editFormData.update_notes}
+                    onChange={(e) => setEditFormData({ ...editFormData, update_notes: e.target.value })}
+                  />
+                </div>
+              </div>
+
+              <div className="modal-footer" style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.75rem' }}>
+                <button type="button" className="btn btn-secondary" onClick={() => setEditingReceipt(null)}>
+                  Cancel
+                </button>
+                <button type="submit" className="btn btn-primary" style={{ fontWeight: 700 }}>
+                  Save & Mark Updated ✓
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
       )}
     </div>
   )

@@ -164,6 +164,10 @@ export interface FeePaymentReceipt {
   biometric_finger_used?: string
   biometric_verification_code?: string
   biometric_verified_at?: string
+  is_updated?: boolean
+  updated_at?: string
+  updated_by?: string
+  update_notes?: string
 }
 
 export interface BiometricFeeClearancePass {
