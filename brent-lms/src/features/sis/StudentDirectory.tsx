@@ -682,6 +682,27 @@ export function StudentDirectory() {
                         </button>
                         <button
                           type="button"
+                          className="btn btn-sm"
+                          style={{
+                            background: std.certificate_granted ? '#fef3c7' : '#f8fafc',
+                            border: std.certificate_granted ? '1px solid #f59e0b' : '1px solid #cbd5e1',
+                            color: std.certificate_granted ? '#b45309' : '#475569',
+                            fontWeight: 700,
+                          }}
+                          onClick={async () => {
+                            const willGrant = !std.certificate_granted
+                            await schoolStore.grantCertificate(std.id, willGrant)
+                            setStudents(schoolStore.getStudents())
+                            if (selectedStudent && selectedStudent.id === std.id) {
+                              setSelectedStudent({ ...selectedStudent, certificate_granted: willGrant })
+                            }
+                          }}
+                          title={std.certificate_granted ? 'Certificate is GRANTED (Click to revoke)' : 'Click to Grant & Authorize Certificate of Completion'}
+                        >
+                          {std.certificate_granted ? '🎓 Cert Granted ✓' : '🎓 Grant Cert'}
+                        </button>
+                        <button
+                          type="button"
                           className="btn btn-primary btn-sm"
                           onClick={() => {
                             setEditingStudent(std)
@@ -973,6 +994,25 @@ export function StudentDirectory() {
                   }}
                 >
                   🔑 View Login Pass
+                </button>
+                <button
+                  type="button"
+                  className="btn"
+                  style={{
+                    background: selectedStudent.certificate_granted ? '#fef3c7' : '#f8fafc',
+                    color: selectedStudent.certificate_granted ? '#b45309' : '#1e3a8a',
+                    border: selectedStudent.certificate_granted ? '1px solid #f59e0b' : '1px solid #cbd5e1',
+                    fontWeight: 700,
+                  }}
+                  onClick={async () => {
+                    const willGrant = !selectedStudent.certificate_granted
+                    await schoolStore.grantCertificate(selectedStudent.id, willGrant)
+                    const updatedList = schoolStore.getStudents()
+                    setStudents(updatedList)
+                    setSelectedStudent({ ...selectedStudent, certificate_granted: willGrant })
+                  }}
+                >
+                  {selectedStudent.certificate_granted ? '🎓 Certificate Granted ✓ (Click to Revoke)' : '🎓 Grant Certificate'}
                 </button>
                 <button
                   type="button"

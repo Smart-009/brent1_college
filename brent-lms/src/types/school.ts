@@ -44,6 +44,10 @@ export interface StudentRecord {
   biometric_public_key?: string
   biometric_enrolled_at?: string
   biometric_enrolled_by?: string
+  certificate_granted?: boolean
+  certificate_granted_at?: string
+  certificate_number?: string
+  certificate_grade?: string
 }
 
 export interface TimetablePeriod {

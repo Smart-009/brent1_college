@@ -128,15 +128,39 @@ export function StudentDashboard() {
             </p>
           </div>
 
-          <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap' }}>
-            <button
-              type="button"
-              className="btn btn-sm"
-              onClick={() => setShowCertModal(true)}
-              style={{ background: '#f59e0b', color: '#090d16', fontWeight: 800, border: 'none' }}
-            >
-              🎓 Certificate of Completion
-            </button>
+          <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap', alignItems: 'center' }}>
+            {currentStudent?.certificate_granted ? (
+              <button
+                type="button"
+                className="btn btn-sm"
+                onClick={() => setShowCertModal(true)}
+                style={{ background: '#f59e0b', color: '#090d16', fontWeight: 800, border: 'none', display: 'flex', alignItems: 'center', gap: '0.35rem' }}
+                title="Your Certificate has been officially granted and verified by the Academic Registrar."
+              >
+                🎓 Certificate of Completion (Granted ✓)
+              </button>
+            ) : (
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                <button
+                  type="button"
+                  className="btn btn-sm"
+                  disabled
+                  title="Certificate locked: Awaiting course evaluation and graduation clearance by the College Administrator."
+                  style={{
+                    background: 'rgba(255, 255, 255, 0.12)',
+                    color: '#cbd5e1',
+                    fontWeight: 700,
+                    border: '1px solid rgba(255, 255, 255, 0.2)',
+                    cursor: 'not-allowed',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '0.35rem',
+                  }}
+                >
+                  🔒 Certificate (Pending Admin Clearance)
+                </button>
+              </div>
+            )}
             <Link to="/exams" className="btn btn-sm" style={{ background: '#ffffff', color: '#1e3a8a', fontWeight: 700 }}>
               📜 View Official Transcript
             </Link>

@@ -575,6 +575,31 @@ class SchoolDataStore {
     schoolEventBus.publish('STUDENT_DELETED', id)
   }
 
+  async grantCertificate(id: string, granted: boolean = true, grade: string = 'Distinction (A)'): Promise<void> {
+    await txEngine.executeAtomic(
+      `GRANT_CERTIFICATE_${id}`,
+      ['brent_school_students'],
+      () => {
+        const list = this.get<StudentRecord[]>('students', INITIAL_STUDENTS)
+        const idx = list.findIndex((s) => s.id === id || s.admission_number.toLowerCase() === id.toLowerCase())
+        if (idx === -1) throw new IntegrityError(`Student ID "${id}" not found.`)
+
+        const student = list[idx]
+        const certNo = student.certificate_number || `EI-CERT-${student.admission_number.replace(/[^a-zA-Z0-9]/g, '')}-${Math.floor(1000 + Math.random() * 9000)}`
+
+        list[idx] = {
+          ...student,
+          certificate_granted: granted,
+          certificate_granted_at: granted ? new Date().toISOString() : undefined,
+          certificate_number: granted ? certNo : undefined,
+          certificate_grade: granted ? (grade || 'Distinction (A)') : undefined,
+        }
+        this.set('students', list)
+      }
+    )
+    schoolEventBus.publish('STUDENT_UPDATED')
+  }
+
   // --- Timetable CRUD (ACID Protected) ---
   getTimetable(classFilter?: string, dayFilter?: string): TimetablePeriod[] {
     let list = this.get<TimetablePeriod[]>('timetable', INITIAL_TIMETABLE)
