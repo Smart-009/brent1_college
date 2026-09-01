@@ -1,4 +1,4 @@
-import { type ReactNode, useEffect } from 'react'
+import { type ReactNode, useEffect, useRef } from 'react'
 import { createPortal } from 'react-dom'
 import { Button } from './Button'
 
@@ -12,6 +12,8 @@ interface ModalProps {
 }
 
 export function Modal({ isOpen, onClose, title, size = 'md', children, footer }: ModalProps) {
+  const overlayRef = useRef<HTMLDivElement>(null)
+
   // Close on Escape
   useEffect(() => {
     if (!isOpen) return
@@ -20,16 +22,23 @@ export function Modal({ isOpen, onClose, title, size = 'md', children, footer }:
     return () => window.removeEventListener('keydown', handler)
   }, [isOpen, onClose])
 
-  // Prevent body scroll
+  // Prevent body scroll & reset scroll
   useEffect(() => {
-    document.body.style.overflow = isOpen ? 'hidden' : ''
+    if (isOpen) {
+      document.body.style.overflow = 'hidden'
+      if (overlayRef.current) {
+        overlayRef.current.scrollTop = 0
+      }
+    } else {
+      document.body.style.overflow = ''
+    }
     return () => { document.body.style.overflow = '' }
   }, [isOpen])
 
   if (!isOpen) return null
 
   return createPortal(
-    <div className="modal-overlay" onClick={(e) => e.target === e.currentTarget && onClose()}>
+    <div ref={overlayRef} className="modal-overlay" onClick={(e) => e.target === e.currentTarget && onClose()}>
       <div className={`modal-box modal-${size}`} role="dialog" aria-modal="true" aria-labelledby="modal-title">
         <div className="modal-header">
           <h2 className="modal-title" id="modal-title">{title}</h2>

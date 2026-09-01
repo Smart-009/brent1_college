@@ -311,16 +311,23 @@
    ===================== */
 .modal-overlay {
   position: fixed;
-  inset: 0;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  width: 100vw;
+  height: 100vh;
   background: rgba(15, 23, 42, 0.75);
   backdrop-filter: blur(4px);
   display: flex;
-  align-items: flex-start;
-  justify-content: center;
-  padding: 2rem 1rem;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 3rem 1rem;
   z-index: 99999;
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
+  box-sizing: border-box;
   animation: fadeInFast 0.15s ease forwards;
 }
 .modal-box,
@@ -330,12 +337,13 @@
   border-radius: var(--radius-xl);
   box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5), 0 0 0 1px var(--color-border);
   width: 100%;
-  margin: auto 0;
-  max-height: calc(100vh - 4rem);
+  margin: 0 auto;
+  max-height: calc(100vh - 6rem);
   display: flex;
   flex-direction: column;
   overflow: hidden;
   position: relative;
+  flex-shrink: 0;
   animation: fadeIn 0.2s ease forwards;
 }
 .modal-sm { max-width: 420px; }
