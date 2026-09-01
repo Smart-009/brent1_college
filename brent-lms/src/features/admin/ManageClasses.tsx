@@ -174,36 +174,45 @@ export function ManageClasses() {
   const [shifts, setShifts] = useState('Mon, Wed & Fri: 7:30 PM - 9:30 PM EAT')
   const [icon, setIcon] = useState('💻')
 
-  // Fetch departments from Supabase (merging with local state)
+  // Fetch departments directly from Supabase courses table for 100% cross-device synchronization
   const { isLoading } = useQuery({
-    queryKey: ['admin-classes'],
+    queryKey: ['admin-classes-cloud'],
     queryFn: async () => {
       try {
-        const { data, error } = await supabase.from('classes').select('*').order('name')
+        const { data, error } = await supabase.from('courses').select('*').order('created_at', { ascending: true })
         if (!error && data && data.length > 0) {
-          const currentItems = loadPrograms()
-          const merged = currentItems.map((item) => {
-            const dbMatch = data.find((d: any) => d.id === item.id || d.name.toLowerCase() === item.name.toLowerCase())
-            if (dbMatch) {
-              return {
-                ...item,
-                name: dbMatch.name || item.name,
-                grade_level: dbMatch.grade_level || item.grade_level,
-                academic_year: dbMatch.academic_year || item.academic_year,
-                hod_name: dbMatch.hod_name || item.hod_name,
-                fee_amount: dbMatch.fee_amount || item.fee_amount,
-                duration: dbMatch.duration || item.duration,
-                shifts: dbMatch.shifts || item.shifts,
-                icon: dbMatch.icon || item.icon,
-              }
+          const cloudItems: DepartmentProgram[] = data.map((c) => {
+            const titleLower = (c.title || '').toLowerCase()
+            const icon = titleLower.includes('python') || titleLower.includes('data')
+              ? '📊'
+              : titleLower.includes('cyber') || titleLower.includes('security')
+              ? '🛡️'
+              : titleLower.includes('account') || titleLower.includes('tax') || titleLower.includes('quickbooks')
+              ? '📈'
+              : titleLower.includes('language') || titleLower.includes('french') || titleLower.includes('german') || titleLower.includes('arabic') || titleLower.includes('swahili') || titleLower.includes('english') || titleLower.includes('ielts')
+              ? '🗣️'
+              : titleLower.includes('graphic') || titleLower.includes('design')
+              ? '🎨'
+              : '💻'
+
+            return {
+              id: c.id,
+              name: c.title,
+              hod_name: 'Faculty Department Lead',
+              grade_level: 'Vocational Certificate Program',
+              academic_year: `${CURRENT_YEAR} Virtual Cohort`,
+              fee_amount: 60,
+              duration: c.description || '8 to 12 Weeks (Short Course Certificate)',
+              shifts: 'Live Online Evening (7:30 PM) / Weekend Batches',
+              icon,
             }
-            return item
           })
-          saveLocalDepts(merged)
-          return merged
+          setLocalDepts(cloudItems)
+          saveLocalDepts(cloudItems)
+          return cloudItems
         }
       } catch {
-        // use local
+        // fallback to local
       }
       return loadPrograms()
     },
