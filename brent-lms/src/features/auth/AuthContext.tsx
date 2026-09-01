@@ -76,25 +76,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [session, setSession] = useState<Session | null>(null)
   const [profile, setProfile] = useState<Profile | null>(() => {
     try {
-      const stored = (localStorage.getItem('eclat_demo_role') || localStorage.getItem('brent_demo_role')) as Role | null
-      // Only restore admin from demo role; others must authenticate cleanly
-      if (stored === 'admin') {
-        return ADMIN_PROFILE
-      } else {
-        localStorage.removeItem('eclat_demo_role')
-        localStorage.removeItem('brent_demo_role')
+      const activeRaw = sessionStorage.getItem('eclat_active_profile') || localStorage.getItem('eclat_active_profile')
+      if (activeRaw) {
+        return JSON.parse(activeRaw)
       }
     } catch {}
     return null
   })
-  const [loading, setLoading] = useState(() => {
-    try {
-      const stored = localStorage.getItem('eclat_demo_role') || localStorage.getItem('brent_demo_role')
-      return !stored
-    } catch {
-      return false
-    }
-  })
+  const [loading, setLoading] = useState(false)
 
   async function fetchProfile(userId: string) {
     try {
@@ -103,7 +92,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         .select('*')
         .eq('id', userId)
         .single()
-      if (data) setProfile(data)
+      if (data) {
+        setProfile(data)
+        localStorage.setItem('eclat_active_profile', JSON.stringify(data))
+      }
     } catch {
       // Fallback
     }
@@ -114,37 +106,22 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }
 
   useEffect(() => {
-    const safetyTimer = setTimeout(() => {
-      setLoading(false)
-    }, 800)
-
     // Non-blocking asynchronous session restoration
     supabase.auth.getSession().then(({ data: { session } }) => {
-      clearTimeout(safetyTimer)
       setSession(session)
       if (session?.user) {
-        fetchProfile(session.user.id).finally(() => setLoading(false))
-      } else {
-        const storedRole = (localStorage.getItem('eclat_demo_role') || localStorage.getItem('brent_demo_role')) as Role | null
-        if (storedRole && DEMO_PROFILES[storedRole]) {
-          setProfile(DEMO_PROFILES[storedRole])
-        }
-        setLoading(false)
+        fetchProfile(session.user.id)
       }
-    }).catch(() => {
-      clearTimeout(safetyTimer)
-      setLoading(false)
-    })
+    }).catch(() => {})
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       setSession(session)
       if (session?.user) {
         fetchProfile(session.user.id)
-      } else {
-        const storedRole = (localStorage.getItem('eclat_demo_role') || localStorage.getItem('brent_demo_role')) as Role | null
-        if (storedRole && DEMO_PROFILES[storedRole]) {
-          setProfile(DEMO_PROFILES[storedRole])
-        } else {
+      } else if (!session) {
+        // If explicitly signed out
+        const hasStored = sessionStorage.getItem('eclat_active_profile') || localStorage.getItem('eclat_active_profile')
+        if (!hasStored) {
           setProfile(null)
         }
       }
@@ -154,9 +131,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, [])
 
   function signInAsDemo(role: Role) {
-    localStorage.setItem('eclat_demo_role', role)
-    localStorage.removeItem('brent_demo_role')
-    setProfile(DEMO_PROFILES[role])
+    const demoProf = DEMO_PROFILES[role]
+    localStorage.setItem('eclat_active_profile', JSON.stringify(demoProf))
+    sessionStorage.setItem('eclat_active_profile', JSON.stringify(demoProf))
+    setProfile(demoProf)
   }
 
   async function signIn(inputIdentifier: string, password: string): Promise<{ error: string | null }> {
@@ -234,7 +212,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             }
           }
           if (userEntry.profile) {
-            localStorage.setItem('eclat_demo_role', userEntry.profile.role || 'student')
+            localStorage.setItem('eclat_active_profile', JSON.stringify(userEntry.profile))
+            sessionStorage.setItem('eclat_active_profile', JSON.stringify(userEntry.profile))
             setProfile(userEntry.profile)
             return { error: null }
           }
@@ -262,7 +241,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         is_active: true,
         created_at: student.admission_date || new Date().toISOString(),
       }
-      localStorage.setItem('eclat_demo_role', 'student')
+      localStorage.setItem('eclat_active_profile', JSON.stringify(studentProfile))
+      sessionStorage.setItem('eclat_active_profile', JSON.stringify(studentProfile))
       setProfile(studentProfile)
       return { error: null }
     }
@@ -326,7 +306,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         })
       } catch {}
 
-      localStorage.setItem('eclat_demo_role', 'student')
+      localStorage.setItem('eclat_active_profile', JSON.stringify(newStudentProfile))
+      sessionStorage.setItem('eclat_active_profile', JSON.stringify(newStudentProfile))
       setProfile(newStudentProfile)
       return { error: null }
     }
@@ -338,7 +319,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     try {
       await supabase.auth.signOut()
     } catch {}
+    localStorage.removeItem('eclat_demo_role')
     localStorage.removeItem('brent_demo_role')
+    localStorage.removeItem('eclat_active_profile')
+    localStorage.removeItem('brent_active_profile')
+    sessionStorage.removeItem('eclat_active_profile')
+    sessionStorage.removeItem('brent_active_profile')
+    sessionStorage.clear()
     setSession(null)
     setProfile(null)
   }
