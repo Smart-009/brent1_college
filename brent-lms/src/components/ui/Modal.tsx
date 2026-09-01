@@ -1,4 +1,5 @@
 import { type ReactNode, useEffect } from 'react'
+import { createPortal } from 'react-dom'
 import { Button } from './Button'
 
 interface ModalProps {
@@ -27,7 +28,7 @@ export function Modal({ isOpen, onClose, title, size = 'md', children, footer }:
 
   if (!isOpen) return null
 
-  return (
+  return createPortal(
     <div className="modal-overlay" onClick={(e) => e.target === e.currentTarget && onClose()}>
       <div className={`modal-box modal-${size}`} role="dialog" aria-modal="true" aria-labelledby="modal-title">
         <div className="modal-header">
@@ -37,7 +38,8 @@ export function Modal({ isOpen, onClose, title, size = 'md', children, footer }:
         <div className="modal-body">{children}</div>
         {footer && <div className="modal-footer">{footer}</div>}
       </div>
-    </div>
+    </div>,
+    document.body
   )
 }
 
