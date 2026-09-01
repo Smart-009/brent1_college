@@ -3,6 +3,7 @@ import { useAuth } from '@/hooks/useAuth'
 import { schoolStore } from '@/lib/schoolData'
 import type {
   FeeInvoice,
+  FeeInvoiceItem,
   FeePaymentReceipt,
   PaymentReminder,
   StudentRecord,
@@ -57,8 +58,8 @@ export function BursarDesk() {
 
   const { profile } = useAuth()
   const defaultIssuer = profile?.full_name
-    ? `${profile.full_name} (${profile.role === 'admin' ? 'Principal' : 'Bursar & Accounts Directorate'})`
-    : 'Mrs. Grace Odhiambo (Bursar & Accounts Directorate)'
+    ? `${profile.full_name} (${profile.role === 'admin' ? 'Principal & Administrator' : 'Bursar & Accounts Directorate'})`
+    : 'Bursar & Accounts Directorate'
 
   const handleOpenEditReceipt = (rec: FeePaymentReceipt) => {
     setEditingReceipt(rec)
@@ -98,6 +99,72 @@ export function BursarDesk() {
     if (window.confirm(`Are you sure you want to delete Receipt "${recNum}"?`)) {
       await schoolStore.deleteReceipt(recId)
       setReceipts(schoolStore.getReceipts())
+      setInvoices(schoolStore.getInvoices())
+      setStudents(schoolStore.getStudents())
+    }
+  }
+
+  const [editingInvoice, setEditingInvoice] = useState<FeeInvoice | null>(null)
+  const [editInvoiceData, setEditInvoiceData] = useState({
+    total_amount: 60,
+    due_date: '',
+    term: 'Semester 1',
+    description: 'Accredited Course Tuition Fee',
+    update_notes: '',
+  })
+
+  const handleOpenEditInvoice = (inv: FeeInvoice) => {
+    setEditingInvoice(inv)
+    setEditInvoiceData({
+      total_amount: inv.total_amount,
+      due_date: inv.due_date || new Date().toISOString().split('T')[0],
+      term: inv.term || 'Semester 1',
+      description: inv.items?.[0]?.description || 'Course Tuition Fee',
+      update_notes: inv.update_notes || '',
+    })
+  }
+
+  const handleSaveUpdateInvoice = async (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!editingInvoice) return
+
+    const newAmount = Number(editInvoiceData.total_amount)
+    const newItems: FeeInvoiceItem[] = [
+      {
+        id: `item-${Date.now()}`,
+        description: editInvoiceData.description || 'Course Tuition Fee',
+        amount: newAmount,
+      },
+    ]
+
+    await schoolStore.updateInvoice(
+      editingInvoice.id,
+      {
+        total_amount: newAmount,
+        due_date: editInvoiceData.due_date,
+        term: editInvoiceData.term,
+        items: newItems,
+        update_notes: editInvoiceData.update_notes,
+      },
+      profile?.full_name || 'Principal / Administrator'
+    )
+
+    setInvoices(schoolStore.getInvoices())
+    setStudents(schoolStore.getStudents())
+    setEditingInvoice(null)
+  }
+
+  const handleDeleteInvoice = async (invId: string, invNum: string) => {
+    if (window.confirm(`Are you sure you want to delete Invoice "${invNum}"?`)) {
+      await schoolStore.deleteInvoice(invId)
+      setInvoices(schoolStore.getInvoices())
+      setStudents(schoolStore.getStudents())
+    }
+  }
+
+  const handleClearAllInvoices = async () => {
+    if (window.confirm('Are you sure you want to clear all invoices from the system?')) {
+      await schoolStore.clearAllInvoices()
       setInvoices(schoolStore.getInvoices())
       setStudents(schoolStore.getStudents())
     }
@@ -331,7 +398,7 @@ export function BursarDesk() {
       purpose: newInquiry.purpose as any,
       program_of_interest: newInquiry.program_of_interest,
       notes: newInquiry.notes || '',
-      recorded_by: 'Bursar & Admissions Desk (Mrs. Grace Odhiambo)',
+      recorded_by: `${defaultIssuer}`,
       created_at: new Date().toLocaleString(),
       status: 'Open',
     }
@@ -587,16 +654,28 @@ export function BursarDesk() {
       {/* Tab 2: Billing & Invoices */}
       {activeTab === 'invoices' && (
         <div className="card" style={{ padding: '1.5rem' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem', marginBottom: '1.5rem' }}>
             <div>
-              <h3 style={{ fontSize: '1.2rem', fontWeight: 700, margin: 0 }}>Fee Invoices & Statements</h3>
+              <h3 style={{ fontSize: '1.2rem', fontWeight: 700, margin: 0 }}>Fee Invoices & Statements ({invoices.length})</h3>
               <p style={{ fontSize: '0.85rem', color: 'var(--color-text-secondary)', margin: '0.25rem 0 0' }}>
                 Manage student billing items, tuition balances, and due dates.
               </p>
             </div>
-            <button type="button" className="btn btn-primary" onClick={() => setShowInvoiceModal(true)}>
-              + Generate New Fee Invoice
-            </button>
+            <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
+              {invoices.length > 0 && (
+                <button
+                  type="button"
+                  className="btn btn-outline"
+                  style={{ color: '#ef4444', borderColor: '#fca5a5' }}
+                  onClick={handleClearAllInvoices}
+                >
+                  🗑️ Clear All Invoices
+                </button>
+              )}
+              <button type="button" className="btn btn-primary" onClick={() => setShowInvoiceModal(true)}>
+                + Generate New Fee Invoice
+              </button>
+            </div>
           </div>
 
           {invoices.length === 0 ? (
@@ -619,13 +698,26 @@ export function BursarDesk() {
                     <th>Balance</th>
                     <th>Status</th>
                     <th>Due Date</th>
-                    <th>Action</th>
+                    <th style={{ textAlign: 'right' }}>Actions</th>
                   </tr>
                 </thead>
                 <tbody>
                   {invoices.map((inv) => (
                     <tr key={inv.id}>
-                      <td><strong>{inv.invoice_number}</strong></td>
+                      <td>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
+                          <strong style={{ color: 'var(--color-primary)' }}>{inv.invoice_number}</strong>
+                          {inv.is_updated && (
+                            <span
+                              className="badge"
+                              style={{ background: '#fef3c7', color: '#b45309', border: '1px solid #fde68a', fontSize: '0.68rem', fontWeight: 800 }}
+                              title={`Updated by ${inv.updated_by || 'Admin'} on ${inv.updated_at ? new Date(inv.updated_at).toLocaleString() : 'recently'}`}
+                            >
+                              ✏️ Updated
+                            </span>
+                          )}
+                        </div>
+                      </td>
                       <td>{inv.admission_number}</td>
                       <td>{inv.student_name}</td>
                       <td>{inv.class_name} • {inv.term}</td>
@@ -640,23 +732,46 @@ export function BursarDesk() {
                         </span>
                       </td>
                       <td>{inv.due_date}</td>
-                      <td>
-                        <button
-                          type="button"
-                          className="btn btn-sm btn-ghost"
-                          onClick={() => {
-                            setPaymentData({
-                              ...paymentData,
-                              student_id: inv.student_id,
-                              admission_number: inv.admission_number,
-                              student_name: inv.student_name,
-                              amount: inv.balance,
-                            })
-                            setShowPayModal(true)
-                          }}
-                        >
-                          Receive Payment
-                        </button>
+                      <td style={{ textAlign: 'right' }}>
+                        <div style={{ display: 'inline-flex', gap: '0.35rem' }}>
+                          <button
+                            type="button"
+                            className="btn btn-xs btn-primary"
+                            onClick={() => handleOpenEditInvoice(inv)}
+                            title="Edit Invoice"
+                          >
+                            ✏️ Edit
+                          </button>
+                          {inv.balance > 0 ? (
+                            <button
+                              type="button"
+                              className="btn btn-xs btn-secondary"
+                              onClick={() => {
+                                setPaymentData({
+                                  ...paymentData,
+                                  student_id: inv.student_id,
+                                  admission_number: inv.admission_number,
+                                  student_name: inv.student_name,
+                                  amount: inv.balance,
+                                })
+                                setShowPayModal(true)
+                              }}
+                            >
+                              Receive Pay
+                            </button>
+                          ) : (
+                            <span style={{ fontSize: '0.75rem', color: '#16a34a', fontWeight: 700 }}>✓ Settled</span>
+                          )}
+                          <button
+                            type="button"
+                            className="btn btn-xs"
+                            style={{ background: '#fee2e2', color: '#dc2626', border: '1px solid #fca5a5' }}
+                            onClick={() => handleDeleteInvoice(inv.id, inv.invoice_number)}
+                            title="Delete Invoice"
+                          >
+                            🗑️
+                          </button>
+                        </div>
                       </td>
                     </tr>
                   ))}
@@ -1906,7 +2021,7 @@ export function BursarDesk() {
 
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', borderTop: '1px solid #e2e8f0', paddingTop: '1.5rem' }}>
               <div>
-                <div style={{ fontWeight: 700 }}>Mrs. Grace Odhiambo</div>
+                <div style={{ fontWeight: 700 }}>{profile?.full_name || 'Academic Registrar & Bursar'}</div>
                 <div style={{ fontSize: '0.8rem', color: '#64748b' }}>Bursar & Admissions Registrar</div>
               </div>
               <div style={{ display: 'flex', gap: '0.5rem' }}>
@@ -2085,6 +2200,92 @@ export function BursarDesk() {
                 </button>
                 <button type="submit" className="btn btn-primary" style={{ fontWeight: 700 }}>
                   Save & Mark Updated ✓
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Edit & Update Invoice Modal */}
+      {editingInvoice && (
+        <div className="modal-overlay" onClick={() => setEditingInvoice(null)}>
+          <div className="modal-content" onClick={(e) => e.stopPropagation()} style={{ maxWidth: '480px' }}>
+            <div className="modal-header">
+              <div>
+                <h3 className="modal-title">✏️ Update Fee Invoice</h3>
+                <p style={{ margin: 0, fontSize: '0.8rem', color: 'var(--color-text-secondary)' }}>
+                  Invoice #{editingInvoice.invoice_number} • {editingInvoice.student_name} ({editingInvoice.admission_number})
+                </p>
+              </div>
+              <button type="button" className="modal-close" onClick={() => setEditingInvoice(null)}>✕</button>
+            </div>
+
+            <form onSubmit={handleSaveUpdateInvoice}>
+              <div className="modal-body" style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                <div className="form-group">
+                  <label className="form-label" style={{ fontWeight: 700 }}>Total Billed Amount ($ USD)</label>
+                  <input
+                    type="number"
+                    className="form-input"
+                    value={editInvoiceData.total_amount}
+                    onChange={(e) => setEditInvoiceData({ ...editInvoiceData, total_amount: Number(e.target.value) })}
+                    min="1"
+                    required
+                  />
+                </div>
+
+                <div className="form-group">
+                  <label className="form-label" style={{ fontWeight: 700 }}>Billing Description</label>
+                  <input
+                    type="text"
+                    className="form-input"
+                    value={editInvoiceData.description}
+                    onChange={(e) => setEditInvoiceData({ ...editInvoiceData, description: e.target.value })}
+                    required
+                  />
+                </div>
+
+                <div className="form-group">
+                  <label className="form-label" style={{ fontWeight: 700 }}>Academic Term / Cohort</label>
+                  <input
+                    type="text"
+                    className="form-input"
+                    value={editInvoiceData.term}
+                    onChange={(e) => setEditInvoiceData({ ...editInvoiceData, term: e.target.value })}
+                    required
+                  />
+                </div>
+
+                <div className="form-group">
+                  <label className="form-label" style={{ fontWeight: 700 }}>Payment Due Date</label>
+                  <input
+                    type="date"
+                    className="form-input"
+                    value={editInvoiceData.due_date}
+                    onChange={(e) => setEditInvoiceData({ ...editInvoiceData, due_date: e.target.value })}
+                    required
+                  />
+                </div>
+
+                <div className="form-group">
+                  <label className="form-label" style={{ fontWeight: 700 }}>Audit Note / Reason for Adjustment</label>
+                  <input
+                    type="text"
+                    className="form-input"
+                    placeholder="e.g. Scholarship waiver, revised module fee structure"
+                    value={editInvoiceData.update_notes}
+                    onChange={(e) => setEditInvoiceData({ ...editInvoiceData, update_notes: e.target.value })}
+                  />
+                </div>
+              </div>
+
+              <div className="modal-footer" style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.75rem' }}>
+                <button type="button" className="btn btn-secondary" onClick={() => setEditingInvoice(null)}>
+                  Cancel
+                </button>
+                <button type="submit" className="btn btn-primary" style={{ fontWeight: 700 }}>
+                  Save & Update Invoice ✓
                 </button>
               </div>
             </form>

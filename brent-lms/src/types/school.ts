@@ -141,6 +141,10 @@ export interface FeeInvoice {
   paid_amount: number
   balance: number
   status: 'Paid' | 'Partial' | 'Overdue' | 'Pending'
+  is_updated?: boolean
+  updated_at?: string
+  updated_by?: string
+  update_notes?: string
 }
 
 export interface FeePaymentReceipt {

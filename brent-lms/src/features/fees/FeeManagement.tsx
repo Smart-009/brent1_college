@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { useAuth } from '@/hooks/useAuth'
 import { schoolStore } from '@/lib/schoolData'
-import type { FeeInvoice, FeePaymentReceipt, StudentRecord, BiometricFeeClearancePass } from '@/types/school'
+import type { FeeInvoice, FeeInvoiceItem, FeePaymentReceipt, StudentRecord, BiometricFeeClearancePass } from '@/types/school'
 import { BiometricScannerModal } from '@/components/biometrics/BiometricScannerModal'
 import { BiometricEnrollModal } from '@/components/biometrics/BiometricEnrollModal'
 import { BiometricClearancePassModal } from '@/components/biometrics/BiometricClearancePassModal'
@@ -11,8 +11,8 @@ export function FeeManagement() {
   const { profile } = useAuth()
   const isStudent = profile?.role === 'student'
   const defaultIssuer = profile?.full_name
-    ? `${profile.full_name} (${profile.role === 'admin' ? 'Principal' : 'Bursar & Accounts Directorate'})`
-    : 'Mrs. Grace Odhiambo (Bursar & Accounts Directorate)'
+    ? `${profile.full_name} (${profile.role === 'admin' ? 'Principal & Administrator' : 'Bursar & Accounts Directorate'})`
+    : 'Accounts & Finance Desk'
 
   const [invoices, setInvoices] = useState<FeeInvoice[]>(() => schoolStore.getInvoices())
   const [receipts, setReceipts] = useState<FeePaymentReceipt[]>(() => schoolStore.getReceipts())
@@ -32,6 +32,15 @@ export function FeeManagement() {
     payment_method: 'M-Pesa' as 'Card' | 'Bank Transfer' | 'Paybill' | 'PayPal' | 'M-Pesa' | 'Cash Deposit',
     reference_code: '',
     paid_by: '',
+    update_notes: '',
+  })
+
+  const [editingInvoice, setEditingInvoice] = useState<FeeInvoice | null>(null)
+  const [editInvoiceData, setEditInvoiceData] = useState({
+    total_amount: 60,
+    due_date: '',
+    term: 'Semester 1',
+    description: 'Accredited Course Tuition Fee',
     update_notes: '',
   })
 
@@ -115,6 +124,63 @@ export function FeeManagement() {
     if (window.confirm('Are you sure you want to remove all receipts from the system? This action will reset the receipts ledger.')) {
       await schoolStore.clearAllReceipts()
       setReceipts(schoolStore.getReceipts())
+      setInvoices(schoolStore.getInvoices())
+      setStudents(schoolStore.getStudents())
+    }
+  }
+
+  const handleOpenEditInvoice = (inv: FeeInvoice) => {
+    setEditingInvoice(inv)
+    setEditInvoiceData({
+      total_amount: inv.total_amount,
+      due_date: inv.due_date || new Date().toISOString().split('T')[0],
+      term: inv.term || 'Semester 1',
+      description: inv.items?.[0]?.description || 'Course Tuition Fee',
+      update_notes: inv.update_notes || '',
+    })
+  }
+
+  const handleSaveUpdateInvoice = async (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!editingInvoice) return
+
+    const newAmount = Number(editInvoiceData.total_amount)
+    const newItems: FeeInvoiceItem[] = [
+      {
+        id: `item-${Date.now()}`,
+        description: editInvoiceData.description || 'Course Tuition Fee',
+        amount: newAmount,
+      },
+    ]
+
+    await schoolStore.updateInvoice(
+      editingInvoice.id,
+      {
+        total_amount: newAmount,
+        due_date: editInvoiceData.due_date,
+        term: editInvoiceData.term,
+        items: newItems,
+        update_notes: editInvoiceData.update_notes,
+      },
+      profile?.full_name || 'Principal / Administrator'
+    )
+
+    setInvoices(schoolStore.getInvoices())
+    setStudents(schoolStore.getStudents())
+    setEditingInvoice(null)
+  }
+
+  const handleDeleteInvoice = async (invId: string, invNum: string) => {
+    if (window.confirm(`Are you sure you want to delete Invoice "${invNum}"?`)) {
+      await schoolStore.deleteInvoice(invId)
+      setInvoices(schoolStore.getInvoices())
+      setStudents(schoolStore.getStudents())
+    }
+  }
+
+  const handleClearAllInvoices = async () => {
+    if (window.confirm('Are you sure you want to remove all fee invoices from the system?')) {
+      await schoolStore.clearAllInvoices()
       setInvoices(schoolStore.getInvoices())
       setStudents(schoolStore.getStudents())
     }
@@ -511,74 +577,133 @@ export function FeeManagement() {
       {/* Tab 1: Invoices */}
       {activeTab === 'invoices' && (
         <div className="card" style={{ overflow: 'hidden' }}>
-          <div className="table-responsive">
-            <table className="table">
-              <thead>
-                <tr>
-                  <th>Invoice No.</th>
-                  <th>Student Name</th>
-                  <th>Adm No.</th>
-                  <th>Class</th>
-                  <th>Term</th>
-                  <th>Total Billed</th>
-                  <th>Paid Amount</th>
-                  <th>Balance</th>
-                  <th>Status</th>
-                  <th style={{ textAlign: 'right' }}>Action</th>
-                </tr>
-              </thead>
-              <tbody>
-                {invoices.map((inv) => (
-                  <tr key={inv.id}>
-                    <td style={{ fontWeight: 600, color: 'var(--color-primary)' }}>{inv.invoice_number}</td>
-                    <td style={{ fontWeight: 600 }}>{inv.student_name}</td>
-                    <td>{inv.admission_number}</td>
-                    <td><span className="badge badge-info">{inv.class_name}</span></td>
-                    <td>{inv.term} {inv.academic_year}</td>
-                    <td>${inv.total_amount.toLocaleString()}</td>
-                    <td style={{ color: '#16a34a', fontWeight: 600 }}>${inv.paid_amount.toLocaleString()}</td>
-                    <td style={{ color: inv.balance > 0 ? '#ea580c' : '#16a34a', fontWeight: 700 }}>
-                      ${inv.balance.toLocaleString()}
-                    </td>
-                    <td>
-                      <span className={`badge ${inv.status === 'Paid' ? 'badge-success' : 'badge-warning'}`}>
-                        {inv.status}
-                      </span>
-                    </td>
-                    <td style={{ textAlign: 'right' }}>
-                      {inv.balance > 0 ? (
-                        <button
-                          type="button"
-                          className="btn btn-primary btn-sm"
-                          onClick={() => {
-                            setPayData({
-                              student_id: inv.student_id,
-                              admission_number: inv.admission_number,
-                              student_name: inv.student_name,
-                              total_fee: inv.balance,
-                              amount: inv.balance,
-                              payment_method: 'M-Pesa',
-                              reference_code: `MPESA-${Math.random().toString(36).substring(2, 8).toUpperCase()}`,
-                              paid_by: inv.student_name,
-                              issued_by: defaultIssuer,
-                              biometric_verified: false,
-                              biometric_finger_used: 'Right Thumb',
-                              biometric_verification_code: '',
-                            })
-                            setShowPayModal(true)
-                          }}
-                        >
-                          Clear Balance
-                        </button>
-                      ) : (
-                        <span style={{ fontSize: '0.8rem', color: '#16a34a', fontWeight: 600 }}>✓ Settled</span>
-                      )}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+          <div style={{ padding: '1rem 1.25rem', borderBottom: '1px solid var(--color-border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '0.75rem', background: 'var(--color-bg-secondary)' }}>
+            <div>
+              <h3 style={{ fontSize: '1rem', fontWeight: 800, margin: 0 }}>Student Fee Invoices ({invoices.length})</h3>
+              <p style={{ fontSize: '0.8rem', color: 'var(--color-text-secondary)', margin: '0.2rem 0 0' }}>
+                Manage semester billing invoices, due dates, fee structures, and administrative fee adjustments.
+              </p>
+            </div>
+            {invoices.length > 0 && (
+              <button
+                type="button"
+                className="btn btn-sm btn-outline"
+                style={{ color: '#ef4444', borderColor: '#fca5a5' }}
+                onClick={handleClearAllInvoices}
+              >
+                🗑️ Clear All Invoices
+              </button>
+            )}
           </div>
+
+          {invoices.length === 0 ? (
+            <div style={{ padding: '3.5rem 1.5rem', textAlign: 'center', color: 'var(--color-text-secondary)' }}>
+              <div style={{ fontSize: '2.5rem', marginBottom: '0.5rem' }}>📄</div>
+              <h4 style={{ margin: '0 0 0.4rem', fontWeight: 700 }}>No Fee Invoices Generated Yet</h4>
+              <p style={{ fontSize: '0.85rem', margin: 0 }}>Invoices will automatically generate when students register for accredited programs.</p>
+            </div>
+          ) : (
+            <div className="table-responsive">
+              <table className="table">
+                <thead>
+                  <tr>
+                    <th>Invoice No.</th>
+                    <th>Student Name</th>
+                    <th>Adm No.</th>
+                    <th>Program</th>
+                    <th>Term</th>
+                    <th>Total Billed</th>
+                    <th>Paid Amount</th>
+                    <th>Balance</th>
+                    <th>Status</th>
+                    <th style={{ textAlign: 'right' }}>Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {invoices.map((inv) => (
+                    <tr key={inv.id}>
+                      <td>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                          <strong style={{ color: 'var(--color-primary)' }}>{inv.invoice_number}</strong>
+                          {inv.is_updated && (
+                            <span
+                              className="badge"
+                              style={{ background: '#fef3c7', color: '#b45309', border: '1px solid #fde68a', fontSize: '0.7rem', fontWeight: 800 }}
+                              title={`Updated by ${inv.updated_by || 'Admin'} on ${inv.updated_at ? new Date(inv.updated_at).toLocaleString() : 'recently'}${inv.update_notes ? ` • Note: ${inv.update_notes}` : ''}`}
+                            >
+                              ✏️ Updated
+                            </span>
+                          )}
+                        </div>
+                      </td>
+                      <td style={{ fontWeight: 600 }}>{inv.student_name}</td>
+                      <td>{inv.admission_number}</td>
+                      <td><span className="badge badge-info">{inv.class_name}</span></td>
+                      <td>{inv.term} {inv.academic_year}</td>
+                      <td style={{ fontWeight: 800 }}>${inv.total_amount.toLocaleString()}</td>
+                      <td style={{ color: '#16a34a', fontWeight: 700 }}>${inv.paid_amount.toLocaleString()}</td>
+                      <td style={{ color: inv.balance > 0 ? '#ea580c' : '#16a34a', fontWeight: 800 }}>
+                        ${inv.balance.toLocaleString()}
+                      </td>
+                      <td>
+                        <span className={`badge ${inv.status === 'Paid' ? 'badge-success' : 'badge-warning'}`}>
+                          {inv.status}
+                        </span>
+                      </td>
+                      <td style={{ textAlign: 'right' }}>
+                        <div style={{ display: 'inline-flex', gap: '0.35rem', alignItems: 'center' }}>
+                          <button
+                            type="button"
+                            className="btn btn-primary btn-xs"
+                            onClick={() => handleOpenEditInvoice(inv)}
+                            title="Edit Invoice"
+                          >
+                            ✏️ Edit
+                          </button>
+                          {inv.balance > 0 ? (
+                            <button
+                              type="button"
+                              className="btn btn-secondary btn-xs"
+                              onClick={() => {
+                                setPayData({
+                                  student_id: inv.student_id,
+                                  admission_number: inv.admission_number,
+                                  student_name: inv.student_name,
+                                  total_fee: inv.balance,
+                                  amount: inv.balance,
+                                  payment_method: 'M-Pesa',
+                                  reference_code: `MPESA-${Math.random().toString(36).substring(2, 8).toUpperCase()}`,
+                                  paid_by: inv.student_name,
+                                  issued_by: defaultIssuer,
+                                  biometric_verified: false,
+                                  biometric_finger_used: 'Right Thumb',
+                                  biometric_verification_code: '',
+                                })
+                                setShowPayModal(true)
+                              }}
+                            >
+                              💳 Pay
+                            </button>
+                          ) : (
+                            <span style={{ fontSize: '0.75rem', color: '#16a34a', fontWeight: 700 }}>✓ Settled</span>
+                          )}
+                          <button
+                            type="button"
+                            className="btn btn-xs"
+                            style={{ background: '#fee2e2', color: '#dc2626', border: '1px solid #fca5a5' }}
+                            onClick={() => handleDeleteInvoice(inv.id, inv.invoice_number)}
+                            title="Delete Invoice"
+                          >
+                            🗑️
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
         </div>
       )}
 
@@ -1311,6 +1436,92 @@ export function FeeManagement() {
                 </button>
                 <button type="submit" className="btn btn-primary" style={{ fontWeight: 700 }}>
                   Save & Mark Updated ✓
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Edit & Update Invoice Modal */}
+      {editingInvoice && (
+        <div className="modal-overlay" onClick={() => setEditingInvoice(null)}>
+          <div className="modal-content" onClick={(e) => e.stopPropagation()} style={{ maxWidth: '480px' }}>
+            <div className="modal-header">
+              <div>
+                <h3 className="modal-title">✏️ Update Fee Invoice</h3>
+                <p style={{ margin: 0, fontSize: '0.8rem', color: 'var(--color-text-secondary)' }}>
+                  Invoice #{editingInvoice.invoice_number} • {editingInvoice.student_name} ({editingInvoice.admission_number})
+                </p>
+              </div>
+              <button type="button" className="modal-close" onClick={() => setEditingInvoice(null)}>✕</button>
+            </div>
+
+            <form onSubmit={handleSaveUpdateInvoice}>
+              <div className="modal-body" style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                <div className="form-group">
+                  <label className="form-label" style={{ fontWeight: 700 }}>Total Billed Amount ($ USD)</label>
+                  <input
+                    type="number"
+                    className="form-input"
+                    value={editInvoiceData.total_amount}
+                    onChange={(e) => setEditInvoiceData({ ...editInvoiceData, total_amount: Number(e.target.value) })}
+                    min="1"
+                    required
+                  />
+                </div>
+
+                <div className="form-group">
+                  <label className="form-label" style={{ fontWeight: 700 }}>Billing Description</label>
+                  <input
+                    type="text"
+                    className="form-input"
+                    value={editInvoiceData.description}
+                    onChange={(e) => setEditInvoiceData({ ...editInvoiceData, description: e.target.value })}
+                    required
+                  />
+                </div>
+
+                <div className="form-group">
+                  <label className="form-label" style={{ fontWeight: 700 }}>Academic Term / Cohort</label>
+                  <input
+                    type="text"
+                    className="form-input"
+                    value={editInvoiceData.term}
+                    onChange={(e) => setEditInvoiceData({ ...editInvoiceData, term: e.target.value })}
+                    required
+                  />
+                </div>
+
+                <div className="form-group">
+                  <label className="form-label" style={{ fontWeight: 700 }}>Payment Due Date</label>
+                  <input
+                    type="date"
+                    className="form-input"
+                    value={editInvoiceData.due_date}
+                    onChange={(e) => setEditInvoiceData({ ...editInvoiceData, due_date: e.target.value })}
+                    required
+                  />
+                </div>
+
+                <div className="form-group">
+                  <label className="form-label" style={{ fontWeight: 700 }}>Audit Note / Reason for Adjustment</label>
+                  <input
+                    type="text"
+                    className="form-input"
+                    placeholder="e.g. Scholarship waiver, revised module fee structure"
+                    value={editInvoiceData.update_notes}
+                    onChange={(e) => setEditInvoiceData({ ...editInvoiceData, update_notes: e.target.value })}
+                  />
+                </div>
+              </div>
+
+              <div className="modal-footer" style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.75rem' }}>
+                <button type="button" className="btn btn-secondary" onClick={() => setEditingInvoice(null)}>
+                  Cancel
+                </button>
+                <button type="submit" className="btn btn-primary" style={{ fontWeight: 700 }}>
+                  Save & Update Invoice ✓
                 </button>
               </div>
             </form>

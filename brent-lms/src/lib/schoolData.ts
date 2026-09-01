@@ -801,6 +801,77 @@ class SchoolDataStore {
     return this.addInvoice(invoice)
   }
 
+  async updateInvoice(invoiceId: string, updated: Partial<FeeInvoice>, adminName?: string): Promise<void> {
+    await txEngine.executeAtomic(
+      `UPDATE_INVOICE_${invoiceId}`,
+      ['brent_school_invoices', 'brent_school_students'],
+      () => {
+        const list = this.getInvoices()
+        const idx = list.findIndex((inv) => inv.id === invoiceId || inv.invoice_number === invoiceId)
+        if (idx === -1) throw new IntegrityError(`Invoice "${invoiceId}" not found.`)
+
+        const oldInv = list[idx]
+        const items = updated.items || oldInv.items
+        const totalAmount = updated.total_amount ?? items.reduce((sum, item) => sum + (Number(item.amount) || 0), 0)
+        const paidAmount = updated.paid_amount ?? oldInv.paid_amount
+        const balance = Math.max(0, totalAmount - paidAmount)
+        const status: 'Paid' | 'Partial' | 'Overdue' | 'Pending' =
+          balance === 0 ? 'Paid' : paidAmount > 0 ? 'Partial' : 'Pending'
+
+        const merged: FeeInvoice = {
+          ...oldInv,
+          ...updated,
+          items,
+          total_amount: totalAmount,
+          paid_amount: paidAmount,
+          balance,
+          status,
+          is_updated: true,
+          updated_at: new Date().toISOString(),
+          updated_by: adminName || 'Principal / Administrator',
+        }
+
+        list[idx] = merged
+        this.set('invoices', list)
+
+        // Update student fee total and balance
+        const students = this.getStudents()
+        const stdIdx = students.findIndex((s) => s.id === merged.student_id || s.admission_number.toLowerCase() === merged.admission_number.toLowerCase())
+        if (stdIdx !== -1) {
+          students[stdIdx].term_fee_total = totalAmount
+          students[stdIdx].fee_balance = balance
+          students[stdIdx].fee_cleared = balance === 0
+          this.set('students', students)
+        }
+      }
+    )
+    schoolEventBus.publish('INVOICE_CREATED', updated)
+    schoolEventBus.publish('STUDENT_UPDATED')
+  }
+
+  async deleteInvoice(invoiceId: string): Promise<void> {
+    await txEngine.executeAtomic(
+      `DELETE_INVOICE_${invoiceId}`,
+      ['brent_school_invoices'],
+      () => {
+        const list = this.getInvoices().filter((inv) => inv.id !== invoiceId && inv.invoice_number !== invoiceId)
+        this.set('invoices', list)
+      }
+    )
+    schoolEventBus.publish('INVOICE_CREATED', invoiceId)
+  }
+
+  async clearAllInvoices(): Promise<void> {
+    await txEngine.executeAtomic(
+      'CLEAR_ALL_INVOICES',
+      ['brent_school_invoices'],
+      () => {
+        this.set('invoices', [])
+      }
+    )
+    schoolEventBus.publish('INVOICE_CREATED')
+  }
+
   getReceipts(): FeePaymentReceipt[] {
     return this.get<FeePaymentReceipt[]>('receipts', INITIAL_RECEIPTS)
   }

@@ -1,9 +1,11 @@
 import { useState } from 'react'
+import { useAuth } from '@/hooks/useAuth'
 import { schoolStore } from '@/lib/schoolData'
 import type { StudentRecord, SecretaryInquiry, CourseUnit, UnitRegistrationReceipt } from '@/types/school'
 import { UnitRegistrationSlip } from '@/components/shared/UnitRegistrationSlip'
 
 export function SecretaryDesk() {
+  const { profile } = useAuth()
   const [students] = useState<StudentRecord[]>(() => schoolStore.getStudents())
   const [inquiries, setInquiries] = useState<SecretaryInquiry[]>(() => schoolStore.getInquiries())
   const [courseUnits] = useState<CourseUnit[]>(() => schoolStore.getCourseUnits())
@@ -45,7 +47,7 @@ export function SecretaryDesk() {
       purpose: newInquiry.purpose as any,
       program_of_interest: newInquiry.program_of_interest,
       notes: newInquiry.notes || '',
-      recorded_by: 'College Secretary (Mrs. Grace Odhiambo)',
+      recorded_by: `${profile?.full_name || 'Admissions Desk'} (Secretary Office)`,
       created_at: new Date().toLocaleString(),
       status: 'Open',
     }
@@ -614,7 +616,7 @@ export function SecretaryDesk() {
 
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', borderTop: '1px solid #e2e8f0', paddingTop: '1.5rem' }}>
               <div>
-                <div style={{ fontWeight: 700 }}>Mrs. Grace Odhiambo</div>
+                <div style={{ fontWeight: 700 }}>{profile?.full_name || 'Academic Registrar'}</div>
                 <div style={{ fontSize: '0.8rem', color: '#64748b' }}>Admissions Registrar & Secretary Desk</div>
               </div>
               <div style={{ display: 'flex', gap: '0.5rem' }}>
