@@ -983,56 +983,86 @@ export function ResourceLibrary() {
       {/* Upload Modal (Faculty Only) */}
       {showUploadModal && (
         <div className="modal-overlay" onClick={() => setShowUploadModal(false)}>
-          <div className="modal-content modal-md" onClick={(e) => e.stopPropagation()}>
-            <div className="modal-header">
-              <h3 className="modal-title">Upload Academic E-Resource</h3>
-              <button type="button" className="modal-close" onClick={() => setShowUploadModal(false)}>✕</button>
+          <div
+            className="modal-content modal-md"
+            onClick={(e) => e.stopPropagation()}
+            style={{
+              borderRadius: '20px',
+              maxWidth: '560px',
+              width: '94%',
+              maxHeight: '90vh',
+              overflow: 'hidden',
+              display: 'flex',
+              flexDirection: 'column',
+              boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.5)',
+            }}
+          >
+            <div className="modal-header" style={{ padding: '1.25rem 1.5rem', background: '#0f172a', color: '#ffffff' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
+                <span style={{ fontSize: '1.3rem' }}>📤</span>
+                <h3 className="modal-title" style={{ color: '#ffffff', fontSize: '1.1rem', fontWeight: 800, margin: 0 }}>
+                  Upload Academic E-Resource
+                </h3>
+              </div>
+              <button
+                type="button"
+                className="modal-close"
+                onClick={() => setShowUploadModal(false)}
+                style={{ color: '#ffffff', background: 'rgba(255, 255, 255, 0.15)', borderRadius: '50%', width: '32px', height: '32px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+              >
+                ✕
+              </button>
             </div>
-            <form onSubmit={handleUploadResource}>
-              <div className="modal-body" style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+
+            <form onSubmit={handleUploadResource} style={{ display: 'flex', flexDirection: 'column', flex: 1, minHeight: 0 }}>
+              <div className="modal-body" style={{ padding: '1.25rem 1.5rem', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '1.1rem' }}>
                 {/* Source Selection Tabs */}
                 <div>
-                  <label className="label">Resource Source</label>
-                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.5rem', marginBottom: '0.5rem' }}>
+                  <label className="label" style={{ fontWeight: 700, fontSize: '0.82rem', marginBottom: '0.4rem' }}>
+                    Resource Source
+                  </label>
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(130px, 1fr))', gap: '0.65rem' }}>
                     <button
                       type="button"
                       onClick={() => setUploadSource('file')}
                       style={{
-                        padding: '0.6rem 0.85rem',
-                        borderRadius: '8px',
-                        border: uploadSource === 'file' ? '2px solid #2563eb' : '1px solid #cbd5e1',
-                        background: uploadSource === 'file' ? '#eff6ff' : '#f8fafc',
+                        padding: '0.75rem 0.85rem',
+                        borderRadius: '10px',
+                        border: uploadSource === 'file' ? '2px solid #2563eb' : '1.5px solid #cbd5e1',
+                        background: uploadSource === 'file' ? '#eff6ff' : '#ffffff',
                         color: uploadSource === 'file' ? '#1e3a8a' : '#475569',
-                        fontWeight: 700,
-                        fontSize: '0.82rem',
+                        fontWeight: 800,
+                        fontSize: '0.85rem',
                         cursor: 'pointer',
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
-                        gap: '0.4rem',
+                        gap: '0.5rem',
+                        transition: 'all 0.15s ease',
                       }}
                     >
-                      <span>📁</span> Device Upload
+                      <span style={{ fontSize: '1.1rem' }}>📁</span> Device Upload
                     </button>
                     <button
                       type="button"
                       onClick={() => setUploadSource('gdrive')}
                       style={{
-                        padding: '0.6rem 0.85rem',
-                        borderRadius: '8px',
-                        border: uploadSource === 'gdrive' ? '2px solid #2563eb' : '1px solid #cbd5e1',
-                        background: uploadSource === 'gdrive' ? '#eff6ff' : '#f8fafc',
+                        padding: '0.75rem 0.85rem',
+                        borderRadius: '10px',
+                        border: uploadSource === 'gdrive' ? '2px solid #2563eb' : '1.5px solid #cbd5e1',
+                        background: uploadSource === 'gdrive' ? '#eff6ff' : '#ffffff',
                         color: uploadSource === 'gdrive' ? '#1e3a8a' : '#475569',
-                        fontWeight: 700,
-                        fontSize: '0.82rem',
+                        fontWeight: 800,
+                        fontSize: '0.85rem',
                         cursor: 'pointer',
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
-                        gap: '0.4rem',
+                        gap: '0.5rem',
+                        transition: 'all 0.15s ease',
                       }}
                     >
-                      <span>☁️</span> Google Drive Link
+                      <span style={{ fontSize: '1.1rem' }}>☁️</span> Google Drive Link
                     </button>
                   </div>
                 </div>
@@ -1040,12 +1070,14 @@ export function ResourceLibrary() {
                 {uploadSource === 'file' ? (
                   /* Local Storage File Picker */
                   <div>
-                    <label className="label">Select File from Device *</label>
+                    <label className="label" style={{ fontWeight: 700, fontSize: '0.82rem', marginBottom: '0.35rem' }}>
+                      Select File from Device *
+                    </label>
                     <div
                       style={{
                         border: '2px dashed #3b82f6',
                         borderRadius: '12px',
-                        padding: '1.25rem',
+                        padding: '1.5rem 1rem',
                         textAlign: 'center',
                         background: selectedFile ? '#eff6ff' : '#f8fafc',
                         cursor: 'pointer',
@@ -1060,15 +1092,15 @@ export function ResourceLibrary() {
                         accept=".pdf, .docx, .doc, .ppt, .pptx, .xlsx, .xls, .zip, .html, .txt, image/*"
                         onChange={handleFileChange}
                       />
-                      <div style={{ fontSize: '2rem', marginBottom: '0.35rem' }}>
+                      <div style={{ fontSize: '2.2rem', marginBottom: '0.4rem' }}>
                         {selectedFile ? '📄' : '📁'}
                       </div>
                       {selectedFile ? (
                         <div>
-                          <div style={{ fontWeight: 800, color: '#1e3a8a', fontSize: '0.92rem' }}>
+                          <div style={{ fontWeight: 800, color: '#1e3a8a', fontSize: '0.95rem' }}>
                             {selectedFile.name}
                           </div>
-                          <div style={{ fontSize: '0.75rem', color: '#16a34a', fontWeight: 600, marginTop: '2px' }}>
+                          <div style={{ fontSize: '0.78rem', color: '#16a34a', fontWeight: 700, marginTop: '4px' }}>
                             ✓ Ready to upload • {(selectedFile.size / (1024 * 1024)).toFixed(2)} MB
                           </div>
                           <button
@@ -1078,28 +1110,30 @@ export function ResourceLibrary() {
                               setSelectedFile(null)
                             }}
                             style={{
-                              background: 'none',
+                              background: '#fee2e2',
                               border: 'none',
-                              color: '#dc2626',
+                              color: '#991b1b',
                               fontSize: '0.75rem',
                               fontWeight: 700,
+                              borderRadius: '6px',
+                              padding: '4px 10px',
                               cursor: 'pointer',
-                              marginTop: '0.4rem',
+                              marginTop: '0.6rem',
                             }}
                           >
-                            ✕ Choose different file
+                            ✕ Remove / Choose different file
                           </button>
                         </div>
                       ) : (
                         <div>
-                          <div style={{ fontWeight: 700, color: '#1e293b', fontSize: '0.9rem' }}>
-                            Click or Drag to Upload from Local Storage
+                          <div style={{ fontWeight: 700, color: '#1e293b', fontSize: '0.92rem' }}>
+                            Tap to Choose Document from Storage
                           </div>
-                          <div style={{ fontSize: '0.75rem', color: '#64748b', marginTop: '2px' }}>
-                            Accepts PDF, Word (DOCX), PowerPoint, Excel, ZIP or HTML files
+                          <div style={{ fontSize: '0.75rem', color: '#64748b', marginTop: '4px' }}>
+                            PDF, Word (DOCX), PowerPoint, Excel, ZIP or HTML
                           </div>
-                          <div style={{ display: 'inline-block', background: '#2563eb', color: '#ffffff', padding: '4px 12px', borderRadius: '6px', fontSize: '0.75rem', fontWeight: 700, marginTop: '0.6rem' }}>
-                            Browse Files
+                          <div style={{ display: 'inline-block', background: '#2563eb', color: '#ffffff', padding: '6px 14px', borderRadius: '8px', fontSize: '0.78rem', fontWeight: 700, marginTop: '0.75rem' }}>
+                            Browse Device Files
                           </div>
                         </div>
                       )}
@@ -1108,17 +1142,19 @@ export function ResourceLibrary() {
                 ) : (
                   /* Google Drive Link Input */
                   <div>
-                    <label className="label">Google Drive or Cloud Document Share Link *</label>
-                    <div style={{ background: '#eff6ff', border: '1.5px dashed #3b82f6', borderRadius: '10px', padding: '1rem', display: 'flex', flexDirection: 'column', gap: '0.6rem' }}>
-                      <div style={{ fontSize: '0.78rem', color: '#1e3a8a', lineHeight: 1.4 }}>
-                        💡 <strong>In-App Viewer:</strong> Paste any public or shared link from Google Drive, Google Docs, Slides, or Sheets. Students will be able to read and interact with the document seamlessly inside the LMS!
+                    <label className="label" style={{ fontWeight: 700, fontSize: '0.82rem', marginBottom: '0.35rem' }}>
+                      Google Drive or Cloud Document Link *
+                    </label>
+                    <div style={{ background: '#eff6ff', border: '1.5px dashed #3b82f6', borderRadius: '12px', padding: '1rem', display: 'flex', flexDirection: 'column', gap: '0.65rem' }}>
+                      <div style={{ fontSize: '0.8rem', color: '#1e3a8a', lineHeight: 1.4 }}>
+                        💡 <strong>In-App Viewer:</strong> Paste any shared link from Google Drive, Docs, Slides, or Sheets. Students read seamlessly inside the LMS!
                       </div>
                       <input
                         type="url"
                         required={uploadSource === 'gdrive'}
                         className="input"
-                        style={{ background: '#ffffff' }}
-                        placeholder="https://drive.google.com/file/d/.../view?usp=sharing"
+                        style={{ background: '#ffffff', fontSize: '0.9rem', padding: '0.75rem' }}
+                        placeholder="https://drive.google.com/file/d/..."
                         value={googleDriveUrl}
                         onChange={(e) => {
                           setGoogleDriveUrl(e.target.value)
@@ -1132,22 +1168,28 @@ export function ResourceLibrary() {
                 )}
 
                 <div>
-                  <label className="label">Resource Title *</label>
+                  <label className="label" style={{ fontWeight: 700, fontSize: '0.82rem', marginBottom: '0.35rem' }}>
+                    Resource Title *
+                  </label>
                   <input
                     type="text"
                     required
                     className="input"
-                    placeholder="Enter document title (e.g. 2026 Revision Guide)"
+                    style={{ fontSize: '0.9rem', padding: '0.75rem' }}
+                    placeholder="e.g. 2026 Revision Guide or Lab Notes"
                     value={newTitle}
                     onChange={(e) => setNewTitle(e.target.value)}
                   />
                 </div>
 
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
-                  <div>
-                    <label className="label">Category *</label>
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.85rem' }}>
+                  <div style={{ flex: '1 1 180px', minWidth: '140px' }}>
+                    <label className="label" style={{ fontWeight: 700, fontSize: '0.82rem', marginBottom: '0.35rem' }}>
+                      Category *
+                    </label>
                     <select
                       className="input"
+                      style={{ fontSize: '0.9rem', padding: '0.75rem' }}
                       value={newCategory}
                       onChange={(e) => setNewCategory(e.target.value as any)}
                     >
@@ -1158,12 +1200,15 @@ export function ResourceLibrary() {
                       <option value="Textbooks">Textbooks</option>
                     </select>
                   </div>
-                  <div>
-                    <label className="label">Examination Year (Optional)</label>
+                  <div style={{ flex: '1 1 140px', minWidth: '120px' }}>
+                    <label className="label" style={{ fontWeight: 700, fontSize: '0.82rem', marginBottom: '0.35rem' }}>
+                      Exam Year
+                    </label>
                     <input
                       type="number"
                       className="input"
-                      placeholder="e.g. 2026 (Optional)"
+                      style={{ fontSize: '0.9rem', padding: '0.75rem' }}
+                      placeholder="e.g. 2026"
                       value={newYear}
                       onChange={(e) => setNewYear(e.target.value ? Number(e.target.value) : '')}
                     />
@@ -1171,8 +1216,15 @@ export function ResourceLibrary() {
                 </div>
 
                 <div>
-                  <label className="label">Subject Discipline</label>
-                  <select className="input" value={newSubject} onChange={(e) => setNewSubject(e.target.value)}>
+                  <label className="label" style={{ fontWeight: 700, fontSize: '0.82rem', marginBottom: '0.35rem' }}>
+                    Subject Discipline
+                  </label>
+                  <select
+                    className="input"
+                    style={{ fontSize: '0.9rem', padding: '0.75rem' }}
+                    value={newSubject}
+                    onChange={(e) => setNewSubject(e.target.value)}
+                  >
                     {storeSubjects.map((sub) => (
                       <option key={sub} value={sub}>{sub}</option>
                     ))}
@@ -1180,22 +1232,37 @@ export function ResourceLibrary() {
                 </div>
 
                 <div>
-                  <label className="label">Class / Target Level</label>
+                  <label className="label" style={{ fontWeight: 700, fontSize: '0.82rem', marginBottom: '0.35rem' }}>
+                    Class / Target Level
+                  </label>
                   <input
                     type="text"
                     className="input"
-                    placeholder="e.g. 3 Months Short Course / Certificate"
+                    style={{ fontSize: '0.9rem', padding: '0.75rem' }}
+                    placeholder="e.g. Certificate / Diploma / All Trainees"
                     value={newClassLevel}
                     onChange={(e) => setNewClassLevel(e.target.value)}
                   />
                 </div>
               </div>
-              <div className="modal-footer">
-                <button type="button" className="btn btn-secondary" disabled={isUploading} onClick={() => setShowUploadModal(false)}>
+
+              <div className="modal-footer" style={{ padding: '1rem 1.5rem', background: '#f8fafc', borderTop: '1px solid #e2e8f0', display: 'flex', justifyContent: 'flex-end', gap: '0.75rem' }}>
+                <button
+                  type="button"
+                  className="btn btn-secondary"
+                  disabled={isUploading}
+                  onClick={() => setShowUploadModal(false)}
+                  style={{ fontWeight: 700 }}
+                >
                   Cancel
                 </button>
-                <button type="submit" className="btn btn-primary" disabled={isUploading}>
-                  {isUploading ? '⏳ Uploading & Saving to Database...' : '✓ Publish to E-Library'}
+                <button
+                  type="submit"
+                  className="btn btn-primary"
+                  disabled={isUploading}
+                  style={{ fontWeight: 800, padding: '0.75rem 1.5rem' }}
+                >
+                  {isUploading ? '⏳ Uploading & Saving...' : '✓ Publish to E-Library'}
                 </button>
               </div>
             </form>
