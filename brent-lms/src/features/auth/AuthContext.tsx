@@ -3,6 +3,7 @@ import type { Session, User } from '@supabase/supabase-js'
 import { supabase } from '@/lib/supabase'
 import { schoolStore } from '@/lib/schoolData'
 import { INSTITUTION_CONFIG } from '@/config/institution'
+import { verifyPassword } from '@/lib/crypto'
 import type { Profile, Role } from '@/lib/database.types'
 
 export const ADMIN_PROFILE: Profile = {
@@ -209,8 +210,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         const parsed = JSON.parse(localCredsRaw)
         const userEntry = parsed[cleanAlpha] || parsed[rawInput.toLowerCase()] || parsed[rawInput]
         if (userEntry) {
-          if (userEntry.password && userEntry.password !== password) {
-            return { error: 'Incorrect password for this student admission account.' }
+          const storedHashOrPlain = userEntry.passwordHash || userEntry.password
+          if (storedHashOrPlain) {
+            const isValid = await verifyPassword(password, storedHashOrPlain)
+            if (!isValid) {
+              return { error: 'Incorrect password for this student admission account.' }
+            }
           }
           if (userEntry.profile) {
             localStorage.setItem('eclat_active_profile', JSON.stringify(userEntry.profile))
