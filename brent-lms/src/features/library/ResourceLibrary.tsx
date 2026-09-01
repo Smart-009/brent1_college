@@ -1185,20 +1185,27 @@ export function ResourceLibrary() {
                 <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.85rem' }}>
                   <div style={{ flex: '1 1 180px', minWidth: '140px' }}>
                     <label className="label" style={{ fontWeight: 700, fontSize: '0.82rem', marginBottom: '0.35rem' }}>
-                      Category *
+                      Category / Document Type *
                     </label>
-                    <select
+                    <input
+                      type="text"
+                      required
+                      list="category-suggestions"
                       className="input"
                       style={{ fontSize: '0.9rem', padding: '0.75rem' }}
+                      placeholder="e.g. Revision Notes, Past Paper, E-Book"
                       value={newCategory}
                       onChange={(e) => setNewCategory(e.target.value as any)}
-                    >
-                      <option value="Past Papers">Past Papers</option>
-                      <option value="Revision Notes">Revision Notes</option>
-                      <option value="Lab Manuals">Lab Manuals</option>
-                      <option value="Syllabus">Syllabus</option>
-                      <option value="Textbooks">Textbooks</option>
-                    </select>
+                    />
+                    <datalist id="category-suggestions">
+                      <option value="Revision Notes" />
+                      <option value="Past Papers" />
+                      <option value="Lab Manuals" />
+                      <option value="Textbooks & E-Books" />
+                      <option value="Syllabus & Course Outline" />
+                      <option value="Cheatsheets & Study Guides" />
+                      <option value="Assignments & Practical Projects" />
+                    </datalist>
                   </div>
                   <div style={{ flex: '1 1 140px', minWidth: '120px' }}>
                     <label className="label" style={{ fontWeight: 700, fontSize: '0.82rem', marginBottom: '0.35rem' }}>
@@ -1217,18 +1224,31 @@ export function ResourceLibrary() {
 
                 <div>
                   <label className="label" style={{ fontWeight: 700, fontSize: '0.82rem', marginBottom: '0.35rem' }}>
-                    Subject Discipline
+                    Subject / Program Name *
                   </label>
-                  <select
+                  <input
+                    type="text"
+                    required
+                    list="subject-suggestions"
                     className="input"
                     style={{ fontSize: '0.9rem', padding: '0.75rem' }}
+                    placeholder="e.g. Web Development, Python, French, Graphic Design..."
                     value={newSubject}
                     onChange={(e) => setNewSubject(e.target.value)}
-                  >
+                  />
+                  <datalist id="subject-suggestions">
                     {storeSubjects.map((sub) => (
-                      <option key={sub} value={sub}>{sub}</option>
+                      <option key={sub} value={sub} />
                     ))}
-                  </select>
+                    <option value="Full-Stack Web Development" />
+                    <option value="Python Programming & Data Analytics" />
+                    <option value="Comprehensive Computer Packages" />
+                    <option value="Cybersecurity Fundamentals" />
+                    <option value="Computerized Accounting (QuickBooks & iTax)" />
+                    <option value="English Language & Corporate Fluency" />
+                    <option value="Foreign Languages (Arabic, French, German)" />
+                    <option value="IELTS Academic & General Prep" />
+                  </datalist>
                 </div>
 
                 <div>
@@ -1243,6 +1263,14 @@ export function ResourceLibrary() {
                     value={newClassLevel}
                     onChange={(e) => setNewClassLevel(e.target.value)}
                   />
+                </div>
+
+                {/* Free Access Notice Banner */}
+                <div style={{ background: '#ecfdf5', border: '1px solid #a7f3d0', borderRadius: '10px', padding: '0.65rem 0.85rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                  <span style={{ fontSize: '1.1rem' }}>🟢</span>
+                  <span style={{ fontSize: '0.78rem', color: '#065f46', fontWeight: 700 }}>
+                    100% Free Open Access: This e-resource will be freely accessible to all enrolled students and visitors.
+                  </span>
                 </div>
               </div>
 
