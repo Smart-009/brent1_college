@@ -6,690 +6,647 @@ import { Button } from '@/components/ui/Button'
 import { Modal, ConfirmModal } from '@/components/ui/Modal'
 import { Spinner } from '@/components/ui/Spinner'
 
-export interface DepartmentProgram {
+export interface DbSubject {
   id: string
   name: string
-  hod_name?: string
-  grade_level: string | null
-  academic_year: string | null
-  fee_amount?: number
-  duration?: string
-  shifts?: string
-  icon?: string
+  color_hex?: string | null
   created_at?: string
 }
 
-const CURRENT_YEAR = new Date().getFullYear()
-
-const DEFAULT_DEPARTMENTS: DepartmentProgram[] = [
-  {
-    id: 'dept-swe',
-    name: 'Full-Stack Web Development & Cloud Systems (React 19, Node.js)',
-    hod_name: 'Eng. Alex Mwangi',
-    grade_level: 'Full-Stack Engineering Certificate',
-    academic_year: `${CURRENT_YEAR} Virtual Cohort`,
-    fee_amount: 120,
-    duration: '12 Weeks (3 Months)',
-    shifts: 'Live Online Evening (7:30PM) / Self-Paced',
-    icon: '💻',
-  },
-  {
-    id: 'dept-data',
-    name: 'Python Programming, SQL & Data Analytics',
-    hod_name: 'Dr. Brian Ochieng',
-    grade_level: 'Data Science & Analytics Certificate',
-    academic_year: `${CURRENT_YEAR} Virtual Cohort`,
-    fee_amount: 95,
-    duration: '8 Weeks (2 Months)',
-    shifts: 'Live Virtual Weekend / Evening Batches',
-    icon: '📊',
-  },
-  {
-    id: 'dept-ict',
-    name: 'Comprehensive Computer Packages & Digital Office Skills',
-    hod_name: 'Mr. James Mutua',
-    grade_level: 'Digital Literacy Certificate',
-    academic_year: `${CURRENT_YEAR} Virtual Cohort`,
-    fee_amount: 45,
-    duration: '4-6 Weeks',
-    shifts: 'Morning (9:00AM) / Evening (6:00PM)',
-    icon: '⚡',
-  },
-  {
-    id: 'dept-cyber',
-    name: 'Cybersecurity Fundamentals & Ethical Defense',
-    hod_name: 'Mr. David Kiprono',
-    grade_level: 'IT Security Certificate',
-    academic_year: `${CURRENT_YEAR} Virtual Cohort`,
-    fee_amount: 90,
-    duration: '6 Weeks',
-    shifts: 'Weekend Intensive Live Virtual',
-    icon: '🛡️',
-  },
-  {
-    id: 'dept-acc',
-    name: 'Computerized Accounting (QuickBooks & KRA iTax Filing)',
-    hod_name: 'Mrs. Grace Wanjiku',
-    grade_level: 'Corporate Accounting Certificate',
-    academic_year: `${CURRENT_YEAR} Virtual Cohort`,
-    fee_amount: 65,
-    duration: '4-6 Weeks',
-    shifts: 'Evening (6:00PM) / Saturday Masterclass',
-    icon: '📈',
-  },
-  {
-    id: 'dept-ielts',
-    name: 'IELTS Academic & General Exam Preparation (Target Band 7.5+)',
-    hod_name: 'Prof. Eric Thorne',
-    grade_level: 'International English Certificate',
-    academic_year: `${CURRENT_YEAR} Virtual Cohort`,
-    fee_amount: 85,
-    duration: '4-6 Weeks',
-    shifts: 'Live Evening (5:30PM) / Weekend Intensive',
-    icon: '🌍',
-  },
-  {
-    id: 'dept-english',
-    name: 'English Language Mastery & Executive Public Speaking',
-    hod_name: 'Mme. Claire Dubois',
-    grade_level: 'Corporate Fluency Certificate',
-    academic_year: `${CURRENT_YEAR} Virtual Cohort`,
-    fee_amount: 55,
-    duration: '6-8 Weeks',
-    shifts: 'Morning (7:30AM) / Evening (6:30PM)',
-    icon: '🗣️',
-  },
-  {
-    id: 'dept-foreign',
-    name: 'Foreign Languages Mastery (Arabic, French, German)',
-    hod_name: 'Mwalimu Amina Yusuf',
-    grade_level: 'International Diploma A1-B2',
-    academic_year: `${CURRENT_YEAR} Virtual Cohort`,
-    fee_amount: 75,
-    duration: '8 Weeks',
-    shifts: 'Live Online Video Masterclass',
-    icon: '🌐',
-  },
-]
-
-import { schoolStore } from '@/lib/schoolData'
+export interface DbCourse {
+  id: string
+  title: string
+  description: string | null
+  subject_id: string | null
+  teacher_id?: string | null
+  class_id?: string | null
+  is_published: boolean
+  created_at?: string
+  updated_at?: string
+  subjects?: DbSubject | null
+}
 
 export function ManageClasses() {
   const queryClient = useQueryClient()
+  const [activeTab, setActiveTab] = useState<'courses' | 'subjects'>('courses')
+  const [searchQuery, setSearchQuery] = useState('')
 
-  // Load initial departments from schoolStore and local storage
-  const loadPrograms = (): DepartmentProgram[] => {
-    try {
-      const saved = localStorage.getItem('brent_admin_departments') || localStorage.getItem('eclat_admin_departments')
-      if (saved) {
-        const parsed = JSON.parse(saved)
-        if (Array.isArray(parsed) && parsed.length > 0) {
-          return parsed
-        }
-      }
-    } catch {}
-
-    const units = schoolStore.getCourseUnits().map((u) => {
-      return {
-        id: u.id,
-        name: u.title,
-        hod_name: u.teacher_name || 'Faculty Lecturer',
-        grade_level: `${u.credit_hours || 45} Credits (${u.course_duration || '3 Months'})`,
-        academic_year: `${CURRENT_YEAR} Virtual Cohort`,
-        fee_amount: u.fee || 75,
-        duration: u.course_duration || '3 Months (Certificate Course)',
-        shifts: u.live_schedule_text || 'Mon, Wed & Fri: 7:30 PM - 9:30 PM EAT',
-        icon: '💻',
-      }
-    })
-
-    if (units.length > 0) return units
-    return DEFAULT_DEPARTMENTS
-  }
-
-  const [localDepts, setLocalDepts] = useState<DepartmentProgram[]>(loadPrograms)
-
-  const saveLocalDepts = (items: DepartmentProgram[]) => {
-    setLocalDepts(items)
-    try {
-      localStorage.setItem('brent_admin_departments', JSON.stringify(items))
-      localStorage.setItem('eclat_admin_departments', JSON.stringify(items))
-    } catch {
-      // ignore
-    }
-  }
-
-  // Modals & form state
-  const [showAddModal, setShowAddModal] = useState(false)
-  const [editingDept, setEditingDept] = useState<DepartmentProgram | null>(null)
-  const [deptToDelete, setDeptToDelete] = useState<DepartmentProgram | null>(null)
-
-  // Form Fields
-  const [name, setName] = useState('')
-  const [hodName, setHodName] = useState('')
-  const [gradeLevel, setGradeLevel] = useState('Vocational Short Course Certificate')
-  const [academicYear, setAcademicYear] = useState(`${CURRENT_YEAR} Virtual Cohort`)
-  const [feeAmount, setFeeAmount] = useState<number>(75)
-  const [duration, setDuration] = useState('3 Months (Certificate Course)')
-  const [shifts, setShifts] = useState('Mon, Wed & Fri: 7:30 PM - 9:30 PM EAT')
-  const [icon, setIcon] = useState('💻')
-
-  // Fetch departments directly from Supabase courses table for 100% cross-device synchronization
-  const { isLoading } = useQuery({
-    queryKey: ['admin-classes-cloud'],
+  // 1. Fetch live courses with joined subject from Supabase
+  const { data: courses = [], isLoading: isLoadingCourses, isError: isErrorCourses, refetch: refetchCourses } = useQuery<DbCourse[]>({
+    queryKey: ['db-courses-live'],
     queryFn: async () => {
-      try {
-        const { data, error } = await supabase.from('courses').select('*').order('created_at', { ascending: true })
-        if (!error && data && data.length > 0) {
-          const cloudItems: DepartmentProgram[] = data.map((c) => {
-            const titleLower = (c.title || '').toLowerCase()
-            const icon = titleLower.includes('python') || titleLower.includes('data')
-              ? '📊'
-              : titleLower.includes('cyber') || titleLower.includes('security')
-              ? '🛡️'
-              : titleLower.includes('account') || titleLower.includes('tax') || titleLower.includes('quickbooks')
-              ? '📈'
-              : titleLower.includes('language') || titleLower.includes('french') || titleLower.includes('german') || titleLower.includes('arabic') || titleLower.includes('swahili') || titleLower.includes('english') || titleLower.includes('ielts')
-              ? '🗣️'
-              : titleLower.includes('graphic') || titleLower.includes('design')
-              ? '🎨'
-              : '💻'
+      const { data, error } = await supabase
+        .from('courses')
+        .select('id, title, description, is_published, subject_id, created_at, updated_at, subjects(id, name, color_hex)')
+        .order('created_at', { ascending: false })
 
-            return {
-              id: c.id,
-              name: c.title,
-              hod_name: 'Faculty Department Lead',
-              grade_level: 'Vocational Certificate Program',
-              academic_year: `${CURRENT_YEAR} Virtual Cohort`,
-              fee_amount: 60,
-              duration: c.description || '8 to 12 Weeks (Short Course Certificate)',
-              shifts: 'Live Online Evening (7:30 PM) / Weekend Batches',
-              icon,
-            }
-          })
-          setLocalDepts(cloudItems)
-          saveLocalDepts(cloudItems)
-          return cloudItems
-        }
-      } catch {
-        // fallback to local
-      }
-      return loadPrograms()
+      if (error) throw error
+      const rows = (data || []) as any[]
+      return rows.map((r) => ({
+        ...r,
+        subjects: Array.isArray(r.subjects) ? (r.subjects[0] || null) : (r.subjects || null),
+      })) as DbCourse[]
     },
   })
 
-  // Open Edit Modal
-  const handleOpenEdit = (dept: DepartmentProgram) => {
-    setEditingDept(dept)
-    setName(dept.name)
-    setHodName(dept.hod_name || '')
-    setGradeLevel(dept.grade_level || 'Vocational Short Course Certificate')
-    setAcademicYear(dept.academic_year || `${CURRENT_YEAR} Virtual Cohort`)
-    setFeeAmount(dept.fee_amount || 75)
-    setDuration(dept.duration || '3 Months (Certificate Course)')
-    setShifts(dept.shifts || 'Mon, Wed & Fri: 7:30 PM - 9:30 PM EAT')
-    setIcon(dept.icon || '💻')
+  // 2. Fetch live subjects from Supabase
+  const { data: subjects = [], isLoading: isLoadingSubjects, refetch: refetchSubjects } = useQuery<DbSubject[]>({
+    queryKey: ['db-subjects-live'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('subjects')
+        .select('id, name, color_hex, created_at')
+        .order('name', { ascending: true })
+
+      if (error) throw error
+      return (data || []) as DbSubject[]
+    },
+  })
+
+  // Course Modal State
+  const [showCourseModal, setShowCourseModal] = useState(false)
+  const [editingCourse, setEditingCourse] = useState<DbCourse | null>(null)
+  const [courseTitle, setCourseTitle] = useState('')
+  const [courseDesc, setCourseDesc] = useState('')
+  const [courseSubjectId, setCourseSubjectId] = useState('')
+  const [coursePublished, setCoursePublished] = useState(true)
+  const [courseToDelete, setCourseToDelete] = useState<DbCourse | null>(null)
+
+  // Subject Modal State
+  const [showSubjectModal, setShowSubjectModal] = useState(false)
+  const [editingSubject, setEditingSubject] = useState<DbSubject | null>(null)
+  const [subjectName, setSubjectName] = useState('')
+  const [subjectColor, setSubjectColor] = useState('#2563eb')
+  const [subjectToDelete, setSubjectToDelete] = useState<DbSubject | null>(null)
+
+  // Open Create Course Modal
+  const handleOpenCreateCourse = () => {
+    setEditingCourse(null)
+    setCourseTitle('')
+    setCourseDesc('')
+    setCourseSubjectId(subjects[0]?.id || '')
+    setCoursePublished(true)
+    setShowCourseModal(true)
   }
 
-  // Open Create Modal
-  const handleOpenCreate = () => {
-    setEditingDept(null)
-    setName('')
-    setHodName('')
-    setGradeLevel('Vocational Short Course Certificate')
-    setAcademicYear(`${CURRENT_YEAR} Virtual Cohort`)
-    setFeeAmount(75)
-    setDuration('3 Months (Certificate Course)')
-    setShifts('Mon, Wed & Fri: 7:30 PM - 9:30 PM EAT')
-    setIcon('💻')
-    setShowAddModal(true)
+  // Open Edit Course Modal
+  const handleOpenEditCourse = (course: DbCourse) => {
+    setEditingCourse(course)
+    setCourseTitle(course.title || '')
+    setCourseDesc(course.description || '')
+    setCourseSubjectId(course.subject_id || '')
+    setCoursePublished(course.is_published ?? true)
+    setShowCourseModal(true)
   }
 
-  // Save (Create or Update) Mutation
-  const saveMutation = useMutation({
+  // Save (Create or Update) Course Mutation
+  const saveCourseMutation = useMutation({
     mutationFn: async () => {
-      if (!name.trim()) return
+      if (!courseTitle.trim()) return
 
-      if (editingDept) {
-        // Update existing department
-        const updatedItem: DepartmentProgram = {
-          ...editingDept,
-          name: name.trim(),
-          hod_name: hodName.trim() || 'Faculty Instructor',
-          grade_level: gradeLevel.trim() || 'Vocational Short Course Certificate',
-          academic_year: academicYear.trim() || `${CURRENT_YEAR} Virtual Cohort`,
-          fee_amount: Number(feeAmount) || 75,
-          duration: duration.trim(),
-          shifts: shifts.trim(),
-          icon: icon.trim() || '🎓',
-        }
+      const payload = {
+        title: courseTitle.trim(),
+        description: courseDesc.trim() || null,
+        subject_id: courseSubjectId || null,
+        is_published: coursePublished,
+        updated_at: new Date().toISOString(),
+      }
 
-        const updatedList = localDepts.map((d) => (d.id === editingDept.id ? updatedItem : d))
-        saveLocalDepts(updatedList)
-
-        // 1. Persist directly to central SIMS schoolStore
-        await schoolStore.updateCourseUnit(editingDept.id, {
-          title: name.trim(),
-          teacher_name: hodName.trim() || 'Faculty Instructor',
-          fee: Number(feeAmount) || 75,
-          course_duration: duration.trim(),
-          live_schedule_text: shifts.trim(),
-        })
-
-        await schoolStore.updateDepartment(editingDept.id, {
-          name: name.trim(),
-          hod_name: hodName.trim() || 'Faculty Instructor',
-        })
-
-        // 2. Persist to Supabase Database
-        try {
-          await supabase
-            .from('classes')
-            .upsert({
-              id: editingDept.id,
-              name: name.trim(),
-              grade_level: gradeLevel.trim() || null,
-              academic_year: academicYear.trim() || `${CURRENT_YEAR}`,
-            })
-        } catch {
-          // ignore
-        }
-
-        try {
-          await supabase
-            .from('courses')
-            .update({
-              title: name.trim(),
-            })
-            .eq('id', editingDept.id)
-        } catch {
-          // ignore
-        }
+      if (editingCourse) {
+        // Update Course in Supabase
+        const { error } = await supabase.from('courses').update(payload).eq('id', editingCourse.id)
+        if (error) throw error
       } else {
-        // Create new department
-        const newId = `unit-prog-${Date.now()}`
-        const newDept: DepartmentProgram = {
-          id: newId,
-          name: name.trim(),
-          hod_name: hodName.trim() || 'Faculty Instructor',
-          grade_level: gradeLevel.trim() || 'Vocational Short Course Certificate',
-          academic_year: academicYear.trim() || `${CURRENT_YEAR} Virtual Cohort`,
-          fee_amount: Number(feeAmount) || 75,
-          duration: duration.trim(),
-          shifts: shifts.trim(),
-          icon: icon.trim() || '🎓',
-        }
-
-        const updatedList = [newDept, ...localDepts]
-        saveLocalDepts(updatedList)
-
-        // Persist to central schoolStore
-        await schoolStore.addCourseUnit({
-          id: newId,
-          code: `CRS-${Date.now().toString().slice(-4)}`,
-          title: name.trim(),
-          department: 'Academic Programs',
-          program: name.trim(),
-          course_duration: duration.trim(),
-          credit_hours: 45,
-          fee: Number(feeAmount) || 75,
-          tuition_fee_usd: Number(feeAmount) || 75,
-          teacher_name: hodName.trim() || 'Faculty Instructor',
-          live_schedule_text: shifts.trim(),
-          is_published: true,
-          created_at: new Date().toISOString(),
-        } as any)
-
-        // Persist to Supabase
-        try {
-          await supabase.from('classes').insert({
-            id: newId,
-            name: name.trim(),
-            grade_level: gradeLevel.trim() || null,
-            academic_year: academicYear.trim() || `${CURRENT_YEAR}`,
-          })
-        } catch {
-          // ignore
-        }
+        // Insert new Course in Supabase
+        const { error } = await supabase.from('courses').insert([{ ...payload, created_at: new Date().toISOString() }])
+        if (error) throw error
       }
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['admin-classes'] })
-      setShowAddModal(false)
-      setEditingDept(null)
+      queryClient.invalidateQueries({ queryKey: ['db-courses-live'] })
+      setShowCourseModal(false)
+      setEditingCourse(null)
+    },
+    onError: (err: any) => {
+      alert(`Database Operation Error: ${err?.message || 'Could not save course'}`)
     },
   })
 
-  // Delete Mutation
-  const deleteMutation = useMutation({
+  // Delete Course Mutation
+  const deleteCourseMutation = useMutation({
     mutationFn: async (id: string) => {
-      const updatedList = localDepts.filter((d) => d.id !== id)
-      saveLocalDepts(updatedList)
+      const { error } = await supabase.from('courses').delete().eq('id', id)
+      if (error) throw error
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['db-courses-live'] })
+      setCourseToDelete(null)
+    },
+    onError: (err: any) => {
+      alert(`Database Delete Error: ${err?.message || 'Could not delete course'}`)
+    },
+  })
 
-      // Delete from schoolStore
-      await schoolStore.deleteCourseUnit(id)
-      await schoolStore.deleteDepartment(id)
+  // Open Create Subject Modal
+  const handleOpenCreateSubject = () => {
+    setEditingSubject(null)
+    setSubjectName('')
+    setSubjectColor('#2563eb')
+    setShowSubjectModal(true)
+  }
 
-      // Delete from Supabase
-      try {
-        await supabase.from('classes').delete().eq('id', id)
-      } catch {
-        // ignore
+  // Open Edit Subject Modal
+  const handleOpenEditSubject = (sub: DbSubject) => {
+    setEditingSubject(sub)
+    setSubjectName(sub.name || '')
+    setSubjectColor(sub.color_hex || '#2563eb')
+    setShowSubjectModal(true)
+  }
+
+  // Save (Create or Update) Subject Mutation
+  const saveSubjectMutation = useMutation({
+    mutationFn: async () => {
+      if (!subjectName.trim()) return
+
+      const payload = {
+        name: subjectName.trim(),
+        color_hex: subjectColor,
       }
-      try {
-        await supabase.from('courses').delete().eq('id', id)
-      } catch {
-        // ignore
+
+      if (editingSubject) {
+        // Update Subject in Supabase
+        const { error } = await supabase.from('subjects').update(payload).eq('id', editingSubject.id)
+        if (error) throw error
+      } else {
+        // Insert Subject in Supabase
+        const { error } = await supabase.from('subjects').insert([{ ...payload, created_at: new Date().toISOString() }])
+        if (error) throw error
       }
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['admin-classes'] })
-      setDeptToDelete(null)
+      queryClient.invalidateQueries({ queryKey: ['db-subjects-live'] })
+      queryClient.invalidateQueries({ queryKey: ['db-courses-live'] })
+      setShowSubjectModal(false)
+      setEditingSubject(null)
+    },
+    onError: (err: any) => {
+      alert(`Database Subject Error: ${err?.message || 'Could not save subject'}`)
     },
   })
+
+  // Delete Subject Mutation
+  const deleteSubjectMutation = useMutation({
+    mutationFn: async (id: string) => {
+      const { error } = await supabase.from('subjects').delete().eq('id', id)
+      if (error) throw error
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['db-subjects-live'] })
+      queryClient.invalidateQueries({ queryKey: ['db-courses-live'] })
+      setSubjectToDelete(null)
+    },
+    onError: (err: any) => {
+      alert(`Database Delete Error: ${err?.message || 'Could not delete subject'}`)
+    },
+  })
+
+  // Filtered lists based on search
+  const filteredCourses = courses.filter(
+    (c) =>
+      c.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      (c.description || '').toLowerCase().includes(searchQuery.toLowerCase()) ||
+      (c.subjects?.name || '').toLowerCase().includes(searchQuery.toLowerCase())
+  )
+
+  const filteredSubjects = subjects.filter((s) => s.name.toLowerCase().includes(searchQuery.toLowerCase()))
 
   return (
-    <PageWrapper
-      title="Academic Departments & Vocational Programs"
-      subtitle="Full control to create, edit, update, and manage all vocational training departments, HODs, course durations, and tuition fee structures."
-      action={
-        <Button variant="primary" onClick={handleOpenCreate} style={{ fontWeight: 800 }}>
-          + Add New Department / Program
-        </Button>
-      }
-    >
-      {/* Department Summary Metrics */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-        <div className="card" style={{ padding: '1.25rem', borderLeft: '4px solid #1e3a8a' }}>
-          <div style={{ fontSize: '0.8rem', color: '#1e293b', fontWeight: 700 }}>Total Academic Departments</div>
-          <div style={{ fontSize: '1.85rem', fontWeight: 900, color: '#1e3a8a', marginTop: '0.2rem' }}>
-            {localDepts.length}
+    <PageWrapper title="Academic Programs & Live Database">
+      <div className="space-y-6">
+        {/* Top Header Card */}
+        <div className="card p-6" style={{ background: 'linear-gradient(135deg, #0f172a 0%, #1e293b 100%)', color: '#ffffff', borderRadius: '16px' }}>
+          <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+            <div>
+              <div className="flex items-center gap-2 mb-1">
+                <span style={{ fontSize: '1.4rem' }}>🗄️</span>
+                <h1 className="text-2xl font-bold tracking-tight text-white m-0">
+                  Live Academic Database Console
+                </h1>
+                <span className="badge" style={{ background: '#10b981', color: '#ffffff', fontWeight: 800, fontSize: '0.72rem' }}>
+                  🟢 REAL-TIME SUPABASE SYNC
+                </span>
+              </div>
+              <p className="text-slate-300 text-sm m-0">
+                Direct live synchronization with your database <code className="text-emerald-400 font-mono">courses</code> and <code className="text-emerald-400 font-mono">subjects</code> tables.
+              </p>
+            </div>
+
+            <div className="flex gap-2 flex-wrap">
+              <Button
+                variant="primary"
+                onClick={activeTab === 'courses' ? handleOpenCreateCourse : handleOpenCreateSubject}
+                style={{ fontWeight: 800, padding: '0.65rem 1.25rem' }}
+              >
+                {activeTab === 'courses' ? '+ Add New Course' : '+ Add Subject Discipline'}
+              </Button>
+              <button
+                type="button"
+                onClick={() => {
+                  refetchCourses()
+                  refetchSubjects()
+                }}
+                className="btn btn-secondary btn-sm"
+                style={{ background: 'rgba(255, 255, 255, 0.15)', color: '#ffffff', border: 'none' }}
+                title="Refresh from Supabase"
+              >
+                🔄 Refresh Cloud Data
+              </button>
+            </div>
           </div>
-          <div style={{ fontSize: '0.75rem', color: '#16a34a', fontWeight: 600 }}>Active Vocational Programs</div>
+
+          {/* Database Metrics Grid */}
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 mt-6 pt-5 border-t border-slate-700">
+            <div className="bg-slate-800/80 p-4 rounded-xl border border-slate-700">
+              <div className="text-xs text-slate-400 font-semibold uppercase tracking-wider">Total Online Courses</div>
+              <div className="text-2xl sm:text-3xl font-extrabold text-blue-400 mt-1">{courses.length}</div>
+              <div className="text-xs text-slate-400 mt-0.5">Live in courses table</div>
+            </div>
+
+            <div className="bg-slate-800/80 p-4 rounded-xl border border-slate-700">
+              <div className="text-xs text-slate-400 font-semibold uppercase tracking-wider">Subject Disciplines</div>
+              <div className="text-2xl sm:text-3xl font-extrabold text-emerald-400 mt-1">{subjects.length}</div>
+              <div className="text-xs text-slate-400 mt-0.5">Live in subjects table</div>
+            </div>
+
+            <div className="bg-slate-800/80 p-4 rounded-xl border border-slate-700 col-span-2 sm:col-span-1">
+              <div className="text-xs text-slate-400 font-semibold uppercase tracking-wider">Published Status</div>
+              <div className="text-2xl sm:text-3xl font-extrabold text-amber-400 mt-1">
+                {courses.filter((c) => c.is_published).length}
+              </div>
+              <div className="text-xs text-slate-400 mt-0.5">Active Student Enrollments</div>
+            </div>
+          </div>
         </div>
 
-        <div className="card" style={{ padding: '1.25rem', borderLeft: '4px solid #16a34a' }}>
-          <div style={{ fontSize: '0.8rem', color: '#1e293b', fontWeight: 700 }}>Intake Status</div>
-          <div style={{ fontSize: '1.85rem', fontWeight: 900, color: '#16a34a', marginTop: '0.2rem' }}>
-            Open 2026
+        {/* Tab & Search Control Bar */}
+        <div className="card p-4 flex flex-col sm:flex-row justify-between items-stretch sm:items-center gap-4">
+          {/* Table Switcher Tabs */}
+          <div className="flex gap-2 bg-slate-100 dark:bg-slate-800 p-1 rounded-xl">
+            <button
+              type="button"
+              onClick={() => setActiveTab('courses')}
+              className={`px-4 py-2 rounded-lg font-bold text-sm transition-all flex items-center gap-2 ${
+                activeTab === 'courses'
+                  ? 'bg-blue-600 text-white shadow'
+                  : 'text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700'
+              }`}
+            >
+              <span>📚</span>
+              <span>Online Courses ({courses.length})</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => setActiveTab('subjects')}
+              className={`px-4 py-2 rounded-lg font-bold text-sm transition-all flex items-center gap-2 ${
+                activeTab === 'subjects'
+                  ? 'bg-blue-600 text-white shadow'
+                  : 'text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700'
+              }`}
+            >
+              <span>🏷️</span>
+              <span>Subject Disciplines ({subjects.length})</span>
+            </button>
           </div>
-          <div style={{ fontSize: '0.75rem', color: '#334155', fontWeight: 600 }}>Rolling Monthly Admissions</div>
+
+          {/* Search Bar */}
+          <div className="relative flex-1 max-w-md">
+            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm">🔍</span>
+            <input
+              type="text"
+              className="input pl-9 text-sm"
+              placeholder={activeTab === 'courses' ? 'Search courses by title or discipline...' : 'Search subjects...'}
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+            />
+            {searchQuery && (
+              <button
+                type="button"
+                onClick={() => setSearchQuery('')}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 font-bold"
+              >
+                ✕
+              </button>
+            )}
+          </div>
         </div>
 
-        <div className="card" style={{ padding: '1.25rem', borderLeft: '4px solid #d97706' }}>
-          <div style={{ fontSize: '0.8rem', color: '#1e293b', fontWeight: 700 }}>Short Course Durations</div>
-          <div style={{ fontSize: '1.85rem', fontWeight: 900, color: '#d97706', marginTop: '0.2rem' }}>
-            4 – 12 Wks
-          </div>
-          <div style={{ fontSize: '0.75rem', color: '#334155', fontWeight: 600 }}>Practical Lab Focused</div>
-        </div>
-
-        <div className="card" style={{ padding: '1.25rem', borderLeft: '4px solid #7c3aed' }}>
-          <div style={{ fontSize: '0.8rem', color: '#1e293b', fontWeight: 700 }}>Learning Mode</div>
-          <div style={{ fontSize: '1.35rem', fontWeight: 900, color: '#7c3aed', marginTop: '0.4rem' }}>
-            100% Online
-          </div>
-          <div style={{ fontSize: '0.75rem', color: '#334155', fontWeight: 600 }}>Live Virtual Classroom & 24/7 LMS</div>
-        </div>
-      </div>
-
-      {isLoading ? (
-        <div style={{ display: 'flex', justifyContent: 'center', padding: 'var(--space-12)' }}>
-          <Spinner size="lg" />
-        </div>
-      ) : localDepts && localDepts.length > 0 ? (
-        <div className="grid grid-2 gap-6">
-          {localDepts.map((d) => (
-            <div key={d.id} className="card" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between', border: '1.5px solid #cbd5e1' }}>
-              <div className="card-body" style={{ padding: '1.5rem' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '1rem', marginBottom: '0.75rem' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                    <span style={{ fontSize: '2rem', padding: '0.5rem', background: '#eff6ff', borderRadius: '12px', border: '1px solid #bfdbfe' }}>
-                      {d.icon || '🎓'}
-                    </span>
+        {/* TAB 1: COURSES TABLE VIEW */}
+        {activeTab === 'courses' && (
+          <div>
+            {isLoadingCourses ? (
+              <div className="card p-12 text-center">
+                <Spinner />
+                <p className="text-slate-500 mt-2 text-sm">Querying Supabase courses table...</p>
+              </div>
+            ) : isErrorCourses ? (
+              <div className="card p-8 text-center text-red-600">
+                <p className="font-bold">Error loading courses from Supabase database.</p>
+                <button type="button" onClick={() => refetchCourses()} className="btn btn-secondary btn-sm mt-2">
+                  Try Again
+                </button>
+              </div>
+            ) : filteredCourses.length === 0 ? (
+              <div className="card p-12 text-center text-slate-500">
+                <div className="text-3xl mb-2">📚</div>
+                <h3 className="font-bold text-slate-700 dark:text-slate-300">No Courses Found</h3>
+                <p className="text-xs text-slate-400 mt-1">Add your first course using the "+ Add New Course" button above.</p>
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+                {filteredCourses.map((c) => (
+                  <div
+                    key={c.id}
+                    className="card p-5 flex flex-col justify-between border border-slate-200 dark:border-slate-800 hover:shadow-md transition-all"
+                  >
                     <div>
-                      <h3 style={{ fontSize: '1.15rem', fontWeight: 800, color: '#090d16', margin: 0, lineHeight: 1.3 }}>
-                        {d.name}
+                      {/* Top Badges */}
+                      <div className="flex justify-between items-start gap-2 mb-3">
+                        <span
+                          className="px-2.5 py-1 rounded-md text-xs font-extrabold"
+                          style={{
+                            backgroundColor: c.subjects?.color_hex ? `${c.subjects.color_hex}15` : '#eff6ff',
+                            color: c.subjects?.color_hex || '#2563eb',
+                            border: `1px solid ${c.subjects?.color_hex ? `${c.subjects.color_hex}35` : '#bfdbfe'}`,
+                          }}
+                        >
+                          {c.subjects?.name || 'General Studies'}
+                        </span>
+                        <span className={`badge ${c.is_published ? 'badge-success' : 'badge-neutral'} text-[11px]`}>
+                          {c.is_published ? '🟢 Published' : 'Draft'}
+                        </span>
+                      </div>
+
+                      {/* Course Title */}
+                      <h3 className="text-lg font-bold text-slate-900 dark:text-white leading-snug mb-2">
+                        {c.title}
                       </h3>
-                      <div style={{ fontSize: '0.82rem', color: '#1e3a8a', fontWeight: 700, marginTop: '2px' }}>
-                        👤 Head of Dept: <strong>{d.hod_name || 'Lead Faculty Trainer'}</strong>
+
+                      {/* Syllabus / Description */}
+                      <p className="text-xs text-slate-600 dark:text-slate-400 line-clamp-3 mb-4 leading-relaxed">
+                        {c.description || 'No detailed syllabus curriculum provided yet.'}
+                      </p>
+                    </div>
+
+                    {/* Footer Controls */}
+                    <div className="pt-4 border-t border-slate-100 dark:border-slate-800 flex justify-between items-center text-xs text-slate-400">
+                      <span className="font-mono text-[11px]">ID: {c.id.slice(0, 8)}...</span>
+                      <div className="flex gap-2">
+                        <button
+                          type="button"
+                          onClick={() => handleOpenEditCourse(c)}
+                          className="btn btn-secondary btn-sm"
+                          style={{ padding: '4px 10px', fontSize: '0.75rem', fontWeight: 700 }}
+                        >
+                          ✏️ Edit
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => setCourseToDelete(c)}
+                          className="btn btn-ghost btn-sm text-red-600 hover:bg-red-50"
+                          style={{ padding: '4px 8px' }}
+                          title="Delete course from database"
+                        >
+                          🗑️
+                        </button>
                       </div>
                     </div>
                   </div>
-                  <span className="badge badge-primary" style={{ fontWeight: 800, fontSize: '0.78rem' }}>
-                    {d.academic_year || '2026 Intake'}
-                  </span>
-                </div>
-
-                <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '10px', padding: '0.85rem 1rem', marginTop: '1rem', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.6rem', fontSize: '0.85rem' }}>
-                  <div>
-                    <span style={{ color: '#475569', display: 'block', fontSize: '0.72rem', textTransform: 'uppercase', fontWeight: 700 }}>
-                      Course Tuition Fee
-                    </span>
-                    <strong style={{ color: '#16a34a', fontSize: '1.1rem', fontWeight: 900 }}>
-                      ${d.fee_amount ? d.fee_amount.toLocaleString() : '75'}
-                    </strong>
-                  </div>
-
-                  <div>
-                    <span style={{ color: '#475569', display: 'block', fontSize: '0.72rem', textTransform: 'uppercase', fontWeight: 700 }}>
-                      Duration
-                    </span>
-                    <strong style={{ color: '#090d16', fontWeight: 800 }}>
-                      ⏱️ {d.duration || '4-6 Weeks'}
-                    </strong>
-                  </div>
-
-                  <div style={{ gridColumn: 'span 2' }}>
-                    <span style={{ color: '#475569', display: 'block', fontSize: '0.72rem', textTransform: 'uppercase', fontWeight: 700 }}>
-                      Timetable Shifts & Lab Hours
-                    </span>
-                    <strong style={{ color: '#1e3a8a', fontWeight: 700 }}>
-                      📅 {d.shifts || 'Morning (8:30AM) / Evening (5:30PM)'}
-                    </strong>
-                  </div>
-
-                  <div style={{ gridColumn: 'span 2' }}>
-                    <span style={{ color: '#475569', display: 'block', fontSize: '0.72rem', textTransform: 'uppercase', fontWeight: 700 }}>
-                      Qualification Award
-                    </span>
-                    <span style={{ color: '#090d16', fontWeight: 600 }}>
-                      📜 {d.grade_level || 'Vocational Short Course Certificate'}
-                    </span>
-                  </div>
-                </div>
+                ))}
               </div>
-
-              {/* Action Buttons */}
-              <div className="card-footer" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: '#f8fafc', borderTop: '1px solid #cbd5e1', padding: '0.85rem 1.5rem' }}>
-                <span style={{ fontSize: '0.75rem', color: '#64748b' }}>
-                  ID: <code>{d.id}</code>
-                </span>
-                <div style={{ display: 'flex', gap: '0.5rem' }}>
-                  <Button
-                    variant="secondary"
-                    size="sm"
-                    onClick={() => handleOpenEdit(d)}
-                    style={{ fontWeight: 700, color: '#1e3a8a', background: '#eff6ff', borderColor: '#bfdbfe' }}
-                  >
-                    ✏️ Edit & Update
-                  </Button>
-                  <Button
-                    variant="danger"
-                    size="sm"
-                    onClick={() => setDeptToDelete(d)}
-                    style={{ fontWeight: 700 }}
-                  >
-                    🗑️ Delete
-                  </Button>
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
-      ) : (
-        <div className="empty-state card">
-          <div className="empty-state-icon">🏫</div>
-          <div className="empty-state-title">No Departments Configured</div>
-          <div className="empty-state-desc">
-            Create your first college department / vocational program to begin managing short courses and student enrollments.
+            )}
           </div>
-          <Button variant="primary" onClick={handleOpenCreate}>
-            + Create First Department
-          </Button>
-        </div>
-      )}
+        )}
 
-      {/* Add / Edit Department Modal */}
-      {(showAddModal || editingDept) && (
-        <Modal
-          isOpen={true}
-          onClose={() => {
-            setShowAddModal(false)
-            setEditingDept(null)
+        {/* TAB 2: SUBJECTS TABLE VIEW */}
+        {activeTab === 'subjects' && (
+          <div>
+            {isLoadingSubjects ? (
+              <div className="card p-12 text-center">
+                <Spinner />
+                <p className="text-slate-500 mt-2 text-sm">Querying Supabase subjects table...</p>
+              </div>
+            ) : filteredSubjects.length === 0 ? (
+              <div className="card p-12 text-center text-slate-500">
+                <div className="text-3xl mb-2">🏷️</div>
+                <h3 className="font-bold text-slate-700 dark:text-slate-300">No Subjects Found</h3>
+                <p className="text-xs text-slate-400 mt-1">Add a new discipline using the "+ Add Subject Discipline" button.</p>
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                {filteredSubjects.map((s) => {
+                  const linkedCoursesCount = courses.filter((c) => c.subject_id === s.id).length
+                  return (
+                    <div
+                      key={s.id}
+                      className="card p-4 flex items-center justify-between border border-slate-200 dark:border-slate-800"
+                    >
+                      <div className="flex items-center gap-3">
+                        <span
+                          className="w-4 h-4 rounded-full flex-shrink-0"
+                          style={{ backgroundColor: s.color_hex || '#2563eb' }}
+                        />
+                        <div>
+                          <h4 className="font-bold text-sm text-slate-900 dark:text-white m-0">{s.name}</h4>
+                          <span className="text-xs text-slate-500">
+                            {linkedCoursesCount} {linkedCoursesCount === 1 ? 'Linked Course' : 'Linked Courses'}
+                          </span>
+                        </div>
+                      </div>
+
+                      <div className="flex gap-1">
+                        <button
+                          type="button"
+                          onClick={() => handleOpenEditSubject(s)}
+                          className="btn btn-ghost btn-sm text-blue-600"
+                          title="Edit Subject"
+                        >
+                          ✏️
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => setSubjectToDelete(s)}
+                          className="btn btn-ghost btn-sm text-red-600"
+                          title="Delete Subject"
+                        >
+                          🗑️
+                        </button>
+                      </div>
+                    </div>
+                  )
+                })}
+              </div>
+            )}
+          </div>
+        )}
+      </div>
+
+      {/* MODAL: ADD / EDIT COURSE */}
+      <Modal
+        isOpen={showCourseModal}
+        onClose={() => setShowCourseModal(false)}
+        title={editingCourse ? 'Edit Database Course' : 'Create New Course (Supabase Live)'}
+      >
+        <form
+          onSubmit={(e) => {
+            e.preventDefault()
+            saveCourseMutation.mutate()
           }}
-          title={editingDept ? `✏️ Edit Department: ${editingDept.name}` : '🏫 Add New Academic Department & Program'}
-          size="md"
+          className="space-y-4"
         >
-          <form
-            onSubmit={(e) => {
-              e.preventDefault()
-              saveMutation.mutate()
-            }}
-          >
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-              <div style={{ display: 'grid', gridTemplateColumns: '80px 1fr', gap: '0.75rem' }}>
-                <div className="form-group" style={{ margin: 0 }}>
-                  <label className="form-label" htmlFor="deptIcon">Icon</label>
-                  <input
-                    id="deptIcon"
-                    type="text"
-                    value={icon}
-                    onChange={(e) => setIcon(e.target.value)}
-                    style={{ textAlign: 'center', fontSize: '1.25rem' }}
-                    required
-                  />
-                </div>
-                <div className="form-group" style={{ margin: 0 }}>
-                  <label className="form-label" htmlFor="deptName">Department / Course Name *</label>
-                  <input
-                    id="deptName"
-                    type="text"
-                    placeholder="e.g. Professional Barista & Specialty Coffee Brewing"
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
-                    required
-                  />
-                </div>
-              </div>
+          <div>
+            <label className="label">Course Title *</label>
+            <input
+              type="text"
+              required
+              className="input"
+              placeholder="e.g. Full-Stack Web Development (React 19, Node.js)"
+              value={courseTitle}
+              onChange={(e) => setCourseTitle(e.target.value)}
+            />
+          </div>
 
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem' }}>
-                <div className="form-group" style={{ margin: 0 }}>
-                  <label className="form-label" htmlFor="hodName">Head of Department / Lead Trainer *</label>
-                  <input
-                    id="hodName"
-                    type="text"
-                    placeholder="e.g. Chef Michael Omondi"
-                    value={hodName}
-                    onChange={(e) => setHodName(e.target.value)}
-                    required
-                  />
-                </div>
-                <div className="form-group" style={{ margin: 0 }}>
-                  <label className="form-label" htmlFor="feeAmount">Course Tuition Fee ($ USD) *</label>
-                  <input
-                    id="feeAmount"
-                    type="number"
-                    min="1"
-                    placeholder="e.g. 95"
-                    value={feeAmount}
-                    onChange={(e) => setFeeAmount(Number(e.target.value))}
-                    required
-                  />
-                </div>
-              </div>
+          <div>
+            <label className="label">Subject Discipline *</label>
+            <select
+              className="input"
+              required
+              value={courseSubjectId}
+              onChange={(e) => setCourseSubjectId(e.target.value)}
+            >
+              <option value="">-- Select or Assign Subject --</option>
+              {subjects.map((sub) => (
+                <option key={sub.id} value={sub.id}>
+                  {sub.name}
+                </option>
+              ))}
+            </select>
+          </div>
 
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem' }}>
-                <div className="form-group" style={{ margin: 0 }}>
-                  <label className="form-label" htmlFor="courseDuration">Course Duration *</label>
-                  <input
-                    id="courseDuration"
-                    type="text"
-                    placeholder="e.g. 4-6 Weeks / 8 Weeks / 12 Weeks"
-                    value={duration}
-                    onChange={(e) => setDuration(e.target.value)}
-                    required
-                  />
-                </div>
-                <div className="form-group" style={{ margin: 0 }}>
-                  <label className="form-label" htmlFor="academicYear">Intake Category</label>
-                  <input
-                    id="academicYear"
-                    type="text"
-                    placeholder="e.g. 2026 Practical Intake"
-                    value={academicYear}
-                    onChange={(e) => setAcademicYear(e.target.value)}
-                    required
-                  />
-                </div>
-              </div>
+          <div>
+            <label className="label">Course Syllabus and Description</label>
+            <textarea
+              className="input"
+              rows={4}
+              placeholder="Outline the modular units, course competencies, and practical lab training objectives..."
+              value={courseDesc}
+              onChange={(e) => setCourseDesc(e.target.value)}
+            />
+          </div>
 
-              <div className="form-group" style={{ margin: 0 }}>
-                <label className="form-label" htmlFor="shifts">Timetable Shifts & Lab Hours *</label>
-                <input
-                  id="shifts"
-                  type="text"
-                  placeholder="e.g. Morning (8:30AM - 11:30AM) / Evening (5:30PM - 7:30PM)"
-                  value={shifts}
-                  onChange={(e) => setShifts(e.target.value)}
-                  required
-                />
-              </div>
+          <div className="flex items-center gap-3 p-3 bg-slate-50 dark:bg-slate-800 rounded-lg">
+            <input
+              type="checkbox"
+              id="coursePublishCheck"
+              checked={coursePublished}
+              onChange={(e) => setCoursePublished(e.target.checked)}
+              className="w-4 h-4 rounded text-blue-600"
+            />
+            <label htmlFor="coursePublishCheck" className="text-sm font-semibold cursor-pointer m-0">
+              Publish Course (Make visible for student enrollment and LMS modules)
+            </label>
+          </div>
 
-              <div className="form-group" style={{ margin: 0 }}>
-                <label className="form-label" htmlFor="gradeLevel">Certification / Qualification Award *</label>
-                <input
-                  id="gradeLevel"
-                  type="text"
-                  placeholder="e.g. Master Barista Certificate / Short Course Competency"
-                  value={gradeLevel}
-                  onChange={(e) => setGradeLevel(e.target.value)}
-                  required
-                />
-              </div>
+          <div className="flex justify-end gap-2 pt-3 border-t">
+            <Button variant="secondary" onClick={() => setShowCourseModal(false)} disabled={saveCourseMutation.isPending}>
+              Cancel
+            </Button>
+            <Button type="submit" variant="primary" loading={saveCourseMutation.isPending}>
+              {editingCourse ? 'Save Changes' : '+ Create Course in Supabase'}
+            </Button>
+          </div>
+        </form>
+      </Modal>
+
+      {/* MODAL: ADD / EDIT SUBJECT */}
+      <Modal
+        isOpen={showSubjectModal}
+        onClose={() => setShowSubjectModal(false)}
+        title={editingSubject ? 'Edit Subject Discipline' : 'Add Subject Discipline (Supabase Live)'}
+      >
+        <form
+          onSubmit={(e) => {
+            e.preventDefault()
+            saveSubjectMutation.mutate()
+          }}
+          className="space-y-4"
+        >
+          <div>
+            <label className="label">Subject Discipline Name *</label>
+            <input
+              type="text"
+              required
+              className="input"
+              placeholder="e.g. Artificial Intelligence and Cloud Computing"
+              value={subjectName}
+              onChange={(e) => setSubjectName(e.target.value)}
+            />
+          </div>
+
+          <div>
+            <label className="label">Color Identifier Tag</label>
+            <div className="flex items-center gap-3">
+              <input
+                type="color"
+                value={subjectColor}
+                onChange={(e) => setSubjectColor(e.target.value)}
+                className="w-12 h-10 p-1 rounded border cursor-pointer"
+              />
+              <input
+                type="text"
+                className="input flex-1"
+                placeholder="#2563eb"
+                value={subjectColor}
+                onChange={(e) => setSubjectColor(e.target.value)}
+              />
             </div>
+          </div>
 
-            <div className="flex justify-end gap-3 mt-6" style={{ borderTop: '1px solid #e2e8f0', paddingTop: '1rem' }}>
-              <Button
-                type="button"
-                variant="ghost"
-                onClick={() => {
-                  setShowAddModal(false)
-                  setEditingDept(null)
-                }}
-              >
-                Cancel
-              </Button>
-              <Button type="submit" variant="primary" loading={saveMutation.isPending} style={{ fontWeight: 800 }}>
-                {editingDept ? '💾 Update Department →' : '🚀 Save Department →'}
-              </Button>
-            </div>
-          </form>
-        </Modal>
-      )}
+          <div className="flex justify-end gap-2 pt-3 border-t">
+            <Button variant="secondary" onClick={() => setShowSubjectModal(false)} disabled={saveSubjectMutation.isPending}>
+              Cancel
+            </Button>
+            <Button type="submit" variant="primary" loading={saveSubjectMutation.isPending}>
+              {editingSubject ? 'Update Subject' : '+ Add Subject to Database'}
+            </Button>
+          </div>
+        </form>
+      </Modal>
 
-      {/* Delete Confirmation Modal */}
-      {deptToDelete && (
-        <ConfirmModal
-          isOpen={true}
-          onClose={() => setDeptToDelete(null)}
-          onConfirm={() => deleteMutation.mutate(deptToDelete.id)}
-          title="Delete Academic Department?"
-          message={`Are you sure you want to delete "${deptToDelete.name}"? All associated short course configurations for this department will be removed.`}
-          confirmLabel="Delete Department"
-          loading={deleteMutation.isPending}
-        />
-      )}
+      {/* CONFIRM DELETE COURSE */}
+      <ConfirmModal
+        isOpen={Boolean(courseToDelete)}
+        onClose={() => setCourseToDelete(null)}
+        onConfirm={() => {
+          if (courseToDelete) deleteCourseMutation.mutate(courseToDelete.id)
+        }}
+        title="Delete Course"
+        message={`Are you sure you want to permanently delete "${courseToDelete?.title}" from the database? All linked lessons will be removed.`}
+        confirmLabel="Yes, Delete Course"
+        loading={deleteCourseMutation.isPending}
+      />
+
+      {/* CONFIRM DELETE SUBJECT */}
+      <ConfirmModal
+        isOpen={Boolean(subjectToDelete)}
+        onClose={() => setSubjectToDelete(null)}
+        onConfirm={() => {
+          if (subjectToDelete) deleteSubjectMutation.mutate(subjectToDelete.id)
+        }}
+        title="Delete Subject Discipline"
+        message={`Are you sure you want to permanently delete "${subjectToDelete?.name}"? Any courses assigned to this subject will have their discipline unlinked.`}
+        confirmLabel="Yes, Delete Subject"
+        loading={deleteSubjectMutation.isPending}
+      />
     </PageWrapper>
   )
 }
