@@ -5,6 +5,8 @@ const config: CapacitorConfig = {
   appName: 'Éclat Institute',
   webDir: 'dist',
   server: {
+    url: 'https://eclat.institute',
+    cleartext: true,
     androidScheme: 'https',
   },
 };
