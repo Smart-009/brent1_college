@@ -93,6 +93,19 @@ export function ResourceLibrary() {
   const [readerTheme, setReaderTheme] = useState<'light' | 'sepia' | 'dark'>('light')
   const [drmWarning, setDrmWarning] = useState<string | null>(null)
 
+  // Dynamic Hardware Screen Capture Security (Enables FLAG_SECURE only while reading resources)
+  useEffect(() => {
+    if (readingResource) {
+      import('@/lib/screenSecurity').then((mod) => mod.enableScreenSecurity()).catch(() => {})
+    } else {
+      import('@/lib/screenSecurity').then((mod) => mod.disableScreenSecurity()).catch(() => {})
+    }
+
+    return () => {
+      import('@/lib/screenSecurity').then((mod) => mod.disableScreenSecurity()).catch(() => {})
+    }
+  }, [readingResource])
+
   // DRM Protection: Keyboard save, print, copy and inspect prevention
   useEffect(() => {
     if (!readingResource) return
