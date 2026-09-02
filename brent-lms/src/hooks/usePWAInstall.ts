@@ -13,8 +13,17 @@ export function usePWAInstall() {
   const [showInstallGuide, setShowInstallGuide] = useState(false)
 
   useEffect(() => {
-    // Check if already installed / running in standalone
+    // Check if already installed / running in native app or standalone
+    const isCapacitor =
+      typeof window !== 'undefined' &&
+      (Boolean((window as any).Capacitor?.isNativePlatform?.()) ||
+       (window as any).Capacitor?.getPlatform?.() === 'android' ||
+       (window as any).Capacitor?.getPlatform?.() === 'ios' ||
+       window.location.protocol === 'capacitor:' ||
+       window.location.protocol === 'ionic:')
+
     const isStandalone =
+      isCapacitor ||
       (typeof window !== 'undefined' && window.matchMedia?.('(display-mode: standalone)')?.matches) ||
       (typeof window !== 'undefined' && (window.navigator as unknown as { standalone?: boolean })?.standalone === true) ||
       (typeof document !== 'undefined' && typeof document.referrer === 'string' && document.referrer.includes('android-app://')) ||
