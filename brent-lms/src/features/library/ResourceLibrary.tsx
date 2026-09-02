@@ -109,16 +109,33 @@ export function ResourceLibrary() {
       }
     }
 
-    // Detect multi-touch screenshot gestures (3+ fingers on mobile screen)
+    // Intercept Volume Down / Volume Up hardware buttons (Android hardware screenshot combo)
+    const handleVolumeKeys = (e: KeyboardEvent) => {
+      if (
+        e.key === 'AudioVolumeDown' ||
+        e.key === 'AudioVolumeUp' ||
+        (e as any).keyCode === 24 ||
+        (e as any).keyCode === 25 ||
+        (e as any).keyCode === 26
+      ) {
+        setIsDefocused(true)
+        setDrmWarning('🔒 Hardware button screen capture is blocked by DRM policy.')
+        setTimeout(() => setIsDefocused(false), 2500)
+      }
+    }
+
+    // Detect multi-touch screenshot gestures (2+ fingers or swipe combos on mobile screen)
     const handleTouchStart = (e: TouchEvent) => {
-      if (e.touches.length >= 3) {
+      if (e.touches.length >= 2) {
         setIsDefocused(true)
         setDrmWarning('🔒 Multi-touch screen capture is blocked by DRM policy.')
-        setTimeout(() => setDrmWarning(null), 4000)
+        setTimeout(() => setDrmWarning(null), 3000)
       }
     }
 
     const handleKeyDown = (e: KeyboardEvent) => {
+      handleVolumeKeys(e)
+
       // Intercept Ctrl+S / Cmd+S (Save)
       if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 's') {
         e.preventDefault()
@@ -168,16 +185,20 @@ export function ResourceLibrary() {
 
     window.addEventListener('blur', handleDefocus)
     window.addEventListener('focusout', handleDefocus)
+    window.addEventListener('pagehide', handleDefocus)
     document.addEventListener('visibilitychange', handleVisibility)
     window.addEventListener('keydown', handleKeyDown)
     window.addEventListener('touchstart', handleTouchStart, { passive: true })
+    window.addEventListener('touchmove', handleTouchStart, { passive: true })
 
     return () => {
       window.removeEventListener('blur', handleDefocus)
       window.removeEventListener('focusout', handleDefocus)
+      window.removeEventListener('pagehide', handleDefocus)
       document.removeEventListener('visibilitychange', handleVisibility)
       window.removeEventListener('keydown', handleKeyDown)
       window.removeEventListener('touchstart', handleTouchStart)
+      window.removeEventListener('touchmove', handleTouchStart)
     }
   }, [readingResource])
 
