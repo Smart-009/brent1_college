@@ -168,6 +168,26 @@ export function MobileLandingView({
             </button>
           )}
 
+          <Link
+            to="/library"
+            style={{
+              background: 'rgba(59, 130, 246, 0.2)',
+              color: '#93c5fd',
+              border: '1px solid rgba(59, 130, 246, 0.4)',
+              padding: '0.4rem 0.65rem',
+              borderRadius: '8px',
+              fontSize: '0.75rem',
+              fontWeight: 700,
+              textDecoration: 'none',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '3px',
+            }}
+          >
+            <span>📖</span>
+            <span>Library</span>
+          </Link>
+
           <button
             type="button"
             onClick={onOpenPortals}
