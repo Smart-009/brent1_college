@@ -5,6 +5,7 @@ import { useAuth } from '@/hooks/useAuth'
 import { schoolStore } from '@/lib/schoolData'
 import { LayoutShell } from '@/components/layout/LayoutShell'
 import { LoadingScreen } from '@/components/ui/Spinner'
+import { PullToRefresh } from '@/components/shared/PullToRefresh'
 
 // Direct import for Home/Landing page for instant render
 import { Landing } from '@/features/landing/Landing'
@@ -81,6 +82,7 @@ export function App() {
 
   return (
     <Suspense fallback={<LoadingScreen message="Loading Eclat Institute Portal..." />}>
+      <PullToRefresh />
       <Routes>
         {/* Public Landing & Login */}
         <Route path="/" element={<Landing />} />

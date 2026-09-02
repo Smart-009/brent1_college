@@ -224,20 +224,20 @@ export function ManageClasses() {
     <PageWrapper title="Academic Programs & Live Database">
       <div className="space-y-6">
         {/* Top Header Card */}
-        <div className="card p-6" style={{ background: 'linear-gradient(135deg, #0f172a 0%, #1e293b 100%)', color: '#ffffff', borderRadius: '16px' }}>
+        <div className="card p-6" style={{ background: 'linear-gradient(135deg, #090d16 0%, #1e293b 100%)', color: '#ffffff', borderRadius: '16px', border: '1px solid rgba(255, 255, 255, 0.1)' }}>
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
             <div>
               <div className="flex items-center gap-2 mb-1">
                 <span style={{ fontSize: '1.4rem' }}>🗄️</span>
-                <h1 className="text-2xl font-bold tracking-tight text-white m-0">
+                <h1 style={{ fontSize: '1.4rem', fontWeight: 800, color: '#ffffff', margin: 0 }}>
                   Live Academic Database Console
                 </h1>
                 <span className="badge" style={{ background: '#10b981', color: '#ffffff', fontWeight: 800, fontSize: '0.72rem' }}>
                   🟢 REAL-TIME SUPABASE SYNC
                 </span>
               </div>
-              <p className="text-slate-300 text-sm m-0">
-                Direct live synchronization with your database <code className="text-emerald-400 font-mono">courses</code> and <code className="text-emerald-400 font-mono">subjects</code> tables.
+              <p style={{ color: '#cbd5e1', fontSize: '0.88rem', margin: '0.25rem 0 0' }}>
+                Direct live synchronization with your database <code style={{ background: 'rgba(52, 211, 153, 0.2)', color: '#34d399', padding: '2px 6px', borderRadius: '4px', fontFamily: 'monospace' }}>courses</code> and <code style={{ background: 'rgba(52, 211, 153, 0.2)', color: '#34d399', padding: '2px 6px', borderRadius: '4px', fontFamily: 'monospace' }}>subjects</code> tables.
               </p>
             </div>
 
@@ -256,7 +256,7 @@ export function ManageClasses() {
                   refetchSubjects()
                 }}
                 className="btn btn-secondary btn-sm"
-                style={{ background: 'rgba(255, 255, 255, 0.15)', color: '#ffffff', border: 'none' }}
+                style={{ background: 'rgba(255, 255, 255, 0.15)', color: '#ffffff', border: '1px solid rgba(255, 255, 255, 0.2)' }}
                 title="Refresh from Supabase"
               >
                 🔄 Refresh Cloud Data
@@ -265,25 +265,25 @@ export function ManageClasses() {
           </div>
 
           {/* Database Metrics Grid */}
-          <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 mt-6 pt-5 border-t border-slate-700">
-            <div className="bg-slate-800/80 p-4 rounded-xl border border-slate-700">
-              <div className="text-xs text-slate-400 font-semibold uppercase tracking-wider">Total Online Courses</div>
-              <div className="text-2xl sm:text-3xl font-extrabold text-blue-400 mt-1">{courses.length}</div>
-              <div className="text-xs text-slate-400 mt-0.5">Live in courses table</div>
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 mt-6 pt-5" style={{ borderTop: '1px solid rgba(255, 255, 255, 0.1)' }}>
+            <div style={{ background: 'rgba(15, 23, 42, 0.8)', padding: '1rem', borderRadius: '12px', border: '1px solid rgba(255, 255, 255, 0.1)' }}>
+              <div style={{ fontSize: '0.75rem', color: '#94a3b8', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em' }}>Total Online Courses</div>
+              <div style={{ fontSize: '1.8rem', fontWeight: 900, color: '#60a5fa', margin: '0.25rem 0' }}>{courses.length}</div>
+              <div style={{ fontSize: '0.75rem', color: '#94a3b8' }}>Live in courses table</div>
             </div>
 
-            <div className="bg-slate-800/80 p-4 rounded-xl border border-slate-700">
-              <div className="text-xs text-slate-400 font-semibold uppercase tracking-wider">Subject Disciplines</div>
-              <div className="text-2xl sm:text-3xl font-extrabold text-emerald-400 mt-1">{subjects.length}</div>
-              <div className="text-xs text-slate-400 mt-0.5">Live in subjects table</div>
+            <div style={{ background: 'rgba(15, 23, 42, 0.8)', padding: '1rem', borderRadius: '12px', border: '1px solid rgba(255, 255, 255, 0.1)' }}>
+              <div style={{ fontSize: '0.75rem', color: '#94a3b8', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em' }}>Subject Disciplines</div>
+              <div style={{ fontSize: '1.8rem', fontWeight: 900, color: '#34d399', margin: '0.25rem 0' }}>{subjects.length}</div>
+              <div style={{ fontSize: '0.75rem', color: '#94a3b8' }}>Live in subjects table</div>
             </div>
 
-            <div className="bg-slate-800/80 p-4 rounded-xl border border-slate-700 col-span-2 sm:col-span-1">
-              <div className="text-xs text-slate-400 font-semibold uppercase tracking-wider">Published Status</div>
-              <div className="text-2xl sm:text-3xl font-extrabold text-amber-400 mt-1">
+            <div className="col-span-2 sm:col-span-1" style={{ background: 'rgba(15, 23, 42, 0.8)', padding: '1rem', borderRadius: '12px', border: '1px solid rgba(255, 255, 255, 0.1)' }}>
+              <div style={{ fontSize: '0.75rem', color: '#94a3b8', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em' }}>Published Status</div>
+              <div style={{ fontSize: '1.8rem', fontWeight: 900, color: '#fbbf24', margin: '0.25rem 0' }}>
                 {courses.filter((c) => c.is_published).length}
               </div>
-              <div className="text-xs text-slate-400 mt-0.5">Active Student Enrollments</div>
+              <div style={{ fontSize: '0.75rem', color: '#94a3b8' }}>Active Student Enrollments</div>
             </div>
           </div>
         </div>

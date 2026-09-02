@@ -91,6 +91,7 @@ export function ResourceLibrary() {
   // Fullscreen In-App Viewer State
   const [readingResource, setReadingResource] = useState<AcademicResource | null>(null)
   const [readerTheme, setReaderTheme] = useState<'light' | 'sepia' | 'dark'>('light')
+  const [readerZoom, setReaderZoom] = useState<number>(100)
   const [drmWarning, setDrmWarning] = useState<string | null>(null)
 
   // Dynamic Hardware Screen Capture Security (Enables FLAG_SECURE only while reading resources)
@@ -666,6 +667,34 @@ export function ResourceLibrary() {
 
             {/* Controls */}
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexShrink: 0 }}>
+              {/* Zoom Controls */}
+              <div style={{ display: 'flex', alignItems: 'center', gap: '2px', background: readerTheme === 'dark' ? '#1e293b' : '#e2e8f0', borderRadius: '8px', padding: '2px 4px' }}>
+                <button
+                  type="button"
+                  onClick={() => setReaderZoom((z) => Math.max(75, z - 20))}
+                  style={{ background: 'transparent', color: 'inherit', border: 'none', padding: '4px 6px', borderRadius: '6px', cursor: 'pointer', fontWeight: 800, fontSize: '0.8rem' }}
+                  title="Zoom Out (-)"
+                >
+                  🔍 -
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setReaderZoom(100)}
+                  style={{ background: 'transparent', color: 'inherit', border: 'none', padding: '4px 6px', borderRadius: '6px', cursor: 'pointer', fontWeight: 700, fontSize: '0.72rem' }}
+                  title="Reset Zoom (100%)"
+                >
+                  {readerZoom}%
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setReaderZoom((z) => Math.min(250, z + 20))}
+                  style={{ background: 'transparent', color: 'inherit', border: 'none', padding: '4px 6px', borderRadius: '6px', cursor: 'pointer', fontWeight: 800, fontSize: '0.8rem' }}
+                  title="Zoom In (+)"
+                >
+                  🔍 +
+                </button>
+              </div>
+
               {/* Bookmark Toggle */}
               <button
                 type="button"
@@ -679,7 +708,7 @@ export function ResourceLibrary() {
                 }}
                 title={bookmarkedIds.includes(readingResource.id) ? 'Saved in My Books' : 'Save Book'}
               >
-                {bookmarkedIds.includes(readingResource.id) ? '⭐ Saved' : '☆ Save'}
+                {bookmarkedIds.includes(readingResource.id) ? '⭐' : '☆'}
               </button>
 
               {/* Theme Selector */}
@@ -734,7 +763,7 @@ export function ResourceLibrary() {
           </div>
 
           {/* Fullscreen Document Content Viewport */}
-          <div style={{ flex: 1, position: 'relative', overflow: 'hidden', background: readerTheme === 'dark' ? '#0b0f19' : '#f8fafc' }}>
+          <div style={{ flex: 1, position: 'relative', overflow: 'auto', WebkitOverflowScrolling: 'touch', background: readerTheme === 'dark' ? '#0b0f19' : '#f8fafc' }}>
             {/* Anti-Popout Click Interceptor (Prevents clicking Google Drive's "Open in New Window" top-right icon) */}
             <div
               style={{
@@ -788,8 +817,18 @@ export function ResourceLibrary() {
               ))}
             </div>
 
-            {/* Embedded Document Viewport with Google Drive Toolbar Cropped Out */}
-            <div style={{ width: '100%', height: '100%', overflow: 'hidden', position: 'relative' }}>
+            {/* Embedded Document Viewport with Zoom Scaling and Google Drive Toolbar Cropped Out */}
+            <div
+              style={{
+                width: readerZoom > 100 ? `${readerZoom}%` : '100%',
+                height: readerZoom > 100 ? `${readerZoom}%` : '100%',
+                minHeight: '100%',
+                overflow: 'hidden',
+                position: 'relative',
+                transformOrigin: 'top center',
+                transition: 'width 0.15s ease, height 0.15s ease',
+              }}
+            >
               {/\.(png|jpe?g|webp|gif|svg)$/i.test(readingResource.file_url || '') ? (
                 <div style={{ padding: '1.5rem', height: '100%', overflowY: 'auto', textAlign: 'center' }}>
                   <img
