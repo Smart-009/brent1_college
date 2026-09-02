@@ -87,7 +87,10 @@ export function App() {
         <Route path="/courses" element={<Landing />} />
         <Route path="/login" element={<Login />} />
         <Route path="/change-password" element={<ChangePassword />} />
-        <Route path="/access-expired" element={<AccessExpired />} />
+        {/* Open Public Routes with App Layout */}
+        <Route element={<LayoutShell />}>
+          <Route path="/library" element={<ResourceLibrary />} />
+        </Route>
 
         {/* Authenticated Layout Routes */}
         <Route
@@ -101,7 +104,6 @@ export function App() {
           <Route path="/timetable" element={<TimetableView />} />
           <Route path="/exams" element={<ExamManagement />} />
           <Route path="/fees" element={<FeeManagement />} />
-          <Route path="/library" element={<ResourceLibrary />} />
           <Route path="/noticeboard" element={<SchoolNoticeboard />} />
           <Route path="/discipline" element={<DisciplineTracker />} />
           <Route path="/students" element={<StudentDirectory />} />
