@@ -123,8 +123,47 @@ export function Navbar({ onToggleSidebar }: { onToggleSidebar: () => void }) {
           </button>
         )}
 
+        {/* Direct E-Library Link */}
+        <Link
+          to="/library"
+          className="btn btn-sm"
+          style={{
+            background: 'rgba(59, 130, 246, 0.18)',
+            color: '#93c5fd',
+            border: '1px solid rgba(59, 130, 246, 0.4)',
+            borderRadius: '8px',
+            padding: '4px 12px',
+            fontSize: '0.8rem',
+            fontWeight: 800,
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: '5px',
+            textDecoration: 'none',
+          }}
+          title="Browse Open E-Library & Academic Resources"
+        >
+          <span>📖</span>
+          <span>E-Library</span>
+        </Link>
+
         {/* Role Simulator Switcher */}
         <RoleSwitcher />
+
+        {!profile && (
+          <Link
+            to="/login"
+            className="btn btn-sm btn-primary"
+            style={{
+              fontWeight: 800,
+              padding: '0.4rem 0.85rem',
+              borderRadius: '8px',
+              fontSize: '0.8rem',
+              textDecoration: 'none',
+            }}
+          >
+            🔐 Login
+          </Link>
+        )}
 
         {profile && (
           <>

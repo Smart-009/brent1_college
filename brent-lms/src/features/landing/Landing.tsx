@@ -912,12 +912,37 @@ export function Landing() {
           <div style={{ display: 'flex', alignItems: 'center', gap: '1.25rem', flexShrink: 0 }}>
             <nav className="desktop-nav-links" style={{ fontSize: '0.92rem', fontWeight: 600 }}>
               <a href="#courses" style={{ color: '#334155', textDecoration: 'none', transition: 'color 0.2s' }}>Courses</a>
+              <Link to="/library" style={{ color: '#2563eb', fontWeight: 800, textDecoration: 'none', transition: 'color 0.2s' }}>📖 E-Library</Link>
               <a href="#why-eclat" style={{ color: '#334155', textDecoration: 'none', transition: 'color 0.2s' }}>Why Choose Us</a>
               <a href="#testimonials" style={{ color: '#334155', textDecoration: 'none', transition: 'color 0.2s' }}>Graduate Outcomes</a>
               <a href="#intakes" style={{ color: '#334155', textDecoration: 'none', transition: 'color 0.2s' }}>Intakes & Fees</a>
             </nav>
 
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', flexWrap: 'nowrap' }}>
+              {/* Direct E-Library Access Button on Desktop Navbar */}
+              <Link
+                to="/library"
+                className="btn btn-sm"
+                style={{
+                  background: '#eff6ff',
+                  color: '#1d4ed8',
+                  border: '1px solid #bfdbfe',
+                  fontWeight: 800,
+                  padding: '0.45rem 0.85rem',
+                  borderRadius: '8px',
+                  fontSize: '0.78rem',
+                  whiteSpace: 'nowrap',
+                  textDecoration: 'none',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '4px',
+                }}
+                title="Access Free Academic E-Library"
+              >
+                <span>📖</span>
+                <span>E-Library</span>
+              </Link>
+
               {!isInstalled && (
                 <button
                   type="button"
@@ -929,7 +954,7 @@ export function Landing() {
                     fontWeight: 700,
                     padding: '0.45rem 0.75rem',
                     borderRadius: '8px',
-                    boxShadow: '0 2px 6px rgba(22, 163, 74, 0.3)',
+                    boxShadow: '0 2px 6px rgba(220, 163, 74, 0.3)',
                     display: 'inline-flex',
                     alignItems: 'center',
                     gap: '4px',
@@ -1088,6 +1113,27 @@ export function Landing() {
             >
               📚 Browse Online Programs
             </a>
+
+            <Link
+              to="/library"
+              className="btn btn-lg"
+              style={{
+                background: 'rgba(59, 130, 246, 0.2)',
+                color: '#93c5fd',
+                fontWeight: 800,
+                padding: '1rem 2.25rem',
+                fontSize: '1.08rem',
+                borderRadius: '12px',
+                border: '1.5px solid rgba(59, 130, 246, 0.5)',
+                textDecoration: 'none',
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '8px',
+              }}
+            >
+              <span>📖</span>
+              <span>Open Free E-Library</span>
+            </Link>
 
             {!isInstalled && (
               <button

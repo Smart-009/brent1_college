@@ -5,9 +5,14 @@ import { RoleBadge } from '@/components/ui/Badge'
 export function Sidebar({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) {
   const { profile, signOut } = useAuth()
   const navigate = useNavigate()
-  if (!profile) return null
-
   // Streamlined Role-Specific Navigation Definitions
+  const guestNav = [
+    { to: '/', label: 'Home & Overview', icon: '🏠' },
+    { to: '/courses', label: 'Vocational Courses', icon: '📚' },
+    { to: '/library', label: 'E-Library & Past Papers', icon: '📖' },
+    { to: '/login', label: 'Student / Faculty Login', icon: '🔐' },
+  ]
+
   const studentNav = [
     { to: '/student', label: 'My Student Dashboard', icon: '🏠' },
     { to: '/student/courses', label: 'My Enrolled Lessons & LMS', icon: '📚' },
@@ -59,7 +64,7 @@ export function Sidebar({ isOpen, onClose }: { isOpen: boolean; onClose: () => v
     admin: { label: '🛡️ Institutional Administration', links: adminNav },
   }
 
-  const currentSection = roleNavMap[profile.role] || roleNavMap.student
+  const currentSection = profile ? (roleNavMap[profile.role] || roleNavMap.student) : { label: 'Éclat Institute Hub', links: guestNav }
 
   const handleSignOut = async () => {
     onClose()
@@ -77,7 +82,7 @@ export function Sidebar({ isOpen, onClose }: { isOpen: boolean; onClose: () => v
           <NavLink
             key={link.to}
             to={link.to}
-            end={link.to === '/student' || link.to === '/teacher' || link.to === '/parent' || link.to === '/admin' || link.to === '/bursar' || link.to === '/secretary'}
+            end={link.to === '/' || link.to === '/student' || link.to === '/teacher' || link.to === '/parent' || link.to === '/admin' || link.to === '/bursar' || link.to === '/secretary'}
             className={({ isActive }) => `sidebar-link ${isActive ? 'active' : ''}`}
             onClick={onClose}
           >
@@ -87,7 +92,7 @@ export function Sidebar({ isOpen, onClose }: { isOpen: boolean; onClose: () => v
         ))}
       </div>
 
-      {/* User Account & Prominent Logout Section */}
+      {/* User Account or Guest Login Section */}
       <div
         style={{
           padding: '1rem 1rem calc(80px + env(safe-area-inset-bottom, 0px)) 1rem',
@@ -97,55 +102,76 @@ export function Sidebar({ isOpen, onClose }: { isOpen: boolean; onClose: () => v
           flexShrink: 0,
         }}
       >
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem', marginBottom: '0.75rem' }}>
-          <div
+        {profile ? (
+          <>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem', marginBottom: '0.75rem' }}>
+              <div
+                style={{
+                  width: '34px',
+                  height: '34px',
+                  borderRadius: '50%',
+                  background: 'var(--color-primary)',
+                  color: '#ffffff',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  fontWeight: 800,
+                  fontSize: '0.9rem',
+                  flexShrink: 0,
+                }}
+              >
+                {profile.full_name[0]?.toUpperCase() || 'U'}
+              </div>
+              <div style={{ minWidth: 0, flex: 1 }}>
+                <div style={{ fontSize: '0.82rem', fontWeight: 800, color: 'var(--color-text)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                  {profile.full_name}
+                </div>
+                <RoleBadge role={profile.role} />
+              </div>
+            </div>
+
+            <button
+              type="button"
+              onClick={handleSignOut}
+              className="btn btn-sm btn-full"
+              style={{
+                background: '#dc2626',
+                color: '#ffffff',
+                fontWeight: 800,
+                border: 'none',
+                borderRadius: '8px',
+                padding: '0.55rem',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '6px',
+                fontSize: '0.82rem',
+                cursor: 'pointer',
+                boxShadow: '0 2px 6px rgba(220, 38, 38, 0.25)',
+              }}
+            >
+              <span>🚪</span>
+              <span>Log Out of System</span>
+            </button>
+          </>
+        ) : (
+          <NavLink
+            to="/login"
+            onClick={onClose}
+            className="btn btn-primary btn-sm btn-full"
             style={{
-              width: '34px',
-              height: '34px',
-              borderRadius: '50%',
-              background: 'var(--color-primary)',
-              color: '#ffffff',
+              fontWeight: 800,
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              fontWeight: 800,
-              fontSize: '0.9rem',
-              flexShrink: 0,
+              gap: '6px',
+              textDecoration: 'none',
             }}
           >
-            {profile.full_name[0]?.toUpperCase() || 'U'}
-          </div>
-          <div style={{ minWidth: 0, flex: 1 }}>
-            <div style={{ fontSize: '0.82rem', fontWeight: 800, color: 'var(--color-text)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-              {profile.full_name}
-            </div>
-            <RoleBadge role={profile.role} />
-          </div>
-        </div>
-
-        <button
-          type="button"
-          onClick={handleSignOut}
-          className="btn btn-sm btn-full"
-          style={{
-            background: '#dc2626',
-            color: '#ffffff',
-            fontWeight: 800,
-            border: 'none',
-            borderRadius: '8px',
-            padding: '0.55rem',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            gap: '6px',
-            fontSize: '0.82rem',
-            cursor: 'pointer',
-            boxShadow: '0 2px 6px rgba(220, 38, 38, 0.25)',
-          }}
-        >
-          <span>🚪</span>
-          <span>Log Out of System</span>
-        </button>
+            <span>🔐</span>
+            <span>Student / Staff Login</span>
+          </NavLink>
+        )}
       </div>
     </aside>
   )
