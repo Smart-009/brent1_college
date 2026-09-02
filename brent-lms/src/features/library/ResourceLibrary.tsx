@@ -118,10 +118,20 @@ export function ResourceLibrary() {
   const [readerTheme, setReaderTheme] = useState<'light' | 'sepia' | 'dark'>('light')
   const [currentPage, setCurrentPage] = useState(1)
   const [drmWarning, setDrmWarning] = useState<string | null>(null)
+  const [isDefocused, setIsDefocused] = useState(false)
 
-  // DRM Anti-Screenshot, Anti-Save, and Anti-Print Interceptor
+  // DRM Anti-Screenshot, Anti-Save, Window Defocus, and Anti-Print Interceptor
   useEffect(() => {
     if (!readingResource) return
+
+    const handleBlur = () => {
+      // User switched tabs, opened screenshot snippet tool, or minimized window
+      setIsDefocused(true)
+    }
+
+    const handleFocus = () => {
+      setIsDefocused(false)
+    }
 
     const handleKeyDown = (e: KeyboardEvent) => {
       // Intercept Ctrl+S / Cmd+S (Save)
@@ -140,10 +150,15 @@ export function ResourceLibrary() {
         return
       }
 
-      // Intercept PrintScreen key
-      if (e.key === 'PrintScreen' || e.code === 'PrintScreen') {
+      // Intercept PrintScreen key & Screenshot combos (Win+Shift+S, Meta+Shift+3/4)
+      if (
+        e.key === 'PrintScreen' ||
+        e.code === 'PrintScreen' ||
+        ((e.ctrlKey || e.metaKey) && e.shiftKey && (e.key === 'S' || e.key === 's' || e.key === '3' || e.key === '4' || e.key === '5'))
+      ) {
         e.preventDefault()
-        setDrmWarning('🔒 Protected Academic Viewer: Screenshots and file saving are restricted.')
+        setIsDefocused(true)
+        setDrmWarning('🔒 Screenshot capture blocked by DRM policy.')
         setTimeout(() => setDrmWarning(null), 4000)
         return
       }
@@ -151,7 +166,7 @@ export function ResourceLibrary() {
       // Intercept Ctrl+C / Cmd+C (Copy)
       if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'c') {
         e.preventDefault()
-        setDrmWarning('🔒 Protected Academic Viewer: Screenshots and file saving are restricted.')
+        setDrmWarning('🔒 Protected Academic Viewer: Copying is restricted.')
         setTimeout(() => setDrmWarning(null), 4000)
         return
       }
@@ -166,8 +181,14 @@ export function ResourceLibrary() {
       }
     }
 
+    window.addEventListener('blur', handleBlur)
+    window.addEventListener('focus', handleFocus)
     window.addEventListener('keydown', handleKeyDown)
-    return () => window.removeEventListener('keydown', handleKeyDown)
+    return () => {
+      window.removeEventListener('blur', handleBlur)
+      window.removeEventListener('focus', handleFocus)
+      window.removeEventListener('keydown', handleKeyDown)
+    }
   }, [readingResource])
 
   // Upload Modal State (for admin only)
@@ -845,6 +866,62 @@ export function ResourceLibrary() {
             {readerMode === 'document' ? (
               <div style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden', background: readerTheme === 'dark' ? '#0f172a' : '#f1f5f9', position: 'relative' }}>
                 <div style={{ flex: 1, width: '100%', height: '100%', position: 'relative', overflow: 'hidden' }}>
+                  {/* Defocus / Screen-Capture Blackout Shield */}
+                  {isDefocused && (
+                    <div
+                      style={{
+                        position: 'absolute',
+                        inset: 0,
+                        zIndex: 90,
+                        background: '#090d16',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        color: '#ffffff',
+                        textAlign: 'center',
+                        padding: '2rem',
+                        backdropFilter: 'blur(20px)',
+                      }}
+                    >
+                      <div style={{ fontSize: '3.5rem', marginBottom: '1rem' }}>🛡️</div>
+                      <h3 style={{ fontSize: '1.3rem', fontWeight: 800, margin: '0 0 0.5rem', color: '#60a5fa' }}>
+                        Confidential Document Protected
+                      </h3>
+                      <p style={{ fontSize: '0.85rem', color: '#94a3b8', maxWidth: '420px', lineHeight: 1.6, margin: '0 0 1.25rem' }}>
+                        Document viewing is secured inside the LMS app. Screen capture, external window switching, and printing are prohibited by DRM policy.
+                      </p>
+                      <button
+                        type="button"
+                        className="btn btn-primary"
+                        onClick={() => setIsDefocused(false)}
+                        style={{ fontWeight: 800, padding: '0.65rem 1.5rem', borderRadius: '10px' }}
+                      >
+                        ✓ Return to Document
+                      </button>
+                    </div>
+                  )}
+
+                  {/* Anti-Popout Click Interceptor (Prevents clicking Google Drive's "Open in New Window" top-right icon) */}
+                  <div
+                    style={{
+                      position: 'absolute',
+                      top: 0,
+                      right: 0,
+                      width: '70px',
+                      height: '70px',
+                      zIndex: 35,
+                      background: 'transparent',
+                      cursor: 'default',
+                    }}
+                    onClick={(e) => {
+                      e.stopPropagation()
+                      setDrmWarning('🔒 Protected Viewer: Opening documents outside the LMS app is disabled.')
+                      setTimeout(() => setDrmWarning(null), 3500)
+                    }}
+                    title="Protected Viewer: In-App Reading Only"
+                  />
+
                   {/* Dynamic Watermark Pattern Overlay */}
                   <div
                     style={{
@@ -892,6 +969,7 @@ export function ResourceLibrary() {
                     <iframe
                       src={getEmbeddableDocumentUrl(readingResource.file_url, docEngine)}
                       title={readingResource.title}
+                      referrerPolicy="no-referrer"
                       style={{ width: '100%', height: '100%', minHeight: '75vh', border: 'none', background: '#ffffff' }}
                       allow="autoplay"
                     />
