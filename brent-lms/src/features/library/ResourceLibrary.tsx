@@ -727,7 +727,7 @@ export function ResourceLibrary() {
               title="Protected Viewer: In-App Reading Only"
             />
 
-            {/* Dynamic High-Visibility Security Watermark */}
+            {/* Dynamic Subtle Security Watermark */}
             <div
               style={{
                 position: 'absolute',
@@ -737,26 +737,25 @@ export function ResourceLibrary() {
                 display: 'flex',
                 flexDirection: 'column',
                 justifyContent: 'space-around',
-                opacity: 0.14,
+                opacity: 0.05,
                 overflow: 'hidden',
                 userSelect: 'none',
               }}
             >
-              {Array.from({ length: 8 }).map((_, idx) => (
+              {Array.from({ length: 6 }).map((_, idx) => (
                 <div
                   key={idx}
                   style={{
                     transform: 'rotate(-25deg)',
-                    fontSize: '1.15rem',
-                    fontWeight: 900,
-                    color: '#dc2626',
-                    letterSpacing: '0.14em',
+                    fontSize: '1rem',
+                    fontWeight: 800,
+                    color: '#64748b',
+                    letterSpacing: '0.12em',
                     textAlign: 'center',
                     whiteSpace: 'nowrap',
-                    textShadow: '0 0 2px rgba(220, 38, 38, 0.4)',
                   }}
                 >
-                  ÉCLAT INSTITUTE • CONFIDENTIAL LMS RESOURCE • DO NOT SCREENSHOT • LICENSED TO {profile?.full_name?.toUpperCase() || 'ENROLLED STUDENT'}
+                  ÉCLAT INSTITUTE • LICENSED TO {profile?.full_name?.toUpperCase() || 'REGISTERED STUDENT'} • ACADEMIC USE ONLY
                 </div>
               ))}
             </div>
