@@ -94,24 +94,35 @@ export function ResourceLibrary() {
   const [drmWarning, setDrmWarning] = useState<string | null>(null)
   const [isDefocused, setIsDefocused] = useState(false)
 
-  // DRM Anti-Screenshot, Anti-Save, Window Defocus, and Anti-Print Interceptor
+  // DRM Anti-Screenshot, Multi-Touch Screen Capture, Window Defocus, and Anti-Print Interceptor
   useEffect(() => {
     if (!readingResource) return
 
-    const handleBlur = () => {
-      // User switched tabs, opened screenshot snippet tool, or minimized window
+    const handleDefocus = () => {
+      // User switched apps, opened screenshot snippet tool, or triggered OS capture
       setIsDefocused(true)
     }
 
-    const handleFocus = () => {
-      setIsDefocused(false)
+    const handleVisibility = () => {
+      if (document.hidden || document.visibilityState === 'hidden') {
+        setIsDefocused(true)
+      }
+    }
+
+    // Detect multi-touch screenshot gestures (3+ fingers on mobile screen)
+    const handleTouchStart = (e: TouchEvent) => {
+      if (e.touches.length >= 3) {
+        setIsDefocused(true)
+        setDrmWarning('🔒 Multi-touch screen capture is blocked by DRM policy.')
+        setTimeout(() => setDrmWarning(null), 4000)
+      }
     }
 
     const handleKeyDown = (e: KeyboardEvent) => {
       // Intercept Ctrl+S / Cmd+S (Save)
       if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 's') {
         e.preventDefault()
-        setDrmWarning('🔒 Protected Academic Viewer: Screenshots and file saving are restricted.')
+        setDrmWarning('🔒 Protected Academic Viewer: Saving and downloading are restricted.')
         setTimeout(() => setDrmWarning(null), 4000)
         return
       }
@@ -119,7 +130,7 @@ export function ResourceLibrary() {
       // Intercept Ctrl+P / Cmd+P (Print)
       if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'p') {
         e.preventDefault()
-        setDrmWarning('🔒 Protected Academic Viewer: Screenshots and file saving are restricted.')
+        setDrmWarning('🔒 Protected Academic Viewer: Printing is restricted.')
         setTimeout(() => setDrmWarning(null), 4000)
         return
       }
@@ -155,13 +166,18 @@ export function ResourceLibrary() {
       }
     }
 
-    window.addEventListener('blur', handleBlur)
-    window.addEventListener('focus', handleFocus)
+    window.addEventListener('blur', handleDefocus)
+    window.addEventListener('focusout', handleDefocus)
+    document.addEventListener('visibilitychange', handleVisibility)
     window.addEventListener('keydown', handleKeyDown)
+    window.addEventListener('touchstart', handleTouchStart, { passive: true })
+
     return () => {
-      window.removeEventListener('blur', handleBlur)
-      window.removeEventListener('focus', handleFocus)
+      window.removeEventListener('blur', handleDefocus)
+      window.removeEventListener('focusout', handleDefocus)
+      document.removeEventListener('visibilitychange', handleVisibility)
       window.removeEventListener('keydown', handleKeyDown)
+      window.removeEventListener('touchstart', handleTouchStart)
     }
   }, [readingResource])
 
@@ -782,58 +798,68 @@ export function ResourceLibrary() {
               title="Protected Viewer: In-App Reading Only"
             />
 
-            {/* Dynamic Security Watermark */}
+            {/* Dynamic High-Visibility Security Watermark */}
             <div
               style={{
                 position: 'absolute',
                 inset: 0,
                 pointerEvents: 'none',
-                zIndex: 20,
+                zIndex: 25,
                 display: 'flex',
                 flexDirection: 'column',
                 justifyContent: 'space-around',
-                opacity: 0.07,
+                opacity: 0.14,
                 overflow: 'hidden',
                 userSelect: 'none',
               }}
             >
-              {Array.from({ length: 6 }).map((_, idx) => (
+              {Array.from({ length: 8 }).map((_, idx) => (
                 <div
                   key={idx}
                   style={{
-                    transform: 'rotate(-20deg)',
-                    fontSize: '1.1rem',
+                    transform: 'rotate(-25deg)',
+                    fontSize: '1.15rem',
                     fontWeight: 900,
                     color: '#dc2626',
-                    letterSpacing: '0.12em',
+                    letterSpacing: '0.14em',
                     textAlign: 'center',
                     whiteSpace: 'nowrap',
+                    textShadow: '0 0 2px rgba(220, 38, 38, 0.4)',
                   }}
                 >
-                  ÉCLAT INSTITUTE • LICENSED TO {profile?.full_name?.toUpperCase() || 'ENROLLED STUDENT'} • STRICTLY CONFIDENTIAL
+                  ÉCLAT INSTITUTE • CONFIDENTIAL LMS RESOURCE • DO NOT SCREENSHOT • LICENSED TO {profile?.full_name?.toUpperCase() || 'ENROLLED STUDENT'}
                 </div>
               ))}
             </div>
 
-            {/\.(png|jpe?g|webp|gif|svg)$/i.test(readingResource.file_url || '') ? (
-              <div style={{ padding: '1.5rem', height: '100%', overflowY: 'auto', textAlign: 'center' }}>
-                <img
-                  src={readingResource.file_url}
-                  alt={readingResource.title}
-                  onContextMenu={(e) => e.preventDefault()}
-                  onDragStart={(e) => e.preventDefault()}
-                  style={{ maxWidth: '100%', maxHeight: '90vh', objectFit: 'contain', borderRadius: '8px', boxShadow: '0 4px 12px rgba(0,0,0,0.1)', pointerEvents: 'none' }}
+            {/* Embedded Document Viewport with Google Drive Toolbar Cropped Out */}
+            <div style={{ width: '100%', height: '100%', overflow: 'hidden', position: 'relative' }}>
+              {/\.(png|jpe?g|webp|gif|svg)$/i.test(readingResource.file_url || '') ? (
+                <div style={{ padding: '1.5rem', height: '100%', overflowY: 'auto', textAlign: 'center' }}>
+                  <img
+                    src={readingResource.file_url}
+                    alt={readingResource.title}
+                    onContextMenu={(e) => e.preventDefault()}
+                    onDragStart={(e) => e.preventDefault()}
+                    style={{ maxWidth: '100%', maxHeight: '90vh', objectFit: 'contain', borderRadius: '8px', boxShadow: '0 4px 12px rgba(0,0,0,0.1)', pointerEvents: 'none' }}
+                  />
+                </div>
+              ) : (
+                <iframe
+                  src={isDefocused ? 'about:blank' : getEmbeddableDocumentUrl(readingResource.file_url, 'cloud')}
+                  title={readingResource.title}
+                  referrerPolicy="no-referrer"
+                  style={{
+                    width: '100%',
+                    height: 'calc(100% + 56px)',
+                    marginTop: '-56px',
+                    border: 'none',
+                    background: '#ffffff',
+                  }}
+                  allow="autoplay"
                 />
-              </div>
-            ) : (
-              <iframe
-                src={getEmbeddableDocumentUrl(readingResource.file_url, 'cloud')}
-                title={readingResource.title}
-                referrerPolicy="no-referrer"
-                style={{ width: '100%', height: '100%', border: 'none', background: '#ffffff' }}
-                allow="autoplay"
-              />
-            )}
+              )}
+            </div>
           </div>
         </div>
       )}
