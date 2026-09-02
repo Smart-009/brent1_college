@@ -92,55 +92,17 @@ export function ResourceLibrary() {
   const [readingResource, setReadingResource] = useState<AcademicResource | null>(null)
   const [readerTheme, setReaderTheme] = useState<'light' | 'sepia' | 'dark'>('light')
   const [drmWarning, setDrmWarning] = useState<string | null>(null)
-  const [isDefocused, setIsDefocused] = useState(false)
 
-  // DRM Anti-Screenshot, Multi-Touch Screen Capture, Window Defocus, and Anti-Print Interceptor
+  // DRM Protection: Keyboard save, print, copy and inspect prevention
   useEffect(() => {
     if (!readingResource) return
 
-    const handleDefocus = () => {
-      // User switched apps, opened screenshot snippet tool, or triggered OS capture
-      setIsDefocused(true)
-    }
-
-    const handleVisibility = () => {
-      if (document.hidden || document.visibilityState === 'hidden') {
-        setIsDefocused(true)
-      }
-    }
-
-    // Intercept Volume Down / Volume Up hardware buttons (Android hardware screenshot combo)
-    const handleVolumeKeys = (e: KeyboardEvent) => {
-      if (
-        e.key === 'AudioVolumeDown' ||
-        e.key === 'AudioVolumeUp' ||
-        (e as any).keyCode === 24 ||
-        (e as any).keyCode === 25 ||
-        (e as any).keyCode === 26
-      ) {
-        setIsDefocused(true)
-        setDrmWarning('🔒 Hardware button screen capture is blocked by DRM policy.')
-        setTimeout(() => setIsDefocused(false), 2500)
-      }
-    }
-
-    // Detect multi-touch screenshot gestures (2+ fingers or swipe combos on mobile screen)
-    const handleTouchStart = (e: TouchEvent) => {
-      if (e.touches.length >= 2) {
-        setIsDefocused(true)
-        setDrmWarning('🔒 Multi-touch screen capture is blocked by DRM policy.')
-        setTimeout(() => setDrmWarning(null), 3000)
-      }
-    }
-
     const handleKeyDown = (e: KeyboardEvent) => {
-      handleVolumeKeys(e)
-
       // Intercept Ctrl+S / Cmd+S (Save)
       if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 's') {
         e.preventDefault()
         setDrmWarning('🔒 Protected Academic Viewer: Saving and downloading are restricted.')
-        setTimeout(() => setDrmWarning(null), 4000)
+        setTimeout(() => setDrmWarning(null), 3000)
         return
       }
 
@@ -148,20 +110,15 @@ export function ResourceLibrary() {
       if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'p') {
         e.preventDefault()
         setDrmWarning('🔒 Protected Academic Viewer: Printing is restricted.')
-        setTimeout(() => setDrmWarning(null), 4000)
+        setTimeout(() => setDrmWarning(null), 3000)
         return
       }
 
-      // Intercept PrintScreen key & Screenshot combos (Win+Shift+S, Meta+Shift+3/4)
-      if (
-        e.key === 'PrintScreen' ||
-        e.code === 'PrintScreen' ||
-        ((e.ctrlKey || e.metaKey) && e.shiftKey && (e.key === 'S' || e.key === 's' || e.key === '3' || e.key === '4' || e.key === '5'))
-      ) {
+      // Intercept PrintScreen key
+      if (e.key === 'PrintScreen' || e.code === 'PrintScreen') {
         e.preventDefault()
-        setIsDefocused(true)
-        setDrmWarning('🔒 Screenshot capture blocked by DRM policy.')
-        setTimeout(() => setDrmWarning(null), 4000)
+        setDrmWarning('🔒 Screenshot capture is restricted by DRM policy.')
+        setTimeout(() => setDrmWarning(null), 3000)
         return
       }
 
@@ -169,7 +126,7 @@ export function ResourceLibrary() {
       if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'c') {
         e.preventDefault()
         setDrmWarning('🔒 Protected Academic Viewer: Copying is restricted.')
-        setTimeout(() => setDrmWarning(null), 4000)
+        setTimeout(() => setDrmWarning(null), 3000)
         return
       }
 
@@ -183,22 +140,9 @@ export function ResourceLibrary() {
       }
     }
 
-    window.addEventListener('blur', handleDefocus)
-    window.addEventListener('focusout', handleDefocus)
-    window.addEventListener('pagehide', handleDefocus)
-    document.addEventListener('visibilitychange', handleVisibility)
     window.addEventListener('keydown', handleKeyDown)
-    window.addEventListener('touchstart', handleTouchStart, { passive: true })
-    window.addEventListener('touchmove', handleTouchStart, { passive: true })
-
     return () => {
-      window.removeEventListener('blur', handleDefocus)
-      window.removeEventListener('focusout', handleDefocus)
-      window.removeEventListener('pagehide', handleDefocus)
-      document.removeEventListener('visibilitychange', handleVisibility)
       window.removeEventListener('keydown', handleKeyDown)
-      window.removeEventListener('touchstart', handleTouchStart)
-      window.removeEventListener('touchmove', handleTouchStart)
     }
   }, [readingResource])
 
@@ -763,42 +707,6 @@ export function ResourceLibrary() {
 
           {/* Fullscreen Document Content Viewport */}
           <div style={{ flex: 1, position: 'relative', overflow: 'hidden', background: readerTheme === 'dark' ? '#0b0f19' : '#f8fafc' }}>
-            {/* Defocus / Screen-Capture Blackout Shield */}
-            {isDefocused && (
-              <div
-                style={{
-                  position: 'absolute',
-                  inset: 0,
-                  zIndex: 90,
-                  background: '#090d16',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  color: '#ffffff',
-                  textAlign: 'center',
-                  padding: '2rem',
-                  backdropFilter: 'blur(25px)',
-                }}
-              >
-                <div style={{ fontSize: '3.5rem', marginBottom: '1rem' }}>🛡️</div>
-                <h3 style={{ fontSize: '1.3rem', fontWeight: 800, margin: '0 0 0.5rem', color: '#60a5fa' }}>
-                  Confidential Document Protected
-                </h3>
-                <p style={{ fontSize: '0.85rem', color: '#94a3b8', maxWidth: '420px', lineHeight: 1.6, margin: '0 0 1.25rem' }}>
-                  Document viewing is secured inside the LMS app. Screen capture, external window switching, and printing are prohibited by DRM policy.
-                </p>
-                <button
-                  type="button"
-                  className="btn btn-primary"
-                  onClick={() => setIsDefocused(false)}
-                  style={{ fontWeight: 800, padding: '0.65rem 1.5rem', borderRadius: '10px' }}
-                >
-                  ✓ Return to Document
-                </button>
-              </div>
-            )}
-
             {/* Anti-Popout Click Interceptor (Prevents clicking Google Drive's "Open in New Window" top-right icon) */}
             <div
               style={{
@@ -867,7 +775,7 @@ export function ResourceLibrary() {
                 </div>
               ) : (
                 <iframe
-                  src={isDefocused ? 'about:blank' : getEmbeddableDocumentUrl(readingResource.file_url, 'cloud')}
+                  src={getEmbeddableDocumentUrl(readingResource.file_url, 'cloud')}
                   title={readingResource.title}
                   referrerPolicy="no-referrer"
                   style={{
