@@ -190,7 +190,22 @@ export function ResourceLibrary() {
     })
   }, [resources, search, selectedCat, selectedSub, bookmarkedIds])
 
+  const isNativeApp =
+    typeof window !== 'undefined' &&
+    (Boolean((window as any).Capacitor?.isNativePlatform?.()) ||
+     (window as any).Capacitor?.getPlatform?.() === 'android' ||
+     (window as any).Capacitor?.getPlatform?.() === 'ios' ||
+     window.location.protocol === 'capacitor:' ||
+     window.location.protocol === 'ionic:')
+
+  const [showAppDownloadPrompt, setShowAppDownloadPrompt] = useState(false)
+
   const handleOpenReader = (res: AcademicResource) => {
+    if (!isNativeApp && !isAdmin) {
+      setShowAppDownloadPrompt(true)
+      return
+    }
+
     setReadingResource(res)
 
     // Only increment unique student reads once per browser session
@@ -1095,6 +1110,79 @@ export function ResourceLibrary() {
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {/* App Download Guidance Modal for Web Visitors */}
+      {showAppDownloadPrompt && (
+        <div className="modal-overlay" onClick={() => setShowAppDownloadPrompt(false)}>
+          <div
+            className="modal-content modal-md"
+            onClick={(e) => e.stopPropagation()}
+            style={{
+              textAlign: 'center',
+              padding: '2.5rem 2rem',
+              borderRadius: '20px',
+              border: '1px solid rgba(212, 175, 55, 0.3)',
+              background: '#090d16',
+              color: '#ffffff',
+              boxShadow: '0 20px 50px rgba(0, 0, 0, 0.7)',
+            }}
+          >
+            <div style={{ fontSize: '3.5rem', marginBottom: '0.75rem' }}>📱</div>
+            <h3
+              style={{
+                fontSize: '1.4rem',
+                fontWeight: 900,
+                color: '#d4af37',
+                marginBottom: '0.75rem',
+                fontFamily: 'var(--font-heading)',
+                letterSpacing: '0.02em',
+              }}
+            >
+              Academic E-Library Reader
+            </h3>
+            <p style={{ color: '#94a3b8', fontSize: '0.95rem', lineHeight: '1.6', marginBottom: '1.75rem', maxWidth: '420px', margin: '0 auto 1.75rem' }}>
+              To protect academic materials and enable seamless offline study, all textbooks, lecture slides, and past papers are read exclusively inside the official <strong>Éclat Institute App</strong>.
+            </p>
+
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.85rem', alignItems: 'center' }}>
+              <a
+                href="/eclat-institute.apk"
+                download="eclat-institute.apk"
+                className="btn"
+                style={{
+                  background: 'linear-gradient(135deg, #16a34a, #15803d)',
+                  color: '#ffffff',
+                  fontWeight: 800,
+                  padding: '0.9rem 2rem',
+                  borderRadius: '12px',
+                  fontSize: '1.05rem',
+                  textDecoration: 'none',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '0.65rem',
+                  boxShadow: '0 6px 20px rgba(22, 163, 74, 0.4)',
+                }}
+              >
+                <span>🤖</span>
+                <span>Download Android App (.APK)</span>
+              </a>
+
+              <div style={{ fontSize: '0.85rem', color: '#64748b', marginTop: '0.25rem' }}>
+                💻 <strong>Desktop App (Windows & Mac)</strong> — <em>Launching Tomorrow</em>
+              </div>
+
+              <button
+                type="button"
+                className="btn btn-secondary btn-sm"
+                onClick={() => setShowAppDownloadPrompt(false)}
+                style={{ marginTop: '0.75rem', padding: '0.5rem 1.5rem', borderRadius: '8px' }}
+              >
+                Continue Exploring Catalog
+              </button>
+            </div>
           </div>
         </div>
       )}
