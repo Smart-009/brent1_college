@@ -1,24 +1,19 @@
-import { registerPlugin } from '@capacitor/core';
-
-interface ScreenSecurityPlugin {
-  enable(): Promise<void>;
-  disable(): Promise<void>;
-}
-
-const ScreenSecurity = registerPlugin<ScreenSecurityPlugin>('ScreenSecurity');
-
 export const enableScreenSecurity = async () => {
   try {
-    await ScreenSecurity.enable();
+    if (typeof window !== 'undefined' && (window as any).AndroidSecurity?.enableProtection) {
+      (window as any).AndroidSecurity.enableProtection();
+    }
   } catch (e) {
-    // Web fallback or not on native
+    // Web fallback
   }
 };
 
 export const disableScreenSecurity = async () => {
   try {
-    await ScreenSecurity.disable();
+    if (typeof window !== 'undefined' && (window as any).AndroidSecurity?.disableProtection) {
+      (window as any).AndroidSecurity.disableProtection();
+    }
   } catch (e) {
-    // Web fallback or not on native
+    // Web fallback
   }
 };

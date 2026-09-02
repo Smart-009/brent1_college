@@ -2,56 +2,56 @@ package com.eclatinstitute.lms;
 
 import android.os.Bundle;
 import android.view.WindowManager;
+import android.webkit.JavascriptInterface;
+import android.webkit.WebView;
 import com.getcapacitor.BridgeActivity;
-import com.getcapacitor.Plugin;
-import com.getcapacitor.PluginCall;
-import com.getcapacitor.PluginMethod;
-import com.getcapacitor.annotation.CapacitorPlugin;
 
 public class MainActivity extends BridgeActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        registerPlugin(ScreenSecurityPlugin.class);
         super.onCreate(savedInstanceState);
     }
-}
 
-@CapacitorPlugin(name = "ScreenSecurity")
-class ScreenSecurityPlugin extends Plugin {
-    @PluginMethod
-    public void enable(PluginCall call) {
-        if (getActivity() != null) {
-            getActivity().runOnUiThread(new Runnable() {
+    @Override
+    public void onStart() {
+        super.onStart();
+        try {
+            if (getBridge() != null && getBridge().getWebView() != null) {
+                WebView webView = getBridge().getWebView();
+                webView.addJavascriptInterface(new SecurityBridge(), "AndroidSecurity");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public class SecurityBridge {
+        @JavascriptInterface
+        public void enableProtection() {
+            runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    getActivity().getWindow().setFlags(
+                    getWindow().setFlags(
                         WindowManager.LayoutParams.FLAG_SECURE,
                         WindowManager.LayoutParams.FLAG_SECURE
                     );
-                    call.resolve();
                 }
             });
-        } else {
-            call.resolve();
         }
-    }
 
-    @PluginMethod
-    public void disable(PluginCall call) {
-        if (getActivity() != null) {
-            getActivity().runOnUiThread(new Runnable() {
+        @JavascriptInterface
+        public void disableProtection() {
+            runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    getActivity().getWindow().clearFlags(
+                    getWindow().clearFlags(
                         WindowManager.LayoutParams.FLAG_SECURE
                     );
-                    call.resolve();
                 }
             });
-        } else {
-            call.resolve();
         }
     }
 }
+
 
 
