@@ -410,19 +410,3 @@ select {
   .show-mobile-only { display: none; }
 }
 
-/* ---- DRM Anti-Screenshot & Anti-Capture Directives ---- */
-.drm-protected-viewport,
-.drm-protected-viewport iframe,
-.drm-protected-viewport img {
-  -webkit-touch-callout: none !important;
-  -webkit-user-select: none !important;
-  user-select: none !important;
-  -webkit-user-drag: none !important;
-}
-
-@media print {
-  body {
-    display: none !important;
-    visibility: hidden !important;
-  }
-}
