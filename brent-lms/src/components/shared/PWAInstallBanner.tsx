@@ -132,13 +132,33 @@ export function PWAInstallBanner() {
               </div>
             </div>
 
-            <div className="modal-footer">
+            <div className="modal-footer" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '0.5rem' }}>
+              <a
+                href="/eclat-institute.apk"
+                download="eclat-institute.apk"
+                className="btn btn-sm"
+                style={{
+                  background: '#16a34a',
+                  color: '#ffffff',
+                  fontWeight: 700,
+                  textDecoration: 'none',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '6px',
+                  padding: '0.6rem 1rem',
+                  borderRadius: '8px',
+                }}
+              >
+                <span>🤖</span>
+                <span>Direct Download Android APK</span>
+              </a>
+
               <button
                 type="button"
-                className="btn btn-primary"
+                className="btn btn-primary btn-sm"
                 onClick={() => setShowInstallGuide(false)}
               >
-                Got It, Thanks!
+                Got it
               </button>
             </div>
           </div>
