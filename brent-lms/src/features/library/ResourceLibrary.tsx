@@ -41,30 +41,8 @@ export function ResourceLibrary() {
     })
   }
 
-  // Text-to-Speech (TTS) Voice Reader State
-  const [isSpeaking, setIsSpeaking] = useState(false)
-  const [speechRate, setSpeechRate] = useState<number>(1)
-
-  const stopSpeech = () => {
-    if ('speechSynthesis' in window) {
-      window.speechSynthesis.cancel()
-      setIsSpeaking(false)
-    }
-  }
-
-  const speakText = (text: string) => {
-    if (!('speechSynthesis' in window)) {
-      alert('Speech synthesis is not supported on this browser.')
-      return
-    }
-    stopSpeech()
-    const utterance = new SpeechSynthesisUtterance(text)
-    utterance.rate = speechRate
-    utterance.onend = () => setIsSpeaking(false)
-    utterance.onerror = () => setIsSpeaking(false)
-    setIsSpeaking(true)
-    window.speechSynthesis.speak(utterance)
-  }
+  // Session Read Tracking (prevents repeated view increments on open/close)
+  const [readResourcesSession, setReadResourcesSession] = useState<Set<string>>(new Set())
 
   // Fetch live resources from Supabase database on mount
   useEffect(() => {
@@ -110,13 +88,9 @@ export function ResourceLibrary() {
     }
   }, [])
 
-  // E-Reader Modal State
+  // Fullscreen In-App Viewer State
   const [readingResource, setReadingResource] = useState<AcademicResource | null>(null)
-  const [readerMode, setReaderMode] = useState<'document' | 'notes'>('document')
-  const [docEngine, setDocEngine] = useState<'cloud' | 'direct'>('cloud')
-  const [readerFontSize, setReaderFontSize] = useState<'normal' | 'large' | 'xlarge'>('normal')
   const [readerTheme, setReaderTheme] = useState<'light' | 'sepia' | 'dark'>('light')
-  const [currentPage, setCurrentPage] = useState(1)
   const [drmWarning, setDrmWarning] = useState<string | null>(null)
   const [isDefocused, setIsDefocused] = useState(false)
 
@@ -223,18 +197,21 @@ export function ResourceLibrary() {
   }, [resources, search, selectedCat, selectedSub, bookmarkedIds])
 
   const handleOpenReader = (res: AcademicResource) => {
-    // Increment read counter locally & in Supabase
-    const nextCount = (res.downloads_count || 0) + 1
-    const updated = resources.map((r) => (r.id === res.id ? { ...r, downloads_count: nextCount } : r))
-    setResources(updated)
     setReadingResource(res)
-    setCurrentPage(1)
-    schoolStore.updateResource(res.id, { downloads_count: nextCount }).catch(() => {})
-    supabase
-      .from('library_resources')
-      .update({ downloads_count: nextCount })
-      .eq('id', res.id)
-      .then(() => {})
+
+    // Only increment unique student reads once per browser session
+    if (!isAdmin && !readResourcesSession.has(res.id)) {
+      setReadResourcesSession((prev) => new Set(prev).add(res.id))
+      const nextCount = (res.downloads_count || 0) + 1
+      const updated = resources.map((r) => (r.id === res.id ? { ...r, downloads_count: nextCount } : r))
+      setResources(updated)
+      schoolStore.updateResource(res.id, { downloads_count: nextCount }).catch(() => {})
+      supabase
+        .from('library_resources')
+        .update({ downloads_count: nextCount })
+        .eq('id', res.id)
+        .then(() => {})
+    }
   }
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -272,16 +249,14 @@ export function ResourceLibrary() {
       const isGDrive = uploadSource === 'gdrive' && googleDriveUrl.trim().length > 0
       let fileSizeFormatted = selectedFile
         ? `${(selectedFile.size / (1024 * 1024)).toFixed(1)} MB`
-        : isGDrive
-        ? 'Google Drive Cloud'
-        : '1.8 MB'
+        : 'Academic Document'
 
       let fileExt: AcademicResource['file_type'] = 'PDF'
       let fileBlobUrl = ''
 
       if (isGDrive) {
         fileBlobUrl = googleDriveUrl.trim()
-        fileSizeFormatted = 'Google Drive Cloud'
+        fileSizeFormatted = 'Academic Document'
         fileExt = 'PDF'
       } else if (selectedFile) {
         const rawExt = selectedFile.name.split('.').pop()?.toUpperCase()
@@ -510,7 +485,10 @@ export function ResourceLibrary() {
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '0.5rem', marginBottom: '0.75rem' }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', flexWrap: 'wrap' }}>
                     <span className="badge badge-primary" style={{ fontWeight: 700 }}>{res.category}</span>
-                    <span className="badge badge-neutral" style={{ fontSize: '0.75rem' }}>{res.file_type} • {res.file_size}</span>
+                    <span className="badge badge-neutral" style={{ fontSize: '0.75rem' }}>
+                      {res.file_type}
+                      {res.file_size && !res.file_size.toLowerCase().includes('drive') && !res.file_size.toLowerCase().includes('cloud') ? ` • ${res.file_size}` : ''}
+                    </span>
                   </div>
                   <button
                     type="button"
@@ -584,507 +562,277 @@ export function ResourceLibrary() {
         )}
       </div>
 
-      {/* Interactive Protected Document Reader & File Viewer Modal */}
+      {/* Interactive Fullscreen Protected Document Viewer */}
       {readingResource && (
         <div
-          className="modal-overlay"
-          onClick={() => setReadingResource(null)}
+          style={{
+            position: 'fixed',
+            inset: 0,
+            width: '100vw',
+            height: '100vh',
+            zIndex: 99999,
+            background: readerTheme === 'dark' ? '#0b0f19' : readerTheme === 'sepia' ? '#fbf0d9' : '#ffffff',
+            color: readerTheme === 'dark' ? '#f8fafc' : '#1e293b',
+            display: 'flex',
+            flexDirection: 'column',
+            overflow: 'hidden',
+            userSelect: 'none',
+            WebkitUserSelect: 'none',
+          }}
           onContextMenu={(e) => {
             e.preventDefault()
-            setDrmWarning('🔒 Protected Academic Viewer: Screenshots and file saving are restricted.')
+            setDrmWarning('🔒 Protected Academic Viewer: Screenshots and saving are restricted.')
             setTimeout(() => setDrmWarning(null), 3000)
           }}
           onCopy={(e) => {
             e.preventDefault()
-            setDrmWarning('🔒 Protected Academic Viewer: Screenshots and file saving are restricted.')
+            setDrmWarning('🔒 Protected Academic Viewer: Copying is restricted.')
             setTimeout(() => setDrmWarning(null), 3000)
           }}
           onCut={(e) => e.preventDefault()}
         >
-          <div
-            className="modal-content modal-xl drm-protected-viewport"
-            onClick={(e) => e.stopPropagation()}
-            style={{
-              background: readerTheme === 'dark' ? '#0f172a' : readerTheme === 'sepia' ? '#fdf6e2' : '#ffffff',
-              color: readerTheme === 'dark' ? '#f8fafc' : '#1e293b',
-              display: 'flex',
-              flexDirection: 'column',
-              maxHeight: '94vh',
-              height: '94vh',
-              borderRadius: '12px',
-              padding: 0,
-              overflow: 'hidden',
-              position: 'relative',
-              userSelect: 'none',
-              WebkitUserSelect: 'none',
-            }}
-          >
-            {/* DRM Toast Warning Notification */}
-            {drmWarning && (
-              <div
-                style={{
-                  position: 'absolute',
-                  top: '16px',
-                  left: '50%',
-                  transform: 'translateX(-50%)',
-                  zIndex: 9999,
-                  background: '#dc2626',
-                  color: '#ffffff',
-                  padding: '0.65rem 1.4rem',
-                  borderRadius: '999px',
-                  fontWeight: 800,
-                  fontSize: '0.85rem',
-                  boxShadow: '0 8px 24px rgba(220, 38, 38, 0.45)',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '8px',
-                  textAlign: 'center',
-                  animation: 'fadeIn 0.2s ease-in-out',
-                }}
-              >
-                <span>🛡️</span>
-                <span>{drmWarning}</span>
-              </div>
-            )}
-
-            {/* Top Reader Toolbar */}
+          {/* DRM Warning Toast */}
+          {drmWarning && (
             <div
               style={{
+                position: 'fixed',
+                top: '64px',
+                left: '50%',
+                transform: 'translateX(-50%)',
+                zIndex: 100000,
+                background: '#dc2626',
+                color: '#ffffff',
+                padding: '0.65rem 1.4rem',
+                borderRadius: '999px',
+                fontWeight: 800,
+                fontSize: '0.85rem',
+                boxShadow: '0 8px 24px rgba(220, 38, 38, 0.45)',
                 display: 'flex',
-                justifyContent: 'space-between',
                 alignItems: 'center',
-                padding: '0.75rem 1.25rem',
-                borderBottom: `1px solid ${readerTheme === 'dark' ? '#334155' : '#e2e8f0'}`,
-                background: readerTheme === 'dark' ? '#1e293b' : '#f8fafc',
-                flexWrap: 'wrap',
-                gap: '0.5rem',
+                gap: '8px',
+                textAlign: 'center',
+                animation: 'fadeIn 0.2s ease-in-out',
               }}
             >
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                <span style={{ fontSize: '1.4rem' }}>📄</span>
-                <div>
-                  <h3 style={{ margin: 0, fontSize: '1rem', fontWeight: 800, color: readerTheme === 'dark' ? '#93c5fd' : '#1e3a8a' }}>
-                    {readingResource.title}
-                  </h3>
-                  <div style={{ fontSize: '0.75rem', opacity: 0.8 }}>
-                    {readingResource.category} • {readingResource.subject} ({readingResource.year || new Date().getFullYear()}) • 🔒 Protected Read-Only
-                  </div>
-                </div>
-              </div>
+              <span>🛡️</span>
+              <span>{drmWarning}</span>
+            </div>
+          )}
 
-              {/* Reader Controls */}
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', flexWrap: 'wrap' }}>
-                {/* Bookmark Toggle in Reader */}
-                <button
-                  type="button"
-                  onClick={() => toggleBookmark(readingResource.id)}
-                  className="btn btn-ghost btn-sm"
+          {/* Minimal Fullscreen Header Toolbar */}
+          <div
+            style={{
+              height: '56px',
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              padding: '0 1.25rem',
+              borderBottom: `1px solid ${readerTheme === 'dark' ? '#1e293b' : '#e2e8f0'}`,
+              background: readerTheme === 'dark' ? '#0f172a' : '#f8fafc',
+              gap: '0.75rem',
+              flexShrink: 0,
+            }}
+          >
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', minWidth: 0 }}>
+              <span style={{ fontSize: '1.3rem', flexShrink: 0 }}>📖</span>
+              <div style={{ minWidth: 0, overflow: 'hidden' }}>
+                <h3
                   style={{
-                    color: bookmarkedIds.includes(readingResource.id) ? '#f59e0b' : 'inherit',
-                    fontSize: '1rem',
-                    padding: '4px 8px',
+                    margin: 0,
+                    fontSize: '0.95rem',
+                    fontWeight: 800,
+                    color: readerTheme === 'dark' ? '#93c5fd' : '#1e3a8a',
+                    whiteSpace: 'nowrap',
+                    overflow: 'hidden',
+                    textOverflow: 'ellipsis',
                   }}
-                  title={bookmarkedIds.includes(readingResource.id) ? 'Saved in My Books' : 'Save Book'}
                 >
-                  {bookmarkedIds.includes(readingResource.id) ? '⭐ Saved' : '☆ Save'}
-                </button>
-
-                {/* Text to Speech Voice Audio Button */}
-                <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      if (isSpeaking) {
-                        stopSpeech()
-                      } else {
-                        const noteText = `${readingResource.title}. Category: ${readingResource.category}. Subject: ${readingResource.subject}. Key study concepts and practical training takeaways for Éclat Institute Trainees. Review the foundational principles, modular syntax, and best practices.`
-                        speakText(noteText)
-                      }
-                    }}
-                    style={{
-                      background: isSpeaking ? '#ef4444' : 'rgba(59, 130, 246, 0.15)',
-                      color: isSpeaking ? '#ffffff' : '#3b82f6',
-                      border: '1px solid rgba(59, 130, 246, 0.3)',
-                      padding: '4px 10px',
-                      borderRadius: '6px',
-                      cursor: 'pointer',
-                      fontSize: '0.75rem',
-                      fontWeight: 700,
-                      display: 'inline-flex',
-                      alignItems: 'center',
-                      gap: '4px',
-                    }}
-                  >
-                    <span>{isSpeaking ? '⏹️ Stop Voice' : '🔊 Listen Aloud'}</span>
-                  </button>
-
-                  {isSpeaking && (
-                    <select
-                      value={speechRate}
-                      onChange={(e) => setSpeechRate(Number(e.target.value))}
-                      style={{
-                        padding: '2px 4px',
-                        fontSize: '0.7rem',
-                        borderRadius: '4px',
-                        background: 'transparent',
-                        color: 'inherit',
-                        border: '1px solid #94a3b8',
-                      }}
-                    >
-                      <option value={1}>1x Speed</option>
-                      <option value={1.25}>1.25x</option>
-                      <option value={1.5}>1.5x</option>
-                    </select>
-                  )}
+                  {readingResource.title}
+                </h3>
+                <div style={{ fontSize: '0.72rem', opacity: 0.75, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                  {readingResource.category} • {readingResource.subject} {readingResource.year ? `(${readingResource.year})` : ''} • 🔒 In-App Reader
                 </div>
-
-                {/* View Mode & Engine Switcher */}
-                <div style={{ display: 'flex', gap: '2px', background: readerTheme === 'dark' ? '#0f172a' : '#e2e8f0', borderRadius: '6px', padding: '2px' }}>
-                  <button
-                    type="button"
-                    style={{
-                      background: readerMode === 'document' && docEngine === 'cloud' ? 'var(--color-primary)' : 'transparent',
-                      color: readerMode === 'document' && docEngine === 'cloud' ? '#fff' : 'inherit',
-                      border: 'none',
-                      padding: '4px 9px',
-                      borderRadius: '4px',
-                      cursor: 'pointer',
-                      fontSize: '0.75rem',
-                      fontWeight: 700,
-                    }}
-                    onClick={() => {
-                      setReaderMode('document')
-                      setDocEngine('cloud')
-                    }}
-                  >
-                    🌐 Cloud View
-                  </button>
-                  <button
-                    type="button"
-                    style={{
-                      background: readerMode === 'document' && docEngine === 'direct' ? 'var(--color-primary)' : 'transparent',
-                      color: readerMode === 'document' && docEngine === 'direct' ? '#fff' : 'inherit',
-                      border: 'none',
-                      padding: '4px 9px',
-                      borderRadius: '4px',
-                      cursor: 'pointer',
-                      fontSize: '0.75rem',
-                      fontWeight: 700,
-                    }}
-                    onClick={() => {
-                      setReaderMode('document')
-                      setDocEngine('direct')
-                    }}
-                  >
-                    📄 Stream
-                  </button>
-                  <button
-                    type="button"
-                    style={{
-                      background: readerMode === 'notes' ? 'var(--color-primary)' : 'transparent',
-                      color: readerMode === 'notes' ? '#fff' : 'inherit',
-                      border: 'none',
-                      padding: '4px 9px',
-                      borderRadius: '4px',
-                      cursor: 'pointer',
-                      fontSize: '0.75rem',
-                      fontWeight: 700,
-                    }}
-                    onClick={() => setReaderMode('notes')}
-                  >
-                    🤖 AI Study Notes
-                  </button>
-                </div>
-
-                {/* Font Size Selector (for Study Notes) */}
-                {readerMode === 'notes' && (
-                  <div style={{ display: 'flex', gap: '2px', background: readerTheme === 'dark' ? '#0f172a' : '#e2e8f0', borderRadius: '6px', padding: '2px' }}>
-                    <button
-                      type="button"
-                      style={{ background: readerFontSize === 'normal' ? 'var(--color-primary)' : 'transparent', color: readerFontSize === 'normal' ? '#fff' : 'inherit', border: 'none', padding: '3px 7px', borderRadius: '4px', cursor: 'pointer', fontSize: '0.72rem' }}
-                      onClick={() => setReaderFontSize('normal')}
-                    >
-                      A
-                    </button>
-                    <button
-                      type="button"
-                      style={{ background: readerFontSize === 'large' ? 'var(--color-primary)' : 'transparent', color: readerFontSize === 'large' ? '#fff' : 'inherit', border: 'none', padding: '3px 7px', borderRadius: '4px', cursor: 'pointer', fontSize: '0.8rem', fontWeight: 700 }}
-                      onClick={() => setReaderFontSize('large')}
-                    >
-                      A+
-                    </button>
-                    <button
-                      type="button"
-                      style={{ background: readerFontSize === 'xlarge' ? 'var(--color-primary)' : 'transparent', color: readerFontSize === 'xlarge' ? '#fff' : 'inherit', border: 'none', padding: '3px 7px', borderRadius: '4px', cursor: 'pointer', fontSize: '0.9rem', fontWeight: 800 }}
-                      onClick={() => setReaderFontSize('xlarge')}
-                    >
-                      A++
-                    </button>
-                  </div>
-                )}
-
-                {/* Theme Selector */}
-                <div style={{ display: 'flex', gap: '2px', background: readerTheme === 'dark' ? '#0f172a' : '#e2e8f0', borderRadius: '6px', padding: '2px' }}>
-                  <button
-                    type="button"
-                    style={{ background: readerTheme === 'light' ? '#fff' : 'transparent', color: readerTheme === 'light' ? '#000' : 'inherit', border: 'none', padding: '3px 8px', borderRadius: '4px', cursor: 'pointer', fontSize: '0.75rem' }}
-                    onClick={() => setReaderTheme('light')}
-                    title="Light Theme"
-                  >
-                    ☀️
-                  </button>
-                  <button
-                    type="button"
-                    style={{ background: readerTheme === 'sepia' ? '#fdf6e2' : 'transparent', color: readerTheme === 'sepia' ? '#78350f' : 'inherit', border: 'none', padding: '3px 8px', borderRadius: '4px', cursor: 'pointer', fontSize: '0.75rem' }}
-                    onClick={() => setReaderTheme('sepia')}
-                    title="Sepia Paper Theme"
-                  >
-                    📜
-                  </button>
-                  <button
-                    type="button"
-                    style={{ background: readerTheme === 'dark' ? '#334155' : 'transparent', color: readerTheme === 'dark' ? '#fff' : 'inherit', border: 'none', padding: '3px 8px', borderRadius: '4px', cursor: 'pointer', fontSize: '0.75rem' }}
-                    onClick={() => setReaderTheme('dark')}
-                    title="Night Mode"
-                  >
-                    🌙
-                  </button>
-                </div>
-
-                <button
-                  type="button"
-                  className="modal-close"
-                  style={{ position: 'static', color: 'inherit' }}
-                  onClick={() => setReadingResource(null)}
-                >
-                  ✕
-                </button>
               </div>
             </div>
 
-            {/* Document Content Viewport */}
-            {readerMode === 'document' ? (
-              <div style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden', background: readerTheme === 'dark' ? '#0f172a' : '#f1f5f9', position: 'relative' }}>
-                <div style={{ flex: 1, width: '100%', height: '100%', position: 'relative', overflow: 'hidden' }}>
-                  {/* Defocus / Screen-Capture Blackout Shield */}
-                  {isDefocused && (
-                    <div
-                      style={{
-                        position: 'absolute',
-                        inset: 0,
-                        zIndex: 90,
-                        background: '#090d16',
-                        display: 'flex',
-                        flexDirection: 'column',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        color: '#ffffff',
-                        textAlign: 'center',
-                        padding: '2rem',
-                        backdropFilter: 'blur(20px)',
-                      }}
-                    >
-                      <div style={{ fontSize: '3.5rem', marginBottom: '1rem' }}>🛡️</div>
-                      <h3 style={{ fontSize: '1.3rem', fontWeight: 800, margin: '0 0 0.5rem', color: '#60a5fa' }}>
-                        Confidential Document Protected
-                      </h3>
-                      <p style={{ fontSize: '0.85rem', color: '#94a3b8', maxWidth: '420px', lineHeight: 1.6, margin: '0 0 1.25rem' }}>
-                        Document viewing is secured inside the LMS app. Screen capture, external window switching, and printing are prohibited by DRM policy.
-                      </p>
-                      <button
-                        type="button"
-                        className="btn btn-primary"
-                        onClick={() => setIsDefocused(false)}
-                        style={{ fontWeight: 800, padding: '0.65rem 1.5rem', borderRadius: '10px' }}
-                      >
-                        ✓ Return to Document
-                      </button>
-                    </div>
-                  )}
+            {/* Controls */}
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexShrink: 0 }}>
+              {/* Bookmark Toggle */}
+              <button
+                type="button"
+                onClick={() => toggleBookmark(readingResource.id)}
+                className="btn btn-ghost btn-sm"
+                style={{
+                  color: bookmarkedIds.includes(readingResource.id) ? '#f59e0b' : 'inherit',
+                  fontSize: '0.85rem',
+                  padding: '4px 8px',
+                  fontWeight: 700,
+                }}
+                title={bookmarkedIds.includes(readingResource.id) ? 'Saved in My Books' : 'Save Book'}
+              >
+                {bookmarkedIds.includes(readingResource.id) ? '⭐ Saved' : '☆ Save'}
+              </button>
 
-                  {/* Anti-Popout Click Interceptor (Prevents clicking Google Drive's "Open in New Window" top-right icon) */}
-                  <div
-                    style={{
-                      position: 'absolute',
-                      top: 0,
-                      right: 0,
-                      width: '70px',
-                      height: '70px',
-                      zIndex: 35,
-                      background: 'transparent',
-                      cursor: 'default',
-                    }}
-                    onClick={(e) => {
-                      e.stopPropagation()
-                      setDrmWarning('🔒 Protected Viewer: Opening documents outside the LMS app is disabled.')
-                      setTimeout(() => setDrmWarning(null), 3500)
-                    }}
-                    title="Protected Viewer: In-App Reading Only"
-                  />
+              {/* Theme Selector */}
+              <div style={{ display: 'flex', gap: '2px', background: readerTheme === 'dark' ? '#1e293b' : '#e2e8f0', borderRadius: '8px', padding: '2px' }}>
+                <button
+                  type="button"
+                  style={{ background: readerTheme === 'light' ? '#fff' : 'transparent', color: readerTheme === 'light' ? '#000' : 'inherit', border: 'none', padding: '4px 8px', borderRadius: '6px', cursor: 'pointer', fontSize: '0.75rem' }}
+                  onClick={() => setReaderTheme('light')}
+                  title="Light Theme"
+                >
+                  ☀️
+                </button>
+                <button
+                  type="button"
+                  style={{ background: readerTheme === 'sepia' ? '#fdf6e2' : 'transparent', color: readerTheme === 'sepia' ? '#78350f' : 'inherit', border: 'none', padding: '4px 8px', borderRadius: '6px', cursor: 'pointer', fontSize: '0.75rem' }}
+                  onClick={() => setReaderTheme('sepia')}
+                  title="Sepia Paper Theme"
+                >
+                  📜
+                </button>
+                <button
+                  type="button"
+                  style={{ background: readerTheme === 'dark' ? '#334155' : 'transparent', color: readerTheme === 'dark' ? '#fff' : 'inherit', border: 'none', padding: '4px 8px', borderRadius: '6px', cursor: 'pointer', fontSize: '0.75rem' }}
+                  onClick={() => setReaderTheme('dark')}
+                  title="Night Mode"
+                >
+                  🌙
+                </button>
+              </div>
 
-                  {/* Dynamic Watermark Pattern Overlay */}
-                  <div
-                    style={{
-                      position: 'absolute',
-                      inset: 0,
-                      pointerEvents: 'none',
-                      zIndex: 20,
-                      display: 'flex',
-                      flexDirection: 'column',
-                      justifyContent: 'space-around',
-                      opacity: 0.08,
-                      overflow: 'hidden',
-                      userSelect: 'none',
-                    }}
-                  >
-                    {Array.from({ length: 6 }).map((_, idx) => (
-                      <div
-                        key={idx}
-                        style={{
-                          transform: 'rotate(-20deg)',
-                          fontSize: '1.1rem',
-                          fontWeight: 900,
-                          color: '#dc2626',
-                          letterSpacing: '0.12em',
-                          textAlign: 'center',
-                          whiteSpace: 'nowrap',
-                        }}
-                      >
-                        ÉCLAT INSTITUTE • LICENSED TO {profile?.full_name?.toUpperCase() || 'ENROLLED STUDENT'} • STRICTLY CONFIDENTIAL
-                      </div>
-                    ))}
-                  </div>
+              {/* Close Button */}
+              <button
+                type="button"
+                onClick={() => setReadingResource(null)}
+                style={{
+                  background: readerTheme === 'dark' ? '#ef4444' : '#fee2e2',
+                  color: readerTheme === 'dark' ? '#ffffff' : '#991b1b',
+                  border: 'none',
+                  borderRadius: '8px',
+                  padding: '6px 12px',
+                  fontWeight: 800,
+                  fontSize: '0.85rem',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '4px',
+                }}
+              >
+                ✕ Close
+              </button>
+            </div>
+          </div>
 
-                  {/\.(png|jpe?g|webp|gif|svg)$/i.test(readingResource.file_url || '') ? (
-                    <div style={{ padding: '1.5rem', height: '100%', overflowY: 'auto', textAlign: 'center' }}>
-                      <img
-                        src={readingResource.file_url}
-                        alt={readingResource.title}
-                        onContextMenu={(e) => e.preventDefault()}
-                        onDragStart={(e) => e.preventDefault()}
-                        style={{ maxWidth: '100%', maxHeight: '80vh', objectFit: 'contain', borderRadius: '8px', boxShadow: '0 4px 12px rgba(0,0,0,0.1)', pointerEvents: 'none' }}
-                      />
-                    </div>
-                  ) : (
-                    <iframe
-                      src={getEmbeddableDocumentUrl(readingResource.file_url, docEngine)}
-                      title={readingResource.title}
-                      referrerPolicy="no-referrer"
-                      style={{ width: '100%', height: '100%', minHeight: '75vh', border: 'none', background: '#ffffff' }}
-                      allow="autoplay"
-                    />
-                  )}
+          {/* Fullscreen Document Content Viewport */}
+          <div style={{ flex: 1, position: 'relative', overflow: 'hidden', background: readerTheme === 'dark' ? '#0b0f19' : '#f8fafc' }}>
+            {/* Defocus / Screen-Capture Blackout Shield */}
+            {isDefocused && (
+              <div
+                style={{
+                  position: 'absolute',
+                  inset: 0,
+                  zIndex: 90,
+                  background: '#090d16',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  color: '#ffffff',
+                  textAlign: 'center',
+                  padding: '2rem',
+                  backdropFilter: 'blur(25px)',
+                }}
+              >
+                <div style={{ fontSize: '3.5rem', marginBottom: '1rem' }}>🛡️</div>
+                <h3 style={{ fontSize: '1.3rem', fontWeight: 800, margin: '0 0 0.5rem', color: '#60a5fa' }}>
+                  Confidential Document Protected
+                </h3>
+                <p style={{ fontSize: '0.85rem', color: '#94a3b8', maxWidth: '420px', lineHeight: 1.6, margin: '0 0 1.25rem' }}>
+                  Document viewing is secured inside the LMS app. Screen capture, external window switching, and printing are prohibited by DRM policy.
+                </p>
+                <button
+                  type="button"
+                  className="btn btn-primary"
+                  onClick={() => setIsDefocused(false)}
+                  style={{ fontWeight: 800, padding: '0.65rem 1.5rem', borderRadius: '10px' }}
+                >
+                  ✓ Return to Document
+                </button>
+              </div>
+            )}
+
+            {/* Anti-Popout Click Interceptor (Prevents clicking Google Drive's "Open in New Window" top-right icon) */}
+            <div
+              style={{
+                position: 'absolute',
+                top: 0,
+                right: 0,
+                width: '75px',
+                height: '75px',
+                zIndex: 35,
+                background: 'transparent',
+                cursor: 'default',
+              }}
+              onClick={(e) => {
+                e.stopPropagation()
+                setDrmWarning('🔒 Protected Viewer: Opening documents outside the LMS app is disabled.')
+                setTimeout(() => setDrmWarning(null), 3500)
+              }}
+              title="Protected Viewer: In-App Reading Only"
+            />
+
+            {/* Dynamic Security Watermark */}
+            <div
+              style={{
+                position: 'absolute',
+                inset: 0,
+                pointerEvents: 'none',
+                zIndex: 20,
+                display: 'flex',
+                flexDirection: 'column',
+                justifyContent: 'space-around',
+                opacity: 0.07,
+                overflow: 'hidden',
+                userSelect: 'none',
+              }}
+            >
+              {Array.from({ length: 6 }).map((_, idx) => (
+                <div
+                  key={idx}
+                  style={{
+                    transform: 'rotate(-20deg)',
+                    fontSize: '1.1rem',
+                    fontWeight: 900,
+                    color: '#dc2626',
+                    letterSpacing: '0.12em',
+                    textAlign: 'center',
+                    whiteSpace: 'nowrap',
+                  }}
+                >
+                  ÉCLAT INSTITUTE • LICENSED TO {profile?.full_name?.toUpperCase() || 'ENROLLED STUDENT'} • STRICTLY CONFIDENTIAL
                 </div>
+              ))}
+            </div>
+
+            {/\.(png|jpe?g|webp|gif|svg)$/i.test(readingResource.file_url || '') ? (
+              <div style={{ padding: '1.5rem', height: '100%', overflowY: 'auto', textAlign: 'center' }}>
+                <img
+                  src={readingResource.file_url}
+                  alt={readingResource.title}
+                  onContextMenu={(e) => e.preventDefault()}
+                  onDragStart={(e) => e.preventDefault()}
+                  style={{ maxWidth: '100%', maxHeight: '90vh', objectFit: 'contain', borderRadius: '8px', boxShadow: '0 4px 12px rgba(0,0,0,0.1)', pointerEvents: 'none' }}
+                />
               </div>
             ) : (
-              /* Study Notes Mode */
-              <>
-                <div
-                  style={{
-                    flex: 1,
-                    overflowY: 'auto',
-                    padding: '2.5rem 3.5rem',
-                    fontSize: readerFontSize === 'xlarge' ? '1.25rem' : readerFontSize === 'large' ? '1.1rem' : '0.95rem',
-                    lineHeight: 1.8,
-                    maxWidth: '900px',
-                    margin: '0 auto',
-                    width: '100%',
-                  }}
-                >
-                  {/* Document Header */}
-                  <div style={{ textAlign: 'center', borderBottom: `2px dashed ${readerTheme === 'dark' ? '#334155' : '#cbd5e1'}`, paddingBottom: '1.5rem', marginBottom: '2rem' }}>
-                    <div style={{ fontSize: '1.2rem', fontWeight: 900, textTransform: 'uppercase', letterSpacing: '0.05em' }}>
-                      ECLAT INSTITUTE — PROFESSIONAL SHORT COURSES DIRECTORY
-                    </div>
-                    <div style={{ fontSize: '0.9rem', fontWeight: 700, margin: '0.35rem 0' }}>
-                      {readingResource.subject} • {readingResource.category} ({readingResource.year || new Date().getFullYear()})
-                    </div>
-                    <div style={{ fontSize: '0.8rem', opacity: 0.8 }}>
-                      Curated by Faculty Instructor: <strong>{readingResource.uploaded_by}</strong> • Revision Notes
-                    </div>
-                  </div>
-
-                  {currentPage === 1 && (
-                    <div>
-                      <h2 style={{ fontSize: '1.2rem', fontWeight: 800, borderLeft: '4px solid var(--color-primary)', paddingLeft: '0.75rem', marginBottom: '1rem' }}>
-                        SECTION A: CORE CONCEPTS & COMPULSORY PRINCIPLES
-                      </h2>
-                      <p>
-                        <strong>Module Objective:</strong><br />
-                        This document covers standard practical competencies, safety guidelines, and examination objectives for <strong>{readingResource.subject}</strong>.
-                      </p>
-                      <p>
-                        <strong>Key Assessment Points:</strong><br />
-                        Students must demonstrate thorough familiarity with practical workshop procedures, equipment handling, and theoretical foundations before sitting for certification.
-                      </p>
-                    </div>
-                  )}
-
-                  {currentPage === 2 && (
-                    <div>
-                      <h2 style={{ fontSize: '1.2rem', fontWeight: 800, borderLeft: '4px solid #16a34a', paddingLeft: '0.75rem', marginBottom: '1rem' }}>
-                        SECTION B: PRACTICAL IMPLEMENTATION & CASE STUDIES
-                      </h2>
-                      <p>
-                        <strong>Practical Application:</strong><br />
-                        Case study analysis, real-world project simulations, and industry standards aligned with TVET requirements.
-                      </p>
-                    </div>
-                  )}
-
-                  {currentPage === 3 && (
-                    <div>
-                      <h2 style={{ fontSize: '1.2rem', fontWeight: 800, borderLeft: '4px solid #7c3aed', paddingLeft: '0.75rem', marginBottom: '1rem' }}>
-                        APPENDIX & INSTRUCTOR REVISION GUIDE
-                      </h2>
-                      <div style={{ background: readerTheme === 'dark' ? '#1e293b' : '#f8fafc', border: `1px solid ${readerTheme === 'dark' ? '#334155' : '#e2e8f0'}`, borderRadius: '8px', padding: '1.25rem', marginBottom: '1.5rem' }}>
-                        <h4 style={{ margin: '0 0 0.5rem', fontSize: '0.95rem', fontWeight: 700 }}>Instructor's Study Recommendation</h4>
-                        <p style={{ margin: 0, fontSize: '0.85rem', lineHeight: 1.6 }}>
-                          "Review all modules thoroughly and complete the practical lab exercises before the end-of-term evaluation."
-                        </p>
-                      </div>
-                      <div style={{ textAlign: 'center', opacity: 0.7, fontSize: '0.8rem', marginTop: '2rem' }}>
-                        — END OF NOTES — <br />
-                        Eclat Institute Directorate of Academic Resources
-                      </div>
-                    </div>
-                  )}
-                </div>
-
-                {/* Bottom Pagination Bar */}
-                <div
-                  style={{
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                    alignItems: 'center',
-                    padding: '0.75rem 1.5rem',
-                    borderTop: `1px solid ${readerTheme === 'dark' ? '#334155' : '#e2e8f0'}`,
-                    background: readerTheme === 'dark' ? '#1e293b' : '#f8fafc',
-                  }}
-                >
-                  <button
-                    type="button"
-                    className="btn btn-secondary btn-sm"
-                    disabled={currentPage === 1}
-                    onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
-                  >
-                    ← Previous Page
-                  </button>
-
-                  <div style={{ fontSize: '0.85rem', fontWeight: 700 }}>
-                    Page {currentPage} of 3
-                  </div>
-
-                  <button
-                    type="button"
-                    className="btn btn-secondary btn-sm"
-                    disabled={currentPage === 3}
-                    onClick={() => setCurrentPage((p) => Math.min(3, p + 1))}
-                  >
-                    Next Page →
-                  </button>
-                </div>
-              </>
+              <iframe
+                src={getEmbeddableDocumentUrl(readingResource.file_url, 'cloud')}
+                title={readingResource.title}
+                referrerPolicy="no-referrer"
+                style={{ width: '100%', height: '100%', border: 'none', background: '#ffffff' }}
+                allow="autoplay"
+              />
             )}
           </div>
         </div>
