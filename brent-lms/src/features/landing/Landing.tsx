@@ -2881,7 +2881,7 @@ export function Landing() {
               Study Anywhere on Dedicated Desktop & Mobile Apps
             </h2>
             <p style={{ fontSize: '1.05rem', color: '#94a3b8', maxWidth: '750px', margin: '0 auto', fontWeight: 500 }}>
-              The website is your admissions & guidance portal. Download our high-performance native apps for DRM-protected textbooks, hardware anti-cheat exams, and offline reading.
+              Download our dedicated mobile and desktop applications to study offline, attend live lectures, and track your coursework anywhere.
             </p>
           </div>
 
@@ -2896,10 +2896,10 @@ export function Landing() {
                   Windows Desktop App
                 </h3>
                 <p style={{ fontSize: '0.92rem', color: '#cbd5e1', lineHeight: 1.6, marginBottom: '1.5rem' }}>
-                  Built for power learners. Full-screen distraction-free reader, hardware screenshot blocking, and instant offline textbook access.
+                  Built for focused learning on PC. Full-screen lecture viewer, offline digital library, and fast note-taking.
                 </p>
                 <ul style={{ listStyle: 'none', padding: 0, margin: '0 0 2rem', fontSize: '0.85rem', color: '#94a3b8', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-                  <li>✓ Hardware Anti-Cheat & Screen Protection</li>
+                  <li>✓ Distraction-Free Full Screen Study</li>
                   <li>✓ Zoom Controls & Dynamic Text Resizing</li>
                   <li>✓ 1-Click Registration Slip & Fee Printing</li>
                   <li>✓ Windows 10 & 11 64-bit Compatible</li>
@@ -2933,7 +2933,7 @@ export function Landing() {
                   Take your entire college in your pocket. Live video classes, swipe-to-refresh cloud sync, and instant timetable push alerts.
                 </p>
                 <ul style={{ listStyle: 'none', padding: 0, margin: '0 0 2rem', fontSize: '0.85rem', color: '#94a3b8', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-                  <li>✓ Pre-Populated Offline E-Library</li>
+                  <li>✓ Offline E-Library & Study Materials</li>
                   <li>✓ Swipe Down Pull-to-Refresh Gesture</li>
                   <li>✓ Pinch-to-Zoom Textbook Reader</li>
                   <li>✓ Instant Cloud Attendance & Grades</li>
@@ -2970,9 +2970,9 @@ export function Landing() {
                 </p>
                 <ul style={{ listStyle: 'none', padding: 0, margin: '0 0 2rem', fontSize: '0.85rem', color: '#94a3b8', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
                   <li>✓ High-Resolution Retina Graphics</li>
-                  <li>✓ Native Xcode Capacitor Core</li>
-                  <li>✓ Safari Instant Web App Mode</li>
-                  <li>✓ Encrypted Offline Storage</li>
+                  <li>✓ Fast HD Video Playback</li>
+                  <li>✓ Offline Study Notes</li>
+                  <li>✓ Clean Native Experience</li>
                 </ul>
               </div>
 
