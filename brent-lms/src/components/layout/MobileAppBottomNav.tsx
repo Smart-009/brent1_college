@@ -96,13 +96,9 @@ export function MobileAppBottomNav() {
       {/* Courses Tab */}
       <Link
         to={getCoursesLink()}
-        onClick={(e) => {
-          if (!profile && (currentPath === '/' || currentPath === '/courses')) {
-            e.preventDefault()
-            const el = document.getElementById('courses')
-            if (el) {
-              el.scrollIntoView({ behavior: 'smooth' })
-            }
+        onClick={() => {
+          if (currentPath === getCoursesLink()) {
+            window.scrollTo({ top: 0, behavior: 'smooth' })
           }
         }}
         className={`mobile-nav-item ${isCoursesActive ? 'active' : ''}`}
