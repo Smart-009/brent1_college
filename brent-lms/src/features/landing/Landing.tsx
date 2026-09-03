@@ -1,7 +1,6 @@
 import { useState, useMemo, useEffect } from 'react'
 import { Link, useNavigate, useLocation } from 'react-router-dom'
 import { useIsMobile } from '@/hooks/useMediaQuery'
-import { usePWAInstall } from '@/hooks/usePWAInstall'
 import { DesktopCommandPalette } from '@/components/shared/DesktopCommandPalette'
 import { supabase } from '@/lib/supabase'
 import { schoolStore } from '@/lib/schoolData'
@@ -716,7 +715,6 @@ export function Landing() {
   const location = useLocation()
   const navigate = useNavigate()
 
-  const { isInstallable, isInstalled, isIOS, promptInstall } = usePWAInstall()
   const [appModalOpen, setAppModalOpen] = useState(false)
   const [appModalTab, setAppModalTab] = useState<'android' | 'ios' | 'windows'>('android')
 
@@ -1669,7 +1667,8 @@ export function Landing() {
               <button
                 type="button"
                 onClick={() => {
-                  setAppModalTab(isIOS ? 'ios' : 'android')
+                  const isApple = typeof navigator !== 'undefined' && /iPhone|iPad|iPod|Macintosh/i.test(navigator.userAgent)
+                  setAppModalTab(isApple ? 'ios' : 'android')
                   setAppModalOpen(true)
                   setMobileNavOpen(false)
                 }}
@@ -3923,52 +3922,36 @@ export function Landing() {
 
             {/* TAB CONTENT: ANDROID */}
             {appModalTab === 'android' && (
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.9rem' }}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
                 <div style={{ background: '#f0fdf4', border: '1px solid #bbf7d0', borderRadius: '16px', padding: '1.25rem' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '0.35rem' }}>
-                    <span style={{ fontSize: '1.25rem' }}>⚡</span>
-                    <strong style={{ fontSize: '0.98rem', color: '#166534' }}>Method 1: Instant 1-Tap App Install</strong>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '0.4rem' }}>
+                    <span style={{ fontSize: '1.3rem' }}>🤖</span>
+                    <strong style={{ fontSize: '1.02rem', color: '#166534' }}>Official Android Native App (.APK)</strong>
                   </div>
-                  <p style={{ fontSize: '0.84rem', color: '#15803d', lineHeight: 1.5, margin: '0 0 0.85rem' }}>
-                    Installs Éclat directly into your app drawer with offline study, 0 storage waste, and auto-updates.
+                  <p style={{ fontSize: '0.86rem', color: '#15803d', lineHeight: 1.5, margin: '0 0 1rem' }}>
+                    Full native Android app with hardware screenshot blocking, DRM-protected offline reader, and automatic Over-The-Air (OTA) updates.
                   </p>
-                  <button
-                    type="button"
-                    onClick={async () => {
-                      const res = await promptInstall()
-                      if (!res) {
-                        setToastMessage('To install: Tap your browser ⋮ Menu (Top Right) ➔ select "Install app" or "Add to Home Screen".')
-                      }
-                    }}
-                    className="btn"
-                    style={{ width: '100%', background: '#16a34a', color: '#ffffff', fontWeight: 800, padding: '0.75rem', borderRadius: '10px', fontSize: '0.92rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', boxShadow: '0 4px 12px rgba(22, 163, 74, 0.3)', cursor: 'pointer', border: 'none' }}
-                  >
-                    <span>⚡</span>
-                    <span>1-Tap Install App on Phone</span>
-                  </button>
 
-                  <div style={{ marginTop: '0.75rem', padding: '0.5rem 0.75rem', background: 'rgba(255,255,255,0.8)', borderRadius: '8px', border: '1px solid #bbf7d0', fontSize: '0.78rem', color: '#166534' }}>
-                    📲 <strong>Browser Tip:</strong> Tap <strong>⋮ Menu (Top Right)</strong> ➔ <strong>"Install app"</strong> or <strong>"Add to Home screen"</strong>.
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.5rem', marginBottom: '1rem' }}>
+                    <div style={{ background: '#ffffff', padding: '0.5rem 0.75rem', borderRadius: '8px', border: '1px solid #bbf7d0', fontSize: '0.78rem', color: '#166534', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                      <span>🛡️</span>
+                      <strong>Screenshots Blocked</strong>
+                    </div>
+                    <div style={{ background: '#ffffff', padding: '0.5rem 0.75rem', borderRadius: '8px', border: '1px solid #bbf7d0', fontSize: '0.78rem', color: '#166534', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                      <span>⚡</span>
+                      <strong>Over-The-Air Updates</strong>
+                    </div>
                   </div>
-                </div>
 
-                <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '16px', padding: '1.25rem' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '0.35rem' }}>
-                    <span style={{ fontSize: '1.25rem' }}>📦</span>
-                    <strong style={{ fontSize: '0.98rem', color: '#0f172a' }}>Method 2: Standalone .APK Package</strong>
-                  </div>
-                  <p style={{ fontSize: '0.84rem', color: '#64748b', lineHeight: 1.5, margin: '0 0 0.85rem' }}>
-                    Need a raw installer file for manual sideloading? Receive the verified APK on WhatsApp.
-                  </p>
                   <a
-                    href={getWhatsAppInquiryUrl('Hello Eclat Admissions! Please send me the official Android APK installation file.')}
+                    href={getWhatsAppInquiryUrl('Hello Eclat Admissions! Please send me the official Android Native App (.APK) file for download.')}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="btn"
-                    style={{ width: '100%', background: '#0f172a', color: '#ffffff', fontWeight: 800, padding: '0.75rem', borderRadius: '10px', fontSize: '0.9rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', textDecoration: 'none' }}
+                    style={{ width: '100%', background: '#16a34a', color: '#ffffff', fontWeight: 800, padding: '0.8rem', borderRadius: '10px', fontSize: '0.92rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', textDecoration: 'none', boxShadow: '0 4px 12px rgba(22, 163, 74, 0.3)' }}
                   >
-                    <span>💬</span>
-                    <span>Request .APK File on WhatsApp</span>
+                    <span>📥</span>
+                    <span>Download Android App (.APK)</span>
                   </a>
                 </div>
               </div>
@@ -3976,48 +3959,38 @@ export function Landing() {
 
             {/* TAB CONTENT: IOS (IPHONE & IPAD) */}
             {appModalTab === 'ios' && (
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.9rem' }}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
                 <div style={{ background: '#f8fafc', border: '1px solid #cbd5e1', borderRadius: '16px', padding: '1.25rem' }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '0.4rem' }}>
-                    <span style={{ fontSize: '1.25rem' }}>📲</span>
-                    <strong style={{ fontSize: '1rem', color: '#0f172a' }}>Install on iPhone / iPad (2 Quick Steps)</strong>
+                    <svg width="18" height="18" viewBox="0 0 170 170" fill="#0f172a">
+                      <path d="M150.37 130.25c-2.45 5.66-5.35 10.87-8.71 15.66-4.58 6.53-8.33 11.05-11.22 13.56-4.48 4.12-9.28 6.23-14.42 6.35-3.69 0-8.14-1.05-13.32-3.18-5.19-2.12-9.97-3.17-14.34-3.17-4.58 0-9.49 1.05-14.74 3.17-5.26 2.13-9.5 3.24-12.74 3.35-4.35.13-9.16-1.9-14.42-6.08-3.7-3.04-7.59-7.71-11.69-14.01-6.1-9.35-10.88-20.08-14.34-32.22-3.46-12.14-5.19-23.77-5.19-34.91 0-14.47 3.6-26.65 10.8-36.54 7.21-9.89 16.32-14.93 27.34-15.13 4.69 0 10.15 1.25 16.38 3.75 6.23 2.5 10.15 3.8 11.75 3.9 1.43 0 5.48-1.35 12.14-4.05 6.66-2.7 12.14-3.9 16.43-3.6 12.3.6 22.13 5.4 29.5 14.4-10.74 6.5-16.03 15.5-15.86 27 .2 9.4 3.8 17.2 10.8 23.4 4.5 4 9.6 6.8 15.3 8.4-2.2 6.5-4.8 12.8-7.8 18.9zM119.22 31.05c0-7.24 2.66-13.9 7.98-19.98 5.32-6.08 11.83-9.87 19.53-11.37.2 1.3.3 2.5.3 3.6 0 7.1-2.8 13.9-8.4 20.4-5.6 6.5-12.2 10.3-19.8 11.4-.2-1.3-.61-2.65-.61-4.05z"/>
+                    </svg>
+                    <strong style={{ fontSize: '1.02rem', color: '#0f172a' }}>Apple iOS Native App (iPhone & iPad)</strong>
                   </div>
-                  <p style={{ fontSize: '0.84rem', color: '#475569', lineHeight: 1.5, margin: '0 0 0.85rem' }}>
-                    Apple allows you to run Éclat as a full native app without the App Store:
+                  <p style={{ fontSize: '0.86rem', color: '#475569', lineHeight: 1.5, margin: '0 0 1rem' }}>
+                    Native iOS app with anti-cheat examination mode, secure video streaming, and encrypted offline documents.
                   </p>
 
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '0.6rem', marginBottom: '1rem' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '10px', background: '#ffffff', padding: '0.65rem 0.85rem', borderRadius: '10px', border: '1px solid #e2e8f0' }}>
-                      <span style={{ width: '22px', height: '22px', borderRadius: '50%', background: '#0f172a', color: '#ffffff', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.74rem', fontWeight: 800, flexShrink: 0 }}>1</span>
-                      <div style={{ fontSize: '0.84rem', color: '#1e293b' }}>
-                        In <strong>Safari</strong>, tap the <strong>Share</strong> button <span style={{ display: 'inline-block', background: '#f1f5f9', padding: '1px 5px', borderRadius: '4px', fontWeight: 700 }}>[↑]</span> at the bottom.
-                      </div>
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.5rem', marginBottom: '1rem' }}>
+                    <div style={{ background: '#ffffff', padding: '0.5rem 0.75rem', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '0.78rem', color: '#0f172a', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                      <span>🛡️</span>
+                      <strong>Anti-Cheat Exam Lock</strong>
                     </div>
-
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '10px', background: '#ffffff', padding: '0.65rem 0.85rem', borderRadius: '10px', border: '1px solid #e2e8f0' }}>
-                      <span style={{ width: '22px', height: '22px', borderRadius: '50%', background: '#0f172a', color: '#ffffff', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.74rem', fontWeight: 800, flexShrink: 0 }}>2</span>
-                      <div style={{ fontSize: '0.84rem', color: '#1e293b' }}>
-                        Scroll down and tap <strong>"Add to Home Screen"</strong> <span style={{ display: 'inline-block', background: '#f1f5f9', padding: '1px 5px', borderRadius: '4px', fontWeight: 700 }}>[+]</span>.
-                      </div>
-                    </div>
-
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '10px', background: '#ffffff', padding: '0.65rem 0.85rem', borderRadius: '10px', border: '1px solid #e2e8f0' }}>
-                      <span style={{ width: '22px', height: '22px', borderRadius: '50%', background: '#16a34a', color: '#ffffff', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.74rem', fontWeight: 800, flexShrink: 0 }}>✓</span>
-                      <div style={{ fontSize: '0.84rem', color: '#1e293b' }}>
-                        Tap <strong>"Add"</strong>. The Éclat emblem appears immediately on your home screen!
-                      </div>
+                    <div style={{ background: '#ffffff', padding: '0.5rem 0.75rem', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '0.78rem', color: '#0f172a', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                      <span>📲</span>
+                      <strong>Apple TestFlight</strong>
                     </div>
                   </div>
 
                   <a
-                    href={getWhatsAppInquiryUrl('Hello Eclat Admissions! I would like TestFlight installation guidance for my Apple device.')}
+                    href={getWhatsAppInquiryUrl('Hello Eclat Admissions! Please send me the Apple TestFlight invite link for iOS.')}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="btn"
-                    style={{ width: '100%', background: '#2563eb', color: '#ffffff', fontWeight: 700, padding: '0.75rem', borderRadius: '10px', fontSize: '0.88rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', textDecoration: 'none' }}
+                    style={{ width: '100%', background: '#0f172a', color: '#ffffff', fontWeight: 800, padding: '0.8rem', borderRadius: '10px', fontSize: '0.92rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', textDecoration: 'none', boxShadow: '0 4px 12px rgba(15, 23, 42, 0.3)' }}
                   >
-                    <span>💬</span>
-                    <span>Need Apple TestFlight Assistance? Chat with Us</span>
+                    <span>🍏</span>
+                    <span>Get iOS App via TestFlight</span>
                   </a>
                 </div>
               </div>
@@ -4025,52 +3998,36 @@ export function Landing() {
 
             {/* TAB CONTENT: WINDOWS PC */}
             {appModalTab === 'windows' && (
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.9rem' }}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
                 <div style={{ background: '#eff6ff', border: '1px solid #bfdbfe', borderRadius: '16px', padding: '1.25rem' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '0.35rem' }}>
-                    <span style={{ fontSize: '1.25rem' }}>⚡</span>
-                    <strong style={{ fontSize: '0.98rem', color: '#1e40af' }}>Method 1: Instant Desktop App (Chrome / Edge)</strong>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '0.4rem' }}>
+                    <span style={{ fontSize: '1.3rem' }}>💻</span>
+                    <strong style={{ fontSize: '1.02rem', color: '#1e40af' }}>Windows Desktop App (.EXE Setup)</strong>
                   </div>
-                  <p style={{ fontSize: '0.84rem', color: '#1d4ed8', lineHeight: 1.5, margin: '0 0 0.85rem' }}>
-                    Runs in dedicated standalone window mode without browser tabs, pinned to your Windows taskbar & start menu.
+                  <p style={{ fontSize: '0.86rem', color: '#1d4ed8', lineHeight: 1.5, margin: '0 0 1rem' }}>
+                    Official Windows 10 & 11 standalone application with hardware anti-cheat protection, direct printing, and offline reader.
                   </p>
-                  <button
-                    type="button"
-                    onClick={async () => {
-                      const res = await promptInstall()
-                      if (!res) {
-                        setToastMessage('In Chrome/Edge, click the install icon in the URL bar (top right) or press (⋮) ➔ Install.')
-                      }
-                    }}
-                    className="btn btn-primary"
-                    style={{ width: '100%', fontWeight: 800, padding: '0.75rem', borderRadius: '10px', fontSize: '0.92rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', boxShadow: '0 4px 12px rgba(37, 99, 235, 0.3)', cursor: 'pointer', border: 'none' }}
-                  >
-                    <span>⚡</span>
-                    <span>1-Click Install to Windows Taskbar</span>
-                  </button>
 
-                  <div style={{ marginTop: '0.75rem', padding: '0.5rem 0.75rem', background: 'rgba(255,255,255,0.8)', borderRadius: '8px', border: '1px solid #bfdbfe', fontSize: '0.78rem', color: '#1e40af' }}>
-                    💻 <strong>Tip:</strong> Look at your browser address bar (top right) and click the <strong>Install [⊕]</strong> icon.
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.5rem', marginBottom: '1rem' }}>
+                    <div style={{ background: '#ffffff', padding: '0.5rem 0.75rem', borderRadius: '8px', border: '1px solid #bfdbfe', fontSize: '0.78rem', color: '#1e40af', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                      <span>🛡️</span>
+                      <strong>Snipping Tool Blocked</strong>
+                    </div>
+                    <div style={{ background: '#ffffff', padding: '0.5rem 0.75rem', borderRadius: '8px', border: '1px solid #bfdbfe', fontSize: '0.78rem', color: '#1e40af', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                      <span>🖨️</span>
+                      <strong>Native Slips & Prints</strong>
+                    </div>
                   </div>
-                </div>
 
-                <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '16px', padding: '1.25rem' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '0.35rem' }}>
-                    <span style={{ fontSize: '1.25rem' }}>💻</span>
-                    <strong style={{ fontSize: '0.98rem', color: '#0f172a' }}>Method 2: Standalone Windows .EXE Setup</strong>
-                  </div>
-                  <p style={{ fontSize: '0.84rem', color: '#64748b', lineHeight: 1.5, margin: '0 0 0.85rem' }}>
-                    Standard Windows desktop installer package with anti-cheat examination mode and local storage.
-                  </p>
                   <a
                     href={getWhatsAppInquiryUrl('Hello Eclat Admissions! Please send me the official Windows Desktop (.EXE) installer.')}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="btn"
-                    style={{ width: '100%', background: '#0f172a', color: '#ffffff', fontWeight: 800, padding: '0.75rem', borderRadius: '10px', fontSize: '0.9rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', textDecoration: 'none' }}
+                    className="btn btn-primary"
+                    style={{ width: '100%', fontWeight: 800, padding: '0.8rem', borderRadius: '10px', fontSize: '0.92rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', textDecoration: 'none', boxShadow: '0 4px 12px rgba(37, 99, 235, 0.3)' }}
                   >
-                    <span>💬</span>
-                    <span>Request Windows Installer on WhatsApp</span>
+                    <span>📥</span>
+                    <span>Download Windows Installer (.EXE)</span>
                   </a>
                 </div>
               </div>
