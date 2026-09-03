@@ -1434,98 +1434,105 @@ export function Landing() {
 
           {/* Right Side: Quick Action Links & Portals */}
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexShrink: 0 }}>
-            {/* Desktop Nav Links */}
-            <nav className="desktop-nav-links" style={{ fontSize: '0.88rem', fontWeight: 600, marginRight: '0.25rem' }}>
-              <Link to="/library" style={{ color: '#2563eb', fontWeight: 800, textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '4px' }}>
-                <span>📖</span>
-                <span>E-Library</span>
-              </Link>
-              <a href="#calculator" style={{ color: '#334155', textDecoration: 'none' }}>Tuition Plans</a>
-              <a href="#about" style={{ color: '#334155', textDecoration: 'none' }}>About Us</a>
-            </nav>
+            {/* Desktop-Only Navigation & Actions */}
+            {!isMobile && (
+              <>
+                <nav className="desktop-nav-links" style={{ fontSize: '0.88rem', fontWeight: 600, marginRight: '0.25rem', display: 'flex', gap: '1rem', alignItems: 'center' }}>
+                  <Link to="/library" style={{ color: '#2563eb', fontWeight: 800, textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                    <span>📖</span>
+                    <span>E-Library</span>
+                  </Link>
+                  <a href="#calculator" style={{ color: '#334155', textDecoration: 'none' }}>Tuition Plans</a>
+                  <a href="#about" style={{ color: '#334155', textDecoration: 'none' }}>About Us</a>
+                </nav>
 
-            <a
-              href="#app-download"
-              className="btn btn-sm hidden md:inline-flex"
-              style={{
-                background: '#16a34a',
-                color: '#ffffff',
-                border: 'none',
-                fontWeight: 700,
-                padding: '0.45rem 0.75rem',
-                borderRadius: '8px',
-                boxShadow: '0 2px 6px rgba(22, 163, 74, 0.3)',
-                alignItems: 'center',
-                gap: '4px',
-                fontSize: '0.78rem',
-                whiteSpace: 'nowrap',
-                textDecoration: 'none',
-              }}
-              title="Download Official Native Desktop & Mobile Apps"
-            >
-              <span>📲</span>
-              <span>Get Apps</span>
-            </a>
+                <a
+                  href="#app-download"
+                  className="btn btn-sm"
+                  style={{
+                    background: '#16a34a',
+                    color: '#ffffff',
+                    border: 'none',
+                    fontWeight: 700,
+                    padding: '0.45rem 0.75rem',
+                    borderRadius: '8px',
+                    boxShadow: '0 2px 6px rgba(22, 163, 74, 0.3)',
+                    alignItems: 'center',
+                    gap: '4px',
+                    fontSize: '0.78rem',
+                    whiteSpace: 'nowrap',
+                    textDecoration: 'none',
+                    display: 'inline-flex',
+                  }}
+                  title="Download Official Native Desktop & Mobile Apps"
+                >
+                  <span>📲</span>
+                  <span>Get Apps</span>
+                </a>
 
-            <button
-              type="button"
-              className="btn btn-sm hidden lg:inline-flex"
-              style={{
-                background: '#eff6ff',
-                color: '#1d4ed8',
-                border: '1px solid #bfdbfe',
-                fontWeight: 700,
-                padding: '0.45rem 0.75rem',
-                borderRadius: '8px',
-                fontSize: '0.78rem',
-                whiteSpace: 'nowrap',
-              }}
-              onClick={() => setInquiryModalOpen(true)}
-            >
-              ⚡ Apply
-            </button>
+                <button
+                  type="button"
+                  className="btn btn-sm"
+                  style={{
+                    background: '#eff6ff',
+                    color: '#1d4ed8',
+                    border: '1px solid #bfdbfe',
+                    fontWeight: 700,
+                    padding: '0.45rem 0.75rem',
+                    borderRadius: '8px',
+                    fontSize: '0.78rem',
+                    whiteSpace: 'nowrap',
+                  }}
+                  onClick={() => setInquiryModalOpen(true)}
+                >
+                  ⚡ Apply
+                </button>
 
-            <button
-              type="button"
-              className="btn btn-sm btn-primary hidden md:inline-flex"
-              style={{
-                fontWeight: 700,
-                padding: '0.45rem 0.85rem',
-                borderRadius: '8px',
-                boxShadow: '0 4px 10px rgba(30, 58, 138, 0.25)',
-                fontSize: '0.78rem',
-                whiteSpace: 'nowrap',
-              }}
-              onClick={() => setShowPortalDesksModal(true)}
-            >
-              🔐 Portals
-            </button>
+                <button
+                  type="button"
+                  className="btn btn-sm btn-primary"
+                  style={{
+                    fontWeight: 700,
+                    padding: '0.45rem 0.85rem',
+                    borderRadius: '8px',
+                    boxShadow: '0 4px 10px rgba(30, 58, 138, 0.25)',
+                    fontSize: '0.78rem',
+                    whiteSpace: 'nowrap',
+                  }}
+                  onClick={() => setShowPortalDesksModal(true)}
+                >
+                  🔐 Portals
+                </button>
+              </>
+            )}
 
-            {/* Mobile Hamburger Toggle Button - ALWAYS visible on mobile */}
-            <button
-              type="button"
-              className="btn btn-sm landing-mobile-menu-toggle"
-              style={{
-                background: mobileNavOpen ? '#0f172a' : '#2563eb',
-                color: '#ffffff',
-                border: 'none',
-                fontWeight: 800,
-                fontSize: '0.88rem',
-                padding: '0.45rem 0.85rem',
-                borderRadius: '8px',
-                cursor: 'pointer',
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '6px',
-                boxShadow: '0 2px 8px rgba(37, 99, 235, 0.35)',
-                flexShrink: 0,
-              }}
-              onClick={() => setMobileNavOpen(!mobileNavOpen)}
-              aria-label="Toggle Navigation Menu"
-            >
-              <span style={{ fontSize: '1.05rem', lineHeight: 1 }}>{mobileNavOpen ? '✕' : '☰'}</span>
-              <span>{mobileNavOpen ? 'Close' : 'Menu'}</span>
-            </button>
+            {/* Mobile-Only Hamburger Toggle Button - ALWAYS rendered on mobile */}
+            {isMobile && (
+              <button
+                type="button"
+                className="btn btn-sm landing-mobile-menu-toggle"
+                style={{
+                  background: mobileNavOpen ? '#0f172a' : '#2563eb',
+                  color: '#ffffff',
+                  border: 'none',
+                  fontWeight: 800,
+                  fontSize: '0.9rem',
+                  padding: '0.5rem 0.95rem',
+                  borderRadius: '8px',
+                  cursor: 'pointer',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '6px',
+                  boxShadow: '0 2px 10px rgba(37, 99, 235, 0.4)',
+                  flexShrink: 0,
+                }}
+                onClick={() => setMobileNavOpen(!mobileNavOpen)}
+                aria-label="Toggle Navigation Menu"
+              >
+                <span style={{ fontSize: '1.15rem', lineHeight: 1 }}>{mobileNavOpen ? '✕' : '☰'}</span>
+                <span>{mobileNavOpen ? 'Close' : 'Menu'}</span>
+              </button>
+            )}
           </div>
         </div>
 
