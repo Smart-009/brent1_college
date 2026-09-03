@@ -1,11 +1,7 @@
 import { useState, useMemo, useEffect } from 'react'
 import { Link, useNavigate, useLocation } from 'react-router-dom'
-import { usePWAInstall } from '@/hooks/usePWAInstall'
 import { useIsMobile } from '@/hooks/useMediaQuery'
-import { PWAInstallBanner } from '@/components/shared/PWAInstallBanner'
 import { DesktopCommandPalette } from '@/components/shared/DesktopCommandPalette'
-import { MobileAppBottomNav } from '@/components/layout/MobileAppBottomNav'
-import { MobileLandingView } from './MobileLandingView'
 import { supabase } from '@/lib/supabase'
 import { schoolStore } from '@/lib/schoolData'
 import { INSTITUTION_CONFIG, getWhatsAppInquiryUrl } from '@/config/institution'
@@ -310,7 +306,6 @@ const TESTIMONIALS = [
 
 export function Landing() {
   const isMobile = useIsMobile(768)
-  const { isInstalled, promptInstall } = usePWAInstall()
   const location = useLocation()
   const navigate = useNavigate()
 
@@ -830,7 +825,6 @@ export function Landing() {
 
   return (
     <div style={{ minHeight: '100vh', background: '#f8fafc', color: '#0f172a', fontFamily: 'Inter, system-ui, -apple-system, sans-serif' }}>
-      <PWAInstallBanner />
       <DesktopCommandPalette />
 
       {/* Top Admissions & Quick Contacts Bar */}
@@ -930,31 +924,29 @@ export function Landing() {
                 <span>E-Library</span>
               </Link>
 
-              {!isInstalled && (
-                <button
-                  type="button"
-                  className="btn btn-sm"
-                  style={{
-                    background: '#16a34a',
-                    color: '#ffffff',
-                    border: 'none',
-                    fontWeight: 700,
-                    padding: '0.45rem 0.75rem',
-                    borderRadius: '8px',
-                    boxShadow: '0 2px 6px rgba(220, 163, 74, 0.3)',
-                    display: 'inline-flex',
-                    alignItems: 'center',
-                    gap: '4px',
-                    fontSize: '0.78rem',
-                    whiteSpace: 'nowrap',
-                  }}
-                  onClick={promptInstall}
-                  title="Install Eclat Institute App on your Phone"
-                >
-                  <span>📲</span>
-                  <span className="hidden xs:inline">App</span>
-                </button>
-              )}
+              <a
+                href="#app-download"
+                className="btn btn-sm"
+                style={{
+                  background: '#16a34a',
+                  color: '#ffffff',
+                  border: 'none',
+                  fontWeight: 700,
+                  padding: '0.45rem 0.75rem',
+                  borderRadius: '8px',
+                  boxShadow: '0 2px 6px rgba(22, 163, 74, 0.3)',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '4px',
+                  fontSize: '0.78rem',
+                  whiteSpace: 'nowrap',
+                  textDecoration: 'none',
+                }}
+                title="Download Official Native Desktop & Mobile Apps"
+              >
+                <span>📲</span>
+                <span>Get Apps</span>
+              </a>
 
               <button
                 type="button"
@@ -2022,15 +2014,16 @@ export function Landing() {
                 </ul>
               </div>
 
-              <button
-                type="button"
-                onClick={promptInstall}
+              <a
+                href={getWhatsAppInquiryUrl('Hello Eclat Support! I would like the iOS TestFlight / Apple installation link for my iPhone.')}
+                target="_blank"
+                rel="noopener noreferrer"
                 className="btn"
-                style={{ background: '#334155', color: '#ffffff', fontWeight: 800, padding: '0.85rem', borderRadius: '12px', textAlign: 'center', border: '1px solid #475569', display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '8px' }}
+                style={{ background: '#334155', color: '#ffffff', fontWeight: 800, padding: '0.85rem', borderRadius: '12px', textAlign: 'center', border: '1px solid #475569', display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '8px', textDecoration: 'none' }}
               >
                 <span>🍎</span>
-                <span>Add to Home Screen (iOS)</span>
-              </button>
+                <span>Get iOS App (TestFlight)</span>
+              </a>
             </div>
           </div>
         </div>

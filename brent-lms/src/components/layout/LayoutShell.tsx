@@ -2,7 +2,6 @@ import { useState } from 'react'
 import { Outlet } from 'react-router-dom'
 import { Navbar } from './Navbar'
 import { Sidebar } from './Sidebar'
-import { PWAInstallBanner } from '@/components/shared/PWAInstallBanner'
 import { OfflineIndicator } from '@/components/shared/OfflineIndicator'
 import { DesktopCommandPalette } from '@/components/shared/DesktopCommandPalette'
 import { ClassBellReminderModal } from '@/components/shared/ClassBellReminderModal'
@@ -15,7 +14,6 @@ export function LayoutShell() {
   return (
     <div className="app-layout">
       <OfflineIndicator />
-      <PWAInstallBanner />
       <DesktopCommandPalette />
       <ClassBellReminderModal />
       <Navbar onToggleSidebar={() => setSidebarOpen(!sidebarOpen)} />

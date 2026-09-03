@@ -6,13 +6,11 @@ import type { Notification } from '@/lib/database.types'
 import { RoleBadge } from '@/components/ui/Badge'
 import { RoleSwitcher } from '@/components/shared/RoleSwitcher'
 import { dispatchSchoolBellAlert } from '@/components/shared/ClassBellReminderModal'
-import { usePWAInstall } from '@/hooks/usePWAInstall'
 import { formatDateTime } from '@/lib/utils'
 
 export function Navbar({ onToggleSidebar }: { onToggleSidebar: () => void }) {
   const { profile, signOut } = useAuth()
   const navigate = useNavigate()
-  const { isInstalled, promptInstall } = usePWAInstall()
 
   const [notifications, setNotifications] = useState<Notification[]>([])
   const [showNotifs, setShowNotifs] = useState(false)
@@ -96,32 +94,26 @@ export function Navbar({ onToggleSidebar }: { onToggleSidebar: () => void }) {
           <span className="hide-on-mobile">School Bell</span>
         </button>
 
-        {/* PWA Install Button in Header */}
-        {!isInstalled && (
-          <button
-            type="button"
-            className="btn btn-sm hide-mobile"
-            style={{
-              background: 'rgba(255, 255, 255, 0.15)',
-              color: '#ffffff',
-              border: '1px solid rgba(255, 255, 255, 0.3)',
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: '0.35rem',
-              fontSize: '0.8rem',
-              fontWeight: 600,
-            }}
-            onClick={promptInstall}
-            title="Install Eclat Institute Web App on Chrome"
-          >
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-              <polyline points="7 10 12 15 17 10" />
-              <line x1="12" y1="15" x2="12" y2="3" />
-            </svg>
-            <span>Install App</span>
-          </button>
-        )}
+        {/* Download Native Apps Link */}
+        <a
+          href="/#app-download"
+          className="btn btn-sm hide-mobile"
+          style={{
+            background: 'rgba(255, 255, 255, 0.15)',
+            color: '#ffffff',
+            border: '1px solid rgba(255, 255, 255, 0.3)',
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: '0.35rem',
+            fontSize: '0.8rem',
+            fontWeight: 600,
+            textDecoration: 'none',
+          }}
+          title="Download Official Native Desktop & Mobile Apps"
+        >
+          <span>📲</span>
+          <span>Get Apps</span>
+        </a>
 
         {/* Direct E-Library Link */}
         <Link
