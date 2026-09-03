@@ -461,7 +461,7 @@ const TESTIMONIALS = [
     name: 'Dr. Marcus Vance',
     role: 'Lead Health Data Scientist at NHS Trust',
     location: 'London, United Kingdom',
-    countryCode: '🇬🇧 UK',
+    countryCode: '🇬🇧 United Kingdom',
     course: 'R Programming & Biostatistics',
     avatar: '📊',
     quote:
@@ -491,25 +491,25 @@ const TESTIMONIALS = [
     rating: 5,
   },
   {
-    name: 'Dr. Amara Okafor',
-    role: 'Senior Epidemiologist & Health Informatics Lead',
-    location: 'Lagos, Nigeria',
-    countryCode: '🇳🇬 Nigeria',
+    name: 'Ethan Miller',
+    role: 'Senior Quantitative Research Lead',
+    location: 'Toronto, Canada',
+    countryCode: '🇨🇦 Canada',
     course: 'IBM SPSS & Stata Econometric Modeling',
     avatar: '📈',
     quote:
-      'The survey coding in SPSS and multi-level panel regressions in Stata were broken down into practical steps by Éclat’s research methodologists. We used these exact techniques to publish our West African disease surveillance study.',
+      'The survey coding in SPSS and multi-level panel regressions in Stata were broken down into practical steps by Éclat’s research methodologists. We used these exact techniques to publish our international health economics study.',
     rating: 5,
   },
   {
-    name: 'Brian Kiprono',
-    role: 'Remote Frontend Developer at FinTech Startup',
-    location: 'Nairobi, Kenya',
-    countryCode: '🇰🇪 Kenya',
+    name: 'Alexander Hayes',
+    role: 'Remote Software Engineer at HealthTech',
+    location: 'Austin, Texas, USA',
+    countryCode: '🇺🇸 United States',
     course: 'Full-Stack JavaScript & React 19',
     avatar: '💻',
     quote:
-      'The 100% online React 19 and Node.js course at Éclat was phenomenal. The live coding labs and mentor code reviews prepared me to build real-world apps. Within 1 month, I landed a remote developer role at a global FinTech!',
+      'The 100% online React 19 and Node.js course at Éclat was phenomenal. The live coding labs and mentor code reviews prepared me to build scalable full-stack applications. Within 1 month, I landed a remote developer role!',
     rating: 5,
   },
   {
@@ -524,10 +524,10 @@ const TESTIMONIALS = [
     rating: 5,
   },
   {
-    name: 'Kwame Mensah',
+    name: 'Liam O’Connor',
     role: 'Cyber Threat Intelligence & SOC Analyst',
-    location: 'Accra, Ghana',
-    countryCode: '🇬🇭 Ghana',
+    location: 'Dublin, Ireland',
+    countryCode: '🇮🇪 Ireland',
     course: 'Cybersecurity & Ethical Hacking',
     avatar: '🛡️',
     quote:
@@ -2742,13 +2742,13 @@ export function Landing() {
       <section id="testimonials" style={{ padding: '5rem 1.5rem', maxWidth: '1240px', margin: '0 auto' }}>
         <div style={{ textAlign: 'center', marginBottom: '3.5rem' }}>
           <span style={{ fontSize: '0.82rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.08em', color: '#2563eb' }}>
-            PROVEN RESULTS
+            🌍 GLOBAL ALUMNI OUTCOMES
           </span>
           <h2 style={{ fontSize: '2.3rem', fontWeight: 900, color: '#0f172a', margin: '0.35rem 0 0.75rem' }}>
-            Real Alumni. Real Career Transformations.
+            International Learners. Global Career Transformations.
           </h2>
-          <p style={{ fontSize: '1.05rem', color: '#1e293b', maxWidth: '650px', margin: '0 auto', fontWeight: 500 }}>
-            See how our practical training model helped students land rewarding jobs and scale their professional careers.
+          <p style={{ fontSize: '1.05rem', color: '#1e293b', maxWidth: '700px', margin: '0 auto', fontWeight: 500 }}>
+            Hear from our global online learners across the UK, Germany, Canada, UAE, USA, France, and Ireland who accelerated their professional careers with Éclat Institute.
           </p>
         </div>
 
