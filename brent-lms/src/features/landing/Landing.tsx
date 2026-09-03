@@ -3828,7 +3828,7 @@ export function Landing() {
                     Install Éclat Apps
                   </h3>
                   <p style={{ fontSize: '0.8rem', color: '#64748b', margin: '2px 0 0', fontWeight: 500 }}>
-                    Study offline with full DRM reader & exam security
+                    Study on your phone, tablet, or PC with video lessons & library
                   </p>
                 </div>
               </div>
@@ -3937,20 +3937,20 @@ export function Landing() {
                 <div style={{ background: '#f0fdf4', border: '1px solid #bbf7d0', borderRadius: '16px', padding: '1.25rem' }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '0.4rem' }}>
                     <span style={{ fontSize: '1.3rem' }}>🤖</span>
-                    <strong style={{ fontSize: '1.02rem', color: '#166534' }}>Official Android Native App (.APK)</strong>
+                    <strong style={{ fontSize: '1.02rem', color: '#166534' }}>Official Android Learning App</strong>
                   </div>
                   <p style={{ fontSize: '0.86rem', color: '#15803d', lineHeight: 1.5, margin: '0 0 1rem' }}>
-                    Full native Android app with hardware screenshot blocking, DRM-protected offline reader, and automatic Over-The-Air (OTA) updates.
+                    Access your enrolled courses, watch interactive video lectures, download lecture notes, and take exams directly on your phone.
                   </p>
 
                   <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.5rem', marginBottom: '1rem' }}>
                     <div style={{ background: '#ffffff', padding: '0.5rem 0.75rem', borderRadius: '8px', border: '1px solid #bbf7d0', fontSize: '0.78rem', color: '#166534', display: 'flex', alignItems: 'center', gap: '6px' }}>
-                      <span>🛡️</span>
-                      <strong>Screenshots Blocked</strong>
+                      <span>📚</span>
+                      <strong>Offline Study & Notes</strong>
                     </div>
                     <div style={{ background: '#ffffff', padding: '0.5rem 0.75rem', borderRadius: '8px', border: '1px solid #bbf7d0', fontSize: '0.78rem', color: '#166534', display: 'flex', alignItems: 'center', gap: '6px' }}>
                       <span>⚡</span>
-                      <strong>Over-The-Air Updates</strong>
+                      <strong>Fast & Lightweight (31 MB)</strong>
                     </div>
                   </div>
 
@@ -3975,20 +3975,20 @@ export function Landing() {
                     <svg width="18" height="18" viewBox="0 0 170 170" fill="#0f172a">
                       <path d="M150.37 130.25c-2.45 5.66-5.35 10.87-8.71 15.66-4.58 6.53-8.33 11.05-11.22 13.56-4.48 4.12-9.28 6.23-14.42 6.35-3.69 0-8.14-1.05-13.32-3.18-5.19-2.12-9.97-3.17-14.34-3.17-4.58 0-9.49 1.05-14.74 3.17-5.26 2.13-9.5 3.24-12.74 3.35-4.35.13-9.16-1.9-14.42-6.08-3.7-3.04-7.59-7.71-11.69-14.01-6.1-9.35-10.88-20.08-14.34-32.22-3.46-12.14-5.19-23.77-5.19-34.91 0-14.47 3.6-26.65 10.8-36.54 7.21-9.89 16.32-14.93 27.34-15.13 4.69 0 10.15 1.25 16.38 3.75 6.23 2.5 10.15 3.8 11.75 3.9 1.43 0 5.48-1.35 12.14-4.05 6.66-2.7 12.14-3.9 16.43-3.6 12.3.6 22.13 5.4 29.5 14.4-10.74 6.5-16.03 15.5-15.86 27 .2 9.4 3.8 17.2 10.8 23.4 4.5 4 9.6 6.8 15.3 8.4-2.2 6.5-4.8 12.8-7.8 18.9zM119.22 31.05c0-7.24 2.66-13.9 7.98-19.98 5.32-6.08 11.83-9.87 19.53-11.37.2 1.3.3 2.5.3 3.6 0 7.1-2.8 13.9-8.4 20.4-5.6 6.5-12.2 10.3-19.8 11.4-.2-1.3-.61-2.65-.61-4.05z"/>
                     </svg>
-                    <strong style={{ fontSize: '1.02rem', color: '#0f172a' }}>Apple iOS Native App (iPhone & iPad)</strong>
+                    <strong style={{ fontSize: '1.02rem', color: '#0f172a' }}>Apple iOS App (iPhone & iPad)</strong>
                   </div>
                   <p style={{ fontSize: '0.86rem', color: '#475569', lineHeight: 1.5, margin: '0 0 1rem' }}>
-                    Native iOS app with anti-cheat examination mode, secure video streaming, and encrypted offline documents.
+                    HD video lectures, interactive class schedule, downloadable assignments, and instant exam notifications on iOS.
                   </p>
 
                   <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.5rem', marginBottom: '1rem' }}>
                     <div style={{ background: '#ffffff', padding: '0.5rem 0.75rem', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '0.78rem', color: '#0f172a', display: 'flex', alignItems: 'center', gap: '6px' }}>
-                      <span>🛡️</span>
-                      <strong>Anti-Cheat Exam Lock</strong>
+                      <span>📱</span>
+                      <strong>iPhone & iPad Optimized</strong>
                     </div>
                     <div style={{ background: '#ffffff', padding: '0.5rem 0.75rem', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '0.78rem', color: '#0f172a', display: 'flex', alignItems: 'center', gap: '6px' }}>
-                      <span>📲</span>
-                      <strong>Apple TestFlight</strong>
+                      <span>🔔</span>
+                      <strong>Live Class Alerts</strong>
                     </div>
                   </div>
 
@@ -4012,20 +4012,20 @@ export function Landing() {
                 <div style={{ background: '#eff6ff', border: '1px solid #bfdbfe', borderRadius: '16px', padding: '1.25rem' }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '0.4rem' }}>
                     <span style={{ fontSize: '1.3rem' }}>💻</span>
-                    <strong style={{ fontSize: '1.02rem', color: '#1e40af' }}>Windows Desktop App (.EXE Setup)</strong>
+                    <strong style={{ fontSize: '1.02rem', color: '#1e40af' }}>Windows Desktop Learning App</strong>
                   </div>
                   <p style={{ fontSize: '0.86rem', color: '#1d4ed8', lineHeight: 1.5, margin: '0 0 1rem' }}>
-                    Official Windows 10 & 11 standalone application with hardware anti-cheat protection, direct printing, and offline reader.
+                    Dedicated learning workstation for Windows 10 & 11 with full-screen lecture viewing, note-taking, and document reading.
                   </p>
 
                   <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.5rem', marginBottom: '1rem' }}>
                     <div style={{ background: '#ffffff', padding: '0.5rem 0.75rem', borderRadius: '8px', border: '1px solid #bfdbfe', fontSize: '0.78rem', color: '#1e40af', display: 'flex', alignItems: 'center', gap: '6px' }}>
-                      <span>🛡️</span>
-                      <strong>Snipping Tool Blocked</strong>
+                      <span>💻</span>
+                      <strong>Desktop Study Hub</strong>
                     </div>
                     <div style={{ background: '#ffffff', padding: '0.5rem 0.75rem', borderRadius: '8px', border: '1px solid #bfdbfe', fontSize: '0.78rem', color: '#1e40af', display: 'flex', alignItems: 'center', gap: '6px' }}>
                       <span>🖨️</span>
-                      <strong>Native Slips & Prints</strong>
+                      <strong>Direct Slips & Prints</strong>
                     </div>
                   </div>
 
