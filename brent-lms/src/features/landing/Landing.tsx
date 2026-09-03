@@ -1831,41 +1831,43 @@ export function Landing() {
         style={{
           background: HERO_PROMO_SLIDES[currentHeroSlide].gradient,
           color: '#ffffff',
-          padding: '2.75rem 1.5rem',
+          padding: isMobile ? '1.5rem 0.85rem' : '2.75rem 1.5rem',
           position: 'relative',
           overflow: 'hidden',
           borderBottom: '1px solid #1e293b',
           transition: 'background 0.7s ease',
+          boxSizing: 'border-box',
+          width: '100%',
         }}
       >
-        <div style={{ maxWidth: '1240px', margin: '0 auto', position: 'relative', zIndex: 2 }}>
+        <div style={{ maxWidth: '1240px', margin: '0 auto', position: 'relative', zIndex: 2, boxSizing: 'border-box', width: '100%' }}>
           {/* Spotlight Header Row */}
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem', marginBottom: '1.5rem' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-              <span style={{ fontSize: '1.25rem' }}>✨</span>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '0.75rem', marginBottom: '1.25rem' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
+              <span style={{ fontSize: '1.15rem' }}>✨</span>
               <div>
-                <div style={{ fontSize: '0.72rem', color: '#94a3b8', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.08em' }}>
+                <div style={{ fontSize: '0.7rem', color: '#94a3b8', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.08em' }}>
                   FEATURED ONLINE PROGRAM SPOTLIGHT
                 </div>
-                <div style={{ fontSize: '1.1rem', fontWeight: 900, color: '#ffffff' }}>
+                <div style={{ fontSize: isMobile ? '0.98rem' : '1.1rem', fontWeight: 900, color: '#ffffff' }}>
                   {HERO_PROMO_SLIDES[currentHeroSlide].category}
                 </div>
               </div>
             </div>
 
             {/* Prev / Next & Indicators */}
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
               <button
                 type="button"
                 onClick={() => setCurrentHeroSlide((prev) => (prev === 0 ? HERO_PROMO_SLIDES.length - 1 : prev - 1))}
                 style={{
-                  width: '34px',
-                  height: '34px',
+                  width: '32px',
+                  height: '32px',
                   borderRadius: '50%',
                   background: 'rgba(255, 255, 255, 0.1)',
                   border: '1px solid rgba(255, 255, 255, 0.2)',
                   color: '#ffffff',
-                  fontSize: '0.9rem',
+                  fontSize: '0.85rem',
                   fontWeight: 800,
                   cursor: 'pointer',
                   display: 'flex',
@@ -1877,15 +1879,15 @@ export function Landing() {
                 ❮
               </button>
 
-              <div style={{ display: 'flex', gap: '5px', padding: '0 6px' }}>
+              <div style={{ display: 'flex', gap: '4px', padding: '0 4px' }}>
                 {HERO_PROMO_SLIDES.map((_, idx) => (
                   <button
                     key={idx}
                     type="button"
                     onClick={() => setCurrentHeroSlide(idx)}
                     style={{
-                      width: currentHeroSlide === idx ? '24px' : '8px',
-                      height: '8px',
+                      width: currentHeroSlide === idx ? '20px' : '7px',
+                      height: '7px',
                       borderRadius: '999px',
                       background: currentHeroSlide === idx ? '#d4af37' : 'rgba(255, 255, 255, 0.25)',
                       border: 'none',
@@ -1902,13 +1904,13 @@ export function Landing() {
                 type="button"
                 onClick={() => setCurrentHeroSlide((prev) => (prev + 1) % HERO_PROMO_SLIDES.length)}
                 style={{
-                  width: '34px',
-                  height: '34px',
+                  width: '32px',
+                  height: '32px',
                   borderRadius: '50%',
                   background: 'rgba(255, 255, 255, 0.1)',
                   border: '1px solid rgba(255, 255, 255, 0.2)',
                   color: '#ffffff',
-                  fontSize: '0.9rem',
+                  fontSize: '0.85rem',
                   fontWeight: 800,
                   cursor: 'pointer',
                   display: 'flex',
@@ -1928,47 +1930,63 @@ export function Landing() {
               background: 'rgba(15, 23, 42, 0.65)',
               backdropFilter: 'blur(16px)',
               border: `1.5px solid ${HERO_PROMO_SLIDES[currentHeroSlide].accentColor}40`,
-              borderRadius: '20px',
-              padding: isMobile ? '1.5rem' : '2rem 2.5rem',
+              borderRadius: isMobile ? '14px' : '20px',
+              padding: isMobile ? '1.25rem 1rem' : '2rem 2.5rem',
               display: 'grid',
               gridTemplateColumns: isMobile ? '1fr' : '1.4fr 0.6fr',
-              gap: '2rem',
+              gap: isMobile ? '1.25rem' : '2rem',
               alignItems: 'center',
               boxShadow: '0 12px 36px rgba(0,0,0,0.3)',
+              boxSizing: 'border-box',
+              maxWidth: '100%',
+              overflow: 'hidden',
             }}
           >
-            <div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', marginBottom: '0.75rem', flexWrap: 'wrap' }}>
+            <div style={{ minWidth: 0, overflow: 'hidden' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.65rem', flexWrap: 'wrap' }}>
                 <span
                   style={{
                     background: HERO_PROMO_SLIDES[currentHeroSlide].badgeBg,
                     color: HERO_PROMO_SLIDES[currentHeroSlide].badgeColor,
                     border: `1px solid ${HERO_PROMO_SLIDES[currentHeroSlide].badgeColor}50`,
                     borderRadius: '999px',
-                    padding: '3px 12px',
-                    fontSize: '0.78rem',
+                    padding: '3px 10px',
+                    fontSize: isMobile ? '0.72rem' : '0.78rem',
                     fontWeight: 800,
+                    maxWidth: '100%',
+                    wordBreak: 'break-word',
                   }}
                 >
                   {HERO_PROMO_SLIDES[currentHeroSlide].badge}
                 </span>
-                <span style={{ fontSize: '0.78rem', color: '#94a3b8', fontWeight: 600 }}>
-                  🟢 Live Online Cohort Enrolling Now
+                <span style={{ fontSize: '0.72rem', color: '#94a3b8', fontWeight: 600 }}>
+                  🟢 Live Cohort Enrolling
                 </span>
               </div>
 
-              <h2 style={{ fontSize: isMobile ? '1.4rem' : '1.85rem', fontWeight: 900, margin: '0 0 0.65rem', color: '#ffffff', lineHeight: 1.25 }}>
+              <h2
+                style={{
+                  fontSize: isMobile ? 'clamp(1.1rem, 4.8vw, 1.35rem)' : '1.85rem',
+                  fontWeight: 900,
+                  margin: '0 0 0.65rem',
+                  color: '#ffffff',
+                  lineHeight: 1.25,
+                  wordBreak: 'break-word',
+                  overflowWrap: 'break-word',
+                  maxWidth: '100%',
+                }}
+              >
                 {HERO_PROMO_SLIDES[currentHeroSlide].headline}: <br />
-                <span style={{ color: HERO_PROMO_SLIDES[currentHeroSlide].accentColor }}>
+                <span style={{ color: HERO_PROMO_SLIDES[currentHeroSlide].accentColor, wordBreak: 'break-word' }}>
                   {HERO_PROMO_SLIDES[currentHeroSlide].highlight}
                 </span>
               </h2>
 
-              <p style={{ fontSize: '0.94rem', color: '#cbd5e1', lineHeight: 1.6, margin: '0 0 1.25rem', maxWidth: '680px' }}>
+              <p style={{ fontSize: isMobile ? '0.86rem' : '0.94rem', color: '#cbd5e1', lineHeight: 1.55, margin: '0 0 1.1rem', maxWidth: '680px', wordBreak: 'break-word' }}>
                 {HERO_PROMO_SLIDES[currentHeroSlide].description}
               </p>
 
-              <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
+              <div style={{ display: 'flex', gap: '0.4rem', flexWrap: 'wrap', maxWidth: '100%' }}>
                 {HERO_PROMO_SLIDES[currentHeroSlide].features.map((feat, idx) => (
                   <span
                     key={idx}
@@ -1976,10 +1994,12 @@ export function Landing() {
                       background: 'rgba(255, 255, 255, 0.08)',
                       border: '1px solid rgba(255, 255, 255, 0.12)',
                       borderRadius: '6px',
-                      padding: '3px 9px',
-                      fontSize: '0.76rem',
+                      padding: '3px 8px',
+                      fontSize: '0.74rem',
                       fontWeight: 700,
                       color: '#f8fafc',
+                      whiteSpace: 'normal',
+                      wordBreak: 'break-word',
                     }}
                   >
                     ✓ {feat}
@@ -1989,13 +2009,13 @@ export function Landing() {
             </div>
 
             {/* Right Quick Jump & Action */}
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.85rem', justifyContent: 'center' }}>
-              <div style={{ background: 'rgba(255, 255, 255, 0.05)', padding: '1rem', borderRadius: '12px', border: '1px solid rgba(255, 255, 255, 0.1)' }}>
-                <div style={{ fontSize: '0.72rem', color: '#94a3b8', fontWeight: 700, textTransform: 'uppercase' }}>Academic Department</div>
-                <div style={{ fontSize: '1rem', fontWeight: 800, color: '#ffffff', marginTop: '2px' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', justifyContent: 'center', minWidth: 0 }}>
+              <div style={{ background: 'rgba(255, 255, 255, 0.05)', padding: isMobile ? '0.75rem' : '1rem', borderRadius: '12px', border: '1px solid rgba(255, 255, 255, 0.1)' }}>
+                <div style={{ fontSize: '0.7rem', color: '#94a3b8', fontWeight: 700, textTransform: 'uppercase' }}>Academic Department</div>
+                <div style={{ fontSize: isMobile ? '0.92rem' : '1rem', fontWeight: 800, color: '#ffffff', marginTop: '2px' }}>
                   {HERO_PROMO_SLIDES[currentHeroSlide].category}
                 </div>
-                <div style={{ fontSize: '0.76rem', color: '#d4af37', fontWeight: 700, marginTop: '4px' }}>
+                <div style={{ fontSize: '0.74rem', color: '#d4af37', fontWeight: 700, marginTop: '3px' }}>
                   ⭐ {HERO_PROMO_SLIDES[currentHeroSlide].metricNumber} {HERO_PROMO_SLIDES[currentHeroSlide].metricLabel}
                 </div>
               </div>
@@ -2012,8 +2032,8 @@ export function Landing() {
                   background: '#d4af37',
                   color: '#0c0e12',
                   fontWeight: 900,
-                  fontSize: '0.92rem',
-                  padding: '0.8rem 1.25rem',
+                  fontSize: isMobile ? '0.86rem' : '0.92rem',
+                  padding: isMobile ? '0.75rem 1rem' : '0.8rem 1.25rem',
                   borderRadius: '10px',
                   border: 'none',
                   cursor: 'pointer',
@@ -2022,6 +2042,10 @@ export function Landing() {
                   alignItems: 'center',
                   justifyContent: 'center',
                   gap: '8px',
+                  width: '100%',
+                  textAlign: 'center',
+                  whiteSpace: 'normal',
+                  wordBreak: 'break-word',
                 }}
               >
                 <span>🚀 {HERO_PROMO_SLIDES[currentHeroSlide].primaryCtaText}</span>
