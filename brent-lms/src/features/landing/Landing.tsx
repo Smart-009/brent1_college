@@ -1,6 +1,7 @@
 import { useState, useMemo, useEffect } from 'react'
 import { Link, useNavigate, useLocation } from 'react-router-dom'
 import { useIsMobile } from '@/hooks/useMediaQuery'
+import { usePWAInstall } from '@/hooks/usePWAInstall'
 import { DesktopCommandPalette } from '@/components/shared/DesktopCommandPalette'
 import { supabase } from '@/lib/supabase'
 import { schoolStore } from '@/lib/schoolData'
@@ -714,6 +715,10 @@ export function Landing() {
   const isMobile = useIsMobile(768)
   const location = useLocation()
   const navigate = useNavigate()
+
+  const { isInstallable, isInstalled, isIOS, promptInstall } = usePWAInstall()
+  const [appModalOpen, setAppModalOpen] = useState(false)
+  const [appModalTab, setAppModalTab] = useState<'android' | 'ios' | 'windows'>('android')
 
   const [activeCategory, setActiveCategory] = useState<string>('All')
   const [searchQuery, setSearchQuery] = useState<string>('')
@@ -1446,8 +1451,8 @@ export function Landing() {
                   <a href="#about" style={{ color: '#334155', textDecoration: 'none' }}>About Us</a>
                 </nav>
 
-                <a
-                  href="#app-download"
+                <button
+                  type="button"
                   className="btn btn-sm"
                   style={{
                     background: '#16a34a',
@@ -1461,14 +1466,18 @@ export function Landing() {
                     gap: '4px',
                     fontSize: '0.78rem',
                     whiteSpace: 'nowrap',
-                    textDecoration: 'none',
+                    cursor: 'pointer',
                     display: 'inline-flex',
                   }}
-                  title="Download Official Native Desktop & Mobile Apps"
+                  onClick={() => {
+                    setAppModalTab('windows')
+                    setAppModalOpen(true)
+                  }}
+                  title="Install & Download Official Native Apps"
                 >
                   <span>📲</span>
                   <span>Get Apps</span>
-                </a>
+                </button>
 
                 <button
                   type="button"
@@ -1657,14 +1666,18 @@ export function Landing() {
                 <span>Student Reviews & Outcomes</span>
               </a>
 
-              <a
-                href="#app-download"
-                onClick={() => setMobileNavOpen(false)}
-                style={{ color: '#16a34a', fontWeight: 800, textDecoration: 'none', padding: '0.6rem 0.75rem', borderRadius: '8px', display: 'flex', alignItems: 'center', gap: '10px' }}
+              <button
+                type="button"
+                onClick={() => {
+                  setAppModalTab(isIOS ? 'ios' : 'android')
+                  setAppModalOpen(true)
+                  setMobileNavOpen(false)
+                }}
+                style={{ width: '100%', textAlign: 'left', background: '#f0fdf4', color: '#15803d', border: '1px solid #bbf7d0', padding: '0.65rem 0.75rem', borderRadius: '8px', display: 'flex', alignItems: 'center', gap: '10px', fontWeight: 800, cursor: 'pointer', fontSize: '0.92rem' }}
               >
                 <span style={{ fontSize: '1.1rem' }}>📲</span>
-                <span>Download Desktop (.EXE) & Android (.APK) Apps</span>
-              </a>
+                <span>Install & Download Native Apps</span>
+              </button>
 
               <div style={{ paddingTop: '0.75rem', display: 'flex', flexDirection: 'column', gap: '0.65rem' }}>
                 <a
@@ -2883,16 +2896,18 @@ export function Landing() {
                 </ul>
               </div>
 
-              <a
-                href="https://github.com/Smart-009/brent1_college/releases/download/latest/Eclat-Institute-Setup.exe"
-                target="_blank"
-                rel="noopener noreferrer"
+              <button
+                type="button"
+                onClick={() => {
+                  setAppModalTab('windows')
+                  setAppModalOpen(true)
+                }}
                 className="btn btn-primary"
-                style={{ fontWeight: 800, padding: '0.85rem', borderRadius: '12px', textAlign: 'center', textDecoration: 'none', display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '8px', boxShadow: '0 4px 14px rgba(37, 99, 235, 0.4)' }}
+                style={{ fontWeight: 800, padding: '0.85rem', borderRadius: '12px', textAlign: 'center', cursor: 'pointer', display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '8px', boxShadow: '0 4px 14px rgba(37, 99, 235, 0.4)' }}
               >
                 <span>💻</span>
-                <span>Download Windows App (.EXE)</span>
-              </a>
+                <span>Install & Download Windows App</span>
+              </button>
             </div>
 
             {/* Android Mobile App Card */}
@@ -2915,16 +2930,18 @@ export function Landing() {
                 </ul>
               </div>
 
-              <a
-                href="https://github.com/Smart-009/brent1_college/releases/download/latest/eclat-institute.apk"
-                target="_blank"
-                rel="noopener noreferrer"
+              <button
+                type="button"
+                onClick={() => {
+                  setAppModalTab('android')
+                  setAppModalOpen(true)
+                }}
                 className="btn"
-                style={{ background: '#16a34a', color: '#ffffff', fontWeight: 800, padding: '0.85rem', borderRadius: '12px', textAlign: 'center', textDecoration: 'none', display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '8px', boxShadow: '0 4px 14px rgba(22, 163, 74, 0.4)' }}
+                style={{ background: '#16a34a', color: '#ffffff', fontWeight: 800, padding: '0.85rem', borderRadius: '12px', textAlign: 'center', cursor: 'pointer', display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '8px', boxShadow: '0 4px 14px rgba(22, 163, 74, 0.4)' }}
               >
                 <span>🤖</span>
-                <span>Download Android APK (Direct)</span>
-              </a>
+                <span>Install & Download Android App</span>
+              </button>
             </div>
 
             {/* iOS Apple App Card */}
@@ -2949,18 +2966,20 @@ export function Landing() {
                 </ul>
               </div>
 
-              <a
-                href={getWhatsAppInquiryUrl('Hello Eclat Support! I would like the iOS TestFlight / Apple installation link for my iPhone.')}
-                target="_blank"
-                rel="noopener noreferrer"
+              <button
+                type="button"
+                onClick={() => {
+                  setAppModalTab('ios')
+                  setAppModalOpen(true)
+                }}
                 className="btn"
-                style={{ background: '#1e293b', color: '#ffffff', fontWeight: 800, padding: '0.85rem', borderRadius: '12px', textAlign: 'center', border: '1px solid #475569', display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '8px', textDecoration: 'none' }}
+                style={{ background: '#1e293b', color: '#ffffff', fontWeight: 800, padding: '0.85rem', borderRadius: '12px', textAlign: 'center', border: '1px solid #475569', display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '8px', cursor: 'pointer' }}
               >
                 <svg width="18" height="18" viewBox="0 0 170 170" fill="currentColor" aria-label="Apple Logo" style={{ display: 'inline-block' }}>
                   <path d="M150.37 130.25c-2.45 5.66-5.35 10.87-8.71 15.66-4.58 6.53-8.33 11.05-11.22 13.56-4.48 4.12-9.28 6.23-14.42 6.35-3.69 0-8.14-1.05-13.32-3.18-5.19-2.12-9.97-3.17-14.34-3.17-4.58 0-9.49 1.05-14.74 3.17-5.26 2.13-9.5 3.24-12.74 3.35-4.35.13-9.16-1.9-14.42-6.08-3.7-3.04-7.59-7.71-11.69-14.01-6.1-9.35-10.88-20.08-14.34-32.22-3.46-12.14-5.19-23.77-5.19-34.91 0-14.47 3.6-26.65 10.8-36.54 7.21-9.89 16.32-14.93 27.34-15.13 4.69 0 10.15 1.25 16.38 3.75 6.23 2.5 10.15 3.8 11.75 3.9 1.43 0 5.48-1.35 12.14-4.05 6.66-2.7 12.14-3.9 16.43-3.6 12.3.6 22.13 5.4 29.5 14.4-10.74 6.5-16.03 15.5-15.86 27 .2 9.4 3.8 17.2 10.8 23.4 4.5 4 9.6 6.8 15.3 8.4-2.2 6.5-4.8 12.8-7.8 18.9zM119.22 31.05c0-7.24 2.66-13.9 7.98-19.98 5.32-6.08 11.83-9.87 19.53-11.37.2 1.3.3 2.5.3 3.6 0 7.1-2.8 13.9-8.4 20.4-5.6 6.5-12.2 10.3-19.8 11.4-.2-1.3-.61-2.65-.61-4.05z"/>
                 </svg>
-                <span>Get iOS App (TestFlight)</span>
-              </a>
+                <span>Install on iPhone & iPad</span>
+              </button>
             </div>
           </div>
         </div>
@@ -3771,7 +3790,253 @@ export function Landing() {
         </div>
       )}
 
-      {/* 2. College Portals & Management Desks Modal */}
+      {/* 2. Official Multi-Platform App Download & Installation Center Modal */}
+      {appModalOpen && (
+        <div className="modal-overlay" onClick={() => setAppModalOpen(false)}>
+          <div className="modal-content modal-lg" onClick={(e) => e.stopPropagation()} style={{ padding: '2rem 1.75rem', borderRadius: '20px', maxWidth: '640px' }}>
+            <div className="modal-header" style={{ padding: 0, paddingBottom: '1rem', marginBottom: '1.25rem', borderBottom: '1px solid #e2e8f0', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
+                <img src="/logo.png" alt="Éclat" style={{ width: '38px', height: '38px', borderRadius: '50%' }} />
+                <div>
+                  <h3 className="modal-title" style={{ fontSize: '1.25rem', fontWeight: 900, color: '#0f172a', margin: 0 }}>
+                    Install Éclat Institute Apps
+                  </h3>
+                  <p style={{ fontSize: '0.8rem', color: '#64748b', margin: 0 }}>
+                    Offline E-Library, anti-cheat examinations & live lecture classrooms
+                  </p>
+                </div>
+              </div>
+              <button type="button" className="modal-close" onClick={() => setAppModalOpen(false)}>✕</button>
+            </div>
+
+            {/* Platform Selector Tabs */}
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '0.5rem', marginBottom: '1.5rem', background: '#f1f5f9', padding: '0.35rem', borderRadius: '12px' }}>
+              <button
+                type="button"
+                onClick={() => setAppModalTab('android')}
+                style={{
+                  padding: '0.6rem 0.5rem',
+                  borderRadius: '9px',
+                  border: 'none',
+                  fontWeight: appModalTab === 'android' ? 800 : 600,
+                  fontSize: '0.85rem',
+                  background: appModalTab === 'android' ? '#ffffff' : 'transparent',
+                  color: appModalTab === 'android' ? '#15803d' : '#475569',
+                  boxShadow: appModalTab === 'android' ? '0 2px 6px rgba(0,0,0,0.08)' : 'none',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '6px',
+                }}
+              >
+                <span>🤖</span>
+                <span>Android</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setAppModalTab('ios')}
+                style={{
+                  padding: '0.6rem 0.5rem',
+                  borderRadius: '9px',
+                  border: 'none',
+                  fontWeight: appModalTab === 'ios' ? 800 : 600,
+                  fontSize: '0.85rem',
+                  background: appModalTab === 'ios' ? '#ffffff' : 'transparent',
+                  color: appModalTab === 'ios' ? '#0f172a' : '#475569',
+                  boxShadow: appModalTab === 'ios' ? '0 2px 6px rgba(0,0,0,0.08)' : 'none',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '6px',
+                }}
+              >
+                <svg width="14" height="14" viewBox="0 0 170 170" fill="currentColor" style={{ display: 'inline-block' }}>
+                  <path d="M150.37 130.25c-2.45 5.66-5.35 10.87-8.71 15.66-4.58 6.53-8.33 11.05-11.22 13.56-4.48 4.12-9.28 6.23-14.42 6.35-3.69 0-8.14-1.05-13.32-3.18-5.19-2.12-9.97-3.17-14.34-3.17-4.58 0-9.49 1.05-14.74 3.17-5.26 2.13-9.5 3.24-12.74 3.35-4.35.13-9.16-1.9-14.42-6.08-3.7-3.04-7.59-7.71-11.69-14.01-6.1-9.35-10.88-20.08-14.34-32.22-3.46-12.14-5.19-23.77-5.19-34.91 0-14.47 3.6-26.65 10.8-36.54 7.21-9.89 16.32-14.93 27.34-15.13 4.69 0 10.15 1.25 16.38 3.75 6.23 2.5 10.15 3.8 11.75 3.9 1.43 0 5.48-1.35 12.14-4.05 6.66-2.7 12.14-3.9 16.43-3.6 12.3.6 22.13 5.4 29.5 14.4-10.74 6.5-16.03 15.5-15.86 27 .2 9.4 3.8 17.2 10.8 23.4 4.5 4 9.6 6.8 15.3 8.4-2.2 6.5-4.8 12.8-7.8 18.9zM119.22 31.05c0-7.24 2.66-13.9 7.98-19.98 5.32-6.08 11.83-9.87 19.53-11.37.2 1.3.3 2.5.3 3.6 0 7.1-2.8 13.9-8.4 20.4-5.6 6.5-12.2 10.3-19.8 11.4-.2-1.3-.61-2.65-.61-4.05z"/>
+                </svg>
+                <span>iPhone / iPad</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setAppModalTab('windows')}
+                style={{
+                  padding: '0.6rem 0.5rem',
+                  borderRadius: '9px',
+                  border: 'none',
+                  fontWeight: appModalTab === 'windows' ? 800 : 600,
+                  fontSize: '0.85rem',
+                  background: appModalTab === 'windows' ? '#ffffff' : 'transparent',
+                  color: appModalTab === 'windows' ? '#1d4ed8' : '#475569',
+                  boxShadow: appModalTab === 'windows' ? '0 2px 6px rgba(0,0,0,0.08)' : 'none',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '6px',
+                }}
+              >
+                <span>💻</span>
+                <span>Windows PC</span>
+              </button>
+            </div>
+
+            {/* TAB CONTENT: ANDROID */}
+            {appModalTab === 'android' && (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                <div style={{ background: '#f0fdf4', border: '1px solid #bbf7d0', borderRadius: '14px', padding: '1.25rem' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '0.4rem' }}>
+                    <span style={{ fontSize: '1.3rem' }}>⚡</span>
+                    <strong style={{ fontSize: '1rem', color: '#166534' }}>Method 1: Instant 1-Tap App Install (Recommended)</strong>
+                  </div>
+                  <p style={{ fontSize: '0.86rem', color: '#15803d', lineHeight: 1.5, margin: '0 0 1rem' }}>
+                    Installs Éclat directly into your app drawer with offline support, 0 storage waste, and automatic updates. No file downloads or security warnings.
+                  </p>
+                  <button
+                    type="button"
+                    onClick={async () => {
+                      const res = await promptInstall()
+                      if (!res) {
+                        setToastMessage('Tap the three dots (⋮) in your browser and select "Install app" or "Add to Home Screen".')
+                      }
+                    }}
+                    className="btn"
+                    style={{ width: '100%', background: '#16a34a', color: '#ffffff', fontWeight: 800, padding: '0.75rem', borderRadius: '10px', fontSize: '0.92rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', boxShadow: '0 4px 12px rgba(22, 163, 74, 0.3)', cursor: 'pointer', border: 'none' }}
+                  >
+                    <span>⚡</span>
+                    <span>1-Tap Install on This Device</span>
+                  </button>
+                </div>
+
+                <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '14px', padding: '1.25rem' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '0.4rem' }}>
+                    <span style={{ fontSize: '1.3rem' }}>📦</span>
+                    <strong style={{ fontSize: '1rem', color: '#0f172a' }}>Method 2: Standalone Android APK Package</strong>
+                  </div>
+                  <p style={{ fontSize: '0.86rem', color: '#64748b', lineHeight: 1.5, margin: '0 0 1rem' }}>
+                    Standard offline APK package for manual installation and sideloading.
+                  </p>
+                  <a
+                    href="https://github.com/Smart-009/brent1_college/releases/download/latest/eclat-institute.apk"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="btn"
+                    style={{ width: '100%', background: '#0f172a', color: '#ffffff', fontWeight: 800, padding: '0.75rem', borderRadius: '10px', fontSize: '0.92rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', textDecoration: 'none' }}
+                  >
+                    <span>📥</span>
+                    <span>Download APK File (eclat-institute.apk)</span>
+                  </a>
+                  <div style={{ marginTop: '0.75rem', fontSize: '0.78rem', color: '#94a3b8', textAlign: 'center' }}>
+                    💡 Tip: When the download finishes, tap <strong>Open</strong> ➔ tap <strong>Install</strong>.
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* TAB CONTENT: IOS (IPHONE & IPAD) */}
+            {appModalTab === 'ios' && (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                <div style={{ background: '#f8fafc', border: '1px solid #cbd5e1', borderRadius: '14px', padding: '1.25rem' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '0.5rem' }}>
+                    <span style={{ fontSize: '1.3rem' }}>📲</span>
+                    <strong style={{ fontSize: '1.05rem', color: '#0f172a' }}>Install on iPhone / iPad (2 Quick Steps)</strong>
+                  </div>
+                  <p style={{ fontSize: '0.86rem', color: '#475569', lineHeight: 1.5, margin: '0 0 1rem' }}>
+                    Apple allows you to run Éclat Institute as a full native app without the App Store:
+                  </p>
+
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', marginBottom: '1.25rem' }}>
+                    <div style={{ display: 'flex', alignItems: 'flex-start', gap: '12px', background: '#ffffff', padding: '0.75rem 1rem', borderRadius: '10px', border: '1px solid #e2e8f0' }}>
+                      <span style={{ width: '24px', height: '24px', borderRadius: '50%', background: '#0f172a', color: '#ffffff', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.78rem', fontWeight: 800, flexShrink: 0 }}>1</span>
+                      <div style={{ fontSize: '0.88rem', color: '#1e293b' }}>
+                        In <strong>Safari</strong> on your iPhone or iPad, tap the <strong>Share</strong> button <span style={{ display: 'inline-block', background: '#f1f5f9', padding: '2px 6px', borderRadius: '4px', fontWeight: 700 }}>[↑]</span> at the bottom bar.
+                      </div>
+                    </div>
+
+                    <div style={{ display: 'flex', alignItems: 'flex-start', gap: '12px', background: '#ffffff', padding: '0.75rem 1rem', borderRadius: '10px', border: '1px solid #e2e8f0' }}>
+                      <span style={{ width: '24px', height: '24px', borderRadius: '50%', background: '#0f172a', color: '#ffffff', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.78rem', fontWeight: 800, flexShrink: 0 }}>2</span>
+                      <div style={{ fontSize: '0.88rem', color: '#1e293b' }}>
+                        Scroll down and tap <strong>"Add to Home Screen"</strong> <span style={{ display: 'inline-block', background: '#f1f5f9', padding: '2px 6px', borderRadius: '4px', fontWeight: 700 }}>[+]</span>.
+                      </div>
+                    </div>
+
+                    <div style={{ display: 'flex', alignItems: 'flex-start', gap: '12px', background: '#ffffff', padding: '0.75rem 1rem', borderRadius: '10px', border: '1px solid #e2e8f0' }}>
+                      <span style={{ width: '24px', height: '24px', borderRadius: '50%', background: '#16a34a', color: '#ffffff', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.78rem', fontWeight: 800, flexShrink: 0 }}>✓</span>
+                      <div style={{ fontSize: '0.88rem', color: '#1e293b' }}>
+                        Tap <strong>"Add"</strong> in the top right. The Éclat emblem will appear immediately on your home screen!
+                      </div>
+                    </div>
+                  </div>
+
+                  <a
+                    href={getWhatsAppInquiryUrl('Hello Eclat Admissions! I would like TestFlight installation guidance for my Apple device.')}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="btn"
+                    style={{ width: '100%', background: '#2563eb', color: '#ffffff', fontWeight: 700, padding: '0.75rem', borderRadius: '10px', fontSize: '0.88rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', textDecoration: 'none' }}
+                  >
+                    <span>💬</span>
+                    <span>Need Apple TestFlight Assistance? Chat with Us</span>
+                  </a>
+                </div>
+              </div>
+            )}
+
+            {/* TAB CONTENT: WINDOWS PC */}
+            {appModalTab === 'windows' && (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                <div style={{ background: '#eff6ff', border: '1px solid #bfdbfe', borderRadius: '14px', padding: '1.25rem' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '0.4rem' }}>
+                    <span style={{ fontSize: '1.3rem' }}>⚡</span>
+                    <strong style={{ fontSize: '1rem', color: '#1e40af' }}>Method 1: Instant Chrome / Edge Desktop App</strong>
+                  </div>
+                  <p style={{ fontSize: '0.86rem', color: '#1d4ed8', lineHeight: 1.5, margin: '0 0 1rem' }}>
+                    Runs in dedicated standalone window mode without browser tabs, pinned to your Windows taskbar & start menu.
+                  </p>
+                  <button
+                    type="button"
+                    onClick={async () => {
+                      const res = await promptInstall()
+                      if (!res) {
+                        setToastMessage('In Chrome/Edge, click the install icon in the URL bar (top right) or press (⋮) ➔ Install.')
+                      }
+                    }}
+                    className="btn btn-primary"
+                    style={{ width: '100%', fontWeight: 800, padding: '0.75rem', borderRadius: '10px', fontSize: '0.92rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', boxShadow: '0 4px 12px rgba(37, 99, 235, 0.3)', cursor: 'pointer', border: 'none' }}
+                  >
+                    <span>⚡</span>
+                    <span>1-Click Install to Windows Taskbar</span>
+                  </button>
+                </div>
+
+                <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '14px', padding: '1.25rem' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '0.4rem' }}>
+                    <span style={{ fontSize: '1.3rem' }}>💻</span>
+                    <strong style={{ fontSize: '1rem', color: '#0f172a' }}>Method 2: Standalone Windows .EXE Installer</strong>
+                  </div>
+                  <p style={{ fontSize: '0.86rem', color: '#64748b', lineHeight: 1.5, margin: '0 0 1rem' }}>
+                    Standard Windows desktop installer with hardware anti-cheat & offline reader.
+                  </p>
+                  <a
+                    href="https://github.com/Smart-009/brent1_college/releases/download/latest/Eclat-Institute-Setup.exe"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="btn"
+                    style={{ width: '100%', background: '#0f172a', color: '#ffffff', fontWeight: 800, padding: '0.75rem', borderRadius: '10px', fontSize: '0.92rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', textDecoration: 'none' }}
+                  >
+                    <span>📥</span>
+                    <span>Download Windows Installer (Setup.exe)</span>
+                  </a>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* 3. College Portals & Management Desks Modal */}
       {showPortalDesksModal && (
         <div className="modal-overlay" onClick={() => setShowPortalDesksModal(false)}>
           <div className="modal-content modal-md" onClick={(e) => e.stopPropagation()} style={{ padding: '1.75rem', borderRadius: '16px' }}>
