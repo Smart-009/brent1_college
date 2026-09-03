@@ -3768,24 +3768,27 @@ export function Landing() {
             className="modal-content"
             onClick={(e) => e.stopPropagation()}
             style={{
-              padding: isMobile ? '1.5rem 1.25rem' : '2rem 1.75rem',
+              padding: isMobile ? '1.5rem 1.25rem' : '1.85rem 1.75rem',
               borderRadius: '24px',
-              maxWidth: '560px',
-              width: '94vw',
-              maxHeight: '88vh',
+              maxWidth: '540px',
+              width: '92vw',
+              maxHeight: '90vh',
               overflowY: 'auto',
               background: '#ffffff',
-              boxShadow: '0 25px 50px -12px rgba(15, 23, 42, 0.35)',
+              boxShadow: '0 25px 60px -15px rgba(15, 23, 42, 0.4)',
+              border: '1px solid rgba(226, 232, 240, 0.8)',
               position: 'relative',
               animation: 'fadeIn 0.2s ease',
             }}
           >
             {/* Modal Header */}
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', paddingBottom: '1rem', marginBottom: '1.25rem', borderBottom: '1px solid #e2e8f0' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                <img src="/logo.png" alt="Éclat Emblem" style={{ width: '42px', height: '42px', borderRadius: '50%', boxShadow: '0 2px 8px rgba(0,0,0,0.1)' }} />
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingBottom: '1rem', marginBottom: '1.25rem', borderBottom: '1px solid #f1f5f9' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.85rem' }}>
+                <div style={{ width: '44px', height: '44px', borderRadius: '12px', background: 'linear-gradient(135deg, #1e3a8a 0%, #0f172a 100%)', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 4px 12px rgba(30, 58, 138, 0.25)', flexShrink: 0 }}>
+                  <img src="/logo.png" alt="Éclat Emblem" style={{ width: '32px', height: '32px', borderRadius: '50%' }} />
+                </div>
                 <div>
-                  <h3 style={{ fontSize: isMobile ? '1.15rem' : '1.3rem', fontWeight: 900, color: '#0f172a', margin: 0, fontFamily: 'var(--font-heading)' }}>
+                  <h3 style={{ fontSize: isMobile ? '1.15rem' : '1.25rem', fontWeight: 900, color: '#0f172a', margin: 0, fontFamily: 'var(--font-heading)', letterSpacing: '-0.02em' }}>
                     Install Éclat Apps
                   </h3>
                   <p style={{ fontSize: '0.8rem', color: '#64748b', margin: '2px 0 0', fontWeight: 500 }}>
@@ -3797,11 +3800,11 @@ export function Landing() {
                 type="button"
                 onClick={() => setAppModalOpen(false)}
                 style={{
-                  width: '32px',
-                  height: '32px',
+                  width: '34px',
+                  height: '34px',
                   borderRadius: '50%',
-                  background: '#f1f5f9',
-                  border: 'none',
+                  background: '#f8fafc',
+                  border: '1px solid #e2e8f0',
                   fontSize: '0.9rem',
                   fontWeight: 800,
                   color: '#64748b',
@@ -3809,6 +3812,7 @@ export function Landing() {
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
+                  transition: 'all 0.15s ease',
                 }}
               >
                 ✕
@@ -3816,28 +3820,28 @@ export function Landing() {
             </div>
 
             {/* Platform Segmented Switcher (Native Platforms) */}
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.35rem', marginBottom: '1.25rem', background: '#f1f5f9', padding: '0.35rem', borderRadius: '14px' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.4rem', marginBottom: '1.25rem', background: '#f1f5f9', padding: '0.35rem', borderRadius: '14px' }}>
               <button
                 type="button"
                 onClick={() => setAppModalTab('android')}
                 style={{
-                  padding: '0.65rem 0.5rem',
+                  padding: '0.7rem 0.5rem',
                   borderRadius: '10px',
                   border: 'none',
                   fontWeight: appModalTab === 'android' ? 800 : 600,
-                  fontSize: '0.86rem',
+                  fontSize: '0.88rem',
                   background: appModalTab === 'android' ? '#ffffff' : 'transparent',
-                  color: appModalTab === 'android' ? '#15803d' : '#64748b',
-                  boxShadow: appModalTab === 'android' ? '0 2px 8px rgba(0,0,0,0.08)' : 'none',
+                  color: appModalTab === 'android' ? '#166534' : '#64748b',
+                  boxShadow: appModalTab === 'android' ? '0 2px 10px rgba(0,0,0,0.08)' : 'none',
                   cursor: 'pointer',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  gap: '6px',
+                  gap: '8px',
                   transition: 'all 0.15s ease',
                 }}
               >
-                <span>🤖</span>
+                <span style={{ fontSize: '1.1rem' }}>🤖</span>
                 <span>Android (.APK)</span>
               </button>
 
@@ -3845,23 +3849,23 @@ export function Landing() {
                 type="button"
                 onClick={() => setAppModalTab('windows')}
                 style={{
-                  padding: '0.65rem 0.5rem',
+                  padding: '0.7rem 0.5rem',
                   borderRadius: '10px',
                   border: 'none',
                   fontWeight: appModalTab === 'windows' ? 800 : 600,
-                  fontSize: '0.86rem',
+                  fontSize: '0.88rem',
                   background: appModalTab === 'windows' ? '#ffffff' : 'transparent',
-                  color: appModalTab === 'windows' ? '#1d4ed8' : '#64748b',
-                  boxShadow: appModalTab === 'windows' ? '0 2px 8px rgba(0,0,0,0.08)' : 'none',
+                  color: appModalTab === 'windows' ? '#1e40af' : '#64748b',
+                  boxShadow: appModalTab === 'windows' ? '0 2px 10px rgba(0,0,0,0.08)' : 'none',
                   cursor: 'pointer',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  gap: '6px',
+                  gap: '8px',
                   transition: 'all 0.15s ease',
                 }}
               >
-                <span>💻</span>
+                <span style={{ fontSize: '1.1rem' }}>💻</span>
                 <span>Windows PC (.EXE)</span>
               </button>
             </div>
@@ -3869,35 +3873,61 @@ export function Landing() {
             {/* TAB CONTENT: ANDROID */}
             {appModalTab === 'android' && (
               <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-                <div style={{ background: '#f0fdf4', border: '1px solid #bbf7d0', borderRadius: '16px', padding: '1.25rem' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '0.4rem' }}>
-                    <span style={{ fontSize: '1.3rem' }}>🤖</span>
-                    <strong style={{ fontSize: '1.02rem', color: '#166534' }}>Official Android Learning App</strong>
+                <div style={{ background: '#f0fdf4', border: '1px solid #bbf7d0', borderRadius: '18px', padding: '1.35rem' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                      <span style={{ fontSize: '1.4rem' }}>🤖</span>
+                      <strong style={{ fontSize: '1.05rem', color: '#166534' }}>Official Android Learning App</strong>
+                    </div>
+                    <span style={{ fontSize: '0.72rem', fontWeight: 800, color: '#15803d', background: '#dcfce7', padding: '0.2rem 0.55rem', borderRadius: '20px', border: '1px solid #86efac' }}>
+                      v1.0.0 • 31 MB
+                    </span>
                   </div>
-                  <p style={{ fontSize: '0.86rem', color: '#15803d', lineHeight: 1.5, margin: '0 0 1rem' }}>
+                  <p style={{ fontSize: '0.86rem', color: '#15803d', lineHeight: 1.55, margin: '0 0 1rem', fontWeight: 500 }}>
                     Access your enrolled courses, watch interactive video lectures, download lecture notes, and take exams directly on your phone.
                   </p>
 
-                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.5rem', marginBottom: '1rem' }}>
-                    <div style={{ background: '#ffffff', padding: '0.5rem 0.75rem', borderRadius: '8px', border: '1px solid #bbf7d0', fontSize: '0.78rem', color: '#166534', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.5rem', marginBottom: '1.15rem' }}>
+                    <div style={{ background: '#ffffff', padding: '0.6rem 0.75rem', borderRadius: '10px', border: '1px solid #dcfce7', fontSize: '0.78rem', color: '#166534', display: 'flex', alignItems: 'center', gap: '6px', fontWeight: 600 }}>
                       <span>📚</span>
-                      <strong>Offline Study & Notes</strong>
+                      <span>Offline Study & Notes</span>
                     </div>
-                    <div style={{ background: '#ffffff', padding: '0.5rem 0.75rem', borderRadius: '8px', border: '1px solid #bbf7d0', fontSize: '0.78rem', color: '#166534', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                    <div style={{ background: '#ffffff', padding: '0.6rem 0.75rem', borderRadius: '10px', border: '1px solid #dcfce7', fontSize: '0.78rem', color: '#166534', display: 'flex', alignItems: 'center', gap: '6px', fontWeight: 600 }}>
                       <span>⚡</span>
-                      <strong>Fast & Lightweight (31 MB)</strong>
+                      <span>Fast Cloud Auto-Sync</span>
                     </div>
                   </div>
 
                   <a
                     href="https://github.com/Smart-009/brent1_college/releases/download/v1.0.0/eclat-institute.apk"
                     download="eclat-institute.apk"
-                    className="btn"
-                    style={{ width: '100%', background: '#16a34a', color: '#ffffff', fontWeight: 800, padding: '0.8rem', borderRadius: '10px', fontSize: '0.92rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', textDecoration: 'none', boxShadow: '0 4px 12px rgba(22, 163, 74, 0.3)', cursor: 'pointer' }}
+                    style={{
+                      width: '100%',
+                      background: 'linear-gradient(135deg, #15803d 0%, #16a34a 100%)',
+                      color: '#ffffff',
+                      fontWeight: 800,
+                      padding: '0.85rem',
+                      borderRadius: '12px',
+                      fontSize: '0.94rem',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      gap: '8px',
+                      textDecoration: 'none',
+                      boxShadow: '0 4px 14px rgba(22, 163, 74, 0.35)',
+                      cursor: 'pointer',
+                      border: 'none',
+                      transition: 'all 0.15s ease',
+                    }}
                   >
-                    <span>📥</span>
+                    <span style={{ fontSize: '1.1rem' }}>📥</span>
                     <span>Download Android App (.APK)</span>
                   </a>
+                </div>
+
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px', fontSize: '0.75rem', color: '#64748b' }}>
+                  <span>🛡️</span>
+                  <span>100% Virus-Free & Verified Official Package</span>
                 </div>
               </div>
             )}
@@ -3905,35 +3935,61 @@ export function Landing() {
             {/* TAB CONTENT: WINDOWS PC */}
             {appModalTab === 'windows' && (
               <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-                <div style={{ background: '#eff6ff', border: '1px solid #bfdbfe', borderRadius: '16px', padding: '1.25rem' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '0.4rem' }}>
-                    <span style={{ fontSize: '1.3rem' }}>💻</span>
-                    <strong style={{ fontSize: '1.02rem', color: '#1e40af' }}>Windows Desktop Learning App</strong>
+                <div style={{ background: '#eff6ff', border: '1px solid #bfdbfe', borderRadius: '18px', padding: '1.35rem' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                      <span style={{ fontSize: '1.4rem' }}>💻</span>
+                      <strong style={{ fontSize: '1.05rem', color: '#1e40af' }}>Windows Desktop Learning App</strong>
+                    </div>
+                    <span style={{ fontSize: '0.72rem', fontWeight: 800, color: '#1d4ed8', background: '#dbeafe', padding: '0.2rem 0.55rem', borderRadius: '20px', border: '1px solid #93c5fd' }}>
+                      64-bit • Windows 10/11
+                    </span>
                   </div>
-                  <p style={{ fontSize: '0.86rem', color: '#1d4ed8', lineHeight: 1.5, margin: '0 0 1rem' }}>
-                    Dedicated learning workstation for Windows 10 & 11 with full-screen lecture viewing, note-taking, and document reading.
+                  <p style={{ fontSize: '0.86rem', color: '#1d4ed8', lineHeight: 1.55, margin: '0 0 1rem', fontWeight: 500 }}>
+                    Dedicated learning workstation for Windows with full-screen lecture viewing, fast note-taking, and digital library reader.
                   </p>
 
-                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.5rem', marginBottom: '1rem' }}>
-                    <div style={{ background: '#ffffff', padding: '0.5rem 0.75rem', borderRadius: '8px', border: '1px solid #bfdbfe', fontSize: '0.78rem', color: '#1e40af', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.5rem', marginBottom: '1.15rem' }}>
+                    <div style={{ background: '#ffffff', padding: '0.6rem 0.75rem', borderRadius: '10px', border: '1px solid #dbeafe', fontSize: '0.78rem', color: '#1e40af', display: 'flex', alignItems: 'center', gap: '6px', fontWeight: 600 }}>
                       <span>💻</span>
-                      <strong>Desktop Study Hub</strong>
+                      <span>Desktop Study Hub</span>
                     </div>
-                    <div style={{ background: '#ffffff', padding: '0.5rem 0.75rem', borderRadius: '8px', border: '1px solid #bfdbfe', fontSize: '0.78rem', color: '#1e40af', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                    <div style={{ background: '#ffffff', padding: '0.6rem 0.75rem', borderRadius: '10px', border: '1px solid #dbeafe', fontSize: '0.78rem', color: '#1e40af', display: 'flex', alignItems: 'center', gap: '6px', fontWeight: 600 }}>
                       <span>🖨️</span>
-                      <strong>Direct Slips & Prints</strong>
+                      <span>Direct Slips & Prints</span>
                     </div>
                   </div>
 
                   <a
                     href="https://github.com/Smart-009/brent1_college/releases/download/v1.0.0/Eclat-Institute-Setup.exe"
                     download="Eclat-Institute-Setup.exe"
-                    className="btn btn-primary"
-                    style={{ width: '100%', fontWeight: 800, padding: '0.8rem', borderRadius: '10px', fontSize: '0.92rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', textDecoration: 'none', boxShadow: '0 4px 12px rgba(37, 99, 235, 0.3)', cursor: 'pointer' }}
+                    style={{
+                      width: '100%',
+                      background: 'linear-gradient(135deg, #1d4ed8 0%, #2563eb 100%)',
+                      color: '#ffffff',
+                      fontWeight: 800,
+                      padding: '0.85rem',
+                      borderRadius: '12px',
+                      fontSize: '0.94rem',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      gap: '8px',
+                      textDecoration: 'none',
+                      boxShadow: '0 4px 14px rgba(37, 99, 235, 0.35)',
+                      cursor: 'pointer',
+                      border: 'none',
+                      transition: 'all 0.15s ease',
+                    }}
                   >
-                    <span>📥</span>
+                    <span style={{ fontSize: '1.1rem' }}>📥</span>
                     <span>Download Windows Installer (.EXE)</span>
                   </a>
+                </div>
+
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px', fontSize: '0.75rem', color: '#64748b' }}>
+                  <span>🛡️</span>
+                  <span>100% Virus-Free & Verified Official Package</span>
                 </div>
               </div>
             )}
