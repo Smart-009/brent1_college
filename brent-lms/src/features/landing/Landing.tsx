@@ -3944,11 +3944,10 @@ export function Landing() {
                   </div>
 
                   <a
-                    href={getWhatsAppInquiryUrl('Hello Eclat Admissions! Please send me the official Android Native App (.APK) file for download.')}
-                    target="_blank"
-                    rel="noopener noreferrer"
+                    href="/downloads/eclat-institute.apk"
+                    download="eclat-institute.apk"
                     className="btn"
-                    style={{ width: '100%', background: '#16a34a', color: '#ffffff', fontWeight: 800, padding: '0.8rem', borderRadius: '10px', fontSize: '0.92rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', textDecoration: 'none', boxShadow: '0 4px 12px rgba(22, 163, 74, 0.3)' }}
+                    style={{ width: '100%', background: '#16a34a', color: '#ffffff', fontWeight: 800, padding: '0.8rem', borderRadius: '10px', fontSize: '0.92rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', textDecoration: 'none', boxShadow: '0 4px 12px rgba(22, 163, 74, 0.3)', cursor: 'pointer' }}
                   >
                     <span>📥</span>
                     <span>Download Android App (.APK)</span>
@@ -3983,14 +3982,14 @@ export function Landing() {
                   </div>
 
                   <a
-                    href={getWhatsAppInquiryUrl('Hello Eclat Admissions! Please send me the Apple TestFlight invite link for iOS.')}
+                    href="https://testflight.apple.com"
                     target="_blank"
                     rel="noopener noreferrer"
                     className="btn"
                     style={{ width: '100%', background: '#0f172a', color: '#ffffff', fontWeight: 800, padding: '0.8rem', borderRadius: '10px', fontSize: '0.92rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', textDecoration: 'none', boxShadow: '0 4px 12px rgba(15, 23, 42, 0.3)' }}
                   >
                     <span>🍏</span>
-                    <span>Get iOS App via TestFlight</span>
+                    <span>Get iOS App on TestFlight</span>
                   </a>
                 </div>
               </div>
@@ -4020,11 +4019,10 @@ export function Landing() {
                   </div>
 
                   <a
-                    href={getWhatsAppInquiryUrl('Hello Eclat Admissions! Please send me the official Windows Desktop (.EXE) installer.')}
-                    target="_blank"
-                    rel="noopener noreferrer"
+                    href="/downloads/Eclat-Institute-Setup.exe"
+                    download="Eclat-Institute-Setup.exe"
                     className="btn btn-primary"
-                    style={{ width: '100%', fontWeight: 800, padding: '0.8rem', borderRadius: '10px', fontSize: '0.92rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', textDecoration: 'none', boxShadow: '0 4px 12px rgba(37, 99, 235, 0.3)' }}
+                    style={{ width: '100%', fontWeight: 800, padding: '0.8rem', borderRadius: '10px', fontSize: '0.92rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', textDecoration: 'none', boxShadow: '0 4px 12px rgba(37, 99, 235, 0.3)', cursor: 'pointer' }}
                   >
                     <span>📥</span>
                     <span>Download Windows Installer (.EXE)</span>
