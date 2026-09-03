@@ -2930,8 +2930,10 @@ export function Landing() {
             {/* iOS Apple App Card */}
             <div style={{ background: 'rgba(30, 41, 59, 0.5)', border: '1px solid #334155', borderRadius: '20px', padding: '2.5rem', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
               <div>
-                <div style={{ width: '56px', height: '56px', borderRadius: '14px', background: 'rgba(168, 85, 247, 0.15)', border: '1px solid rgba(168, 85, 247, 0.3)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.8rem', marginBottom: '1.5rem' }}>
-                  🍎
+                <div style={{ width: '56px', height: '56px', borderRadius: '14px', background: 'rgba(255, 255, 255, 0.1)', border: '1px solid rgba(255, 255, 255, 0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '1.5rem', color: '#ffffff' }}>
+                  <svg width="30" height="30" viewBox="0 0 170 170" fill="currentColor" aria-label="Apple Logo">
+                    <path d="M150.37 130.25c-2.45 5.66-5.35 10.87-8.71 15.66-4.58 6.53-8.33 11.05-11.22 13.56-4.48 4.12-9.28 6.23-14.42 6.35-3.69 0-8.14-1.05-13.32-3.18-5.19-2.12-9.97-3.17-14.34-3.17-4.58 0-9.49 1.05-14.74 3.17-5.26 2.13-9.5 3.24-12.74 3.35-4.35.13-9.16-1.9-14.42-6.08-3.7-3.04-7.59-7.71-11.69-14.01-6.1-9.35-10.88-20.08-14.34-32.22-3.46-12.14-5.19-23.77-5.19-34.91 0-14.47 3.6-26.65 10.8-36.54 7.21-9.89 16.32-14.93 27.34-15.13 4.69 0 10.15 1.25 16.38 3.75 6.23 2.5 10.15 3.8 11.75 3.9 1.43 0 5.48-1.35 12.14-4.05 6.66-2.7 12.14-3.9 16.43-3.6 12.3.6 22.13 5.4 29.5 14.4-10.74 6.5-16.03 15.5-15.86 27 .2 9.4 3.8 17.2 10.8 23.4 4.5 4 9.6 6.8 15.3 8.4-2.2 6.5-4.8 12.8-7.8 18.9zM119.22 31.05c0-7.24 2.66-13.9 7.98-19.98 5.32-6.08 11.83-9.87 19.53-11.37.2 1.3.3 2.5.3 3.6 0 7.1-2.8 13.9-8.4 20.4-5.6 6.5-12.2 10.3-19.8 11.4-.2-1.3-.61-2.65-.61-4.05z"/>
+                  </svg>
                 </div>
                 <h3 style={{ fontSize: '1.35rem', fontWeight: 800, color: '#ffffff', margin: '0 0 0.5rem' }}>
                   Apple iOS (iPhone & iPad)
@@ -2952,9 +2954,11 @@ export function Landing() {
                 target="_blank"
                 rel="noopener noreferrer"
                 className="btn"
-                style={{ background: '#334155', color: '#ffffff', fontWeight: 800, padding: '0.85rem', borderRadius: '12px', textAlign: 'center', border: '1px solid #475569', display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '8px', textDecoration: 'none' }}
+                style={{ background: '#1e293b', color: '#ffffff', fontWeight: 800, padding: '0.85rem', borderRadius: '12px', textAlign: 'center', border: '1px solid #475569', display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '8px', textDecoration: 'none' }}
               >
-                <span>🍎</span>
+                <svg width="18" height="18" viewBox="0 0 170 170" fill="currentColor" aria-label="Apple Logo" style={{ display: 'inline-block' }}>
+                  <path d="M150.37 130.25c-2.45 5.66-5.35 10.87-8.71 15.66-4.58 6.53-8.33 11.05-11.22 13.56-4.48 4.12-9.28 6.23-14.42 6.35-3.69 0-8.14-1.05-13.32-3.18-5.19-2.12-9.97-3.17-14.34-3.17-4.58 0-9.49 1.05-14.74 3.17-5.26 2.13-9.5 3.24-12.74 3.35-4.35.13-9.16-1.9-14.42-6.08-3.7-3.04-7.59-7.71-11.69-14.01-6.1-9.35-10.88-20.08-14.34-32.22-3.46-12.14-5.19-23.77-5.19-34.91 0-14.47 3.6-26.65 10.8-36.54 7.21-9.89 16.32-14.93 27.34-15.13 4.69 0 10.15 1.25 16.38 3.75 6.23 2.5 10.15 3.8 11.75 3.9 1.43 0 5.48-1.35 12.14-4.05 6.66-2.7 12.14-3.9 16.43-3.6 12.3.6 22.13 5.4 29.5 14.4-10.74 6.5-16.03 15.5-15.86 27 .2 9.4 3.8 17.2 10.8 23.4 4.5 4 9.6 6.8 15.3 8.4-2.2 6.5-4.8 12.8-7.8 18.9zM119.22 31.05c0-7.24 2.66-13.9 7.98-19.98 5.32-6.08 11.83-9.87 19.53-11.37.2 1.3.3 2.5.3 3.6 0 7.1-2.8 13.9-8.4 20.4-5.6 6.5-12.2 10.3-19.8 11.4-.2-1.3-.61-2.65-.61-4.05z"/>
+                </svg>
                 <span>Get iOS App (TestFlight)</span>
               </a>
             </div>
