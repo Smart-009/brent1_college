@@ -1789,7 +1789,7 @@ export function Landing() {
                 {/* Udemy-Style Card Visual Banner / Thumbnail Header */}
                 <div
                   style={{
-                    background: `linear-gradient(135deg, ${course.tagColor}15 0%, #ffffff 100%)`,
+                    background: `linear-gradient(135deg, ${(course.tagColor || '#2563eb')}15 0%, #ffffff 100%)`,
                     borderBottom: '1px solid #f1f5f9',
                     padding: '1.25rem 1.5rem',
                     display: 'flex',
@@ -1812,13 +1812,13 @@ export function Landing() {
                         boxShadow: '0 2px 8px rgba(0,0,0,0.06)',
                       }}
                     >
-                      {course.icon}
+                      {course.icon || '🎓'}
                     </div>
                     <div>
                       <span
                         style={{
-                          background: `${course.tagColor}20`,
-                          color: course.tagColor,
+                          background: `${(course.tagColor || '#2563eb')}20`,
+                          color: course.tagColor || '#2563eb',
                           fontWeight: 800,
                           fontSize: '0.72rem',
                           padding: '2px 8px',
@@ -1827,7 +1827,7 @@ export function Landing() {
                           letterSpacing: '0.04em',
                         }}
                       >
-                        {course.category.split('&')[0]}
+                        {course.category ? course.category.split('&')[0] : 'Online Course'}
                       </span>
                       <div style={{ fontSize: '0.72rem', color: '#64748b', marginTop: '2px' }}>
                         🌐 100% Online Cohort
@@ -1863,7 +1863,7 @@ export function Landing() {
                         borderRadius: '4px',
                       }}
                     >
-                      {course.discountBadge}
+                      {course.discountBadge || '50% OFF'}
                     </span>
                   )}
                 </div>
@@ -1902,10 +1902,10 @@ export function Landing() {
                     {/* Schedule & Duration Meta */}
                     <div style={{ display: 'flex', gap: '0.5rem', fontSize: '0.78rem', color: '#334155', marginBottom: '0.85rem', flexWrap: 'wrap' }}>
                       <span style={{ background: '#f8fafc', border: '1px solid #e2e8f0', padding: '3px 8px', borderRadius: '6px' }}>
-                        ⏱️ {course.duration}
+                        ⏱️ {course.duration || '8 Weeks'}
                       </span>
                       <span style={{ background: '#f8fafc', border: '1px solid #e2e8f0', padding: '3px 8px', borderRadius: '6px' }}>
-                        📅 {course.schedule.split('/')[0]}
+                        📅 {course.schedule ? course.schedule.split('/')[0] : 'Flexible Online Schedule'}
                       </span>
                     </div>
 
@@ -1913,13 +1913,13 @@ export function Landing() {
                     <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '8px', padding: '0.65rem 0.85rem', marginBottom: '0.85rem' }}>
                       <div style={{ fontSize: '0.7rem', fontWeight: 700, color: '#64748b', textTransform: 'uppercase' }}>Target Career Role:</div>
                       <div style={{ fontSize: '0.84rem', fontWeight: 800, color: '#1e3a8a', marginTop: '2px' }}>
-                        💼 {course.careerOutcome}
+                        💼 {course.careerOutcome || 'Career Certification Track'}
                       </div>
                     </div>
 
                     {/* Key Skills */}
                     <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px', marginBottom: '1rem' }}>
-                      {course.skills.slice(0, 3).map((s) => (
+                      {(course.skills || []).slice(0, 3).map((s) => (
                         <span
                           key={s}
                           style={{
@@ -1934,9 +1934,9 @@ export function Landing() {
                           ✓ {s}
                         </span>
                       ))}
-                      {course.skills.length > 3 && (
+                      {(course.skills || []).length > 3 && (
                         <span style={{ color: '#64748b', fontSize: '0.72rem', padding: '2px 4px' }}>
-                          +{course.skills.length - 3} more
+                          +{(course.skills || []).length - 3} more
                         </span>
                       )}
                     </div>
