@@ -205,7 +205,7 @@ export function Login() {
 
           <div style={{ marginTop: '2rem', paddingTop: '1rem', borderTop: '1px solid #e2e8f0', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '0.5rem' }}>
             <Link to="/" style={{ fontSize: '0.82rem', color: '#2563eb', textDecoration: 'none', fontWeight: 700 }}>
-              ← Return to Main Website
+              ← Back to Home
             </Link>
 
             {/* Discrete Switcher for Staff vs Student */}
