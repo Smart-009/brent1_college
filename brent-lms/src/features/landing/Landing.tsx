@@ -16,11 +16,18 @@ interface CourseItem {
   duration: string
   schedule: string
   fee: string
+  originalFee?: string
+  discountBadge?: string
+  rating?: number
+  ratingCount?: number
+  studentsEnrolled?: number
+  instructor?: string
   installment: string
   careerOutcome: string
   skills: string[]
   icon: string
   popular?: boolean
+  bestseller?: boolean
   syllabus?: { week: string; topic: string; practicalLab: string }[]
 }
 
@@ -34,11 +41,18 @@ const DEFAULT_COURSES_DATA: CourseItem[] = [
     duration: '12 Weeks (3 Months)',
     schedule: 'Live Online Evening Classes (7:30 PM - 9:30 PM) / Self-Paced',
     fee: '$120',
+    originalFee: '$240',
+    discountBadge: '50% OFF',
+    rating: 4.9,
+    ratingCount: 1420,
+    studentsEnrolled: 3850,
+    instructor: 'Dr. Harrison Kiprop • Senior Software Architect',
+    bestseller: true,
+    popular: true,
     installment: '2 installments of $60',
     careerOutcome: 'Junior Full-Stack Developer • Frontend Engineer • Remote Tech Contractor',
     skills: ['React 19 & JavaScript ES6+', 'Node.js & Express APIs', 'PostgreSQL & Database Queries', 'Git GitHub & Cloud Hosting', 'Full-Stack Portfolio Project'],
     icon: '💻',
-    popular: true,
     syllabus: [
       { week: 'Week 1-3', topic: 'HTML5 Semantic Layouts, Modern Tailwind CSS & JavaScript ES6+', practicalLab: 'Live coding responsive web landing pages and portfolio projects.' },
       { week: 'Week 4-6', topic: 'React 19 State, Hooks, Component Architectures & APIs', practicalLab: 'Building dynamic interactive dashboards with real-time API integrations.' },
@@ -48,18 +62,25 @@ const DEFAULT_COURSES_DATA: CourseItem[] = [
   },
   {
     id: 'c-python',
-    title: 'Python Programming, SQL & Data Analytics',
+    title: 'Python Programming, SQL & Data Analytics Masterclass',
     category: 'Tech & Programming',
     tag: '📊 Data & AI Fundamentals',
     tagColor: '#0284c7',
     duration: '8 Weeks (2 Months)',
     schedule: 'Live Virtual Cohorts (Mon & Wed 8:00 PM) / Saturday Intensive',
     fee: '$95',
+    originalFee: '$190',
+    discountBadge: '50% OFF',
+    rating: 4.8,
+    ratingCount: 980,
+    studentsEnrolled: 2420,
+    instructor: 'Eng. Brian Mutua • Lead Data Architect',
+    bestseller: true,
+    popular: true,
     installment: '2 installments of $48',
     careerOutcome: 'Data Analyst • Business Intelligence Associate • Junior Python Developer',
     skills: ['Python Syntax & OOP', 'Pandas & NumPy Data Cleaning', 'SQL Queries & Relational DBs', 'Matplotlib & Seaborn Charts', 'Power BI Dashboards'],
     icon: '📊',
-    popular: true,
     syllabus: [
       { week: 'Week 1-2', topic: 'Python Programming Fundamentals & Data Structures', practicalLab: 'Writing Python scripts, automation loops, and algorithmic problem solving.' },
       { week: 'Week 3-4', topic: 'SQL Relational Queries & Database Aggregations', practicalLab: 'Querying complex multi-table datasets, filtering, and JOIN operations.' },
@@ -76,11 +97,18 @@ const DEFAULT_COURSES_DATA: CourseItem[] = [
     duration: '4 Weeks (1 Month)',
     schedule: 'Live Virtual Morning (9:00 AM) / Evening (6:00 PM) / 24/7 LMS',
     fee: '$45',
+    originalFee: '$90',
+    discountBadge: '50% OFF',
+    rating: 4.9,
+    ratingCount: 2150,
+    studentsEnrolled: 5300,
+    instructor: 'Grace Wambui • Senior IT & Digital Literacy Trainer',
+    bestseller: true,
+    popular: true,
     installment: '2 installments of $23',
     careerOutcome: 'Office Administrator • Executive Virtual Assistant • Data Entry Specialist',
     skills: ['Ms Word & Document Styling', 'Advanced Ms Excel & Formulas', 'PowerPoint Slide Decks', 'Google Workspace Collaboration', 'Canva Pro Graphics & Social Media'],
     icon: '⚡',
-    popular: true,
     syllabus: [
       { week: 'Week 1', topic: 'Touch Typing & Advanced Ms Word Corporate Documentation', practicalLab: 'Formatting official business memos, contracts, and dynamic tables of contents.' },
       { week: 'Week 2', topic: 'Advanced Ms Excel Spreadsheets, VLOOKUP & Data Formulas', practicalLab: 'Automated payroll formulas, IF statements, budgeting sheets, and pivot charts.' },
@@ -90,18 +118,25 @@ const DEFAULT_COURSES_DATA: CourseItem[] = [
   },
   {
     id: 'c-cyber',
-    title: 'Cybersecurity Fundamentals & Ethical Defense',
+    title: 'Cybersecurity Fundamentals, Ethical Hacking & Defensive Ops',
     category: 'Tech & Programming',
     tag: '🛡️ Security & Defense',
     tagColor: '#dc2626',
     duration: '6 Weeks',
     schedule: 'Live Virtual Weekend Masterclass (Sat & Sun 3:00 PM - 6:00 PM)',
     fee: '$89',
+    originalFee: '$175',
+    discountBadge: '49% OFF',
+    rating: 4.9,
+    ratingCount: 640,
+    studentsEnrolled: 1650,
+    instructor: 'Alex Omondi, CISSP • Cybersecurity Consultant',
+    bestseller: false,
+    popular: true,
     installment: '2 installments of $45',
     careerOutcome: 'Junior SOC Analyst • IT Security Specialist • System Administrator',
     skills: ['Network Security & Protocols', 'Vulnerability Assessment', 'Ethical Hacking Fundamentals', 'Password & Encryption Standards', 'Incident Response'],
     icon: '🛡️',
-    popular: true,
     syllabus: [
       { week: 'Week 1-2', topic: 'Networking Protocols, TCP/IP, OSI & Firewall Architecture', practicalLab: 'Packet sniffing with Wireshark and analyzing network traffic security.' },
       { week: 'Week 3-4', topic: 'Common Cyber Attack Vectors, Malware & Social Engineering', practicalLab: 'Identifying phishing payloads, vulnerability scanning, and risk reports.' },
@@ -117,11 +152,18 @@ const DEFAULT_COURSES_DATA: CourseItem[] = [
     duration: '4 Weeks (1 Month)',
     schedule: 'Live Virtual Evening (6:00 PM - 8:00 PM) / Weekend Batches',
     fee: '$65',
+    originalFee: '$130',
+    discountBadge: '50% OFF',
+    rating: 4.8,
+    ratingCount: 810,
+    studentsEnrolled: 2100,
+    instructor: 'Charles Mwangi, CPA-K • Senior Financial Controller',
+    bestseller: true,
+    popular: true,
     installment: '2 installments of $33',
     careerOutcome: 'Accounts Assistant • Payroll Specialist • Tax Consultant & Bookkeeper',
     skills: ['QuickBooks Desktop & Online', 'International Tax Filing & VAT', 'Payroll & Benefits Deductions', 'Bank Reconciliation', 'Financial Statements & Balance Sheets'],
     icon: '📈',
-    popular: true,
     syllabus: [
       { week: 'Week 1', topic: 'Company File Setup & Chart of Accounts in QuickBooks', practicalLab: 'Configuring fiscal years, opening balances, and vendor databases.' },
       { week: 'Week 2', topic: 'Invoicing, Accounts Receivable & Bill Payments', practicalLab: 'Recording sales receipts, customer credit memos, and supplier reconciliations.' },
@@ -131,13 +173,21 @@ const DEFAULT_COURSES_DATA: CourseItem[] = [
   },
   {
     id: 'c-uiux',
-    title: 'UI/UX Product Design & Figma Masterclass',
+    title: 'UI/UX Product Design, Mobile Design Systems & Figma',
     category: 'Computer & Digital Skills',
     tag: '🎨 Creative Tech',
     tagColor: '#8b5cf6',
     duration: '6 Weeks',
     schedule: 'Live Online Evening / Flexible Self-Paced Modules',
     fee: '$75',
+    originalFee: '$150',
+    discountBadge: '50% OFF',
+    rating: 4.9,
+    ratingCount: 520,
+    studentsEnrolled: 1350,
+    instructor: 'Linda Achieng • Principal Product Designer',
+    bestseller: false,
+    popular: true,
     installment: '2 installments of $38',
     careerOutcome: 'UI/UX Designer • Product Designer • Freelance Figma Specialist',
     skills: ['User Research & Wireframing', 'Figma Components & Auto Layout', 'Interactive Clickable Prototypes', 'Design Systems & UI Kits', 'Developer Hand-off'],
@@ -157,11 +207,18 @@ const DEFAULT_COURSES_DATA: CourseItem[] = [
     duration: '6 to 8 Weeks',
     schedule: 'Live Virtual Evening (6:00 PM) / Morning Sessions (7:30 AM)',
     fee: '$55',
+    originalFee: '$110',
+    discountBadge: '50% OFF',
+    rating: 4.9,
+    ratingCount: 1680,
+    studentsEnrolled: 4200,
+    instructor: 'Elizabeth Ndung’u • Corporate Communication Director',
+    bestseller: true,
+    popular: true,
     installment: '2 installments of $28',
     careerOutcome: 'Corporate Communicator • Public Speaker • Executive Virtual Assistant',
     skills: ['Spoken English & Pronunciation', 'Business Email & Executive Memos', 'Public Speaking & Presentation', 'Grammar & Vocabulary Mastery', 'Boardroom Interview Confidence'],
     icon: '📢',
-    popular: true,
     syllabus: [
       { week: 'Week 1-2', topic: 'Grammar Fundamentals & Phonetic Pronunciation', practicalLab: 'Live speaking video breakout rooms and articulation drills.' },
       { week: 'Week 3-4', topic: 'Spoken Fluency & Vocabulary Expansion', practicalLab: 'Interactive pair dialogues, impromptu speeches, and eliminating hesitation.' },
@@ -178,11 +235,18 @@ const DEFAULT_COURSES_DATA: CourseItem[] = [
     duration: '4 to 6 Weeks Intensive',
     schedule: 'Live Zoom Speaking Mock Tests & Writing Drills (Evening / Weekend)',
     fee: '$85',
+    originalFee: '$170',
+    discountBadge: '50% OFF',
+    rating: 4.95,
+    ratingCount: 2340,
+    studentsEnrolled: 5600,
+    instructor: 'Sarah Jenkins, CELTA • IELTS Master Examiner',
+    bestseller: true,
+    popular: true,
     installment: '2 installments of $43',
     careerOutcome: 'Study Abroad (UK, Canada, USA, Europe) • Global Healthcare & Relocation Visas',
     skills: ['IELTS Speaking 1-on-1 Mocks', 'Listening Audio Comprehension Strategies', 'Academic Reading Speed Tactics', 'Task 1 & Task 2 Writing Masterclass', 'British Council Exam Rubric'],
     icon: '🎓',
-    popular: true,
     syllabus: [
       { week: 'Week 1', topic: 'IELTS Speaking Section & Part 1-3 Fluency Mastery', practicalLab: '1-on-1 live mock interviews with certified feedback and scoring.' },
       { week: 'Week 2', topic: 'Listening Section & Audio Trap Strategies', practicalLab: 'Real-time Cambridge audio practice tests with multi-accent comprehension.' },
@@ -199,11 +263,18 @@ const DEFAULT_COURSES_DATA: CourseItem[] = [
     duration: '4 to 6 Weeks',
     schedule: 'Live Interactive 1-on-1 & Small Group Video Sessions',
     fee: '$49',
+    originalFee: '$98',
+    discountBadge: '50% OFF',
+    rating: 4.85,
+    ratingCount: 760,
+    studentsEnrolled: 1890,
+    instructor: 'Mwalimu Juma Bakari • Swahili Linguistics Lead',
+    bestseller: false,
+    popular: true,
     installment: '2 installments of $25',
     careerOutcome: 'NGO Field Officer • Expatriate Integration • East Africa Trade Liaison',
     skills: ['Everyday Mazungumzo & Greetings', 'Sarufi (Grammar & Noun Classes)', 'Market & Business Swahili', 'Reading & Written Composition', 'Cultural Communication & Etiquette'],
     icon: '🇰🇪',
-    popular: true,
     syllabus: [
       { week: 'Week 1', topic: 'Salamu, Utambulisho & Noun Classes (Ngeli)', practicalLab: 'Live conversational drills and everyday interactive greetings.' },
       { week: 'Week 2', topic: 'Sarufi ya Kiswahili & Tense Conjugation', practicalLab: 'Past, present, future tenses, negation (kukanusha), and sentence building.' },
@@ -220,11 +291,18 @@ const DEFAULT_COURSES_DATA: CourseItem[] = [
     duration: '8 Weeks (2 Months)',
     schedule: 'Live Evening (6:30 PM) / Weekend Virtual Cohorts',
     fee: '$75',
+    originalFee: '$150',
+    discountBadge: '50% OFF',
+    rating: 4.9,
+    ratingCount: 1120,
+    studentsEnrolled: 2900,
+    instructor: 'Ustadh Tariq Al-Mansoor • Arabic Language Specialist',
+    bestseller: true,
+    popular: true,
     installment: '2 installments of $38',
     careerOutcome: 'Bilingual Support Specialist • Middle East Corporate Liaison • Flight Attendant',
     skills: ['Arabic Script & Phonetics', 'Conversational Arabic for Everyday Life', 'Business & Commercial Vocabulary', 'Listening & Audio Comprehension', 'Gulf Cultural Etiquette'],
     icon: '🌴',
-    popular: true,
     syllabus: [
       { week: 'Week 1-2', topic: 'Alphabet, Pronunciation & Basic Introductions', practicalLab: 'Writing Arabic script and practicing conversational greetings.' },
       { week: 'Week 3-4', topic: 'Everyday Dialogue, Numbers & Travel Vocabulary', practicalLab: 'Role-playing airport, hotel, and restaurant interactions in Arabic.' },
@@ -241,6 +319,14 @@ const DEFAULT_COURSES_DATA: CourseItem[] = [
     duration: '8 Weeks (2 Months)',
     schedule: 'Live Online Video Masterclass (Tue & Thu 7:00 PM)',
     fee: '$79',
+    originalFee: '$160',
+    discountBadge: '50% OFF',
+    rating: 4.88,
+    ratingCount: 670,
+    studentsEnrolled: 1750,
+    instructor: 'Madame Claire Dubois • DELF Certified Evaluator',
+    bestseller: false,
+    popular: true,
     installment: '2 installments of $40',
     careerOutcome: 'Embassy Assistant • International NGO Officer • Multilingual Customer Support',
     skills: ['French Phonetics & Accent', 'Grammar & Verb Conjugation', 'Conversational Fluency', 'Written Composition', 'DELF A1/A2 Exam Prep'],
@@ -261,6 +347,14 @@ const DEFAULT_COURSES_DATA: CourseItem[] = [
     duration: '8 Weeks (2 Months)',
     schedule: 'Live Online Coaching & Grammar Workshops (Mon & Fri 7:00 PM)',
     fee: '$79',
+    originalFee: '$160',
+    discountBadge: '50% OFF',
+    rating: 4.92,
+    ratingCount: 890,
+    studentsEnrolled: 2200,
+    instructor: 'Herr Hans Meyer • Goethe-Zertifikat Examiner',
+    bestseller: true,
+    popular: true,
     installment: '2 installments of $40',
     careerOutcome: 'German University Candidate • Healthcare & Nurse Relocation in Germany',
     skills: ['German Grammar & Cases (Akkusativ, Dativ)', 'Conversational Speaking Drills', 'Reading Comprehension', 'Goethe-Zertifikat Exam Tactics', 'Workplace Communication'],
@@ -316,6 +410,7 @@ export function Landing() {
   const [inquirySuccess, setInquirySuccess] = useState(false)
   const [showPortalDesksModal, setShowPortalDesksModal] = useState(false)
   const [mobileNavOpen, setMobileNavOpen] = useState(false)
+  const [categoryDropdownOpen, setCategoryDropdownOpen] = useState(false)
   const [supportModalOpen, setSupportModalOpen] = useState(false)
   const [showScrollTop, setShowScrollTop] = useState(false)
   const [toastMessage, setToastMessage] = useState<string | null>(null)
@@ -859,7 +954,7 @@ export function Landing() {
           </span>
         </div>
 
-      {/* Main Header / Navigation */}
+      {/* Main Header / Navigation (Udemy-Style Marketplace Header) */}
       <header
         style={{
           position: 'sticky',
@@ -871,116 +966,214 @@ export function Landing() {
           padding: '0.65rem 1rem',
         }}
       >
-        <div style={{ maxWidth: '1240px', margin: '0 auto', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'nowrap', gap: '0.5rem' }}>
-          {/* Brand Logo */}
-          <Link to="/" style={{ display: 'flex', alignItems: 'center', gap: '0.65rem', textDecoration: 'none', minWidth: 0, flexShrink: 1 }}>
-            <img
-              src="/logo.png"
-              alt="Éclat Institute Logo"
-              style={{ width: '40px', height: '40px', borderRadius: '50%', objectFit: 'cover', border: '2px solid #d4af37', boxShadow: '0 2px 8px rgba(0,0,0,0.12)', flexShrink: 0 }}
-            />
-            <div style={{ minWidth: 0 }}>
-              <div style={{ fontSize: '1.2rem', fontWeight: 900, color: '#0f172a', fontFamily: 'var(--font-heading)', letterSpacing: '0.02em', lineHeight: 1.1, whiteSpace: 'nowrap' }}>
-                ÉCLAT INSTITUTE
+        <div style={{ maxWidth: '1280px', margin: '0 auto', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'nowrap', gap: '0.75rem' }}>
+          {/* Left Side: Brand Logo & Explore Categories */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', flexShrink: 0 }}>
+            <Link to="/" style={{ display: 'flex', alignItems: 'center', gap: '0.65rem', textDecoration: 'none' }}>
+              <img
+                src="/logo.png"
+                alt="Éclat Institute Logo"
+                style={{ width: '40px', height: '40px', borderRadius: '50%', objectFit: 'cover', border: '2px solid #d4af37', boxShadow: '0 2px 8px rgba(0,0,0,0.12)', flexShrink: 0 }}
+              />
+              <div style={{ minWidth: 0 }}>
+                <div style={{ fontSize: '1.2rem', fontWeight: 900, color: '#0f172a', fontFamily: 'var(--font-heading)', letterSpacing: '0.02em', lineHeight: 1.1, whiteSpace: 'nowrap' }}>
+                  ÉCLAT INSTITUTE
+                </div>
+                <div className="hidden sm:block" style={{ fontSize: '0.68rem', color: '#8c6e28', fontWeight: 700, letterSpacing: '0.06em', textTransform: 'uppercase', whiteSpace: 'nowrap' }}>
+                  100% Online Global Academy
+                </div>
               </div>
-              <div className="hidden sm:block" style={{ fontSize: '0.68rem', color: '#8c6e28', fontWeight: 700, letterSpacing: '0.06em', textTransform: 'uppercase', whiteSpace: 'nowrap' }}>
-                100% Online Live & Cloud LMS
-              </div>
-            </div>
-          </Link>
+            </Link>
 
-          {/* Nav Links */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '1.25rem', flexShrink: 0 }}>
-            <nav className="desktop-nav-links" style={{ fontSize: '0.92rem', fontWeight: 600 }}>
-              <a href="#courses" style={{ color: '#334155', textDecoration: 'none', transition: 'color 0.2s' }}>Courses</a>
-              <Link to="/library" style={{ color: '#2563eb', fontWeight: 800, textDecoration: 'none', transition: 'color 0.2s' }}>📖 E-Library</Link>
-              <a href="#why-eclat" style={{ color: '#334155', textDecoration: 'none', transition: 'color 0.2s' }}>Why Choose Us</a>
-              <a href="#testimonials" style={{ color: '#334155', textDecoration: 'none', transition: 'color 0.2s' }}>Graduate Outcomes</a>
-              <a href="#intakes" style={{ color: '#334155', textDecoration: 'none', transition: 'color 0.2s' }}>Intakes & Fees</a>
-            </nav>
-
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', flexWrap: 'nowrap' }}>
-              {/* Direct E-Library Access Button on Desktop Navbar */}
-              <Link
-                to="/library"
-                className="btn btn-sm"
+            {/* Udemy-Style "Explore Categories" Dropdown (Desktop) */}
+            <div style={{ position: 'relative' }} className="hidden lg:block">
+              <button
+                type="button"
+                onClick={() => setCategoryDropdownOpen(!categoryDropdownOpen)}
                 style={{
-                  background: '#eff6ff',
-                  color: '#1d4ed8',
+                  background: categoryDropdownOpen ? '#eff6ff' : 'transparent',
+                  color: '#1e3a8a',
                   border: '1px solid #bfdbfe',
-                  fontWeight: 800,
-                  padding: '0.45rem 0.85rem',
-                  borderRadius: '8px',
-                  fontSize: '0.78rem',
-                  whiteSpace: 'nowrap',
-                  textDecoration: 'none',
+                  borderRadius: '999px',
+                  padding: '0.45rem 0.95rem',
+                  fontSize: '0.85rem',
+                  fontWeight: 700,
+                  cursor: 'pointer',
                   display: 'inline-flex',
                   alignItems: 'center',
-                  gap: '4px',
+                  gap: '6px',
+                  transition: 'all 0.2s',
                 }}
-                title="Access Free Academic E-Library"
               >
+                <span>🗂️</span>
+                <span>Explore Categories</span>
+                <span style={{ fontSize: '0.75rem', transform: categoryDropdownOpen ? 'rotate(180deg)' : 'rotate(0deg)', transition: 'transform 0.2s' }}>▼</span>
+              </button>
+
+              {categoryDropdownOpen && (
+                <div
+                  style={{
+                    position: 'absolute',
+                    top: 'calc(100% + 8px)',
+                    left: 0,
+                    width: '260px',
+                    background: '#ffffff',
+                    border: '1px solid #cbd5e1',
+                    borderRadius: '12px',
+                    boxShadow: '0 12px 32px rgba(0,0,0,0.15)',
+                    padding: '0.5rem',
+                    zIndex: 200,
+                    animation: 'fadeIn 0.15s ease',
+                  }}
+                >
+                  {[
+                    { id: 'All', icon: '🔥', label: 'All Online Programs' },
+                    { id: 'Tech & Programming', icon: '💻', label: 'Tech & Software Engineering' },
+                    { id: 'Languages & Communication', icon: '🗣️', label: 'World Languages & IELTS' },
+                    { id: 'Computer & Digital Skills', icon: '⚡', label: 'Digital Literacy & Office Skills' },
+                    { id: 'Business Tech & Accounting', icon: '📈', label: 'QuickBooks & Tax Accounting' },
+                  ].map((cat) => (
+                    <button
+                      key={cat.id}
+                      type="button"
+                      onClick={() => {
+                        setActiveCategory(cat.id)
+                        setCategoryDropdownOpen(false)
+                        const el = document.getElementById('courses')
+                        if (el) el.scrollIntoView({ behavior: 'smooth' })
+                      }}
+                      style={{
+                        width: '100%',
+                        textAlign: 'left',
+                        background: activeCategory === cat.id ? '#eff6ff' : 'transparent',
+                        color: activeCategory === cat.id ? '#1e3a8a' : '#334155',
+                        border: 'none',
+                        borderRadius: '8px',
+                        padding: '0.6rem 0.75rem',
+                        fontSize: '0.84rem',
+                        fontWeight: activeCategory === cat.id ? 800 : 600,
+                        cursor: 'pointer',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '8px',
+                      }}
+                    >
+                      <span>{cat.icon}</span>
+                      <span>{cat.label}</span>
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Center: Global Search Bar (Udemy-Style) */}
+          <div style={{ flex: 1, maxWidth: '420px', margin: '0 0.5rem' }} className="hidden md:block">
+            <div style={{ position: 'relative', width: '100%' }}>
+              <input
+                type="text"
+                placeholder="🔍 Search for courses, skills (e.g. Python, IELTS, React, Excel)..."
+                value={searchQuery}
+                onChange={(e) => {
+                  setSearchQuery(e.target.value)
+                  if (e.target.value && location.hash !== '#courses') {
+                    const el = document.getElementById('courses')
+                    if (el) el.scrollIntoView({ behavior: 'smooth' })
+                  }
+                }}
+                style={{
+                  width: '100%',
+                  padding: '0.55rem 1rem 0.55rem 2.2rem',
+                  borderRadius: '999px',
+                  border: '1.5px solid #cbd5e1',
+                  background: '#f8fafc',
+                  fontSize: '0.86rem',
+                  color: '#0f172a',
+                  outline: 'none',
+                }}
+              />
+              <span style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', opacity: 0.5, fontSize: '0.85rem' }}>🔍</span>
+              {searchQuery && (
+                <button
+                  type="button"
+                  onClick={() => setSearchQuery('')}
+                  style={{ position: 'absolute', right: '12px', top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', cursor: 'pointer', color: '#64748b', fontWeight: 800 }}
+                >
+                  ✕
+                </button>
+              )}
+            </div>
+          </div>
+
+          {/* Right Side: Quick Action Links & Portals */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem', flexShrink: 0 }}>
+            {/* Desktop Nav Links */}
+            <nav className="desktop-nav-links" style={{ fontSize: '0.88rem', fontWeight: 600, marginRight: '0.25rem' }}>
+              <Link to="/library" style={{ color: '#2563eb', fontWeight: 800, textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '4px' }}>
                 <span>📖</span>
                 <span>E-Library</span>
               </Link>
+              <a href="#calculator" style={{ color: '#334155', textDecoration: 'none' }}>Tuition Plans</a>
+              <a href="#why-eclat" style={{ color: '#334155', textDecoration: 'none' }}>Why Us</a>
+            </nav>
 
-              <a
-                href="#app-download"
-                className="btn btn-sm"
-                style={{
-                  background: '#16a34a',
-                  color: '#ffffff',
-                  border: 'none',
-                  fontWeight: 700,
-                  padding: '0.45rem 0.75rem',
-                  borderRadius: '8px',
-                  boxShadow: '0 2px 6px rgba(22, 163, 74, 0.3)',
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  gap: '4px',
-                  fontSize: '0.78rem',
-                  whiteSpace: 'nowrap',
-                  textDecoration: 'none',
-                }}
-                title="Download Official Native Desktop & Mobile Apps"
-              >
-                <span>📲</span>
-                <span>Get Apps</span>
-              </a>
+            <a
+              href="#app-download"
+              className="btn btn-sm"
+              style={{
+                background: '#16a34a',
+                color: '#ffffff',
+                border: 'none',
+                fontWeight: 700,
+                padding: '0.45rem 0.75rem',
+                borderRadius: '8px',
+                boxShadow: '0 2px 6px rgba(22, 163, 74, 0.3)',
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '4px',
+                fontSize: '0.78rem',
+                whiteSpace: 'nowrap',
+                textDecoration: 'none',
+              }}
+              title="Download Official Native Desktop & Mobile Apps"
+            >
+              <span>📲</span>
+              <span>Get Apps</span>
+            </a>
 
-              <button
-                type="button"
-                className="btn btn-sm"
-                style={{
-                  background: '#eff6ff',
-                  color: '#1d4ed8',
-                  border: '1px solid #bfdbfe',
-                  fontWeight: 700,
-                  padding: '0.45rem 0.75rem',
-                  borderRadius: '8px',
-                  fontSize: '0.78rem',
-                  whiteSpace: 'nowrap',
-                }}
-                onClick={() => setInquiryModalOpen(true)}
-              >
-                ⚡ Apply
-              </button>
+            <button
+              type="button"
+              className="btn btn-sm"
+              style={{
+                background: '#eff6ff',
+                color: '#1d4ed8',
+                border: '1px solid #bfdbfe',
+                fontWeight: 700,
+                padding: '0.45rem 0.75rem',
+                borderRadius: '8px',
+                fontSize: '0.78rem',
+                whiteSpace: 'nowrap',
+              }}
+              onClick={() => setInquiryModalOpen(true)}
+            >
+              ⚡ Apply
+            </button>
 
-              <button
-                type="button"
-                className="btn btn-sm btn-primary"
-                style={{
-                  fontWeight: 700,
-                  padding: '0.45rem 0.85rem',
-                  borderRadius: '8px',
-                  boxShadow: '0 4px 10px rgba(30, 58, 138, 0.25)',
-                  fontSize: '0.78rem',
-                  whiteSpace: 'nowrap',
-                }}
-                onClick={() => setShowPortalDesksModal(true)}
-              >
-                🔐 Portals
-              </button>
+            <button
+              type="button"
+              className="btn btn-sm btn-primary"
+              style={{
+                fontWeight: 700,
+                padding: '0.45rem 0.85rem',
+                borderRadius: '8px',
+                boxShadow: '0 4px 10px rgba(30, 58, 138, 0.25)',
+                fontSize: '0.78rem',
+                whiteSpace: 'nowrap',
+              }}
+              onClick={() => setShowPortalDesksModal(true)}
+            >
+              🔐 Portals
+            </button>
 
               {/* Mobile Hamburger Toggle Button */}
               <button
@@ -1006,7 +1199,6 @@ export function Landing() {
               </button>
             </div>
           </div>
-        </div>
 
         {/* Mobile Slide-Down Navigation Menu */}
         {mobileNavOpen && (
@@ -1674,143 +1866,238 @@ export function Landing() {
                 key={course.id}
                 style={{
                   background: '#ffffff',
-                  border: course.popular ? '2px solid #3b82f6' : '1px solid #e2e8f0',
-                  borderRadius: '20px',
-                  padding: '2rem',
+                  border: course.bestseller ? '2px solid #d4af37' : '1px solid #e2e8f0',
+                  borderRadius: '16px',
                   display: 'flex',
                   flexDirection: 'column',
                   justifyContent: 'space-between',
-                  boxShadow: course.popular ? '0 10px 25px -5px rgba(59, 130, 246, 0.15)' : '0 4px 6px -1px rgba(0, 0, 0, 0.05)',
+                  boxShadow: course.bestseller ? '0 8px 24px -4px rgba(212, 175, 55, 0.25)' : '0 4px 12px -2px rgba(0, 0, 0, 0.05)',
+                  overflow: 'hidden',
                   position: 'relative',
                   transition: 'all 0.25s ease',
                 }}
                 onMouseEnter={(e) => {
                   e.currentTarget.style.transform = 'translateY(-4px)'
-                  e.currentTarget.style.boxShadow = '0 15px 30px -5px rgba(0, 0, 0, 0.12)'
+                  e.currentTarget.style.boxShadow = '0 16px 32px -4px rgba(0, 0, 0, 0.12)'
                 }}
                 onMouseLeave={(e) => {
                   e.currentTarget.style.transform = 'translateY(0)'
-                  e.currentTarget.style.boxShadow = course.popular ? '0 10px 25px -5px rgba(59, 130, 246, 0.15)' : '0 4px 6px -1px rgba(0, 0, 0, 0.05)'
+                  e.currentTarget.style.boxShadow = course.bestseller ? '0 8px 24px -4px rgba(212, 175, 55, 0.25)' : '0 4px 12px -2px rgba(0, 0, 0, 0.05)'
                 }}
               >
-                <div>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.25rem' }}>
-                    <span style={{ fontSize: '2.5rem' }}>{course.icon}</span>
-                    <span
+                {/* Udemy-Style Card Visual Banner / Thumbnail Header */}
+                <div
+                  style={{
+                    background: `linear-gradient(135deg, ${course.tagColor}15 0%, #ffffff 100%)`,
+                    borderBottom: '1px solid #f1f5f9',
+                    padding: '1.25rem 1.5rem',
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                  }}
+                >
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                    <div
                       style={{
-                        background: `${course.tagColor}15`,
-                        color: course.tagColor,
-                        fontWeight: 800,
-                        fontSize: '0.78rem',
-                        padding: '4px 12px',
-                        borderRadius: '999px',
-                        border: `1px solid ${course.tagColor}30`,
+                        width: '48px',
+                        height: '48px',
+                        borderRadius: '12px',
+                        background: '#ffffff',
+                        border: '1px solid #e2e8f0',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        fontSize: '1.8rem',
+                        boxShadow: '0 2px 8px rgba(0,0,0,0.06)',
                       }}
                     >
-                      {course.tag}
-                    </span>
-                  </div>
-
-                  <h3 style={{ fontSize: '1.25rem', fontWeight: 800, color: '#0f172a', margin: '0 0 0.5rem', lineHeight: 1.35 }}>
-                    {course.title}
-                  </h3>
-
-                  <div style={{ display: 'flex', gap: '0.75rem', fontSize: '0.84rem', color: '#334155', marginBottom: '1.25rem', flexWrap: 'wrap' }}>
-                    <span>⏱️ <strong style={{ color: '#0f172a' }}>Duration:</strong> {course.duration}</span>
-                    <span>•</span>
-                    <span>📅 <strong style={{ color: '#0f172a' }}>Shifts:</strong> {course.schedule}</span>
-                  </div>
-
-                  {/* Career Outcome Card */}
-                  <div style={{ background: '#f8fafc', border: '1px solid #cbd5e1', borderRadius: '10px', padding: '0.75rem 1rem', marginBottom: '1.25rem' }}>
-                    <div style={{ fontSize: '0.75rem', fontWeight: 700, color: '#334155', textTransform: 'uppercase' }}>Target Career Role:</div>
-                    <div style={{ fontSize: '0.92rem', fontWeight: 800, color: '#1e3a8a', marginTop: '2px' }}>
-                      💼 {course.careerOutcome}
+                      {course.icon}
+                    </div>
+                    <div>
+                      <span
+                        style={{
+                          background: `${course.tagColor}20`,
+                          color: course.tagColor,
+                          fontWeight: 800,
+                          fontSize: '0.72rem',
+                          padding: '2px 8px',
+                          borderRadius: '6px',
+                          textTransform: 'uppercase',
+                          letterSpacing: '0.04em',
+                        }}
+                      >
+                        {course.category.split('&')[0]}
+                      </span>
+                      <div style={{ fontSize: '0.72rem', color: '#64748b', marginTop: '2px' }}>
+                        🌐 100% Online Cohort
+                      </div>
                     </div>
                   </div>
 
-                  {/* Skills Grid */}
-                  <div style={{ marginBottom: '1rem' }}>
-                    <div style={{ fontSize: '0.75rem', fontWeight: 700, color: '#1e293b', marginBottom: '0.5rem', textTransform: 'uppercase' }}>Skills You'll Master:</div>
-                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.4rem' }}>
-                      {course.skills.map((s) => (
+                  {course.bestseller ? (
+                    <span
+                      style={{
+                        background: '#fef3c7',
+                        color: '#92400e',
+                        border: '1px solid #fcd34d',
+                        fontWeight: 900,
+                        fontSize: '0.72rem',
+                        padding: '3px 8px',
+                        borderRadius: '4px',
+                        textTransform: 'uppercase',
+                        letterSpacing: '0.04em',
+                      }}
+                    >
+                      ★ Bestseller
+                    </span>
+                  ) : (
+                    <span
+                      style={{
+                        background: '#f0fdf4',
+                        color: '#166534',
+                        border: '1px solid #bbf7d0',
+                        fontWeight: 800,
+                        fontSize: '0.72rem',
+                        padding: '3px 8px',
+                        borderRadius: '4px',
+                      }}
+                    >
+                      {course.discountBadge}
+                    </span>
+                  )}
+                </div>
+
+                {/* Main Card Body */}
+                <div style={{ padding: '1.25rem 1.5rem', flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+                  <div>
+                    {/* Course Title */}
+                    <h3
+                      style={{
+                        fontSize: '1.15rem',
+                        fontWeight: 900,
+                        color: '#0f172a',
+                        margin: '0 0 0.35rem',
+                        lineHeight: 1.35,
+                        fontFamily: 'var(--font-heading)',
+                      }}
+                    >
+                      {course.title}
+                    </h3>
+
+                    {/* Instructor Line */}
+                    <div style={{ fontSize: '0.8rem', color: '#475569', marginBottom: '0.65rem' }}>
+                      👨‍🏫 {course.instructor || 'Éclat Senior Faculty & Industry Expert'}
+                    </div>
+
+                    {/* Udemy-Style Rating & Student Count */}
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '1rem', flexWrap: 'wrap' }}>
+                      <strong style={{ color: '#b45309', fontSize: '0.92rem', fontWeight: 900 }}>{(course.rating || 4.9).toFixed(1)}</strong>
+                      <span style={{ color: '#f59e0b', fontSize: '0.85rem' }}>★★★★★</span>
+                      <span style={{ color: '#64748b', fontSize: '0.78rem' }}>({(course.ratingCount || 1240).toLocaleString()})</span>
+                      <span style={{ color: '#94a3b8' }}>•</span>
+                      <span style={{ color: '#0369a1', fontSize: '0.78rem', fontWeight: 700 }}>{(course.studentsEnrolled || 2800).toLocaleString()} students</span>
+                    </div>
+
+                    {/* Schedule & Duration Meta */}
+                    <div style={{ display: 'flex', gap: '0.5rem', fontSize: '0.78rem', color: '#334155', marginBottom: '0.85rem', flexWrap: 'wrap' }}>
+                      <span style={{ background: '#f8fafc', border: '1px solid #e2e8f0', padding: '3px 8px', borderRadius: '6px' }}>
+                        ⏱️ {course.duration}
+                      </span>
+                      <span style={{ background: '#f8fafc', border: '1px solid #e2e8f0', padding: '3px 8px', borderRadius: '6px' }}>
+                        📅 {course.schedule.split('/')[0]}
+                      </span>
+                    </div>
+
+                    {/* Career Outcome */}
+                    <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '8px', padding: '0.65rem 0.85rem', marginBottom: '0.85rem' }}>
+                      <div style={{ fontSize: '0.7rem', fontWeight: 700, color: '#64748b', textTransform: 'uppercase' }}>Target Career Role:</div>
+                      <div style={{ fontSize: '0.84rem', fontWeight: 800, color: '#1e3a8a', marginTop: '2px' }}>
+                        💼 {course.careerOutcome}
+                      </div>
+                    </div>
+
+                    {/* Key Skills */}
+                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px', marginBottom: '1rem' }}>
+                      {course.skills.slice(0, 3).map((s) => (
                         <span
                           key={s}
                           style={{
                             background: '#eff6ff',
-                            color: '#1e40af',
-                            borderRadius: '6px',
-                            padding: '3px 8px',
-                            fontSize: '0.76rem',
+                            color: '#1d4ed8',
+                            borderRadius: '4px',
+                            padding: '2px 7px',
+                            fontSize: '0.74rem',
                             fontWeight: 600,
                           }}
                         >
                           ✓ {s}
                         </span>
                       ))}
+                      {course.skills.length > 3 && (
+                        <span style={{ color: '#64748b', fontSize: '0.72rem', padding: '2px 4px' }}>
+                          +{course.skills.length - 3} more
+                        </span>
+                      )}
                     </div>
                   </div>
 
-                  {/* Practical Syllabus Accordion Toggle */}
+                  {/* Practical Syllabus Button */}
                   {course.syllabus && course.syllabus.length > 0 && (
-                    <div style={{ marginBottom: '1.25rem' }}>
+                    <div style={{ marginBottom: '1rem' }}>
                       <button
                         type="button"
                         style={{
-                          background: expandedSyllabusId === course.id ? '#eff6ff' : '#f8fafc',
-                          border: '1px solid #cbd5e1',
+                          background: '#f8fafc',
+                          border: '1px dashed #94a3b8',
                           borderRadius: '8px',
-                          padding: '0.45rem 0.85rem',
+                          padding: '0.45rem 0.75rem',
                           fontSize: '0.78rem',
                           fontWeight: 700,
-                          color: '#1e3a8a',
+                          color: '#2563eb',
                           cursor: 'pointer',
                           width: '100%',
                           display: 'flex',
                           justifyContent: 'space-between',
                           alignItems: 'center',
-                          transition: 'all 0.2s',
                         }}
-                        onClick={() => setExpandedSyllabusId(expandedSyllabusId === course.id ? null : course.id)}
+                        onClick={() => setSelectedCourseForModal(course)}
                       >
-                        <span>📋 {expandedSyllabusId === course.id ? 'Hide Practical Modules' : 'View 4-Week Practical Modules'}</span>
-                        <span>{expandedSyllabusId === course.id ? '▲' : '▼'}</span>
+                        <span>📖 View Full Syllabus & Labs</span>
+                        <span>→</span>
                       </button>
-
-                      {expandedSyllabusId === course.id && (
-                        <div style={{ marginTop: '0.75rem', padding: '0.75rem', background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '8px', display: 'flex', flexDirection: 'column', gap: '0.6rem', fontSize: '0.78rem' }}>
-                          {course.syllabus.map((mod, idx) => (
-                            <div key={idx} style={{ borderBottom: idx !== course.syllabus!.length - 1 ? '1px solid #e2e8f0' : 'none', paddingBottom: '0.4rem' }}>
-                              <div style={{ fontWeight: 800, color: '#1e3a8a' }}>{mod.week}: {mod.topic}</div>
-                              <div style={{ color: '#475569', marginTop: '2px' }}>🔧 <em>Lab:</em> {mod.practicalLab}</div>
-                            </div>
-                          ))}
-                        </div>
-                      )}
                     </div>
                   )}
-                </div>
 
-                <div style={{ borderTop: '1px solid #e2e8f0', paddingTop: '1.25rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <div>
-                    <div style={{ fontSize: '0.75rem', color: '#334155', fontWeight: 700 }}>Total Tuition:</div>
-                    <div style={{ fontSize: '1.35rem', fontWeight: 900, color: '#16a34a' }}>{course.fee}</div>
-                    <div style={{ fontSize: '0.75rem', color: '#475569', fontWeight: 600 }}>{course.installment}</div>
+                  {/* Udemy-Style Pricing & Direct Enrollment CTA */}
+                  <div style={{ borderTop: '1px solid #f1f5f9', paddingTop: '1rem', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end' }}>
+                    <div>
+                      <div style={{ display: 'flex', alignItems: 'baseline', gap: '6px' }}>
+                        <span style={{ fontSize: '1.4rem', fontWeight: 900, color: '#0f172a' }}>{course.fee}</span>
+                        <span style={{ fontSize: '0.9rem', color: '#94a3b8', textDecoration: 'line-through' }}>{course.originalFee || '$180'}</span>
+                        <span style={{ fontSize: '0.75rem', color: '#16a34a', fontWeight: 800 }}>{course.discountBadge || '50% OFF'}</span>
+                      </div>
+                      <div style={{ fontSize: '0.72rem', color: '#64748b', fontWeight: 600 }}>
+                        {course.installment}
+                      </div>
+                    </div>
+
+                    <div style={{ display: 'flex', gap: '6px' }}>
+                      <button
+                        type="button"
+                        className="btn btn-primary"
+                        style={{
+                          fontWeight: 800,
+                          borderRadius: '8px',
+                          padding: '0.6rem 1.15rem',
+                          fontSize: '0.85rem',
+                          boxShadow: '0 4px 12px rgba(37, 99, 235, 0.3)',
+                        }}
+                        onClick={() => handleOpenCourseApplication(course)}
+                      >
+                        ⚡ Enroll Now
+                      </button>
+                    </div>
                   </div>
-
-                  <button
-                    type="button"
-                    className="btn btn-primary"
-                    style={{
-                      fontWeight: 800,
-                      borderRadius: '10px',
-                      padding: '0.65rem 1.25rem',
-                      fontSize: '0.9rem',
-                    }}
-                    onClick={() => handleOpenCourseApplication(course)}
-                  >
-                    Apply Now →
-                  </button>
                 </div>
               </div>
             ))}
