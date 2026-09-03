@@ -320,6 +320,7 @@ export function Landing() {
   const [inquiryModalOpen, setInquiryModalOpen] = useState(false)
   const [inquirySuccess, setInquirySuccess] = useState(false)
   const [showPortalDesksModal, setShowPortalDesksModal] = useState(false)
+  const [mobileNavOpen, setMobileNavOpen] = useState(false)
   const [showScrollTop, setShowScrollTop] = useState(false)
   const [toastMessage, setToastMessage] = useState<string | null>(null)
 
@@ -827,26 +828,11 @@ export function Landing() {
   }
 
   return (
-    <div style={{ minHeight: '100vh', background: isMobile ? '#090d16' : '#f8fafc', color: isMobile ? '#f8fafc' : '#0f172a', fontFamily: 'Inter, system-ui, -apple-system, sans-serif' }}>
+    <div style={{ minHeight: '100vh', background: '#f8fafc', color: '#0f172a', fontFamily: 'Inter, system-ui, -apple-system, sans-serif' }}>
       <PWAInstallBanner />
       <DesktopCommandPalette />
 
-      {isMobile ? (
-        <MobileLandingView
-          courses={coursesList}
-          timeLeft={timeLeft}
-          onOpenInquiry={(title) => {
-            if (title) setInquiryForm((prev) => ({ ...prev, course: title }))
-            setCheckoutStep('details')
-            setInquiryModalOpen(true)
-          }}
-          onOpenPortals={() => setShowPortalDesksModal(true)}
-          onSelectCourse={(c) => setSelectedCourseForModal(c)}
-          showToast={showToast}
-        />
-      ) : (
-        <>
-          {/* Top Admissions & Quick Contacts Bar */}
+      {/* Top Admissions & Quick Contacts Bar */}
           <div
             style={{
               background: 'linear-gradient(90deg, #1e3a8a 0%, #2563eb 50%, #1e3a8a 100%)',
@@ -1002,9 +988,103 @@ export function Landing() {
               >
                 🔐 Portals
               </button>
+
+              {/* Mobile Hamburger Toggle Button */}
+              <button
+                type="button"
+                className="btn btn-sm sm:hidden"
+                style={{
+                  background: '#f1f5f9',
+                  color: '#0f172a',
+                  border: '1px solid #cbd5e1',
+                  fontWeight: 800,
+                  fontSize: '1rem',
+                  padding: '0.4rem 0.65rem',
+                  borderRadius: '8px',
+                  cursor: 'pointer',
+                }}
+                onClick={() => setMobileNavOpen(!mobileNavOpen)}
+                aria-label="Toggle Navigation Menu"
+              >
+                {mobileNavOpen ? '✕' : '☰'}
+              </button>
             </div>
           </div>
         </div>
+
+        {/* Mobile Slide-Down Navigation Menu */}
+        {mobileNavOpen && (
+          <div
+            style={{
+              background: '#ffffff',
+              borderTop: '1px solid #e2e8f0',
+              padding: '1rem 1.25rem',
+              boxShadow: '0 10px 25px rgba(0,0,0,0.1)',
+              animation: 'fadeIn 0.2s ease',
+            }}
+          >
+            <nav style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', fontSize: '0.95rem', fontWeight: 600 }}>
+              <a
+                href="#courses"
+                onClick={() => setMobileNavOpen(false)}
+                style={{ color: '#0f172a', textDecoration: 'none', padding: '0.4rem 0' }}
+              >
+                📚 Courses & Programs
+              </a>
+              <Link
+                to="/library"
+                onClick={() => setMobileNavOpen(false)}
+                style={{ color: '#2563eb', fontWeight: 800, textDecoration: 'none', padding: '0.4rem 0' }}
+              >
+                📖 Free Academic E-Library
+              </Link>
+              <a
+                href="#why-eclat"
+                onClick={() => setMobileNavOpen(false)}
+                style={{ color: '#0f172a', textDecoration: 'none', padding: '0.4rem 0' }}
+              >
+                ⭐ Why Choose Éclat Institute
+              </a>
+              <a
+                href="#testimonials"
+                onClick={() => setMobileNavOpen(false)}
+                style={{ color: '#0f172a', textDecoration: 'none', padding: '0.4rem 0' }}
+              >
+                🎓 Graduate Outcomes & Testimonials
+              </a>
+              <a
+                href="#intakes"
+                onClick={() => setMobileNavOpen(false)}
+                style={{ color: '#0f172a', textDecoration: 'none', padding: '0.4rem 0' }}
+              >
+                💳 Intakes & Tuition Fees
+              </a>
+
+              <div style={{ borderTop: '1px solid #e2e8f0', paddingTop: '0.75rem', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                <a
+                  href={getWhatsAppInquiryUrl('General Admissions Inquiry')}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="btn btn-sm"
+                  style={{ background: '#22c55e', color: '#ffffff', fontWeight: 800, textAlign: 'center', padding: '0.6rem', borderRadius: '8px', textDecoration: 'none' }}
+                >
+                  💬 WhatsApp Admissions Desk
+                </a>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setMobileNavOpen(false)
+                    setInquiryModalOpen(true)
+                  }}
+                  className="btn btn-sm"
+                  style={{ background: '#d4af37', color: '#0c0e12', fontWeight: 800, textAlign: 'center', padding: '0.6rem', borderRadius: '8px' }}
+                >
+                  🚀 Apply & Enroll Online
+                </button>
+              </div>
+            </nav>
+          </div>
+        )}
       </header>
 
       {/* Hero Section */}
@@ -2065,8 +2145,6 @@ export function Landing() {
           </div>
         </div>
       </footer>
-      </>
-      )}
 
       {/* ============================================================
           GLOBAL RESPONSIVE MODALS (Mobile & Desktop)
@@ -2784,9 +2862,6 @@ export function Landing() {
           </button>
         </div>
       )}
-
-      {/* Mobile-Native Bottom App Bar */}
-      <MobileAppBottomNav />
     </div>
   )
 }
