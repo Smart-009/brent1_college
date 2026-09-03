@@ -96,18 +96,26 @@ function createWindow() {
     if (isDev) {
       return `http://localhost:5173${routePath}`
     }
-    return `file://${path.join(__dirname, '../dist/index.html')}#${routePath}`
+    return `https://www.eclat.institute${routePath}`
   }
 
-  // Load app
+  // Hardware Screen Capture Protection Active by Default
+  try {
+    mainWindow.setContentProtection(true)
+  } catch (e) {}
+
+  // Load app from live production server with auto OTA updates
   if (isDev) {
     mainWindow.loadURL('http://localhost:5173')
   } else {
-    mainWindow.loadFile(path.join(__dirname, '../dist/index.html'))
+    mainWindow.loadURL('https://www.eclat.institute')
   }
 
-  // Open links in external browser
+  // Open external links in default system browser
   mainWindow.webContents.setWindowOpenHandler(({ url }) => {
+    if (url.startsWith('http://localhost') || url.includes('eclat.institute')) {
+      return { action: 'allow' }
+    }
     shell.openExternal(url)
     return { action: 'deny' }
   })
