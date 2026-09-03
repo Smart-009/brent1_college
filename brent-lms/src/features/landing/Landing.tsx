@@ -1,6 +1,7 @@
 import { useState, useMemo, useEffect } from 'react'
 import { Link, useNavigate, useLocation } from 'react-router-dom'
 import { useIsMobile } from '@/hooks/useMediaQuery'
+import { NativeAppHome } from './NativeAppHome'
 import { DesktopCommandPalette } from '@/components/shared/DesktopCommandPalette'
 import { supabase } from '@/lib/supabase'
 import { schoolStore } from '@/lib/schoolData'
@@ -1244,6 +1245,16 @@ export function Landing() {
 
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' })
+  }
+
+  const isNativeApp =
+    typeof window !== 'undefined' &&
+    (Boolean((window as any).Capacitor?.isNativePlatform?.()) ||
+      Boolean((window as any).AndroidSecurity) ||
+      /Capacitor|Electron/i.test(navigator.userAgent))
+
+  if (isNativeApp) {
+    return <NativeAppHome courses={coursesList} onSelectCourse={(c) => setSelectedCourseForModal(c as any)} />
   }
 
   return (
