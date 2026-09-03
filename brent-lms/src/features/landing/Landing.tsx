@@ -321,6 +321,7 @@ export function Landing() {
   const [inquirySuccess, setInquirySuccess] = useState(false)
   const [showPortalDesksModal, setShowPortalDesksModal] = useState(false)
   const [mobileNavOpen, setMobileNavOpen] = useState(false)
+  const [supportModalOpen, setSupportModalOpen] = useState(false)
   const [showScrollTop, setShowScrollTop] = useState(false)
   const [toastMessage, setToastMessage] = useState<string | null>(null)
 
@@ -850,19 +851,19 @@ export function Landing() {
           textOverflow: 'ellipsis',
         }}
       >
-        <span style={{ display: 'inline-flex', alignItems: 'center', gap: '0.4rem' }}>
-          <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#22c55e', display: 'inline-block', flexShrink: 0 }} />
-          <strong>Intake Ongoing:</strong> 15% Early Bird Voucher
-        </span>
-        <span className="hidden sm:inline" style={{ opacity: 0.8 }}>|</span>
-        <span className="hidden sm:inline">
-          📞 <strong>{INSTITUTION_CONFIG.contact.phone}</strong>
-        </span>
-        <span className="hidden md:inline" style={{ opacity: 0.8 }}>|</span>
-        <span className="hidden md:inline">
-          🏦 {INSTITUTION_CONFIG.bank.name}: <strong>{INSTITUTION_CONFIG.bank.accountNumber}</strong>
-        </span>
-      </div>
+          <span style={{ display: 'inline-flex', alignItems: 'center', gap: '0.4rem' }}>
+            <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#22c55e', display: 'inline-block', flexShrink: 0 }} />
+            <strong>Intake Ongoing:</strong> 15% Early Bird Tuition Voucher
+          </span>
+          <span className="hidden sm:inline" style={{ opacity: 0.8 }}>|</span>
+          <span className="hidden sm:inline">
+            📞 Admissions: <strong>{INSTITUTION_CONFIG.contact.phone}</strong>
+          </span>
+          <span className="hidden md:inline" style={{ opacity: 0.8 }}>|</span>
+          <span className="hidden md:inline">
+            🎓 100% Online Live Classes & 24/7 Digital LMS
+          </span>
+        </div>
 
       {/* Main Header / Navigation */}
       <header
@@ -1902,9 +1903,8 @@ export function Landing() {
                   </div>
 
                   <div style={{ background: 'rgba(255,255,255,0.08)', borderRadius: '8px', padding: '0.75rem', fontSize: '0.8rem', color: '#e2e8f0', lineHeight: 1.5 }}>
-                    <div>🏦 <strong>Bank:</strong> {INSTITUTION_CONFIG.bank.name} (Acc: <span style={{ color: '#67e8f9', fontWeight: 800 }}>{INSTITUTION_CONFIG.bank.accountNumber}</span>)</div>
-                    <div>📱 <strong>Paybill:</strong> {INSTITUTION_CONFIG.bank.paybillNumber} (Account: {INSTITUTION_CONFIG.bank.accountNumber})</div>
-                    <div>💳 <strong>Card:</strong> Visa / Mastercard Accepted</div>
+                    <div>🔒 <strong>Flexible Payment:</strong> Visa, Mastercard, Bank Wire, Mobile Money</div>
+                    <div style={{ color: '#93c5fd', marginTop: '3px' }}>⚡ Official invoice & payment details are presented at checkout when enrolling.</div>
                   </div>
                 </div>
 
@@ -2164,15 +2164,21 @@ export function Landing() {
             </div>
             <div style={{ background: 'rgba(255, 255, 255, 0.12)', borderRadius: '12px', padding: '1.25rem', marginTop: '1.5rem', lineHeight: 1.8 }}>
               <div>🌐 <strong>Currency:</strong> <span style={{ fontSize: '1.15rem', fontWeight: 900, color: '#ffffff' }}>USD ($)</span> (or local equivalent)</div>
-              <div>💳 <strong>Card Payment:</strong> Debit / Credit Card (Visa & Mastercard)</div>
-              <div>🏦 <strong>Bank Wire / Direct Deposit:</strong> {INSTITUTION_CONFIG.bank.name} • Acc: <span style={{ fontWeight: 900, color: '#fef08a' }}>{INSTITUTION_CONFIG.bank.accountNumber}</span></div>
-              <div>📱 <strong>M-Pesa Paybill:</strong> Business No: <strong style={{ color: '#ffffff' }}>{INSTITUTION_CONFIG.bank.paybillNumber}</strong> • Account: <strong style={{ color: '#fef08a' }}>{INSTITUTION_CONFIG.bank.accountNumber}</strong></div>
-              <div>📑 <strong>Reference:</strong> Student Full Name or Admission ID</div>
-              <div>💰 <strong>Installment Plan:</strong> Available in 2 to 3 flexible parts</div>
+              <div>💳 <strong>Card Payment:</strong> Debit / Credit Card (Visa, Mastercard & Prepaid)</div>
+              <div>🏦 <strong>Bank Wire & Mobile Money:</strong> Instant automated invoices generated upon registration</div>
+              <div>💰 <strong>Installment Plan:</strong> 2 flexible parts accepted (50% on admission)</div>
+              <div>📑 <strong>Receipts:</strong> Official stamped digital receipts with instant QR verification</div>
             </div>
-            <p style={{ fontSize: '0.82rem', color: '#d1fae5', marginTop: '1.25rem', margin: '1.25rem 0 0' }}>
-              * Official stamped digital receipts are issued instantly by the Bursar Desk upon payment confirmation.
-            </p>
+            <div style={{ marginTop: '1.25rem' }}>
+              <button
+                type="button"
+                className="btn btn-sm"
+                style={{ background: '#ffffff', color: '#065f46', fontWeight: 800, padding: '0.6rem 1.25rem', borderRadius: '8px', border: 'none', cursor: 'pointer' }}
+                onClick={() => setInquiryModalOpen(true)}
+              >
+                💳 Enroll & Proceed to Payment Desk →
+              </button>
+            </div>
           </div>
 
           {/* Virtual Admissions & Support Desk Card */}
@@ -3079,6 +3085,122 @@ export function Landing() {
           </button>
         </div>
       )}
+
+      {/* Floating Admissions & Support Button with Direct Number */}
+      <div style={{ position: 'fixed', bottom: '24px', right: '24px', zIndex: 9990, display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '8px' }}>
+        {supportModalOpen && (
+          <div
+            style={{
+              background: '#ffffff',
+              borderRadius: '16px',
+              padding: '1.25rem',
+              boxShadow: '0 12px 36px rgba(0,0,0,0.2)',
+              border: '1px solid #e2e8f0',
+              width: '290px',
+              animation: 'fadeIn 0.2s ease',
+              marginBottom: '4px',
+            }}
+          >
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.75rem' }}>
+              <div style={{ fontWeight: 800, color: '#0f172a', fontSize: '0.95rem' }}>🎧 Admissions & Support</div>
+              <button
+                type="button"
+                onClick={() => setSupportModalOpen(false)}
+                style={{ background: 'none', border: 'none', color: '#64748b', cursor: 'pointer', fontWeight: 900 }}
+              >
+                ✕
+              </button>
+            </div>
+            <p style={{ fontSize: '0.8rem', color: '#475569', margin: '0 0 0.85rem' }}>
+              Have questions about courses, admissions, or fees? Reach out to our virtual desk:
+            </p>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+              <a
+                href={getWhatsAppInquiryUrl('Hello Eclat Support! I need assistance with admissions.')}
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{
+                  background: '#22c55e',
+                  color: '#ffffff',
+                  fontWeight: 700,
+                  fontSize: '0.82rem',
+                  padding: '0.6rem 0.85rem',
+                  borderRadius: '8px',
+                  textDecoration: 'none',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '8px',
+                }}
+              >
+                <span>💬</span>
+                <span>WhatsApp: {INSTITUTION_CONFIG.contact.phone}</span>
+              </a>
+              <a
+                href={`tel:${INSTITUTION_CONFIG.contact.phoneRaw}`}
+                style={{
+                  background: '#eff6ff',
+                  color: '#1d4ed8',
+                  border: '1px solid #bfdbfe',
+                  fontWeight: 700,
+                  fontSize: '0.82rem',
+                  padding: '0.6rem 0.85rem',
+                  borderRadius: '8px',
+                  textDecoration: 'none',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '8px',
+                }}
+              >
+                <span>📞</span>
+                <span>Call Hotline: {INSTITUTION_CONFIG.contact.phone}</span>
+              </a>
+              <a
+                href={`mailto:${INSTITUTION_CONFIG.contact.admissionsEmail}`}
+                style={{
+                  background: '#f8fafc',
+                  color: '#334155',
+                  border: '1px solid #cbd5e1',
+                  fontWeight: 700,
+                  fontSize: '0.82rem',
+                  padding: '0.6rem 0.85rem',
+                  borderRadius: '8px',
+                  textDecoration: 'none',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '8px',
+                }}
+              >
+                <span>✉️</span>
+                <span>Email: {INSTITUTION_CONFIG.contact.admissionsEmail}</span>
+              </a>
+            </div>
+          </div>
+        )}
+
+        <button
+          type="button"
+          onClick={() => setSupportModalOpen(!supportModalOpen)}
+          style={{
+            background: '#22c55e',
+            color: '#ffffff',
+            border: 'none',
+            borderRadius: '999px',
+            padding: '0.75rem 1.25rem',
+            fontWeight: 800,
+            fontSize: '0.88rem',
+            cursor: 'pointer',
+            boxShadow: '0 8px 24px rgba(34, 197, 94, 0.4)',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '8px',
+            transition: 'transform 0.2s',
+          }}
+          title="Contact Admissions Support"
+        >
+          <span style={{ fontSize: '1.1rem' }}>💬</span>
+          <span>Support: {INSTITUTION_CONFIG.contact.phone}</span>
+        </button>
+      </div>
     </div>
   )
 }
