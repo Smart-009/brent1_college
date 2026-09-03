@@ -64,7 +64,7 @@ const DEFAULT_COURSES_DATA: CourseItem[] = [
     id: 'c-python',
     title: 'Python Programming, SQL & Data Analytics Masterclass',
     category: 'Tech & Programming',
-    tag: '📊 Data & AI Fundamentals',
+    tag: '🐍 Data & AI Fundamentals',
     tagColor: '#0284c7',
     duration: '8 Weeks (2 Months)',
     schedule: 'Live Virtual Cohorts (Mon & Wed 8:00 PM) / Saturday Intensive',
@@ -80,7 +80,7 @@ const DEFAULT_COURSES_DATA: CourseItem[] = [
     installment: '2 installments of $48',
     careerOutcome: 'Data Analyst • Business Intelligence Associate • Junior Python Developer',
     skills: ['Python Syntax & OOP', 'Pandas & NumPy Data Cleaning', 'SQL Queries & Relational DBs', 'Matplotlib & Seaborn Charts', 'Power BI Dashboards'],
-    icon: '📊',
+    icon: '🐍',
     syllabus: [
       { week: 'Week 1-2', topic: 'Python Programming Fundamentals & Data Structures', practicalLab: 'Writing Python scripts, automation loops, and algorithmic problem solving.' },
       { week: 'Week 3-4', topic: 'SQL Relational Queries & Database Aggregations', practicalLab: 'Querying complex multi-table datasets, filtering, and JOIN operations.' },
@@ -92,7 +92,7 @@ const DEFAULT_COURSES_DATA: CourseItem[] = [
     id: 'c-comp',
     title: 'Comprehensive Computer Packages & Modern Digital Literacy',
     category: 'Computer & Digital Skills',
-    tag: '⚡ Essential Office Tech',
+    tag: '🖥️ Essential Office Tech',
     tagColor: '#0f172a',
     duration: '4 Weeks (1 Month)',
     schedule: 'Live Virtual Morning (9:00 AM) / Evening (6:00 PM) / 24/7 LMS',
@@ -108,7 +108,7 @@ const DEFAULT_COURSES_DATA: CourseItem[] = [
     installment: '2 installments of $23',
     careerOutcome: 'Office Administrator • Executive Virtual Assistant • Data Entry Specialist',
     skills: ['Ms Word & Document Styling', 'Advanced Ms Excel & Formulas', 'PowerPoint Slide Decks', 'Google Workspace Collaboration', 'Canva Pro Graphics & Social Media'],
-    icon: '⚡',
+    icon: '🖥️',
     syllabus: [
       { week: 'Week 1', topic: 'Touch Typing & Advanced Ms Word Corporate Documentation', practicalLab: 'Formatting official business memos, contracts, and dynamic tables of contents.' },
       { week: 'Week 2', topic: 'Advanced Ms Excel Spreadsheets, VLOOKUP & Data Formulas', practicalLab: 'Automated payroll formulas, IF statements, budgeting sheets, and pivot charts.' },
@@ -147,7 +147,7 @@ const DEFAULT_COURSES_DATA: CourseItem[] = [
     id: 'c-acc',
     title: 'Computerized Accounting, QuickBooks & International Tax',
     category: 'Business Tech & Accounting',
-    tag: '📈 High Corporate Demand',
+    tag: '🧾 High Corporate Demand',
     tagColor: '#b45309',
     duration: '4 Weeks (1 Month)',
     schedule: 'Live Virtual Evening (6:00 PM - 8:00 PM) / Weekend Batches',
@@ -163,7 +163,7 @@ const DEFAULT_COURSES_DATA: CourseItem[] = [
     installment: '2 installments of $33',
     careerOutcome: 'Accounts Assistant • Payroll Specialist • Tax Consultant & Bookkeeper',
     skills: ['QuickBooks Desktop & Online', 'International Tax Filing & VAT', 'Payroll & Benefits Deductions', 'Bank Reconciliation', 'Financial Statements & Balance Sheets'],
-    icon: '📈',
+    icon: '🧾',
     syllabus: [
       { week: 'Week 1', topic: 'Company File Setup & Chart of Accounts in QuickBooks', practicalLab: 'Configuring fiscal years, opening balances, and vendor databases.' },
       { week: 'Week 2', topic: 'Invoicing, Accounts Receivable & Bill Payments', practicalLab: 'Recording sales receipts, customer credit memos, and supplier reconciliations.' },
@@ -218,7 +218,7 @@ const DEFAULT_COURSES_DATA: CourseItem[] = [
     installment: '2 installments of $28',
     careerOutcome: 'Corporate Communicator • Public Speaker • Executive Virtual Assistant',
     skills: ['Spoken English & Pronunciation', 'Business Email & Executive Memos', 'Public Speaking & Presentation', 'Grammar & Vocabulary Mastery', 'Boardroom Interview Confidence'],
-    icon: '📢',
+    icon: '🗣️',
     syllabus: [
       { week: 'Week 1-2', topic: 'Grammar Fundamentals & Phonetic Pronunciation', practicalLab: 'Live speaking video breakout rooms and articulation drills.' },
       { week: 'Week 3-4', topic: 'Spoken Fluency & Vocabulary Expansion', practicalLab: 'Interactive pair dialogues, impromptu speeches, and eliminating hesitation.' },
@@ -230,7 +230,7 @@ const DEFAULT_COURSES_DATA: CourseItem[] = [
     id: 'c-ielts',
     title: 'IELTS Academic & General Training Exam Prep (Band 7.5 - 9.0)',
     category: 'Languages & Communication',
-    tag: '🌍 Study Abroad & Global Visas',
+    tag: '🇬🇧 Study Abroad & Global Visas',
     tagColor: '#2563eb',
     duration: '4 to 6 Weeks Intensive',
     schedule: 'Live Zoom Speaking Mock Tests & Writing Drills (Evening / Weekend)',
@@ -246,7 +246,7 @@ const DEFAULT_COURSES_DATA: CourseItem[] = [
     installment: '2 installments of $43',
     careerOutcome: 'Study Abroad (UK, Canada, USA, Europe) • Global Healthcare & Relocation Visas',
     skills: ['IELTS Speaking 1-on-1 Mocks', 'Listening Audio Comprehension Strategies', 'Academic Reading Speed Tactics', 'Task 1 & Task 2 Writing Masterclass', 'British Council Exam Rubric'],
-    icon: '🎓',
+    icon: '🇬🇧',
     syllabus: [
       { week: 'Week 1', topic: 'IELTS Speaking Section & Part 1-3 Fluency Mastery', practicalLab: '1-on-1 live mock interviews with certified feedback and scoring.' },
       { week: 'Week 2', topic: 'Listening Section & Audio Trap Strategies', practicalLab: 'Real-time Cambridge audio practice tests with multi-accent comprehension.' },
@@ -286,7 +286,7 @@ const DEFAULT_COURSES_DATA: CourseItem[] = [
     id: 'c-arabic',
     title: 'Arabic Language for Business & Middle East Careers',
     category: 'Languages & Communication',
-    tag: '🌴 Gulf & International Career',
+    tag: '🇸🇦 Gulf & Middle East Careers',
     tagColor: '#059669',
     duration: '8 Weeks (2 Months)',
     schedule: 'Live Evening (6:30 PM) / Weekend Virtual Cohorts',
@@ -302,7 +302,7 @@ const DEFAULT_COURSES_DATA: CourseItem[] = [
     installment: '2 installments of $38',
     careerOutcome: 'Bilingual Support Specialist • Middle East Corporate Liaison • Flight Attendant',
     skills: ['Arabic Script & Phonetics', 'Conversational Arabic for Everyday Life', 'Business & Commercial Vocabulary', 'Listening & Audio Comprehension', 'Gulf Cultural Etiquette'],
-    icon: '🌴',
+    icon: '🇸🇦',
     syllabus: [
       { week: 'Week 1-2', topic: 'Alphabet, Pronunciation & Basic Introductions', practicalLab: 'Writing Arabic script and practicing conversational greetings.' },
       { week: 'Week 3-4', topic: 'Everyday Dialogue, Numbers & Travel Vocabulary', practicalLab: 'Role-playing airport, hotel, and restaurant interactions in Arabic.' },
@@ -314,7 +314,7 @@ const DEFAULT_COURSES_DATA: CourseItem[] = [
     id: 'c-french',
     title: 'French Language Proficiency (DELF A1 - B2 Preparation)',
     category: 'Languages & Communication',
-    tag: '🇫🇷 International Diploma',
+    tag: '🇫🇷 French Proficiency (DELF)',
     tagColor: '#3b82f6',
     duration: '8 Weeks (2 Months)',
     schedule: 'Live Online Video Masterclass (Tue & Thu 7:00 PM)',
@@ -342,7 +342,7 @@ const DEFAULT_COURSES_DATA: CourseItem[] = [
     id: 'c-german',
     title: 'German Language for Work & Studies (Goethe A1/A2 Prep)',
     category: 'Languages & Communication',
-    tag: '🇩🇪 German University & Work Pathway',
+    tag: '🇩🇪 German for Work & Studies',
     tagColor: '#f59e0b',
     duration: '8 Weeks (2 Months)',
     schedule: 'Live Online Coaching & Grammar Workshops (Mon & Fri 7:00 PM)',
@@ -1030,8 +1030,8 @@ export function Landing() {
                     { id: 'All', icon: '🔥', label: 'All Online Programs' },
                     { id: 'Tech & Programming', icon: '💻', label: 'Tech & Software Engineering' },
                     { id: 'Languages & Communication', icon: '🗣️', label: 'World Languages & IELTS' },
-                    { id: 'Computer & Digital Skills', icon: '⚡', label: 'Digital Literacy & Office Skills' },
-                    { id: 'Business Tech & Accounting', icon: '📈', label: 'QuickBooks & Tax Accounting' },
+                    { id: 'Computer & Digital Skills', icon: '🖥️', label: 'Digital Literacy & Office Skills' },
+                    { id: 'Business Tech & Accounting', icon: '🧾', label: 'QuickBooks & Tax Accounting' },
                   ].map((cat) => (
                     <button
                       key={cat.id}
@@ -1697,8 +1697,8 @@ export function Landing() {
                 { id: 'All', label: '🔥 All Programs', count: coursesList.length },
                 { id: 'Tech & Programming', label: '💻 Tech & Software', count: coursesList.filter((c) => c.category === 'Tech & Programming').length },
                 { id: 'Languages & Communication', label: '🗣️ Languages & IELTS', count: coursesList.filter((c) => c.category === 'Languages & Communication').length },
-                { id: 'Computer & Digital Skills', label: '⚡ Digital Literacy', count: coursesList.filter((c) => c.category === 'Computer & Digital Skills').length },
-                { id: 'Business Tech & Accounting', label: '📈 Accounting & Tax', count: coursesList.filter((c) => c.category === 'Business Tech & Accounting').length },
+                { id: 'Computer & Digital Skills', label: '🖥️ Digital Literacy', count: coursesList.filter((c) => c.category === 'Computer & Digital Skills').length },
+                { id: 'Business Tech & Accounting', label: '🧾 Accounting & Tax', count: coursesList.filter((c) => c.category === 'Business Tech & Accounting').length },
               ].map((cat) => (
                 <button
                   key={cat.id}
@@ -3467,7 +3467,13 @@ export function Landing() {
           }}
           title="Live Admissions & WhatsApp Support (+254 740 027 346)"
         >
-          {supportModalOpen ? '✕' : '💬'}
+          {supportModalOpen ? (
+            <span style={{ fontSize: '1.4rem', fontWeight: 900 }}>✕</span>
+          ) : (
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="#ffffff" style={{ filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.15))' }}>
+              <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z"/>
+            </svg>
+          )}
           {!supportModalOpen && (
             <span
               style={{
