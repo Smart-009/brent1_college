@@ -1433,7 +1433,7 @@ export function Landing() {
           </div>
 
           {/* Right Side: Quick Action Links & Portals */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem', flexShrink: 0 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexShrink: 0 }}>
             {/* Desktop Nav Links */}
             <nav className="desktop-nav-links" style={{ fontSize: '0.88rem', fontWeight: 600, marginRight: '0.25rem' }}>
               <Link to="/library" style={{ color: '#2563eb', fontWeight: 800, textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '4px' }}>
@@ -1441,12 +1441,12 @@ export function Landing() {
                 <span>E-Library</span>
               </Link>
               <a href="#calculator" style={{ color: '#334155', textDecoration: 'none' }}>Tuition Plans</a>
-              <a href="#why-eclat" style={{ color: '#334155', textDecoration: 'none' }}>Why Us</a>
+              <a href="#about" style={{ color: '#334155', textDecoration: 'none' }}>About Us</a>
             </nav>
 
             <a
               href="#app-download"
-              className="btn btn-sm"
+              className="btn btn-sm hidden md:inline-flex"
               style={{
                 background: '#16a34a',
                 color: '#ffffff',
@@ -1455,7 +1455,6 @@ export function Landing() {
                 padding: '0.45rem 0.75rem',
                 borderRadius: '8px',
                 boxShadow: '0 2px 6px rgba(22, 163, 74, 0.3)',
-                display: 'inline-flex',
                 alignItems: 'center',
                 gap: '4px',
                 fontSize: '0.78rem',
@@ -1470,7 +1469,7 @@ export function Landing() {
 
             <button
               type="button"
-              className="btn btn-sm"
+              className="btn btn-sm hidden lg:inline-flex"
               style={{
                 background: '#eff6ff',
                 color: '#1d4ed8',
@@ -1488,7 +1487,7 @@ export function Landing() {
 
             <button
               type="button"
-              className="btn btn-sm btn-primary"
+              className="btn btn-sm btn-primary hidden md:inline-flex"
               style={{
                 fontWeight: 700,
                 padding: '0.45rem 0.85rem',
@@ -1502,30 +1501,33 @@ export function Landing() {
               🔐 Portals
             </button>
 
-              {/* Mobile Hamburger Toggle Button */}
-              <button
-                type="button"
-                className="btn btn-sm landing-mobile-menu-toggle"
-                style={{
-                  background: mobileNavOpen ? '#0f172a' : '#eff6ff',
-                  color: mobileNavOpen ? '#ffffff' : '#1e40af',
-                  border: '1.5px solid #3b82f6',
-                  fontWeight: 800,
-                  fontSize: '0.88rem',
-                  padding: '0.45rem 0.85rem',
-                  borderRadius: '8px',
-                  cursor: 'pointer',
-                  alignItems: 'center',
-                  gap: '6px',
-                }}
-                onClick={() => setMobileNavOpen(!mobileNavOpen)}
-                aria-label="Toggle Navigation Menu"
-              >
-                <span>{mobileNavOpen ? '✕' : '☰'}</span>
-                <span>{mobileNavOpen ? 'Close' : 'Menu'}</span>
-              </button>
-            </div>
+            {/* Mobile Hamburger Toggle Button - ALWAYS visible on mobile */}
+            <button
+              type="button"
+              className="btn btn-sm landing-mobile-menu-toggle"
+              style={{
+                background: mobileNavOpen ? '#0f172a' : '#2563eb',
+                color: '#ffffff',
+                border: 'none',
+                fontWeight: 800,
+                fontSize: '0.88rem',
+                padding: '0.45rem 0.85rem',
+                borderRadius: '8px',
+                cursor: 'pointer',
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '6px',
+                boxShadow: '0 2px 8px rgba(37, 99, 235, 0.35)',
+                flexShrink: 0,
+              }}
+              onClick={() => setMobileNavOpen(!mobileNavOpen)}
+              aria-label="Toggle Navigation Menu"
+            >
+              <span style={{ fontSize: '1.05rem', lineHeight: 1 }}>{mobileNavOpen ? '✕' : '☰'}</span>
+              <span>{mobileNavOpen ? 'Close' : 'Menu'}</span>
+            </button>
           </div>
+        </div>
 
         {/* Mobile Slide-Down Navigation Menu */}
         {mobileNavOpen && (
@@ -1752,10 +1754,10 @@ export function Landing() {
           {/* Master Academy Headline */}
           <h1
             style={{
-              fontSize: isMobile ? '2.2rem' : 'clamp(2.5rem, 4.8vw, 3.8rem)',
+              fontSize: isMobile ? 'clamp(1.4rem, 6vw, 1.85rem)' : 'clamp(2.5rem, 4.8vw, 3.8rem)',
               fontWeight: 900,
-              letterSpacing: '-0.03em',
-              lineHeight: 1.15,
+              letterSpacing: '-0.02em',
+              lineHeight: isMobile ? 1.25 : 1.15,
               margin: '0 auto 1.25rem',
               maxWidth: '960px',
               color: '#ffffff',
