@@ -374,7 +374,7 @@ const DEFAULT_COURSES_DATA: CourseItem[] = [
     id: 'c-german',
     title: 'German Language for Work & Studies (Goethe A1/A2 Prep)',
     category: 'Languages & Communication',
-    tag: '🇩🇪 German for Work & Studies',
+    tag: '🇩🇪 German Goethe-Zertifikat Pathway',
     tagColor: '#f59e0b',
     duration: '8 Weeks (2 Months)',
     schedule: 'Live Online Coaching & Grammar Workshops (Mon & Fri 7:00 PM)',
@@ -399,10 +399,38 @@ const DEFAULT_COURSES_DATA: CourseItem[] = [
     ],
   },
   {
+    id: 'c-french',
+    title: 'French Language Proficiency (DELF A1 - B2 Preparation)',
+    category: 'Languages & Communication',
+    tag: '🇫🇷 French Proficiency (DELF)',
+    tagColor: '#3b82f6',
+    duration: '8 Weeks (2 Months)',
+    schedule: 'Live Online Video Masterclass (Tue & Thu 7:00 PM)',
+    fee: '$79',
+    originalFee: '$160',
+    discountBadge: '50% OFF',
+    rating: 4.88,
+    ratingCount: 670,
+    studentsEnrolled: 1750,
+    instructor: 'Madame Claire Dubois • DELF Certified Evaluator',
+    bestseller: false,
+    popular: true,
+    installment: '2 installments of $40',
+    careerOutcome: 'Embassy Assistant • International NGO Officer • Multilingual Customer Support',
+    skills: ['French Phonetics & Accent', 'Grammar & Verb Conjugation', 'Conversational Fluency', 'Written Composition', 'DELF A1/A2 Exam Prep'],
+    icon: '🇫🇷',
+    syllabus: [
+      { week: 'Week 1-2', topic: 'Les Salutations, Alphabet & Prononciation', practicalLab: 'Live pronunciation coaching and self-introduction dialogues.' },
+      { week: 'Week 3-4', topic: 'Grammaire & Conjugaison des Verbes', practicalLab: 'Building past and present sentences in interactive breakout rooms.' },
+      { week: 'Week 5-6', topic: 'Compréhension Orale & Expression Écrite', practicalLab: 'Listening to native audio clips and drafting French formal emails.' },
+      { week: 'Week 7-8', topic: 'Préparation à l’Examen DELF & Simulation', practicalLab: 'Mock DELF listening, reading, and speaking tests.' },
+    ],
+  },
+  {
     id: 'c-kisw',
     title: 'Spoken & Written Kiswahili Sanifu (Beginners & Expatriates)',
     category: 'Languages & Communication',
-    tag: '🇰🇪 Conversational Swahili',
+    tag: '🇰🇪 Conversational Swahili (Sanifu)',
     tagColor: '#16a34a',
     duration: '4 to 6 Weeks',
     schedule: 'Live Interactive 1-on-1 & Small Group Video Sessions',
@@ -430,75 +458,91 @@ const DEFAULT_COURSES_DATA: CourseItem[] = [
 
 const TESTIMONIALS = [
   {
-    name: 'Kevin Ochieng',
-    role: 'Lead Quantitative Researcher at Regional Health NGO',
-    course: 'R Programming & Stata Econometrics',
+    name: 'Dr. Marcus Vance',
+    role: 'Lead Health Data Scientist at NHS Trust',
+    location: 'London, United Kingdom',
+    countryCode: '🇬🇧 UK',
+    course: 'R Programming & Biostatistics',
     avatar: '📊',
     quote:
-      'The hands-on training in RStudio, tidyverse data pipelines, and Stata panel regressions at Éclat Institute was transformative. I was able to automate our multi-country survey data analysis and publish our research findings with zero friction!',
+      'The hands-on training in RStudio, tidyverse data pipelines, and biostatistical regression models at Éclat was world-class. I was able to automate our NHS hospital trust epidemiological reporting with total precision!',
     rating: 5,
   },
   {
-    name: 'Mercy Wanjiku',
-    role: 'Data Analyst & SPSS Consultant',
-    course: 'Python & IBM SPSS Statistics',
+    name: 'Clara Schneider',
+    role: 'Frontend Software Engineer at SaaS Enterprise',
+    location: 'Frankfurt, Germany',
+    countryCode: '🇩🇪 Germany',
+    course: 'Full-Stack Web Dev (React 19 & Node.js)',
+    avatar: '💻',
+    quote:
+      'Enrolling in Éclat’s React 19 and Node.js course from Germany was the best career decision I made. The live evening coding labs, GitHub pull request reviews, and API deployments prepared me to land my software developer role.',
+    rating: 5,
+  },
+  {
+    name: 'Tariq Al-Hashimi',
+    role: 'Regional Operations Director at Logistics Group',
+    location: 'Dubai, United Arab Emirates',
+    countryCode: '🇦🇪 UAE',
+    course: 'Arabic for Business & Corporate Careers',
+    avatar: '🇸🇦',
+    quote:
+      'Taking the live online Arabic and Corporate Communication classes gave me the exact executive fluency required for regional boardroom negotiations and business expansion across the Gulf Cooperation Council (GCC).',
+    rating: 5,
+  },
+  {
+    name: 'Dr. Amara Okafor',
+    role: 'Senior Epidemiologist & Health Informatics Lead',
+    location: 'Lagos, Nigeria',
+    countryCode: '🇳🇬 Nigeria',
+    course: 'IBM SPSS & Stata Econometric Modeling',
     avatar: '📈',
     quote:
-      'Coming from a non-programming background, Éclat’s mentors broke down hypothesis testing, ANOVA, and Python pandas into easy practical steps. The live weekly lab sessions gave me real confidence, and I now handle corporate survey consulting full-time.',
+      'The survey coding in SPSS and multi-level panel regressions in Stata were broken down into practical steps by Éclat’s research methodologists. We used these exact techniques to publish our West African disease surveillance study.',
     rating: 5,
   },
   {
     name: 'Brian Kiprono',
     role: 'Remote Frontend Developer at FinTech Startup',
-    course: 'Full-Stack Web Development (React 19 & Node)',
+    location: 'Nairobi, Kenya',
+    countryCode: '🇰🇪 Kenya',
+    course: 'Full-Stack JavaScript & React 19',
     avatar: '💻',
     quote:
-      'The 100% online React 19 and Node.js course at Éclat was phenomenal. The live evening coding labs, GitHub pull request reviews, and PostgreSQL deployment prepared me to build production apps. Within 1 month, I landed a remote developer role!',
+      'The 100% online React 19 and Node.js course at Éclat was phenomenal. The live coding labs and mentor code reviews prepared me to build real-world apps. Within 1 month, I landed a remote developer role at a global FinTech!',
     rating: 5,
   },
   {
-    name: 'Dennis Mutiso',
-    role: 'Cybersecurity Operations (SOC) Analyst',
-    course: 'Cybersecurity & Ethical Hacking',
-    avatar: '🛡️',
-    quote:
-      'The practical network defense labs using Wireshark, vulnerability scanning, and incident response simulations were world-class. It gave me the technical edge to pass my security certifications and land my cybersecurity analyst role at a tier-1 bank.',
-    rating: 5,
-  },
-  {
-    name: 'Faith Chebet',
-    role: 'Achieved IELTS Band 8.5 (Nursing Relocation to the UK)',
+    name: 'Sophie Dubois',
+    role: 'Postgraduate Scholar (IELTS Band 8.5 Achieved)',
+    location: 'Lyon, France / Montreal, Canada',
+    countryCode: '🇫🇷 France',
     course: 'IELTS Academic Preparation',
     avatar: '🇬🇧',
     quote:
-      'The 1-on-1 live Zoom mock speaking sessions and detailed essay feedback transformed my confidence. I scored an overall Band 8.5 and my UK nursing visa application was approved seamlessly. Best online program!',
+      'The 1-on-1 live Zoom mock speaking sessions and Cambridge essay evaluations transformed my performance. I achieved an overall Band 8.5 on my first attempt and secured my Canadian academic visa effortlessly!',
     rating: 5,
   },
   {
-    name: 'Eunice Mwende',
-    role: 'Relocated to Germany (Goethe-Zertifikat B2 Certified)',
-    course: 'German Language for Work & Studies',
-    avatar: '🇩🇪',
+    name: 'Kwame Mensah',
+    role: 'Cyber Threat Intelligence & SOC Analyst',
+    location: 'Accra, Ghana',
+    countryCode: '🇬🇭 Ghana',
+    course: 'Cybersecurity & Ethical Hacking',
+    avatar: '🛡️',
     quote:
-      'Herr Hans Meyer’s live German workshops made complex grammar cases, der/die/das rules, and listening comprehension so easy to master. I cleared my Goethe examination on my first sitting and secured my visa to Frankfurt!',
+      'The practical network security labs using Wireshark, vulnerability scanning, and incident response simulations gave me the technical edge to pass my global security exams and secure a senior SOC analyst position.',
     rating: 5,
   },
   {
-    name: 'Abdi Mohammed',
-    role: 'Bilingual Corporate Specialist in Dubai',
-    course: 'Arabic for Business & Middle East Careers',
-    avatar: '🇸🇦',
-    quote:
-      'Taking the live online Arabic and Corporate Communication classes from home gave me the fluency required for international interviews. I am now working with an international airline in Dubai!',
-    rating: 5,
-  },
-  {
-    name: 'Samuel Karanja',
-    role: 'Senior Accountant & Financial Controller',
+    name: 'Elena Rostova',
+    role: 'Financial Controller & QuickBooks Specialist',
+    location: 'Berlin, Germany',
+    countryCode: '🇩🇪 Germany',
     course: 'Computerized Accounting & QuickBooks',
     avatar: '🧾',
     quote:
-      'The practical QuickBooks multi-currency setup, VAT filing, and automated payroll reconciliation training directly helped our firm streamline client bookkeeping and eliminate reporting errors.',
+      'The practical QuickBooks multi-currency setup, international VAT filing, and automated payroll reconciliation training directly helped our international consultancy automate bookkeeping for European remote clients.',
     rating: 5,
   },
 ]
@@ -2746,12 +2790,30 @@ export function Landing() {
                 display: 'flex',
                 flexDirection: 'column',
                 justifyContent: 'space-between',
-                boxShadow: '0 4px 6px -1px rgba(0,0,0,0.05)',
+                boxShadow: '0 4px 12px rgba(0,0,0,0.04)',
+                position: 'relative',
               }}
             >
               <div>
-                <div style={{ color: '#f59e0b', fontSize: '1.1rem', marginBottom: '1rem' }}>
-                  {'★'.repeat(t.rating)}
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
+                  <div style={{ color: '#f59e0b', fontSize: '1.1rem' }}>
+                    {'★'.repeat(t.rating)}
+                  </div>
+                  {t.location && (
+                    <span
+                      style={{
+                        background: '#f1f5f9',
+                        color: '#334155',
+                        fontSize: '0.74rem',
+                        fontWeight: 700,
+                        padding: '3px 9px',
+                        borderRadius: '999px',
+                        border: '1px solid #e2e8f0',
+                      }}
+                    >
+                      📍 {t.location}
+                    </span>
+                  )}
                 </div>
                 <p style={{ fontSize: '0.98rem', color: '#0f172a', lineHeight: 1.7, fontStyle: 'italic', marginBottom: '1.5rem', fontWeight: 500 }}>
                   "{t.quote}"
@@ -2759,13 +2821,13 @@ export function Landing() {
               </div>
 
               <div style={{ display: 'flex', alignItems: 'center', gap: '0.85rem', borderTop: '1px solid #f1f5f9', paddingTop: '1rem' }}>
-                <div style={{ width: '44px', height: '44px', borderRadius: '50%', background: '#eff6ff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.4rem' }}>
+                <div style={{ width: '44px', height: '44px', borderRadius: '50%', background: '#eff6ff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.4rem', border: '1px solid #bfdbfe' }}>
                   {t.avatar}
                 </div>
                 <div>
                   <div style={{ fontWeight: 800, color: '#0f172a', fontSize: '0.95rem' }}>{t.name}</div>
                   <div style={{ fontSize: '0.8rem', color: '#1e3a8a', fontWeight: 700 }}>{t.role}</div>
-                  <div style={{ fontSize: '0.75rem', color: '#334155', fontWeight: 600 }}>Graduate • {t.course}</div>
+                  <div style={{ fontSize: '0.75rem', color: '#64748b', fontWeight: 600 }}>Alumni • {t.course}</div>
                 </div>
               </div>
             </div>
@@ -3600,24 +3662,74 @@ export function Landing() {
       {/* 3. Course Syllabus & Practical Lab Breakdown Modal */}
       {selectedCourseForModal && (
         <div className="modal-overlay" onClick={() => setSelectedCourseForModal(null)}>
-          <div className="modal-content modal-lg" onClick={(e) => e.stopPropagation()} style={{ padding: '1.75rem', borderRadius: '16px', maxHeight: '88vh' }}>
-            <div className="modal-header" style={{ padding: 0, paddingBottom: '1rem', marginBottom: '1.25rem', borderBottom: '1px solid #e2e8f0' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                <span style={{ fontSize: '2rem' }}>{selectedCourseForModal.icon}</span>
-                <div>
-                  <div style={{ fontSize: '0.75rem', fontWeight: 800, color: selectedCourseForModal.tagColor, textTransform: 'uppercase' }}>
+          <div
+            className="modal-content modal-lg"
+            onClick={(e) => e.stopPropagation()}
+            style={{
+              padding: '1.75rem',
+              borderRadius: '18px',
+              maxHeight: '90vh',
+              overflowY: 'auto',
+              WebkitOverflowScrolling: 'touch',
+              display: 'flex',
+              flexDirection: 'column',
+              boxShadow: '0 25px 60px rgba(0,0,0,0.3)',
+            }}
+          >
+            {/* Modal Header */}
+            <div className="modal-header" style={{ padding: 0, paddingBottom: '1rem', marginBottom: '1.25rem', borderBottom: '1px solid #e2e8f0', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '1rem' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.85rem', flex: 1, minWidth: 0 }}>
+                <div
+                  style={{
+                    width: '46px',
+                    height: '46px',
+                    borderRadius: '12px',
+                    background: '#f1f5f9',
+                    border: '1px solid #cbd5e1',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    fontSize: '1.5rem',
+                    flexShrink: 0,
+                  }}
+                >
+                  {selectedCourseForModal.icon}
+                </div>
+                <div style={{ minWidth: 0 }}>
+                  <div style={{ fontSize: '0.75rem', fontWeight: 800, color: selectedCourseForModal.tagColor, textTransform: 'uppercase', letterSpacing: '0.04em' }}>
                     {selectedCourseForModal.tag}
                   </div>
-                  <h3 className="modal-title" style={{ fontSize: '1.25rem', fontWeight: 900, color: '#1e3a8a', margin: '2px 0 0' }}>
+                  <h3 className="modal-title" style={{ fontSize: '1.25rem', fontWeight: 900, color: '#1e3a8a', margin: '2px 0 0', lineHeight: 1.25 }}>
                     {selectedCourseForModal.title}
                   </h3>
                 </div>
               </div>
-              <button type="button" className="modal-close" onClick={() => setSelectedCourseForModal(null)}>✕</button>
+              <button
+                type="button"
+                className="modal-close"
+                onClick={() => setSelectedCourseForModal(null)}
+                style={{
+                  background: '#f1f5f9',
+                  border: 'none',
+                  borderRadius: '50%',
+                  width: '34px',
+                  height: '34px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  cursor: 'pointer',
+                  fontSize: '1rem',
+                  fontWeight: 900,
+                  color: '#475569',
+                  flexShrink: 0,
+                }}
+              >
+                ✕
+              </button>
             </div>
 
             {/* Course Meta Grid */}
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '0.75rem', marginBottom: '1.25rem', background: '#f8fafc', padding: '1rem', borderRadius: '10px', border: '1px solid #e2e8f0' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '0.75rem', marginBottom: '1.25rem', background: '#f8fafc', padding: '1rem', borderRadius: '12px', border: '1px solid #e2e8f0' }}>
               <div>
                 <div style={{ fontSize: '0.72rem', color: '#64748b', fontWeight: 700, textTransform: 'uppercase' }}>Duration & Shift</div>
                 <div style={{ fontWeight: 800, color: '#0f172a', marginTop: '2px', fontSize: '0.9rem' }}>⏱️ {selectedCourseForModal.duration}</div>
@@ -3695,8 +3807,8 @@ export function Landing() {
               💼 <strong>Target Career Outcomes:</strong> {selectedCourseForModal.careerOutcome}
             </div>
 
-            {/* Modal Actions */}
-            <div style={{ display: 'flex', gap: '0.75rem', justifyContent: 'flex-end', flexWrap: 'wrap' }}>
+            {/* Modal Actions (Sticky at bottom) */}
+            <div style={{ position: 'sticky', bottom: '-1.75rem', background: '#ffffff', padding: '1rem 0 0', marginTop: 'auto', borderTop: '1px solid #e2e8f0', display: 'flex', gap: '0.75rem', justifyContent: 'flex-end', flexWrap: 'wrap', zIndex: 10 }}>
               <a
                 href={getWhatsAppInquiryUrl(`Hello ${INSTITUTION_CONFIG.name}! I want to inquire about enrolling in ${selectedCourseForModal.title} online.`)}
                 target="_blank"
