@@ -1561,297 +1561,370 @@ export function Landing() {
         )}
       </header>
 
-      {/* Hero Section: Dynamic Animated Multi-Discipline Promotional Carousel */}
+      {/* Hero Section: 100% Online Global Academy Billboard */}
+      <section
+        style={{
+          background: 'linear-gradient(135deg, #090d16 0%, #0f172a 50%, #1e293b 100%)',
+          color: '#ffffff',
+          padding: isMobile ? '3.5rem 1.25rem 3rem' : '5rem 2rem 4rem',
+          position: 'relative',
+          overflow: 'hidden',
+          borderBottom: '1px solid #1e293b',
+        }}
+      >
+        {/* Ambient background glow */}
+        <div
+          style={{
+            position: 'absolute',
+            top: '-25%',
+            right: '-10%',
+            width: '650px',
+            height: '650px',
+            borderRadius: '50%',
+            background: '#2563eb',
+            opacity: 0.12,
+            filter: 'blur(130px)',
+            pointerEvents: 'none',
+          }}
+        />
+
+        <div style={{ maxWidth: '1200px', margin: '0 auto', textAlign: 'center', position: 'relative', zIndex: 2 }}>
+          {/* Academy Global Badge */}
+          <div
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '0.65rem',
+              background: 'rgba(255, 255, 255, 0.08)',
+              backdropFilter: 'blur(10px)',
+              border: '1px solid rgba(212, 175, 55, 0.35)',
+              borderRadius: '999px',
+              padding: '0.45rem 1.35rem',
+              fontSize: '0.85rem',
+              fontWeight: 800,
+              color: '#d4af37',
+              letterSpacing: '0.04em',
+              marginBottom: '1.75rem',
+              boxShadow: '0 4px 16px rgba(0,0,0,0.2)',
+            }}
+          >
+            <span>🌐</span>
+            <span>ÉCLAT INSTITUTE • 100% ONLINE GLOBAL ACADEMY</span>
+          </div>
+
+          {/* Master Academy Headline */}
+          <h1
+            style={{
+              fontSize: isMobile ? '2.2rem' : 'clamp(2.5rem, 4.8vw, 3.8rem)',
+              fontWeight: 900,
+              letterSpacing: '-0.03em',
+              lineHeight: 1.15,
+              margin: '0 auto 1.25rem',
+              maxWidth: '960px',
+              color: '#ffffff',
+              fontFamily: 'var(--font-heading)',
+            }}
+          >
+            Skills that drive your career forward. <br />
+            <span
+              style={{
+                background: 'linear-gradient(90deg, #d4af37 0%, #fef08a 50%, #d4af37 100%)',
+                WebkitBackgroundClip: 'text',
+                WebkitTextFillColor: 'transparent',
+              }}
+            >
+              100% Online Live Classes • Verified Diplomas
+            </span>
+          </h1>
+
+          {/* Subtitle establishing all 5 faculties */}
+          <p
+            style={{
+              maxWidth: '820px',
+              margin: '0 auto 2.25rem',
+              fontSize: isMobile ? '1.02rem' : '1.18rem',
+              color: '#cbd5e1',
+              lineHeight: 1.65,
+              fontWeight: 400,
+            }}
+          >
+            Master in-demand <strong>Tech & Software</strong> (React, Node, Python, Cyber), <strong>Data Science & Research</strong> (R, SPSS, Stata), <strong>World Languages</strong> (IELTS, German, Arabic, French), and <strong>Accounting</strong> with live interactive evening classes, expert mentorship, and flexible installment plans.
+          </p>
+
+          {/* Primary Academy CTAs */}
+          <div style={{ display: 'flex', justifyContent: 'center', gap: '1rem', flexWrap: 'wrap', marginBottom: '2.5rem' }}>
+            <a
+              href="#courses"
+              className="btn btn-lg"
+              style={{
+                background: '#d4af37',
+                color: '#0c0e12',
+                fontWeight: 900,
+                padding: '0.9rem 2.25rem',
+                fontSize: '1.02rem',
+                borderRadius: '10px',
+                boxShadow: '0 10px 24px rgba(212, 175, 55, 0.35)',
+                border: 'none',
+                textDecoration: 'none',
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '8px',
+              }}
+            >
+              <span>🚀 Explore All Programs</span>
+              <span>↓</span>
+            </a>
+
+            <button
+              type="button"
+              className="btn btn-lg"
+              style={{
+                background: '#2563eb',
+                color: '#ffffff',
+                fontWeight: 800,
+                padding: '0.9rem 2rem',
+                fontSize: '1.02rem',
+                borderRadius: '10px',
+                boxShadow: '0 8px 20px rgba(37, 99, 235, 0.3)',
+                border: 'none',
+                cursor: 'pointer',
+              }}
+              onClick={() => setInquiryModalOpen(true)}
+            >
+              ⚡ Enroll in Intake
+            </button>
+
+            <a
+              href={getWhatsAppInquiryUrl('Hello Eclat Admissions! I would like details about your 100% online programs.')}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="btn btn-lg"
+              style={{
+                background: 'rgba(34, 197, 94, 0.15)',
+                color: '#4ade80',
+                fontWeight: 700,
+                padding: '0.9rem 1.5rem',
+                fontSize: '1rem',
+                borderRadius: '10px',
+                border: '1px solid rgba(34, 197, 94, 0.3)',
+                textDecoration: 'none',
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '8px',
+              }}
+            >
+              <span>💬</span>
+              <span>WhatsApp Counselor</span>
+            </a>
+          </div>
+
+          {/* Academy Value Props Trust Row */}
+          <div
+            style={{
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+              gap: '1.75rem',
+              flexWrap: 'wrap',
+              fontSize: '0.88rem',
+              color: '#94a3b8',
+              fontWeight: 600,
+              paddingTop: '1rem',
+              borderTop: '1px solid rgba(255, 255, 255, 0.1)',
+            }}
+          >
+            <span style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
+              <span style={{ color: '#22c55e' }}>✓</span> ⭐️ 4.9/5 by 3,500+ Online Students Globally
+            </span>
+            <span style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
+              <span style={{ color: '#22c55e' }}>✓</span> 100% Virtual Evening & Weekend Cohorts
+            </span>
+            <span style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
+              <span style={{ color: '#22c55e' }}>✓</span> Cryptographically Verified Diplomas
+            </span>
+            <span style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
+              <span style={{ color: '#22c55e' }}>✓</span> 50% Flexible Monthly Installments
+            </span>
+          </div>
+        </div>
+      </section>
+
+      {/* Featured Courses Spotlight: Interactive Animated Promotional Carousel Banner */}
       <section
         onMouseEnter={() => setHeroSliderPaused(true)}
         onMouseLeave={() => setHeroSliderPaused(false)}
         style={{
           background: HERO_PROMO_SLIDES[currentHeroSlide].gradient,
           color: '#ffffff',
-          padding: isMobile ? '3.5rem 1.25rem 3rem' : '5rem 2rem 4.5rem',
+          padding: '2.75rem 1.5rem',
           position: 'relative',
           overflow: 'hidden',
           borderBottom: '1px solid #1e293b',
-          transition: 'background 0.8s ease-in-out',
+          transition: 'background 0.7s ease',
         }}
       >
-        {/* Animated ambient glow blobs */}
-        <div
-          style={{
-            position: 'absolute',
-            top: '-20%',
-            right: '-10%',
-            width: '600px',
-            height: '600px',
-            borderRadius: '50%',
-            background: HERO_PROMO_SLIDES[currentHeroSlide].accentColor,
-            opacity: 0.12,
-            filter: 'blur(120px)',
-            pointerEvents: 'none',
-            transition: 'all 0.8s ease',
-          }}
-        />
-
         <div style={{ maxWidth: '1240px', margin: '0 auto', position: 'relative', zIndex: 2 }}>
-          {/* Main Slide Content Grid */}
-          <div
-            style={{
-              display: 'grid',
-              gridTemplateColumns: isMobile ? '1fr' : '1.2fr 0.8fr',
-              gap: isMobile ? '2.5rem' : '3.5rem',
-              alignItems: 'center',
-            }}
-          >
-            {/* Left Column: Headline, Highlights & Actions */}
-            <div>
-              {/* Category Badge & Live Status */}
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', flexWrap: 'wrap', marginBottom: '1.25rem' }}>
-                <div
-                  style={{
-                    display: 'inline-flex',
-                    alignItems: 'center',
-                    gap: '0.5rem',
-                    background: HERO_PROMO_SLIDES[currentHeroSlide].badgeBg,
-                    border: `1px solid ${HERO_PROMO_SLIDES[currentHeroSlide].badgeColor}50`,
-                    borderRadius: '999px',
-                    padding: '0.4rem 1rem',
-                    fontSize: '0.82rem',
-                    fontWeight: 800,
-                    color: HERO_PROMO_SLIDES[currentHeroSlide].badgeColor,
-                    letterSpacing: '0.04em',
-                    boxShadow: '0 4px 12px rgba(0,0,0,0.2)',
-                  }}
-                >
-                  <span>{HERO_PROMO_SLIDES[currentHeroSlide].badge}</span>
+          {/* Spotlight Header Row */}
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem', marginBottom: '1.5rem' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+              <span style={{ fontSize: '1.25rem' }}>✨</span>
+              <div>
+                <div style={{ fontSize: '0.72rem', color: '#94a3b8', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.08em' }}>
+                  FEATURED ONLINE PROGRAM SPOTLIGHT
                 </div>
-
-                <div
-                  style={{
-                    display: 'inline-flex',
-                    alignItems: 'center',
-                    gap: '6px',
-                    background: 'rgba(255, 255, 255, 0.08)',
-                    borderRadius: '999px',
-                    padding: '0.4rem 0.85rem',
-                    fontSize: '0.78rem',
-                    fontWeight: 700,
-                    color: '#94a3b8',
-                  }}
-                >
-                  <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#22c55e', display: 'inline-block' }} />
-                  <span>Interactive Cohort Open</span>
+                <div style={{ fontSize: '1.1rem', fontWeight: 900, color: '#ffffff' }}>
+                  {HERO_PROMO_SLIDES[currentHeroSlide].category}
                 </div>
               </div>
+            </div>
 
-              {/* Dynamic Slide Headline */}
-              <h1
+            {/* Prev / Next & Indicators */}
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+              <button
+                type="button"
+                onClick={() => setCurrentHeroSlide((prev) => (prev === 0 ? HERO_PROMO_SLIDES.length - 1 : prev - 1))}
                 style={{
-                  fontSize: isMobile ? '2.1rem' : 'clamp(2.4rem, 3.8vw, 3.4rem)',
-                  fontWeight: 900,
-                  letterSpacing: '-0.03em',
-                  lineHeight: 1.15,
-                  margin: '0 0 1.25rem',
+                  width: '34px',
+                  height: '34px',
+                  borderRadius: '50%',
+                  background: 'rgba(255, 255, 255, 0.1)',
+                  border: '1px solid rgba(255, 255, 255, 0.2)',
                   color: '#ffffff',
-                  fontFamily: 'var(--font-heading)',
+                  fontSize: '0.9rem',
+                  fontWeight: 800,
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
                 }}
+                title="Previous Slide"
               >
-                {HERO_PROMO_SLIDES[currentHeroSlide].headline} <br />
+                ❮
+              </button>
+
+              <div style={{ display: 'flex', gap: '5px', padding: '0 6px' }}>
+                {HERO_PROMO_SLIDES.map((_, idx) => (
+                  <button
+                    key={idx}
+                    type="button"
+                    onClick={() => setCurrentHeroSlide(idx)}
+                    style={{
+                      width: currentHeroSlide === idx ? '24px' : '8px',
+                      height: '8px',
+                      borderRadius: '999px',
+                      background: currentHeroSlide === idx ? '#d4af37' : 'rgba(255, 255, 255, 0.25)',
+                      border: 'none',
+                      cursor: 'pointer',
+                      transition: 'all 0.3s ease',
+                      padding: 0,
+                    }}
+                    title={`Slide ${idx + 1}`}
+                  />
+                ))}
+              </div>
+
+              <button
+                type="button"
+                onClick={() => setCurrentHeroSlide((prev) => (prev + 1) % HERO_PROMO_SLIDES.length)}
+                style={{
+                  width: '34px',
+                  height: '34px',
+                  borderRadius: '50%',
+                  background: 'rgba(255, 255, 255, 0.1)',
+                  border: '1px solid rgba(255, 255, 255, 0.2)',
+                  color: '#ffffff',
+                  fontSize: '0.9rem',
+                  fontWeight: 800,
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}
+                title="Next Slide"
+              >
+                ❯
+              </button>
+            </div>
+          </div>
+
+          {/* Slide Card Content */}
+          <div
+            style={{
+              background: 'rgba(15, 23, 42, 0.65)',
+              backdropFilter: 'blur(16px)',
+              border: `1.5px solid ${HERO_PROMO_SLIDES[currentHeroSlide].accentColor}40`,
+              borderRadius: '20px',
+              padding: isMobile ? '1.5rem' : '2rem 2.5rem',
+              display: 'grid',
+              gridTemplateColumns: isMobile ? '1fr' : '1.4fr 0.6fr',
+              gap: '2rem',
+              alignItems: 'center',
+              boxShadow: '0 12px 36px rgba(0,0,0,0.3)',
+            }}
+          >
+            <div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', marginBottom: '0.75rem', flexWrap: 'wrap' }}>
                 <span
                   style={{
-                    background: 'linear-gradient(90deg, #d4af37 0%, #fef08a 50%, #d4af37 100%)',
-                    WebkitBackgroundClip: 'text',
-                    WebkitTextFillColor: 'transparent',
+                    background: HERO_PROMO_SLIDES[currentHeroSlide].badgeBg,
+                    color: HERO_PROMO_SLIDES[currentHeroSlide].badgeColor,
+                    border: `1px solid ${HERO_PROMO_SLIDES[currentHeroSlide].badgeColor}50`,
+                    borderRadius: '999px',
+                    padding: '3px 12px',
+                    fontSize: '0.78rem',
+                    fontWeight: 800,
                   }}
                 >
+                  {HERO_PROMO_SLIDES[currentHeroSlide].badge}
+                </span>
+                <span style={{ fontSize: '0.78rem', color: '#94a3b8', fontWeight: 600 }}>
+                  🟢 Live Online Cohort Enrolling Now
+                </span>
+              </div>
+
+              <h2 style={{ fontSize: isMobile ? '1.4rem' : '1.85rem', fontWeight: 900, margin: '0 0 0.65rem', color: '#ffffff', lineHeight: 1.25 }}>
+                {HERO_PROMO_SLIDES[currentHeroSlide].headline}: <br />
+                <span style={{ color: HERO_PROMO_SLIDES[currentHeroSlide].accentColor }}>
                   {HERO_PROMO_SLIDES[currentHeroSlide].highlight}
                 </span>
-              </h1>
+              </h2>
 
-              {/* Dynamic Slide Description */}
-              <p
-                style={{
-                  fontSize: isMobile ? '1rem' : '1.12rem',
-                  color: '#cbd5e1',
-                  lineHeight: 1.65,
-                  margin: '0 0 1.75rem',
-                  maxWidth: '650px',
-                }}
-              >
+              <p style={{ fontSize: '0.94rem', color: '#cbd5e1', lineHeight: 1.6, margin: '0 0 1.25rem', maxWidth: '680px' }}>
                 {HERO_PROMO_SLIDES[currentHeroSlide].description}
               </p>
 
-              {/* Highlight Skill Badges */}
-              <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', marginBottom: '2.25rem' }}>
+              <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
                 {HERO_PROMO_SLIDES[currentHeroSlide].features.map((feat, idx) => (
                   <span
                     key={idx}
                     style={{
-                      background: 'rgba(255, 255, 255, 0.07)',
+                      background: 'rgba(255, 255, 255, 0.08)',
                       border: '1px solid rgba(255, 255, 255, 0.12)',
-                      borderRadius: '8px',
-                      padding: '0.35rem 0.75rem',
-                      fontSize: '0.8rem',
+                      borderRadius: '6px',
+                      padding: '3px 9px',
+                      fontSize: '0.76rem',
                       fontWeight: 700,
-                      color: '#f1f5f9',
-                      display: 'inline-flex',
-                      alignItems: 'center',
-                      gap: '5px',
+                      color: '#f8fafc',
                     }}
                   >
-                    <span style={{ color: HERO_PROMO_SLIDES[currentHeroSlide].accentColor }}>✓</span>
-                    {feat}
+                    ✓ {feat}
                   </span>
                 ))}
               </div>
-
-              {/* High-Conversion Action Buttons */}
-              <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap', alignItems: 'center' }}>
-                <button
-                  type="button"
-                  onClick={() => {
-                    setActiveCategory(HERO_PROMO_SLIDES[currentHeroSlide].category)
-                    const el = document.getElementById('courses')
-                    if (el) el.scrollIntoView({ behavior: 'smooth' })
-                  }}
-                  className="btn btn-lg"
-                  style={{
-                    background: '#d4af37',
-                    color: '#0c0e12',
-                    fontWeight: 900,
-                    padding: '0.9rem 2rem',
-                    fontSize: '1rem',
-                    borderRadius: '10px',
-                    boxShadow: '0 10px 24px rgba(212, 175, 55, 0.35)',
-                    border: 'none',
-                    cursor: 'pointer',
-                    display: 'inline-flex',
-                    alignItems: 'center',
-                    gap: '8px',
-                  }}
-                >
-                  <span>🚀 {HERO_PROMO_SLIDES[currentHeroSlide].primaryCtaText}</span>
-                  <span>↓</span>
-                </button>
-
-                <button
-                  type="button"
-                  onClick={() => setInquiryModalOpen(true)}
-                  className="btn btn-lg"
-                  style={{
-                    background: '#2563eb',
-                    color: '#ffffff',
-                    fontWeight: 800,
-                    padding: '0.9rem 1.75rem',
-                    fontSize: '1rem',
-                    borderRadius: '10px',
-                    boxShadow: '0 8px 20px rgba(37, 99, 235, 0.3)',
-                    border: 'none',
-                    cursor: 'pointer',
-                  }}
-                >
-                  ⚡ Enroll in Intake
-                </button>
-
-                <a
-                  href={getWhatsAppInquiryUrl(`Hello Eclat Admissions! I would like details about ${HERO_PROMO_SLIDES[currentHeroSlide].badge}`)}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="btn btn-lg"
-                  style={{
-                    background: 'rgba(34, 197, 94, 0.15)',
-                    color: '#4ade80',
-                    fontWeight: 700,
-                    padding: '0.9rem 1.35rem',
-                    fontSize: '0.95rem',
-                    borderRadius: '10px',
-                    border: '1px solid rgba(34, 197, 94, 0.3)',
-                    textDecoration: 'none',
-                    display: 'inline-flex',
-                    alignItems: 'center',
-                    gap: '8px',
-                  }}
-                >
-                  <span>💬</span>
-                  <span>WhatsApp Desk</span>
-                </a>
-              </div>
             </div>
 
-            {/* Right Column: Glassmorphic Interactive Discipline Showcase Card */}
-            <div
-              style={{
-                background: 'rgba(15, 23, 42, 0.75)',
-                backdropFilter: 'blur(16px)',
-                border: `1.5px solid ${HERO_PROMO_SLIDES[currentHeroSlide].accentColor}40`,
-                borderRadius: '24px',
-                padding: isMobile ? '1.75rem' : '2.25rem',
-                boxShadow: `0 20px 50px rgba(0, 0, 0, 0.4), 0 0 30px ${HERO_PROMO_SLIDES[currentHeroSlide].accentColor}15`,
-                position: 'relative',
-              }}
-            >
-              {/* Top Card Banner */}
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem', borderBottom: '1px solid rgba(255,255,255,0.1)', paddingBottom: '1.25rem' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '0.85rem' }}>
-                  <div
-                    style={{
-                      width: '48px',
-                      height: '48px',
-                      borderRadius: '14px',
-                      background: HERO_PROMO_SLIDES[currentHeroSlide].badgeBg,
-                      border: `1px solid ${HERO_PROMO_SLIDES[currentHeroSlide].accentColor}50`,
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      fontSize: '1.6rem',
-                    }}
-                  >
-                    {HERO_PROMO_SLIDES[currentHeroSlide].icon}
-                  </div>
-                  <div>
-                    <div style={{ fontSize: '0.75rem', color: '#94a3b8', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em' }}>
-                      Academic Department
-                    </div>
-                    <div style={{ fontSize: '1.05rem', fontWeight: 800, color: '#ffffff' }}>
-                      {HERO_PROMO_SLIDES[currentHeroSlide].category}
-                    </div>
-                  </div>
+            {/* Right Quick Jump & Action */}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.85rem', justifyContent: 'center' }}>
+              <div style={{ background: 'rgba(255, 255, 255, 0.05)', padding: '1rem', borderRadius: '12px', border: '1px solid rgba(255, 255, 255, 0.1)' }}>
+                <div style={{ fontSize: '0.72rem', color: '#94a3b8', fontWeight: 700, textTransform: 'uppercase' }}>Academic Department</div>
+                <div style={{ fontSize: '1rem', fontWeight: 800, color: '#ffffff', marginTop: '2px' }}>
+                  {HERO_PROMO_SLIDES[currentHeroSlide].category}
                 </div>
-
-                <div style={{ textAlign: 'right' }}>
-                  <div style={{ fontSize: '1.25rem', fontWeight: 900, color: '#d4af37' }}>
-                    {HERO_PROMO_SLIDES[currentHeroSlide].metricNumber}
-                  </div>
-                  <div style={{ fontSize: '0.7rem', color: '#94a3b8', fontWeight: 600 }}>
-                    {HERO_PROMO_SLIDES[currentHeroSlide].metricLabel}
-                  </div>
+                <div style={{ fontSize: '0.76rem', color: '#d4af37', fontWeight: 700, marginTop: '4px' }}>
+                  ⭐ {HERO_PROMO_SLIDES[currentHeroSlide].metricNumber} {HERO_PROMO_SLIDES[currentHeroSlide].metricLabel}
                 </div>
               </div>
 
-              {/* Key Department Value Pillars */}
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.85rem', marginBottom: '1.75rem' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '10px', background: 'rgba(255,255,255,0.04)', padding: '0.75rem 1rem', borderRadius: '12px' }}>
-                  <span style={{ fontSize: '1.1rem' }}>🎓</span>
-                  <div style={{ fontSize: '0.86rem', color: '#e2e8f0', fontWeight: 600 }}>
-                    <strong>Accredited Curriculum:</strong> Real-world projects & thesis datasets
-                  </div>
-                </div>
-
-                <div style={{ display: 'flex', alignItems: 'center', gap: '10px', background: 'rgba(255,255,255,0.04)', padding: '0.75rem 1rem', borderRadius: '12px' }}>
-                  <span style={{ fontSize: '1.1rem' }}>⏰</span>
-                  <div style={{ fontSize: '0.86rem', color: '#e2e8f0', fontWeight: 600 }}>
-                    <strong>Flexible Schedule:</strong> Evening (7:30 PM) & Saturday Intensives
-                  </div>
-                </div>
-
-                <div style={{ display: 'flex', alignItems: 'center', gap: '10px', background: 'rgba(255,255,255,0.04)', padding: '0.75rem 1rem', borderRadius: '12px' }}>
-                  <span style={{ fontSize: '1.1rem' }}>💳</span>
-                  <div style={{ fontSize: '0.86rem', color: '#e2e8f0', fontWeight: 600 }}>
-                    <strong>Tuition Ease:</strong> 50% Down Payment • 2 Monthly Installments
-                  </div>
-                </div>
-              </div>
-
-              {/* Direct Card Action Button */}
               <button
                 type="button"
                 onClick={() => {
@@ -1859,124 +1932,25 @@ export function Landing() {
                   const el = document.getElementById('courses')
                   if (el) el.scrollIntoView({ behavior: 'smooth' })
                 }}
+                className="btn"
                 style={{
-                  width: '100%',
-                  background: 'linear-gradient(135deg, #1e293b 0%, #0f172a 100%)',
-                  border: `1px solid ${HERO_PROMO_SLIDES[currentHeroSlide].accentColor}60`,
-                  color: '#ffffff',
-                  fontWeight: 800,
+                  background: '#d4af37',
+                  color: '#0c0e12',
+                  fontWeight: 900,
                   fontSize: '0.92rem',
-                  padding: '0.85rem',
-                  borderRadius: '12px',
+                  padding: '0.8rem 1.25rem',
+                  borderRadius: '10px',
+                  border: 'none',
                   cursor: 'pointer',
+                  boxShadow: '0 6px 18px rgba(212, 175, 55, 0.3)',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
                   gap: '8px',
-                  boxShadow: '0 4px 16px rgba(0,0,0,0.3)',
-                  transition: 'all 0.2s',
                 }}
               >
-                <span>View {HERO_PROMO_SLIDES[currentHeroSlide].category} Courses</span>
-                <span>→</span>
-              </button>
-            </div>
-          </div>
-
-          {/* Carousel Slide Indicators & Manual Arrow Navigation */}
-          <div
-            style={{
-              marginTop: '3rem',
-              display: 'flex',
-              justifyContent: 'space-between',
-              alignItems: 'center',
-              flexWrap: 'wrap',
-              gap: '1rem',
-              borderTop: '1px solid rgba(255, 255, 255, 0.1)',
-              paddingTop: '1.75rem',
-            }}
-          >
-            {/* Interactive Slide Tabs */}
-            <div style={{ display: 'flex', gap: '0.6rem', flexWrap: 'wrap' }}>
-              {HERO_PROMO_SLIDES.map((slide, idx) => (
-                <button
-                  key={slide.id}
-                  type="button"
-                  onClick={() => setCurrentHeroSlide(idx)}
-                  style={{
-                    background: currentHeroSlide === idx ? 'rgba(255, 255, 255, 0.15)' : 'rgba(255, 255, 255, 0.04)',
-                    border: `1.5px solid ${currentHeroSlide === idx ? slide.accentColor : 'rgba(255, 255, 255, 0.1)'}`,
-                    borderRadius: '999px',
-                    padding: '0.45rem 1rem',
-                    color: currentHeroSlide === idx ? '#ffffff' : '#94a3b8',
-                    fontSize: '0.82rem',
-                    fontWeight: currentHeroSlide === idx ? 800 : 600,
-                    cursor: 'pointer',
-                    display: 'inline-flex',
-                    alignItems: 'center',
-                    gap: '6px',
-                    transition: 'all 0.25s',
-                  }}
-                >
-                  <span>{slide.icon}</span>
-                  <span>{slide.category}</span>
-                  {currentHeroSlide === idx && (
-                    <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: slide.accentColor }} />
-                  )}
-                </button>
-              ))}
-            </div>
-
-            {/* Prev / Next Arrow Navigation */}
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-              <button
-                type="button"
-                onClick={() => setCurrentHeroSlide((prev) => (prev === 0 ? HERO_PROMO_SLIDES.length - 1 : prev - 1))}
-                style={{
-                  width: '38px',
-                  height: '38px',
-                  borderRadius: '50%',
-                  background: 'rgba(255, 255, 255, 0.08)',
-                  border: '1px solid rgba(255, 255, 255, 0.2)',
-                  color: '#ffffff',
-                  fontSize: '1rem',
-                  fontWeight: 800,
-                  cursor: 'pointer',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  transition: 'background 0.2s',
-                }}
-                title="Previous Slide"
-              >
-                ❮
-              </button>
-
-              <span style={{ fontSize: '0.82rem', color: '#94a3b8', fontWeight: 700, minWidth: '45px', textAlign: 'center' }}>
-                {currentHeroSlide + 1} / {HERO_PROMO_SLIDES.length}
-              </span>
-
-              <button
-                type="button"
-                onClick={() => setCurrentHeroSlide((prev) => (prev + 1) % HERO_PROMO_SLIDES.length)}
-                style={{
-                  width: '38px',
-                  height: '38px',
-                  borderRadius: '50%',
-                  background: 'rgba(255, 255, 255, 0.08)',
-                  border: '1px solid rgba(255, 255, 255, 0.2)',
-                  color: '#ffffff',
-                  fontSize: '1rem',
-                  fontWeight: 800,
-                  cursor: 'pointer',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  transition: 'background 0.2s',
-                }}
-                title="Next Slide"
-              >
-                ❯
+                <span>🚀 {HERO_PROMO_SLIDES[currentHeroSlide].primaryCtaText}</span>
+                <span>↓</span>
               </button>
             </div>
           </div>
