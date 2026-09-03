@@ -744,6 +744,15 @@ export function Landing() {
     return () => clearInterval(timer)
   }, [heroSliderPaused])
 
+  // Track window scroll position for floating scroll to top button
+  useEffect(() => {
+    const handleScroll = () => {
+      setShowScrollTop(window.scrollY > 450)
+    }
+    window.addEventListener('scroll', handleScroll, { passive: true })
+    return () => window.removeEventListener('scroll', handleScroll)
+  }, [])
+
   // Scroll to courses on #courses or /courses route
   useEffect(() => {
     if (location.pathname === '/courses' || location.hash === '#courses') {
@@ -4503,6 +4512,37 @@ export function Landing() {
           )}
         </button>
       </div>
+
+      {/* Floating Scroll to Top Button */}
+      {showScrollTop && (
+        <button
+          type="button"
+          onClick={scrollToTop}
+          aria-label="Scroll to top"
+          style={{
+            position: 'fixed',
+            bottom: isMobile ? '86px' : '96px',
+            right: '24px',
+            width: '44px',
+            height: '44px',
+            borderRadius: '50%',
+            background: 'linear-gradient(135deg, #1e3a8a 0%, #2563eb 100%)',
+            color: '#ffffff',
+            border: '2px solid rgba(212, 175, 55, 0.4)',
+            boxShadow: '0 8px 24px rgba(0, 0, 0, 0.3)',
+            cursor: 'pointer',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            fontSize: '1.2rem',
+            fontWeight: 900,
+            zIndex: 90,
+            transition: 'all 0.2s ease',
+          }}
+        >
+          ↑
+        </button>
+      )}
     </div>
   )
 }

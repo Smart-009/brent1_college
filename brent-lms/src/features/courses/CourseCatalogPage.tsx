@@ -1,9 +1,9 @@
-﻿import { useState, useMemo } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { useState, useMemo } from 'react'
+import { Link } from 'react-router-dom'
 import { useAuthContext } from '@/features/auth/AuthContext'
 import { MobileAppBottomNav } from '@/components/layout/MobileAppBottomNav'
 import { DesktopCommandPalette } from '@/components/shared/DesktopCommandPalette'
-import { INSTITUTION_CONFIG, getWhatsAppInquiryUrl } from '@/config/institution'
+import { getWhatsAppInquiryUrl } from '@/config/institution'
 
 interface CourseItem {
   id: string
@@ -195,7 +195,6 @@ const CATEGORIES = [
 
 export function CourseCatalogPage() {
   const { profile } = useAuthContext()
-  const navigate = useNavigate()
   const [selectedCat, setSelectedCat] = useState('All')
   const [search, setSearch] = useState('')
   const [selectedCourse, setSelectedCourse] = useState<CourseItem | null>(null)
