@@ -3890,7 +3890,7 @@ export function Landing() {
                   </div>
 
                   <a
-                    href="/downloads/eclat-institute.apk"
+                    href="https://github.com/Smart-009/brent1_college/releases/download/v1.0.0/eclat-institute.apk"
                     download="eclat-institute.apk"
                     className="btn"
                     style={{ width: '100%', background: '#16a34a', color: '#ffffff', fontWeight: 800, padding: '0.8rem', borderRadius: '10px', fontSize: '0.92rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', textDecoration: 'none', boxShadow: '0 4px 12px rgba(22, 163, 74, 0.3)', cursor: 'pointer' }}
@@ -3926,7 +3926,7 @@ export function Landing() {
                   </div>
 
                   <a
-                    href="/downloads/Eclat-Institute-Setup.exe"
+                    href="https://github.com/Smart-009/brent1_college/releases/download/v1.0.0/Eclat-Institute-Setup.exe"
                     download="Eclat-Institute-Setup.exe"
                     className="btn btn-primary"
                     style={{ width: '100%', fontWeight: 800, padding: '0.8rem', borderRadius: '10px', fontSize: '0.92rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', textDecoration: 'none', boxShadow: '0 4px 12px rgba(37, 99, 235, 0.3)', cursor: 'pointer' }}
