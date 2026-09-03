@@ -1533,66 +1533,128 @@ export function Landing() {
             style={{
               background: '#ffffff',
               borderTop: '2px solid #3b82f6',
-              padding: '1.25rem 1.5rem',
+              padding: '1.25rem 1rem',
               boxShadow: '0 15px 30px rgba(0,0,0,0.15)',
               animation: 'fadeIn 0.2s ease',
-              maxHeight: '80vh',
+              maxHeight: '82vh',
               overflowY: 'auto',
+              WebkitOverflowScrolling: 'touch',
             }}
           >
-            <nav style={{ display: 'flex', flexDirection: 'column', gap: '0.65rem', fontSize: '0.95rem', fontWeight: 600 }}>
+            <nav style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem', fontSize: '0.94rem', fontWeight: 600 }}>
+              <a
+                href="#about"
+                onClick={() => setMobileNavOpen(false)}
+                style={{ color: '#0f172a', textDecoration: 'none', padding: '0.6rem 0.75rem', borderRadius: '8px', display: 'flex', alignItems: 'center', gap: '10px', background: '#f8fafc' }}
+              >
+                <span style={{ fontSize: '1.1rem' }}>🏛️</span>
+                <span>About Éclat Institute</span>
+              </a>
+
               <a
                 href="#courses"
                 onClick={() => setMobileNavOpen(false)}
-                style={{ color: '#0f172a', textDecoration: 'none', padding: '0.5rem 0', display: 'flex', alignItems: 'center', gap: '8px', borderBottom: '1px solid #f1f5f9' }}
+                style={{ color: '#0f172a', textDecoration: 'none', padding: '0.6rem 0.75rem', borderRadius: '8px', display: 'flex', alignItems: 'center', gap: '10px' }}
               >
-                <span>📚</span>
-                <span>Courses & Programs</span>
+                <span style={{ fontSize: '1.1rem' }}>📚</span>
+                <span>Courses & Academic Programs</span>
+              </a>
+
+              {/* Category Quick Jumps */}
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.4rem', margin: '0.2rem 0 0.5rem', padding: '0.25rem' }}>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setActiveCategory('Data Science & Research')
+                    setMobileNavOpen(false)
+                    const el = document.getElementById('courses')
+                    if (el) el.scrollIntoView({ behavior: 'smooth' })
+                  }}
+                  style={{ textAlign: 'left', background: '#f0f9ff', color: '#0369a1', border: '1px solid #bae6fd', borderRadius: '6px', padding: '6px 8px', fontSize: '0.78rem', fontWeight: 700, cursor: 'pointer' }}
+                >
+                  📊 Data Science & R
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setActiveCategory('Tech & Programming')
+                    setMobileNavOpen(false)
+                    const el = document.getElementById('courses')
+                    if (el) el.scrollIntoView({ behavior: 'smooth' })
+                  }}
+                  style={{ textAlign: 'left', background: '#eef2ff', color: '#4338ca', border: '1px solid #c7d2fe', borderRadius: '6px', padding: '6px 8px', fontSize: '0.78rem', fontWeight: 700, cursor: 'pointer' }}
+                >
+                  💻 Tech & Coding
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setActiveCategory('Creative Arts & Design')
+                    setMobileNavOpen(false)
+                    const el = document.getElementById('courses')
+                    if (el) el.scrollIntoView({ behavior: 'smooth' })
+                  }}
+                  style={{ textAlign: 'left', background: '#faf5ff', color: '#7e22ce', border: '1px solid #e9d5ff', borderRadius: '6px', padding: '6px 8px', fontSize: '0.78rem', fontWeight: 700, cursor: 'pointer' }}
+                >
+                  🎨 UI/UX & Design
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setActiveCategory('Languages & Communication')
+                    setMobileNavOpen(false)
+                    const el = document.getElementById('courses')
+                    if (el) el.scrollIntoView({ behavior: 'smooth' })
+                  }}
+                  style={{ textAlign: 'left', background: '#f0fdf4', color: '#15803d', border: '1px solid #bbf7d0', borderRadius: '6px', padding: '6px 8px', fontSize: '0.78rem', fontWeight: 700, cursor: 'pointer' }}
+                >
+                  🗣️ Languages & IELTS
+                </button>
+              </div>
+
+              <a
+                href="#calculator"
+                onClick={() => setMobileNavOpen(false)}
+                style={{ color: '#0f172a', textDecoration: 'none', padding: '0.6rem 0.75rem', borderRadius: '8px', display: 'flex', alignItems: 'center', gap: '10px' }}
+              >
+                <span style={{ fontSize: '1.1rem' }}>💳</span>
+                <span>Tuition & Installment Calculator</span>
               </a>
 
               <Link
                 to="/library"
                 onClick={() => setMobileNavOpen(false)}
-                style={{ color: '#2563eb', fontWeight: 800, textDecoration: 'none', padding: '0.5rem 0', display: 'flex', alignItems: 'center', gap: '8px', borderBottom: '1px solid #f1f5f9' }}
+                style={{ color: '#2563eb', fontWeight: 800, textDecoration: 'none', padding: '0.6rem 0.75rem', borderRadius: '8px', display: 'flex', alignItems: 'center', gap: '10px', background: '#eff6ff' }}
               >
-                <span>📖</span>
-                <span>Free Academic E-Library</span>
+                <span style={{ fontSize: '1.1rem' }}>📖</span>
+                <span>Free E-Library & Past Papers</span>
               </Link>
 
-              <a
-                href="#calculator"
+              <Link
+                to="/timetable"
                 onClick={() => setMobileNavOpen(false)}
-                style={{ color: '#0f172a', textDecoration: 'none', padding: '0.5rem 0', display: 'flex', alignItems: 'center', gap: '8px', borderBottom: '1px solid #f1f5f9' }}
+                style={{ color: '#0f172a', textDecoration: 'none', padding: '0.6rem 0.75rem', borderRadius: '8px', display: 'flex', alignItems: 'center', gap: '10px' }}
               >
-                <span>💳</span>
-                <span>Tuition & Installment Calculator</span>
-              </a>
-
-              <a
-                href="#why-eclat"
-                onClick={() => setMobileNavOpen(false)}
-                style={{ color: '#0f172a', textDecoration: 'none', padding: '0.5rem 0', display: 'flex', alignItems: 'center', gap: '8px', borderBottom: '1px solid #f1f5f9' }}
-              >
-                <span>⭐</span>
-                <span>Why Choose Éclat Institute</span>
-              </a>
+                <span style={{ fontSize: '1.1rem' }}>📅</span>
+                <span>Virtual Class Timetable</span>
+              </Link>
 
               <a
                 href="#testimonials"
                 onClick={() => setMobileNavOpen(false)}
-                style={{ color: '#0f172a', textDecoration: 'none', padding: '0.5rem 0', display: 'flex', alignItems: 'center', gap: '8px', borderBottom: '1px solid #f1f5f9' }}
+                style={{ color: '#0f172a', textDecoration: 'none', padding: '0.6rem 0.75rem', borderRadius: '8px', display: 'flex', alignItems: 'center', gap: '10px' }}
               >
-                <span>🎓</span>
-                <span>Graduate Outcomes & Testimonials</span>
+                <span style={{ fontSize: '1.1rem' }}>⭐</span>
+                <span>Student Reviews & Outcomes</span>
               </a>
 
               <a
                 href="#app-download"
                 onClick={() => setMobileNavOpen(false)}
-                style={{ color: '#16a34a', fontWeight: 800, textDecoration: 'none', padding: '0.5rem 0', display: 'flex', alignItems: 'center', gap: '8px', borderBottom: '1px solid #f1f5f9' }}
+                style={{ color: '#16a34a', fontWeight: 800, textDecoration: 'none', padding: '0.6rem 0.75rem', borderRadius: '8px', display: 'flex', alignItems: 'center', gap: '10px' }}
               >
-                <span>📲</span>
-                <span>Download Desktop (.EXE) & Mobile (.APK) Apps</span>
+                <span style={{ fontSize: '1.1rem' }}>📲</span>
+                <span>Download Desktop (.EXE) & Android (.APK) Apps</span>
               </a>
 
               <div style={{ paddingTop: '0.75rem', display: 'flex', flexDirection: 'column', gap: '0.65rem' }}>
@@ -1601,7 +1663,7 @@ export function Landing() {
                   target="_blank"
                   rel="noopener noreferrer"
                   className="btn btn-sm"
-                  style={{ background: '#22c55e', color: '#ffffff', fontWeight: 800, textAlign: 'center', padding: '0.7rem', borderRadius: '10px', textDecoration: 'none', display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '8px' }}
+                  style={{ background: '#22c55e', color: '#ffffff', fontWeight: 800, textAlign: 'center', padding: '0.75rem', borderRadius: '10px', textDecoration: 'none', display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '8px' }}
                 >
                   <span>💬</span>
                   <span>WhatsApp Admissions Desk</span>
@@ -1614,9 +1676,9 @@ export function Landing() {
                     setInquiryModalOpen(true)
                   }}
                   className="btn btn-sm"
-                  style={{ background: '#d4af37', color: '#0c0e12', fontWeight: 900, textAlign: 'center', padding: '0.7rem', borderRadius: '10px' }}
+                  style={{ background: '#d4af37', color: '#0c0e12', fontWeight: 900, textAlign: 'center', padding: '0.75rem', borderRadius: '10px', border: 'none', cursor: 'pointer' }}
                 >
-                  🚀 Apply & Enroll Online
+                  🚀 Apply & Enroll in Intake
                 </button>
 
                 <button
@@ -1626,7 +1688,7 @@ export function Landing() {
                     setShowPortalDesksModal(true)
                   }}
                   className="btn btn-sm btn-primary"
-                  style={{ fontWeight: 800, textAlign: 'center', padding: '0.7rem', borderRadius: '10px' }}
+                  style={{ fontWeight: 800, textAlign: 'center', padding: '0.75rem', borderRadius: '10px' }}
                 >
                   🔐 Student & Staff Portals
                 </button>
@@ -2151,66 +2213,103 @@ export function Landing() {
         </div>
       </section>
 
-      {/* Value Proposition / Why Choose Eclat Institute */}
-      <section id="why-eclat" style={{ padding: '5rem 1.5rem', maxWidth: '1240px', margin: '0 auto' }}>
-        <div style={{ textAlign: 'center', marginBottom: '3.5rem' }}>
+      {/* About Us & Institutional Advantage */}
+      <section id="about" style={{ padding: isMobile ? '3.5rem 1rem' : '5rem 1.5rem', maxWidth: '1240px', margin: '0 auto' }}>
+        <div id="why-eclat" style={{ textAlign: 'center', marginBottom: isMobile ? '2.25rem' : '3.5rem' }}>
           <span style={{ fontSize: '0.82rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.08em', color: '#b45309' }}>
-            THE ÉCLAT ONLINE ADVANTAGE
+            🏛️ ABOUT ÉCLAT INSTITUTE
           </span>
-          <h2 style={{ fontSize: '2.3rem', fontWeight: 900, color: '#0f172a', margin: '0.35rem 0 0.75rem', fontFamily: 'var(--font-heading)' }}>
-            Tech & Language Mastery Built for Modern Learners
+          <h2 style={{ fontSize: isMobile ? '1.75rem' : '2.3rem', fontWeight: 900, color: '#0f172a', margin: '0.35rem 0 0.75rem', fontFamily: 'var(--font-heading)', lineHeight: 1.2 }}>
+            Empowering Modern Learners Worldwide
           </h2>
-          <p style={{ fontSize: '1.05rem', color: '#334155', maxWidth: '700px', margin: '0 auto', fontWeight: 500 }}>
-            No traffic, no rigid classroom constraints. Master cutting-edge programming frameworks and international languages with live expert mentorship.
+          <p style={{ fontSize: isMobile ? '0.94rem' : '1.05rem', color: '#334155', maxWidth: '740px', margin: '0 auto', fontWeight: 500, lineHeight: 1.65 }}>
+            Éclat Institute is an accredited 100% Online Global Academy. We deliver live virtual lectures, hands-on project labs, and direct mentor code reviews to help students and working professionals excel across 5 key disciplines.
           </p>
         </div>
 
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '2rem' }}>
-          <div style={{ background: '#ffffff', border: '1px solid #cbd5e1', borderRadius: '16px', padding: '2rem', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.04)' }}>
-            <div style={{ width: '52px', height: '52px', borderRadius: '12px', background: '#eff6ff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.75rem', marginBottom: '1.25rem' }}>
+        {/* 5 Specialized Academic Faculties Grid */}
+        <div style={{ marginBottom: isMobile ? '2rem' : '3rem' }}>
+          <div style={{ fontSize: '0.78rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.06em', color: '#64748b', textAlign: 'center', marginBottom: '1.25rem' }}>
+            Our 5 Academic Departments
+          </div>
+          <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : 'repeat(auto-fit, minmax(220px, 1fr))', gap: '1rem' }}>
+            {[
+              { icon: '💻', name: 'Tech & Software', desc: 'React 19, Node.js REST APIs, PostgreSQL & Ethical Hacking' },
+              { icon: '📊', name: 'Data Science & Research', desc: 'Python, RStudio Biostats, SPSS Surveys & Stata Econometrics' },
+              { icon: '🎨', name: 'Creative Arts & Design', desc: 'Figma UI/UX Design Systems, Adobe Suite & 3D Animation' },
+              { icon: '🗣️', name: 'World Languages & IELTS', desc: 'IELTS Band 8.5+, German Goethe, Arabic & French' },
+              { icon: '🧾', name: 'Business Tech & Accounting', desc: 'QuickBooks Pro, VAT Tax Compliance & Payroll' },
+            ].map((dept, idx) => (
+              <div
+                key={idx}
+                style={{
+                  background: '#ffffff',
+                  border: '1px solid #e2e8f0',
+                  borderRadius: '12px',
+                  padding: '1.25rem 1rem',
+                  boxShadow: '0 2px 6px rgba(0,0,0,0.03)',
+                  display: 'flex',
+                  alignItems: 'flex-start',
+                  gap: '12px',
+                }}
+              >
+                <span style={{ fontSize: '1.6rem', flexShrink: 0 }}>{dept.icon}</span>
+                <div>
+                  <div style={{ fontSize: '0.92rem', fontWeight: 800, color: '#0f172a' }}>{dept.name}</div>
+                  <div style={{ fontSize: '0.78rem', color: '#64748b', marginTop: '3px', lineHeight: 1.45 }}>{dept.desc}</div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* 4 Core Institutional Pillars */}
+        <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : 'repeat(auto-fit, minmax(260px, 1fr))', gap: isMobile ? '1rem' : '1.75rem' }}>
+          <div style={{ background: '#ffffff', border: '1px solid #cbd5e1', borderRadius: '16px', padding: isMobile ? '1.25rem' : '2rem', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.04)' }}>
+            <div style={{ width: '48px', height: '48px', borderRadius: '12px', background: '#eff6ff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.5rem', marginBottom: '1rem' }}>
               💻
             </div>
-            <h3 style={{ fontSize: '1.25rem', fontWeight: 800, color: '#0f172a', margin: '0 0 0.5rem' }}>
+            <h3 style={{ fontSize: '1.15rem', fontWeight: 800, color: '#0f172a', margin: '0 0 0.4rem' }}>
               Live Virtual Coding & Language Labs
             </h3>
-            <p style={{ fontSize: '0.92rem', color: '#334155', lineHeight: 1.6, margin: 0 }}>
+            <p style={{ fontSize: '0.88rem', color: '#334155', lineHeight: 1.6, margin: 0 }}>
               Interactive live screen-sharing, breakout speaking rooms, live GitHub code reviews, and direct instructor feedback on your projects.
             </p>
           </div>
 
-          <div style={{ background: '#ffffff', border: '1px solid #cbd5e1', borderRadius: '16px', padding: '2rem', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.04)' }}>
-            <div style={{ width: '52px', height: '52px', borderRadius: '12px', background: '#f0fdf4', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.75rem', marginBottom: '1.25rem' }}>
+          <div style={{ background: '#ffffff', border: '1px solid #cbd5e1', borderRadius: '16px', padding: isMobile ? '1.25rem' : '2rem', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.04)' }}>
+            <div style={{ width: '48px', height: '48px', borderRadius: '12px', background: '#f0fdf4', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.5rem', marginBottom: '1rem' }}>
               ⏰
             </div>
-            <h3 style={{ fontSize: '1.25rem', fontWeight: 800, color: '#0f172a', margin: '0 0 0.5rem' }}>
+            <h3 style={{ fontSize: '1.15rem', fontWeight: 800, color: '#0f172a', margin: '0 0 0.4rem' }}>
               Flexible Evening & Weekend Batches
             </h3>
-            <p style={{ fontSize: '0.92rem', color: '#334155', lineHeight: 1.6, margin: 0 }}>
+            <p style={{ fontSize: '0.88rem', color: '#334155', lineHeight: 1.6, margin: 0 }}>
               Attend live online evening sessions (6:00 PM – 9:30 PM) or weekend masterclasses. Missed a class? Watch HD video replays anytime on the portal.
             </p>
           </div>
 
-          <div style={{ background: '#ffffff', border: '1px solid #cbd5e1', borderRadius: '16px', padding: '2rem', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.04)' }}>
-            <div style={{ width: '52px', height: '52px', borderRadius: '12px', background: '#faf5ff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.75rem', marginBottom: '1.25rem' }}>
+          <div style={{ background: '#ffffff', border: '1px solid #cbd5e1', borderRadius: '16px', padding: isMobile ? '1.25rem' : '2rem', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.04)' }}>
+            <div style={{ width: '48px', height: '48px', borderRadius: '12px', background: '#faf5ff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.5rem', marginBottom: '1rem' }}>
               📜
             </div>
-            <h3 style={{ fontSize: '1.25rem', fontWeight: 800, color: '#0f172a', margin: '0 0 0.5rem' }}>
+            <h3 style={{ fontSize: '1.15rem', fontWeight: 800, color: '#0f172a', margin: '0 0 0.4rem' }}>
               Verified Digital E-Certificates
             </h3>
-            <p style={{ fontSize: '0.92rem', color: '#334155', lineHeight: 1.6, margin: 0 }}>
-              Receive cryptographically signed digital certificates with instant QR verification for LinkedIn, remote jobs, and international visa applications.
+            <p style={{ fontSize: '0.88rem', color: '#334155', lineHeight: 1.6, margin: 0 }}>
+              Receive cryptographically signed digital certificates with instant QR verification for LinkedIn, remote jobs, and international applications.
             </p>
           </div>
 
-          <div style={{ background: '#ffffff', border: '1px solid #cbd5e1', borderRadius: '16px', padding: '2rem', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.04)' }}>
-            <div style={{ width: '52px', height: '52px', borderRadius: '12px', background: '#fffbeb', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.75rem', marginBottom: '1.25rem' }}>
+          <div style={{ background: '#ffffff', border: '1px solid #cbd5e1', borderRadius: '16px', padding: isMobile ? '1.25rem' : '2rem', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.04)' }}>
+            <div style={{ width: '48px', height: '48px', borderRadius: '12px', background: '#fffbeb', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.5rem', marginBottom: '1rem' }}>
               💳
             </div>
-            <h3 style={{ fontSize: '1.25rem', fontWeight: 800, color: '#0f172a', margin: '0 0 0.5rem' }}>
+            <h3 style={{ fontSize: '1.15rem', fontWeight: 800, color: '#0f172a', margin: '0 0 0.4rem' }}>
               Global Flexible Installments ($ USD)
             </h3>
-            <p style={{ fontSize: '0.92rem', color: '#334155', lineHeight: 1.6, margin: 0 }}>
-              Affordable international pricing in US Dollars. Pay tuition seamlessly via Visa, Mastercard, PayPal, Bank Wire, or Mobile Money with 2 to 3 flexible installments.
+            <p style={{ fontSize: '0.88rem', color: '#334155', lineHeight: 1.6, margin: 0 }}>
+              Affordable international pricing in US Dollars. Pay tuition seamlessly via Visa, Mastercard, PayPal, Bank Wire, or Mobile Money with 2 flexible installments.
             </p>
           </div>
         </div>
