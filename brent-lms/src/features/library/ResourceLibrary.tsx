@@ -546,18 +546,6 @@ export function ResourceLibrary() {
                       🗑️
                     </button>
                   )}
-                  {/(python|web|code|software|data|react|javascript|sql|lab)/i.test(res.subject + ' ' + res.title + ' ' + res.category) && (
-                    <a
-                      href="https://stackblitz.com"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="btn btn-secondary btn-sm"
-                      style={{ display: 'inline-flex', alignItems: 'center', gap: '4px', textDecoration: 'none' }}
-                      title="Open Interactive Code Sandbox"
-                    >
-                      ⚡ Lab Sandbox
-                    </a>
-                  )}
                   <button
                     type="button"
                     className="btn btn-primary btn-sm"
