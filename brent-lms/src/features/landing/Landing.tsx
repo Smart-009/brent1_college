@@ -1309,273 +1309,174 @@ export function Landing() {
         )}
       </header>
 
-      {/* Hero Section */}
+      {/* Hero Section (Modern Udemy-Style Promotional Billboard) */}
       <section
         style={{
-          background: 'radial-gradient(ellipse at top center, #1e3a8a 0%, #0f172a 75%, #020617 100%)',
+          background: 'linear-gradient(135deg, #090d16 0%, #0f172a 50%, #1e293b 100%)',
           color: '#ffffff',
-          padding: '4.5rem 1.5rem 4rem',
+          padding: '5rem 1.5rem 4.5rem',
           position: 'relative',
           overflow: 'hidden',
+          borderBottom: '1px solid #1e293b',
         }}
       >
         <div style={{ maxWidth: '1100px', margin: '0 auto', textAlign: 'center', position: 'relative', zIndex: 2 }}>
-          {/* Trust Badges */}
+          {/* Trust Badge */}
           <div
             style={{
               display: 'inline-flex',
               alignItems: 'center',
               gap: '0.6rem',
-              background: 'rgba(255, 255, 255, 0.1)',
+              background: 'rgba(255, 255, 255, 0.08)',
               backdropFilter: 'blur(10px)',
-              border: '1px solid rgba(255, 255, 255, 0.2)',
+              border: '1px solid rgba(255, 255, 255, 0.15)',
               borderRadius: '999px',
-              padding: '0.45rem 1.4rem',
+              padding: '0.45rem 1.25rem',
               fontSize: '0.86rem',
               fontWeight: 700,
               color: '#93c5fd',
               marginBottom: '1.75rem',
             }}
           >
-            <span>⭐️⭐️⭐️⭐️⭐️</span> Rated 4.9/5 by 3,500+ Online Students Worldwide
+            <span>⭐️⭐️⭐️⭐️⭐️</span>
+            <span>Rated 4.9/5 by 3,500+ Online Students in Kenya & Globally</span>
           </div>
 
-          {/* Main Hero Headline */}
+          {/* Main Headline */}
           <h1
             style={{
-              fontSize: 'clamp(2.4rem, 5.5vw, 4rem)',
+              fontSize: 'clamp(2.4rem, 5vw, 3.8rem)',
               fontWeight: 900,
-              letterSpacing: '-0.035em',
+              letterSpacing: '-0.03em',
               lineHeight: 1.15,
-              margin: '0 auto 1.5rem',
-              maxWidth: '960px',
+              margin: '0 auto 1.25rem',
+              maxWidth: '920px',
               color: '#ffffff',
+              fontFamily: 'var(--font-heading)',
             }}
           >
-            Master In-Demand Tech & Global Languages. <br />
+            Skills that drive your career forward. <br />
             <span
               style={{
-                background: 'linear-gradient(90deg, #d4af37 0%, #f5df88 50%, #d4af37 100%)',
+                background: 'linear-gradient(90deg, #d4af37 0%, #fef08a 50%, #d4af37 100%)',
                 WebkitBackgroundClip: 'text',
                 WebkitTextFillColor: 'transparent',
               }}
             >
-              100% Online • Live Virtual Labs • Global Certification
+              100% Online • Live Virtual Labs • Verified Diplomas
             </span>
           </h1>
 
           <p
             style={{
-              maxWidth: '820px',
-              margin: '0 auto 2.5rem',
-              fontSize: '1.2rem',
-              color: '#e2e8f0',
-              lineHeight: 1.65,
-              fontWeight: 500,
+              maxWidth: '780px',
+              margin: '0 auto 2.25rem',
+              fontSize: '1.15rem',
+              color: '#cbd5e1',
+              lineHeight: 1.6,
+              fontWeight: 400,
             }}
           >
-            Kenya & East Africa’s premier virtual institute. Master Software Engineering (React & Node), Python Data Analytics, Cybersecurity, Computer Packages, and World Languages (English, IELTS, Kiswahili, Arabic, French, German) with live interactive classes and 24/7 LMS access!
+            Learn in-demand Tech & Software (React, Node, Python, Cybersecurity), World Languages (IELTS, English, Arabic, German, French), and Business Tools from industry mentors with live classes and flexible installment plans.
           </p>
 
-          {/* Hero CTAs */}
+          {/* Clean, Focused Action CTAs */}
           <div style={{ display: 'flex', justifyContent: 'center', gap: '1rem', flexWrap: 'wrap', marginBottom: '2.5rem' }}>
-            <button
-              type="button"
+            <a
+              href="#courses"
               className="btn btn-lg"
               style={{
                 background: '#d4af37',
                 color: '#0c0e12',
                 fontWeight: 900,
-                padding: '1rem 2.25rem',
-                fontSize: '1.05rem',
-                borderRadius: '12px',
-                boxShadow: '0 10px 28px rgba(212, 175, 55, 0.4)',
+                padding: '0.9rem 2.25rem',
+                fontSize: '1.02rem',
+                borderRadius: '10px',
+                boxShadow: '0 10px 24px rgba(212, 175, 55, 0.35)',
+                border: 'none',
+                textDecoration: 'none',
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '8px',
+              }}
+            >
+              <span>🚀 Explore Courses</span>
+              <span>↓</span>
+            </a>
+
+            <button
+              type="button"
+              className="btn btn-lg"
+              style={{
+                background: '#2563eb',
+                color: '#ffffff',
+                fontWeight: 800,
+                padding: '0.9rem 2rem',
+                fontSize: '1.02rem',
+                borderRadius: '10px',
+                boxShadow: '0 8px 20px rgba(37, 99, 235, 0.3)',
                 border: 'none',
                 cursor: 'pointer',
               }}
               onClick={() => setInquiryModalOpen(true)}
             >
-              🚀 Enroll in 100% Online Intake →
+              ⚡ Enroll in Intake
             </button>
 
-            <a
-              href="https://github.com/Smart-009/brent1_college/actions"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="btn btn-lg"
-              style={{
-                background: '#1e293b',
-                color: '#60a5fa',
-                fontWeight: 800,
-                padding: '1rem 2rem',
-                fontSize: '1.02rem',
-                borderRadius: '12px',
-                border: '1.5px solid #3b82f6',
-                boxShadow: '0 10px 25px rgba(59, 130, 246, 0.25)',
-                textDecoration: 'none',
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '8px',
-              }}
-            >
-              <span>💻</span>
-              <span>Download Desktop App (.EXE)</span>
-            </a>
-
-            <a
-              href="https://github.com/Smart-009/brent1_college/actions"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="btn btn-lg"
-              style={{
-                background: '#14532d',
-                color: '#86efac',
-                fontWeight: 800,
-                padding: '1rem 2rem',
-                fontSize: '1.02rem',
-                borderRadius: '12px',
-                border: '1.5px solid #22c55e',
-                boxShadow: '0 10px 25px rgba(34, 197, 94, 0.25)',
-                textDecoration: 'none',
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '8px',
-              }}
-            >
-              <span>🤖</span>
-              <span>Download Android App (.APK)</span>
-            </a>
-
-            <a
-              href={getWhatsAppInquiryUrl('General Admissions & Course Outline')}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="btn btn-lg"
-              style={{
-                background: 'rgba(255, 255, 255, 0.12)',
-                color: '#ffffff',
-                fontWeight: 700,
-                padding: '1rem 1.75rem',
-                fontSize: '1.02rem',
-                borderRadius: '12px',
-                border: '1px solid rgba(255, 255, 255, 0.25)',
-                backdropFilter: 'blur(8px)',
-                textDecoration: 'none',
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '8px',
-              }}
-            >
-              <span>💬</span>
-              <span>WhatsApp Counselor</span>
-            </a>
-          </div>
-
-          {/* Secure Classroom Learning Gateway Notice */}
-          <div
-            style={{
-              background: 'rgba(30, 41, 59, 0.6)',
-              backdropFilter: 'blur(10px)',
-              border: '1px solid rgba(255, 255, 255, 0.1)',
-              borderRadius: '12px',
-              padding: '0.75rem 1.25rem',
-              maxWidth: '820px',
-              margin: '0 auto 1.5rem',
-              fontSize: '0.85rem',
-              color: '#cbd5e1',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              gap: '8px',
-              flexWrap: 'wrap',
-            }}
-          >
-            <span>🛡️</span>
-            <span>
-              <strong>Secure Multi-Platform Learning:</strong> The website is your admissions & information portal. All live lectures, exams, and DRM-protected E-Library materials run inside the official <strong>Éclat Desktop & Mobile Apps</strong>.
-            </span>
-          </div>
-
-          {/* Quick Jump Browse Chips */}
-          <div style={{ display: 'flex', justifyContent: 'center', gap: '0.5rem', flexWrap: 'wrap', maxWidth: '860px', margin: '0 auto 2.5rem' }}>
-            <a
-              href="#courses"
-              onClick={() => setActiveCategory('Tech & Programming')}
-              style={{
-                background: 'rgba(255, 255, 255, 0.08)',
-                color: '#93c5fd',
-                border: '1px solid rgba(147, 197, 253, 0.25)',
-                padding: '0.35rem 0.85rem',
-                borderRadius: '999px',
-                fontSize: '0.8rem',
-                fontWeight: 700,
-                textDecoration: 'none',
-              }}
-            >
-              💻 Tech Programs
-            </a>
-            <a
-              href="#courses"
-              onClick={() => setActiveCategory('Languages & Communication')}
-              style={{
-                background: 'rgba(255, 255, 255, 0.08)',
-                color: '#86efac',
-                border: '1px solid rgba(134, 239, 172, 0.25)',
-                padding: '0.35rem 0.85rem',
-                borderRadius: '999px',
-                fontSize: '0.8rem',
-                fontWeight: 700,
-                textDecoration: 'none',
-              }}
-            >
-              🗣️ World Languages
-            </a>
             <Link
               to="/library"
+              className="btn btn-lg"
               style={{
                 background: 'rgba(255, 255, 255, 0.08)',
-                color: '#fde047',
-                border: '1px solid rgba(253, 224, 71, 0.25)',
-                padding: '0.35rem 0.85rem',
-                borderRadius: '999px',
-                fontSize: '0.8rem',
+                color: '#ffffff',
                 fontWeight: 700,
-                textDecoration: 'none',
-              }}
-            >
-              📖 Free E-Library
-            </Link>
-            <a
-              href="#calculator"
-              style={{
-                background: 'rgba(255, 255, 255, 0.08)',
-                color: '#f472b6',
-                border: '1px solid rgba(244, 114, 182, 0.25)',
-                padding: '0.35rem 0.85rem',
-                borderRadius: '999px',
-                fontSize: '0.8rem',
-                fontWeight: 700,
-                textDecoration: 'none',
-              }}
-            >
-              💳 Tuition Calculator
-            </a>
-            <a
-              href="#app-download"
-              style={{
-                background: 'rgba(255, 255, 255, 0.08)',
-                color: '#cbd5e1',
+                padding: '0.9rem 1.75rem',
+                fontSize: '1rem',
+                borderRadius: '10px',
                 border: '1px solid rgba(255, 255, 255, 0.2)',
-                padding: '0.35rem 0.85rem',
-                borderRadius: '999px',
-                fontSize: '0.8rem',
-                fontWeight: 700,
                 textDecoration: 'none',
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '6px',
               }}
             >
-              📲 Download Apps
-            </a>
+              <span>📖</span>
+              <span>Free E-Library</span>
+            </Link>
           </div>
+
+          {/* Value Props Row */}
+          <div
+            style={{
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+              gap: '1.75rem',
+              flexWrap: 'wrap',
+              fontSize: '0.88rem',
+              color: '#94a3b8',
+              fontWeight: 600,
+            }}
+          >
+            <span style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
+              <span style={{ color: '#22c55e' }}>✓</span> 100% Online Live Evening & Weekend Batches
+            </span>
+            <span style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
+              <span style={{ color: '#22c55e' }}>✓</span> Cryptographically Verified Diplomas
+            </span>
+            <span style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
+              <span style={{ color: '#22c55e' }}>✓</span> 50% Flexible Installment Plans
+            </span>
+            <span style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
+              <span style={{ color: '#22c55e' }}>✓</span> Dedicated Desktop & Mobile Classrooms
+            </span>
+          </div>
+        </div>
+      </section>
+
+      {/* Highlights & Value Metrics Section */}
+      <section style={{ background: '#090d16', padding: '2.5rem 1.5rem', borderBottom: '1px solid #1e293b' }}>
+        <div style={{ maxWidth: '1240px', margin: '0 auto' }}>
 
           {/* Live Intake Countdown Alert */}
           <div
@@ -3403,119 +3304,191 @@ export function Landing() {
         </div>
       )}
 
-      {/* Floating Admissions & Support Button with Direct Number */}
-      <div style={{ position: 'fixed', bottom: '24px', right: '24px', zIndex: 9990, display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '8px' }}>
+      {/* Sleek Modern Floating Support Desk (WhatsApp / Admissions Live Desk) */}
+      <div style={{ position: 'fixed', bottom: '24px', right: '24px', zIndex: 9990, display: 'flex', flexDirection: 'column', alignItems: 'flex-end' }}>
         {supportModalOpen && (
           <div
             style={{
               background: '#ffffff',
-              borderRadius: '16px',
-              padding: '1.25rem',
-              boxShadow: '0 12px 36px rgba(0,0,0,0.2)',
+              borderRadius: '20px',
+              padding: '1.4rem',
+              boxShadow: '0 20px 48px rgba(15, 23, 42, 0.25)',
               border: '1px solid #e2e8f0',
-              width: '290px',
+              width: '320px',
               animation: 'fadeIn 0.2s ease',
-              marginBottom: '4px',
+              marginBottom: '12px',
+              textAlign: 'left',
             }}
           >
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.75rem' }}>
-              <div style={{ fontWeight: 800, color: '#0f172a', fontSize: '0.95rem' }}>🎧 Admissions & Support</div>
+            {/* Counselor Avatar & Online Status Header */}
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.85rem', borderBottom: '1px solid #f1f5f9', paddingBottom: '0.75rem' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                <div style={{ position: 'relative' }}>
+                  <img
+                    src="/logo.png"
+                    alt="Éclat Admissions Desk"
+                    style={{ width: '40px', height: '40px', borderRadius: '50%', objectFit: 'cover', border: '2px solid #22c55e' }}
+                  />
+                  <span
+                    style={{
+                      position: 'absolute',
+                      bottom: '0px',
+                      right: '0px',
+                      width: '12px',
+                      height: '12px',
+                      borderRadius: '50%',
+                      background: '#22c55e',
+                      border: '2px solid #ffffff',
+                    }}
+                  />
+                </div>
+                <div>
+                  <div style={{ fontWeight: 800, color: '#0f172a', fontSize: '0.92rem' }}>Éclat Admissions Desk</div>
+                  <div style={{ fontSize: '0.72rem', color: '#16a34a', fontWeight: 700 }}>● Online • Ready to Assist</div>
+                </div>
+              </div>
+
               <button
                 type="button"
                 onClick={() => setSupportModalOpen(false)}
-                style={{ background: 'none', border: 'none', color: '#64748b', cursor: 'pointer', fontWeight: 900 }}
+                style={{
+                  background: '#f1f5f9',
+                  border: 'none',
+                  borderRadius: '50%',
+                  width: '28px',
+                  height: '28px',
+                  color: '#64748b',
+                  cursor: 'pointer',
+                  fontWeight: 900,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}
+                aria-label="Close Support Desk"
               >
                 ✕
               </button>
             </div>
-            <p style={{ fontSize: '0.8rem', color: '#475569', margin: '0 0 0.85rem' }}>
-              Have questions about courses, admissions, or fees? Reach out to our virtual desk:
-            </p>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+
+            {/* Friendly Greeting Message */}
+            <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '12px', padding: '0.75rem 0.85rem', fontSize: '0.82rem', color: '#334155', lineHeight: 1.5, marginBottom: '1rem' }}>
+              👋 <strong>Hi there!</strong> Have questions about our 100% online programs, tuition installment plans, or live class schedules? Connect with our virtual admissions team:
+            </div>
+
+            {/* Support Action Triggers */}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.55rem' }}>
               <a
-                href={getWhatsAppInquiryUrl('Hello Eclat Support! I need assistance with admissions.')}
+                href={getWhatsAppInquiryUrl('Hello Eclat Admissions! I need assistance with course enrollment & tuition.')}
                 target="_blank"
                 rel="noopener noreferrer"
                 style={{
-                  background: '#22c55e',
+                  background: 'linear-gradient(135deg, #22c55e 0%, #16a34a 100%)',
                   color: '#ffffff',
-                  fontWeight: 700,
-                  fontSize: '0.82rem',
-                  padding: '0.6rem 0.85rem',
-                  borderRadius: '8px',
+                  fontWeight: 800,
+                  fontSize: '0.86rem',
+                  padding: '0.7rem 1rem',
+                  borderRadius: '10px',
                   textDecoration: 'none',
                   display: 'flex',
                   alignItems: 'center',
+                  justifyContent: 'center',
                   gap: '8px',
+                  boxShadow: '0 4px 12px rgba(34, 197, 94, 0.3)',
                 }}
               >
-                <span>💬</span>
-                <span>WhatsApp: {INSTITUTION_CONFIG.contact.phone}</span>
+                <span style={{ fontSize: '1.2rem' }}>💬</span>
+                <span>WhatsApp ({INSTITUTION_CONFIG.contact.phone})</span>
               </a>
+
               <a
                 href={`tel:${INSTITUTION_CONFIG.contact.phoneRaw}`}
                 style={{
                   background: '#eff6ff',
                   color: '#1d4ed8',
-                  border: '1px solid #bfdbfe',
+                  border: '1.5px solid #bfdbfe',
                   fontWeight: 700,
                   fontSize: '0.82rem',
-                  padding: '0.6rem 0.85rem',
-                  borderRadius: '8px',
+                  padding: '0.6rem 1rem',
+                  borderRadius: '10px',
                   textDecoration: 'none',
                   display: 'flex',
                   alignItems: 'center',
+                  justifyContent: 'center',
                   gap: '8px',
                 }}
               >
                 <span>📞</span>
                 <span>Call Hotline: {INSTITUTION_CONFIG.contact.phone}</span>
               </a>
+
               <a
                 href={`mailto:${INSTITUTION_CONFIG.contact.admissionsEmail}`}
                 style={{
                   background: '#f8fafc',
-                  color: '#334155',
+                  color: '#475569',
                   border: '1px solid #cbd5e1',
-                  fontWeight: 700,
-                  fontSize: '0.82rem',
-                  padding: '0.6rem 0.85rem',
-                  borderRadius: '8px',
+                  fontWeight: 600,
+                  fontSize: '0.8rem',
+                  padding: '0.5rem 1rem',
+                  borderRadius: '10px',
                   textDecoration: 'none',
                   display: 'flex',
                   alignItems: 'center',
-                  gap: '8px',
+                  justifyContent: 'center',
+                  gap: '6px',
                 }}
               >
                 <span>✉️</span>
-                <span>Email: {INSTITUTION_CONFIG.contact.admissionsEmail}</span>
+                <span>Email Admissions Registry</span>
               </a>
             </div>
           </div>
         )}
 
+        {/* Circular Floating Messenger Bubble */}
         <button
           type="button"
           onClick={() => setSupportModalOpen(!supportModalOpen)}
           style={{
-            background: '#22c55e',
+            width: '58px',
+            height: '58px',
+            borderRadius: '50%',
+            background: 'linear-gradient(135deg, #22c55e 0%, #15803d 100%)',
             color: '#ffffff',
-            border: 'none',
-            borderRadius: '999px',
-            padding: '0.75rem 1.25rem',
-            fontWeight: 800,
-            fontSize: '0.88rem',
+            border: '3px solid #ffffff',
             cursor: 'pointer',
-            boxShadow: '0 8px 24px rgba(34, 197, 94, 0.4)',
+            boxShadow: '0 8px 24px rgba(34, 197, 94, 0.45)',
             display: 'flex',
             alignItems: 'center',
-            gap: '8px',
+            justifyContent: 'center',
+            fontSize: '1.6rem',
+            position: 'relative',
             transition: 'transform 0.2s',
           }}
-          title="Contact Admissions Support"
+          title="Live Admissions & WhatsApp Support (+254 740 027 346)"
         >
-          <span style={{ fontSize: '1.1rem' }}>💬</span>
-          <span>Support: {INSTITUTION_CONFIG.contact.phone}</span>
+          {supportModalOpen ? '✕' : '💬'}
+          {!supportModalOpen && (
+            <span
+              style={{
+                position: 'absolute',
+                top: '-2px',
+                right: '-2px',
+                width: '18px',
+                height: '18px',
+                borderRadius: '50%',
+                background: '#ef4444',
+                border: '2px solid #ffffff',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                fontSize: '0.65rem',
+                fontWeight: 900,
+              }}
+            >
+              1
+            </span>
+          )}
         </button>
       </div>
     </div>
