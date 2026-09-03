@@ -985,21 +985,24 @@ export function Landing() {
               {/* Mobile Hamburger Toggle Button */}
               <button
                 type="button"
-                className="btn btn-sm sm:hidden"
+                className="btn btn-sm landing-mobile-menu-toggle"
                 style={{
-                  background: '#f1f5f9',
-                  color: '#0f172a',
-                  border: '1px solid #cbd5e1',
+                  background: mobileNavOpen ? '#0f172a' : '#eff6ff',
+                  color: mobileNavOpen ? '#ffffff' : '#1e40af',
+                  border: '1.5px solid #3b82f6',
                   fontWeight: 800,
-                  fontSize: '1rem',
-                  padding: '0.4rem 0.65rem',
+                  fontSize: '0.88rem',
+                  padding: '0.45rem 0.85rem',
                   borderRadius: '8px',
                   cursor: 'pointer',
+                  alignItems: 'center',
+                  gap: '6px',
                 }}
                 onClick={() => setMobileNavOpen(!mobileNavOpen)}
                 aria-label="Toggle Navigation Menu"
               >
-                {mobileNavOpen ? '✕' : '☰'}
+                <span>{mobileNavOpen ? '✕' : '☰'}</span>
+                <span>{mobileNavOpen ? 'Close' : 'Menu'}</span>
               </button>
             </div>
           </div>
@@ -1010,59 +1013,81 @@ export function Landing() {
           <div
             style={{
               background: '#ffffff',
-              borderTop: '1px solid #e2e8f0',
-              padding: '1rem 1.25rem',
-              boxShadow: '0 10px 25px rgba(0,0,0,0.1)',
+              borderTop: '2px solid #3b82f6',
+              padding: '1.25rem 1.5rem',
+              boxShadow: '0 15px 30px rgba(0,0,0,0.15)',
               animation: 'fadeIn 0.2s ease',
+              maxHeight: '80vh',
+              overflowY: 'auto',
             }}
           >
-            <nav style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', fontSize: '0.95rem', fontWeight: 600 }}>
+            <nav style={{ display: 'flex', flexDirection: 'column', gap: '0.65rem', fontSize: '0.95rem', fontWeight: 600 }}>
               <a
                 href="#courses"
                 onClick={() => setMobileNavOpen(false)}
-                style={{ color: '#0f172a', textDecoration: 'none', padding: '0.4rem 0' }}
+                style={{ color: '#0f172a', textDecoration: 'none', padding: '0.5rem 0', display: 'flex', alignItems: 'center', gap: '8px', borderBottom: '1px solid #f1f5f9' }}
               >
-                📚 Courses & Programs
+                <span>📚</span>
+                <span>Courses & Programs</span>
               </a>
+
               <Link
                 to="/library"
                 onClick={() => setMobileNavOpen(false)}
-                style={{ color: '#2563eb', fontWeight: 800, textDecoration: 'none', padding: '0.4rem 0' }}
+                style={{ color: '#2563eb', fontWeight: 800, textDecoration: 'none', padding: '0.5rem 0', display: 'flex', alignItems: 'center', gap: '8px', borderBottom: '1px solid #f1f5f9' }}
               >
-                📖 Free Academic E-Library
+                <span>📖</span>
+                <span>Free Academic E-Library</span>
               </Link>
+
+              <a
+                href="#calculator"
+                onClick={() => setMobileNavOpen(false)}
+                style={{ color: '#0f172a', textDecoration: 'none', padding: '0.5rem 0', display: 'flex', alignItems: 'center', gap: '8px', borderBottom: '1px solid #f1f5f9' }}
+              >
+                <span>💳</span>
+                <span>Tuition & Installment Calculator</span>
+              </a>
+
               <a
                 href="#why-eclat"
                 onClick={() => setMobileNavOpen(false)}
-                style={{ color: '#0f172a', textDecoration: 'none', padding: '0.4rem 0' }}
+                style={{ color: '#0f172a', textDecoration: 'none', padding: '0.5rem 0', display: 'flex', alignItems: 'center', gap: '8px', borderBottom: '1px solid #f1f5f9' }}
               >
-                ⭐ Why Choose Éclat Institute
+                <span>⭐</span>
+                <span>Why Choose Éclat Institute</span>
               </a>
+
               <a
                 href="#testimonials"
                 onClick={() => setMobileNavOpen(false)}
-                style={{ color: '#0f172a', textDecoration: 'none', padding: '0.4rem 0' }}
+                style={{ color: '#0f172a', textDecoration: 'none', padding: '0.5rem 0', display: 'flex', alignItems: 'center', gap: '8px', borderBottom: '1px solid #f1f5f9' }}
               >
-                🎓 Graduate Outcomes & Testimonials
-              </a>
-              <a
-                href="#intakes"
-                onClick={() => setMobileNavOpen(false)}
-                style={{ color: '#0f172a', textDecoration: 'none', padding: '0.4rem 0' }}
-              >
-                💳 Intakes & Tuition Fees
+                <span>🎓</span>
+                <span>Graduate Outcomes & Testimonials</span>
               </a>
 
-              <div style={{ borderTop: '1px solid #e2e8f0', paddingTop: '0.75rem', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+              <a
+                href="#app-download"
+                onClick={() => setMobileNavOpen(false)}
+                style={{ color: '#16a34a', fontWeight: 800, textDecoration: 'none', padding: '0.5rem 0', display: 'flex', alignItems: 'center', gap: '8px', borderBottom: '1px solid #f1f5f9' }}
+              >
+                <span>📲</span>
+                <span>Download Desktop (.EXE) & Mobile (.APK) Apps</span>
+              </a>
+
+              <div style={{ paddingTop: '0.75rem', display: 'flex', flexDirection: 'column', gap: '0.65rem' }}>
                 <a
-                  href={getWhatsAppInquiryUrl('General Admissions Inquiry')}
+                  href={getWhatsAppInquiryUrl('Hello Eclat Admissions! I need assistance with course enrollment.')}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="btn btn-sm"
-                  style={{ background: '#22c55e', color: '#ffffff', fontWeight: 800, textAlign: 'center', padding: '0.6rem', borderRadius: '8px', textDecoration: 'none' }}
+                  style={{ background: '#22c55e', color: '#ffffff', fontWeight: 800, textAlign: 'center', padding: '0.7rem', borderRadius: '10px', textDecoration: 'none', display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '8px' }}
                 >
-                  💬 WhatsApp Admissions Desk
+                  <span>💬</span>
+                  <span>WhatsApp Admissions Desk</span>
                 </a>
+
                 <button
                   type="button"
                   onClick={() => {
@@ -1070,9 +1095,21 @@ export function Landing() {
                     setInquiryModalOpen(true)
                   }}
                   className="btn btn-sm"
-                  style={{ background: '#d4af37', color: '#0c0e12', fontWeight: 800, textAlign: 'center', padding: '0.6rem', borderRadius: '8px' }}
+                  style={{ background: '#d4af37', color: '#0c0e12', fontWeight: 900, textAlign: 'center', padding: '0.7rem', borderRadius: '10px' }}
                 >
                   🚀 Apply & Enroll Online
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => {
+                    setMobileNavOpen(false)
+                    setShowPortalDesksModal(true)
+                  }}
+                  className="btn btn-sm btn-primary"
+                  style={{ fontWeight: 800, textAlign: 'center', padding: '0.7rem', borderRadius: '10px' }}
+                >
+                  🔐 Student & Staff Portals
                 </button>
               </div>
             </nav>

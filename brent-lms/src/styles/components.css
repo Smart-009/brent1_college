@@ -924,7 +924,11 @@ tbody td { padding: var(--space-3) var(--space-4); color: var(--color-text-secon
 .desktop-nav-links {
   display: flex !important;
   align-items: center;
-  gap: 1.75rem;
+  gap: 1.5rem;
+}
+
+.landing-mobile-menu-toggle {
+  display: none !important;
 }
 
 @media (min-width: 992px) {
@@ -936,6 +940,12 @@ tbody td { padding: var(--space-3) var(--space-4); color: var(--color-text-secon
 @media (max-width: 991px) {
   .desktop-nav-links {
     display: none !important;
+  }
+
+  .landing-mobile-menu-toggle {
+    display: inline-flex !important;
+    align-items: center;
+    gap: 6px;
   }
 
   .hide-on-mobile {
