@@ -10,7 +10,7 @@ import type { Role } from '@/lib/database.types'
 interface CourseItem {
   id: string
   title: string
-  category: 'Tech & Programming' | 'Computer & Digital Skills' | 'Languages & Communication' | 'Business Tech & Accounting' | 'Executive Masterclass' | string
+  category: 'Data Science & Research' | 'Tech & Programming' | 'Computer & Digital Skills' | 'Languages & Communication' | 'Business Tech & Accounting' | 'Executive Masterclass' | string
   tag: string
   tagColor: string
   duration: string
@@ -32,6 +32,7 @@ interface CourseItem {
 }
 
 const DEFAULT_COURSES_DATA: CourseItem[] = [
+  // --- TECH & SOFTWARE ENGINEERING ---
   {
     id: 'c-coding',
     title: 'Full-Stack Web Development & Modern JavaScript (React 19 & Node.js)',
@@ -61,9 +62,37 @@ const DEFAULT_COURSES_DATA: CourseItem[] = [
     ],
   },
   {
+    id: 'c-cyber',
+    title: 'Cybersecurity Fundamentals, Ethical Hacking & Defensive Ops',
+    category: 'Tech & Programming',
+    tag: '🛡️ Security & Defense',
+    tagColor: '#dc2626',
+    duration: '6 Weeks',
+    schedule: 'Live Virtual Weekend Masterclass (Sat & Sun 3:00 PM - 6:00 PM)',
+    fee: '$89',
+    originalFee: '$175',
+    discountBadge: '49% OFF',
+    rating: 4.9,
+    ratingCount: 640,
+    studentsEnrolled: 1650,
+    instructor: 'Alex Omondi, CISSP • Cybersecurity Consultant',
+    bestseller: false,
+    popular: true,
+    installment: '2 installments of $45',
+    careerOutcome: 'Junior SOC Analyst • IT Security Specialist • System Administrator',
+    skills: ['Network Security & Protocols', 'Vulnerability Assessment', 'Ethical Hacking Fundamentals', 'Password & Encryption Standards', 'Incident Response'],
+    icon: '🛡️',
+    syllabus: [
+      { week: 'Week 1-2', topic: 'Networking Protocols, TCP/IP, OSI & Firewall Architecture', practicalLab: 'Packet sniffing with Wireshark and analyzing network traffic security.' },
+      { week: 'Week 3-4', topic: 'Common Cyber Attack Vectors, Malware & Social Engineering', practicalLab: 'Identifying phishing payloads, vulnerability scanning, and risk reports.' },
+      { week: 'Week 5-6', topic: 'Defensive Hardening, Cryptography & Incident Response', practicalLab: 'Configuring secure server policies, SSL/TLS, and security audit checklists.' },
+    ],
+  },
+  // --- DATA SCIENCE & STATISTICAL RESEARCH (PYTHON, R, SPSS, STATA) ---
+  {
     id: 'c-python',
     title: 'Python Programming, SQL & Data Analytics Masterclass',
-    category: 'Tech & Programming',
+    category: 'Data Science & Research',
     tag: '🐍 Data & AI Fundamentals',
     tagColor: '#0284c7',
     duration: '8 Weeks (2 Months)',
@@ -71,7 +100,7 @@ const DEFAULT_COURSES_DATA: CourseItem[] = [
     fee: '$95',
     originalFee: '$190',
     discountBadge: '50% OFF',
-    rating: 4.8,
+    rating: 4.85,
     ratingCount: 980,
     studentsEnrolled: 2420,
     instructor: 'Eng. Brian Mutua • Lead Data Architect',
@@ -88,6 +117,90 @@ const DEFAULT_COURSES_DATA: CourseItem[] = [
       { week: 'Week 7-8', topic: 'Interactive Visualizations & Business Intelligence', practicalLab: 'Publishing interactive analytics dashboards and executive reports.' },
     ],
   },
+  {
+    id: 'c-r-stats',
+    title: 'R Programming for Data Science, Biostatistics & Statistical Modeling',
+    category: 'Data Science & Research',
+    tag: '📊 Statistical Computing & RStudio',
+    tagColor: '#2563eb',
+    duration: '6 to 8 Weeks',
+    schedule: 'Live Evening Labs (Mon & Thu 7:00 PM) / Weekend Batches',
+    fee: '$85',
+    originalFee: '$170',
+    discountBadge: '50% OFF',
+    rating: 4.92,
+    ratingCount: 1120,
+    studentsEnrolled: 2650,
+    instructor: 'Dr. Geoffrey Kiplagat • Senior Biostatistician & R Lead',
+    bestseller: true,
+    popular: true,
+    installment: '2 installments of $43',
+    careerOutcome: 'Biostatistician • Quantitative Researcher • M&E Data Analyst',
+    skills: ['RStudio & Tidyverse (dplyr, tidyr)', 'ggplot2 Publication Visualizations', 'Hypothesis Testing & ANOVA', 'Linear & Logistic Regression Models', 'R Markdown Reproducible Reports'],
+    icon: '📊',
+    syllabus: [
+      { week: 'Week 1-2', topic: 'R Syntax, Data Structures & RStudio Workflow', practicalLab: 'Importing CSVs, cleaning messy surveys with dplyr pipelines and data manipulation.' },
+      { week: 'Week 3-4', topic: 'Exploratory Data Analysis & ggplot2 Visuals', practicalLab: 'Generating publication-ready boxplots, scatterplots, heatmaps, and theme customization.' },
+      { week: 'Week 5-6', topic: 'Parametric/Non-Parametric Tests & ANOVA', practicalLab: 'Conducting t-tests, Chi-square independence tests, and one-way/two-way ANOVA.' },
+      { week: 'Week 7-8', topic: 'Regression Modeling & R Markdown Automation', practicalLab: 'Building multivariate linear and logistic models; compiling dynamic PDF/HTML research reports.' },
+    ],
+  },
+  {
+    id: 'c-spss',
+    title: 'IBM SPSS Statistics for Survey Research, Thesis & Quantitative Analysis',
+    category: 'Data Science & Research',
+    tag: '📈 Survey & Thesis Research',
+    tagColor: '#059669',
+    duration: '4 to 6 Weeks',
+    schedule: 'Live Virtual Cohorts (Tue & Fri 6:30 PM) / Weekend Workshops',
+    fee: '$75',
+    originalFee: '$150',
+    discountBadge: '50% OFF',
+    rating: 4.88,
+    ratingCount: 1540,
+    studentsEnrolled: 3400,
+    instructor: 'Prof. Mary Aoko • Lead Research Methodologist',
+    bestseller: true,
+    popular: true,
+    installment: '2 installments of $38',
+    careerOutcome: 'Survey Research Analyst • Academic Thesis Statistician • Public Health Consultant',
+    skills: ['SPSS Variable View & Coding', 'Descriptive & Frequency Summaries', 'Cross-tabulation & Chi-Square Tests', 'Reliability Analysis (Cronbach’s Alpha)', 'Multiple Regression & APA Tables'],
+    icon: '📈',
+    syllabus: [
+      { week: 'Week 1', topic: 'Questionnaire Coding, Variable Definition & Data Cleaning', practicalLab: 'Setting up variable types, value labels, handling missing values and data screening.' },
+      { week: 'Week 2', topic: 'Descriptive Statistics, Normality Tests & Visualizations', practicalLab: 'Computing means, standard deviations, histograms, and testing data normality.' },
+      { week: 'Week 3', topic: 'Cross-tabulations, Chi-Square & Correlation Matrix', practicalLab: 'Running bivariate correlations, Pearson & Spearman coefficients, and Chi-Square.' },
+      { week: 'Week 4-6', topic: 'Multiple Linear Regression, Reliability & APA Export', practicalLab: 'Testing hypotheses with regression equations, computing scale reliability, and exporting APA output.' },
+    ],
+  },
+  {
+    id: 'c-stata',
+    title: 'Stata for Econometrics, Policy Analysis & Quantitative Research',
+    category: 'Data Science & Research',
+    tag: '📉 Econometrics & Policy Analytics',
+    tagColor: '#b45309',
+    duration: '6 Weeks',
+    schedule: 'Live Weekend Masterclass (Sat & Sun 4:00 PM - 6:30 PM)',
+    fee: '$85',
+    originalFee: '$170',
+    discountBadge: '50% OFF',
+    rating: 4.9,
+    ratingCount: 890,
+    studentsEnrolled: 1980,
+    instructor: 'Dr. Samuel Oduor • Development Economist & Policy Lead',
+    bestseller: false,
+    popular: true,
+    installment: '2 installments of $43',
+    careerOutcome: 'Econometrician • Policy Research Analyst • Quantitative Economics Consultant',
+    skills: ['Stata Do-File Scripting & Reproducibility', 'Data Merging, Appending & Reshaping', 'OLS & Multivariate Regression', 'Panel Data (Fixed & Random Effects)', 'Publication Tables (estout/outreg2)'],
+    icon: '📉',
+    syllabus: [
+      { week: 'Week 1-2', topic: 'Stata Interface, Command Syntax & Do-File Architecture', practicalLab: 'Writing clean reproducible do-files, generating variables, and labeling survey data.' },
+      { week: 'Week 3-4', topic: 'Data Wrangling: Merging, Appending & Reshaping (Wide/Long)', practicalLab: 'Combining multi-year household panel surveys and transforming complex structures.' },
+      { week: 'Week 5-6', topic: 'Panel Data Econometrics, Fixed Effects & Table Export', practicalLab: 'Running xtreg models, Hausman tests, and exporting journal-ready regression tables with esttab.' },
+    ],
+  },
+  // --- COMPUTER & DIGITAL SKILLS ---
   {
     id: 'c-comp',
     title: 'Comprehensive Computer Packages & Modern Digital Literacy',
@@ -117,32 +230,33 @@ const DEFAULT_COURSES_DATA: CourseItem[] = [
     ],
   },
   {
-    id: 'c-cyber',
-    title: 'Cybersecurity Fundamentals, Ethical Hacking & Defensive Ops',
-    category: 'Tech & Programming',
-    tag: '🛡️ Security & Defense',
-    tagColor: '#dc2626',
+    id: 'c-uiux',
+    title: 'UI/UX Product Design, Mobile Design Systems & Figma',
+    category: 'Computer & Digital Skills',
+    tag: '🎨 Creative Tech',
+    tagColor: '#8b5cf6',
     duration: '6 Weeks',
-    schedule: 'Live Virtual Weekend Masterclass (Sat & Sun 3:00 PM - 6:00 PM)',
-    fee: '$89',
-    originalFee: '$175',
-    discountBadge: '49% OFF',
+    schedule: 'Live Online Evening / Flexible Self-Paced Modules',
+    fee: '$75',
+    originalFee: '$150',
+    discountBadge: '50% OFF',
     rating: 4.9,
-    ratingCount: 640,
-    studentsEnrolled: 1650,
-    instructor: 'Alex Omondi, CISSP • Cybersecurity Consultant',
+    ratingCount: 520,
+    studentsEnrolled: 1350,
+    instructor: 'Linda Achieng • Principal Product Designer',
     bestseller: false,
     popular: true,
-    installment: '2 installments of $45',
-    careerOutcome: 'Junior SOC Analyst • IT Security Specialist • System Administrator',
-    skills: ['Network Security & Protocols', 'Vulnerability Assessment', 'Ethical Hacking Fundamentals', 'Password & Encryption Standards', 'Incident Response'],
-    icon: '🛡️',
+    installment: '2 installments of $38',
+    careerOutcome: 'UI/UX Designer • Product Designer • Freelance Figma Specialist',
+    skills: ['User Research & Wireframing', 'Figma Components & Auto Layout', 'Interactive Clickable Prototypes', 'Design Systems & UI Kits', 'Developer Hand-off'],
+    icon: '🎨',
     syllabus: [
-      { week: 'Week 1-2', topic: 'Networking Protocols, TCP/IP, OSI & Firewall Architecture', practicalLab: 'Packet sniffing with Wireshark and analyzing network traffic security.' },
-      { week: 'Week 3-4', topic: 'Common Cyber Attack Vectors, Malware & Social Engineering', practicalLab: 'Identifying phishing payloads, vulnerability scanning, and risk reports.' },
-      { week: 'Week 5-6', topic: 'Defensive Hardening, Cryptography & Incident Response', practicalLab: 'Configuring secure server policies, SSL/TLS, and security audit checklists.' },
+      { week: 'Week 1-2', topic: 'UX Design Thinking, User Persona & Wireframing', practicalLab: 'Low-fidelity wireframing and user journey mapping for mobile apps.' },
+      { week: 'Week 3-4', topic: 'Figma Mastery: Auto Layout, Components & Tokens', practicalLab: 'Building scalable UI component design systems and responsive web screens.' },
+      { week: 'Week 5-6', topic: 'High-Fidelity Prototyping, Micro-interactions & Hand-off', practicalLab: 'Delivering interactive animated prototypes and developer design tokens.' },
     ],
   },
+  // --- BUSINESS TECH & ACCOUNTING ---
   {
     id: 'c-acc',
     title: 'Computerized Accounting, QuickBooks & International Tax',
@@ -171,61 +285,7 @@ const DEFAULT_COURSES_DATA: CourseItem[] = [
       { week: 'Week 4', topic: 'Bank Reconciliation & Financial Statement Generation', practicalLab: 'Balancing monthly bank accounts and generating Profit & Loss balance sheets.' },
     ],
   },
-  {
-    id: 'c-uiux',
-    title: 'UI/UX Product Design, Mobile Design Systems & Figma',
-    category: 'Computer & Digital Skills',
-    tag: '🎨 Creative Tech',
-    tagColor: '#8b5cf6',
-    duration: '6 Weeks',
-    schedule: 'Live Online Evening / Flexible Self-Paced Modules',
-    fee: '$75',
-    originalFee: '$150',
-    discountBadge: '50% OFF',
-    rating: 4.9,
-    ratingCount: 520,
-    studentsEnrolled: 1350,
-    instructor: 'Linda Achieng • Principal Product Designer',
-    bestseller: false,
-    popular: true,
-    installment: '2 installments of $38',
-    careerOutcome: 'UI/UX Designer • Product Designer • Freelance Figma Specialist',
-    skills: ['User Research & Wireframing', 'Figma Components & Auto Layout', 'Interactive Clickable Prototypes', 'Design Systems & UI Kits', 'Developer Hand-off'],
-    icon: '🎨',
-    syllabus: [
-      { week: 'Week 1-2', topic: 'UX Design Thinking, User Persona & Wireframing', practicalLab: 'Low-fidelity wireframing and user journey mapping for mobile apps.' },
-      { week: 'Week 3-4', topic: 'Figma Mastery: Auto Layout, Components & Tokens', practicalLab: 'Building scalable UI component design systems and responsive web screens.' },
-      { week: 'Week 5-6', topic: 'High-Fidelity Prototyping, Micro-interactions & Hand-off', practicalLab: 'Delivering interactive animated prototypes and developer design tokens.' },
-    ],
-  },
-  {
-    id: 'c-eng',
-    title: 'English Language Mastery & Executive Corporate Communication',
-    category: 'Languages & Communication',
-    tag: '🗣️ Public Speaking & Fluency',
-    tagColor: '#0284c7',
-    duration: '6 to 8 Weeks',
-    schedule: 'Live Virtual Evening (6:00 PM) / Morning Sessions (7:30 AM)',
-    fee: '$55',
-    originalFee: '$110',
-    discountBadge: '50% OFF',
-    rating: 4.9,
-    ratingCount: 1680,
-    studentsEnrolled: 4200,
-    instructor: 'Elizabeth Ndung’u • Corporate Communication Director',
-    bestseller: true,
-    popular: true,
-    installment: '2 installments of $28',
-    careerOutcome: 'Corporate Communicator • Public Speaker • Executive Virtual Assistant',
-    skills: ['Spoken English & Pronunciation', 'Business Email & Executive Memos', 'Public Speaking & Presentation', 'Grammar & Vocabulary Mastery', 'Boardroom Interview Confidence'],
-    icon: '🗣️',
-    syllabus: [
-      { week: 'Week 1-2', topic: 'Grammar Fundamentals & Phonetic Pronunciation', practicalLab: 'Live speaking video breakout rooms and articulation drills.' },
-      { week: 'Week 3-4', topic: 'Spoken Fluency & Vocabulary Expansion', practicalLab: 'Interactive pair dialogues, impromptu speeches, and eliminating hesitation.' },
-      { week: 'Week 5-6', topic: 'Business Writing & Corporate Email Etiquette', practicalLab: 'Drafting formal executive memos, corporate proposals, and reports.' },
-      { week: 'Week 7-8', topic: 'Public Speaking, Presentations & Interview Skills', practicalLab: 'Live virtual presentations and executive interview simulations.' },
-    ],
-  },
+  // --- WORLD LANGUAGES & INTERNATIONAL CERTIFICATIONS ---
   {
     id: 'c-ielts',
     title: 'IELTS Academic & General Training Exam Prep (Band 7.5 - 9.0)',
@@ -255,31 +315,31 @@ const DEFAULT_COURSES_DATA: CourseItem[] = [
     ],
   },
   {
-    id: 'c-kisw',
-    title: 'Spoken & Written Kiswahili Sanifu (Beginners & Expatriates)',
+    id: 'c-eng',
+    title: 'English Language Mastery & Executive Corporate Communication',
     category: 'Languages & Communication',
-    tag: '🇰🇪 Conversational Swahili',
-    tagColor: '#16a34a',
-    duration: '4 to 6 Weeks',
-    schedule: 'Live Interactive 1-on-1 & Small Group Video Sessions',
-    fee: '$49',
-    originalFee: '$98',
+    tag: '🗣️ Executive Communication',
+    tagColor: '#0284c7',
+    duration: '6 to 8 Weeks',
+    schedule: 'Live Virtual Evening (6:00 PM) / Morning Sessions (7:30 AM)',
+    fee: '$55',
+    originalFee: '$110',
     discountBadge: '50% OFF',
-    rating: 4.85,
-    ratingCount: 760,
-    studentsEnrolled: 1890,
-    instructor: 'Mwalimu Juma Bakari • Swahili Linguistics Lead',
-    bestseller: false,
+    rating: 4.9,
+    ratingCount: 1680,
+    studentsEnrolled: 4200,
+    instructor: 'Elizabeth Ndung’u • Corporate Communication Director',
+    bestseller: true,
     popular: true,
-    installment: '2 installments of $25',
-    careerOutcome: 'NGO Field Officer • Expatriate Integration • East Africa Trade Liaison',
-    skills: ['Everyday Mazungumzo & Greetings', 'Sarufi (Grammar & Noun Classes)', 'Market & Business Swahili', 'Reading & Written Composition', 'Cultural Communication & Etiquette'],
-    icon: '🇰🇪',
+    installment: '2 installments of $28',
+    careerOutcome: 'Corporate Communicator • Public Speaker • Executive Virtual Assistant',
+    skills: ['Spoken English & Pronunciation', 'Business Email & Executive Memos', 'Public Speaking & Presentation', 'Grammar & Vocabulary Mastery', 'Boardroom Interview Confidence'],
+    icon: '🗣️',
     syllabus: [
-      { week: 'Week 1', topic: 'Salamu, Utambulisho & Noun Classes (Ngeli)', practicalLab: 'Live conversational drills and everyday interactive greetings.' },
-      { week: 'Week 2', topic: 'Sarufi ya Kiswahili & Tense Conjugation', practicalLab: 'Past, present, future tenses, negation (kukanusha), and sentence building.' },
-      { week: 'Week 3', topic: 'Biashara & Mazungumzo ya Masokoni', practicalLab: 'Real-life business scenarios, negotiation dialogues, and directions.' },
-      { week: 'Week 4-6', topic: 'Insha, Hotuba & Formal Swahili Discourse', practicalLab: 'Formal speech delivery, translation exercises, and cultural etiquette.' },
+      { week: 'Week 1-2', topic: 'Grammar Fundamentals & Phonetic Pronunciation', practicalLab: 'Live speaking video breakout rooms and articulation drills.' },
+      { week: 'Week 3-4', topic: 'Spoken Fluency & Vocabulary Expansion', practicalLab: 'Interactive pair dialogues, impromptu speeches, and eliminating hesitation.' },
+      { week: 'Week 5-6', topic: 'Business Writing & Corporate Email Etiquette', practicalLab: 'Drafting formal executive memos, corporate proposals, and reports.' },
+      { week: 'Week 7-8', topic: 'Public Speaking, Presentations & Interview Skills', practicalLab: 'Live virtual presentations and executive interview simulations.' },
     ],
   },
   {
@@ -311,34 +371,6 @@ const DEFAULT_COURSES_DATA: CourseItem[] = [
     ],
   },
   {
-    id: 'c-french',
-    title: 'French Language Proficiency (DELF A1 - B2 Preparation)',
-    category: 'Languages & Communication',
-    tag: '🇫🇷 French Proficiency (DELF)',
-    tagColor: '#3b82f6',
-    duration: '8 Weeks (2 Months)',
-    schedule: 'Live Online Video Masterclass (Tue & Thu 7:00 PM)',
-    fee: '$79',
-    originalFee: '$160',
-    discountBadge: '50% OFF',
-    rating: 4.88,
-    ratingCount: 670,
-    studentsEnrolled: 1750,
-    instructor: 'Madame Claire Dubois • DELF Certified Evaluator',
-    bestseller: false,
-    popular: true,
-    installment: '2 installments of $40',
-    careerOutcome: 'Embassy Assistant • International NGO Officer • Multilingual Customer Support',
-    skills: ['French Phonetics & Accent', 'Grammar & Verb Conjugation', 'Conversational Fluency', 'Written Composition', 'DELF A1/A2 Exam Prep'],
-    icon: '🇫🇷',
-    syllabus: [
-      { week: 'Week 1-2', topic: 'Les Salutations, Alphabet & Prononciation', practicalLab: 'Live pronunciation coaching and self-introduction dialogues.' },
-      { week: 'Week 3-4', topic: 'Grammaire & Conjugaison des Verbes', practicalLab: 'Building past and present sentences in interactive breakout rooms.' },
-      { week: 'Week 5-6', topic: 'Compréhension Orale & Expression Écrite', practicalLab: 'Listening to native audio clips and drafting French formal emails.' },
-      { week: 'Week 7-8', topic: 'Préparation à l’Examen DELF & Simulation', practicalLab: 'Mock DELF listening, reading, and speaking tests.' },
-    ],
-  },
-  {
     id: 'c-german',
     title: 'German Language for Work & Studies (Goethe A1/A2 Prep)',
     category: 'Languages & Communication',
@@ -366,35 +398,197 @@ const DEFAULT_COURSES_DATA: CourseItem[] = [
       { week: 'Week 7-8', topic: 'Goethe-Zertifikat Prüfungsvorbereitung', practicalLab: 'Complete timed simulation of the Goethe A1/A2 examination.' },
     ],
   },
+  {
+    id: 'c-kisw',
+    title: 'Spoken & Written Kiswahili Sanifu (Beginners & Expatriates)',
+    category: 'Languages & Communication',
+    tag: '🇰🇪 Conversational Swahili',
+    tagColor: '#16a34a',
+    duration: '4 to 6 Weeks',
+    schedule: 'Live Interactive 1-on-1 & Small Group Video Sessions',
+    fee: '$49',
+    originalFee: '$98',
+    discountBadge: '50% OFF',
+    rating: 4.85,
+    ratingCount: 760,
+    studentsEnrolled: 1890,
+    instructor: 'Mwalimu Juma Bakari • Swahili Linguistics Lead',
+    bestseller: false,
+    popular: true,
+    installment: '2 installments of $25',
+    careerOutcome: 'NGO Field Officer • Expatriate Integration • East Africa Trade Liaison',
+    skills: ['Everyday Mazungumzo & Greetings', 'Sarufi (Grammar & Noun Classes)', 'Market & Business Swahili', 'Reading & Written Composition', 'Cultural Communication & Etiquette'],
+    icon: '🇰🇪',
+    syllabus: [
+      { week: 'Week 1', topic: 'Salamu, Utambulisho & Noun Classes (Ngeli)', practicalLab: 'Live conversational drills and everyday interactive greetings.' },
+      { week: 'Week 2', topic: 'Sarufi ya Kiswahili & Tense Conjugation', practicalLab: 'Past, present, future tenses, negation (kukanusha), and sentence building.' },
+      { week: 'Week 3', topic: 'Biashara & Mazungumzo ya Masokoni', practicalLab: 'Real-life business scenarios, negotiation dialogues, and directions.' },
+      { week: 'Week 4-6', topic: 'Insha, Hotuba & Formal Swahili Discourse', practicalLab: 'Formal speech delivery, translation exercises, and cultural etiquette.' },
+    ],
+  },
 ]
 
 const TESTIMONIALS = [
   {
+    name: 'Kevin Ochieng',
+    role: 'Lead Quantitative Researcher at Regional Health NGO',
+    course: 'R Programming & Stata Econometrics',
+    avatar: '📊',
+    quote:
+      'The hands-on training in RStudio, tidyverse data pipelines, and Stata panel regressions at Éclat Institute was transformative. I was able to automate our multi-country survey data analysis and publish our research findings with zero friction!',
+    rating: 5,
+  },
+  {
+    name: 'Mercy Wanjiku',
+    role: 'Data Analyst & SPSS Consultant',
+    course: 'Python & IBM SPSS Statistics',
+    avatar: '📈',
+    quote:
+      'Coming from a non-programming background, Éclat’s mentors broke down hypothesis testing, ANOVA, and Python pandas into easy practical steps. The live weekly lab sessions gave me real confidence, and I now handle corporate survey consulting full-time.',
+    rating: 5,
+  },
+  {
     name: 'Brian Kiprono',
     role: 'Remote Frontend Developer at FinTech Startup',
-    course: 'Full-Stack Web Development',
+    course: 'Full-Stack Web Development (React 19 & Node)',
     avatar: '💻',
     quote:
-      'The 100% online React and Node.js course at Éclat Institute was phenomenal. The live evening coding labs and GitHub code reviews prepared me to build real-world apps. Within 1 month of finishing, I landed a remote developer role!',
+      'The 100% online React 19 and Node.js course at Éclat was phenomenal. The live evening coding labs, GitHub pull request reviews, and PostgreSQL deployment prepared me to build production apps. Within 1 month, I landed a remote developer role!',
+    rating: 5,
+  },
+  {
+    name: 'Dennis Mutiso',
+    role: 'Cybersecurity Operations (SOC) Analyst',
+    course: 'Cybersecurity & Ethical Hacking',
+    avatar: '🛡️',
+    quote:
+      'The practical network defense labs using Wireshark, vulnerability scanning, and incident response simulations were world-class. It gave me the technical edge to pass my security certifications and land my cybersecurity analyst role at a tier-1 bank.',
     rating: 5,
   },
   {
     name: 'Faith Chebet',
     role: 'Achieved IELTS Band 8.5 (Nursing Relocation to the UK)',
     course: 'IELTS Academic Preparation',
-    avatar: '🎓',
+    avatar: '🇬🇧',
     quote:
-      'The 1-on-1 live Zoom mock speaking sessions and detailed essay feedback transformed my confidence. I scored an overall Band 8.5 and my UK visa application was approved seamlessly. Best online program!',
+      'The 1-on-1 live Zoom mock speaking sessions and detailed essay feedback transformed my confidence. I scored an overall Band 8.5 and my UK nursing visa application was approved seamlessly. Best online program!',
+    rating: 5,
+  },
+  {
+    name: 'Eunice Mwende',
+    role: 'Relocated to Germany (Goethe-Zertifikat B2 Certified)',
+    course: 'German Language for Work & Studies',
+    avatar: '🇩🇪',
+    quote:
+      'Herr Hans Meyer’s live German workshops made complex grammar cases, der/die/das rules, and listening comprehension so easy to master. I cleared my Goethe examination on my first sitting and secured my visa to Frankfurt!',
     rating: 5,
   },
   {
     name: 'Abdi Mohammed',
     role: 'Bilingual Corporate Specialist in Dubai',
     course: 'Arabic for Business & Middle East Careers',
-    avatar: '🌴',
+    avatar: '🇸🇦',
     quote:
       'Taking the live online Arabic and Corporate Communication classes from home gave me the fluency required for international interviews. I am now working with an international airline in Dubai!',
     rating: 5,
+  },
+  {
+    name: 'Samuel Karanja',
+    role: 'Senior Accountant & Financial Controller',
+    course: 'Computerized Accounting & QuickBooks',
+    avatar: '🧾',
+    quote:
+      'The practical QuickBooks multi-currency setup, VAT filing, and automated payroll reconciliation training directly helped our firm streamline client bookkeeping and eliminate reporting errors.',
+    rating: 5,
+  },
+]
+
+interface PromoSlide {
+  id: string
+  badge: string
+  badgeBg: string
+  badgeColor: string
+  headline: string
+  highlight: string
+  description: string
+  gradient: string
+  accentColor: string
+  icon: string
+  metricNumber: string
+  metricLabel: string
+  category: string
+  primaryCtaText: string
+  features: string[]
+}
+
+const HERO_PROMO_SLIDES: PromoSlide[] = [
+  {
+    id: 'data-research',
+    badge: '📊 DATA SCIENCE & STATISTICAL RESEARCH',
+    badgeBg: 'rgba(2, 132, 199, 0.2)',
+    badgeColor: '#38bdf8',
+    headline: 'Master Python, R, SPSS & Stata',
+    highlight: 'Statistical Computing, Econometrics & Biostatistics',
+    description: 'From survey data cleaning & thesis statistical analysis to multivariate regression modeling, RStudio tidyverse pipelines, and Stata do-files. Taught by senior research methodologists.',
+    gradient: 'radial-gradient(ellipse at 80% 20%, rgba(2, 132, 199, 0.28) 0%, rgba(15, 23, 42, 0.95) 70%), linear-gradient(135deg, #030712 0%, #082f49 50%, #030712 100%)',
+    accentColor: '#38bdf8',
+    icon: '📊',
+    metricNumber: '4,200+',
+    metricLabel: 'Researchers & Analysts Certified',
+    category: 'Data Science & Research',
+    primaryCtaText: 'Explore Data & Stats Programs',
+    features: ['RStudio & Biostatistics', 'IBM SPSS Survey Stats', 'Stata Econometrics', 'Python & SQL Analytics'],
+  },
+  {
+    id: 'tech-software',
+    badge: '💻 TECH & SOFTWARE ENGINEERING',
+    badgeBg: 'rgba(99, 102, 241, 0.2)',
+    badgeColor: '#a5b4fc',
+    headline: 'Build Scalable Web Applications &',
+    highlight: 'Defend Enterprise Cyber Infrastructure',
+    description: 'Master React 19, Node.js REST APIs, PostgreSQL databases, and Ethical Hacking with live interactive coding rooms, GitHub code reviews, and cloud container deployments.',
+    gradient: 'radial-gradient(ellipse at 80% 20%, rgba(99, 102, 241, 0.28) 0%, rgba(15, 23, 42, 0.95) 70%), linear-gradient(135deg, #030712 0%, #1e1b4b 50%, #030712 100%)',
+    accentColor: '#818cf8',
+    icon: '💻',
+    metricNumber: '3,850+',
+    metricLabel: 'Developers & SOC Analysts Trained',
+    category: 'Tech & Programming',
+    primaryCtaText: 'Explore Software & Tech Cohorts',
+    features: ['React 19 & Full-Stack', 'Node.js Express APIs', 'Cybersecurity Ops', 'Cloud & Git Portfolios'],
+  },
+  {
+    id: 'world-languages',
+    badge: '🗣️ WORLD LANGUAGES & RELOCATION',
+    badgeBg: 'rgba(34, 197, 94, 0.2)',
+    badgeColor: '#4ade80',
+    headline: 'Score IELTS Band 8.5+ & Master',
+    highlight: 'Arabic, German, French & English',
+    description: 'Targeting UK, Canada, USA, Europe, or Gulf careers? Master Spoken English, Arabic for Middle East jobs, Goethe-Zertifikat German, and French DELF with live certified examiners.',
+    gradient: 'radial-gradient(ellipse at 80% 20%, rgba(34, 197, 94, 0.25) 0%, rgba(15, 23, 42, 0.95) 70%), linear-gradient(135deg, #030712 0%, #064e3b 50%, #030712 100%)',
+    accentColor: '#4ade80',
+    icon: '🌍',
+    metricNumber: '5,600+',
+    metricLabel: 'Successful Global Visa Students',
+    category: 'Languages & Communication',
+    primaryCtaText: 'Explore World Languages & IELTS',
+    features: ['1-on-1 IELTS Speaking Mocks', 'German Goethe Prep', 'Arabic for Gulf Careers', 'French DELF A1-B2'],
+  },
+  {
+    id: 'accounting-finance',
+    badge: '🧾 ACCOUNTING, QUICKBOOKS & OFFICE TECH',
+    badgeBg: 'rgba(217, 119, 6, 0.2)',
+    badgeColor: '#fbbf24',
+    headline: 'Lead Corporate Finance, Tax Filing &',
+    highlight: 'Advanced Digital Office Operations',
+    description: 'Master QuickBooks multi-currency company files, monthly VAT tax returns, payroll deductions, and executive Ms Excel spreadsheets for business leadership.',
+    gradient: 'radial-gradient(ellipse at 80% 20%, rgba(217, 119, 6, 0.25) 0%, rgba(15, 23, 42, 0.95) 70%), linear-gradient(135deg, #030712 0%, #451a03 50%, #030712 100%)',
+    accentColor: '#f59e0b',
+    icon: '🧾',
+    metricNumber: '5,300+',
+    metricLabel: 'Accounting & Office Specialists',
+    category: 'Business Tech & Accounting',
+    primaryCtaText: 'Explore Accounting & Office Tools',
+    features: ['QuickBooks Multi-Currency', 'VAT & Payroll Filing', 'Advanced Ms Excel', 'Figma UI/UX & Canva'],
   },
 ]
 
@@ -414,6 +608,19 @@ export function Landing() {
   const [supportModalOpen, setSupportModalOpen] = useState(false)
   const [showScrollTop, setShowScrollTop] = useState(false)
   const [toastMessage, setToastMessage] = useState<string | null>(null)
+
+  // Hero Animated Promotional Carousel State
+  const [currentHeroSlide, setCurrentHeroSlide] = useState(0)
+  const [heroSliderPaused, setHeroSliderPaused] = useState(false)
+
+  // Auto-advance promotional hero slides every 6 seconds
+  useEffect(() => {
+    if (heroSliderPaused) return
+    const timer = setInterval(() => {
+      setCurrentHeroSlide((prev) => (prev + 1) % HERO_PROMO_SLIDES.length)
+    }, 6000)
+    return () => clearInterval(timer)
+  }, [heroSliderPaused])
 
   // Scroll to courses on #courses or /courses route
   useEffect(() => {
@@ -1028,6 +1235,7 @@ export function Landing() {
                 >
                   {[
                     { id: 'All', icon: '🔥', label: 'All Online Programs' },
+                    { id: 'Data Science & Research', icon: '📊', label: 'Data Science, R, SPSS & Stata' },
                     { id: 'Tech & Programming', icon: '💻', label: 'Tech & Software Engineering' },
                     { id: 'Languages & Communication', icon: '🗣️', label: 'World Languages & IELTS' },
                     { id: 'Computer & Digital Skills', icon: '🖥️', label: 'Digital Literacy & Office Skills' },
@@ -1309,167 +1517,424 @@ export function Landing() {
         )}
       </header>
 
-      {/* Hero Section (Modern Udemy-Style Promotional Billboard) */}
+      {/* Hero Section: Dynamic Animated Multi-Discipline Promotional Carousel */}
       <section
+        onMouseEnter={() => setHeroSliderPaused(true)}
+        onMouseLeave={() => setHeroSliderPaused(false)}
         style={{
-          background: 'linear-gradient(135deg, #090d16 0%, #0f172a 50%, #1e293b 100%)',
+          background: HERO_PROMO_SLIDES[currentHeroSlide].gradient,
           color: '#ffffff',
-          padding: '5rem 1.5rem 4.5rem',
+          padding: isMobile ? '3.5rem 1.25rem 3rem' : '5rem 2rem 4.5rem',
           position: 'relative',
           overflow: 'hidden',
           borderBottom: '1px solid #1e293b',
+          transition: 'background 0.8s ease-in-out',
         }}
       >
-        <div style={{ maxWidth: '1100px', margin: '0 auto', textAlign: 'center', position: 'relative', zIndex: 2 }}>
-          {/* Trust Badge */}
+        {/* Animated ambient glow blobs */}
+        <div
+          style={{
+            position: 'absolute',
+            top: '-20%',
+            right: '-10%',
+            width: '600px',
+            height: '600px',
+            borderRadius: '50%',
+            background: HERO_PROMO_SLIDES[currentHeroSlide].accentColor,
+            opacity: 0.12,
+            filter: 'blur(120px)',
+            pointerEvents: 'none',
+            transition: 'all 0.8s ease',
+          }}
+        />
+
+        <div style={{ maxWidth: '1240px', margin: '0 auto', position: 'relative', zIndex: 2 }}>
+          {/* Main Slide Content Grid */}
           <div
             style={{
-              display: 'inline-flex',
+              display: 'grid',
+              gridTemplateColumns: isMobile ? '1fr' : '1.2fr 0.8fr',
+              gap: isMobile ? '2.5rem' : '3.5rem',
               alignItems: 'center',
-              gap: '0.6rem',
-              background: 'rgba(255, 255, 255, 0.08)',
-              backdropFilter: 'blur(10px)',
-              border: '1px solid rgba(255, 255, 255, 0.15)',
-              borderRadius: '999px',
-              padding: '0.45rem 1.25rem',
-              fontSize: '0.86rem',
-              fontWeight: 700,
-              color: '#93c5fd',
-              marginBottom: '1.75rem',
             }}
           >
-            <span>⭐️⭐️⭐️⭐️⭐️</span>
-            <span>Rated 4.9/5 by 3,500+ Online Students in Kenya & Globally</span>
+            {/* Left Column: Headline, Highlights & Actions */}
+            <div>
+              {/* Category Badge & Live Status */}
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', flexWrap: 'wrap', marginBottom: '1.25rem' }}>
+                <div
+                  style={{
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '0.5rem',
+                    background: HERO_PROMO_SLIDES[currentHeroSlide].badgeBg,
+                    border: `1px solid ${HERO_PROMO_SLIDES[currentHeroSlide].badgeColor}50`,
+                    borderRadius: '999px',
+                    padding: '0.4rem 1rem',
+                    fontSize: '0.82rem',
+                    fontWeight: 800,
+                    color: HERO_PROMO_SLIDES[currentHeroSlide].badgeColor,
+                    letterSpacing: '0.04em',
+                    boxShadow: '0 4px 12px rgba(0,0,0,0.2)',
+                  }}
+                >
+                  <span>{HERO_PROMO_SLIDES[currentHeroSlide].badge}</span>
+                </div>
+
+                <div
+                  style={{
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '6px',
+                    background: 'rgba(255, 255, 255, 0.08)',
+                    borderRadius: '999px',
+                    padding: '0.4rem 0.85rem',
+                    fontSize: '0.78rem',
+                    fontWeight: 700,
+                    color: '#94a3b8',
+                  }}
+                >
+                  <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#22c55e', display: 'inline-block' }} />
+                  <span>Interactive Cohort Open</span>
+                </div>
+              </div>
+
+              {/* Dynamic Slide Headline */}
+              <h1
+                style={{
+                  fontSize: isMobile ? '2.1rem' : 'clamp(2.4rem, 3.8vw, 3.4rem)',
+                  fontWeight: 900,
+                  letterSpacing: '-0.03em',
+                  lineHeight: 1.15,
+                  margin: '0 0 1.25rem',
+                  color: '#ffffff',
+                  fontFamily: 'var(--font-heading)',
+                }}
+              >
+                {HERO_PROMO_SLIDES[currentHeroSlide].headline} <br />
+                <span
+                  style={{
+                    background: 'linear-gradient(90deg, #d4af37 0%, #fef08a 50%, #d4af37 100%)',
+                    WebkitBackgroundClip: 'text',
+                    WebkitTextFillColor: 'transparent',
+                  }}
+                >
+                  {HERO_PROMO_SLIDES[currentHeroSlide].highlight}
+                </span>
+              </h1>
+
+              {/* Dynamic Slide Description */}
+              <p
+                style={{
+                  fontSize: isMobile ? '1rem' : '1.12rem',
+                  color: '#cbd5e1',
+                  lineHeight: 1.65,
+                  margin: '0 0 1.75rem',
+                  maxWidth: '650px',
+                }}
+              >
+                {HERO_PROMO_SLIDES[currentHeroSlide].description}
+              </p>
+
+              {/* Highlight Skill Badges */}
+              <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', marginBottom: '2.25rem' }}>
+                {HERO_PROMO_SLIDES[currentHeroSlide].features.map((feat, idx) => (
+                  <span
+                    key={idx}
+                    style={{
+                      background: 'rgba(255, 255, 255, 0.07)',
+                      border: '1px solid rgba(255, 255, 255, 0.12)',
+                      borderRadius: '8px',
+                      padding: '0.35rem 0.75rem',
+                      fontSize: '0.8rem',
+                      fontWeight: 700,
+                      color: '#f1f5f9',
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: '5px',
+                    }}
+                  >
+                    <span style={{ color: HERO_PROMO_SLIDES[currentHeroSlide].accentColor }}>✓</span>
+                    {feat}
+                  </span>
+                ))}
+              </div>
+
+              {/* High-Conversion Action Buttons */}
+              <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap', alignItems: 'center' }}>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setActiveCategory(HERO_PROMO_SLIDES[currentHeroSlide].category)
+                    const el = document.getElementById('courses')
+                    if (el) el.scrollIntoView({ behavior: 'smooth' })
+                  }}
+                  className="btn btn-lg"
+                  style={{
+                    background: '#d4af37',
+                    color: '#0c0e12',
+                    fontWeight: 900,
+                    padding: '0.9rem 2rem',
+                    fontSize: '1rem',
+                    borderRadius: '10px',
+                    boxShadow: '0 10px 24px rgba(212, 175, 55, 0.35)',
+                    border: 'none',
+                    cursor: 'pointer',
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '8px',
+                  }}
+                >
+                  <span>🚀 {HERO_PROMO_SLIDES[currentHeroSlide].primaryCtaText}</span>
+                  <span>↓</span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => setInquiryModalOpen(true)}
+                  className="btn btn-lg"
+                  style={{
+                    background: '#2563eb',
+                    color: '#ffffff',
+                    fontWeight: 800,
+                    padding: '0.9rem 1.75rem',
+                    fontSize: '1rem',
+                    borderRadius: '10px',
+                    boxShadow: '0 8px 20px rgba(37, 99, 235, 0.3)',
+                    border: 'none',
+                    cursor: 'pointer',
+                  }}
+                >
+                  ⚡ Enroll in Intake
+                </button>
+
+                <a
+                  href={getWhatsAppInquiryUrl(`Hello Eclat Admissions! I would like details about ${HERO_PROMO_SLIDES[currentHeroSlide].badge}`)}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="btn btn-lg"
+                  style={{
+                    background: 'rgba(34, 197, 94, 0.15)',
+                    color: '#4ade80',
+                    fontWeight: 700,
+                    padding: '0.9rem 1.35rem',
+                    fontSize: '0.95rem',
+                    borderRadius: '10px',
+                    border: '1px solid rgba(34, 197, 94, 0.3)',
+                    textDecoration: 'none',
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '8px',
+                  }}
+                >
+                  <span>💬</span>
+                  <span>WhatsApp Desk</span>
+                </a>
+              </div>
+            </div>
+
+            {/* Right Column: Glassmorphic Interactive Discipline Showcase Card */}
+            <div
+              style={{
+                background: 'rgba(15, 23, 42, 0.75)',
+                backdropFilter: 'blur(16px)',
+                border: `1.5px solid ${HERO_PROMO_SLIDES[currentHeroSlide].accentColor}40`,
+                borderRadius: '24px',
+                padding: isMobile ? '1.75rem' : '2.25rem',
+                boxShadow: `0 20px 50px rgba(0, 0, 0, 0.4), 0 0 30px ${HERO_PROMO_SLIDES[currentHeroSlide].accentColor}15`,
+                position: 'relative',
+              }}
+            >
+              {/* Top Card Banner */}
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem', borderBottom: '1px solid rgba(255,255,255,0.1)', paddingBottom: '1.25rem' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.85rem' }}>
+                  <div
+                    style={{
+                      width: '48px',
+                      height: '48px',
+                      borderRadius: '14px',
+                      background: HERO_PROMO_SLIDES[currentHeroSlide].badgeBg,
+                      border: `1px solid ${HERO_PROMO_SLIDES[currentHeroSlide].accentColor}50`,
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      fontSize: '1.6rem',
+                    }}
+                  >
+                    {HERO_PROMO_SLIDES[currentHeroSlide].icon}
+                  </div>
+                  <div>
+                    <div style={{ fontSize: '0.75rem', color: '#94a3b8', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                      Academic Department
+                    </div>
+                    <div style={{ fontSize: '1.05rem', fontWeight: 800, color: '#ffffff' }}>
+                      {HERO_PROMO_SLIDES[currentHeroSlide].category}
+                    </div>
+                  </div>
+                </div>
+
+                <div style={{ textAlign: 'right' }}>
+                  <div style={{ fontSize: '1.25rem', fontWeight: 900, color: '#d4af37' }}>
+                    {HERO_PROMO_SLIDES[currentHeroSlide].metricNumber}
+                  </div>
+                  <div style={{ fontSize: '0.7rem', color: '#94a3b8', fontWeight: 600 }}>
+                    {HERO_PROMO_SLIDES[currentHeroSlide].metricLabel}
+                  </div>
+                </div>
+              </div>
+
+              {/* Key Department Value Pillars */}
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.85rem', marginBottom: '1.75rem' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '10px', background: 'rgba(255,255,255,0.04)', padding: '0.75rem 1rem', borderRadius: '12px' }}>
+                  <span style={{ fontSize: '1.1rem' }}>🎓</span>
+                  <div style={{ fontSize: '0.86rem', color: '#e2e8f0', fontWeight: 600 }}>
+                    <strong>Accredited Curriculum:</strong> Real-world projects & thesis datasets
+                  </div>
+                </div>
+
+                <div style={{ display: 'flex', alignItems: 'center', gap: '10px', background: 'rgba(255,255,255,0.04)', padding: '0.75rem 1rem', borderRadius: '12px' }}>
+                  <span style={{ fontSize: '1.1rem' }}>⏰</span>
+                  <div style={{ fontSize: '0.86rem', color: '#e2e8f0', fontWeight: 600 }}>
+                    <strong>Flexible Schedule:</strong> Evening (7:30 PM) & Saturday Intensives
+                  </div>
+                </div>
+
+                <div style={{ display: 'flex', alignItems: 'center', gap: '10px', background: 'rgba(255,255,255,0.04)', padding: '0.75rem 1rem', borderRadius: '12px' }}>
+                  <span style={{ fontSize: '1.1rem' }}>💳</span>
+                  <div style={{ fontSize: '0.86rem', color: '#e2e8f0', fontWeight: 600 }}>
+                    <strong>Tuition Ease:</strong> 50% Down Payment • 2 Monthly Installments
+                  </div>
+                </div>
+              </div>
+
+              {/* Direct Card Action Button */}
+              <button
+                type="button"
+                onClick={() => {
+                  setActiveCategory(HERO_PROMO_SLIDES[currentHeroSlide].category)
+                  const el = document.getElementById('courses')
+                  if (el) el.scrollIntoView({ behavior: 'smooth' })
+                }}
+                style={{
+                  width: '100%',
+                  background: 'linear-gradient(135deg, #1e293b 0%, #0f172a 100%)',
+                  border: `1px solid ${HERO_PROMO_SLIDES[currentHeroSlide].accentColor}60`,
+                  color: '#ffffff',
+                  fontWeight: 800,
+                  fontSize: '0.92rem',
+                  padding: '0.85rem',
+                  borderRadius: '12px',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '8px',
+                  boxShadow: '0 4px 16px rgba(0,0,0,0.3)',
+                  transition: 'all 0.2s',
+                }}
+              >
+                <span>View {HERO_PROMO_SLIDES[currentHeroSlide].category} Courses</span>
+                <span>→</span>
+              </button>
+            </div>
           </div>
 
-          {/* Main Headline */}
-          <h1
-            style={{
-              fontSize: 'clamp(2.4rem, 5vw, 3.8rem)',
-              fontWeight: 900,
-              letterSpacing: '-0.03em',
-              lineHeight: 1.15,
-              margin: '0 auto 1.25rem',
-              maxWidth: '920px',
-              color: '#ffffff',
-              fontFamily: 'var(--font-heading)',
-            }}
-          >
-            Skills that drive your career forward. <br />
-            <span
-              style={{
-                background: 'linear-gradient(90deg, #d4af37 0%, #fef08a 50%, #d4af37 100%)',
-                WebkitBackgroundClip: 'text',
-                WebkitTextFillColor: 'transparent',
-              }}
-            >
-              100% Online • Live Virtual Labs • Verified Diplomas
-            </span>
-          </h1>
-
-          <p
-            style={{
-              maxWidth: '780px',
-              margin: '0 auto 2.25rem',
-              fontSize: '1.15rem',
-              color: '#cbd5e1',
-              lineHeight: 1.6,
-              fontWeight: 400,
-            }}
-          >
-            Learn in-demand Tech & Software (React, Node, Python, Cybersecurity), World Languages (IELTS, English, Arabic, German, French), and Business Tools from industry mentors with live classes and flexible installment plans.
-          </p>
-
-          {/* Clean, Focused Action CTAs */}
-          <div style={{ display: 'flex', justifyContent: 'center', gap: '1rem', flexWrap: 'wrap', marginBottom: '2.5rem' }}>
-            <a
-              href="#courses"
-              className="btn btn-lg"
-              style={{
-                background: '#d4af37',
-                color: '#0c0e12',
-                fontWeight: 900,
-                padding: '0.9rem 2.25rem',
-                fontSize: '1.02rem',
-                borderRadius: '10px',
-                boxShadow: '0 10px 24px rgba(212, 175, 55, 0.35)',
-                border: 'none',
-                textDecoration: 'none',
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '8px',
-              }}
-            >
-              <span>🚀 Explore Courses</span>
-              <span>↓</span>
-            </a>
-
-            <button
-              type="button"
-              className="btn btn-lg"
-              style={{
-                background: '#2563eb',
-                color: '#ffffff',
-                fontWeight: 800,
-                padding: '0.9rem 2rem',
-                fontSize: '1.02rem',
-                borderRadius: '10px',
-                boxShadow: '0 8px 20px rgba(37, 99, 235, 0.3)',
-                border: 'none',
-                cursor: 'pointer',
-              }}
-              onClick={() => setInquiryModalOpen(true)}
-            >
-              ⚡ Enroll in Intake
-            </button>
-
-            <Link
-              to="/library"
-              className="btn btn-lg"
-              style={{
-                background: 'rgba(255, 255, 255, 0.08)',
-                color: '#ffffff',
-                fontWeight: 700,
-                padding: '0.9rem 1.75rem',
-                fontSize: '1rem',
-                borderRadius: '10px',
-                border: '1px solid rgba(255, 255, 255, 0.2)',
-                textDecoration: 'none',
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '6px',
-              }}
-            >
-              <span>📖</span>
-              <span>Free E-Library</span>
-            </Link>
-          </div>
-
-          {/* Value Props Row */}
+          {/* Carousel Slide Indicators & Manual Arrow Navigation */}
           <div
             style={{
+              marginTop: '3rem',
               display: 'flex',
-              justifyContent: 'center',
+              justifyContent: 'space-between',
               alignItems: 'center',
-              gap: '1.75rem',
               flexWrap: 'wrap',
-              fontSize: '0.88rem',
-              color: '#94a3b8',
-              fontWeight: 600,
+              gap: '1rem',
+              borderTop: '1px solid rgba(255, 255, 255, 0.1)',
+              paddingTop: '1.75rem',
             }}
           >
-            <span style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
-              <span style={{ color: '#22c55e' }}>✓</span> 100% Online Live Evening & Weekend Batches
-            </span>
-            <span style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
-              <span style={{ color: '#22c55e' }}>✓</span> Cryptographically Verified Diplomas
-            </span>
-            <span style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
-              <span style={{ color: '#22c55e' }}>✓</span> 50% Flexible Installment Plans
-            </span>
-            <span style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
-              <span style={{ color: '#22c55e' }}>✓</span> Dedicated Desktop & Mobile Classrooms
-            </span>
+            {/* Interactive Slide Tabs */}
+            <div style={{ display: 'flex', gap: '0.6rem', flexWrap: 'wrap' }}>
+              {HERO_PROMO_SLIDES.map((slide, idx) => (
+                <button
+                  key={slide.id}
+                  type="button"
+                  onClick={() => setCurrentHeroSlide(idx)}
+                  style={{
+                    background: currentHeroSlide === idx ? 'rgba(255, 255, 255, 0.15)' : 'rgba(255, 255, 255, 0.04)',
+                    border: `1.5px solid ${currentHeroSlide === idx ? slide.accentColor : 'rgba(255, 255, 255, 0.1)'}`,
+                    borderRadius: '999px',
+                    padding: '0.45rem 1rem',
+                    color: currentHeroSlide === idx ? '#ffffff' : '#94a3b8',
+                    fontSize: '0.82rem',
+                    fontWeight: currentHeroSlide === idx ? 800 : 600,
+                    cursor: 'pointer',
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '6px',
+                    transition: 'all 0.25s',
+                  }}
+                >
+                  <span>{slide.icon}</span>
+                  <span>{slide.category}</span>
+                  {currentHeroSlide === idx && (
+                    <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: slide.accentColor }} />
+                  )}
+                </button>
+              ))}
+            </div>
+
+            {/* Prev / Next Arrow Navigation */}
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+              <button
+                type="button"
+                onClick={() => setCurrentHeroSlide((prev) => (prev === 0 ? HERO_PROMO_SLIDES.length - 1 : prev - 1))}
+                style={{
+                  width: '38px',
+                  height: '38px',
+                  borderRadius: '50%',
+                  background: 'rgba(255, 255, 255, 0.08)',
+                  border: '1px solid rgba(255, 255, 255, 0.2)',
+                  color: '#ffffff',
+                  fontSize: '1rem',
+                  fontWeight: 800,
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  transition: 'background 0.2s',
+                }}
+                title="Previous Slide"
+              >
+                ❮
+              </button>
+
+              <span style={{ fontSize: '0.82rem', color: '#94a3b8', fontWeight: 700, minWidth: '45px', textAlign: 'center' }}>
+                {currentHeroSlide + 1} / {HERO_PROMO_SLIDES.length}
+              </span>
+
+              <button
+                type="button"
+                onClick={() => setCurrentHeroSlide((prev) => (prev + 1) % HERO_PROMO_SLIDES.length)}
+                style={{
+                  width: '38px',
+                  height: '38px',
+                  borderRadius: '50%',
+                  background: 'rgba(255, 255, 255, 0.08)',
+                  border: '1px solid rgba(255, 255, 255, 0.2)',
+                  color: '#ffffff',
+                  fontSize: '1rem',
+                  fontWeight: 800,
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  transition: 'background 0.2s',
+                }}
+                title="Next Slide"
+              >
+                ❯
+              </button>
+            </div>
           </div>
         </div>
       </section>
@@ -1695,6 +2160,7 @@ export function Landing() {
             <div style={{ display: 'flex', gap: '0.6rem', flexWrap: 'wrap' }}>
               {[
                 { id: 'All', label: '🔥 All Programs', count: coursesList.length },
+                { id: 'Data Science & Research', label: '📊 Data, R & SPSS', count: coursesList.filter((c) => c.category === 'Data Science & Research').length },
                 { id: 'Tech & Programming', label: '💻 Tech & Software', count: coursesList.filter((c) => c.category === 'Tech & Programming').length },
                 { id: 'Languages & Communication', label: '🗣️ Languages & IELTS', count: coursesList.filter((c) => c.category === 'Languages & Communication').length },
                 { id: 'Computer & Digital Skills', label: '🖥️ Digital Literacy', count: coursesList.filter((c) => c.category === 'Computer & Digital Skills').length },
