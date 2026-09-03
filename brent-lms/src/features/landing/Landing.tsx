@@ -10,7 +10,7 @@ import type { Role } from '@/lib/database.types'
 interface CourseItem {
   id: string
   title: string
-  category: 'Data Science & Research' | 'Tech & Programming' | 'Computer & Digital Skills' | 'Languages & Communication' | 'Business Tech & Accounting' | 'Executive Masterclass' | string
+  category: 'Data Science & Research' | 'Tech & Programming' | 'Creative Arts & Design' | 'Languages & Communication' | 'Computer & Digital Skills' | 'Business Tech & Accounting' | 'Executive Masterclass' | string
   tag: string
   tagColor: string
   duration: string
@@ -229,11 +229,12 @@ const DEFAULT_COURSES_DATA: CourseItem[] = [
       { week: 'Week 4', topic: 'Canva Graphic Design, AI Productivity Tools & Cybersecurity', practicalLab: 'Designing social media flyers, resume branding, and digital safety practices.' },
     ],
   },
+  // --- CREATIVE ARTS & DIGITAL DESIGN ---
   {
     id: 'c-uiux',
     title: 'UI/UX Product Design, Mobile Design Systems & Figma',
-    category: 'Computer & Digital Skills',
-    tag: '🎨 Creative Tech',
+    category: 'Creative Arts & Design',
+    tag: '🎨 Figma & Product Design',
     tagColor: '#8b5cf6',
     duration: '6 Weeks',
     schedule: 'Live Online Evening / Flexible Self-Paced Modules',
@@ -254,6 +255,62 @@ const DEFAULT_COURSES_DATA: CourseItem[] = [
       { week: 'Week 1-2', topic: 'UX Design Thinking, User Persona & Wireframing', practicalLab: 'Low-fidelity wireframing and user journey mapping for mobile apps.' },
       { week: 'Week 3-4', topic: 'Figma Mastery: Auto Layout, Components & Tokens', practicalLab: 'Building scalable UI component design systems and responsive web screens.' },
       { week: 'Week 5-6', topic: 'High-Fidelity Prototyping, Micro-interactions & Hand-off', practicalLab: 'Delivering interactive animated prototypes and developer design tokens.' },
+    ],
+  },
+  {
+    id: 'c-graphics',
+    title: 'Graphic Design, Motion Graphics & Visual Branding',
+    category: 'Creative Arts & Design',
+    tag: '🖌️ Adobe Creative Suite',
+    tagColor: '#ec4899',
+    duration: '8 Weeks (2 Months)',
+    schedule: 'Live Virtual Studio Workshops (Tue & Thu 6:30 PM)',
+    fee: '$79',
+    originalFee: '$160',
+    discountBadge: '50% OFF',
+    rating: 4.88,
+    ratingCount: 640,
+    studentsEnrolled: 1680,
+    instructor: 'Victor Somerhalder • Creative Brand Director',
+    bestseller: true,
+    popular: true,
+    installment: '2 installments of $40',
+    careerOutcome: 'Brand Identity Designer • Motion Graphics Artist • Creative Director',
+    skills: ['Adobe Photoshop Photo Manipulation', 'Adobe Illustrator Vector Art', 'Premiere Pro Video Editing', 'Brand Guidelines & Typography', 'Social Media Motion Adverts'],
+    icon: '🖌️',
+    syllabus: [
+      { week: 'Week 1-2', topic: 'Vector Illustration & Logo Identity (Illustrator)', practicalLab: 'Designing vector logos, brand moodboards, and scalable icon sets.' },
+      { week: 'Week 3-4', topic: 'Photo Editing, Masking & Visual Art (Photoshop)', practicalLab: 'Product retouching, double exposure, and advertising billboard posters.' },
+      { week: 'Week 5-6', topic: 'Video Editing & Audio Post-Production (Premiere Pro)', practicalLab: 'Cutting commercial YouTube/TikTok videos, color grading, and sound mixing.' },
+      { week: 'Week 7-8', topic: 'Motion Graphics, Lower Thirds & After Effects', practicalLab: 'Creating animated title intros and kinetic typography motion ads.' },
+    ],
+  },
+  {
+    id: 'c-3d-anim',
+    title: '3D Modeling, Digital Animation & Visual Storytelling (Blender 3D)',
+    category: 'Creative Arts & Design',
+    tag: '🎥 3D Animation & VFX',
+    tagColor: '#f97316',
+    duration: '8 Weeks (2 Months)',
+    schedule: 'Live Virtual Lab Intensives (Mon & Fri 7:00 PM)',
+    fee: '$85',
+    originalFee: '$170',
+    discountBadge: '50% OFF',
+    rating: 4.92,
+    ratingCount: 430,
+    studentsEnrolled: 1120,
+    instructor: 'Dmitri Rostov • 3D Animator & Game Asset Artist',
+    bestseller: false,
+    popular: true,
+    installment: '2 installments of $43',
+    careerOutcome: '3D Modeler • 3D Animation Artist • Game Asset Designer',
+    skills: ['Blender 3D Polygon Modeling', 'PBR Texturing & Shading', 'Character Rigging & Keyframing', 'Camera Lighting & Cycles Rendering', 'Visual Effects & Compositing'],
+    icon: '🎥',
+    syllabus: [
+      { week: 'Week 1-2', topic: 'Blender 3D Interface, Hard-Surface Modeling & Modifiers', practicalLab: 'Modeling real-world 3D consumer products and architectural spaces.' },
+      { week: 'Week 3-4', topic: 'PBR Materials, Procedural Texturing & UV Unwrapping', practicalLab: 'Applying realistic textures, glass refractions, and metal shaders.' },
+      { week: 'Week 5-6', topic: 'Armature Rigging & Character Animation Mechanics', practicalLab: 'Rigging a humanoid character and animating a walk/run cycle.' },
+      { week: 'Week 7-8', topic: 'Cinematic Lighting, Cycles/Eevee Render & Post-FX', practicalLab: 'Rendering a 10-second cinematic 3D commercial animation.' },
     ],
   },
   // --- BUSINESS TECH & ACCOUNTING ---
@@ -599,6 +656,23 @@ const HERO_PROMO_SLIDES: PromoSlide[] = [
     category: 'Tech & Programming',
     primaryCtaText: 'Explore Software & Tech Cohorts',
     features: ['React 19 & Full-Stack', 'Node.js Express APIs', 'Cybersecurity Ops', 'Cloud & Git Portfolios'],
+  },
+  {
+    id: 'creative-design',
+    badge: '🎨 CREATIVE ARTS & DIGITAL DESIGN',
+    badgeBg: 'rgba(168, 85, 247, 0.2)',
+    badgeColor: '#c084fc',
+    headline: 'Master UI/UX Product Design &',
+    highlight: 'Motion Graphics, Figma & Visual Arts',
+    description: 'From wireframing and design systems in Figma to motion animation, branding in Adobe Illustrator/Photoshop, 3D modeling, and video editing. Taught by senior creative directors.',
+    gradient: 'radial-gradient(ellipse at 80% 20%, rgba(168, 85, 247, 0.25) 0%, rgba(15, 23, 42, 0.95) 70%), linear-gradient(135deg, #030712 0%, #3b0764 50%, #030712 100%)',
+    accentColor: '#c084fc',
+    icon: '🎨',
+    metricNumber: '2,900+',
+    metricLabel: 'Designers & Creatives Certified',
+    category: 'Creative Arts & Design',
+    primaryCtaText: 'Explore Creative Arts & Design',
+    features: ['Figma UI/UX Design Systems', 'Graphic Design & Branding', '3D Blender Animation', 'Motion Graphics & Video'],
   },
   {
     id: 'world-languages',
@@ -1281,6 +1355,7 @@ export function Landing() {
                     { id: 'All', icon: '🔥', label: 'All Online Programs' },
                     { id: 'Data Science & Research', icon: '📊', label: 'Data Science, R, SPSS & Stata' },
                     { id: 'Tech & Programming', icon: '💻', label: 'Tech & Software Engineering' },
+                    { id: 'Creative Arts & Design', icon: '🎨', label: 'Creative Arts & UI/UX Design' },
                     { id: 'Languages & Communication', icon: '🗣️', label: 'World Languages & IELTS' },
                     { id: 'Computer & Digital Skills', icon: '🖥️', label: 'Digital Literacy & Office Skills' },
                     { id: 'Business Tech & Accounting', icon: '🧾', label: 'QuickBooks & Tax Accounting' },
@@ -1648,7 +1723,7 @@ export function Landing() {
               fontWeight: 400,
             }}
           >
-            Master in-demand <strong style={{ color: '#ffffff', fontWeight: 800 }}>Tech & Software</strong> (React, Node, Python, Cyber), <strong style={{ color: '#ffffff', fontWeight: 800 }}>Data Science & Research</strong> (R, SPSS, Stata), <strong style={{ color: '#ffffff', fontWeight: 800 }}>World Languages</strong> (IELTS, German, Arabic, French), and <strong style={{ color: '#ffffff', fontWeight: 800 }}>Accounting</strong> with live interactive evening classes, expert mentorship, and flexible installment plans.
+            Master in-demand <strong style={{ color: '#ffffff', fontWeight: 800 }}>Tech & Software</strong> (React, Node, Python, Cyber), <strong style={{ color: '#ffffff', fontWeight: 800 }}>Data Science & Research</strong> (R, SPSS, Stata), <strong style={{ color: '#ffffff', fontWeight: 800 }}>Creative Arts & Design</strong> (UI/UX, Figma, Graphics), <strong style={{ color: '#ffffff', fontWeight: 800 }}>World Languages</strong> (IELTS, German, Arabic, French), and <strong style={{ color: '#ffffff', fontWeight: 800 }}>Accounting</strong> with live interactive evening classes, expert mentorship, and flexible installment plans.
           </p>
 
           {/* Primary Academy CTAs */}
@@ -2180,6 +2255,7 @@ export function Landing() {
                 { id: 'All', label: '🔥 All Programs', count: coursesList.length },
                 { id: 'Data Science & Research', label: '📊 Data, R & SPSS', count: coursesList.filter((c) => c.category === 'Data Science & Research').length },
                 { id: 'Tech & Programming', label: '💻 Tech & Software', count: coursesList.filter((c) => c.category === 'Tech & Programming').length },
+                { id: 'Creative Arts & Design', label: '🎨 Creative Arts & Design', count: coursesList.filter((c) => c.category === 'Creative Arts & Design').length },
                 { id: 'Languages & Communication', label: '🗣️ Languages & IELTS', count: coursesList.filter((c) => c.category === 'Languages & Communication').length },
                 { id: 'Computer & Digital Skills', label: '🖥️ Digital Literacy', count: coursesList.filter((c) => c.category === 'Computer & Digital Skills').length },
                 { id: 'Business Tech & Accounting', label: '🧾 Accounting & Tax', count: coursesList.filter((c) => c.category === 'Business Tech & Accounting').length },
