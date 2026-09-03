@@ -1258,7 +1258,7 @@ export function Landing() {
               borderRadius: '12px',
               padding: '0.75rem 1.25rem',
               maxWidth: '820px',
-              margin: '0 auto 2.5rem',
+              margin: '0 auto 1.5rem',
               fontSize: '0.85rem',
               color: '#cbd5e1',
               display: 'flex',
@@ -1272,6 +1272,87 @@ export function Landing() {
             <span>
               <strong>Secure Multi-Platform Learning:</strong> The website is your admissions & information portal. All live lectures, exams, and DRM-protected E-Library materials run inside the official <strong>Éclat Desktop & Mobile Apps</strong>.
             </span>
+          </div>
+
+          {/* Quick Jump Browse Chips */}
+          <div style={{ display: 'flex', justifyContent: 'center', gap: '0.5rem', flexWrap: 'wrap', maxWidth: '860px', margin: '0 auto 2.5rem' }}>
+            <a
+              href="#courses"
+              onClick={() => setActiveCategory('Tech & Programming')}
+              style={{
+                background: 'rgba(255, 255, 255, 0.08)',
+                color: '#93c5fd',
+                border: '1px solid rgba(147, 197, 253, 0.25)',
+                padding: '0.35rem 0.85rem',
+                borderRadius: '999px',
+                fontSize: '0.8rem',
+                fontWeight: 700,
+                textDecoration: 'none',
+              }}
+            >
+              💻 Tech Programs
+            </a>
+            <a
+              href="#courses"
+              onClick={() => setActiveCategory('Languages & Communication')}
+              style={{
+                background: 'rgba(255, 255, 255, 0.08)',
+                color: '#86efac',
+                border: '1px solid rgba(134, 239, 172, 0.25)',
+                padding: '0.35rem 0.85rem',
+                borderRadius: '999px',
+                fontSize: '0.8rem',
+                fontWeight: 700,
+                textDecoration: 'none',
+              }}
+            >
+              🗣️ World Languages
+            </a>
+            <Link
+              to="/library"
+              style={{
+                background: 'rgba(255, 255, 255, 0.08)',
+                color: '#fde047',
+                border: '1px solid rgba(253, 224, 71, 0.25)',
+                padding: '0.35rem 0.85rem',
+                borderRadius: '999px',
+                fontSize: '0.8rem',
+                fontWeight: 700,
+                textDecoration: 'none',
+              }}
+            >
+              📖 Free E-Library
+            </Link>
+            <a
+              href="#calculator"
+              style={{
+                background: 'rgba(255, 255, 255, 0.08)',
+                color: '#f472b6',
+                border: '1px solid rgba(244, 114, 182, 0.25)',
+                padding: '0.35rem 0.85rem',
+                borderRadius: '999px',
+                fontSize: '0.8rem',
+                fontWeight: 700,
+                textDecoration: 'none',
+              }}
+            >
+              💳 Tuition Calculator
+            </a>
+            <a
+              href="#app-download"
+              style={{
+                background: 'rgba(255, 255, 255, 0.08)',
+                color: '#cbd5e1',
+                border: '1px solid rgba(255, 255, 255, 0.2)',
+                padding: '0.35rem 0.85rem',
+                borderRadius: '999px',
+                fontSize: '0.8rem',
+                fontWeight: 700,
+                textDecoration: 'none',
+              }}
+            >
+              📲 Download Apps
+            </a>
           </div>
 
           {/* Live Intake Countdown Alert */}
@@ -1488,31 +1569,53 @@ export function Landing() {
 
           {/* Category Filter Pills & Result Counter */}
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem', marginBottom: '2.5rem' }}>
-            <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
-              {['All', 'Tech & Programming', 'Creative Design & Arts', 'Languages & Communication', 'Computer & Digital Skills', 'Business Tech & Accounting'].map((cat) => (
+            <div style={{ display: 'flex', gap: '0.6rem', flexWrap: 'wrap' }}>
+              {[
+                { id: 'All', label: '🔥 All Programs', count: coursesList.length },
+                { id: 'Tech & Programming', label: '💻 Tech & Software', count: coursesList.filter((c) => c.category === 'Tech & Programming').length },
+                { id: 'Languages & Communication', label: '🗣️ Languages & IELTS', count: coursesList.filter((c) => c.category === 'Languages & Communication').length },
+                { id: 'Computer & Digital Skills', label: '⚡ Digital Literacy', count: coursesList.filter((c) => c.category === 'Computer & Digital Skills').length },
+                { id: 'Business Tech & Accounting', label: '📈 Accounting & Tax', count: coursesList.filter((c) => c.category === 'Business Tech & Accounting').length },
+              ].map((cat) => (
                 <button
-                  key={cat}
+                  key={cat.id}
                   type="button"
                   style={{
-                    background: activeCategory === cat ? '#0f172a' : '#f1f5f9',
-                    color: activeCategory === cat ? '#d4af37' : '#475569',
-                    border: `1px solid ${activeCategory === cat ? '#d4af37' : '#cbd5e1'}`,
+                    background: activeCategory === cat.id ? '#0f172a' : '#ffffff',
+                    color: activeCategory === cat.id ? '#ffffff' : '#334155',
+                    border: `1.5px solid ${activeCategory === cat.id ? '#0f172a' : '#cbd5e1'}`,
                     borderRadius: '999px',
-                    padding: '0.5rem 1.15rem',
-                    fontSize: '0.85rem',
+                    padding: '0.55rem 1.15rem',
+                    fontSize: '0.86rem',
                     fontWeight: 700,
                     cursor: 'pointer',
+                    boxShadow: activeCategory === cat.id ? '0 4px 12px rgba(15, 23, 42, 0.2)' : '0 1px 3px rgba(0,0,0,0.05)',
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '6px',
                     transition: 'all 0.2s ease',
                   }}
-                  onClick={() => setActiveCategory(cat)}
+                  onClick={() => setActiveCategory(cat.id)}
                 >
-                  {cat}
+                  <span>{cat.label}</span>
+                  <span
+                    style={{
+                      background: activeCategory === cat.id ? '#d4af37' : '#e2e8f0',
+                      color: activeCategory === cat.id ? '#0c0e12' : '#475569',
+                      fontSize: '0.72rem',
+                      fontWeight: 900,
+                      padding: '2px 7px',
+                      borderRadius: '999px',
+                    }}
+                  >
+                    {cat.count}
+                  </span>
                 </button>
               ))}
             </div>
 
-            <div style={{ fontSize: '0.85rem', color: '#64748b', fontWeight: 600 }}>
-              Showing <strong style={{ color: '#0f172a' }}>{filteredCourses.length}</strong> available course{filteredCourses.length === 1 ? '' : 's'}
+            <div style={{ fontSize: '0.88rem', color: '#64748b', fontWeight: 600 }}>
+              Showing <strong style={{ color: '#0f172a' }}>{filteredCourses.length}</strong> program{filteredCourses.length === 1 ? '' : 's'}
             </div>
           </div>
 
@@ -1686,17 +1789,17 @@ export function Landing() {
       </section>
 
       {/* Interactive M-Pesa Fee Calculator & Admission Estimator */}
-      <section style={{ background: '#f1f5f9', padding: '4.5rem 1.5rem', borderBottom: '1px solid #e2e8f0' }}>
+      <section id="calculator" style={{ background: '#f1f5f9', padding: '4.5rem 1.5rem', borderBottom: '1px solid #e2e8f0' }}>
         <div style={{ maxWidth: '1000px', margin: '0 auto' }}>
           <div style={{ textAlign: 'center', marginBottom: '2.5rem' }}>
             <span style={{ fontSize: '0.82rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.08em', color: '#2563eb' }}>
               TRANSPARENT TUITION CALCULATOR
             </span>
             <h2 style={{ fontSize: '2.1rem', fontWeight: 900, color: '#0f172a', margin: '0.35rem 0 0.5rem' }}>
-              Instant M-Pesa Fee & Installment Estimator
+              Instant Tuition & Installment Estimator
             </h2>
             <p style={{ fontSize: '0.95rem', color: '#475569', maxWidth: '600px', margin: '0 auto' }}>
-              Choose your course and installment structure to view your exact Paybill breakdown before registration.
+              Choose your course and installment structure to view your exact payment breakdown before registration.
             </p>
           </div>
 
@@ -1814,6 +1917,120 @@ export function Landing() {
                   🚀 Apply for {selectedCalcCourse.title.split('&')[0]} →
                 </button>
               </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Official Multi-Platform Learning Apps Showcase Section */}
+      <section id="app-download" style={{ background: '#0a0f1d', color: '#ffffff', padding: '5rem 1.5rem', borderBottom: '1px solid #1e293b' }}>
+        <div style={{ maxWidth: '1240px', margin: '0 auto' }}>
+          <div style={{ textAlign: 'center', marginBottom: '3.5rem' }}>
+            <span style={{ fontSize: '0.82rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.08em', color: '#38bdf8' }}>
+              OFFICIAL LEARNING APPLICATIONS
+            </span>
+            <h2 style={{ fontSize: '2.3rem', fontWeight: 900, color: '#ffffff', margin: '0.35rem 0 0.75rem', fontFamily: 'var(--font-heading)' }}>
+              Study Anywhere on Dedicated Desktop & Mobile Apps
+            </h2>
+            <p style={{ fontSize: '1.05rem', color: '#94a3b8', maxWidth: '750px', margin: '0 auto', fontWeight: 500 }}>
+              The website is your admissions & guidance portal. Download our high-performance native apps for DRM-protected textbooks, hardware anti-cheat exams, and offline reading.
+            </p>
+          </div>
+
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '2rem' }}>
+            {/* Windows Desktop App Card */}
+            <div style={{ background: 'rgba(30, 41, 59, 0.5)', border: '1px solid #334155', borderRadius: '20px', padding: '2.5rem', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+              <div>
+                <div style={{ width: '56px', height: '56px', borderRadius: '14px', background: 'rgba(59, 130, 246, 0.15)', border: '1px solid rgba(59, 130, 246, 0.3)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.8rem', marginBottom: '1.5rem' }}>
+                  💻
+                </div>
+                <h3 style={{ fontSize: '1.35rem', fontWeight: 800, color: '#ffffff', margin: '0 0 0.5rem' }}>
+                  Windows Desktop App
+                </h3>
+                <p style={{ fontSize: '0.92rem', color: '#cbd5e1', lineHeight: 1.6, marginBottom: '1.5rem' }}>
+                  Built for power learners. Full-screen distraction-free reader, hardware screenshot blocking, and instant offline textbook access.
+                </p>
+                <ul style={{ listStyle: 'none', padding: 0, margin: '0 0 2rem', fontSize: '0.85rem', color: '#94a3b8', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                  <li>✓ Hardware Anti-Cheat & Screen Protection</li>
+                  <li>✓ Zoom Controls & Dynamic Text Resizing</li>
+                  <li>✓ 1-Click Registration Slip & Fee Printing</li>
+                  <li>✓ Windows 10 & 11 64-bit Compatible</li>
+                </ul>
+              </div>
+
+              <a
+                href="https://github.com/Smart-009/brent1_college/actions"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="btn btn-primary"
+                style={{ fontWeight: 800, padding: '0.85rem', borderRadius: '12px', textAlign: 'center', textDecoration: 'none', display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '8px' }}
+              >
+                <span>💻</span>
+                <span>Download Windows App (.EXE)</span>
+              </a>
+            </div>
+
+            {/* Android Mobile App Card */}
+            <div style={{ background: 'rgba(30, 41, 59, 0.5)', border: '1px solid #334155', borderRadius: '20px', padding: '2.5rem', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+              <div>
+                <div style={{ width: '56px', height: '56px', borderRadius: '14px', background: 'rgba(34, 197, 94, 0.15)', border: '1px solid rgba(34, 197, 94, 0.3)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.8rem', marginBottom: '1.5rem' }}>
+                  🤖
+                </div>
+                <h3 style={{ fontSize: '1.35rem', fontWeight: 800, color: '#ffffff', margin: '0 0 0.5rem' }}>
+                  Android Mobile App
+                </h3>
+                <p style={{ fontSize: '0.92rem', color: '#cbd5e1', lineHeight: 1.6, marginBottom: '1.5rem' }}>
+                  Take your entire college in your pocket. Live video classes, swipe-to-refresh cloud sync, and instant timetable push alerts.
+                </p>
+                <ul style={{ listStyle: 'none', padding: 0, margin: '0 0 2rem', fontSize: '0.85rem', color: '#94a3b8', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                  <li>✓ Pre-Populated Offline E-Library</li>
+                  <li>✓ Swipe Down Pull-to-Refresh Gesture</li>
+                  <li>✓ Pinch-to-Zoom Textbook Reader</li>
+                  <li>✓ Instant Cloud Attendance & Grades</li>
+                </ul>
+              </div>
+
+              <a
+                href="https://github.com/Smart-009/brent1_college/actions"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="btn"
+                style={{ background: '#16a34a', color: '#ffffff', fontWeight: 800, padding: '0.85rem', borderRadius: '12px', textAlign: 'center', textDecoration: 'none', display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '8px' }}
+              >
+                <span>🤖</span>
+                <span>Download Android APK</span>
+              </a>
+            </div>
+
+            {/* iOS Apple App Card */}
+            <div style={{ background: 'rgba(30, 41, 59, 0.5)', border: '1px solid #334155', borderRadius: '20px', padding: '2.5rem', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+              <div>
+                <div style={{ width: '56px', height: '56px', borderRadius: '14px', background: 'rgba(168, 85, 247, 0.15)', border: '1px solid rgba(168, 85, 247, 0.3)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.8rem', marginBottom: '1.5rem' }}>
+                  🍎
+                </div>
+                <h3 style={{ fontSize: '1.35rem', fontWeight: 800, color: '#ffffff', margin: '0 0 0.5rem' }}>
+                  Apple iOS (iPhone & iPad)
+                </h3>
+                <p style={{ fontSize: '0.92rem', color: '#cbd5e1', lineHeight: 1.6, marginBottom: '1.5rem' }}>
+                  Optimized for iOS devices with Retina graphics, fluid gestures, Apple biometric security, and iPad split-view support.
+                </p>
+                <ul style={{ listStyle: 'none', padding: 0, margin: '0 0 2rem', fontSize: '0.85rem', color: '#94a3b8', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                  <li>✓ High-Resolution Retina Graphics</li>
+                  <li>✓ Native Xcode Capacitor Core</li>
+                  <li>✓ Safari Instant Web App Mode</li>
+                  <li>✓ Encrypted Offline Storage</li>
+                </ul>
+              </div>
+
+              <button
+                type="button"
+                onClick={promptInstall}
+                className="btn"
+                style={{ background: '#334155', color: '#ffffff', fontWeight: 800, padding: '0.85rem', borderRadius: '12px', textAlign: 'center', border: '1px solid #475569', display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '8px' }}
+              >
+                <span>🍎</span>
+                <span>Add to Home Screen (iOS)</span>
+              </button>
             </div>
           </div>
         </div>
