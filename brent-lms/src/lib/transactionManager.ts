@@ -71,7 +71,7 @@ export class ACIDTransactionEngine {
 
   private loadJournal() {
     try {
-      const raw = localStorage.getItem('brent_acid_journal')
+      const raw = localStorage.getItem('eclat_acid_journal')
       if (raw) this.journal = JSON.parse(raw)
     } catch {
       this.journal = []
@@ -82,7 +82,7 @@ export class ACIDTransactionEngine {
     try {
       // Keep last 100 transactions for audit
       const trimmed = this.journal.slice(-100)
-      localStorage.setItem('brent_acid_journal', JSON.stringify(trimmed))
+      localStorage.setItem('eclat_acid_journal', JSON.stringify(trimmed))
     } catch {}
   }
 

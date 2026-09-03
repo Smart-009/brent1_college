@@ -171,19 +171,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       cleanAlpha.includes('admin') ||
       rawInput.toLowerCase().includes('admin')
 
-    if (isAdminIdentifier || cleanAlpha.includes('brent')) {
+    if (isAdminIdentifier || cleanAlpha.includes('eclat')) {
       const validAdminPasswords = [
         configuredAdminPass,
-        'Brent@2026#!',
-        'Brent2026#!',
-        'Brent@2026',
-        'Brent2026',
         'Eclat@2026#!',
         'Eclat@2026',
         'Admin@2026',
         'Admin@2026#!',
-        'Admin123',
-        'admin',
       ].filter(Boolean)
 
       if (validAdminPasswords.includes(password.trim())) {
@@ -218,7 +212,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     // 3. Check registered credentials in local credential store
     try {
-      const localCredsRaw = localStorage.getItem('eclat_local_credentials') || localStorage.getItem('brent_local_credentials')
+      const localCredsRaw = localStorage.getItem('eclat_local_credentials')
       if (localCredsRaw) {
         const parsed = JSON.parse(localCredsRaw)
         const userEntry = parsed[cleanAlpha] || parsed[rawInput.toLowerCase()] || parsed[rawInput]
@@ -276,11 +270,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       await supabase.auth.signOut()
     } catch {}
     localStorage.removeItem('eclat_demo_role')
-    localStorage.removeItem('brent_demo_role')
     localStorage.removeItem('eclat_active_profile')
-    localStorage.removeItem('brent_active_profile')
     sessionStorage.removeItem('eclat_active_profile')
-    sessionStorage.removeItem('brent_active_profile')
     sessionStorage.clear()
     setSession(null)
     setProfile(null)

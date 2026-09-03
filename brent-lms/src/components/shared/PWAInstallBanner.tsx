@@ -4,7 +4,7 @@ import { usePWAInstall } from '@/hooks/usePWAInstall'
 export function PWAInstallBanner() {
   const { isInstalled, isIOS, showInstallGuide, setShowInstallGuide, promptInstall } = usePWAInstall()
   const [dismissed, setDismissed] = useState(() => {
-    return sessionStorage.getItem('eclat_pwa_dismissed') === 'true' || sessionStorage.getItem('brent_pwa_dismissed') === 'true'
+    return sessionStorage.getItem('eclat_pwa_dismissed') === 'true'
   })
 
   if (isInstalled || dismissed) {

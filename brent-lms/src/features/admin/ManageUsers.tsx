@@ -44,7 +44,7 @@ export function ManageUsers() {
       const { data, error } = await supabase.from('profiles').select('*').order('created_at', { ascending: false })
       if (error) {
         // Fallback to locally stored profiles + SIS students
-        const localCredsRaw = localStorage.getItem('eclat_local_credentials') || localStorage.getItem('brent_local_credentials')
+        const localCredsRaw = localStorage.getItem('eclat_local_credentials')
         const localList: Profile[] = []
         if (localCredsRaw) {
           try {
@@ -173,7 +173,7 @@ export function ManageUsers() {
 
       // 3. Save local credentials for instant frictionless authentication
       try {
-        const stored = localStorage.getItem('eclat_local_credentials') || localStorage.getItem('brent_local_credentials')
+        const stored = localStorage.getItem('eclat_local_credentials')
         const parsed = stored ? JSON.parse(stored) : {}
         parsed[cleanKey] = {
           id: registeredUserId,
@@ -184,7 +184,6 @@ export function ManageUsers() {
           class_ids: selectedClassIds,
           created_at: new Date().toISOString(),
         }
-        localStorage.setItem('brent_local_credentials', JSON.stringify(parsed))
         localStorage.setItem('eclat_local_credentials', JSON.stringify(parsed))
       } catch (storeErr) {
         console.warn('Local credential storage error:', storeErr)

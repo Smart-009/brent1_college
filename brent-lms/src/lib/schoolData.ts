@@ -977,25 +977,25 @@ class SchoolDataStore {
             }
           } catch {}
         }
-        localStorage.removeItem('brent_demo_role')
-        localStorage.removeItem('brent_school_students')
+        localStorage.removeItem('eclat_demo_role')
         localStorage.removeItem('eclat_school_students')
-        localStorage.removeItem('brent_school_course_units')
+        localStorage.removeItem('eclat_school_students')
         localStorage.removeItem('eclat_school_course_units')
-        localStorage.removeItem('brent_school_unit_registrations')
+        localStorage.removeItem('eclat_school_course_units')
         localStorage.removeItem('eclat_school_unit_registrations')
-        localStorage.removeItem('brent_school_invoices')
+        localStorage.removeItem('eclat_school_unit_registrations')
         localStorage.removeItem('eclat_school_invoices')
-        localStorage.removeItem('brent_school_receipts')
+        localStorage.removeItem('eclat_school_invoices')
         localStorage.removeItem('eclat_school_receipts')
-        localStorage.removeItem('brent_school_timetable')
-        localStorage.removeItem('brent_school_exams')
-        localStorage.removeItem('brent_school_report_cards')
-        localStorage.removeItem('brent_school_resources')
-        localStorage.removeItem('brent_school_discipline')
-        localStorage.removeItem('brent_school_notices')
-        localStorage.removeItem('brent_school_reminders')
-        localStorage.removeItem('brent_school_inquiries')
+        localStorage.removeItem('eclat_school_receipts')
+        localStorage.removeItem('eclat_school_timetable')
+        localStorage.removeItem('eclat_school_exams')
+        localStorage.removeItem('eclat_school_report_cards')
+        localStorage.removeItem('eclat_school_resources')
+        localStorage.removeItem('eclat_school_discipline')
+        localStorage.removeItem('eclat_school_notices')
+        localStorage.removeItem('eclat_school_reminders')
+        localStorage.removeItem('eclat_school_inquiries')
         localStorage.setItem('eclat_launch_pure_v9', 'true')
       }
     } catch {}
@@ -1003,19 +1003,19 @@ class SchoolDataStore {
 
   purgeAllDataForLaunch(): void {
     this.memCache.clear()
-    localStorage.removeItem('brent_school_students')
-    localStorage.removeItem('brent_school_timetable')
-    localStorage.removeItem('brent_school_exams')
-    localStorage.removeItem('brent_school_report_cards')
-    localStorage.removeItem('brent_school_invoices')
-    localStorage.removeItem('brent_school_receipts')
-    localStorage.removeItem('brent_school_resources')
-    localStorage.removeItem('brent_school_discipline')
-    localStorage.removeItem('brent_school_notices')
-    localStorage.removeItem('brent_school_reminders')
-    localStorage.removeItem('brent_school_inquiries')
-    localStorage.removeItem('brent_school_course_units')
-    localStorage.removeItem('brent_school_unit_registrations')
+    localStorage.removeItem('eclat_school_students')
+    localStorage.removeItem('eclat_school_timetable')
+    localStorage.removeItem('eclat_school_exams')
+    localStorage.removeItem('eclat_school_report_cards')
+    localStorage.removeItem('eclat_school_invoices')
+    localStorage.removeItem('eclat_school_receipts')
+    localStorage.removeItem('eclat_school_resources')
+    localStorage.removeItem('eclat_school_discipline')
+    localStorage.removeItem('eclat_school_notices')
+    localStorage.removeItem('eclat_school_reminders')
+    localStorage.removeItem('eclat_school_inquiries')
+    localStorage.removeItem('eclat_school_course_units')
+    localStorage.removeItem('eclat_school_unit_registrations')
     schoolEventBus.publish('STUDENT_UPDATED')
     schoolEventBus.publish('PAYMENT_RECORDED')
   }
@@ -1025,7 +1025,7 @@ class SchoolDataStore {
       return this.memCache.get(key)
     }
     try {
-      const stored = localStorage.getItem(`eclat_school_${key}`) || localStorage.getItem(`brent_school_${key}`)
+      const stored = localStorage.getItem(`eclat_school_${key}`) || localStorage.getItem(`eclat_school_${key}`)
       const val = stored ? JSON.parse(stored) : fallback
       this.memCache.set(key, val)
       return val
@@ -1073,7 +1073,7 @@ class SchoolDataStore {
   async addStudent(student: StudentRecord): Promise<void> {
     await txEngine.executeAtomic(
       `ADD_STUDENT_${student.admission_number}`,
-      ['brent_school_students', 'brent_school_invoices'],
+      ['eclat_school_students', 'eclat_school_invoices'],
       () => {
         const list = this.get<StudentRecord[]>('students', INITIAL_STUDENTS)
         const existingIdx = list.findIndex(
@@ -1148,7 +1148,7 @@ class SchoolDataStore {
   async updateStudent(id: string, updated: Partial<StudentRecord>): Promise<void> {
     await txEngine.executeAtomic(
       `UPDATE_STUDENT_${id}`,
-      ['brent_school_students'],
+      ['eclat_school_students'],
       () => {
         const list = this.getStudents()
         const idx = list.findIndex((s) => s.id === id)
@@ -1179,14 +1179,14 @@ class SchoolDataStore {
     await txEngine.executeAtomic(
       `CASCADE_DELETE_STUDENT_${targetId}`,
       [
-        'brent_school_students',
-        'brent_school_invoices',
-        'brent_school_receipts',
-        'brent_school_unit_registrations',
-        'brent_school_report_cards',
-        'brent_school_exams',
-        'brent_school_reminders',
-        'brent_school_discipline',
+        'eclat_school_students',
+        'eclat_school_invoices',
+        'eclat_school_receipts',
+        'eclat_school_unit_registrations',
+        'eclat_school_report_cards',
+        'eclat_school_exams',
+        'eclat_school_reminders',
+        'eclat_school_discipline',
       ],
       () => {
         const matchesStudent = (rec: { student_id?: string; admission_number?: string }) => {
@@ -1232,14 +1232,14 @@ class SchoolDataStore {
 
         // 10. Clean Local Credentials Store
         try {
-          const rawCreds = localStorage.getItem('eclat_local_credentials') || localStorage.getItem('brent_local_credentials')
+          const rawCreds = localStorage.getItem('eclat_local_credentials') || localStorage.getItem('eclat_local_credentials')
           if (rawCreds) {
             const creds = JSON.parse(rawCreds)
             if (targetAdm && creds[targetAdm.toLowerCase()]) delete creds[targetAdm.toLowerCase()]
             if (cleanAdm && creds[cleanAdm]) delete creds[cleanAdm]
             if (creds[targetId]) delete creds[targetId]
             localStorage.setItem('eclat_local_credentials', JSON.stringify(creds))
-            localStorage.setItem('brent_local_credentials', JSON.stringify(creds))
+            localStorage.setItem('eclat_local_credentials', JSON.stringify(creds))
           }
         } catch {}
       }
@@ -1266,13 +1266,13 @@ class SchoolDataStore {
     await txEngine.executeAtomic(
       'CLEAR_ALL_STUDENTS_CASCADE',
       [
-        'brent_school_students',
-        'brent_school_invoices',
-        'brent_school_receipts',
-        'brent_school_unit_registrations',
-        'brent_school_report_cards',
-        'brent_school_reminders',
-        'brent_school_discipline',
+        'eclat_school_students',
+        'eclat_school_invoices',
+        'eclat_school_receipts',
+        'eclat_school_unit_registrations',
+        'eclat_school_report_cards',
+        'eclat_school_reminders',
+        'eclat_school_discipline',
       ],
       () => {
         this.set('students', [])
@@ -1285,7 +1285,7 @@ class SchoolDataStore {
         this.set('biometric_clearance_logs', [])
 
         localStorage.removeItem('eclat_local_credentials')
-        localStorage.removeItem('brent_local_credentials')
+        localStorage.removeItem('eclat_local_credentials')
       }
     )
 
@@ -1302,7 +1302,7 @@ class SchoolDataStore {
   async grantCertificate(id: string, granted: boolean = true, grade: string = 'Distinction (A)'): Promise<void> {
     await txEngine.executeAtomic(
       `GRANT_CERTIFICATE_${id}`,
-      ['brent_school_students'],
+      ['eclat_school_students'],
       () => {
         const list = this.get<StudentRecord[]>('students', INITIAL_STUDENTS)
         const idx = list.findIndex((s) => s.id === id || s.admission_number.toLowerCase() === id.toLowerCase())
@@ -1344,7 +1344,7 @@ class SchoolDataStore {
   async addPeriod(period: TimetablePeriod): Promise<void> {
     await txEngine.executeAtomic(
       `ADD_PERIOD_${period.id}`,
-      ['brent_school_timetable'],
+      ['eclat_school_timetable'],
       () => {
         const list = this.get<TimetablePeriod[]>('timetable', INITIAL_TIMETABLE)
         list.push(period)
@@ -1357,7 +1357,7 @@ class SchoolDataStore {
   async updatePeriod(id: string, updated: Partial<TimetablePeriod>): Promise<void> {
     await txEngine.executeAtomic(
       `UPDATE_PERIOD_${id}`,
-      ['brent_school_timetable'],
+      ['eclat_school_timetable'],
       () => {
         const list = this.get<TimetablePeriod[]>('timetable', INITIAL_TIMETABLE)
         const idx = list.findIndex((p) => p.id === id)
@@ -1373,7 +1373,7 @@ class SchoolDataStore {
   async deletePeriod(id: string): Promise<void> {
     await txEngine.executeAtomic(
       `DELETE_PERIOD_${id}`,
-      ['brent_school_timetable'],
+      ['eclat_school_timetable'],
       () => {
         const list = this.get<TimetablePeriod[]>('timetable', INITIAL_TIMETABLE).filter((p) => p.id !== id)
         this.set('timetable', list)
@@ -1452,7 +1452,7 @@ class SchoolDataStore {
   async addInvoice(invoice: FeeInvoice): Promise<void> {
     await txEngine.executeAtomic(
       `ADD_INVOICE_${invoice.id}`,
-      ['brent_school_invoices'],
+      ['eclat_school_invoices'],
       () => {
         const list = this.getInvoices()
         list.unshift(invoice)
@@ -1469,7 +1469,7 @@ class SchoolDataStore {
   async updateInvoice(invoiceId: string, updated: Partial<FeeInvoice>, adminName?: string): Promise<void> {
     await txEngine.executeAtomic(
       `UPDATE_INVOICE_${invoiceId}`,
-      ['brent_school_invoices', 'brent_school_students'],
+      ['eclat_school_invoices', 'eclat_school_students'],
       () => {
         const list = this.getInvoices()
         const idx = list.findIndex((inv) => inv.id === invoiceId || inv.invoice_number === invoiceId)
@@ -1517,7 +1517,7 @@ class SchoolDataStore {
   async deleteInvoice(invoiceId: string): Promise<void> {
     await txEngine.executeAtomic(
       `DELETE_INVOICE_${invoiceId}`,
-      ['brent_school_invoices'],
+      ['eclat_school_invoices'],
       () => {
         const list = this.getInvoices().filter((inv) => inv.id !== invoiceId && inv.invoice_number !== invoiceId)
         this.set('invoices', list)
@@ -1529,7 +1529,7 @@ class SchoolDataStore {
   async clearAllInvoices(): Promise<void> {
     await txEngine.executeAtomic(
       'CLEAR_ALL_INVOICES',
-      ['brent_school_invoices'],
+      ['eclat_school_invoices'],
       () => {
         this.set('invoices', [])
       }
@@ -1544,7 +1544,7 @@ class SchoolDataStore {
   async recordPayment(receipt: FeePaymentReceipt): Promise<void> {
     await txEngine.executeAtomic(
       `ATOMIC_RECORD_PAYMENT_${receipt.receipt_number}`,
-      ['brent_school_receipts', 'brent_school_invoices', 'brent_school_students'],
+      ['eclat_school_receipts', 'eclat_school_invoices', 'eclat_school_students'],
       () => {
         if (receipt.amount <= 0) {
           throw new IntegrityError('Payment amount must be greater than zero.')
@@ -1580,7 +1580,7 @@ class SchoolDataStore {
   async updateReceipt(receiptId: string, updated: Partial<FeePaymentReceipt>, adminName?: string): Promise<void> {
     await txEngine.executeAtomic(
       `ATOMIC_UPDATE_PAYMENT_${receiptId}`,
-      ['brent_school_receipts', 'brent_school_invoices', 'brent_school_students'],
+      ['eclat_school_receipts', 'eclat_school_invoices', 'eclat_school_students'],
       () => {
         const receipts = this.getReceipts()
         const idx = receipts.findIndex((r) => r.id === receiptId || r.receipt_number === receiptId)
@@ -1629,7 +1629,7 @@ class SchoolDataStore {
   async deleteReceipt(receiptId: string): Promise<void> {
     await txEngine.executeAtomic(
       `ATOMIC_DELETE_RECEIPT_${receiptId}`,
-      ['brent_school_receipts', 'brent_school_invoices', 'brent_school_students'],
+      ['eclat_school_receipts', 'eclat_school_invoices', 'eclat_school_students'],
       () => {
         const receipts = this.getReceipts()
         const target = receipts.find((r) => r.id === receiptId || r.receipt_number === receiptId)
@@ -1661,7 +1661,7 @@ class SchoolDataStore {
   async clearAllReceipts(): Promise<void> {
     await txEngine.executeAtomic(
       'CLEAR_ALL_RECEIPTS',
-      ['brent_school_receipts'],
+      ['eclat_school_receipts'],
       () => {
         this.set('receipts', [])
       }
@@ -1678,7 +1678,7 @@ class SchoolDataStore {
   async sendReminder(reminder: PaymentReminder): Promise<void> {
     await txEngine.executeAtomic(
       `SEND_REMINDER_${reminder.id}`,
-      ['brent_school_reminders'],
+      ['eclat_school_reminders'],
       () => {
         const list = this.getReminders()
         list.unshift(reminder)
@@ -1700,7 +1700,7 @@ class SchoolDataStore {
   async addInquiry(inquiry: SecretaryInquiry): Promise<void> {
     await txEngine.executeAtomic(
       `ADD_INQUIRY_${inquiry.id}`,
-      ['brent_school_inquiries'],
+      ['eclat_school_inquiries'],
       () => {
         const list = this.getInquiries()
         list.unshift(inquiry)
@@ -1718,7 +1718,7 @@ class SchoolDataStore {
   async addNotice(notice: SchoolNotice): Promise<void> {
     await txEngine.executeAtomic(
       `ADD_NOTICE_${notice.id}`,
-      ['brent_school_notices'],
+      ['eclat_school_notices'],
       () => {
         const list = this.getNotices()
         list.unshift(notice)
@@ -1731,7 +1731,7 @@ class SchoolDataStore {
   async updateNotice(id: string, updated: Partial<SchoolNotice>): Promise<void> {
     await txEngine.executeAtomic(
       `UPDATE_NOTICE_${id}`,
-      ['brent_school_notices'],
+      ['eclat_school_notices'],
       () => {
         const list = this.getNotices()
         const idx = list.findIndex((n) => n.id === id)
@@ -1747,7 +1747,7 @@ class SchoolDataStore {
   async deleteNotice(id: string): Promise<void> {
     await txEngine.executeAtomic(
       `DELETE_NOTICE_${id}`,
-      ['brent_school_notices'],
+      ['eclat_school_notices'],
       () => {
         const list = this.getNotices().filter((n) => n.id !== id)
         this.set('notices', list)
@@ -1764,7 +1764,7 @@ class SchoolDataStore {
   async addExam(exam: ExamSession): Promise<void> {
     await txEngine.executeAtomic(
       `ADD_EXAM_${exam.id}`,
-      ['brent_school_exams'],
+      ['eclat_school_exams'],
       () => {
         const list = this.getExams()
         list.unshift(exam)
@@ -1780,7 +1780,7 @@ class SchoolDataStore {
   async addReportCard(card: ReportCard): Promise<void> {
     await txEngine.executeAtomic(
       `ADD_REPORT_CARD_${card.id}`,
-      ['brent_school_report_cards'],
+      ['eclat_school_report_cards'],
       () => {
         const list = this.getReportCards()
         list.unshift(card)
@@ -1796,7 +1796,7 @@ class SchoolDataStore {
   async addResource(resource: AcademicResource): Promise<void> {
     await txEngine.executeAtomic(
       `ADD_RESOURCE_${resource.id}`,
-      ['brent_school_resources'],
+      ['eclat_school_resources'],
       () => {
         const list = this.getResources()
         list.unshift(resource)
@@ -1808,7 +1808,7 @@ class SchoolDataStore {
   async updateResource(id: string, updated: Partial<AcademicResource>): Promise<void> {
     await txEngine.executeAtomic(
       `UPDATE_RESOURCE_${id}`,
-      ['brent_school_resources'],
+      ['eclat_school_resources'],
       () => {
         const list = this.getResources()
         const idx = list.findIndex((r) => r.id === id)
@@ -1823,7 +1823,7 @@ class SchoolDataStore {
   async deleteResource(id: string): Promise<void> {
     await txEngine.executeAtomic(
       `DELETE_RESOURCE_${id}`,
-      ['brent_school_resources'],
+      ['eclat_school_resources'],
       () => {
         const list = this.getResources().filter((r) => r.id !== id)
         this.set('resources', list)
@@ -1838,7 +1838,7 @@ class SchoolDataStore {
   async addDiscipline(record: DisciplineRecord): Promise<void> {
     await txEngine.executeAtomic(
       `ADD_DISCIPLINE_${record.id}`,
-      ['brent_school_discipline'],
+      ['eclat_school_discipline'],
       () => {
         const list = this.getDiscipline()
         list.unshift(record)
@@ -1855,7 +1855,7 @@ class SchoolDataStore {
   async addCourseUnit(unit: CourseUnit): Promise<void> {
     await txEngine.executeAtomic(
       `ADD_COURSE_UNIT_${unit.code}`,
-      ['brent_school_course_units'],
+      ['eclat_school_course_units'],
       () => {
         const list = this.getCourseUnits()
         const existingIdx = list.findIndex(
@@ -1910,7 +1910,7 @@ class SchoolDataStore {
   async updateCourseUnit(id: string, updated: Partial<CourseUnit>): Promise<void> {
     await txEngine.executeAtomic(
       `UPDATE_COURSE_UNIT_${id}`,
-      ['brent_school_course_units'],
+      ['eclat_school_course_units'],
       () => {
         const list = this.getCourseUnits()
         const idx = list.findIndex((u) => u.id === id)
@@ -1927,7 +1927,7 @@ class SchoolDataStore {
   async updateLesson(courseId: string, lessonId: string, updatedLesson: { title?: string; video_url?: string; content?: string; duration_minutes?: number; meeting_url?: string }): Promise<void> {
     await txEngine.executeAtomic(
       `UPDATE_LESSON_${lessonId}`,
-      ['brent_school_course_units'],
+      ['eclat_school_course_units'],
       () => {
         const list = this.getCourseUnits()
         let found = false
@@ -1955,7 +1955,7 @@ class SchoolDataStore {
   async deleteCourseUnit(id: string): Promise<void> {
     await txEngine.executeAtomic(
       `DELETE_COURSE_UNIT_${id}`,
-      ['brent_school_course_units'],
+      ['eclat_school_course_units'],
       () => {
         const list = this.getCourseUnits().filter((u) => u.id !== id)
         this.set('course_units', list)
@@ -1982,7 +1982,7 @@ class SchoolDataStore {
   async deleteUnitRegistration(identifier: string): Promise<void> {
     await txEngine.executeAtomic(
       `DELETE_UNIT_REGISTRATION_${identifier}`,
-      ['brent_school_unit_registrations'],
+      ['eclat_school_unit_registrations'],
       () => {
         const clean = identifier.toLowerCase()
         const raw = this.get<UnitRegistrationReceipt[]>('unit_registrations', [])
@@ -1999,7 +1999,7 @@ class SchoolDataStore {
   async clearAllUnitRegistrations(): Promise<void> {
     await txEngine.executeAtomic(
       'CLEAR_ALL_UNIT_REGISTRATIONS',
-      ['brent_school_unit_registrations'],
+      ['eclat_school_unit_registrations'],
       () => {
         this.set('unit_registrations', [])
       }
@@ -2011,7 +2011,7 @@ class SchoolDataStore {
   async registerStudentUnits(receipt: UnitRegistrationReceipt): Promise<void> {
     await txEngine.executeAtomic(
       `REGISTER_UNITS_${receipt.receipt_number}`,
-      ['brent_school_unit_registrations'],
+      ['eclat_school_unit_registrations'],
       () => {
         const list = this.getUnitRegistrations()
         // Replace existing registration or add new
@@ -2091,7 +2091,7 @@ class SchoolDataStore {
   async addTeacher(teacher: FacultyTeacher): Promise<void> {
     await txEngine.executeAtomic(
       `ADD_TEACHER_${teacher.id}`,
-      ['brent_school_faculty_teachers'],
+      ['eclat_school_faculty_teachers'],
       () => {
         const list = this.getTeachers()
         if (!list.some((t) => t.id === teacher.id || t.name.toLowerCase() === teacher.name.toLowerCase())) {
@@ -2106,7 +2106,7 @@ class SchoolDataStore {
   async deleteTeacher(id: string): Promise<void> {
     await txEngine.executeAtomic(
       `DELETE_TEACHER_${id}`,
-      ['brent_school_faculty_teachers'],
+      ['eclat_school_faculty_teachers'],
       () => {
         const list = this.getTeachers().filter((t) => t.id !== id)
         this.set('faculty_teachers', list)
@@ -2118,7 +2118,7 @@ class SchoolDataStore {
   async clearAllTeachers(): Promise<void> {
     await txEngine.executeAtomic(
       'CLEAR_ALL_TEACHERS',
-      ['brent_school_faculty_teachers'],
+      ['eclat_school_faculty_teachers'],
       () => {
         this.set('faculty_teachers', [])
       }
@@ -2134,7 +2134,7 @@ class SchoolDataStore {
   async addDepartment(dept: CollegeDepartment): Promise<void> {
     await txEngine.executeAtomic(
       `ADD_DEPARTMENT_${dept.code}`,
-      ['brent_school_departments'],
+      ['eclat_school_departments'],
       () => {
         const list = this.getDepartments()
         const existingIdx = list.findIndex(
@@ -2154,7 +2154,7 @@ class SchoolDataStore {
   async updateDepartment(id: string, updated: Partial<CollegeDepartment>): Promise<void> {
     await txEngine.executeAtomic(
       `UPDATE_DEPARTMENT_${id}`,
-      ['brent_school_departments'],
+      ['eclat_school_departments'],
       () => {
         const list = this.getDepartments()
         const idx = list.findIndex((d) => d.id === id)
@@ -2169,7 +2169,7 @@ class SchoolDataStore {
   async deleteDepartment(id: string): Promise<void> {
     await txEngine.executeAtomic(
       `DELETE_DEPARTMENT_${id}`,
-      ['brent_school_departments'],
+      ['eclat_school_departments'],
       () => {
         const list = this.getDepartments().filter((d) => d.id !== id)
         this.set('departments', list)
@@ -2185,7 +2185,7 @@ class SchoolDataStore {
   async addSubject(sub: CollegeSubject): Promise<void> {
     await txEngine.executeAtomic(
       `ADD_SUBJECT_${sub.code}`,
-      ['brent_school_subjects'],
+      ['eclat_school_subjects'],
       () => {
         const list = this.getSubjects()
         const existingIdx = list.findIndex(
@@ -2205,7 +2205,7 @@ class SchoolDataStore {
   async updateSubject(id: string, updated: Partial<CollegeSubject>): Promise<void> {
     await txEngine.executeAtomic(
       `UPDATE_SUBJECT_${id}`,
-      ['brent_school_subjects'],
+      ['eclat_school_subjects'],
       () => {
         const list = this.getSubjects()
         const idx = list.findIndex((s) => s.id === id)
@@ -2220,7 +2220,7 @@ class SchoolDataStore {
   async deleteSubject(id: string): Promise<void> {
     await txEngine.executeAtomic(
       `DELETE_SUBJECT_${id}`,
-      ['brent_school_subjects'],
+      ['eclat_school_subjects'],
       () => {
         const list = this.getSubjects().filter((s) => s.id !== id)
         this.set('subjects', list)
@@ -2241,7 +2241,7 @@ class SchoolDataStore {
     let updatedStudent: StudentRecord | null = null
     await txEngine.executeAtomic(
       `ENROLL_BIOMETRIC_${studentId}`,
-      ['brent_school_students'],
+      ['eclat_school_students'],
       () => {
         const list = this.getStudents()
         const idx = list.findIndex((s) => s.id === studentId)
@@ -2274,7 +2274,7 @@ class SchoolDataStore {
   async removeStudentBiometric(studentId: string): Promise<void> {
     await txEngine.executeAtomic(
       `REMOVE_BIOMETRIC_${studentId}`,
-      ['brent_school_students'],
+      ['eclat_school_students'],
       () => {
         const list = this.getStudents()
         const idx = list.findIndex((s) => s.id === studentId)
@@ -2303,7 +2303,7 @@ class SchoolDataStore {
   async saveBiometricClearanceLog(pass: BiometricFeeClearancePass): Promise<void> {
     await txEngine.executeAtomic(
       `SAVE_CLEARANCE_PASS_${pass.clearance_code}`,
-      ['brent_school_biometric_passes'],
+      ['eclat_school_biometric_passes'],
       () => {
         const list = this.getBiometricClearanceLogs()
         list.unshift(pass)
@@ -2314,22 +2314,22 @@ class SchoolDataStore {
 
   // --- Complete Factory Reset ---
   resetToCleanSlate() {
-    localStorage.removeItem('brent_school_students')
-    localStorage.removeItem('brent_school_timetable')
-    localStorage.removeItem('brent_school_exams')
-    localStorage.removeItem('brent_school_report_cards')
-    localStorage.removeItem('brent_school_invoices')
-    localStorage.removeItem('brent_school_receipts')
-    localStorage.removeItem('brent_school_resources')
-    localStorage.removeItem('brent_school_discipline')
-    localStorage.removeItem('brent_school_notices')
-    localStorage.removeItem('brent_school_reminders')
-    localStorage.removeItem('brent_school_inquiries')
-    localStorage.removeItem('brent_school_course_units')
-    localStorage.removeItem('brent_school_unit_registrations')
-    localStorage.removeItem('brent_school_departments')
-    localStorage.removeItem('brent_school_subjects')
-    localStorage.removeItem('brent_school_biometric_passes')
+    localStorage.removeItem('eclat_school_students')
+    localStorage.removeItem('eclat_school_timetable')
+    localStorage.removeItem('eclat_school_exams')
+    localStorage.removeItem('eclat_school_report_cards')
+    localStorage.removeItem('eclat_school_invoices')
+    localStorage.removeItem('eclat_school_receipts')
+    localStorage.removeItem('eclat_school_resources')
+    localStorage.removeItem('eclat_school_discipline')
+    localStorage.removeItem('eclat_school_notices')
+    localStorage.removeItem('eclat_school_reminders')
+    localStorage.removeItem('eclat_school_inquiries')
+    localStorage.removeItem('eclat_school_course_units')
+    localStorage.removeItem('eclat_school_unit_registrations')
+    localStorage.removeItem('eclat_school_departments')
+    localStorage.removeItem('eclat_school_subjects')
+    localStorage.removeItem('eclat_school_biometric_passes')
   }
 }
 

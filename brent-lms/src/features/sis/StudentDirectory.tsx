@@ -62,14 +62,13 @@ export function StudentDirectory() {
     }
 
     try {
-      const raw = localStorage.getItem('eclat_local_credentials') || localStorage.getItem('brent_local_credentials') || '{}'
+      const raw = localStorage.getItem('eclat_local_credentials') || '{}'
       const creds = JSON.parse(raw)
       creds[cleanAdm] = {
         password: password.trim(),
         profile: profileObj,
       }
       localStorage.setItem('eclat_local_credentials', JSON.stringify(creds))
-      localStorage.setItem('brent_local_credentials', JSON.stringify(creds))
     } catch {}
 
     try {
@@ -679,7 +678,7 @@ export function StudentDirectory() {
                             const cleanAdm = std.admission_number.trim().toLowerCase().replace(/[^a-z0-9]/g, '')
                             let currentPass = 'Student@2026'
                             try {
-                              const raw = localStorage.getItem('eclat_local_credentials') || localStorage.getItem('brent_local_credentials')
+                              const raw = localStorage.getItem('eclat_local_credentials')
                               if (raw) {
                                 const parsed = JSON.parse(raw)
                                 if (parsed[cleanAdm]?.password) {
@@ -995,7 +994,7 @@ export function StudentDirectory() {
                     const cleanAdm = selectedStudent.admission_number.trim().toLowerCase().replace(/[^a-z0-9]/g, '')
                     let currentPass = 'Student@2026'
                     try {
-                      const raw = localStorage.getItem('eclat_local_credentials') || localStorage.getItem('brent_local_credentials')
+                      const raw = localStorage.getItem('eclat_local_credentials')
                       if (raw) {
                         const parsed = JSON.parse(raw)
                         if (parsed[cleanAdm]?.password) {
