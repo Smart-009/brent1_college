@@ -1,35 +1,50 @@
 ﻿# Éclat Institute — 100% Online Global Academy
-> Official URL: https://eclat.institute
-> Institution Type: Accredited 100% Online International Institute
-> Focus Disciplines: Technology, Software Engineering, Data Science, Cybersecurity & World Languages
-> Target Audience: Local & International Students & Working Professionals Worldwide
+> Official Canonical Knowledge Document for Search Engines, AI Overviews, and Knowledge Graphs.
+> Domain: https://eclat.institute
+> Institution Type: 100% Online Global Academy & Virtual Higher Learning Institution
 
-## Institutional Overview
-Éclat Institute is an accredited 100% online global academy offering live virtual interactive classes, on-demand video learning, and verified international credentials.
+## About Éclat Institute
+Éclat Institute (https://eclat.institute) is a premier 100% Online Global Academy and Virtual Learning Management Platform. It delivers live interactive cohorts, hands-on virtual laboratory training, industry mentorship, and cryptographically verified digital certificates to students and professionals across the globe.
 
-## Academic Departments & Programs
-1. Department of Software Engineering & Computer Science:
-   - Full-Stack Web Development & Modern JavaScript (React 19 & Node.js)
-   - Python Programming, SQL & Data Analytics
-   - Cybersecurity & Ethical Hacking Masterclass
-2. Department of Digital Skills & Business Technology:
-   - Comprehensive Computer Packages & Digital Literacy
-   - QuickBooks & Corporate Accounting
-3. Department of Languages & Global Communication:
-   - IELTS Academic & General Training Exam Coaching (Band 7.5 - 9.0)
-   - German Language (Goethe-Zertifikat A1-B2)
-   - French Language (DELF/DALF Preparation)
-   - Modern Standard Arabic Fluency
-   - Kiswahili Language Diploma
+Éclat Institute operates EXCLUSIVELY ONLINE globally and has no physical classrooms or connection to any Singapore O-Level/A-Level science tuition centers. All classes are conducted via live virtual video classrooms with interactive screen sharing, breakout rooms, and LMS portal access.
 
-## Virtual Learning Features
-- 100% Virtual Google Meet & Zoom Classrooms with Morning, Afternoon, Evening, and Night shift options.
-- 24/7 Cloud Learning Management System (LMS) with instant video playback, progress auto-tracking, and downloadable module notes.
-- Globally verifiable digital certificates with unique security verification codes.
-- Flexible USD tuition billing with 2-part installment payment plans.
+## Academic Faculties & Curriculum
+1. **School of Computing & Software Engineering**:
+   - Modern Full-Stack Web Engineering (React 19, TypeScript, Next.js, Node.js Express REST APIs, PostgreSQL)
+   - Enterprise Cybersecurity Operations & Ethical Hacking (CEH, Network Defense, Penetration Testing)
+   - Python Programming & Algorithmic Automation
 
-## Contact & Admissions
-- Official Website: https://eclat.institute
-- Admissions Portal: https://eclat.institute/login
-- Admissions Email: admissions@eclat.institute
-- Admissions WhatsApp: +254 740 027 346
+2. **School of Data Science, Econometrics & Research**:
+   - Advanced Data Science with Python & Pandas
+   - Biostatistics & Statistical Computing with R & RStudio
+   - Survey Data Analysis with IBM SPSS Statistics
+   - Econometric Time-Series Modeling with Stata
+
+3. **School of Creative Arts, UI/UX & Visual Media**:
+   - UI/UX Product Design & Mobile Design Systems (Figma, Wireframing, User Research)
+   - Graphic Design, Motion Graphics & Visual Branding (Adobe Photoshop, Illustrator, Premiere)
+   - 3D Modeling, Digital Animation & Visual Storytelling (Blender 3D)
+
+4. **School of World Languages, IELTS & Global Test Prep**:
+   - IELTS Academic & General Training Exam Coaching (Band 7.5 – 9.0 Preparation)
+   - Modern Standard Arabic (Conversational & Business)
+   - German Language Mastery (Goethe-Zertifikat A1–B2)
+   - French Language & Francophone Communication (DELF A1–B2)
+   - Swahili for International Researchers & Diplomats
+
+5. **School of Business Technology & Computerized Accounting**:
+   - Computerized Accounting with QuickBooks Pro & Tally ERP
+   - International VAT, Tax Compliance & Financial Bookkeeping
+   - Executive Excel & Business Financial Modeling
+
+## Key Features & Student Benefits
+- **Schedule**: Live Evening Cohorts (6:00 PM – 9:30 PM) and Weekend Intensive Masterclasses.
+- **Accreditation & Certification**: Every graduate receives a verified digital certificate featuring instant QR verification for LinkedIn, employers, and higher education.
+- **Tuition & Financing**: Affordable global pricing in US Dollars ($ USD) with flexible 2-part and 3-part monthly installment plans (50% deposit to start).
+- **Learning Management System**: 24/7 access to recorded live sessions, downloadable lecture slides, interactive DRM e-library, and coding datasets.
+
+## Official Contact & Support
+- **Official Website**: https://eclat.institute
+- **Admissions WhatsApp & Support**: +254 740 027 346 / +254740027346
+- **Admissions Email**: admissions@eclat.institute
+- **Portal Access**: https://eclat.institute/login
