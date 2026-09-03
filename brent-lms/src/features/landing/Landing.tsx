@@ -3892,14 +3892,14 @@ export function Landing() {
                     <strong style={{ fontSize: '1rem', color: '#166534' }}>Method 1: Instant 1-Tap App Install (Recommended)</strong>
                   </div>
                   <p style={{ fontSize: '0.86rem', color: '#15803d', lineHeight: 1.5, margin: '0 0 1rem' }}>
-                    Installs Éclat directly into your app drawer with offline support, 0 storage waste, and automatic updates. No file downloads or security warnings.
+                    Installs Éclat directly into your app drawer with offline study support, 0 storage waste, and automatic updates. No file downloads or security warnings.
                   </p>
                   <button
                     type="button"
                     onClick={async () => {
                       const res = await promptInstall()
                       if (!res) {
-                        setToastMessage('Tap the three dots (⋮) in your browser and select "Install app" or "Add to Home Screen".')
+                        setToastMessage('To install: Tap the 3 dots (⋮) in your browser ➔ select "Install app" or "Add to Home Screen".')
                       }
                     }}
                     className="btn"
@@ -3908,29 +3908,30 @@ export function Landing() {
                     <span>⚡</span>
                     <span>1-Tap Install on This Device</span>
                   </button>
+
+                  <div style={{ marginTop: '0.85rem', padding: '0.65rem 0.85rem', background: '#ffffff', borderRadius: '8px', border: '1px solid #bbf7d0', fontSize: '0.82rem', color: '#166534' }}>
+                    📲 <strong>Tip:</strong> If the prompt doesn't open automatically, tap your browser's <strong>⋮ Menu (Top Right)</strong> ➔ tap <strong>"Install app"</strong> or <strong>"Add to Home screen"</strong>.
+                  </div>
                 </div>
 
                 <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '14px', padding: '1.25rem' }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '0.4rem' }}>
                     <span style={{ fontSize: '1.3rem' }}>📦</span>
-                    <strong style={{ fontSize: '1rem', color: '#0f172a' }}>Method 2: Standalone Android APK Package</strong>
+                    <strong style={{ fontSize: '1rem', color: '#0f172a' }}>Method 2: Request Direct .APK File via WhatsApp</strong>
                   </div>
                   <p style={{ fontSize: '0.86rem', color: '#64748b', lineHeight: 1.5, margin: '0 0 1rem' }}>
-                    Standard offline APK package for manual installation and sideloading.
+                    Prefer a standalone Android APK installer file? Our admissions team will send you the verified package directly.
                   </p>
                   <a
-                    href="https://github.com/Smart-009/brent1_college/releases/download/latest/eclat-institute.apk"
+                    href={getWhatsAppInquiryUrl('Hello Eclat Admissions! Please send me the official Android APK installation file.')}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="btn"
                     style={{ width: '100%', background: '#0f172a', color: '#ffffff', fontWeight: 800, padding: '0.75rem', borderRadius: '10px', fontSize: '0.92rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', textDecoration: 'none' }}
                   >
-                    <span>📥</span>
-                    <span>Download APK File (eclat-institute.apk)</span>
+                    <span>💬</span>
+                    <span>Request .APK File on WhatsApp</span>
                   </a>
-                  <div style={{ marginTop: '0.75rem', fontSize: '0.78rem', color: '#94a3b8', textAlign: 'center' }}>
-                    💡 Tip: When the download finishes, tap <strong>Open</strong> ➔ tap <strong>Install</strong>.
-                  </div>
                 </div>
               </div>
             )}
@@ -4014,20 +4015,20 @@ export function Landing() {
                 <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '14px', padding: '1.25rem' }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '0.4rem' }}>
                     <span style={{ fontSize: '1.3rem' }}>💻</span>
-                    <strong style={{ fontSize: '1rem', color: '#0f172a' }}>Method 2: Standalone Windows .EXE Installer</strong>
+                    <strong style={{ fontSize: '1rem', color: '#0f172a' }}>Method 2: Standalone Windows .EXE Setup</strong>
                   </div>
                   <p style={{ fontSize: '0.86rem', color: '#64748b', lineHeight: 1.5, margin: '0 0 1rem' }}>
-                    Standard Windows desktop installer with hardware anti-cheat & offline reader.
+                    Standard Windows desktop installer package with anti-cheat examination mode and local storage.
                   </p>
                   <a
-                    href="https://github.com/Smart-009/brent1_college/releases/download/latest/Eclat-Institute-Setup.exe"
+                    href={getWhatsAppInquiryUrl('Hello Eclat Admissions! Please send me the official Windows Desktop (.EXE) installer.')}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="btn"
                     style={{ width: '100%', background: '#0f172a', color: '#ffffff', fontWeight: 800, padding: '0.75rem', borderRadius: '10px', fontSize: '0.92rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', textDecoration: 'none' }}
                   >
-                    <span>📥</span>
-                    <span>Download Windows Installer (Setup.exe)</span>
+                    <span>💬</span>
+                    <span>Request Windows Installer on WhatsApp</span>
                   </a>
                 </div>
               </div>
