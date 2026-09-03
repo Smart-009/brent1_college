@@ -12,8 +12,35 @@
     "preview": "vite preview",
     "desktop": "electron .",
     "desktop:build": "npm run build && electron .",
+    "desktop:dist": "npm run build && electron-builder --win",
     "cap:sync": "npm run build && npx cap sync",
     "android:open": "npm run build && npx cap open android"
+  },
+  "build": {
+    "appId": "com.eclatinstitute.lms",
+    "productName": "Éclat Institute",
+    "directories": {
+      "output": "dist-electron"
+    },
+    "files": [
+      "dist/**/*",
+      "electron/**/*",
+      "public/**/*"
+    ],
+    "win": {
+      "target": [
+        "nsis",
+        "portable"
+      ],
+      "icon": "public/logo.png"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "Éclat Institute"
+    }
   },
   "dependencies": {
     "@capacitor/android": "^8.5.1",
@@ -36,6 +63,7 @@
     "@types/react-dom": "^19.2.3",
     "@vitejs/plugin-react": "^6.0.3",
     "electron": "^43.4.0",
+    "electron-builder": "^26.0.2",
     "oxlint": "^1.71.0",
     "typescript": "~6.0.2",
     "vite": "^8.1.1"

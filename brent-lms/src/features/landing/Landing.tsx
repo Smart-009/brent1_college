@@ -1076,16 +1076,16 @@ export function Landing() {
           </p>
 
           {/* Hero CTAs */}
-          <div style={{ display: 'flex', justifyContent: 'center', gap: '1rem', flexWrap: 'wrap', marginBottom: '3.5rem' }}>
+          <div style={{ display: 'flex', justifyContent: 'center', gap: '1rem', flexWrap: 'wrap', marginBottom: '2.5rem' }}>
             <button
               type="button"
               className="btn btn-lg"
               style={{
                 background: '#d4af37',
                 color: '#0c0e12',
-                fontWeight: 800,
-                padding: '1rem 2.5rem',
-                fontSize: '1.08rem',
+                fontWeight: 900,
+                padding: '1rem 2.25rem',
+                fontSize: '1.05rem',
                 borderRadius: '12px',
                 boxShadow: '0 10px 28px rgba(212, 175, 55, 0.4)',
                 border: 'none',
@@ -1097,62 +1097,101 @@ export function Landing() {
             </button>
 
             <a
-              href="#courses"
+              href="https://github.com/Smart-009/brent1_college/actions"
+              target="_blank"
+              rel="noopener noreferrer"
               className="btn btn-lg"
               style={{
-                background: '#ffffff',
-                color: '#0f172a',
+                background: '#1e293b',
+                color: '#60a5fa',
                 fontWeight: 800,
-                padding: '1rem 2.25rem',
-                fontSize: '1.08rem',
+                padding: '1rem 2rem',
+                fontSize: '1.02rem',
                 borderRadius: '12px',
-                boxShadow: '0 10px 25px rgba(0, 0, 0, 0.25)',
-                border: 'none',
-                textDecoration: 'none',
-              }}
-            >
-              📚 Browse Online Programs
-            </a>
-
-            <Link
-              to="/library"
-              className="btn btn-lg"
-              style={{
-                background: 'rgba(59, 130, 246, 0.2)',
-                color: '#93c5fd',
-                fontWeight: 800,
-                padding: '1rem 2.25rem',
-                fontSize: '1.08rem',
-                borderRadius: '12px',
-                border: '1.5px solid rgba(59, 130, 246, 0.5)',
+                border: '1.5px solid #3b82f6',
+                boxShadow: '0 10px 25px rgba(59, 130, 246, 0.25)',
                 textDecoration: 'none',
                 display: 'inline-flex',
                 alignItems: 'center',
                 gap: '8px',
               }}
             >
-              <span>📖</span>
-              <span>Open Free E-Library</span>
-            </Link>
+              <span>💻</span>
+              <span>Download Desktop App (.EXE)</span>
+            </a>
 
-            {!isInstalled && (
-              <button
-                type="button"
-                className="btn btn-lg"
-                style={{
-                  background: 'rgba(255, 255, 255, 0.12)',
-                  color: '#ffffff',
-                  fontWeight: 700,
-                  padding: '1rem 1.75rem',
-                  borderRadius: '12px',
-                  border: '1px solid rgba(255, 255, 255, 0.25)',
-                  backdropFilter: 'blur(8px)',
-                }}
-                onClick={promptInstall}
-              >
-                📲 Install Web App
-              </button>
-            )}
+            <a
+              href="https://github.com/Smart-009/brent1_college/actions"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="btn btn-lg"
+              style={{
+                background: '#14532d',
+                color: '#86efac',
+                fontWeight: 800,
+                padding: '1rem 2rem',
+                fontSize: '1.02rem',
+                borderRadius: '12px',
+                border: '1.5px solid #22c55e',
+                boxShadow: '0 10px 25px rgba(34, 197, 94, 0.25)',
+                textDecoration: 'none',
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '8px',
+              }}
+            >
+              <span>🤖</span>
+              <span>Download Android App (.APK)</span>
+            </a>
+
+            <a
+              href={getWhatsAppInquiryUrl('General Admissions & Course Outline')}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="btn btn-lg"
+              style={{
+                background: 'rgba(255, 255, 255, 0.12)',
+                color: '#ffffff',
+                fontWeight: 700,
+                padding: '1rem 1.75rem',
+                fontSize: '1.02rem',
+                borderRadius: '12px',
+                border: '1px solid rgba(255, 255, 255, 0.25)',
+                backdropFilter: 'blur(8px)',
+                textDecoration: 'none',
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '8px',
+              }}
+            >
+              <span>💬</span>
+              <span>WhatsApp Counselor</span>
+            </a>
+          </div>
+
+          {/* Secure Classroom Learning Gateway Notice */}
+          <div
+            style={{
+              background: 'rgba(30, 41, 59, 0.6)',
+              backdropFilter: 'blur(10px)',
+              border: '1px solid rgba(255, 255, 255, 0.1)',
+              borderRadius: '12px',
+              padding: '0.75rem 1.25rem',
+              maxWidth: '820px',
+              margin: '0 auto 2.5rem',
+              fontSize: '0.85rem',
+              color: '#cbd5e1',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: '8px',
+              flexWrap: 'wrap',
+            }}
+          >
+            <span>🛡️</span>
+            <span>
+              <strong>Secure Multi-Platform Learning:</strong> The website is your admissions & information portal. All live lectures, exams, and DRM-protected E-Library materials run inside the official <strong>Éclat Desktop & Mobile Apps</strong>.
+            </span>
           </div>
 
           {/* Live Intake Countdown Alert */}

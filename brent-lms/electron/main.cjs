@@ -2,7 +2,7 @@
 // Eclat Institute — Native Desktop Application Main Process
 // ============================================================
 
-const { app, BrowserWindow, Menu, shell } = require('electron')
+const { app, BrowserWindow, Menu, shell, ipcMain } = require('electron')
 const path = require('path')
 
 const isDev = !app.isPackaged && process.env.NODE_ENV !== 'production'
@@ -110,6 +110,25 @@ function createWindow() {
   mainWindow.webContents.setWindowOpenHandler(({ url }) => {
     shell.openExternal(url)
     return { action: 'deny' }
+  })
+
+  // Hardware Screen Capture Protection & Native Desktop Utilities
+  ipcMain.on('enable-screen-protection', () => {
+    try {
+      mainWindow.setContentProtection(true)
+    } catch (e) {}
+  })
+
+  ipcMain.on('disable-screen-protection', () => {
+    try {
+      mainWindow.setContentProtection(false)
+    } catch (e) {}
+  })
+
+  ipcMain.on('print-page', () => {
+    try {
+      mainWindow.webContents.print()
+    } catch (e) {}
   })
 }
 
