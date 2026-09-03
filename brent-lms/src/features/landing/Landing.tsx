@@ -2884,11 +2884,11 @@ export function Landing() {
               </div>
 
               <a
-                href="https://github.com/Smart-009/brent1_college/actions"
+                href="https://github.com/Smart-009/brent1_college/releases/download/latest/Eclat-Institute-Setup.exe"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="btn btn-primary"
-                style={{ fontWeight: 800, padding: '0.85rem', borderRadius: '12px', textAlign: 'center', textDecoration: 'none', display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '8px' }}
+                style={{ fontWeight: 800, padding: '0.85rem', borderRadius: '12px', textAlign: 'center', textDecoration: 'none', display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '8px', boxShadow: '0 4px 14px rgba(37, 99, 235, 0.4)' }}
               >
                 <span>💻</span>
                 <span>Download Windows App (.EXE)</span>
@@ -2916,14 +2916,14 @@ export function Landing() {
               </div>
 
               <a
-                href="https://github.com/Smart-009/brent1_college/actions"
+                href="https://github.com/Smart-009/brent1_college/releases/download/latest/eclat-institute.apk"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="btn"
-                style={{ background: '#16a34a', color: '#ffffff', fontWeight: 800, padding: '0.85rem', borderRadius: '12px', textAlign: 'center', textDecoration: 'none', display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '8px' }}
+                style={{ background: '#16a34a', color: '#ffffff', fontWeight: 800, padding: '0.85rem', borderRadius: '12px', textAlign: 'center', textDecoration: 'none', display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '8px', boxShadow: '0 4px 14px rgba(22, 163, 74, 0.4)' }}
               >
                 <span>🤖</span>
-                <span>Download Android APK</span>
+                <span>Download Android APK (Direct)</span>
               </a>
             </div>
 
