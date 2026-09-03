@@ -1633,7 +1633,7 @@ export function Landing() {
                 WebkitTextFillColor: 'transparent',
               }}
             >
-              100% Online Live Classes • Verified Diplomas
+              100% Online Live Classes & Industry Mentorship
             </span>
           </h1>
 
@@ -1643,12 +1643,12 @@ export function Landing() {
               maxWidth: '820px',
               margin: '0 auto 2.25rem',
               fontSize: isMobile ? '1.02rem' : '1.18rem',
-              color: '#cbd5e1',
+              color: '#e2e8f0',
               lineHeight: 1.65,
               fontWeight: 400,
             }}
           >
-            Master in-demand <strong>Tech & Software</strong> (React, Node, Python, Cyber), <strong>Data Science & Research</strong> (R, SPSS, Stata), <strong>World Languages</strong> (IELTS, German, Arabic, French), and <strong>Accounting</strong> with live interactive evening classes, expert mentorship, and flexible installment plans.
+            Master in-demand <strong style={{ color: '#ffffff', fontWeight: 800 }}>Tech & Software</strong> (React, Node, Python, Cyber), <strong style={{ color: '#ffffff', fontWeight: 800 }}>Data Science & Research</strong> (R, SPSS, Stata), <strong style={{ color: '#ffffff', fontWeight: 800 }}>World Languages</strong> (IELTS, German, Arabic, French), and <strong style={{ color: '#ffffff', fontWeight: 800 }}>Accounting</strong> with live interactive evening classes, expert mentorship, and flexible installment plans.
           </p>
 
           {/* Primary Academy CTAs */}
@@ -1727,20 +1727,20 @@ export function Landing() {
               gap: '1.75rem',
               flexWrap: 'wrap',
               fontSize: '0.88rem',
-              color: '#94a3b8',
+              color: '#cbd5e1',
               fontWeight: 600,
               paddingTop: '1rem',
               borderTop: '1px solid rgba(255, 255, 255, 0.1)',
             }}
           >
             <span style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
-              <span style={{ color: '#22c55e' }}>✓</span> ⭐️ 4.9/5 by 3,500+ Online Students Globally
+              <span style={{ color: '#22c55e' }}>✓</span> ⭐️ 4.9/5 Student Satisfaction
             </span>
             <span style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
               <span style={{ color: '#22c55e' }}>✓</span> 100% Virtual Evening & Weekend Cohorts
             </span>
             <span style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
-              <span style={{ color: '#22c55e' }}>✓</span> Cryptographically Verified Diplomas
+              <span style={{ color: '#22c55e' }}>✓</span> Verified Digital Certificates
             </span>
             <span style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
               <span style={{ color: '#22c55e' }}>✓</span> 50% Flexible Monthly Installments
@@ -2742,13 +2742,13 @@ export function Landing() {
       <section id="testimonials" style={{ padding: '5rem 1.5rem', maxWidth: '1240px', margin: '0 auto' }}>
         <div style={{ textAlign: 'center', marginBottom: '3.5rem' }}>
           <span style={{ fontSize: '0.82rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.08em', color: '#2563eb' }}>
-            🌍 GLOBAL ALUMNI OUTCOMES
+            STUDENT REVIEWS
           </span>
           <h2 style={{ fontSize: '2.3rem', fontWeight: 900, color: '#0f172a', margin: '0.35rem 0 0.75rem' }}>
-            International Learners. Global Career Transformations.
+            Real Alumni. Real Career Transformations.
           </h2>
-          <p style={{ fontSize: '1.05rem', color: '#1e293b', maxWidth: '700px', margin: '0 auto', fontWeight: 500 }}>
-            Hear from our global online learners across the UK, Germany, Canada, UAE, USA, France, and Ireland who accelerated their professional careers with Éclat Institute.
+          <p style={{ fontSize: '1.05rem', color: '#334155', maxWidth: '650px', margin: '0 auto', fontWeight: 500 }}>
+            Hear how our practical live online classes and mentor reviews helped students land rewarding jobs and scale their skills.
           </p>
         </div>
 
@@ -2776,16 +2776,16 @@ export function Landing() {
                   {t.location && (
                     <span
                       style={{
-                        background: '#f1f5f9',
-                        color: '#334155',
+                        background: '#f8fafc',
+                        color: '#475569',
                         fontSize: '0.74rem',
-                        fontWeight: 700,
-                        padding: '3px 9px',
-                        borderRadius: '999px',
+                        fontWeight: 600,
+                        padding: '3px 8px',
+                        borderRadius: '6px',
                         border: '1px solid #e2e8f0',
                       }}
                     >
-                      📍 {t.location}
+                      {t.location}
                     </span>
                   )}
                 </div>
@@ -3025,7 +3025,7 @@ export function Landing() {
               <a href="#courses" style={{ color: '#cbd5e1', textDecoration: 'none', transition: 'color 0.2s' }}>📈 Computerized Accounting (QuickBooks & iTax)</a>
               <a href="#courses" style={{ color: '#cbd5e1', textDecoration: 'none', transition: 'color 0.2s' }}>🎓 IELTS Exam Preparation (Target Band 7.5 - 9.0)</a>
               <a href="#courses" style={{ color: '#cbd5e1', textDecoration: 'none', transition: 'color 0.2s' }}>🗣️ English Language Mastery & Public Speaking</a>
-              <a href="#courses" style={{ color: '#cbd5e1', textDecoration: 'none', transition: 'color 0.2s' }}>🌴 Arabic, French & German Diplomas</a>
+              <a href="#courses" style={{ color: '#cbd5e1', textDecoration: 'none', transition: 'color 0.2s' }}>🗣️ Arabic, French & German Languages</a>
             </div>
           </div>
 
