@@ -2584,19 +2584,35 @@ export function Landing() {
           <div style={{ background: '#ffffff', border: '1px solid #cbd5e1', borderRadius: '20px', padding: '2.5rem', boxShadow: '0 8px 20px rgba(0,0,0,0.06)' }}>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '2rem' }}>
               <div>
-                <label className="label">1. Select Short Course</label>
-                <select
-                  className="input"
-                  value={calcCourseId}
-                  onChange={(e) => setCalcCourseId(e.target.value)}
-                  style={{ marginBottom: '1.25rem', fontWeight: 600 }}
-                >
-                  {coursesList.map((c) => (
-                    <option key={c.id} value={c.id}>
-                      {c.icon} {c.title} — ({c.fee})
-                    </option>
-                  ))}
-                </select>
+                <label className="label" style={{ fontWeight: 800, color: '#0f172a', marginBottom: '0.45rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <span>1. Select Program or Course</span>
+                  <span style={{ fontSize: '0.72rem', background: '#eff6ff', color: '#2563eb', padding: '2px 8px', borderRadius: '4px', fontWeight: 700, border: '1px solid #bfdbfe' }}>▼ Click to change</span>
+                </label>
+                <div style={{ position: 'relative', marginBottom: '1.25rem' }}>
+                  <select
+                    className="input"
+                    value={calcCourseId}
+                    onChange={(e) => setCalcCourseId(e.target.value)}
+                    style={{
+                      fontWeight: 700,
+                      fontSize: '0.94rem',
+                      color: '#0f172a',
+                      background: '#ffffff',
+                      border: '2px solid #94a3b8',
+                      borderRadius: '12px',
+                      padding: '0.85rem 2.75rem 0.85rem 1rem',
+                      cursor: 'pointer',
+                      boxShadow: '0 2px 6px rgba(0,0,0,0.04)',
+                      width: '100%',
+                    }}
+                  >
+                    {coursesList.map((c) => (
+                      <option key={c.id} value={c.id} style={{ color: '#0f172a', background: '#ffffff', padding: '8px' }}>
+                        {c.icon} {c.title} — ({c.fee})
+                      </option>
+                    ))}
+                  </select>
+                </div>
 
                 <label className="label">2. Select Payment Schedule</label>
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem', marginBottom: '1.25rem' }}>
