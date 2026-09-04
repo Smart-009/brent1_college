@@ -4,6 +4,7 @@ import { useIsMobile } from '@/hooks/useMediaQuery'
 import { schoolStore } from '@/lib/schoolData'
 import { supabase } from '@/lib/supabase'
 import { getEmbeddableDocumentUrl } from '@/lib/utils'
+import { isNativeApp, OFFICIAL_APK_URL, LOCAL_APK_URL } from '@/utils/platform'
 import { ACADEMIC_HANDBOOKS, AcademicHandbook } from './academicHandbookData'
 import type { AcademicResource } from '@/types/school'
 
@@ -246,17 +247,16 @@ export function ResourceLibrary() {
     })
   }, [resources, search, selectedCat, selectedSub, bookmarkedIds])
 
-  const isNativeApp =
-    typeof window !== 'undefined' &&
-    (Boolean((window as any).Capacitor?.isNativePlatform?.()) ||
-     (window as any).Capacitor?.getPlatform?.() === 'android' ||
-     (window as any).Capacitor?.getPlatform?.() === 'ios' ||
-     window.location.protocol === 'capacitor:' ||
-     window.location.protocol === 'ionic:')
-
+  const isNative = isNativeApp()
   const [showAppDownloadPrompt, setShowAppDownloadPrompt] = useState(false)
 
   const handleOpenReader = (res: AcademicResource) => {
+    // Hardware anti-screenshot DRM protection: Block full textbook/document reading on standard web browsers
+    if (!isNative && !isAdmin) {
+      setShowAppDownloadPrompt(true)
+      return
+    }
+
     setActiveChapterIndex(0)
     setReadingResource(res)
 
@@ -447,6 +447,58 @@ export function ResourceLibrary() {
         )}
       </div>
 
+      {/* Web DRM Anti-Screenshot Banner */}
+      {!isNative && !isAdmin && (
+        <div
+          style={{
+            background: 'linear-gradient(135deg, #090d16 0%, #0f172a 100%)',
+            border: '1.5px solid rgba(212, 175, 55, 0.4)',
+            borderRadius: '16px',
+            padding: '1.15rem 1.35rem',
+            marginBottom: '1.5rem',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            flexWrap: 'wrap',
+            gap: '1rem',
+            boxShadow: '0 8px 24px rgba(0,0,0,0.3)',
+          }}
+        >
+          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+            <span style={{ fontSize: '1.8rem' }}>🛡️</span>
+            <div>
+              <div style={{ fontWeight: 900, color: '#d4af37', fontSize: '0.98rem', letterSpacing: '0.02em' }}>
+                Hardware Anti-Screenshot Protection Active
+              </div>
+              <div style={{ fontSize: '0.82rem', color: '#94a3b8', marginTop: '2px', lineHeight: 1.4 }}>
+                To protect institutional copyright, all academic handbooks, lab manuals, and syllabus files are readable exclusively inside the <strong>Official Éclat Native App</strong>.
+              </div>
+            </div>
+          </div>
+          <a
+            href={LOCAL_APK_URL}
+            download="eclat-institute.apk"
+            className="btn"
+            style={{
+              background: 'linear-gradient(135deg, #16a34a, #15803d)',
+              color: '#ffffff',
+              fontWeight: 800,
+              padding: '0.65rem 1.25rem',
+              borderRadius: '10px',
+              fontSize: '0.88rem',
+              textDecoration: 'none',
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '6px',
+              boxShadow: '0 4px 12px rgba(22, 163, 74, 0.35)',
+            }}
+          >
+            <span>🤖</span>
+            <span>Download Android App (.APK)</span>
+          </a>
+        </div>
+      )}
+
       {/* Filter and Search Bar */}
       <div className="card mb-6" style={{ padding: '1.25rem', borderRadius: '16px', background: 'var(--color-surface)', boxShadow: '0 4px 20px rgba(0,0,0,0.06)' }}>
         <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
@@ -607,7 +659,7 @@ export function ResourceLibrary() {
                     className="btn btn-primary btn-sm"
                     onClick={() => handleOpenReader(res)}
                   >
-                    📖 Read Online 🔒
+                    {isNative || isAdmin ? '📖 Read Online 🔒' : '📲 Read in Official App 🔒'}
                   </button>
                 </div>
               </div>
@@ -2158,38 +2210,60 @@ export function ResourceLibrary() {
               To protect academic materials and enable seamless offline study, all textbooks, lecture slides, and past papers are read exclusively inside the official <strong>Éclat Institute App</strong>.
             </p>
 
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.85rem', alignItems: 'center' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.85rem', alignItems: 'center', width: '100%', maxWidth: '360px', margin: '0 auto' }}>
               <a
-                href="/eclat-institute.apk"
+                href={LOCAL_APK_URL}
                 download="eclat-institute.apk"
                 className="btn"
                 style={{
+                  width: '100%',
                   background: 'linear-gradient(135deg, #16a34a, #15803d)',
                   color: '#ffffff',
                   fontWeight: 800,
-                  padding: '0.9rem 2rem',
+                  padding: '0.9rem 1.5rem',
                   borderRadius: '12px',
-                  fontSize: '1.05rem',
+                  fontSize: '1rem',
                   textDecoration: 'none',
                   display: 'inline-flex',
                   alignItems: 'center',
+                  justifyContent: 'center',
                   gap: '0.65rem',
                   boxShadow: '0 6px 20px rgba(22, 163, 74, 0.4)',
                 }}
               >
                 <span>🤖</span>
-                <span>Download Android App (.APK)</span>
+                <span>Download Official Android App (.APK)</span>
               </a>
 
-              <div style={{ fontSize: '0.85rem', color: '#64748b', marginTop: '0.25rem' }}>
-                💻 <strong>Desktop App (Windows & Mac)</strong> — <em>Launching Tomorrow</em>
-              </div>
+              <a
+                href={OFFICIAL_APK_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{
+                  width: '100%',
+                  background: 'rgba(255, 255, 255, 0.08)',
+                  border: '1px solid rgba(255, 255, 255, 0.15)',
+                  color: '#e2e8f0',
+                  fontWeight: 700,
+                  padding: '0.65rem 1rem',
+                  borderRadius: '10px',
+                  fontSize: '0.82rem',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '6px',
+                  textDecoration: 'none',
+                }}
+              >
+                <span>🔗</span>
+                <span>GitHub Release Mirror</span>
+              </a>
 
               <button
                 type="button"
                 className="btn btn-secondary btn-sm"
                 onClick={() => setShowAppDownloadPrompt(false)}
-                style={{ marginTop: '0.75rem', padding: '0.5rem 1.5rem', borderRadius: '8px' }}
+                style={{ marginTop: '0.5rem', padding: '0.5rem 1.5rem', borderRadius: '8px' }}
               >
                 Continue Exploring Catalog
               </button>
