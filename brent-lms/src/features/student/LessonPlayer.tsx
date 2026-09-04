@@ -679,18 +679,49 @@ export function LessonPlayer() {
                           </button>
                         </div>
                       </div>
-                      <iframe
-                        src={getEmbeddableDocumentUrl(res.file_url, docEngine)}
-                        title={res.file_name}
-                        style={{
-                          width: '100%',
-                          height: 580,
-                          border: '1px solid var(--color-border)',
-                          borderRadius: 8,
-                          background: '#ffffff',
-                        }}
-                        allow="autoplay"
-                      />
+                      <div style={{ position: 'relative', width: '100%', borderRadius: 8, overflow: 'hidden' }}>
+                        {/* Top-Right DRM Shield: Covers & Blocks Google Drive's "Pop-out / Open Outside" Button */}
+                        <div
+                          style={{
+                            position: 'absolute',
+                            top: 0,
+                            right: 0,
+                            width: '85px',
+                            height: '62px',
+                            zIndex: 40,
+                            cursor: 'default',
+                            pointerEvents: 'auto',
+                            background: 'transparent',
+                            userSelect: 'none',
+                          }}
+                          onClick={(e) => {
+                            e.stopPropagation()
+                            e.preventDefault()
+                          }}
+                          onMouseDown={(e) => {
+                            e.stopPropagation()
+                            e.preventDefault()
+                          }}
+                          onTouchStart={(e) => {
+                            e.stopPropagation()
+                            e.preventDefault()
+                          }}
+                          title="🔒 In-App DRM Protected Content"
+                        />
+                        <iframe
+                          src={getEmbeddableDocumentUrl(res.file_url, docEngine)}
+                          title={res.file_name}
+                          sandbox="allow-scripts allow-same-origin allow-forms"
+                          style={{
+                            width: '100%',
+                            height: 580,
+                            border: '1px solid var(--color-border)',
+                            borderRadius: 8,
+                            background: '#ffffff',
+                          }}
+                          allow="autoplay"
+                        />
+                      </div>
                     </div>
                   )}
                 </div>

@@ -2422,9 +2422,39 @@ export function ResourceLibrary() {
                       position: 'relative',
                     }}
                   >
+                    {/* Top-Right DRM Shield: Covers & Blocks Google Drive's "Pop-out / Open Outside" Button */}
+                    <div
+                      style={{
+                        position: 'absolute',
+                        top: 0,
+                        right: 0,
+                        width: '85px',
+                        height: '62px',
+                        zIndex: 40,
+                        cursor: 'default',
+                        pointerEvents: 'auto',
+                        background: 'transparent',
+                        userSelect: 'none',
+                      }}
+                      onClick={(e) => {
+                        e.stopPropagation()
+                        e.preventDefault()
+                      }}
+                      onMouseDown={(e) => {
+                        e.stopPropagation()
+                        e.preventDefault()
+                      }}
+                      onTouchStart={(e) => {
+                        e.stopPropagation()
+                        e.preventDefault()
+                      }}
+                      title="🔒 In-App DRM Protected Content"
+                    />
+
                     <iframe
                       src={getEmbeddableDocumentUrl(readingResource.file_url)}
                       title={readingResource.title}
+                      sandbox="allow-scripts allow-same-origin allow-forms"
                       style={{
                         width: '100%',
                         height: '100%',
