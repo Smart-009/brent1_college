@@ -3379,7 +3379,7 @@ export function Landing() {
                   </div>
 
                   <a
-                    href="https://github.com/Smart-009/brent1_college/releases/download/v1.0.0/eclat-institute.apk"
+                    href="/downloads/eclat-institute.apk"
                     download="eclat-institute.apk"
                     style={{
                       width: '100%',
@@ -3441,8 +3441,8 @@ export function Landing() {
                   </div>
 
                   <a
-                    href="https://github.com/Smart-009/brent1_college/releases/download/v1.0.0/Eclat-Institute-Setup.exe"
-                    download="Eclat-Institute-Setup.exe"
+                    href="/downloads/eclat-institute-setup.exe"
+                    download="eclat-institute-setup.exe"
                     style={{
                       width: '100%',
                       background: 'linear-gradient(135deg, #1d4ed8 0%, #2563eb 100%)',

@@ -3154,37 +3154,13 @@ export function ResourceLibrary() {
                 <span>Download Official Android App (.APK)</span>
               </a>
 
-              <a
-                href={OFFICIAL_APK_URL}
-                target="_blank"
-                rel="noopener noreferrer"
-                style={{
-                  width: '100%',
-                  background: 'rgba(255, 255, 255, 0.08)',
-                  border: '1px solid rgba(255, 255, 255, 0.15)',
-                  color: '#e2e8f0',
-                  fontWeight: 700,
-                  padding: '0.65rem 1rem',
-                  borderRadius: '10px',
-                  fontSize: '0.82rem',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  gap: '6px',
-                  textDecoration: 'none',
-                }}
-              >
-                <span>🔗</span>
-                <span>GitHub Release Mirror</span>
-              </a>
-
               <button
                 type="button"
                 className="btn btn-secondary btn-sm"
                 onClick={() => setShowAppDownloadPrompt(false)}
-                style={{ marginTop: '0.5rem', padding: '0.5rem 1.5rem', borderRadius: '8px' }}
+                style={{ marginTop: '0.75rem', padding: '0.6rem 1.5rem', borderRadius: '10px', fontWeight: 700 }}
               >
-                Continue Exploring Catalog
+                Continue Exploring Library Catalog
               </button>
             </div>
           </div>

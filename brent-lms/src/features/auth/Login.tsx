@@ -418,91 +418,43 @@ export function Login() {
                       background: 'linear-gradient(135deg, #16a34a 0%, #15803d 100%)',
                       color: '#ffffff',
                       fontWeight: 800,
-                      padding: '0.75rem 1rem',
-                      borderRadius: '10px',
-                      fontSize: '0.9rem',
+                      padding: '0.85rem 1rem',
+                      borderRadius: '12px',
+                      fontSize: '0.92rem',
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
                       gap: '8px',
                       textDecoration: 'none',
-                      boxShadow: '0 4px 12px rgba(22, 163, 74, 0.3)',
+                      boxShadow: '0 4px 14px rgba(22, 163, 74, 0.35)',
                     }}
                   >
                     <span>🤖</span>
-                    <span>Download Android App (.APK)</span>
+                    <span>Download Official Android App (.APK)</span>
                   </a>
 
                   {/* Laptop / Desktop App Button */}
                   <a
                     href={LOCAL_DESKTOP_URL}
-                    download="Eclat-Institute-Setup.exe"
+                    download="eclat-institute-setup.exe"
                     style={{
                       background: 'linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%)',
                       color: '#ffffff',
                       fontWeight: 800,
-                      padding: '0.75rem 1rem',
-                      borderRadius: '10px',
-                      fontSize: '0.9rem',
+                      padding: '0.85rem 1rem',
+                      borderRadius: '12px',
+                      fontSize: '0.92rem',
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
                       gap: '8px',
                       textDecoration: 'none',
-                      boxShadow: '0 4px 12px rgba(37, 99, 235, 0.3)',
+                      boxShadow: '0 4px 14px rgba(37, 99, 235, 0.35)',
                     }}
                   >
                     <span>💻</span>
                     <span>Download Desktop Laptop App (.exe)</span>
                   </a>
-
-                  {/* Release Mirrors */}
-                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.5rem', marginTop: '2px' }}>
-                    <a
-                      href={OFFICIAL_APK_URL}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      style={{
-                        background: 'rgba(255, 255, 255, 0.08)',
-                        border: '1px solid rgba(255, 255, 255, 0.15)',
-                        color: '#e2e8f0',
-                        fontWeight: 700,
-                        padding: '0.55rem 0.75rem',
-                        borderRadius: '8px',
-                        fontSize: '0.76rem',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        gap: '5px',
-                        textDecoration: 'none',
-                      }}
-                    >
-                      <span>🔗</span>
-                      <span>APK Mirror</span>
-                    </a>
-                    <a
-                      href={OFFICIAL_DESKTOP_URL}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      style={{
-                        background: 'rgba(255, 255, 255, 0.08)',
-                        border: '1px solid rgba(255, 255, 255, 0.15)',
-                        color: '#e2e8f0',
-                        fontWeight: 700,
-                        padding: '0.55rem 0.75rem',
-                        borderRadius: '8px',
-                        fontSize: '0.76rem',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        gap: '5px',
-                        textDecoration: 'none',
-                      }}
-                    >
-                      <span>🔗</span>
-                      <span>Desktop Mirror</span>
-                    </a>
-                  </div>
                 </div>
 
                 <div
