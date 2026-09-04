@@ -15,19 +15,44 @@ export function AdminDashboard() {
   const navigate = useNavigate()
   const queryClient = useQueryClient()
   const [seeding, setSeeding] = useState(false)
+  const [syncModalData, setSyncModalData] = useState<{
+    open: boolean
+    success: boolean
+    message: string
+    details?: {
+      departmentsCount: number
+      handbooksCount: number
+      courseUnitsCount: number
+      classesCount: number
+      intakesCount: number
+    }
+  } | null>(null)
 
   const handleSeedCloud = async () => {
     setSeeding(true)
     try {
       const res = await seedCloudDatabase()
+      setSyncModalData({
+        open: true,
+        success: res.success,
+        message: res.message,
+        details: {
+          departmentsCount: res.departmentsCount,
+          handbooksCount: res.handbooksCount,
+          courseUnitsCount: res.courseUnitsCount,
+          classesCount: res.classesCount,
+          intakesCount: res.intakesCount,
+        },
+      })
       if (res.success) {
-        alert(res.message)
         queryClient.invalidateQueries({ queryKey: ['admin-stats'] })
-      } else {
-        alert(`Seeding error: ${res.message}`)
       }
     } catch (err: any) {
-      alert(`Error seeding database: ${err?.message || err}`)
+      setSyncModalData({
+        open: true,
+        success: false,
+        message: `Error syncing database: ${err?.message || err}`,
+      })
     } finally {
       setSeeding(false)
     }
@@ -261,6 +286,223 @@ export function AdminDashboard() {
           </div>
         </div>
       </div>
+
+      {/* High-Contrast Cloud Database Synchronization Result Modal */}
+      {syncModalData?.open && (
+        <div
+          style={{
+            position: 'fixed',
+            inset: 0,
+            zIndex: 999999,
+            background: 'rgba(0, 0, 0, 0.75)',
+            backdropFilter: 'blur(8px)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            padding: '1.25rem',
+            animation: 'fadeIn 0.2s ease-out',
+          }}
+          onClick={() => setSyncModalData(null)}
+        >
+          <div
+            style={{
+              background: '#ffffff',
+              color: '#0f172a',
+              borderRadius: '20px',
+              maxWidth: '540px',
+              width: '100%',
+              boxShadow: '0 25px 60px rgba(0, 0, 0, 0.45), 0 0 0 1px rgba(0,0,0,0.1)',
+              overflow: 'hidden',
+              display: 'flex',
+              flexDirection: 'column',
+            }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Modal Header */}
+            <div
+              style={{
+                background: syncModalData.success ? 'linear-gradient(135deg, #1e3a8a 0%, #1e40af 100%)' : 'linear-gradient(135deg, #991b1b 0%, #b91c1c 100%)',
+                padding: '1.5rem',
+                color: '#ffffff',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+              }}
+            >
+              <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                <div
+                  style={{
+                    width: '44px',
+                    height: '44px',
+                    borderRadius: '12px',
+                    background: syncModalData.success ? 'rgba(34, 197, 94, 0.25)' : 'rgba(239, 68, 68, 0.25)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    fontSize: '1.5rem',
+                    border: `1.5px solid ${syncModalData.success ? '#4ade80' : '#f87171'}`,
+                  }}
+                >
+                  {syncModalData.success ? '☁️' : '⚠️'}
+                </div>
+                <div>
+                  <h3 style={{ margin: 0, fontSize: '1.2rem', fontWeight: 900, color: '#ffffff' }}>
+                    {syncModalData.success ? 'Cloud Database Synchronized' : 'Synchronization Failed'}
+                  </h3>
+                  <div style={{ fontSize: '0.8rem', color: '#cbd5e1', marginTop: '2px' }}>
+                    Éclat Institute Live Supabase Database
+                  </div>
+                </div>
+              </div>
+
+              <button
+                type="button"
+                onClick={() => setSyncModalData(null)}
+                style={{
+                  background: 'rgba(255, 255, 255, 0.2)',
+                  border: 'none',
+                  borderRadius: '50%',
+                  width: '32px',
+                  height: '32px',
+                  color: '#ffffff',
+                  fontSize: '1rem',
+                  fontWeight: 900,
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}
+              >
+                ✕
+              </button>
+            </div>
+
+            {/* Modal Body */}
+            <div style={{ padding: '1.5rem', background: '#ffffff', color: '#1e293b' }}>
+              {/* Status Banner */}
+              <div
+                style={{
+                  background: syncModalData.success ? '#f0fdf4' : '#fef2f2',
+                  border: `1.5px solid ${syncModalData.success ? '#86efac' : '#fca5a5'}`,
+                  borderRadius: '14px',
+                  padding: '1rem 1.25rem',
+                  marginBottom: '1.25rem',
+                  display: 'flex',
+                  alignItems: 'flex-start',
+                  gap: '10px',
+                }}
+              >
+                <span style={{ fontSize: '1.3rem' }}>{syncModalData.success ? '✅' : '❌'}</span>
+                <div>
+                  <div style={{ fontWeight: 800, fontSize: '0.95rem', color: syncModalData.success ? '#166534' : '#991b1b', marginBottom: '2px' }}>
+                    {syncModalData.success ? 'All Tables Synchronized' : 'Sync Error'}
+                  </div>
+                  <div style={{ fontSize: '0.85rem', color: syncModalData.success ? '#15803d' : '#b91c1c', lineHeight: 1.5 }}>
+                    {syncModalData.message}
+                  </div>
+                </div>
+              </div>
+
+              {/* Sync Statistics Grid */}
+              {syncModalData.details && (
+                <div>
+                  <div style={{ fontSize: '0.82rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.05em', color: '#64748b', marginBottom: '0.75rem' }}>
+                    Synced Database Metrics
+                  </div>
+
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: '0.65rem' }}>
+                    <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '12px', padding: '0.75rem 0.9rem' }}>
+                      <div style={{ fontSize: '0.72rem', color: '#64748b', fontWeight: 700 }}>🏛️ Departments</div>
+                      <div style={{ fontSize: '1.25rem', fontWeight: 900, color: '#1e3a8a', marginTop: '2px' }}>
+                        {syncModalData.details.departmentsCount}
+                      </div>
+                    </div>
+
+                    <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '12px', padding: '0.75rem 0.9rem' }}>
+                      <div style={{ fontSize: '0.72rem', color: '#64748b', fontWeight: 700 }}>📚 Handbooks</div>
+                      <div style={{ fontSize: '1.25rem', fontWeight: 900, color: '#2563eb', marginTop: '2px' }}>
+                        {syncModalData.details.handbooksCount}
+                      </div>
+                    </div>
+
+                    <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '12px', padding: '0.75rem 0.9rem' }}>
+                      <div style={{ fontSize: '0.72rem', color: '#64748b', fontWeight: 700 }}>🎓 Units & Syllabi</div>
+                      <div style={{ fontSize: '1.25rem', fontWeight: 900, color: '#0d9488', marginTop: '2px' }}>
+                        {syncModalData.details.courseUnitsCount}
+                      </div>
+                    </div>
+
+                    <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '12px', padding: '0.75rem 0.9rem' }}>
+                      <div style={{ fontSize: '0.72rem', color: '#64748b', fontWeight: 700 }}>🏫 Active Cohorts</div>
+                      <div style={{ fontSize: '1.25rem', fontWeight: 900, color: '#7c3aed', marginTop: '2px' }}>
+                        {syncModalData.details.classesCount}
+                      </div>
+                    </div>
+
+                    <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '12px', padding: '0.75rem 0.9rem' }}>
+                      <div style={{ fontSize: '0.72rem', color: '#64748b', fontWeight: 700 }}>🗓️ Intake Adverts</div>
+                      <div style={{ fontSize: '1.25rem', fontWeight: 900, color: '#d97706', marginTop: '2px' }}>
+                        {syncModalData.details.intakesCount}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Cloud Connection Badge */}
+              <div
+                style={{
+                  marginTop: '1.25rem',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '8px',
+                  fontSize: '0.78rem',
+                  color: '#475569',
+                  background: '#f1f5f9',
+                  padding: '8px 12px',
+                  borderRadius: '10px',
+                }}
+              >
+                <span style={{ display: 'inline-block', width: '8px', height: '8px', borderRadius: '50%', background: '#22c55e' }} />
+                <span>Supabase Cloud Database connected and operational</span>
+              </div>
+            </div>
+
+            {/* Modal Footer */}
+            <div
+              style={{
+                padding: '1rem 1.5rem',
+                background: '#f8fafc',
+                borderTop: '1px solid #e2e8f0',
+                display: 'flex',
+                justifyContent: 'flex-end',
+              }}
+            >
+              <button
+                type="button"
+                onClick={() => setSyncModalData(null)}
+                style={{
+                  background: 'linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%)',
+                  color: '#ffffff',
+                  border: 'none',
+                  borderRadius: '12px',
+                  padding: '10px 24px',
+                  fontSize: '0.92rem',
+                  fontWeight: 800,
+                  cursor: 'pointer',
+                  boxShadow: '0 4px 12px rgba(37, 99, 235, 0.35)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '6px',
+                }}
+              >
+                <span>✓</span>
+                <span>Done & Close</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </PageWrapper>
   )
 }
