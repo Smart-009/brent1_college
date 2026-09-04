@@ -2,6 +2,7 @@ import { useState, useMemo, useEffect } from 'react'
 import { Link, useNavigate, useLocation } from 'react-router-dom'
 import { useIsMobile } from '@/hooks/useMediaQuery'
 import { NativeAppHome } from './NativeAppHome'
+import { DesktopAppHome } from './DesktopAppHome'
 import { DesktopCommandPalette } from '@/components/shared/DesktopCommandPalette'
 import { supabase } from '@/lib/supabase'
 import { schoolStore } from '@/lib/schoolData'
@@ -1256,11 +1257,20 @@ export function Landing() {
     window.scrollTo({ top: 0, behavior: 'smooth' })
   }
 
+  const isDesktopApp =
+    typeof window !== 'undefined' &&
+    (Boolean((window as any).desktopAPI?.isDesktop) || /Electron/i.test(navigator.userAgent))
+
   const isNativeMobileApp =
     typeof window !== 'undefined' &&
+    !isDesktopApp &&
     (Boolean((window as any).Capacitor?.isNativePlatform?.()) ||
       Boolean((window as any).AndroidSecurity) ||
-      (/Capacitor/i.test(navigator.userAgent) && !/Electron/i.test(navigator.userAgent)))
+      /Capacitor/i.test(navigator.userAgent))
+
+  if (isDesktopApp) {
+    return <DesktopAppHome courses={coursesList} onSelectCourse={(c) => setSelectedCourseForModal(c as any)} />
+  }
 
   if (isNativeMobileApp) {
     return <NativeAppHome courses={coursesList} onSelectCourse={(c) => setSelectedCourseForModal(c as any)} />
