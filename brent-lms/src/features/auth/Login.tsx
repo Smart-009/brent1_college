@@ -262,11 +262,13 @@ export function Login() {
                 <input
                   type="text"
                   required
-                  autoFocus
+                  autoCapitalize="none"
+                  autoCorrect="off"
+                  spellCheck={false}
                   className="input"
                   value={admissionNumber}
                   onChange={(e) => setAdmissionNumber(e.target.value)}
-                  placeholder={selectedRole === 'student' ? 'e.g. EI-2026-001' : 'e.g. admin or username'}
+                  placeholder={selectedRole === 'student' ? 'e.g. EI-2026-001 or admin' : 'e.g. admin or username'}
                   style={{ fontSize: '0.95rem', padding: '0.75rem 0.9rem' }}
                 />
               </div>
@@ -287,6 +289,9 @@ export function Login() {
                 <input
                   type={showPassword ? 'text' : 'password'}
                   required
+                  autoCapitalize="none"
+                  autoCorrect="off"
+                  spellCheck={false}
                   className="input"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
