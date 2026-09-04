@@ -392,4 +392,102 @@ test('DRM Security: Web Browser vs Native App Learning Portal Separation', () =>
   assert.equal(checkStudentAccessPermitted(false, 'teacher').allowed, true)
 })
 
+// 6. GOOGLE DRIVE & CLOUD DOCUMENT EMBED SYSTEM TESTS
+function getGoogleDrivePreviewUrl(url) {
+  if (!url || typeof url !== 'string') return null
+  const trimmed = url.trim()
+
+  const driveFileMatch = trimmed.match(/(?:drive\.google\.com\/file\/d\/|\/file\/d\/)([a-zA-Z0-9_-]{15,})/i)
+  if (driveFileMatch && driveFileMatch[1]) {
+    return `https://drive.google.com/file/d/${driveFileMatch[1]}/preview`
+  }
+
+  const driveIdMatch = trimmed.match(/(?:drive\.google\.com\/(?:open|uc)\?(?:.*&)?id=|[\?&]id=)([a-zA-Z0-9_-]{15,})/i)
+  if (driveIdMatch && driveIdMatch[1]) {
+    return `https://drive.google.com/file/d/${driveIdMatch[1]}/preview`
+  }
+
+  const docsMatch = trimmed.match(/docs\.google\.com\/document\/d\/([a-zA-Z0-9_-]{15,})/i)
+  if (docsMatch && docsMatch[1]) {
+    return `https://docs.google.com/document/d/${docsMatch[1]}/preview`
+  }
+
+  const slidesMatch = trimmed.match(/docs\.google\.com\/presentation\/d\/([a-zA-Z0-9_-]{15,})/i)
+  if (slidesMatch && slidesMatch[1]) {
+    return `https://docs.google.com/presentation/d/${slidesMatch[1]}/preview`
+  }
+
+  const sheetsMatch = trimmed.match(/docs\.google\.com\/spreadsheets\/d\/([a-zA-Z0-9_-]{15,})/i)
+  if (sheetsMatch && sheetsMatch[1]) {
+    return `https://docs.google.com/spreadsheets/d/${sheetsMatch[1]}/preview`
+  }
+
+  if (/^[a-zA-Z0-9_-]{25,50}$/.test(trimmed)) {
+    return `https://drive.google.com/file/d/${trimmed}/preview`
+  }
+
+  return null
+}
+
+function getEmbeddableDocumentUrl(url, engine = 'direct') {
+  if (!url || typeof url !== 'string') return ''
+  const trimmed = url.trim()
+
+  const gdriveEmbed = getGoogleDrivePreviewUrl(trimmed)
+  if (gdriveEmbed) {
+    return gdriveEmbed
+  }
+
+  if (trimmed.startsWith('data:') || trimmed.startsWith('blob:') || trimmed.startsWith('academic://')) {
+    return trimmed
+  }
+
+  if (engine === 'cloud' && (trimmed.startsWith('http://') || trimmed.startsWith('https://'))) {
+    return `https://docs.google.com/viewer?url=${encodeURIComponent(trimmed)}&embedded=true`
+  }
+
+  if (trimmed.startsWith('http://') || trimmed.startsWith('https://')) {
+    if (!trimmed.toLowerCase().endsWith('.pdf') && !trimmed.includes('supabase.co')) {
+      return `https://docs.google.com/viewer?url=${encodeURIComponent(trimmed)}&embedded=true`
+    }
+    return trimmed
+  }
+
+  return trimmed
+}
+
+test('Google Drive Embed: Converts standard share URLs to in-app /preview iframe URLs', () => {
+  const fileId = '1oMD6UumrI70jB5o-xT998d-w816tA4'
+  const shareLink1 = `https://drive.google.com/file/d/${fileId}/view?usp=sharing`
+  const shareLink2 = `https://drive.google.com/file/d/${fileId}/view?usp=drive_link`
+  const openLink = `https://drive.google.com/open?id=${fileId}`
+  const expectedPreview = `https://drive.google.com/file/d/${fileId}/preview`
+
+  assert.equal(getGoogleDrivePreviewUrl(shareLink1), expectedPreview)
+  assert.equal(getGoogleDrivePreviewUrl(shareLink2), expectedPreview)
+  assert.equal(getGoogleDrivePreviewUrl(openLink), expectedPreview)
+  assert.equal(getEmbeddableDocumentUrl(shareLink1), expectedPreview)
+})
+
+test('Google Drive Embed: Recovers cleanly from duplicate paste / corrupted prefix URLs', () => {
+  const fileId = '1oMD6UumrI70jB5o-xT998d-w816tA4'
+  const corruptedUrl = `https://drive.goohttps//drive.google.com/file/d/${fileId}/view?usp=drive_link`
+  const expectedPreview = `https://drive.google.com/file/d/${fileId}/preview`
+
+  assert.equal(getGoogleDrivePreviewUrl(corruptedUrl), expectedPreview)
+  assert.equal(getEmbeddableDocumentUrl(corruptedUrl), expectedPreview)
+})
+
+test('Google Drive Embed: Handles Google Docs, Sheets, and Slides formats', () => {
+  const docId = '1abcdefg_99887766554433221100'
+  const docUrl = `https://docs.google.com/document/d/${docId}/edit?usp=sharing`
+  const sheetUrl = `https://docs.google.com/spreadsheets/d/${docId}/edit`
+  const slideUrl = `https://docs.google.com/presentation/d/${docId}/edit`
+
+  assert.equal(getGoogleDrivePreviewUrl(docUrl), `https://docs.google.com/document/d/${docId}/preview`)
+  assert.equal(getGoogleDrivePreviewUrl(sheetUrl), `https://docs.google.com/spreadsheets/d/${docId}/preview`)
+  assert.equal(getGoogleDrivePreviewUrl(slideUrl), `https://docs.google.com/presentation/d/${docId}/preview`)
+})
+
+
 

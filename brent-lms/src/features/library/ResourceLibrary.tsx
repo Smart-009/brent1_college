@@ -3,7 +3,7 @@ import { useAuth } from '@/hooks/useAuth'
 import { useIsMobile } from '@/hooks/useMediaQuery'
 import { schoolStore } from '@/lib/schoolData'
 import { supabase } from '@/lib/supabase'
-import { getEmbeddableDocumentUrl } from '@/lib/utils'
+import { getEmbeddableDocumentUrl, getGoogleDrivePreviewUrl } from '@/lib/utils'
 import { isNativeApp, OFFICIAL_APK_URL, LOCAL_APK_URL } from '@/utils/platform'
 import { ACADEMIC_HANDBOOKS, AcademicHandbook } from './academicHandbookData'
 import type { AcademicResource } from '@/types/school'
@@ -316,7 +316,7 @@ export function ResourceLibrary() {
       let fileBlobUrl = ''
 
       if (isGDrive) {
-        fileBlobUrl = googleDriveUrl.trim()
+        fileBlobUrl = getGoogleDrivePreviewUrl(googleDriveUrl) || googleDriveUrl.trim()
         fileSizeFormatted = 'Academic Document'
         fileExt = 'PDF'
       } else if (selectedFile) {
@@ -1759,11 +1759,7 @@ export function ResourceLibrary() {
                     }}
                   >
                     <iframe
-                      src={
-                        readingResource.file_url.startsWith('http') && !readingResource.file_url.includes('drive.google.com') && !readingResource.file_url.includes('supabase')
-                          ? `https://docs.google.com/viewer?url=${encodeURIComponent(readingResource.file_url)}&embedded=true`
-                          : readingResource.file_url
-                      }
+                      src={getEmbeddableDocumentUrl(readingResource.file_url)}
                       title={readingResource.title}
                       style={{
                         width: '100%',
@@ -1772,6 +1768,7 @@ export function ResourceLibrary() {
                         border: 'none',
                         background: '#ffffff',
                       }}
+                      allow="autoplay; encrypted-media; fullscreen"
                     />
                   </div>
                 </div>
@@ -2057,15 +2054,25 @@ export function ResourceLibrary() {
                         required={uploadSource === 'gdrive'}
                         className="input"
                         style={{ background: '#ffffff', fontSize: '0.9rem', padding: '0.75rem' }}
-                        placeholder="https://drive.google.com/file/d/..."
+                        placeholder="https://drive.google.com/file/d/... or any Google Docs / Drive link"
                         value={googleDriveUrl}
                         onChange={(e) => {
-                          setGoogleDriveUrl(e.target.value)
-                          if (!newTitle.trim() && e.target.value.includes('drive.google.com')) {
-                            setNewTitle('Google Drive Document')
+                          const val = e.target.value
+                          setGoogleDriveUrl(val)
+                          if (!newTitle.trim() && (val.includes('drive.google.com') || val.includes('docs.google.com'))) {
+                            setNewTitle('Google Drive Resource')
                           }
                         }}
                       />
+                      {googleDriveUrl.trim() && (
+                        <div style={{ fontSize: '0.75rem', fontWeight: 700, color: getGoogleDrivePreviewUrl(googleDriveUrl) ? '#16a34a' : '#2563eb', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                          {getGoogleDrivePreviewUrl(googleDriveUrl) ? (
+                            <>✅ Valid Cloud Document: In-App Interactive Reader Enabled</>
+                          ) : (
+                            <>🔗 Standard Web Document Link</>
+                          )}
+                        </div>
+                      )}
                     </div>
                   </div>
                 )}

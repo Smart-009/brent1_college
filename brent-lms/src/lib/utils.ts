@@ -172,40 +172,46 @@ export function isSafeUrl(url: string): boolean {
 
 /**
  * Detects if a URL is a Google Drive / Google Docs / Slides / Sheets URL
- * and returns the interactive preview embed URL.
+ * and returns the clean interactive preview embed URL.
+ * Resilient against malformed or duplicate-prefixed URLs (e.g. accidental double pasting).
  */
 export function getGoogleDrivePreviewUrl(url: string): string | null {
   if (!url || typeof url !== 'string') return null
   const trimmed = url.trim()
 
-  // 1. Google Drive file URL: /file/d/{id}/...
-  const driveFileMatch = trimmed.match(/drive\.google\.com\/file\/d\/([a-zA-Z0-9_-]+)/)
+  // 1. Google Drive file URL: /file/d/{id}/... (matches even with duplicated prefixes)
+  const driveFileMatch = trimmed.match(/(?:drive\.google\.com\/file\/d\/|\/file\/d\/)([a-zA-Z0-9_-]{15,})/i)
   if (driveFileMatch && driveFileMatch[1]) {
     return `https://drive.google.com/file/d/${driveFileMatch[1]}/preview`
   }
 
-  // 2. Google Drive open?id={id} or uc?id={id}
-  const driveIdMatch = trimmed.match(/drive\.google\.com\/(?:open|uc)\?(?:.*&)?id=([a-zA-Z0-9_-]+)/)
+  // 2. Google Drive open?id={id} or uc?id={id} or generic ?id={id}
+  const driveIdMatch = trimmed.match(/(?:drive\.google\.com\/(?:open|uc)\?(?:.*&)?id=|[\?&]id=)([a-zA-Z0-9_-]{15,})/i)
   if (driveIdMatch && driveIdMatch[1]) {
     return `https://drive.google.com/file/d/${driveIdMatch[1]}/preview`
   }
 
   // 3. Google Docs Document
-  const docsMatch = trimmed.match(/docs\.google\.com\/document\/d\/([a-zA-Z0-9_-]+)/)
+  const docsMatch = trimmed.match(/docs\.google\.com\/document\/d\/([a-zA-Z0-9_-]{15,})/i)
   if (docsMatch && docsMatch[1]) {
     return `https://docs.google.com/document/d/${docsMatch[1]}/preview`
   }
 
   // 4. Google Slides Presentation
-  const slidesMatch = trimmed.match(/docs\.google\.com\/presentation\/d\/([a-zA-Z0-9_-]+)/)
+  const slidesMatch = trimmed.match(/docs\.google\.com\/presentation\/d\/([a-zA-Z0-9_-]{15,})/i)
   if (slidesMatch && slidesMatch[1]) {
     return `https://docs.google.com/presentation/d/${slidesMatch[1]}/preview`
   }
 
   // 5. Google Sheets Spreadsheet
-  const sheetsMatch = trimmed.match(/docs\.google\.com\/spreadsheets\/d\/([a-zA-Z0-9_-]+)/)
+  const sheetsMatch = trimmed.match(/docs\.google\.com\/spreadsheets\/d\/([a-zA-Z0-9_-]{15,})/i)
   if (sheetsMatch && sheetsMatch[1]) {
     return `https://docs.google.com/spreadsheets/d/${sheetsMatch[1]}/preview`
+  }
+
+  // 6. Direct Google Drive file ID if only the raw ID is provided (e.g. 25-50 characters)
+  if (/^[a-zA-Z0-9_-]{25,50}$/.test(trimmed)) {
+    return `https://drive.google.com/file/d/${trimmed}/preview`
   }
 
   return null
@@ -215,19 +221,35 @@ export function getGoogleDrivePreviewUrl(url: string): string | null {
  * Transforms any document/file URL (Google Drive, cloud PDF/DOCX, direct data URL)
  * into a suitable in-app embed preview URL.
  */
-export function getEmbeddableDocumentUrl(url: string, _engine: 'cloud' | 'direct' = 'direct'): string {
-  if (!url) return ''
+export function getEmbeddableDocumentUrl(url: string, engine: 'cloud' | 'direct' = 'direct'): string {
+  if (!url || typeof url !== 'string') return ''
+  const trimmed = url.trim()
 
-  // If it's a base64 Data URL or blob URL, return as-is
-  if (url.startsWith('data:') || url.startsWith('blob:')) {
-    return url
+  // 1. Google Drive / Docs / Slides / Sheets preview embed
+  const gdriveEmbed = getGoogleDrivePreviewUrl(trimmed)
+  if (gdriveEmbed) {
+    return gdriveEmbed
   }
 
-  // If it's an internal academic handbook scheme
-  if (url.startsWith('academic://')) {
-    return url
+  // 2. Base64 Data URL or Blob URL or internal academic scheme
+  if (trimmed.startsWith('data:') || trimmed.startsWith('blob:') || trimmed.startsWith('academic://')) {
+    return trimmed
   }
 
-  return url
+  // 3. Cloud Viewer fallback when explicitly requested
+  if (engine === 'cloud' && (trimmed.startsWith('http://') || trimmed.startsWith('https://'))) {
+    return `https://docs.google.com/viewer?url=${encodeURIComponent(trimmed)}&embedded=true`
+  }
+
+  // 4. Direct HTTP/HTTPS documents
+  if (trimmed.startsWith('http://') || trimmed.startsWith('https://')) {
+    // If not a direct PDF and not Supabase storage, route via Google Docs Viewer for safe embedding
+    if (!trimmed.toLowerCase().endsWith('.pdf') && !trimmed.includes('supabase.co')) {
+      return `https://docs.google.com/viewer?url=${encodeURIComponent(trimmed)}&embedded=true`
+    }
+    return trimmed
+  }
+
+  return trimmed
 }
 
