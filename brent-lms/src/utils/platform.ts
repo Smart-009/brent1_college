@@ -3,12 +3,25 @@
  * Differentiates between the public web marketing portal and the official native secured applications.
  */
 
+export function isElectronApp(): boolean {
+  if (typeof window === 'undefined') return false
+  const w = window as any
+  return Boolean(
+    w.desktopAPI?.isDesktop ||
+    w.electronAPI ||
+    /Electron/i.test(navigator.userAgent)
+  )
+}
+
 export function isNativeApp(): boolean {
   if (typeof window === 'undefined') return false
 
   const w = window as any
 
-  // 1. Capacitor Native Platform check
+  // 1. Electron Desktop Native Laptop App (Windows / Mac)
+  if (isElectronApp()) return true
+
+  // 2. Capacitor Native Mobile Platform check (Android / iOS)
   const isCapacitor = Boolean(
     w.Capacitor?.isNativePlatform?.() ||
     w.Capacitor?.getPlatform?.() === 'android' ||
@@ -19,7 +32,7 @@ export function isNativeApp(): boolean {
     Boolean(w.AndroidSecurity)
   )
 
-  // 2. Android Intent / Native Wrapper
+  // 3. Android Intent / Native Wrapper
   const isAndroidAppWrapper =
     typeof document !== 'undefined' &&
     typeof document.referrer === 'string' &&
@@ -41,3 +54,7 @@ export function isIOSDevice(): boolean {
 export const OFFICIAL_APK_URL =
   'https://github.com/Smart-009/brent1_college/releases/download/v1.0.0/eclat-institute.apk'
 export const LOCAL_APK_URL = '/eclat-institute.apk'
+export const OFFICIAL_DESKTOP_URL =
+  'https://github.com/Smart-009/brent1_college/releases/download/v1.0.0/Eclat.Institute.Setup.exe'
+export const LOCAL_DESKTOP_URL = '/Eclat-Institute-Setup.exe'
+

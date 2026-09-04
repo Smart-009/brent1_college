@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom'
-import { OFFICIAL_APK_URL, LOCAL_APK_URL } from '@/utils/platform'
+import { OFFICIAL_APK_URL, LOCAL_APK_URL, OFFICIAL_DESKTOP_URL, LOCAL_DESKTOP_URL } from '@/utils/platform'
 
 interface NativeAppDRMGuardProps {
   title?: string
@@ -7,8 +7,8 @@ interface NativeAppDRMGuardProps {
 }
 
 export function NativeAppDRMGuard({
-  title = 'Hardware DRM Protected Classroom',
-  description = 'To protect academic intellectual property, student examinations, and course materials against unauthorized screen recording or piracy, student learning is strictly accessible through the Official Éclat Native Application.',
+  title = 'Hardware DRM Protected Classroom & Portals',
+  description = 'To protect academic intellectual property, student examinations, and video lecture materials against unauthorized screen recording or piracy, student learning and student portals are strictly accessible through the Official Éclat Native Applications.',
 }: NativeAppDRMGuardProps) {
   return (
     <div
@@ -24,7 +24,7 @@ export function NativeAppDRMGuard({
     >
       <div
         style={{
-          maxWidth: '560px',
+          maxWidth: '580px',
           width: '100%',
           background: 'rgba(15, 23, 42, 0.95)',
           backdropFilter: 'blur(16px)',
@@ -137,7 +137,7 @@ export function NativeAppDRMGuard({
               🔒 OS Flag Secure
             </div>
             <div style={{ fontSize: '0.72rem', color: '#64748b', lineHeight: 1.3 }}>
-              Blocks screenshot capture and recording software.
+              Blocks screenshot capture and screen recording software.
             </div>
           </div>
 
@@ -150,16 +150,17 @@ export function NativeAppDRMGuard({
             }}
           >
             <div style={{ fontSize: '0.78rem', fontWeight: 800, color: '#4ade80', marginBottom: '2px' }}>
-              ⚡ Secure Offline Sync
+              ⚡ Secure Native Sync
             </div>
             <div style={{ fontSize: '0.72rem', color: '#64748b', lineHeight: 1.3 }}>
-              High-speed encrypted local notes & video playback.
+              Full access to study notes, assignments, exams, and ledgers.
             </div>
           </div>
         </div>
 
-        {/* Action Buttons */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.85rem' }}>
+        {/* App Action Buttons (Android & Desktop Laptop) */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+          {/* Android App Button */}
           <a
             href={LOCAL_APK_URL}
             download="eclat-institute.apk"
@@ -168,12 +169,12 @@ export function NativeAppDRMGuard({
               alignItems: 'center',
               justifyContent: 'center',
               gap: '10px',
-              padding: '0.9rem 1.5rem',
+              padding: '0.85rem 1.4rem',
               borderRadius: '14px',
               background: 'linear-gradient(135deg, #16a34a 0%, #15803d 100%)',
               color: '#ffffff',
               fontWeight: 800,
-              fontSize: '0.98rem',
+              fontSize: '0.95rem',
               textDecoration: 'none',
               boxShadow: '0 6px 20px rgba(22, 163, 74, 0.35)',
               transition: 'all 0.2s',
@@ -183,28 +184,77 @@ export function NativeAppDRMGuard({
             <span>Download Official Android App (.APK)</span>
           </a>
 
+          {/* Laptop / Desktop App Button */}
           <a
-            href={OFFICIAL_APK_URL}
-            target="_blank"
-            rel="noopener noreferrer"
+            href={LOCAL_DESKTOP_URL}
+            download="Eclat-Institute-Setup.exe"
             style={{
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
               gap: '10px',
-              padding: '0.85rem 1.5rem',
+              padding: '0.85rem 1.4rem',
               borderRadius: '14px',
-              background: 'rgba(255, 255, 255, 0.07)',
-              border: '1px solid rgba(255, 255, 255, 0.15)',
-              color: '#f1f5f9',
-              fontWeight: 700,
-              fontSize: '0.88rem',
+              background: 'linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%)',
+              color: '#ffffff',
+              fontWeight: 800,
+              fontSize: '0.95rem',
               textDecoration: 'none',
+              boxShadow: '0 6px 20px rgba(37, 99, 235, 0.35)',
+              transition: 'all 0.2s',
             }}
           >
-            <span style={{ fontSize: '1.1rem' }}>🔗</span>
-            <span>Mirror: GitHub Release APK</span>
+            <span style={{ fontSize: '1.25rem' }}>💻</span>
+            <span>Download Desktop Laptop App (Windows / Mac)</span>
           </a>
+
+          {/* GitHub Mirrors */}
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.5rem' }}>
+            <a
+              href={OFFICIAL_APK_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '6px',
+                padding: '0.65rem 0.85rem',
+                borderRadius: '10px',
+                background: 'rgba(255, 255, 255, 0.06)',
+                border: '1px solid rgba(255, 255, 255, 0.12)',
+                color: '#cbd5e1',
+                fontWeight: 700,
+                fontSize: '0.78rem',
+                textDecoration: 'none',
+              }}
+            >
+              <span>🔗</span>
+              <span>Android Mirror</span>
+            </a>
+            <a
+              href={OFFICIAL_DESKTOP_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '6px',
+                padding: '0.65rem 0.85rem',
+                borderRadius: '10px',
+                background: 'rgba(255, 255, 255, 0.06)',
+                border: '1px solid rgba(255, 255, 255, 0.12)',
+                color: '#cbd5e1',
+                fontWeight: 700,
+                fontSize: '0.78rem',
+                textDecoration: 'none',
+              }}
+            >
+              <span>🔗</span>
+              <span>Desktop Mirror</span>
+            </a>
+          </div>
 
           <div style={{ marginTop: '0.5rem', display: 'flex', justifyContent: 'center', gap: '1rem', flexWrap: 'wrap' }}>
             <Link
@@ -236,3 +286,4 @@ export function NativeAppDRMGuard({
     </div>
   )
 }
+

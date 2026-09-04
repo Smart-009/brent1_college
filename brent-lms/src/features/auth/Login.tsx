@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import { useNavigate, useSearchParams, Link } from 'react-router-dom'
 import { useAuthContext } from '@/features/auth/AuthContext'
 import { MobileAppBottomNav } from '@/components/layout/MobileAppBottomNav'
-import { isNativeApp, OFFICIAL_APK_URL, LOCAL_APK_URL } from '@/utils/platform'
+import { isNativeApp, OFFICIAL_APK_URL, LOCAL_APK_URL, OFFICIAL_DESKTOP_URL, LOCAL_DESKTOP_URL } from '@/utils/platform'
 import type { Role } from '@/lib/database.types'
 
 export function Login() {
@@ -405,11 +405,12 @@ export function Login() {
                 </div>
 
                 <p style={{ fontSize: '0.82rem', color: '#cbd5e1', lineHeight: 1.5, margin: '0 0 1.1rem' }}>
-                  To ensure examination integrity and prevent unauthorized recording of proprietary video lectures and
-                  study notes, all enrolled students must sign in via the <strong>Official Éclat Native App</strong>.
+                  To protect intellectual property, prevent unauthorized recording of proprietary video lectures, and ensure
+                  examination integrity, all enrolled students sign in via the <strong>Official Éclat Apps</strong>.
                 </p>
 
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '0.65rem' }}>
+                  {/* Android App Button */}
                   <a
                     href={LOCAL_APK_URL}
                     download="eclat-institute.apk"
@@ -429,31 +430,79 @@ export function Login() {
                     }}
                   >
                     <span>🤖</span>
-                    <span>Download Official Android App (.APK)</span>
+                    <span>Download Android App (.APK)</span>
                   </a>
 
+                  {/* Laptop / Desktop App Button */}
                   <a
-                    href={OFFICIAL_APK_URL}
-                    target="_blank"
-                    rel="noopener noreferrer"
+                    href={LOCAL_DESKTOP_URL}
+                    download="Eclat-Institute-Setup.exe"
                     style={{
-                      background: 'rgba(255, 255, 255, 0.08)',
-                      border: '1px solid rgba(255, 255, 255, 0.15)',
-                      color: '#e2e8f0',
-                      fontWeight: 700,
-                      padding: '0.65rem 1rem',
+                      background: 'linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%)',
+                      color: '#ffffff',
+                      fontWeight: 800,
+                      padding: '0.75rem 1rem',
                       borderRadius: '10px',
-                      fontSize: '0.82rem',
+                      fontSize: '0.9rem',
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
-                      gap: '6px',
+                      gap: '8px',
                       textDecoration: 'none',
+                      boxShadow: '0 4px 12px rgba(37, 99, 235, 0.3)',
                     }}
                   >
-                    <span>🔗</span>
-                    <span>GitHub Release Mirror</span>
+                    <span>💻</span>
+                    <span>Download Desktop Laptop App (.exe)</span>
                   </a>
+
+                  {/* Release Mirrors */}
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.5rem', marginTop: '2px' }}>
+                    <a
+                      href={OFFICIAL_APK_URL}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      style={{
+                        background: 'rgba(255, 255, 255, 0.08)',
+                        border: '1px solid rgba(255, 255, 255, 0.15)',
+                        color: '#e2e8f0',
+                        fontWeight: 700,
+                        padding: '0.55rem 0.75rem',
+                        borderRadius: '8px',
+                        fontSize: '0.76rem',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        gap: '5px',
+                        textDecoration: 'none',
+                      }}
+                    >
+                      <span>🔗</span>
+                      <span>APK Mirror</span>
+                    </a>
+                    <a
+                      href={OFFICIAL_DESKTOP_URL}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      style={{
+                        background: 'rgba(255, 255, 255, 0.08)',
+                        border: '1px solid rgba(255, 255, 255, 0.15)',
+                        color: '#e2e8f0',
+                        fontWeight: 700,
+                        padding: '0.55rem 0.75rem',
+                        borderRadius: '8px',
+                        fontSize: '0.76rem',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        gap: '5px',
+                        textDecoration: 'none',
+                      }}
+                    >
+                      <span>🔗</span>
+                      <span>Desktop Mirror</span>
+                    </a>
+                  </div>
                 </div>
 
                 <div

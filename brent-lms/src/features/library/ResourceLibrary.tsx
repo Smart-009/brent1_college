@@ -2339,85 +2339,88 @@ export function ResourceLibrary() {
                     flexDirection: 'column',
                     flex: 1,
                     minHeight: '100%',
-                    padding: isMobile ? '0.75rem' : '1.5rem 2.5rem',
+                    padding: isMobile ? '0' : '1.25rem 2rem',
                     boxSizing: 'border-box',
-                    gap: '1rem',
+                    gap: isMobile ? '0' : '1rem',
                   }}
                 >
-                  {/* Document Header Card */}
-                  <div
-                    style={{
-                      background: readerTheme === 'dark' ? '#0f172a' : readerTheme === 'sepia' ? '#f4ebd0' : '#f8fafc',
-                      border: `1px solid ${readerTheme === 'dark' ? '#1e293b' : readerTheme === 'sepia' ? '#e6d7b9' : '#e2e8f0'}`,
-                      borderRadius: '16px',
-                      padding: isMobile ? '1rem' : '1.25rem 1.75rem',
-                      display: 'flex',
-                      justifyContent: 'space-between',
-                      alignItems: 'center',
-                      flexWrap: 'wrap',
-                      gap: '0.75rem',
-                    }}
-                  >
-                    <div>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
-                        <span
+                  {/* Document Header Card (Only on desktop/tablet to maximize reading viewport on phones) */}
+                  {!isMobile && (
+                    <div
+                      style={{
+                        background: readerTheme === 'dark' ? '#0f172a' : readerTheme === 'sepia' ? '#f4ebd0' : '#f8fafc',
+                        border: `1px solid ${readerTheme === 'dark' ? '#1e293b' : readerTheme === 'sepia' ? '#e6d7b9' : '#e2e8f0'}`,
+                        borderRadius: '16px',
+                        padding: '1.25rem 1.75rem',
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        alignItems: 'center',
+                        flexWrap: 'wrap',
+                        gap: '0.75rem',
+                      }}
+                    >
+                      <div>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
+                          <span
+                            style={{
+                              background: '#2563eb',
+                              color: '#ffffff',
+                              padding: '2px 8px',
+                              borderRadius: '6px',
+                              fontSize: '0.72rem',
+                              fontWeight: 800,
+                              textTransform: 'uppercase',
+                            }}
+                          >
+                            {readingResource.category}
+                          </span>
+                          <span style={{ fontSize: '0.75rem', fontWeight: 700, opacity: 0.8 }}>
+                            {readingResource.subject}
+                          </span>
+                        </div>
+                        <h2
                           style={{
-                            background: '#2563eb',
-                            color: '#ffffff',
-                            padding: '2px 8px',
-                            borderRadius: '6px',
-                            fontSize: '0.72rem',
-                            fontWeight: 800,
-                            textTransform: 'uppercase',
+                            margin: '2px 0 4px',
+                            fontSize: '1.45rem',
+                            fontWeight: 900,
+                            color: readerTheme === 'dark' ? '#ffffff' : readerTheme === 'sepia' ? '#2d2215' : '#0f172a',
                           }}
                         >
-                          {readingResource.category}
-                        </span>
-                        <span style={{ fontSize: '0.75rem', fontWeight: 700, opacity: 0.8 }}>
-                          {readingResource.subject}
-                        </span>
+                          {readingResource.title}
+                        </h2>
+                        <div style={{ fontSize: '0.75rem', opacity: 0.7 }}>
+                          Academic Material • Uploaded by {readingResource.uploaded_by || 'Éclat Academic Board'} • Size: {readingResource.file_size || 'Official File'}
+                        </div>
                       </div>
-                      <h2
-                        style={{
-                          margin: '2px 0 4px',
-                          fontSize: isMobile ? '1.15rem' : '1.45rem',
-                          fontWeight: 900,
-                          color: readerTheme === 'dark' ? '#ffffff' : readerTheme === 'sepia' ? '#2d2215' : '#0f172a',
-                        }}
-                      >
-                        {readingResource.title}
-                      </h2>
-                      <div style={{ fontSize: '0.75rem', opacity: 0.7 }}>
-                        Academic Material • Uploaded by {readingResource.uploaded_by || 'Éclat Academic Board'} • Size: {readingResource.file_size || 'Official File'}
-                      </div>
-                    </div>
 
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                      <span
-                        style={{
-                          background: 'rgba(34, 197, 94, 0.15)',
-                          color: '#16a34a',
-                          border: '1px solid rgba(34, 197, 94, 0.3)',
-                          padding: '4px 10px',
-                          borderRadius: '8px',
-                          fontSize: '0.75rem',
-                          fontWeight: 800,
-                        }}
-                      >
-                        🔒 DRM Protected Viewer
-                      </span>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                        <span
+                          style={{
+                            background: 'rgba(34, 197, 94, 0.15)',
+                            color: '#16a34a',
+                            border: '1px solid rgba(34, 197, 94, 0.3)',
+                            padding: '4px 10px',
+                            borderRadius: '8px',
+                            fontSize: '0.75rem',
+                            fontWeight: 800,
+                          }}
+                        >
+                          🔒 DRM Protected Viewer
+                        </span>
+                      </div>
                     </div>
-                  </div>
+                  )}
 
                   {/* High-Performance Embedded Document Frame */}
                   <div
                     style={{
                       flex: 1,
-                      minHeight: isMobile ? '70vh' : '82vh',
-                      borderRadius: '16px',
+                      minHeight: isMobile ? 'calc(100dvh - 54px)' : '82vh',
+                      height: isMobile ? 'calc(100dvh - 54px)' : '82vh',
+                      borderRadius: isMobile ? '0px' : '16px',
                       overflow: 'hidden',
-                      boxShadow: '0 8px 30px rgba(0,0,0,0.15)',
-                      border: `1.5px solid ${readerTheme === 'dark' ? '#1e293b' : readerTheme === 'sepia' ? '#d4af37' : '#cbd5e1'}`,
+                      boxShadow: isMobile ? 'none' : '0 8px 30px rgba(0,0,0,0.15)',
+                      border: isMobile ? 'none' : `1.5px solid ${readerTheme === 'dark' ? '#1e293b' : readerTheme === 'sepia' ? '#d4af37' : '#cbd5e1'}`,
                       background: '#000000',
                       position: 'relative',
                     }}
@@ -2428,18 +2431,18 @@ export function ResourceLibrary() {
                         position: 'absolute',
                         top: 0,
                         right: 0,
-                        width: '78px',
-                        height: '56px',
-                        zIndex: 40,
+                        width: '90px',
+                        height: '62px',
+                        zIndex: 45,
                         cursor: 'default',
                         pointerEvents: 'auto',
                         background: '#000000',
-                        borderBottomLeftRadius: '10px',
+                        borderBottomLeftRadius: isMobile ? '8px' : '10px',
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
                         userSelect: 'none',
-                        boxShadow: '0 2px 10px rgba(0,0,0,0.6)',
+                        boxShadow: '0 2px 10px rgba(0,0,0,0.8)',
                       }}
                       onClick={(e) => {
                         e.stopPropagation()
@@ -2453,9 +2456,13 @@ export function ResourceLibrary() {
                         e.stopPropagation()
                         e.preventDefault()
                       }}
+                      onPointerDown={(e) => {
+                        e.stopPropagation()
+                        e.preventDefault()
+                      }}
                       title="🔒 Protected In-App DRM Reader"
                     >
-                      <span style={{ fontSize: '0.78rem', color: '#64748b', fontWeight: 800 }}>🔒 DRM</span>
+                      <span style={{ fontSize: '0.74rem', color: '#94a3b8', fontWeight: 800 }}>🔒 DRM</span>
                     </div>
 
                     {/* Anti-Screen Capture & Snipping Tool Blackout Shield */}
@@ -2493,7 +2500,7 @@ export function ResourceLibrary() {
                       style={{
                         width: '100%',
                         height: '100%',
-                        minHeight: isMobile ? '70vh' : '82vh',
+                        minHeight: isMobile ? 'calc(100dvh - 54px)' : '82vh',
                         border: 'none',
                         background: '#000000',
                         filter: isBlurred ? 'blur(20px) brightness(0.1)' : 'none',

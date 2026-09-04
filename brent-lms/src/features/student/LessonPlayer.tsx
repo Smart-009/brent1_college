@@ -686,13 +686,18 @@ export function LessonPlayer() {
                             position: 'absolute',
                             top: 0,
                             right: 0,
-                            width: '85px',
+                            width: '90px',
                             height: '62px',
-                            zIndex: 40,
+                            zIndex: 45,
                             cursor: 'default',
                             pointerEvents: 'auto',
-                            background: 'transparent',
+                            background: '#000000',
+                            borderBottomLeftRadius: '10px',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
                             userSelect: 'none',
+                            boxShadow: '0 2px 10px rgba(0,0,0,0.8)',
                           }}
                           onClick={(e) => {
                             e.stopPropagation()
@@ -706,8 +711,14 @@ export function LessonPlayer() {
                             e.stopPropagation()
                             e.preventDefault()
                           }}
+                          onPointerDown={(e) => {
+                            e.stopPropagation()
+                            e.preventDefault()
+                          }}
                           title="🔒 In-App DRM Protected Content"
-                        />
+                        >
+                          <span style={{ fontSize: '0.74rem', color: '#94a3b8', fontWeight: 800 }}>🔒 DRM</span>
+                        </div>
                         <iframe
                           src={getEmbeddableDocumentUrl(res.file_url, docEngine)}
                           title={res.file_name}
