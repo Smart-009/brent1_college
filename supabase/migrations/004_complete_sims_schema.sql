@@ -1,5 +1,5 @@
 -- ============================================================
--- Éclat Institute LMS & SIMS — Complete Schema Upgrade
+-- clat Institute LMS & SIMS  Complete Schema Upgrade
 -- Run this in the Supabase SQL Editor:
 -- https://supabase.com/dashboard/project/_/sql
 -- ============================================================
@@ -9,7 +9,7 @@ ALTER TABLE IF EXISTS classes ADD COLUMN IF NOT EXISTS hod_name TEXT DEFAULT 'Fa
 ALTER TABLE IF EXISTS classes ADD COLUMN IF NOT EXISTS fee_amount NUMERIC DEFAULT 75;
 ALTER TABLE IF EXISTS classes ADD COLUMN IF NOT EXISTS duration TEXT DEFAULT '3 Months (Certificate Course)';
 ALTER TABLE IF EXISTS classes ADD COLUMN IF NOT EXISTS shifts TEXT DEFAULT 'Mon, Wed & Fri: 7:30 PM - 9:30 PM EAT';
-ALTER TABLE IF EXISTS classes ADD COLUMN IF NOT EXISTS icon TEXT DEFAULT '💻';
+ALTER TABLE IF EXISTS classes ADD COLUMN IF NOT EXISTS icon TEXT DEFAULT '';
 
 -- 2. Enhance `profiles` table with student records, SIMS, and biometric fields
 ALTER TABLE IF EXISTS profiles ADD COLUMN IF NOT EXISTS phone TEXT;

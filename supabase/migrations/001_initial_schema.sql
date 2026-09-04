@@ -1,5 +1,5 @@
 -- ============================================================
--- Brent College LMS — Initial Schema
+-- Brent College LMS  Initial Schema
 -- Run this in the Supabase SQL Editor
 -- ============================================================
 
@@ -58,7 +58,7 @@ CREATE TABLE IF NOT EXISTS classes (
 );
 
 -- -------------------------
--- CLASS ENROLLMENTS (student ↔ class)
+-- CLASS ENROLLMENTS (student  class)
 -- -------------------------
 CREATE TABLE IF NOT EXISTS class_enrollments (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -69,7 +69,7 @@ CREATE TABLE IF NOT EXISTS class_enrollments (
 );
 
 -- -------------------------
--- TEACHER SUBJECTS (teacher ↔ class ↔ subject)
+-- TEACHER SUBJECTS (teacher  class  subject)
 -- -------------------------
 CREATE TABLE IF NOT EXISTS teacher_subjects (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -236,7 +236,7 @@ CREATE TABLE IF NOT EXISTS badges (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   name TEXT NOT NULL UNIQUE,
   description TEXT NOT NULL,
-  icon_emoji TEXT NOT NULL DEFAULT '🏅',
+  icon_emoji TEXT NOT NULL DEFAULT '',
   criteria_type TEXT NOT NULL,  -- 'first_lesson', 'streak', 'course_complete', 'perfect_score', 'lessons_count'
   criteria_value INTEGER NOT NULL DEFAULT 1,
   created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
@@ -430,19 +430,19 @@ CREATE POLICY "profiles_update_own" ON profiles FOR UPDATE USING (auth.uid() = i
 CREATE POLICY "profiles_admin_all" ON profiles FOR ALL USING (get_my_role() = 'admin');
 
 -- -------------------------
--- SUBJECTS — public read, admin write
+-- SUBJECTS  public read, admin write
 -- -------------------------
 CREATE POLICY "subjects_read_all" ON subjects FOR SELECT USING (TRUE);
 CREATE POLICY "subjects_admin_write" ON subjects FOR ALL USING (get_my_role() = 'admin');
 
 -- -------------------------
--- SCHOOL TERMS — public read, admin write
+-- SCHOOL TERMS  public read, admin write
 -- -------------------------
 CREATE POLICY "terms_read_all" ON school_terms FOR SELECT USING (TRUE);
 CREATE POLICY "terms_admin_write" ON school_terms FOR ALL USING (get_my_role() = 'admin');
 
 -- -------------------------
--- CLASSES — auth read, admin write
+-- CLASSES  auth read, admin write
 -- -------------------------
 CREATE POLICY "classes_read_auth" ON classes FOR SELECT USING (auth.uid() IS NOT NULL);
 CREATE POLICY "classes_admin_write" ON classes FOR ALL USING (get_my_role() = 'admin');
@@ -461,7 +461,7 @@ CREATE POLICY "ts_read_auth" ON teacher_subjects FOR SELECT USING (auth.uid() IS
 CREATE POLICY "ts_admin_all" ON teacher_subjects FOR ALL USING (get_my_role() = 'admin');
 
 -- -------------------------
--- COURSES — public read, teacher own write, admin all
+-- COURSES  public read, teacher own write, admin all
 -- -------------------------
 CREATE POLICY "courses_read_all" ON courses FOR SELECT USING (TRUE);
 CREATE POLICY "courses_teacher_insert" ON courses FOR INSERT WITH CHECK (
@@ -476,7 +476,7 @@ CREATE POLICY "courses_teacher_delete" ON courses FOR DELETE USING (
 CREATE POLICY "courses_admin_all" ON courses FOR ALL USING (get_my_role() = 'admin');
 
 -- -------------------------
--- LESSONS — public read, teacher own within 24h, admin all
+-- LESSONS  public read, teacher own within 24h, admin all
 -- -------------------------
 CREATE POLICY "lessons_read_all" ON lessons FOR SELECT USING (TRUE);
 CREATE POLICY "lessons_teacher_insert" ON lessons FOR INSERT WITH CHECK (
@@ -511,7 +511,7 @@ CREATE POLICY "lr_teacher_delete_24h" ON lesson_resources FOR DELETE USING (
 CREATE POLICY "lr_admin_all" ON lesson_resources FOR ALL USING (get_my_role() = 'admin');
 
 -- -------------------------
--- QUIZZES — public read, teacher own, admin all
+-- QUIZZES  public read, teacher own, admin all
 -- -------------------------
 CREATE POLICY "quizzes_read_all" ON quizzes FOR SELECT USING (TRUE);
 CREATE POLICY "quizzes_teacher_write" ON quizzes FOR INSERT WITH CHECK (get_my_role() = 'teacher');
@@ -519,7 +519,7 @@ CREATE POLICY "quizzes_teacher_update" ON quizzes FOR UPDATE USING (get_my_role(
 CREATE POLICY "quizzes_admin_all" ON quizzes FOR ALL USING (get_my_role() = 'admin');
 
 -- -------------------------
--- QUIZ ATTEMPTS — own read/write, teacher read for their courses
+-- QUIZ ATTEMPTS  own read/write, teacher read for their courses
 -- -------------------------
 CREATE POLICY "qa_student_own" ON quiz_attempts FOR SELECT USING (student_id = auth.uid());
 CREATE POLICY "qa_student_insert" ON quiz_attempts FOR INSERT WITH CHECK (student_id = auth.uid());
@@ -527,7 +527,7 @@ CREATE POLICY "qa_teacher_read" ON quiz_attempts FOR SELECT USING (get_my_role()
 CREATE POLICY "qa_admin_all" ON quiz_attempts FOR ALL USING (get_my_role() = 'admin');
 
 -- -------------------------
--- ENROLLMENTS — own read/write, teacher read, admin all
+-- ENROLLMENTS  own read/write, teacher read, admin all
 -- -------------------------
 CREATE POLICY "enroll_student_own" ON enrollments FOR SELECT USING (student_id = auth.uid());
 CREATE POLICY "enroll_student_insert" ON enrollments FOR INSERT WITH CHECK (student_id = auth.uid());
@@ -536,20 +536,20 @@ CREATE POLICY "enroll_teacher_read" ON enrollments FOR SELECT USING (get_my_role
 CREATE POLICY "enroll_admin_all" ON enrollments FOR ALL USING (get_my_role() = 'admin');
 
 -- -------------------------
--- ACTIVATION CODES — own student read, admin all
+-- ACTIVATION CODES  own student read, admin all
 -- -------------------------
 CREATE POLICY "ac_student_own" ON activation_codes FOR SELECT USING (student_id = auth.uid());
 CREATE POLICY "ac_admin_all" ON activation_codes FOR ALL USING (get_my_role() = 'admin');
 
 -- -------------------------
--- ATTENDANCE — student own, teacher write/read, admin all
+-- ATTENDANCE  student own, teacher write/read, admin all
 -- -------------------------
 CREATE POLICY "att_student_own" ON attendance FOR SELECT USING (student_id = auth.uid());
 CREATE POLICY "att_teacher_all" ON attendance FOR ALL USING (get_my_role() = 'teacher');
 CREATE POLICY "att_admin_all" ON attendance FOR ALL USING (get_my_role() = 'admin');
 
 -- -------------------------
--- ANNOUNCEMENTS — auth read, teacher/admin write
+-- ANNOUNCEMENTS  auth read, teacher/admin write
 -- -------------------------
 CREATE POLICY "ann_read_auth" ON announcements FOR SELECT USING (auth.uid() IS NOT NULL);
 CREATE POLICY "ann_teacher_write" ON announcements FOR INSERT WITH CHECK (get_my_role() IN ('teacher', 'admin'));
@@ -557,40 +557,40 @@ CREATE POLICY "ann_author_update" ON announcements FOR UPDATE USING (author_id =
 CREATE POLICY "ann_admin_all" ON announcements FOR ALL USING (get_my_role() = 'admin');
 
 -- -------------------------
--- NOTIFICATIONS — own only
+-- NOTIFICATIONS  own only
 -- -------------------------
 CREATE POLICY "notif_own" ON notifications FOR ALL USING (user_id = auth.uid());
 CREATE POLICY "notif_admin_insert" ON notifications FOR INSERT WITH CHECK (get_my_role() = 'admin');
 
 -- -------------------------
--- BADGES — public read, admin write
+-- BADGES  public read, admin write
 -- -------------------------
 CREATE POLICY "badges_read_all" ON badges FOR SELECT USING (TRUE);
 CREATE POLICY "badges_admin_write" ON badges FOR ALL USING (get_my_role() = 'admin');
 
 -- -------------------------
--- STUDENT BADGES — own read, system write
+-- STUDENT BADGES  own read, system write
 -- -------------------------
 CREATE POLICY "sb_own_read" ON student_badges FOR SELECT USING (student_id = auth.uid());
 CREATE POLICY "sb_teacher_read" ON student_badges FOR SELECT USING (get_my_role() IN ('teacher', 'admin'));
 CREATE POLICY "sb_admin_all" ON student_badges FOR ALL USING (get_my_role() = 'admin');
 
 -- -------------------------
--- STREAKS — own read/update, admin all
+-- STREAKS  own read/update, admin all
 -- -------------------------
 CREATE POLICY "streaks_own" ON streaks FOR ALL USING (student_id = auth.uid());
 CREATE POLICY "streaks_teacher_read" ON streaks FOR SELECT USING (get_my_role() = 'teacher');
 CREATE POLICY "streaks_admin_all" ON streaks FOR ALL USING (get_my_role() = 'admin');
 
 -- ============================================================
--- SEED DATA — Badges
+-- SEED DATA  Badges
 -- ============================================================
 INSERT INTO badges (name, description, icon_emoji, criteria_type, criteria_value) VALUES
-  ('First Step',      'Complete your first lesson',            '🎯', 'first_lesson',     1),
-  ('On Fire',         'Achieve a 7-day login streak',          '🔥', 'streak',            7),
-  ('Course Champion', 'Complete a full course',                '⭐', 'course_complete',   1),
-  ('Perfect Score',   'Score 100% on a quiz (first attempt)',  '💯', 'perfect_score',     1),
-  ('Bookworm',        'Complete 5 lessons total',              '📚', 'lessons_count',     5)
+  ('First Step',      'Complete your first lesson',            '', 'first_lesson',     1),
+  ('On Fire',         'Achieve a 7-day login streak',          '', 'streak',            7),
+  ('Course Champion', 'Complete a full course',                '', 'course_complete',   1),
+  ('Perfect Score',   'Score 100% on a quiz (first attempt)',  '', 'perfect_score',     1),
+  ('Bookworm',        'Complete 5 lessons total',              '', 'lessons_count',     5)
 ON CONFLICT (name) DO NOTHING;
 
 -- ============================================================

@@ -1,5 +1,5 @@
 -- ============================================================
--- Brent College LMS — E-Library & Academic Resources Migration
+-- Brent College LMS  E-Library & Academic Resources Migration
 -- ============================================================
 
 -- 1. Create library_resources table

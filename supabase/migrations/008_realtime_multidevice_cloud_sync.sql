@@ -1,5 +1,5 @@
 -- ============================================================
--- Éclat Institute — Migration 008: Multi-Device Realtime Cloud Sync
+-- clat Institute  Migration 008: Multi-Device Realtime Cloud Sync
 -- Enables seamless cross-device synchronization between mobile, laptop & desktop
 -- Run in Supabase SQL Editor: https://supabase.com/dashboard/project/mxfuivzgcnxwyslrmzqa/sql
 -- ============================================================

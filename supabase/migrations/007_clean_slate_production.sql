@@ -1,5 +1,5 @@
 -- ============================================================
--- Éclat Institute — Production Clean Slate (Zero Test Records)
+-- clat Institute  Production Clean Slate (Zero Test Records)
 -- ============================================================
 DO $$
 BEGIN

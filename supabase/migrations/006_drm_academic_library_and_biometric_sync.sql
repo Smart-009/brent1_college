@@ -1,5 +1,5 @@
 -- ============================================================
--- Éclat Institute — Comprehensive Database Migration 006
+-- clat Institute  Comprehensive Database Migration 006
 -- Academic E-Reader Handbooks, DRM Audit, Biometrics & SIMS
 -- Run in Supabase SQL Editor: https://supabase.com/dashboard/project/mxfuivzgcnxwyslrmzqa/sql
 -- ============================================================
@@ -34,7 +34,7 @@ CREATE TABLE IF NOT EXISTS public.academic_handbooks (
   title TEXT NOT NULL,
   discipline TEXT NOT NULL,
   level TEXT NOT NULL DEFAULT 'All Trainees / Diploma',
-  author TEXT NOT NULL DEFAULT 'Éclat Institute Academic Board',
+  author TEXT NOT NULL DEFAULT 'clat Institute Academic Board',
   year INTEGER NOT NULL DEFAULT 2026,
   readings_count INTEGER NOT NULL DEFAULT 0,
   chapters JSONB NOT NULL DEFAULT '[]'::jsonb,

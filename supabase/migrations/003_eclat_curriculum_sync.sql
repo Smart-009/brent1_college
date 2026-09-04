@@ -1,5 +1,5 @@
 -- ============================================================
--- Éclat Institute — Full Curriculum & Database Synchronization Migration
+-- clat Institute  Full Curriculum & Database Synchronization Migration
 -- Run this in the Supabase SQL Editor (https://supabase.com/dashboard/project/mxfuivzgcnxwyslrmzqa/sql)
 -- ============================================================
 

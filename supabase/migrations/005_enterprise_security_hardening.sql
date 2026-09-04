@@ -1,5 +1,5 @@
 -- ============================================================
--- Éclat Institute — Enterprise Database Security Hardening
+-- clat Institute  Enterprise Database Security Hardening
 -- Migration 005: Strict Row Level Security (RLS) & Role Access Control
 -- Run this in the Supabase SQL Editor:
 -- https://supabase.com/dashboard/project/mxfuivzgcnxwyslrmzqa/sql
