@@ -633,30 +633,22 @@ export function YouTubeEmbed({
             )}
           </div>
 
-          {/* Responsive Embedded YouTube Player */}
+          {/* Responsive Embedded YouTube Player (Privacy & DRM Enhanced via youtube-nocookie) */}
           <iframe
-            src={`https://www.youtube.com/embed/${videoId}?autoplay=${autoPlay ? 1 : 0}&playsinline=1&rel=0&modestbranding=1&enablejsapi=1&fs=1${startParam}`}
+            src={`https://www.youtube-nocookie.com/embed/${videoId}?autoplay=${autoPlay ? 1 : 0}&playsinline=1&rel=0&modestbranding=1&enablejsapi=1&fs=1${startParam}`}
             title={title}
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
             allowFullScreen
             style={{ width: '100%', height: '100%', border: 0, position: 'absolute', top: 0, left: 0 }}
           />
         </div>
 
-        {/* Video Direct Open Assistant Bar */}
+        {/* Video Secure In-App Streaming Bar (No External Popouts) */}
         <div style={{ marginTop: '0.6rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '0.5rem', padding: '0 0.25rem' }}>
-          <span style={{ fontSize: '0.78rem', color: 'var(--color-text-secondary)' }}>
-            💡 Video streaming directly via Éclat Institute 24/7 LMS.
+          <span style={{ fontSize: '0.78rem', color: 'var(--color-text-secondary)', display: 'inline-flex', alignItems: 'center', gap: '0.35rem' }}>
+            <span>🔒</span>
+            <span>Secure in-app streaming • Éclat Institute 24/7 LMS</span>
           </span>
-          <a
-            href={`https://www.youtube.com/watch?v=${videoId}`}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="btn btn-xs"
-            style={{ background: '#f8fafc', color: '#0f172a', border: '1px solid #cbd5e1', textDecoration: 'none', borderRadius: '6px', fontWeight: 600, padding: '4px 10px' }}
-          >
-            ▶ Open in YouTube App / Tab ↗
-          </a>
         </div>
       </div>
     )
