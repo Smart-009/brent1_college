@@ -1929,6 +1929,51 @@ export function Landing() {
             </p>
           </div>
         </div>
+
+        {/* Read Full Institutional Profile & Accreditation Banner */}
+        <div
+          style={{
+            marginTop: '2.5rem',
+            background: 'linear-gradient(135deg, #0f172a 0%, #1e3a8a 100%)',
+            borderRadius: '16px',
+            padding: isMobile ? '1.5rem 1.25rem' : '2rem 2.5rem',
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            flexWrap: 'wrap',
+            gap: '1.25rem',
+            border: '1px solid rgba(59, 130, 246, 0.3)',
+            boxShadow: '0 10px 25px rgba(0, 0, 0, 0.1)',
+          }}
+        >
+          <div>
+            <div style={{ fontSize: '0.78rem', fontWeight: 800, color: '#93c5fd', textTransform: 'uppercase', letterSpacing: '0.06em' }}>
+              🌟 Deep-Dive Institutional Profile
+            </div>
+            <h3 style={{ fontSize: isMobile ? '1.2rem' : '1.45rem', fontWeight: 900, color: '#ffffff', margin: '0.25rem 0 0.35rem' }}>
+              Discover Our Mission, Global Faculty & Accreditation
+            </h3>
+            <p style={{ fontSize: '0.88rem', color: '#cbd5e1', margin: 0, maxWidth: '650px' }}>
+              Explore our hybrid-live pedagogy, academic leadership profiles, cryptographic certificate security, and 5 specialized academic departments.
+            </p>
+          </div>
+
+          <Link
+            to="/about"
+            className="btn btn-primary"
+            style={{
+              padding: '0.75rem 1.5rem',
+              fontWeight: 800,
+              fontSize: '0.9rem',
+              borderRadius: '10px',
+              textDecoration: 'none',
+              whiteSpace: 'nowrap',
+              boxShadow: '0 4px 14px rgba(37, 99, 235, 0.4)',
+            }}
+          >
+            🏛️ Read Full About Page →
+          </Link>
+        </div>
       </section>
 
       {/* Featured Short Courses Showcase */}
@@ -2876,10 +2921,13 @@ export function Landing() {
         {/* Bottom Bar */}
         <div style={{ borderTop: '1px solid #1e293b', paddingTop: '1.75rem', textAlign: 'center', fontSize: '0.85rem', color: '#94a3b8', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem', maxWidth: '1280px', margin: '0 auto' }}>
           <div>
-            © {new Date().getFullYear()} <strong style={{ color: '#e2e8f0' }}>Éclat Institute</strong>. All Rights Reserved. Shaping Minds, Inspiring Practical Success.
+            © {new Date().getFullYear()} <strong style={{ color: '#e2e8f0' }}>Éclat Institute</strong>. All Rights Reserved.
           </div>
-          <div style={{ display: 'flex', gap: '1.25rem', alignItems: 'center' }}>
-            <span style={{ fontSize: '0.82rem', color: '#93c5fd' }}>🌐 100% Online Global Academy</span>
+          <div style={{ display: 'flex', gap: '1.25rem', alignItems: 'center', flexWrap: 'wrap' }}>
+            <Link to="/about" style={{ color: '#38bdf8', textDecoration: 'none', fontWeight: 700 }}>🏛️ About Us</Link>
+            <Link to="/courses" style={{ color: '#cbd5e1', textDecoration: 'none' }}>Courses</Link>
+            <Link to="/library" style={{ color: '#cbd5e1', textDecoration: 'none' }}>E-Library</Link>
+            <Link to="/privacy" style={{ color: '#94a3b8', textDecoration: 'none' }}>Privacy Policy</Link>
             <button
               type="button"
               className="btn btn-primary btn-sm"

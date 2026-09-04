@@ -128,6 +128,22 @@ export function CourseCatalogPage() {
 
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem' }}>
           <Link
+            to="/about"
+            style={{
+              background: 'rgba(56, 189, 248, 0.1)',
+              color: '#38bdf8',
+              padding: '0.45rem 0.8rem',
+              borderRadius: '8px',
+              fontSize: '0.78rem',
+              fontWeight: 700,
+              textDecoration: 'none',
+              border: '1px solid rgba(56, 189, 248, 0.25)',
+            }}
+          >
+            🏛️ About Us
+          </Link>
+
+          <Link
             to="/library"
             style={{
               background: 'rgba(255, 255, 255, 0.08)',

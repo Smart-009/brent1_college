@@ -10,6 +10,7 @@ import { PullToRefresh } from '@/components/shared/PullToRefresh'
 // Direct import for Home/Landing page for instant render
 import { Landing } from '@/features/landing/Landing'
 const CourseCatalogPage = lazy(() => import('@/features/courses/CourseCatalogPage').then((m) => ({ default: m.CourseCatalogPage })))
+const AboutPage = lazy(() => import('@/features/landing/AboutPage').then((m) => ({ default: m.AboutPage })))
 const PrivacyPolicy = lazy(() => import('@/features/landing/PrivacyPolicy').then((m) => ({ default: m.PrivacyPolicy })))
 const Login = lazy(() => import('@/features/auth/Login').then((m) => ({ default: m.Login })))
 const ChangePassword = lazy(() => import('@/features/auth/ChangePassword').then((m) => ({ default: m.ChangePassword })))
@@ -102,8 +103,9 @@ export function App() {
       )}
       <PullToRefresh />
       <Routes>
-        {/* Public Landing & Login */}
+        {/* Public Landing, About & Login */}
         <Route path="/" element={<Landing />} />
+        <Route path="/about" element={<AboutPage />} />
         <Route path="/privacy" element={<PrivacyPolicy />} />
         <Route path="/courses" element={<CourseCatalogPage />} />
         <Route path="/login" element={<Login />} />
