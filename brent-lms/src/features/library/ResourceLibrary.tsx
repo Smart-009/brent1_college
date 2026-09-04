@@ -218,6 +218,7 @@ export function ResourceLibrary() {
 
   // Upload Modal State (for admin only)
   const [showUploadModal, setShowUploadModal] = useState(false)
+  const [resourceToDelete, setResourceToDelete] = useState<AcademicResource | null>(null)
   const [uploadSource, setUploadSource] = useState<'file' | 'gdrive'>('file')
   const [selectedFile, setSelectedFile] = useState<File | null>(null)
   const [googleDriveUrl, setGoogleDriveUrl] = useState('')
@@ -287,7 +288,6 @@ export function ResourceLibrary() {
   }
 
   const handleDeleteResource = async (id: string) => {
-    if (!window.confirm('Are you sure you want to permanently remove this resource from the E-Library?')) return
     try {
       await supabase.from('library_resources').delete().eq('id', id)
     } catch {
@@ -649,7 +649,7 @@ export function ResourceLibrary() {
                       className="btn btn-ghost btn-sm"
                       style={{ color: '#dc2626' }}
                       title="Delete Resource"
-                      onClick={() => handleDeleteResource(res.id)}
+                      onClick={() => setResourceToDelete(res)}
                     >
                       🗑️
                     </button>
@@ -2266,6 +2266,100 @@ export function ResourceLibrary() {
                 style={{ marginTop: '0.5rem', padding: '0.5rem 1.5rem', borderRadius: '8px' }}
               >
                 Continue Exploring Catalog
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* High-Contrast Custom Delete Confirmation Modal */}
+      {resourceToDelete && (
+        <div
+          className="modal-overlay"
+          onClick={() => setResourceToDelete(null)}
+          style={{ zIndex: 999999, display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+        >
+          <div
+            className="modal-content modal-sm"
+            onClick={(e) => e.stopPropagation()}
+            style={{
+              background: '#090e1f',
+              color: '#ffffff',
+              border: '2px solid rgba(239, 68, 68, 0.6)',
+              borderRadius: '20px',
+              padding: '1.75rem',
+              boxShadow: '0 25px 60px rgba(0, 0, 0, 0.8), 0 0 30px rgba(239, 68, 68, 0.25)',
+              maxWidth: '440px',
+              width: '92%',
+              animation: 'fadeIn 0.2s ease-out',
+            }}
+          >
+            <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '1.25rem' }}>
+              <div
+                style={{
+                  width: '48px',
+                  height: '48px',
+                  borderRadius: '12px',
+                  background: 'rgba(239, 68, 68, 0.15)',
+                  border: '1px solid rgba(239, 68, 68, 0.4)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  fontSize: '1.6rem',
+                  flexShrink: 0,
+                }}
+              >
+                🗑️
+              </div>
+              <div>
+                <h3 style={{ fontSize: '1.2rem', fontWeight: 900, color: '#ffffff', margin: '0 0 2px' }}>
+                  Delete Resource
+                </h3>
+                <div style={{ fontSize: '0.75rem', color: '#fca5a5', fontWeight: 800, textTransform: 'uppercase' }}>
+                  Permanent Action • Irreversible
+                </div>
+              </div>
+            </div>
+
+            <p style={{ fontSize: '0.92rem', color: '#cbd5e1', lineHeight: 1.6, margin: '0 0 1.5rem' }}>
+              Are you sure you want to permanently remove <strong style={{ color: '#ffffff' }}>"{resourceToDelete.title}"</strong> from the E-Library?
+            </p>
+
+            <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.75rem' }}>
+              <button
+                type="button"
+                className="btn btn-secondary btn-sm"
+                onClick={() => setResourceToDelete(null)}
+                style={{
+                  background: 'rgba(255, 255, 255, 0.08)',
+                  border: '1px solid rgba(255, 255, 255, 0.2)',
+                  color: '#ffffff',
+                  fontWeight: 800,
+                  padding: '0.6rem 1.25rem',
+                  borderRadius: '10px',
+                }}
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                className="btn btn-danger btn-sm"
+                onClick={async () => {
+                  const id = resourceToDelete.id
+                  setResourceToDelete(null)
+                  await handleDeleteResource(id)
+                }}
+                style={{
+                  fontWeight: 900,
+                  background: 'linear-gradient(135deg, #ef4444, #dc2626)',
+                  color: '#ffffff',
+                  border: 'none',
+                  padding: '0.6rem 1.25rem',
+                  borderRadius: '10px',
+                  boxShadow: '0 4px 14px rgba(239, 68, 68, 0.4)',
+                }}
+              >
+                🗑️ Remove Resource
               </button>
             </div>
           </div>
