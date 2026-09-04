@@ -47,6 +47,7 @@ export function Sidebar({ isOpen, onClose }: { isOpen: boolean; onClose: () => v
 
   const adminNav = [
     { to: '/admin', label: 'Admin Dashboard', icon: '⚙️' },
+    { to: '/admin/intakes', label: 'Intake Scheduler & Adverts', icon: '🗓️' },
     { to: '/admin/classes', label: 'Academic Programs & Courses', icon: '🏫' },
     { to: '/students', label: 'Student Directory & Admissions', icon: '🎓' },
     { to: '/library', label: 'E-Library & Cloud Drive', icon: '📖' },

@@ -6,6 +6,7 @@ import { supabase } from './supabase'
 import { INITIAL_DEPARTMENTS, schoolStore } from './schoolData'
 import { OFFICIAL_COURSES } from '@/config/officialCourses'
 import { ACADEMIC_HANDBOOKS } from '@/features/library/academicHandbookData'
+import { INITIAL_INTAKE_SCHEDULES } from './intakeStore'
 
 export interface SeedResult {
   success: boolean
@@ -13,6 +14,7 @@ export interface SeedResult {
   handbooksCount: number
   courseUnitsCount: number
   classesCount: number
+  intakesCount: number
   message: string
 }
 
@@ -21,6 +23,7 @@ export async function seedCloudDatabase(): Promise<SeedResult> {
   let handbooksCount = 0
   let courseUnitsCount = 0
   let classesCount = 0
+  let intakesCount = 0
 
   try {
     // 1. Seed Departments
@@ -138,13 +141,49 @@ export async function seedCloudDatabase(): Promise<SeedResult> {
 
     if (!clErr) classesCount = classesPayload.length
 
+    // 5. Seed Intake Schedules
+    if (INITIAL_INTAKE_SCHEDULES.length > 0) {
+      const intakesPayload = INITIAL_INTAKE_SCHEDULES.map((i) => ({
+        id: i.id,
+        title: i.title,
+        academic_year: i.academic_year,
+        term_session: i.term_session,
+        headline: i.headline,
+        description: i.description,
+        poster_image_url: i.poster_image_url || null,
+        promo_video_url: i.promo_video_url || null,
+        application_deadline: i.application_deadline,
+        orientation_date: i.orientation_date || null,
+        commencement_date: i.commencement_date,
+        status: i.status,
+        target_courses: i.target_courses,
+        early_bird_discount: i.early_bird_discount || null,
+        installment_plan: i.installment_plan || null,
+        study_modes: i.study_modes,
+        contact_phone: i.contact_phone || null,
+        contact_email: i.contact_email || null,
+        registration_fee: i.registration_fee || null,
+        is_published: i.is_published,
+        featured: i.featured || false,
+        created_at: i.created_at,
+        updated_at: new Date().toISOString(),
+      }))
+
+      const { error: intErr } = await supabase
+        .from('intake_schedules')
+        .upsert(intakesPayload, { onConflict: 'id' })
+
+      if (!intErr) intakesCount = intakesPayload.length
+    }
+
     return {
       success: true,
       departmentsCount,
       handbooksCount,
       courseUnitsCount,
       classesCount,
-      message: `Successfully seeded ${departmentsCount} departments, ${handbooksCount} academic handbooks, ${courseUnitsCount} course units, and ${classesCount} classes directly into Supabase!`,
+      intakesCount,
+      message: `Successfully seeded ${departmentsCount} departments, ${handbooksCount} academic handbooks, ${courseUnitsCount} course units, ${classesCount} classes, and ${intakesCount} intake campaigns directly into Supabase!`,
     }
   } catch (error: any) {
     return {
@@ -153,6 +192,7 @@ export async function seedCloudDatabase(): Promise<SeedResult> {
       handbooksCount,
       courseUnitsCount,
       classesCount,
+      intakesCount,
       message: error?.message || 'Failed to seed cloud database.',
     }
   }

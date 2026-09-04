@@ -1,10 +1,13 @@
-import { useState, useMemo } from 'react'
-import { Link } from 'react-router-dom'
+import { useState, useMemo, useEffect } from 'react'
+import { Link, useSearchParams } from 'react-router-dom'
 import { useAuthContext } from '@/features/auth/AuthContext'
 import { MobileAppBottomNav } from '@/components/layout/MobileAppBottomNav'
 import { DesktopCommandPalette } from '@/components/shared/DesktopCommandPalette'
 import { getWhatsAppInquiryUrl, INSTITUTION_CONFIG } from '@/config/institution'
 import { OFFICIAL_COURSES } from '@/config/officialCourses'
+import { intakeStore } from '@/lib/intakeStore'
+import { formatDate } from '@/lib/utils'
+import type { IntakeSchedule } from '@/types/intake'
 
 export interface CourseItem {
   id: string
@@ -51,9 +54,24 @@ const CATEGORIES = [
 
 export function CourseCatalogPage() {
   const { profile } = useAuthContext()
+  const [searchParams] = useSearchParams()
+  const intakeParam = searchParams.get('intake')
+
   const [selectedCat, setSelectedCat] = useState('All')
   const [search, setSearch] = useState('')
   const [selectedCourse, setSelectedCourse] = useState<CourseItem | null>(null)
+  const [intakes, setIntakes] = useState<IntakeSchedule[]>(() => intakeStore.getPublishedIntakes())
+
+  useEffect(() => {
+    intakeStore.fetchCloudIntakes().then((list) => {
+      setIntakes(list.filter((i) => i.is_published))
+    })
+  }, [])
+
+  const matchedIntake = useMemo(() => {
+    if (!intakeParam) return intakes.find((i) => i.featured) || intakes[0] || null
+    return intakes.find((i) => i.id === intakeParam || i.title.toLowerCase().includes(intakeParam.toLowerCase())) || intakes[0] || null
+  }, [intakes, intakeParam])
 
   const filteredCourses = useMemo(() => {
     return ALL_PROGRAMS.filter((c) => {
@@ -154,6 +172,68 @@ export function CourseCatalogPage() {
         <p style={{ fontSize: '0.9rem', color: '#94a3b8', margin: 0, lineHeight: 1.5 }}>
           100% online evening live classes, verifiable global certificates, real-world practical projects, and flexible 2-month installment fee plans.
         </p>
+
+        {/* Matched Intake Cohort Highlight Banner */}
+        {matchedIntake && (
+          <div
+            style={{
+              marginTop: '1.25rem',
+              background: 'linear-gradient(135deg, rgba(30, 58, 138, 0.6) 0%, rgba(15, 23, 42, 0.9) 100%)',
+              border: '1.5px solid rgba(212, 175, 55, 0.4)',
+              borderRadius: '16px',
+              padding: '1rem 1.25rem',
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              flexWrap: 'wrap',
+              gap: '0.75rem',
+              textAlign: 'left',
+              boxShadow: '0 8px 24px rgba(0,0,0,0.3)',
+            }}
+          >
+            <div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                <span style={{ background: '#16a34a', color: '#ffffff', padding: '2px 8px', borderRadius: '999px', fontSize: '0.7rem', fontWeight: 900, textTransform: 'uppercase' }}>
+                  ● {matchedIntake.status}
+                </span>
+                <span style={{ fontSize: '0.78rem', color: '#d4af37', fontWeight: 800 }}>
+                  🗓️ {matchedIntake.title}
+                </span>
+              </div>
+              <div style={{ fontSize: '0.85rem', color: '#cbd5e1', marginTop: '3px' }}>
+                ⏰ Deadline: <strong>{formatDate(matchedIntake.application_deadline)}</strong> • 🚀 Classes Start: <strong>{formatDate(matchedIntake.commencement_date)}</strong>
+              </div>
+              {matchedIntake.early_bird_discount && (
+                <div style={{ fontSize: '0.78rem', color: '#fef08a', fontWeight: 700, marginTop: '2px' }}>
+                  🎁 {matchedIntake.early_bird_discount}
+                </div>
+              )}
+            </div>
+
+            <a
+              href={getWhatsAppInquiryUrl(`Hello, I would like to register for the ${matchedIntake.title}. Please assist me with enrollment.`)}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="btn btn-sm"
+              style={{
+                background: 'linear-gradient(135deg, #16a34a, #15803d)',
+                color: '#ffffff',
+                fontWeight: 800,
+                fontSize: '0.82rem',
+                padding: '0.6rem 1.2rem',
+                borderRadius: '10px',
+                textDecoration: 'none',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '6px',
+                whiteSpace: 'nowrap',
+              }}
+            >
+              <span>💬</span>
+              <span>Enroll in this Intake</span>
+            </a>
+          </div>
+        )}
       </div>
 
       {/* Search & Filter Controls */}

@@ -8,6 +8,7 @@ import { supabase } from '@/lib/supabase'
 import { schoolStore } from '@/lib/schoolData'
 import { INSTITUTION_CONFIG, getWhatsAppInquiryUrl } from '@/config/institution'
 import { OFFICIAL_COURSES } from '@/config/officialCourses'
+import { IntakeAdvertsSection } from './IntakeAdvertsSection'
 import type { Role } from '@/lib/database.types'
 
 interface CourseItem {
@@ -1811,6 +1812,9 @@ export function Landing() {
           </div>
         </div>
       </section>
+
+      {/* Featured Scheduled Academic Intakes Section */}
+      <IntakeAdvertsSection />
 
       {/* About Us & Institutional Advantage */}
       <section id="about" style={{ padding: isMobile ? '3.5rem 1rem' : '5rem 1.5rem', maxWidth: '1240px', margin: '0 auto' }}>

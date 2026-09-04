@@ -99,6 +99,7 @@ export function ResourceLibrary() {
   const [isBlurred, setIsBlurred] = useState<boolean>(false)
   const isMobile = useIsMobile(768)
   const [showMobileToc, setShowMobileToc] = useState<boolean>(false)
+  const [isTocCollapsed, setIsTocCollapsed] = useState<boolean>(false)
 
   const activeHandbook: AcademicHandbook | null = useMemo(() => {
     if (!readingResource) return null
@@ -737,6 +738,35 @@ export function ResourceLibrary() {
                   </button>
                 )}
 
+                {/* Table of Contents Toggle for Desktop */}
+                {!isMobile && activeHandbook && (
+                  <button
+                    type="button"
+                    onClick={() => setIsTocCollapsed((prev) => !prev)}
+                    style={{
+                      background: isTocCollapsed
+                        ? readerTheme === 'dark' ? '#1e3a8a' : '#dbeafe'
+                        : readerTheme === 'dark' ? '#1e293b' : '#e2e8f0',
+                      color: isTocCollapsed
+                        ? readerTheme === 'dark' ? '#93c5fd' : '#1e40af'
+                        : 'inherit',
+                      border: 'none',
+                      padding: '5px 10px',
+                      borderRadius: '8px',
+                      cursor: 'pointer',
+                      fontWeight: 800,
+                      fontSize: '0.78rem',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '5px',
+                    }}
+                    title={isTocCollapsed ? 'Expand Table of Contents' : 'Collapse Table of Contents'}
+                  >
+                    <span>📑</span>
+                    <span>{isTocCollapsed ? 'Show Contents ▶' : '◀ Hide Contents'}</span>
+                  </button>
+                )}
+
                 {/* Zoom Controls (Desktop / Tablet) */}
                 {!isMobile && (
                   <div style={{ display: 'flex', alignItems: 'center', gap: '2px', background: readerTheme === 'dark' ? '#1e293b' : '#e2e8f0', borderRadius: '8px', padding: '2px 4px' }}>
@@ -952,7 +982,7 @@ export function ResourceLibrary() {
                 // 1. NATIVE ACADEMIC HANDBOOK & E-TEXTBOOK READER
                 <div style={{ display: 'flex', flex: 1, minHeight: '100%', position: 'relative' }}>
                   {/* Desktop Left Table of Contents Sidebar */}
-                  {!isMobile && (
+                  {!isMobile && !isTocCollapsed && (
                     <aside
                       style={{
                         width: '280px',
@@ -967,8 +997,27 @@ export function ResourceLibrary() {
                       }}
                     >
                       <div>
-                        <div style={{ fontSize: '0.65rem', fontWeight: 800, textTransform: 'uppercase', color: '#d4af37', letterSpacing: '0.05em' }}>
-                          {activeHandbook.edition}
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                          <span style={{ fontSize: '0.65rem', fontWeight: 800, textTransform: 'uppercase', color: '#d4af37', letterSpacing: '0.05em' }}>
+                            {activeHandbook.edition}
+                          </span>
+                          <button
+                            type="button"
+                            onClick={() => setIsTocCollapsed(true)}
+                            style={{
+                              background: 'transparent',
+                              border: 'none',
+                              color: 'inherit',
+                              opacity: 0.6,
+                              cursor: 'pointer',
+                              fontSize: '0.72rem',
+                              fontWeight: 700,
+                              padding: '2px 4px',
+                            }}
+                            title="Collapse Table of Contents"
+                          >
+                            ◀ Hide
+                          </button>
                         </div>
                         <h4 style={{ margin: '4px 0 2px', fontSize: '0.9rem', fontWeight: 800, color: readerTheme === 'dark' ? '#ffffff' : readerTheme === 'sepia' ? '#2d2215' : '#0f172a', lineHeight: 1.3 }}>
                           {activeHandbook.title}

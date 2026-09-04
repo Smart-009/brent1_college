@@ -41,6 +41,7 @@ const ManageTerms = lazy(() => import('@/features/admin/ManageTerms').then((m) =
 const ActivationManager = lazy(() => import('@/features/admin/ActivationManager').then((m) => ({ default: m.ActivationManager })))
 const ContentModeration = lazy(() => import('@/features/admin/ContentModeration').then((m) => ({ default: m.ContentModeration })))
 const AnnouncementsAdmin = lazy(() => import('@/features/admin/AnnouncementsAdmin').then((m) => ({ default: m.AnnouncementsAdmin })))
+const IntakeScheduler = lazy(() => import('@/features/admin/IntakeScheduler').then((m) => ({ default: m.IntakeScheduler })))
 
 // Lazy-loaded College SIMS & Hub Pages
 const StudentDirectory = lazy(() => import('@/features/sis/StudentDirectory').then((m) => ({ default: m.StudentDirectory })))
@@ -269,6 +270,14 @@ export function App() {
             element={
               <RequireAuth allowedRoles={['admin']}>
                 <AnnouncementsAdmin />
+              </RequireAuth>
+            }
+          />
+          <Route
+            path="/admin/intakes"
+            element={
+              <RequireAuth allowedRoles={['admin']}>
+                <IntakeScheduler />
               </RequireAuth>
             }
           />

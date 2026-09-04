@@ -117,6 +117,9 @@ export function AdminDashboard() {
             </p>
           </div>
           <div className="flex gap-2 flex-wrap">
+            <Button variant="accent" size="sm" onClick={() => navigate('/admin/intakes')} style={{ fontWeight: 800 }}>
+              🗓️ Intake Scheduler & Adverts
+            </Button>
             <Button variant="accent" size="sm" onClick={() => navigate('/teacher/courses/new')}>
               + 📖 Build Course Unit
             </Button>
