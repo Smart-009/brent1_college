@@ -1,10 +1,10 @@
-import { lazy, Suspense, useEffect } from 'react'
+import { lazy, Suspense, useEffect, useState } from 'react'
 import { Routes, Route, Navigate } from 'react-router-dom'
 import type { ReactElement } from 'react'
 import { useAuth } from '@/hooks/useAuth'
 import { schoolStore } from '@/lib/schoolData'
 import { LayoutShell } from '@/components/layout/LayoutShell'
-import { LoadingScreen } from '@/components/ui/Spinner'
+import { LoadingScreen, AppOpeningSplashScreen } from '@/components/ui/Spinner'
 import { PullToRefresh } from '@/components/shared/PullToRefresh'
 
 // Direct import for Home/Landing page for instant render
@@ -89,12 +89,17 @@ function RequireAuth({ children, allowedRoles }: { children: ReactElement; allow
 }
 
 export function App() {
+  const [showOpeningSplash, setShowOpeningSplash] = useState(true)
+
   useEffect(() => {
     schoolStore.syncWithCloud().catch(() => {})
   }, [])
 
   return (
     <Suspense fallback={<LoadingScreen message="Loading Eclat Institute Portal..." />}>
+      {showOpeningSplash && (
+        <AppOpeningSplashScreen onFinished={() => setShowOpeningSplash(false)} />
+      )}
       <PullToRefresh />
       <Routes>
         {/* Public Landing & Login */}
