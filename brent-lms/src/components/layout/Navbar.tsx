@@ -94,7 +94,7 @@ export function Navbar({ onToggleSidebar }: { onToggleSidebar: () => void }) {
           <span className="hide-on-mobile">School Bell</span>
         </button>
 
-        {/* Download Native Apps Link */}
+        {/* Download Native Apps Link (Desktop only) */}
         <a
           href="/#app-download"
           className="btn btn-sm hide-mobile"
@@ -115,10 +115,10 @@ export function Navbar({ onToggleSidebar }: { onToggleSidebar: () => void }) {
           <span>Get Apps</span>
         </a>
 
-        {/* Direct E-Library Link */}
+        {/* Direct E-Library Link (Desktop only - mobile has bottom navigation) */}
         <Link
           to="/library"
-          className="btn btn-sm"
+          className="btn btn-sm hide-mobile"
           style={{
             background: 'rgba(59, 130, 246, 0.18)',
             color: '#93c5fd',
@@ -138,8 +138,10 @@ export function Navbar({ onToggleSidebar }: { onToggleSidebar: () => void }) {
           <span>E-Library</span>
         </Link>
 
-        {/* Role Simulator Switcher */}
-        <RoleSwitcher />
+        {/* Role Simulator Switcher (Desktop only) */}
+        <div className="hide-mobile">
+          <RoleSwitcher />
+        </div>
 
         {!profile && (
           <Link
@@ -226,7 +228,7 @@ export function Navbar({ onToggleSidebar }: { onToggleSidebar: () => void }) {
                 display: 'inline-flex',
                 alignItems: 'center',
                 gap: '4px',
-                padding: '0.4rem 0.75rem',
+                padding: '0.4rem 0.65rem',
                 borderRadius: '8px',
                 cursor: 'pointer',
                 transition: 'all 0.2s',
@@ -238,7 +240,7 @@ export function Navbar({ onToggleSidebar }: { onToggleSidebar: () => void }) {
               title="Sign Out of Eclat Institute Portal"
             >
               <span>🚪</span>
-              <span>Logout</span>
+              <span className="hide-on-mobile">Logout</span>
             </button>
           </>
         )}
