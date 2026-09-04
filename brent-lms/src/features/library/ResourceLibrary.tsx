@@ -3,6 +3,7 @@ import { useAuth } from '@/hooks/useAuth'
 import { schoolStore } from '@/lib/schoolData'
 import { supabase } from '@/lib/supabase'
 import { getEmbeddableDocumentUrl } from '@/lib/utils'
+import { ACADEMIC_HANDBOOKS, AcademicHandbook } from './academicHandbookData'
 import type { AcademicResource } from '@/types/school'
 
 const CATEGORIES = ['All', '⭐ Starred / Saved Books', 'Textbooks', 'Lab Manuals & Code', 'Revision Notes', 'Past Papers', 'Syllabus']
@@ -93,6 +94,19 @@ export function ResourceLibrary() {
   const [readerTheme, setReaderTheme] = useState<'light' | 'sepia' | 'dark'>('light')
   const [readerZoom, setReaderZoom] = useState<number>(100)
   const [drmWarning, setDrmWarning] = useState<string | null>(null)
+  const [activeChapterIndex, setActiveChapterIndex] = useState<number>(0)
+
+  const activeHandbook: AcademicHandbook | null = useMemo(() => {
+    if (!readingResource) return null
+    if (ACADEMIC_HANDBOOKS[readingResource.id]) return ACADEMIC_HANDBOOKS[readingResource.id]
+    const cleanId = readingResource.file_url?.replace('academic://', '')
+    if (cleanId && ACADEMIC_HANDBOOKS[cleanId]) return ACADEMIC_HANDBOOKS[cleanId]
+    const fuzzyKey = Object.keys(ACADEMIC_HANDBOOKS).find((k) => {
+      const stem = k.replace('res-', '').split('-')[0]
+      return readingResource.title.toLowerCase().includes(stem) || readingResource.id.includes(stem)
+    })
+    return fuzzyKey ? ACADEMIC_HANDBOOKS[fuzzyKey] : null
+  }, [readingResource])
 
   // Dynamic Hardware Screen Capture Security (Enables FLAG_SECURE only while reading resources)
   useEffect(() => {
@@ -202,6 +216,7 @@ export function ResourceLibrary() {
   const [showAppDownloadPrompt, setShowAppDownloadPrompt] = useState(false)
 
   const handleOpenReader = (res: AcademicResource) => {
+    setActiveChapterIndex(0)
     setReadingResource(res)
 
     // Only increment unique student reads once per browser session
@@ -800,19 +815,329 @@ export function ResourceLibrary() {
               ))}
             </div>
 
-            {/* Embedded Document Viewport with Zoom Scaling and Google Drive Toolbar Cropped Out */}
+            {/* Embedded Document Viewport with Zoom Scaling and Native E-Reader */}
             <div
               style={{
-                width: readerZoom > 100 ? `${readerZoom}%` : '100%',
-                height: readerZoom > 100 ? `${readerZoom}%` : '100%',
+                width: '100%',
                 minHeight: '100%',
-                overflow: 'hidden',
+                display: 'flex',
+                flexDirection: 'column',
+                background: readerTheme === 'dark' ? '#0b0f19' : readerTheme === 'sepia' ? '#fdf6e2' : '#ffffff',
+                color: readerTheme === 'dark' ? '#cbd5e1' : readerTheme === 'sepia' ? '#433422' : '#1e293b',
                 position: 'relative',
-                transformOrigin: 'top center',
-                transition: 'width 0.15s ease, height 0.15s ease',
               }}
             >
-              {/\.(png|jpe?g|webp|gif|svg)$/i.test(readingResource.file_url || '') ? (
+              {activeHandbook ? (
+                // 1. NATIVE ACADEMIC HANDBOOK & E-TEXTBOOK READER
+                <div style={{ display: 'flex', flex: 1, minHeight: '100%' }}>
+                  {/* Left Table of Contents Sidebar (Desktop) */}
+                  <aside
+                    style={{
+                      width: '280px',
+                      flexShrink: 0,
+                      borderRight: readerTheme === 'dark' ? '1px solid #1e293b' : readerTheme === 'sepia' ? '1px solid #e6d7b9' : '1px solid #e2e8f0',
+                      background: readerTheme === 'dark' ? '#070a12' : readerTheme === 'sepia' ? '#f4ebd0' : '#f8fafc',
+                      padding: '1.25rem 1rem',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      gap: '1rem',
+                      overflowY: 'auto',
+                    }}
+                  >
+                    <div>
+                      <div style={{ fontSize: '0.65rem', fontWeight: 800, textTransform: 'uppercase', color: '#d4af37', letterSpacing: '0.05em' }}>
+                        {activeHandbook.edition}
+                      </div>
+                      <h4 style={{ margin: '4px 0 2px', fontSize: '0.9rem', fontWeight: 800, color: readerTheme === 'dark' ? '#ffffff' : readerTheme === 'sepia' ? '#2d2215' : '#0f172a', lineHeight: 1.3 }}>
+                        {activeHandbook.title}
+                      </h4>
+                      <div style={{ fontSize: '0.72rem', opacity: 0.75, marginTop: '2px' }}>
+                        🏛️ {activeHandbook.faculty}
+                      </div>
+                      <div style={{ fontSize: '0.72rem', opacity: 0.75, marginTop: '2px' }}>
+                        ⏱️ {activeHandbook.estimatedReadTime} • {activeHandbook.totalChapters} Chapters
+                      </div>
+                    </div>
+
+                    <div style={{ borderTop: readerTheme === 'dark' ? '1px solid #1e293b' : '1px solid #e2e8f0', paddingTop: '0.75rem' }}>
+                      <div style={{ fontSize: '0.72rem', fontWeight: 800, textTransform: 'uppercase', opacity: 0.6, marginBottom: '0.5rem' }}>
+                        Table of Contents
+                      </div>
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                        {activeHandbook.chapters.map((ch, idx) => {
+                          const isActive = idx === activeChapterIndex
+                          return (
+                            <button
+                              key={ch.id}
+                              type="button"
+                              onClick={() => setActiveChapterIndex(idx)}
+                              style={{
+                                textAlign: 'left',
+                                padding: '0.6rem 0.75rem',
+                                borderRadius: '10px',
+                                border: 'none',
+                                background: isActive
+                                  ? readerTheme === 'dark' ? '#1e3a8a' : readerTheme === 'sepia' ? '#e2cca4' : '#dbeafe'
+                                  : 'transparent',
+                                color: isActive
+                                  ? readerTheme === 'dark' ? '#93c5fd' : readerTheme === 'sepia' ? '#433422' : '#1e40af'
+                                  : readerTheme === 'dark' ? '#94a3b8' : readerTheme === 'sepia' ? '#6b583f' : '#64748b',
+                                fontWeight: isActive ? 800 : 600,
+                                fontSize: '0.8rem',
+                                cursor: 'pointer',
+                                transition: 'all 0.15s ease',
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: '8px',
+                              }}
+                            >
+                              <span style={{ fontSize: '0.75rem', opacity: 0.8, minWidth: '16px' }}>{ch.number}.</span>
+                              <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{ch.title}</span>
+                            </button>
+                          )
+                        })}
+                      </div>
+                    </div>
+                  </aside>
+
+                  {/* Main Chapter Content Area */}
+                  <div
+                    style={{
+                      flex: 1,
+                      padding: '2.5rem 3.5rem',
+                      maxWidth: '900px',
+                      margin: '0 auto',
+                      width: '100%',
+                      boxSizing: 'border-box',
+                      fontSize: `${readerZoom}%`,
+                      lineHeight: 1.7,
+                      overflowY: 'auto',
+                    }}
+                  >
+                    {activeHandbook.chapters[activeChapterIndex] ? (
+                      <div>
+                        {/* Chapter Title Badge */}
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '0.5rem' }}>
+                          <span
+                            style={{
+                              background: readerTheme === 'dark' ? 'rgba(59, 130, 246, 0.2)' : readerTheme === 'sepia' ? '#e8d5b0' : '#e0e7ff',
+                              color: readerTheme === 'dark' ? '#60a5fa' : readerTheme === 'sepia' ? '#78350f' : '#4338ca',
+                              padding: '2px 8px',
+                              borderRadius: '6px',
+                              fontSize: '0.75rem',
+                              fontWeight: 800,
+                              textTransform: 'uppercase',
+                            }}
+                          >
+                            Chapter {activeHandbook.chapters[activeChapterIndex].number}
+                          </span>
+                          <span style={{ fontSize: '0.75rem', opacity: 0.6 }}>
+                            Module Syllabus Unit
+                          </span>
+                        </div>
+
+                        <h1
+                          style={{
+                            fontSize: '1.85rem',
+                            fontWeight: 900,
+                            color: readerTheme === 'dark' ? '#ffffff' : readerTheme === 'sepia' ? '#2d2215' : '#0f172a',
+                            margin: '0 0 1rem',
+                            lineHeight: 1.25,
+                            letterSpacing: '-0.02em',
+                          }}
+                        >
+                          {activeHandbook.chapters[activeChapterIndex].title}
+                        </h1>
+
+                        <div
+                          style={{
+                            background: readerTheme === 'dark' ? '#131b2e' : readerTheme === 'sepia' ? '#f4ebd0' : '#f1f5f9',
+                            borderLeft: '4px solid #3b82f6',
+                            padding: '0.85rem 1.25rem',
+                            borderRadius: '0 12px 12px 0',
+                            fontSize: '0.92rem',
+                            marginBottom: '2rem',
+                            fontStyle: 'italic',
+                          }}
+                        >
+                          {activeHandbook.chapters[activeChapterIndex].summary}
+                        </div>
+
+                        {/* Sections */}
+                        {activeHandbook.chapters[activeChapterIndex].sections.map((sec, secIdx) => (
+                          <div key={secIdx} style={{ marginBottom: '2.5rem' }}>
+                            <h2
+                              style={{
+                                fontSize: '1.25rem',
+                                fontWeight: 800,
+                                color: readerTheme === 'dark' ? '#f8fafc' : readerTheme === 'sepia' ? '#2d2215' : '#1e293b',
+                                margin: '0 0 0.85rem',
+                                paddingBottom: '0.4rem',
+                                borderBottom: readerTheme === 'dark' ? '1px solid #1e293b' : readerTheme === 'sepia' ? '1px solid #e6d7b9' : '1px solid #e2e8f0',
+                              }}
+                            >
+                              {sec.heading}
+                            </h2>
+
+                            {sec.content.map((p, pIdx) => (
+                              <p key={pIdx} style={{ margin: '0 0 1rem', fontSize: '0.95rem' }}>
+                                {p}
+                              </p>
+                            ))}
+
+                            {/* Practical Code Block */}
+                            {sec.codeSnippet && (
+                              <div
+                                style={{
+                                  background: '#040711',
+                                  borderRadius: '12px',
+                                  border: '1px solid #1e293b',
+                                  margin: '1.25rem 0',
+                                  overflow: 'hidden',
+                                }}
+                              >
+                                <div
+                                  style={{
+                                    display: 'flex',
+                                    justifyContent: 'space-between',
+                                    alignItems: 'center',
+                                    background: '#0b1120',
+                                    padding: '0.4rem 1rem',
+                                    borderBottom: '1px solid #1e293b',
+                                    fontSize: '0.72rem',
+                                    color: '#94a3b8',
+                                    fontWeight: 700,
+                                    textTransform: 'uppercase',
+                                  }}
+                                >
+                                  <span>💻 {sec.codeLanguage || 'Code snippet'}</span>
+                                  <span>🔒 In-App Academic Example</span>
+                                </div>
+                                <pre
+                                  style={{
+                                    margin: 0,
+                                    padding: '1.2rem',
+                                    fontFamily: 'Fira Code, Consolas, Monaco, monospace',
+                                    fontSize: '0.85rem',
+                                    lineHeight: 1.6,
+                                    color: '#38bdf8',
+                                    overflowX: 'auto',
+                                    userSelect: 'none',
+                                  }}
+                                >
+                                  <code>{sec.codeSnippet}</code>
+                                </pre>
+                              </div>
+                            )}
+
+                            {/* Key Points Callout */}
+                            {sec.keyPoints && sec.keyPoints.length > 0 && (
+                              <div
+                                style={{
+                                  background: readerTheme === 'dark' ? 'rgba(34, 197, 94, 0.1)' : readerTheme === 'sepia' ? '#f5eedb' : '#f0fdf4',
+                                  border: readerTheme === 'dark' ? '1px solid rgba(34, 197, 94, 0.3)' : readerTheme === 'sepia' ? '1px solid #d4c5a3' : '1px solid #bbf7d0',
+                                  borderRadius: '14px',
+                                  padding: '1.1rem 1.4rem',
+                                  margin: '1.25rem 0',
+                                }}
+                              >
+                                <div style={{ fontSize: '0.82rem', fontWeight: 800, color: readerTheme === 'dark' ? '#4ade80' : readerTheme === 'sepia' ? '#2d2215' : '#166534', marginBottom: '0.5rem', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                                  <span>💡</span>
+                                  <span>Key Examination & Practical Takeaways</span>
+                                </div>
+                                <ul style={{ margin: 0, paddingLeft: '1.2rem', fontSize: '0.88rem' }}>
+                                  {sec.keyPoints.map((kp, kpIdx) => (
+                                    <li key={kpIdx} style={{ margin: '0.35rem 0' }}>{kp}</li>
+                                  ))}
+                                </ul>
+                              </div>
+                            )}
+
+                            {/* Practice Questions */}
+                            {sec.practiceQuestions && sec.practiceQuestions.length > 0 && (
+                              <div
+                                style={{
+                                  background: readerTheme === 'dark' ? 'rgba(212, 175, 55, 0.1)' : readerTheme === 'sepia' ? '#f7ebd2' : '#fefce8',
+                                  border: readerTheme === 'dark' ? '1px solid rgba(212, 175, 55, 0.3)' : readerTheme === 'sepia' ? '1px solid #d9c49c' : '1px solid #fef08a',
+                                  borderRadius: '14px',
+                                  padding: '1.1rem 1.4rem',
+                                  margin: '1.25rem 0',
+                                }}
+                              >
+                                <div style={{ fontSize: '0.82rem', fontWeight: 800, color: readerTheme === 'dark' ? '#fbbf24' : readerTheme === 'sepia' ? '#78350f' : '#854d0e', marginBottom: '0.5rem', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                                  <span>📝</span>
+                                  <span>Past Examination Questions & Model Solution</span>
+                                </div>
+                                {sec.practiceQuestions.map((pq, pqIdx) => (
+                                  <div key={pqIdx} style={{ marginTop: '0.6rem' }}>
+                                    <div style={{ fontWeight: 700, fontSize: '0.88rem', marginBottom: '0.25rem' }}>{pq.q}</div>
+                                    <div style={{ fontSize: '0.84rem', opacity: 0.9, paddingLeft: '0.75rem', borderLeft: '2px solid #eab308' }}>{pq.a}</div>
+                                  </div>
+                                ))}
+                              </div>
+                            )}
+                          </div>
+                        ))}
+
+                        {/* Chapter Navigation Footer */}
+                        <div
+                          style={{
+                            display: 'flex',
+                            justifyContent: 'space-between',
+                            alignItems: 'center',
+                            marginTop: '3rem',
+                            paddingTop: '1.5rem',
+                            borderTop: readerTheme === 'dark' ? '1px solid #1e293b' : readerTheme === 'sepia' ? '1px solid #e6d7b9' : '1px solid #e2e8f0',
+                          }}
+                        >
+                          <button
+                            type="button"
+                            disabled={activeChapterIndex === 0}
+                            onClick={() => setActiveChapterIndex((i) => Math.max(0, i - 1))}
+                            style={{
+                              background: readerTheme === 'dark' ? '#1e293b' : readerTheme === 'sepia' ? '#e8d5b0' : '#f1f5f9',
+                              color: readerTheme === 'dark' ? '#f8fafc' : readerTheme === 'sepia' ? '#433422' : '#0f172a',
+                              border: 'none',
+                              padding: '0.6rem 1.25rem',
+                              borderRadius: '10px',
+                              fontWeight: 700,
+                              fontSize: '0.84rem',
+                              cursor: activeChapterIndex === 0 ? 'not-allowed' : 'pointer',
+                              opacity: activeChapterIndex === 0 ? 0.4 : 1,
+                            }}
+                          >
+                            ← Previous Chapter
+                          </button>
+
+                          <span style={{ fontSize: '0.8rem', opacity: 0.7, fontWeight: 700 }}>
+                            Chapter {activeChapterIndex + 1} of {activeHandbook.chapters.length}
+                          </span>
+
+                          <button
+                            type="button"
+                            disabled={activeChapterIndex === activeHandbook.chapters.length - 1}
+                            onClick={() => setActiveChapterIndex((i) => Math.min(activeHandbook.chapters.length - 1, i + 1))}
+                            style={{
+                              background: '#2563eb',
+                              color: '#ffffff',
+                              border: 'none',
+                              padding: '0.6rem 1.25rem',
+                              borderRadius: '10px',
+                              fontWeight: 800,
+                              fontSize: '0.84rem',
+                              cursor: activeChapterIndex === activeHandbook.chapters.length - 1 ? 'not-allowed' : 'pointer',
+                              opacity: activeChapterIndex === activeHandbook.chapters.length - 1 ? 0.4 : 1,
+                            }}
+                          >
+                            Next Chapter →
+                          </button>
+                        </div>
+                      </div>
+                    ) : null}
+                  </div>
+                </div>
+              ) : /\.(png|jpe?g|webp|gif|svg)$/i.test(readingResource.file_url || '') ? (
+                // 2. IMAGE VIEWER
                 <div style={{ padding: '1.5rem', height: '100%', overflowY: 'auto', textAlign: 'center' }}>
                   <img
                     src={readingResource.file_url}
@@ -822,20 +1147,48 @@ export function ResourceLibrary() {
                     style={{ maxWidth: '100%', maxHeight: '90vh', objectFit: 'contain', borderRadius: '8px', boxShadow: '0 4px 12px rgba(0,0,0,0.1)', pointerEvents: 'none' }}
                   />
                 </div>
+              ) : readingResource.file_url?.endsWith('.pdf') || readingResource.file_url?.startsWith('data:application/pdf') || readingResource.file_url?.startsWith('blob:') ? (
+                // 3. NATIVE PDF EMBED
+                <object
+                  data={readingResource.file_url}
+                  type="application/pdf"
+                  style={{ width: '100%', height: '100%', minHeight: '80vh', border: 'none' }}
+                >
+                  <div style={{ padding: '2rem', textAlign: 'center' }}>
+                    <p>Protected Academic Document ready.</p>
+                  </div>
+                </object>
               ) : (
-                <iframe
-                  src={getEmbeddableDocumentUrl(readingResource.file_url, 'cloud')}
-                  title={readingResource.title}
-                  referrerPolicy="no-referrer"
-                  style={{
-                    width: '100%',
-                    height: 'calc(100% + 56px)',
-                    marginTop: '-56px',
-                    border: 'none',
-                    background: '#ffffff',
-                  }}
-                  allow="autoplay"
-                />
+                // 4. INSTITUTIONAL FALLBACK DOCUMENT VIEW (ZERO THIRD-PARTY LEAKS)
+                <div style={{ padding: '3rem', maxWidth: '750px', margin: '0 auto', textAlign: 'center' }}>
+                  <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>📜</div>
+                  <h2 style={{ fontSize: '1.4rem', fontWeight: 800, color: readerTheme === 'dark' ? '#ffffff' : '#0f172a', margin: '0 0 0.5rem' }}>
+                    {readingResource.title}
+                  </h2>
+                  <p style={{ fontSize: '0.9rem', color: '#94a3b8', margin: '0 0 1.5rem' }}>
+                    {readingResource.category} • {readingResource.subject} • Academic Year {readingResource.year || 2026}
+                  </p>
+                  <div
+                    style={{
+                      background: readerTheme === 'dark' ? '#131b2e' : '#f1f5f9',
+                      borderRadius: '16px',
+                      padding: '1.5rem',
+                      textAlign: 'left',
+                      fontSize: '0.88rem',
+                      border: readerTheme === 'dark' ? '1px solid #1e293b' : '1px solid #e2e8f0',
+                    }}
+                  >
+                    <div style={{ fontWeight: 800, color: '#3b82f6', marginBottom: '0.4rem' }}>
+                      🎓 Course Unit Information
+                    </div>
+                    <p style={{ margin: '0 0 0.5rem' }}>
+                      This resource is an institutional study material managed under the Éclat Institute Academic Library.
+                    </p>
+                    <p style={{ margin: 0, opacity: 0.8 }}>
+                      Uploaded by: {readingResource.uploaded_by || 'Academic Administrator'} • Size: {readingResource.file_size || 'Standard Handbook'}
+                    </p>
+                  </div>
+                </div>
               )}
             </div>
           </div>

@@ -215,23 +215,17 @@ export function getGoogleDrivePreviewUrl(url: string): string | null {
  * Transforms any document/file URL (Google Drive, cloud PDF/DOCX, direct data URL)
  * into a suitable in-app embed preview URL.
  */
-export function getEmbeddableDocumentUrl(url: string, engine: 'cloud' | 'direct' = 'cloud'): string {
+export function getEmbeddableDocumentUrl(url: string, _engine: 'cloud' | 'direct' = 'direct'): string {
   if (!url) return ''
-
-  // If it's a Google Drive / Docs link, always use the Google Drive preview embed
-  const gDrivePreview = getGoogleDrivePreviewUrl(url)
-  if (gDrivePreview) {
-    return gDrivePreview
-  }
 
   // If it's a base64 Data URL or blob URL, return as-is
   if (url.startsWith('data:') || url.startsWith('blob:')) {
     return url
   }
 
-  // If cloud engine is selected for standard http/https files (like Supabase, AWS, external PDFs)
-  if (engine === 'cloud' && url.startsWith('http')) {
-    return `https://docs.google.com/viewer?url=${encodeURIComponent(url)}&embedded=true`
+  // If it's an internal academic handbook scheme
+  if (url.startsWith('academic://')) {
+    return url
   }
 
   return url

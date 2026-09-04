@@ -685,7 +685,7 @@ export const INITIAL_RESOURCES: AcademicResource[] = [
     category: 'Textbooks',
     subject: 'Tech & Programming',
     class_level: 'All Trainees / Diploma',
-    file_url: 'https://drive.google.com/file/d/1vQ2Z8mH7x8Q4Y5B9A6C3D2E1F0G/preview',
+    file_url: 'academic://res-fullstack-guide',
     file_size: '4.8 MB',
     file_type: 'PDF',
     downloads_count: 142,
@@ -699,7 +699,7 @@ export const INITIAL_RESOURCES: AcademicResource[] = [
     category: 'Lab Manuals',
     subject: 'Tech & Programming',
     class_level: 'Certificate / Diploma',
-    file_url: 'https://drive.google.com/file/d/1vQ2Z8mH7x8Q4Y5B9A6C3D2E1F0G/preview',
+    file_url: 'academic://res-python-lab',
     file_size: '3.6 MB',
     file_type: 'PDF',
     downloads_count: 98,
@@ -713,7 +713,7 @@ export const INITIAL_RESOURCES: AcademicResource[] = [
     category: 'Past Papers',
     subject: 'Languages & Communication',
     class_level: 'International Candidates',
-    file_url: 'https://drive.google.com/file/d/1vQ2Z8mH7x8Q4Y5B9A6C3D2E1F0G/preview',
+    file_url: 'academic://res-ielts-prep',
     file_size: '5.2 MB',
     file_type: 'PDF',
     downloads_count: 215,
@@ -727,7 +727,7 @@ export const INITIAL_RESOURCES: AcademicResource[] = [
     category: 'Textbooks',
     subject: 'Business Tech & Accounting',
     class_level: 'Accounting Trainees',
-    file_url: 'https://drive.google.com/file/d/1vQ2Z8mH7x8Q4Y5B9A6C3D2E1F0G/preview',
+    file_url: 'academic://res-quickbooks-guide',
     file_size: '3.1 MB',
     file_type: 'PDF',
     downloads_count: 87,
@@ -741,7 +741,7 @@ export const INITIAL_RESOURCES: AcademicResource[] = [
     category: 'Textbooks',
     subject: 'Tech & Programming',
     class_level: 'Diploma / Advanced',
-    file_url: 'https://drive.google.com/file/d/1vQ2Z8mH7x8Q4Y5B9A6C3D2E1F0G/preview',
+    file_url: 'academic://res-cybersecurity-handbook',
     file_size: '4.2 MB',
     file_type: 'PDF',
     downloads_count: 110,
@@ -755,7 +755,7 @@ export const INITIAL_RESOURCES: AcademicResource[] = [
     category: 'Revision Notes',
     subject: 'Computer & Digital Skills',
     class_level: 'Foundational / Certificate',
-    file_url: 'https://drive.google.com/file/d/1vQ2Z8mH7x8Q4Y5B9A6C3D2E1F0G/preview',
+    file_url: 'academic://res-computer-packages-notes',
     file_size: '2.9 MB',
     file_type: 'PDF',
     downloads_count: 176,
@@ -769,7 +769,7 @@ export const INITIAL_RESOURCES: AcademicResource[] = [
     category: 'Revision Notes',
     subject: 'Languages & Communication',
     class_level: 'All Language Students',
-    file_url: 'https://drive.google.com/file/d/1vQ2Z8mH7x8Q4Y5B9A6C3D2E1F0G/preview',
+    file_url: 'academic://res-french-conversational',
     file_size: '2.4 MB',
     file_type: 'PDF',
     downloads_count: 64,
@@ -783,7 +783,7 @@ export const INITIAL_RESOURCES: AcademicResource[] = [
     category: 'Lab Manuals',
     subject: 'Digital Marketing & Media',
     class_level: 'Professional Certificate',
-    file_url: 'https://drive.google.com/file/d/1vQ2Z8mH7x8Q4Y5B9A6C3D2E1F0G/preview',
+    file_url: 'academic://res-digital-marketing-strategy',
     file_size: '3.8 MB',
     file_type: 'PDF',
     downloads_count: 133,
@@ -965,38 +965,16 @@ class SchoolDataStore {
 
   private cleanLegacyMockData() {
     try {
-      const isCleaned = localStorage.getItem('eclat_launch_pure_v9')
-      if (!isCleaned) {
-        const activeProfileRaw = localStorage.getItem('eclat_active_profile') || sessionStorage.getItem('eclat_active_profile')
-        if (activeProfileRaw) {
-          try {
-            const parsed = JSON.parse(activeProfileRaw)
-            if (parsed.role === 'student' && (parsed.admission_number?.includes('001') || parsed.full_name?.toLowerCase().includes('trainee'))) {
-              localStorage.removeItem('eclat_active_profile')
-              sessionStorage.removeItem('eclat_active_profile')
-            }
-          } catch {}
-        }
-        localStorage.removeItem('eclat_demo_role')
-        localStorage.removeItem('eclat_school_students')
-        localStorage.removeItem('eclat_school_students')
-        localStorage.removeItem('eclat_school_course_units')
-        localStorage.removeItem('eclat_school_course_units')
-        localStorage.removeItem('eclat_school_unit_registrations')
-        localStorage.removeItem('eclat_school_unit_registrations')
-        localStorage.removeItem('eclat_school_invoices')
-        localStorage.removeItem('eclat_school_invoices')
-        localStorage.removeItem('eclat_school_receipts')
-        localStorage.removeItem('eclat_school_receipts')
-        localStorage.removeItem('eclat_school_timetable')
-        localStorage.removeItem('eclat_school_exams')
-        localStorage.removeItem('eclat_school_report_cards')
+      // Purge legacy cached resources containing third-party storage vendor links
+      const cachedResources = localStorage.getItem('eclat_school_resources')
+      if (cachedResources && cachedResources.includes('drive.google.com')) {
         localStorage.removeItem('eclat_school_resources')
-        localStorage.removeItem('eclat_school_discipline')
-        localStorage.removeItem('eclat_school_notices')
-        localStorage.removeItem('eclat_school_reminders')
-        localStorage.removeItem('eclat_school_inquiries')
-        localStorage.setItem('eclat_launch_pure_v9', 'true')
+      }
+
+      const isCleaned = localStorage.getItem('eclat_launch_pure_v10')
+      if (!isCleaned) {
+        localStorage.removeItem('eclat_school_resources')
+        localStorage.setItem('eclat_launch_pure_v10', 'true')
       }
     } catch {}
   }
