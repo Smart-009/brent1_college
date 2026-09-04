@@ -7,6 +7,7 @@ import { BiometricEnrollModal } from '@/components/biometrics/BiometricEnrollMod
 import { BiometricClearancePassModal } from '@/components/biometrics/BiometricClearancePassModal'
 import { generateBiometricVerificationCode } from '@/lib/biometricEngine'
 import { INSTITUTION_CONFIG } from '@/config/institution'
+import { OFFICIAL_COURSES } from '@/config/officialCourses'
 
 export function FeeManagement() {
   const { profile } = useAuth()
@@ -990,45 +991,50 @@ export function FeeManagement() {
       {activeTab === 'structure' && (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="card" style={{ padding: '1.5rem' }}>
-            <h3 style={{ fontSize: '1.1rem', fontWeight: 700, marginBottom: '0.5rem', color: 'var(--color-primary)' }}>
-              Vocational Short Course Tuition & Practical Lab Schedules
-            </h3>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem' }}>
+              <h3 style={{ fontSize: '1.1rem', fontWeight: 700, margin: 0, color: 'var(--color-primary)' }}>
+                Official Course Tuition & Fee Schedule
+              </h3>
+              <span className="badge badge-success" style={{ fontSize: '0.75rem' }}>2026 Authoritative</span>
+            </div>
             <p style={{ fontSize: '0.85rem', color: 'var(--color-text-secondary)', marginBottom: '1rem' }}>
-              Standard 4 to 12-Week Short Course Fees • Payable in Easy Installments via Card or {INSTITUTION_CONFIG.bank.name} Acc {INSTITUTION_CONFIG.bank.accountNumber}
+              Standard Short Course Fees • Dual Currency (USD & KES) • Payable in Flexible Installments via Card or Bank.
             </p>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', fontSize: '0.88rem' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', padding: '0.4rem 0', borderBottom: '1px solid var(--color-border)' }}>
-                <span>💻 Full-Stack Web Development & React 19 (12 Weeks)</span>
-                <strong>$120</strong>
-              </div>
-              <div style={{ display: 'flex', justifyContent: 'space-between', padding: '0.4rem 0', borderBottom: '1px solid var(--color-border)' }}>
-                <span>📊 Python Programming, SQL & Data Analytics (8 Weeks)</span>
-                <strong>$95</strong>
-              </div>
-              <div style={{ display: 'flex', justifyContent: 'space-between', padding: '0.4rem 0', borderBottom: '1px solid var(--color-border)' }}>
-                <span>⚡ Comprehensive Computer Packages & Digital Skills (4 Weeks)</span>
-                <strong>$45</strong>
-              </div>
-              <div style={{ display: 'flex', justifyContent: 'space-between', padding: '0.4rem 0', borderBottom: '1px solid var(--color-border)' }}>
-                <span>🛡️ Cybersecurity Fundamentals & Network Defense (6 Weeks)</span>
-                <strong>$89</strong>
-              </div>
-              <div style={{ display: 'flex', justifyContent: 'space-between', padding: '0.4rem 0', borderBottom: '1px solid var(--color-border)' }}>
-                <span>📈 Computerized Accounting (QuickBooks & International Tax) (4 Weeks)</span>
-                <strong>$65</strong>
-              </div>
-              <div style={{ display: 'flex', justifyContent: 'space-between', padding: '0.4rem 0', borderBottom: '1px solid var(--color-border)' }}>
-                <span>🌍 IELTS Exam Prep Target Band 7.5 - 9.0 (4-6 Weeks)</span>
-                <strong>$85</strong>
-              </div>
-              <div style={{ display: 'flex', justifyContent: 'space-between', padding: '0.4rem 0', borderBottom: '1px solid var(--color-border)' }}>
-                <span>🗣️ English Language Mastery & Public Speaking (6-8 Weeks)</span>
-                <strong>$55</strong>
-              </div>
-              <div style={{ display: 'flex', justifyContent: 'space-between', padding: '0.4rem 0', borderBottom: '1px solid var(--color-border)' }}>
-                <span>🌴 Arabic, French & German Foreign Languages (8 Weeks)</span>
-                <strong>$79</strong>
-              </div>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.65rem', fontSize: '0.88rem' }}>
+              {OFFICIAL_COURSES.map((course) => (
+                <div
+                  key={course.id}
+                  style={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    padding: '0.6rem 0.75rem',
+                    borderRadius: '8px',
+                    background: 'var(--color-bg-secondary)',
+                    border: '1px solid var(--color-border)',
+                  }}
+                >
+                  <div style={{ minWidth: 0, flex: 1, paddingRight: '0.75rem' }}>
+                    <div style={{ fontWeight: 600, color: 'var(--color-text-primary)', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                      <span>{course.icon}</span>
+                      <span className="truncate">{course.shortTitle}</span>
+                    </div>
+                    <div style={{ fontSize: '0.75rem', color: 'var(--color-text-secondary)', display: 'flex', gap: '0.5rem', flexWrap: 'wrap', marginTop: '0.15rem' }}>
+                      <span>⏱️ {course.duration}</span>
+                      <span>•</span>
+                      <span>💳 {course.installmentText}</span>
+                    </div>
+                  </div>
+                  <div style={{ textAlign: 'right', whiteSpace: 'nowrap' }}>
+                    <div style={{ fontWeight: 800, color: '#16a34a', fontSize: '0.95rem' }}>
+                      ${course.feeUsd} <span style={{ fontSize: '0.75rem', color: 'var(--color-text-secondary)', fontWeight: 500 }}>(KES {course.feeKes.toLocaleString()})</span>
+                    </div>
+                    <div style={{ fontSize: '0.7rem', color: '#94a3b8', textDecoration: 'line-through' }}>
+                      ${course.originalFeeUsd}
+                    </div>
+                  </div>
+                </div>
+              ))}
             </div>
           </div>
 

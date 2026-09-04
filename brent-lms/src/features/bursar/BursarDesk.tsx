@@ -18,6 +18,7 @@ import { BiometricEnrollModal } from '@/components/biometrics/BiometricEnrollMod
 import { BiometricClearancePassModal } from '@/components/biometrics/BiometricClearancePassModal'
 import { generateBiometricVerificationCode } from '@/lib/biometricEngine'
 import { INSTITUTION_CONFIG } from '@/config/institution'
+import { OFFICIAL_COURSES } from '@/config/officialCourses'
 
 export function BursarDesk() {
   const [invoices, setInvoices] = useState<FeeInvoice[]>(() => schoolStore.getInvoices())
@@ -1768,6 +1769,32 @@ export function BursarDesk() {
                   </div>
                 </div>
 
+                <div>
+                  <label className="label">Quick Select Accredited Program (Auto-fills Tuition & Duration)</label>
+                  <select
+                    className="input"
+                    onChange={(e) => {
+                      const selected = OFFICIAL_COURSES.find((c) => c.id === e.target.value)
+                      if (selected) {
+                        setNewInvoice({
+                          ...newInvoice,
+                          class_name: selected.title,
+                          term: selected.duration,
+                          total_amount: selected.feeUsd,
+                          item_description: `${selected.shortTitle} — Full Tuition & Practical Lab Access`,
+                        })
+                      }
+                    }}
+                  >
+                    <option value="">-- Choose from Accredited 2026 Programs or Type Custom Below --</option>
+                    {OFFICIAL_COURSES.map((c) => (
+                      <option key={c.id} value={c.id}>
+                        {c.icon} {c.shortTitle} — ${c.feeUsd} (KES {c.feeKes.toLocaleString()}) • {c.duration}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
                   <div>
                     <label className="label">Course / Program Name *</label>
@@ -1788,7 +1815,9 @@ export function BursarDesk() {
                       onChange={(e) => setNewInvoice({ ...newInvoice, term: e.target.value })}
                     >
                       <option value="4 Weeks (1 Month)">4 Weeks (1 Month)</option>
-                      <option value="6 Weeks (1.5 Months)">6 Weeks (1.5 Months)</option>
+                      <option value="4-6 Weeks">4-6 Weeks</option>
+                      <option value="6 Weeks">6 Weeks</option>
+                      <option value="6-8 Weeks">6-8 Weeks</option>
                       <option value="8 Weeks (2 Months)">8 Weeks (2 Months)</option>
                       <option value="12 Weeks (3 Months)">12 Weeks (3 Months)</option>
                       <option value="Executive Masterclass">Executive Masterclass</option>
@@ -1887,13 +1916,18 @@ export function BursarDesk() {
                 </div>
                 <div>
                   <label className="label">Program of Interest</label>
-                  <input
-                    type="text"
+                  <select
                     className="input"
-                    placeholder="e.g. Certificate in Web & Cloud Systems"
                     value={newInquiry.program_of_interest}
                     onChange={(e) => setNewInquiry({ ...newInquiry, program_of_interest: e.target.value })}
-                  />
+                  >
+                    {OFFICIAL_COURSES.map((c) => (
+                      <option key={c.id} value={c.title}>
+                        {c.icon} {c.shortTitle} (${c.feeUsd} / KES {c.feeKes.toLocaleString()})
+                      </option>
+                    ))}
+                    <option value="General Admissions Consultation">General Admissions Consultation</option>
+                  </select>
                 </div>
                 <div>
                   <label className="label">Inquiry Notes</label>

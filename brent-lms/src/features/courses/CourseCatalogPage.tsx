@@ -3,9 +3,10 @@ import { Link } from 'react-router-dom'
 import { useAuthContext } from '@/features/auth/AuthContext'
 import { MobileAppBottomNav } from '@/components/layout/MobileAppBottomNav'
 import { DesktopCommandPalette } from '@/components/shared/DesktopCommandPalette'
-import { getWhatsAppInquiryUrl } from '@/config/institution'
+import { getWhatsAppInquiryUrl, INSTITUTION_CONFIG } from '@/config/institution'
+import { OFFICIAL_COURSES } from '@/config/officialCourses'
 
-interface CourseItem {
+export interface CourseItem {
   id: string
   title: string
   category: string
@@ -22,175 +23,30 @@ interface CourseItem {
   syllabus?: { week: string; topic: string; practicalLab: string }[]
 }
 
-const ALL_PROGRAMS: CourseItem[] = [
-  {
-    id: 'python-ds',
-    title: 'Python for Data Science, AI & Machine Learning',
-    category: 'Data Science & Research',
-    tag: 'Highest Demand',
-    tagColor: '#3b82f6',
-    duration: '8 Weeks',
-    schedule: 'Mon & Wed 7:30PM - 9:30PM EAT (Live Zoom)',
-    fee: 'KES 24,000 / $185',
-    installment: 'KES 12,000 x 2 Months',
-    careerOutcome: 'Junior Data Scientist, Python Developer, AI Research Assistant',
-    skills: ['Pandas', 'NumPy', 'Scikit-Learn', 'Matplotlib', 'Jupyter', 'APIs'],
-    icon: '🐍',
-    popular: true,
-    syllabus: [
-      { week: 'Week 1-2', topic: 'Python Programming Essentials & OOP', practicalLab: 'Build a Banking Automation & Data Cleaner CLI' },
-      { week: 'Week 3-4', topic: 'Data Wrangling with Pandas & NumPy', practicalLab: 'Analyze Real-World Healthcare & Financial Datasets' },
-      { week: 'Week 5-6', topic: 'Exploratory Data Analysis & Seaborn Visualizations', practicalLab: 'Create an Interactive Interactive Market Intelligence Dashboard' },
-      { week: 'Week 7-8', topic: 'Supervised Machine Learning & Predictive Models', practicalLab: 'Deploy a Customer Churn Predictor on Streamlit Cloud' },
-    ],
-  },
-  {
-    id: 'spss-stata-r',
-    title: 'Data Analysis with SPSS, STATA & R Programming',
-    category: 'Data Science & Research',
-    tag: 'Academic Research',
-    tagColor: '#10b981',
-    duration: '6 Weeks',
-    schedule: 'Tue & Thu 7:00PM - 9:00PM EAT (Live Zoom)',
-    fee: 'KES 22,000 / $170',
-    installment: 'KES 11,000 x 2 Months',
-    careerOutcome: 'Monitoring & Evaluation (M&E) Specialist, Research Analyst, Biostatistician',
-    skills: ['SPSS Regression', 'STATA Panel Data', 'R Studio', 'Hypothesis Testing', 'APA Formatting'],
-    icon: '📊',
-    popular: true,
-    syllabus: [
-      { week: 'Week 1-2', topic: 'Descriptive Statistics & SPSS Survey Coding', practicalLab: 'Clean and Code Multi-Indicator Survey Questionnaires' },
-      { week: 'Week 3-4', topic: 'Hypothesis Testing (ANOVA, Chi-Square, T-Tests)', practicalLab: 'Conduct Cross-Tabulation & Factor Analysis on National Demographics' },
-      { week: 'Week 5', topic: 'STATA Econometric & Panel Regression Modeling', practicalLab: 'Run Fixed and Random Effects on Financial Growth Data' },
-      { week: 'Week 6', topic: 'R Studio Data Visualization with ggplot2', practicalLab: 'Generate Publication-Ready APA Tables & Theses Figures' },
-    ],
-  },
-  {
-    id: 'fullstack-web',
-    title: 'Full-Stack Web Development (React, Node.js & TypeScript)',
-    category: 'Tech & Programming',
-    tag: 'Industry Ready',
-    tagColor: '#6366f1',
-    duration: '12 Weeks',
-    schedule: 'Mon, Wed, Fri 7:00PM - 9:00PM EAT (Live Zoom)',
-    fee: 'KES 35,000 / $270',
-    installment: 'KES 12,000 / Month x 3',
-    careerOutcome: 'Full-Stack Software Engineer, Frontend React Developer',
-    skills: ['React 18', 'TypeScript', 'Node.js', 'Express', 'PostgreSQL', 'Tailwind CSS'],
-    icon: '💻',
-    popular: true,
-    syllabus: [
-      { week: 'Week 1-3', topic: 'Modern JavaScript (ES6+), DOM & TypeScript Foundations', practicalLab: 'Build Interactive Web Apps with Real-Time State' },
-      { week: 'Week 4-6', topic: 'React Single Page Applications & Tailwind CSS', practicalLab: 'Develop a Modern E-Commerce Platform with Cart & Checkout' },
-      { week: 'Week 7-9', topic: 'Backend APIs with Node.js, Express & JWT Auth', practicalLab: 'Create Secure Role-Based REST APIs with PostgreSQL' },
-      { week: 'Week 10-12', topic: 'Deployment, Cloud Hosting & CI/CD Pipelines', practicalLab: 'Deploy Full-Stack Production System on Vercel & Supabase' },
-    ],
-  },
-  {
-    id: 'ui-ux-design',
-    title: 'UI/UX Product Design & Figma Prototyping',
-    category: 'Creative Arts & Design',
-    tag: 'Creative Career',
-    tagColor: '#ec4899',
-    duration: '6 Weeks',
-    schedule: 'Tue & Thu 6:30PM - 8:30PM EAT (Live Zoom)',
-    fee: 'KES 20,000 / $155',
-    installment: 'KES 10,000 x 2 Months',
-    careerOutcome: 'UI/UX Designer, Product Designer, Mobile App Prototyper',
-    skills: ['Figma Auto-Layout', 'Design Systems', 'User Research', 'Wireframing', 'Interactive Prototypes'],
-    icon: '🎨',
-    syllabus: [
-      { week: 'Week 1-2', topic: 'Design Thinking & User Experience Research', practicalLab: 'Conduct User Interviews and Build Personas & Journey Maps' },
-      { week: 'Week 3-4', topic: 'Wireframing, Typography & Color Hierarchy', practicalLab: 'Create High-Fidelity Mobile App Screens in Figma' },
-      { week: 'Week 5-6', topic: 'Components, Auto-Layout & Interactive Prototyping', practicalLab: 'Build & Publish a Complete Portfolio Case Study on Behance' },
-    ],
-  },
-  {
-    id: 'ielts-prep',
-    title: 'IELTS Academic & General Masterclass (Band 8.0+ Target)',
-    category: 'Languages & Communication',
-    tag: 'Global Study & Visa',
-    tagColor: '#eab308',
-    duration: '6 Weeks',
-    schedule: 'Mon, Tue, Wed 6:00PM - 7:30PM EAT (Live Zoom)',
-    fee: 'KES 18,000 / $140',
-    installment: 'KES 9,000 x 2 Months',
-    careerOutcome: 'UK / Canada / Australia University Admission & Work Visa Qualification',
-    skills: ['Essay Writing Task 1 & 2', 'Academic Reading', '1-on-1 Speaking Drills', 'Listening Strategies'],
-    icon: '🗣️',
-    popular: true,
-    syllabus: [
-      { week: 'Week 1-2', topic: 'Speaking Fluency, Pronunciation & Part 1-3 Mock Interviews', practicalLab: 'Live 1-on-1 Evaluated Video Speaking Assessments' },
-      { week: 'Week 3-4', topic: 'Writing Task 1 (Graphs/Charts) & Task 2 (Discursive Essays)', practicalLab: 'Weekly Expert Band 8.0+ Essay Reviews & Corrections' },
-      { week: 'Week 5-6', topic: 'Speed Reading Techniques & Multi-Accent Listening Mastery', practicalLab: 'Full-Length Computer-Delivered Mock Examinations' },
-    ],
-  },
-  {
-    id: 'german-a1-b1',
-    title: 'German Language for Career & Study in Germany (A1 - B1)',
-    category: 'Languages & Communication',
-    tag: 'Goethe Zertifikat',
-    tagColor: '#f97316',
-    duration: '10 Weeks',
-    schedule: 'Mon & Wed 6:30PM - 8:30PM EAT (Live Zoom)',
-    fee: 'KES 25,000 / $195',
-    installment: 'KES 12,500 x 2 Months',
-    careerOutcome: 'Nursing & IT Opportunity in Germany, Goethe A1/B1 Certification',
-    skills: ['Grammar & Cases', 'Conversation Practice', 'Listening Comprehension', 'Goethe Exam Prep'],
-    icon: '🇩🇪',
-    syllabus: [
-      { week: 'Week 1-3', topic: 'Alphabet, Pronunciation, Articles & Everyday Dialogues', practicalLab: 'Daily Real-Life Speaking Practice & Vocabulary Drills' },
-      { week: 'Week 4-7', topic: 'Sentence Structure, Dative/Accusative Cases & Past Tenses', practicalLab: 'Drafting Official Emails & Workplace Scenarios' },
-      { week: 'Week 8-10', topic: 'Goethe Institute Examination Drills & Mock Tests', practicalLab: 'Timed Official Reading, Writing & Oral Assessments' },
-    ],
-  },
-  {
-    id: 'arabic-fluent',
-    title: 'Arabic Language: Modern Standard & Gulf Dialect (Khaleeji)',
-    category: 'Languages & Communication',
-    tag: 'Middle East Careers',
-    tagColor: '#059669',
-    duration: '8 Weeks',
-    schedule: 'Tue & Thu 6:30PM - 8:30PM EAT (Live Zoom)',
-    fee: 'KES 20,000 / $155',
-    installment: 'KES 10,000 x 2 Months',
-    careerOutcome: 'Diplomatic Interpreter, Gulf Professional, Tourism & Translation',
-    skills: ['Arabic Script & Phonetics', 'Business Arabic', 'Gulf Dialect Conversation', 'Grammar (Nahw)'],
-    icon: '🇦🇪',
-    syllabus: [
-      { week: 'Week 1-2', topic: 'Arabic Script Mastery & Authentic Phonetics', practicalLab: 'Reading & Writing Everyday Phrases with Tajweed Rules' },
-      { week: 'Week 3-5', topic: 'Everyday Conversational Arabic & Essential Grammar', practicalLab: 'Simulated Conversations for Travel, Hospitality & Business' },
-      { week: 'Week 6-8', topic: 'Professional Arabic & Gulf Dialect Immersion', practicalLab: 'Drafting Commercial Letters & Real-Time Dialogues' },
-    ],
-  },
-  {
-    id: 'accounting-quickbooks',
-    title: 'Practical Accounting with QuickBooks, Sage & KRA iTax',
-    category: 'Business Tech & Accounting',
-    tag: 'Employment Ready',
-    tagColor: '#0284c7',
-    duration: '6 Weeks',
-    schedule: 'Tue & Thu 7:00PM - 9:00PM EAT (Live Zoom)',
-    fee: 'KES 18,000 / $140',
-    installment: 'KES 9,000 x 2 Months',
-    careerOutcome: 'Accountant, Accounts Assistant, Payroll Administrator, Tax Consultant',
-    skills: ['QuickBooks Online', 'KRA iTax VAT & PAYE', 'Payroll Computation', 'Financial Statements'],
-    icon: '💼',
-    syllabus: [
-      { week: 'Week 1-2', topic: 'QuickBooks Company Setup, Chart of Accounts & Invoicing', practicalLab: 'Set up Multi-Currency Ledgers & Customer/Vendor Accounts' },
-      { week: 'Week 3-4', topic: 'Bank Reconciliation, Inventory & Expense Ledgers', practicalLab: 'Reconcile Real Multi-Month Bank Statements & Card Receipts' },
-      { week: 'Week 5-6', topic: 'KRA iTax Monthly Returns (VAT, PAYE, Withholding Tax) & Payroll', practicalLab: 'Compute Statutory Deductions (NSSF, NHIF/SHIF, Housing Levy)' },
-    ],
-  },
-]
+const ALL_PROGRAMS: CourseItem[] = OFFICIAL_COURSES.map((c) => ({
+  id: c.id,
+  title: c.title,
+  category: c.category,
+  tag: c.tag,
+  tagColor: c.tagColor,
+  duration: c.duration,
+  schedule: c.schedule,
+  fee: `$${c.feeUsd} (KES ${c.feeKes.toLocaleString()})`,
+  installment: c.installmentText,
+  careerOutcome: c.careerOutcome,
+  skills: c.skills,
+  icon: c.icon,
+  popular: c.popular || c.bestseller,
+  syllabus: c.syllabus,
+}))
 
 const CATEGORIES = [
   'All',
-  'Data Science & Research',
   'Tech & Programming',
-  'Creative Arts & Design',
-  'Languages & Communication',
+  'Data Science & Research',
+  'Computer & Digital Skills',
   'Business Tech & Accounting',
+  'Languages & Communication',
 ]
 
 export function CourseCatalogPage() {
