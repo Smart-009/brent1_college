@@ -130,86 +130,6 @@ export function AdminDashboard() {
       title="School Administration Control Panel"
       subtitle="Eclat Institute • Student admissions, activation codes, school terms & content moderation."
     >
-      {/* Dedicated Cloud Database Synchronization Hub Card */}
-      <div
-        className="card mb-6"
-        style={{
-          background: 'linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%)',
-          border: '1.5px solid #334155',
-          borderRadius: '18px',
-          boxShadow: '0 8px 24px rgba(0, 0, 0, 0.25)',
-          overflow: 'hidden',
-        }}
-      >
-        <div
-          style={{
-            padding: '1.25rem 1.5rem',
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            flexWrap: 'wrap',
-            gap: '1rem',
-          }}
-        >
-          <div style={{ minWidth: '280px', flex: 1 }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
-              <span style={{ fontSize: '1.4rem' }}>☁️</span>
-              <h3 style={{ margin: 0, color: '#ffffff', fontSize: '1.15rem', fontWeight: 900 }}>
-                Cloud Database & Live Synchronization Hub
-              </h3>
-              <span
-                style={{
-                  background: 'rgba(34, 197, 94, 0.2)',
-                  color: '#4ade80',
-                  border: '1px solid rgba(34, 197, 94, 0.4)',
-                  padding: '2px 8px',
-                  borderRadius: '999px',
-                  fontSize: '0.72rem',
-                  fontWeight: 800,
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  gap: '4px',
-                }}
-              >
-                <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#22c55e' }} />
-                Live Connected
-              </span>
-            </div>
-            <p style={{ margin: '2px 0 0', fontSize: '0.82rem', color: '#94a3b8', lineHeight: 1.5 }}>
-              Push and backup faculties, courses, syllabus handbooks, DRM library materials, and intake schedules to Supabase.
-            </p>
-          </div>
-
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', flexWrap: 'wrap' }}>
-            <button
-              type="button"
-              onClick={handleSeedCloud}
-              disabled={seeding}
-              style={{
-                background: seeding
-                  ? '#334155'
-                  : 'linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%)',
-                color: '#ffffff',
-                border: 'none',
-                borderRadius: '12px',
-                padding: '10px 20px',
-                fontSize: '0.9rem',
-                fontWeight: 800,
-                cursor: seeding ? 'not-allowed' : 'pointer',
-                boxShadow: seeding ? 'none' : '0 4px 14px rgba(37, 99, 235, 0.4)',
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '8px',
-                transition: 'all 0.2s ease',
-              }}
-            >
-              <span>{seeding ? '⏳' : '☁️'}</span>
-              <span>{seeding ? 'Synchronizing Cloud Database...' : 'Sync & Seed Cloud DB'}</span>
-            </button>
-          </div>
-        </div>
-      </div>
-
       {/* Quick Action Control Bar */}
       <div className="card mb-6" style={{ background: 'linear-gradient(135deg, #1a2a6e 0%, #243A8E 100%)', color: 'white' }}>
         <div className="card-body flex justify-between items-center flex-wrap gap-4">
@@ -218,10 +138,19 @@ export function AdminDashboard() {
               Administrator Quick Actions
             </h2>
             <p style={{ color: 'rgba(255,255,255,0.85)', margin: 'var(--space-1) 0 0', fontSize: 'var(--text-xs)' }}>
-              Issue admission numbers, schedule cohort intakes, or manage student access codes.
+              Issue admission numbers, schedule cohort intakes, or synchronize live cloud datasets.
             </p>
           </div>
           <div className="flex gap-2 flex-wrap">
+            <Button
+              variant="outline"
+              size="sm"
+              style={{ color: '#67e8f9', borderColor: '#67e8f9', fontWeight: 800, background: 'rgba(6, 182, 212, 0.15)' }}
+              onClick={handleSeedCloud}
+              disabled={seeding}
+            >
+              {seeding ? '⏳ Syncing Cloud DB...' : '☁️ Sync & Seed Cloud DB'}
+            </Button>
             <Button variant="accent" size="sm" onClick={() => navigate('/admin/intakes')} style={{ fontWeight: 800 }}>
               🗓️ Intake Scheduler & Adverts
             </Button>
@@ -369,15 +298,21 @@ export function AdminDashboard() {
         <div
           style={{
             position: 'fixed',
-            inset: 0,
-            zIndex: 999999,
-            background: 'rgba(0, 0, 0, 0.75)',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            width: '100vw',
+            height: '100vh',
+            zIndex: 999999999,
+            background: 'rgba(0, 0, 0, 0.8)',
             backdropFilter: 'blur(8px)',
+            WebkitBackdropFilter: 'blur(8px)',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            padding: '1.25rem',
-            animation: 'fadeIn 0.2s ease-out',
+            padding: '1rem',
+            boxSizing: 'border-box',
           }}
           onClick={() => setSyncModalData(null)}
         >
@@ -386,47 +321,53 @@ export function AdminDashboard() {
               background: '#ffffff',
               color: '#0f172a',
               borderRadius: '20px',
-              maxWidth: '540px',
+              maxWidth: '480px',
               width: '100%',
-              boxShadow: '0 25px 60px rgba(0, 0, 0, 0.45), 0 0 0 1px rgba(0,0,0,0.1)',
+              maxHeight: 'min(86vh, 620px)',
+              boxShadow: '0 25px 60px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(0,0,0,0.1)',
               overflow: 'hidden',
               display: 'flex',
               flexDirection: 'column',
+              position: 'relative',
+              margin: 'auto',
             }}
             onClick={(e) => e.stopPropagation()}
           >
             {/* Modal Header */}
             <div
               style={{
-                background: syncModalData.success ? 'linear-gradient(135deg, #1e3a8a 0%, #1e40af 100%)' : 'linear-gradient(135deg, #991b1b 0%, #b91c1c 100%)',
-                padding: '1.5rem',
+                background: syncModalData.success
+                  ? 'linear-gradient(135deg, #1e3a8a 0%, #1e40af 100%)'
+                  : 'linear-gradient(135deg, #991b1b 0%, #b91c1c 100%)',
+                padding: '1rem 1.25rem',
                 color: '#ffffff',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'space-between',
+                flexShrink: 0,
               }}
             >
-              <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                 <div
                   style={{
-                    width: '44px',
-                    height: '44px',
-                    borderRadius: '12px',
+                    width: '38px',
+                    height: '38px',
+                    borderRadius: '10px',
                     background: syncModalData.success ? 'rgba(34, 197, 94, 0.25)' : 'rgba(239, 68, 68, 0.25)',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
-                    fontSize: '1.5rem',
+                    fontSize: '1.3rem',
                     border: `1.5px solid ${syncModalData.success ? '#4ade80' : '#f87171'}`,
                   }}
                 >
                   {syncModalData.success ? '☁️' : '⚠️'}
                 </div>
                 <div>
-                  <h3 style={{ margin: 0, fontSize: '1.2rem', fontWeight: 900, color: '#ffffff' }}>
+                  <h3 style={{ margin: 0, fontSize: '1.1rem', fontWeight: 900, color: '#ffffff' }}>
                     {syncModalData.success ? 'Cloud Database Synchronized' : 'Synchronization Failed'}
                   </h3>
-                  <div style={{ fontSize: '0.8rem', color: '#cbd5e1', marginTop: '2px' }}>
+                  <div style={{ fontSize: '0.75rem', color: '#cbd5e1', marginTop: '1px' }}>
                     Éclat Institute Live Supabase Database
                   </div>
                 </div>
@@ -439,10 +380,10 @@ export function AdminDashboard() {
                   background: 'rgba(255, 255, 255, 0.2)',
                   border: 'none',
                   borderRadius: '50%',
-                  width: '32px',
-                  height: '32px',
+                  width: '30px',
+                  height: '30px',
                   color: '#ffffff',
-                  fontSize: '1rem',
+                  fontSize: '0.95rem',
                   fontWeight: 900,
                   cursor: 'pointer',
                   display: 'flex',
@@ -455,26 +396,48 @@ export function AdminDashboard() {
             </div>
 
             {/* Modal Body */}
-            <div style={{ padding: '1.5rem', background: '#ffffff', color: '#1e293b' }}>
+            <div
+              style={{
+                padding: '1.25rem',
+                background: '#ffffff',
+                color: '#1e293b',
+                overflowY: 'auto',
+                flex: '1 1 auto',
+                minHeight: 0,
+              }}
+            >
               {/* Status Banner */}
               <div
                 style={{
                   background: syncModalData.success ? '#f0fdf4' : '#fef2f2',
                   border: `1.5px solid ${syncModalData.success ? '#86efac' : '#fca5a5'}`,
-                  borderRadius: '14px',
-                  padding: '1rem 1.25rem',
-                  marginBottom: '1.25rem',
+                  borderRadius: '12px',
+                  padding: '0.85rem 1rem',
+                  marginBottom: '1.15rem',
                   display: 'flex',
                   alignItems: 'flex-start',
                   gap: '10px',
                 }}
               >
-                <span style={{ fontSize: '1.3rem' }}>{syncModalData.success ? '✅' : '❌'}</span>
+                <span style={{ fontSize: '1.25rem', lineHeight: 1 }}>{syncModalData.success ? '✅' : '❌'}</span>
                 <div>
-                  <div style={{ fontWeight: 800, fontSize: '0.95rem', color: syncModalData.success ? '#166534' : '#991b1b', marginBottom: '2px' }}>
+                  <div
+                    style={{
+                      fontWeight: 800,
+                      fontSize: '0.92rem',
+                      color: syncModalData.success ? '#166534' : '#991b1b',
+                      marginBottom: '2px',
+                    }}
+                  >
                     {syncModalData.success ? 'All Tables Synchronized' : 'Sync Error'}
                   </div>
-                  <div style={{ fontSize: '0.85rem', color: syncModalData.success ? '#15803d' : '#b91c1c', lineHeight: 1.5 }}>
+                  <div
+                    style={{
+                      fontSize: '0.82rem',
+                      color: syncModalData.success ? '#15803d' : '#b91c1c',
+                      lineHeight: 1.45,
+                    }}
+                  >
                     {syncModalData.message}
                   </div>
                 </div>
@@ -483,42 +446,92 @@ export function AdminDashboard() {
               {/* Sync Statistics Grid */}
               {syncModalData.details && (
                 <div>
-                  <div style={{ fontSize: '0.82rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.05em', color: '#64748b', marginBottom: '0.75rem' }}>
+                  <div
+                    style={{
+                      fontSize: '0.78rem',
+                      fontWeight: 800,
+                      textTransform: 'uppercase',
+                      letterSpacing: '0.05em',
+                      color: '#64748b',
+                      marginBottom: '0.65rem',
+                    }}
+                  >
                     Synced Database Metrics
                   </div>
 
-                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: '0.65rem' }}>
-                    <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '12px', padding: '0.75rem 0.9rem' }}>
+                  <div
+                    style={{
+                      display: 'grid',
+                      gridTemplateColumns: 'repeat(auto-fit, minmax(130px, 1fr))',
+                      gap: '0.6rem',
+                    }}
+                  >
+                    <div
+                      style={{
+                        background: '#f8fafc',
+                        border: '1px solid #e2e8f0',
+                        borderRadius: '10px',
+                        padding: '0.7rem 0.85rem',
+                      }}
+                    >
                       <div style={{ fontSize: '0.72rem', color: '#64748b', fontWeight: 700 }}>🏛️ Departments</div>
-                      <div style={{ fontSize: '1.25rem', fontWeight: 900, color: '#1e3a8a', marginTop: '2px' }}>
+                      <div style={{ fontSize: '1.2rem', fontWeight: 900, color: '#1e3a8a', marginTop: '2px' }}>
                         {syncModalData.details.departmentsCount}
                       </div>
                     </div>
 
-                    <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '12px', padding: '0.75rem 0.9rem' }}>
+                    <div
+                      style={{
+                        background: '#f8fafc',
+                        border: '1px solid #e2e8f0',
+                        borderRadius: '10px',
+                        padding: '0.7rem 0.85rem',
+                      }}
+                    >
                       <div style={{ fontSize: '0.72rem', color: '#64748b', fontWeight: 700 }}>📚 Handbooks</div>
-                      <div style={{ fontSize: '1.25rem', fontWeight: 900, color: '#2563eb', marginTop: '2px' }}>
+                      <div style={{ fontSize: '1.2rem', fontWeight: 900, color: '#2563eb', marginTop: '2px' }}>
                         {syncModalData.details.handbooksCount}
                       </div>
                     </div>
 
-                    <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '12px', padding: '0.75rem 0.9rem' }}>
+                    <div
+                      style={{
+                        background: '#f8fafc',
+                        border: '1px solid #e2e8f0',
+                        borderRadius: '10px',
+                        padding: '0.7rem 0.85rem',
+                      }}
+                    >
                       <div style={{ fontSize: '0.72rem', color: '#64748b', fontWeight: 700 }}>🎓 Units & Syllabi</div>
-                      <div style={{ fontSize: '1.25rem', fontWeight: 900, color: '#0d9488', marginTop: '2px' }}>
+                      <div style={{ fontSize: '1.2rem', fontWeight: 900, color: '#0d9488', marginTop: '2px' }}>
                         {syncModalData.details.courseUnitsCount}
                       </div>
                     </div>
 
-                    <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '12px', padding: '0.75rem 0.9rem' }}>
+                    <div
+                      style={{
+                        background: '#f8fafc',
+                        border: '1px solid #e2e8f0',
+                        borderRadius: '10px',
+                        padding: '0.7rem 0.85rem',
+                      }}
+                    >
                       <div style={{ fontSize: '0.72rem', color: '#64748b', fontWeight: 700 }}>🏫 Active Cohorts</div>
-                      <div style={{ fontSize: '1.25rem', fontWeight: 900, color: '#7c3aed', marginTop: '2px' }}>
+                      <div style={{ fontSize: '1.2rem', fontWeight: 900, color: '#7c3aed', marginTop: '2px' }}>
                         {syncModalData.details.classesCount}
                       </div>
                     </div>
 
-                    <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '12px', padding: '0.75rem 0.9rem' }}>
+                    <div
+                      style={{
+                        background: '#f8fafc',
+                        border: '1px solid #e2e8f0',
+                        borderRadius: '10px',
+                        padding: '0.7rem 0.85rem',
+                      }}
+                    >
                       <div style={{ fontSize: '0.72rem', color: '#64748b', fontWeight: 700 }}>🗓️ Intake Adverts</div>
-                      <div style={{ fontSize: '1.25rem', fontWeight: 900, color: '#d97706', marginTop: '2px' }}>
+                      <div style={{ fontSize: '1.2rem', fontWeight: 900, color: '#d97706', marginTop: '2px' }}>
                         {syncModalData.details.intakesCount}
                       </div>
                     </div>
@@ -529,18 +542,26 @@ export function AdminDashboard() {
               {/* Cloud Connection Badge */}
               <div
                 style={{
-                  marginTop: '1.25rem',
+                  marginTop: '1rem',
                   display: 'flex',
                   alignItems: 'center',
                   gap: '8px',
-                  fontSize: '0.78rem',
+                  fontSize: '0.75rem',
                   color: '#475569',
                   background: '#f1f5f9',
-                  padding: '8px 12px',
-                  borderRadius: '10px',
+                  padding: '7px 10px',
+                  borderRadius: '8px',
                 }}
               >
-                <span style={{ display: 'inline-block', width: '8px', height: '8px', borderRadius: '50%', background: '#22c55e' }} />
+                <span
+                  style={{
+                    display: 'inline-block',
+                    width: '7px',
+                    height: '7px',
+                    borderRadius: '50%',
+                    background: '#22c55e',
+                  }}
+                />
                 <span>Supabase Cloud Database connected and operational</span>
               </div>
             </div>
@@ -548,11 +569,12 @@ export function AdminDashboard() {
             {/* Modal Footer */}
             <div
               style={{
-                padding: '1rem 1.5rem',
+                padding: '0.85rem 1.25rem',
                 background: '#f8fafc',
                 borderTop: '1px solid #e2e8f0',
                 display: 'flex',
                 justifyContent: 'flex-end',
+                flexShrink: 0,
               }}
             >
               <button
@@ -562,9 +584,9 @@ export function AdminDashboard() {
                   background: 'linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%)',
                   color: '#ffffff',
                   border: 'none',
-                  borderRadius: '12px',
-                  padding: '10px 24px',
-                  fontSize: '0.92rem',
+                  borderRadius: '10px',
+                  padding: '9px 20px',
+                  fontSize: '0.88rem',
                   fontWeight: 800,
                   cursor: 'pointer',
                   boxShadow: '0 4px 12px rgba(37, 99, 235, 0.35)',
