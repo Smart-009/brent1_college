@@ -1,5 +1,6 @@
 import { useState, useMemo, useEffect } from 'react'
 import { useAuth } from '@/hooks/useAuth'
+import { useIsMobile } from '@/hooks/useMediaQuery'
 import { schoolStore } from '@/lib/schoolData'
 import { supabase } from '@/lib/supabase'
 import { getEmbeddableDocumentUrl } from '@/lib/utils'
@@ -96,6 +97,8 @@ export function ResourceLibrary() {
   const [drmWarning, setDrmWarning] = useState<string | null>(null)
   const [activeChapterIndex, setActiveChapterIndex] = useState<number>(0)
   const [isBlurred, setIsBlurred] = useState<boolean>(false)
+  const isMobile = useIsMobile(768)
+  const [showMobileToc, setShowMobileToc] = useState<boolean>(false)
 
   const activeHandbook: AcademicHandbook | null = useMemo(() => {
     if (!readingResource) return null
@@ -405,7 +408,12 @@ export function ResourceLibrary() {
   }
 
   return (
-    <div className="page-container">
+    <div
+      className="page-container"
+      style={{
+        paddingBottom: isMobile ? 'calc(95px + env(safe-area-inset-bottom, 0px))' : undefined,
+      }}
+    >
       {/* Header */}
       <div className="page-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '1rem' }}>
         <div>
@@ -666,139 +674,170 @@ export function ResourceLibrary() {
           {/* Minimal Fullscreen Header Toolbar */}
           <div
             style={{
-              height: '56px',
+              minHeight: '56px',
+              paddingTop: 'env(safe-area-inset-top, 0px)',
+              paddingLeft: isMobile ? '0.75rem' : '1.25rem',
+              paddingRight: isMobile ? '0.75rem' : '1.25rem',
+              paddingBottom: '0.4rem',
               display: 'flex',
-              justifyContent: 'space-between',
-              alignItems: 'center',
-              padding: '0 1.25rem',
-              borderBottom: `1px solid ${readerTheme === 'dark' ? '#1e293b' : '#e2e8f0'}`,
-              background: readerTheme === 'dark' ? '#0f172a' : '#f8fafc',
-              gap: '0.75rem',
+              flexDirection: 'column',
+              justifyContent: 'center',
+              borderBottom: `1px solid ${readerTheme === 'dark' ? '#1e293b' : readerTheme === 'sepia' ? '#e6d7b9' : '#e2e8f0'}`,
+              background: readerTheme === 'dark' ? '#0f172a' : readerTheme === 'sepia' ? '#f4ebd0' : '#f8fafc',
               flexShrink: 0,
+              gap: '0.4rem',
             }}
           >
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', minWidth: 0 }}>
-              <span style={{ fontSize: '1.3rem', flexShrink: 0 }}>📖</span>
-              <div style={{ minWidth: 0, overflow: 'hidden' }}>
-                <h3
-                  style={{
-                    margin: 0,
-                    fontSize: '0.95rem',
-                    fontWeight: 800,
-                    color: readerTheme === 'dark' ? '#93c5fd' : '#1e3a8a',
-                    whiteSpace: 'nowrap',
-                    overflow: 'hidden',
-                    textOverflow: 'ellipsis',
-                  }}
-                >
-                  {readingResource.title}
-                </h3>
-                <div style={{ fontSize: '0.72rem', opacity: 0.75, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-                  {readingResource.category} • {readingResource.subject} {readingResource.year ? `(${readingResource.year})` : ''} • 🔒 In-App Reader
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '0.5rem' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', minWidth: 0, flex: 1 }}>
+                <span style={{ fontSize: isMobile ? '1.1rem' : '1.3rem', flexShrink: 0 }}>📖</span>
+                <div style={{ minWidth: 0, overflow: 'hidden' }}>
+                  <h3
+                    style={{
+                      margin: 0,
+                      fontSize: isMobile ? '0.85rem' : '0.95rem',
+                      fontWeight: 800,
+                      color: readerTheme === 'dark' ? '#93c5fd' : readerTheme === 'sepia' ? '#2d2215' : '#1e3a8a',
+                      whiteSpace: 'nowrap',
+                      overflow: 'hidden',
+                      textOverflow: 'ellipsis',
+                    }}
+                  >
+                    {readingResource.title}
+                  </h3>
+                  <div style={{ fontSize: '0.7rem', opacity: 0.75, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                    {readingResource.category} • {readingResource.subject} {readingResource.year ? `(${readingResource.year})` : ''}
+                  </div>
                 </div>
               </div>
-            </div>
 
-            {/* Controls */}
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexShrink: 0 }}>
-              {/* Zoom Controls */}
-              <div style={{ display: 'flex', alignItems: 'center', gap: '2px', background: readerTheme === 'dark' ? '#1e293b' : '#e2e8f0', borderRadius: '8px', padding: '2px 4px' }}>
+              {/* Controls */}
+              <div style={{ display: 'flex', alignItems: 'center', gap: isMobile ? '0.35rem' : '0.5rem', flexShrink: 0 }}>
+                {/* Table of Contents Toggle for Mobile */}
+                {isMobile && activeHandbook && (
+                  <button
+                    type="button"
+                    onClick={() => setShowMobileToc(true)}
+                    style={{
+                      background: readerTheme === 'dark' ? '#1e293b' : readerTheme === 'sepia' ? '#e8d5b0' : '#e2e8f0',
+                      color: readerTheme === 'dark' ? '#93c5fd' : readerTheme === 'sepia' ? '#433422' : '#1e40af',
+                      border: 'none',
+                      padding: '5px 9px',
+                      borderRadius: '8px',
+                      cursor: 'pointer',
+                      fontWeight: 800,
+                      fontSize: '0.75rem',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '4px',
+                    }}
+                  >
+                    <span>📑</span>
+                    <span>Ch. {activeChapterIndex + 1}/{activeHandbook.chapters.length}</span>
+                  </button>
+                )}
+
+                {/* Zoom Controls (Desktop / Tablet) */}
+                {!isMobile && (
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '2px', background: readerTheme === 'dark' ? '#1e293b' : '#e2e8f0', borderRadius: '8px', padding: '2px 4px' }}>
+                    <button
+                      type="button"
+                      onClick={() => setReaderZoom((z) => Math.max(75, z - 20))}
+                      style={{ background: 'transparent', color: 'inherit', border: 'none', padding: '4px 6px', borderRadius: '6px', cursor: 'pointer', fontWeight: 800, fontSize: '0.8rem' }}
+                      title="Zoom Out (-)"
+                    >
+                      🔍 -
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setReaderZoom(100)}
+                      style={{ background: 'transparent', color: 'inherit', border: 'none', padding: '4px 6px', borderRadius: '6px', cursor: 'pointer', fontWeight: 700, fontSize: '0.72rem' }}
+                      title="Reset Zoom (100%)"
+                    >
+                      {readerZoom}%
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setReaderZoom((z) => Math.min(250, z + 20))}
+                      style={{ background: 'transparent', color: 'inherit', border: 'none', padding: '4px 6px', borderRadius: '6px', cursor: 'pointer', fontWeight: 800, fontSize: '0.8rem' }}
+                      title="Zoom In (+)"
+                    >
+                      🔍 +
+                    </button>
+                  </div>
+                )}
+
+                {/* Bookmark Toggle */}
                 <button
                   type="button"
-                  onClick={() => setReaderZoom((z) => Math.max(75, z - 20))}
-                  style={{ background: 'transparent', color: 'inherit', border: 'none', padding: '4px 6px', borderRadius: '6px', cursor: 'pointer', fontWeight: 800, fontSize: '0.8rem' }}
-                  title="Zoom Out (-)"
+                  onClick={() => toggleBookmark(readingResource.id)}
+                  className="btn btn-ghost btn-sm"
+                  style={{
+                    color: bookmarkedIds.includes(readingResource.id) ? '#f59e0b' : 'inherit',
+                    fontSize: isMobile ? '1rem' : '0.85rem',
+                    padding: isMobile ? '4px 6px' : '4px 8px',
+                    fontWeight: 700,
+                  }}
+                  title={bookmarkedIds.includes(readingResource.id) ? 'Saved in My Books' : 'Save Book'}
                 >
-                  🔍 -
+                  {bookmarkedIds.includes(readingResource.id) ? '⭐' : '☆'}
                 </button>
+
+                {/* Theme Selector */}
+                <div style={{ display: 'flex', gap: '2px', background: readerTheme === 'dark' ? '#1e293b' : readerTheme === 'sepia' ? '#e2cca4' : '#e2e8f0', borderRadius: '8px', padding: '2px' }}>
+                  <button
+                    type="button"
+                    style={{ background: readerTheme === 'light' ? '#fff' : 'transparent', color: readerTheme === 'light' ? '#000' : 'inherit', border: 'none', padding: isMobile ? '3px 6px' : '4px 8px', borderRadius: '6px', cursor: 'pointer', fontSize: isMobile ? '0.7rem' : '0.75rem' }}
+                    onClick={() => setReaderTheme('light')}
+                    title="Light Theme"
+                  >
+                    ☀️
+                  </button>
+                  <button
+                    type="button"
+                    style={{ background: readerTheme === 'sepia' ? '#fdf6e2' : 'transparent', color: readerTheme === 'sepia' ? '#78350f' : 'inherit', border: 'none', padding: isMobile ? '3px 6px' : '4px 8px', borderRadius: '6px', cursor: 'pointer', fontSize: isMobile ? '0.7rem' : '0.75rem' }}
+                    onClick={() => setReaderTheme('sepia')}
+                    title="Sepia Paper Theme"
+                  >
+                    📜
+                  </button>
+                  <button
+                    type="button"
+                    style={{ background: readerTheme === 'dark' ? '#334155' : 'transparent', color: readerTheme === 'dark' ? '#fff' : 'inherit', border: 'none', padding: isMobile ? '3px 6px' : '4px 8px', borderRadius: '6px', cursor: 'pointer', fontSize: isMobile ? '0.7rem' : '0.75rem' }}
+                    onClick={() => setReaderTheme('dark')}
+                    title="Night Mode"
+                  >
+                    🌙
+                  </button>
+                </div>
+
+                {/* Close Button */}
                 <button
                   type="button"
-                  onClick={() => setReaderZoom(100)}
-                  style={{ background: 'transparent', color: 'inherit', border: 'none', padding: '4px 6px', borderRadius: '6px', cursor: 'pointer', fontWeight: 700, fontSize: '0.72rem' }}
-                  title="Reset Zoom (100%)"
+                  onClick={() => setReadingResource(null)}
+                  style={{
+                    background: readerTheme === 'dark' ? '#ef4444' : '#fee2e2',
+                    color: readerTheme === 'dark' ? '#ffffff' : '#991b1b',
+                    border: 'none',
+                    borderRadius: '8px',
+                    padding: isMobile ? '5px 10px' : '6px 12px',
+                    fontWeight: 800,
+                    fontSize: isMobile ? '0.78rem' : '0.85rem',
+                    cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '3px',
+                  }}
                 >
-                  {readerZoom}%
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setReaderZoom((z) => Math.min(250, z + 20))}
-                  style={{ background: 'transparent', color: 'inherit', border: 'none', padding: '4px 6px', borderRadius: '6px', cursor: 'pointer', fontWeight: 800, fontSize: '0.8rem' }}
-                  title="Zoom In (+)"
-                >
-                  🔍 +
+                  ✕ {isMobile ? '' : 'Close'}
                 </button>
               </div>
-
-              {/* Bookmark Toggle */}
-              <button
-                type="button"
-                onClick={() => toggleBookmark(readingResource.id)}
-                className="btn btn-ghost btn-sm"
-                style={{
-                  color: bookmarkedIds.includes(readingResource.id) ? '#f59e0b' : 'inherit',
-                  fontSize: '0.85rem',
-                  padding: '4px 8px',
-                  fontWeight: 700,
-                }}
-                title={bookmarkedIds.includes(readingResource.id) ? 'Saved in My Books' : 'Save Book'}
-              >
-                {bookmarkedIds.includes(readingResource.id) ? '⭐' : '☆'}
-              </button>
-
-              {/* Theme Selector */}
-              <div style={{ display: 'flex', gap: '2px', background: readerTheme === 'dark' ? '#1e293b' : '#e2e8f0', borderRadius: '8px', padding: '2px' }}>
-                <button
-                  type="button"
-                  style={{ background: readerTheme === 'light' ? '#fff' : 'transparent', color: readerTheme === 'light' ? '#000' : 'inherit', border: 'none', padding: '4px 8px', borderRadius: '6px', cursor: 'pointer', fontSize: '0.75rem' }}
-                  onClick={() => setReaderTheme('light')}
-                  title="Light Theme"
-                >
-                  ☀️
-                </button>
-                <button
-                  type="button"
-                  style={{ background: readerTheme === 'sepia' ? '#fdf6e2' : 'transparent', color: readerTheme === 'sepia' ? '#78350f' : 'inherit', border: 'none', padding: '4px 8px', borderRadius: '6px', cursor: 'pointer', fontSize: '0.75rem' }}
-                  onClick={() => setReaderTheme('sepia')}
-                  title="Sepia Paper Theme"
-                >
-                  📜
-                </button>
-                <button
-                  type="button"
-                  style={{ background: readerTheme === 'dark' ? '#334155' : 'transparent', color: readerTheme === 'dark' ? '#fff' : 'inherit', border: 'none', padding: '4px 8px', borderRadius: '6px', cursor: 'pointer', fontSize: '0.75rem' }}
-                  onClick={() => setReaderTheme('dark')}
-                  title="Night Mode"
-                >
-                  🌙
-                </button>
-              </div>
-
-              {/* Close Button */}
-              <button
-                type="button"
-                onClick={() => setReadingResource(null)}
-                style={{
-                  background: readerTheme === 'dark' ? '#ef4444' : '#fee2e2',
-                  color: readerTheme === 'dark' ? '#ffffff' : '#991b1b',
-                  border: 'none',
-                  borderRadius: '8px',
-                  padding: '6px 12px',
-                  fontWeight: 800,
-                  fontSize: '0.85rem',
-                  cursor: 'pointer',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '4px',
-                }}
-              >
-                ✕ Close
-              </button>
             </div>
           </div>
 
           {/* Fullscreen Document Content Viewport */}
-          <div style={{ flex: 1, position: 'relative', overflow: 'auto', WebkitOverflowScrolling: 'touch', background: readerTheme === 'dark' ? '#0b0f19' : '#f8fafc' }}>
-            {/* Anti-Popout Click Interceptor (Prevents clicking Google Drive's "Open in New Window" top-right icon) */}
+          <div style={{ flex: 1, position: 'relative', overflow: 'auto', WebkitOverflowScrolling: 'touch', background: readerTheme === 'dark' ? '#0b0f19' : readerTheme === 'sepia' ? '#fdf6e2' : '#f8fafc' }}>
+            {/* Anti-Popout Click Interceptor */}
             <div
               style={{
                 position: 'absolute',
@@ -838,7 +877,7 @@ export function ResourceLibrary() {
                   key={idx}
                   style={{
                     transform: 'rotate(-25deg)',
-                    fontSize: '1rem',
+                    fontSize: isMobile ? '0.8rem' : '1rem',
                     fontWeight: 800,
                     color: '#64748b',
                     letterSpacing: '0.12em',
@@ -911,82 +950,201 @@ export function ResourceLibrary() {
 
               {activeHandbook ? (
                 // 1. NATIVE ACADEMIC HANDBOOK & E-TEXTBOOK READER
-                <div style={{ display: 'flex', flex: 1, minHeight: '100%' }}>
-                  {/* Left Table of Contents Sidebar (Desktop) */}
-                  <aside
-                    style={{
-                      width: '280px',
-                      flexShrink: 0,
-                      borderRight: readerTheme === 'dark' ? '1px solid #1e293b' : readerTheme === 'sepia' ? '1px solid #e6d7b9' : '1px solid #e2e8f0',
-                      background: readerTheme === 'dark' ? '#070a12' : readerTheme === 'sepia' ? '#f4ebd0' : '#f8fafc',
-                      padding: '1.25rem 1rem',
-                      display: 'flex',
-                      flexDirection: 'column',
-                      gap: '1rem',
-                      overflowY: 'auto',
-                    }}
-                  >
-                    <div>
-                      <div style={{ fontSize: '0.65rem', fontWeight: 800, textTransform: 'uppercase', color: '#d4af37', letterSpacing: '0.05em' }}>
-                        {activeHandbook.edition}
+                <div style={{ display: 'flex', flex: 1, minHeight: '100%', position: 'relative' }}>
+                  {/* Desktop Left Table of Contents Sidebar */}
+                  {!isMobile && (
+                    <aside
+                      style={{
+                        width: '280px',
+                        flexShrink: 0,
+                        borderRight: readerTheme === 'dark' ? '1px solid #1e293b' : readerTheme === 'sepia' ? '1px solid #e6d7b9' : '1px solid #e2e8f0',
+                        background: readerTheme === 'dark' ? '#070a12' : readerTheme === 'sepia' ? '#f4ebd0' : '#f8fafc',
+                        padding: '1.25rem 1rem',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        gap: '1rem',
+                        overflowY: 'auto',
+                      }}
+                    >
+                      <div>
+                        <div style={{ fontSize: '0.65rem', fontWeight: 800, textTransform: 'uppercase', color: '#d4af37', letterSpacing: '0.05em' }}>
+                          {activeHandbook.edition}
+                        </div>
+                        <h4 style={{ margin: '4px 0 2px', fontSize: '0.9rem', fontWeight: 800, color: readerTheme === 'dark' ? '#ffffff' : readerTheme === 'sepia' ? '#2d2215' : '#0f172a', lineHeight: 1.3 }}>
+                          {activeHandbook.title}
+                        </h4>
+                        <div style={{ fontSize: '0.72rem', opacity: 0.75, marginTop: '2px' }}>
+                          🏛️ {activeHandbook.faculty}
+                        </div>
+                        <div style={{ fontSize: '0.72rem', opacity: 0.75, marginTop: '2px' }}>
+                          ⏱️ {activeHandbook.estimatedReadTime} • {activeHandbook.totalChapters} Chapters
+                        </div>
                       </div>
-                      <h4 style={{ margin: '4px 0 2px', fontSize: '0.9rem', fontWeight: 800, color: readerTheme === 'dark' ? '#ffffff' : readerTheme === 'sepia' ? '#2d2215' : '#0f172a', lineHeight: 1.3 }}>
-                        {activeHandbook.title}
-                      </h4>
-                      <div style={{ fontSize: '0.72rem', opacity: 0.75, marginTop: '2px' }}>
-                        🏛️ {activeHandbook.faculty}
-                      </div>
-                      <div style={{ fontSize: '0.72rem', opacity: 0.75, marginTop: '2px' }}>
-                        ⏱️ {activeHandbook.estimatedReadTime} • {activeHandbook.totalChapters} Chapters
-                      </div>
-                    </div>
 
-                    <div style={{ borderTop: readerTheme === 'dark' ? '1px solid #1e293b' : '1px solid #e2e8f0', paddingTop: '0.75rem' }}>
-                      <div style={{ fontSize: '0.72rem', fontWeight: 800, textTransform: 'uppercase', opacity: 0.6, marginBottom: '0.5rem' }}>
-                        Table of Contents
+                      <div style={{ borderTop: readerTheme === 'dark' ? '1px solid #1e293b' : '1px solid #e2e8f0', paddingTop: '0.75rem' }}>
+                        <div style={{ fontSize: '0.72rem', fontWeight: 800, textTransform: 'uppercase', opacity: 0.6, marginBottom: '0.5rem' }}>
+                          Table of Contents
+                        </div>
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                          {activeHandbook.chapters.map((ch, idx) => {
+                            const isActive = idx === activeChapterIndex
+                            return (
+                              <button
+                                key={ch.id}
+                                type="button"
+                                onClick={() => setActiveChapterIndex(idx)}
+                                style={{
+                                  textAlign: 'left',
+                                  padding: '0.6rem 0.75rem',
+                                  borderRadius: '10px',
+                                  border: 'none',
+                                  background: isActive
+                                    ? readerTheme === 'dark' ? '#1e3a8a' : readerTheme === 'sepia' ? '#e2cca4' : '#dbeafe'
+                                    : 'transparent',
+                                  color: isActive
+                                    ? readerTheme === 'dark' ? '#93c5fd' : readerTheme === 'sepia' ? '#433422' : '#1e40af'
+                                    : readerTheme === 'dark' ? '#94a3b8' : readerTheme === 'sepia' ? '#6b583f' : '#64748b',
+                                  fontWeight: isActive ? 800 : 600,
+                                  fontSize: '0.8rem',
+                                  cursor: 'pointer',
+                                  transition: 'all 0.15s ease',
+                                  display: 'flex',
+                                  alignItems: 'center',
+                                  gap: '8px',
+                                }}
+                              >
+                                <span style={{ fontSize: '0.75rem', opacity: 0.8, minWidth: '16px' }}>{ch.number}.</span>
+                                <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{ch.title}</span>
+                              </button>
+                            )
+                          })}
+                        </div>
                       </div>
-                      <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
-                        {activeHandbook.chapters.map((ch, idx) => {
-                          const isActive = idx === activeChapterIndex
-                          return (
-                            <button
-                              key={ch.id}
-                              type="button"
-                              onClick={() => setActiveChapterIndex(idx)}
-                              style={{
-                                textAlign: 'left',
-                                padding: '0.6rem 0.75rem',
-                                borderRadius: '10px',
-                                border: 'none',
-                                background: isActive
-                                  ? readerTheme === 'dark' ? '#1e3a8a' : readerTheme === 'sepia' ? '#e2cca4' : '#dbeafe'
-                                  : 'transparent',
-                                color: isActive
-                                  ? readerTheme === 'dark' ? '#93c5fd' : readerTheme === 'sepia' ? '#433422' : '#1e40af'
-                                  : readerTheme === 'dark' ? '#94a3b8' : readerTheme === 'sepia' ? '#6b583f' : '#64748b',
-                                fontWeight: isActive ? 800 : 600,
-                                fontSize: '0.8rem',
-                                cursor: 'pointer',
-                                transition: 'all 0.15s ease',
-                                display: 'flex',
-                                alignItems: 'center',
-                                gap: '8px',
-                              }}
-                            >
-                              <span style={{ fontSize: '0.75rem', opacity: 0.8, minWidth: '16px' }}>{ch.number}.</span>
-                              <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{ch.title}</span>
-                            </button>
-                          )
-                        })}
+                    </aside>
+                  )}
+
+                  {/* Mobile Table of Contents Slide-up Drawer */}
+                  {isMobile && showMobileToc && (
+                    <div
+                      style={{
+                        position: 'fixed',
+                        inset: 0,
+                        zIndex: 999999,
+                        background: 'rgba(0, 0, 0, 0.6)',
+                        backdropFilter: 'blur(4px)',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        justifyContent: 'flex-end',
+                      }}
+                      onClick={() => setShowMobileToc(false)}
+                    >
+                      <div
+                        style={{
+                          background: readerTheme === 'dark' ? '#0f172a' : readerTheme === 'sepia' ? '#fdf6e2' : '#ffffff',
+                          color: readerTheme === 'dark' ? '#f8fafc' : readerTheme === 'sepia' ? '#2d2215' : '#0f172a',
+                          borderTopLeftRadius: '20px',
+                          borderTopRightRadius: '20px',
+                          maxHeight: '80vh',
+                          display: 'flex',
+                          flexDirection: 'column',
+                          boxShadow: '0 -10px 30px rgba(0, 0, 0, 0.3)',
+                          paddingBottom: 'calc(1.5rem + env(safe-area-inset-bottom, 0px))',
+                        }}
+                        onClick={(e) => e.stopPropagation()}
+                      >
+                        {/* Drawer Header */}
+                        <div
+                          style={{
+                            padding: '1.25rem 1.25rem 0.75rem',
+                            display: 'flex',
+                            justifyContent: 'space-between',
+                            alignItems: 'center',
+                            borderBottom: `1px solid ${readerTheme === 'dark' ? '#1e293b' : readerTheme === 'sepia' ? '#e6d7b9' : '#e2e8f0'}`,
+                          }}
+                        >
+                          <div>
+                            <div style={{ fontSize: '0.68rem', fontWeight: 800, textTransform: 'uppercase', color: '#d4af37' }}>
+                              Table of Contents ({activeHandbook.totalChapters} Chapters)
+                            </div>
+                            <div style={{ fontSize: '0.92rem', fontWeight: 800 }}>
+                              {activeHandbook.title}
+                            </div>
+                          </div>
+                          <button
+                            type="button"
+                            onClick={() => setShowMobileToc(false)}
+                            style={{
+                              background: readerTheme === 'dark' ? '#1e293b' : '#f1f5f9',
+                              border: 'none',
+                              borderRadius: '50%',
+                              width: '32px',
+                              height: '32px',
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'center',
+                              cursor: 'pointer',
+                              fontWeight: 800,
+                              color: 'inherit',
+                            }}
+                          >
+                            ✕
+                          </button>
+                        </div>
+
+                        {/* Chapter List */}
+                        <div style={{ padding: '0.75rem', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                          {activeHandbook.chapters.map((ch, idx) => {
+                            const isActive = idx === activeChapterIndex
+                            return (
+                              <button
+                                key={ch.id}
+                                type="button"
+                                onClick={() => {
+                                  setActiveChapterIndex(idx)
+                                  setShowMobileToc(false)
+                                }}
+                                style={{
+                                  textAlign: 'left',
+                                  padding: '0.85rem 1rem',
+                                  borderRadius: '12px',
+                                  border: 'none',
+                                  background: isActive
+                                    ? readerTheme === 'dark' ? '#1e3a8a' : readerTheme === 'sepia' ? '#e2cca4' : '#dbeafe'
+                                    : readerTheme === 'dark' ? '#1e293b' : readerTheme === 'sepia' ? '#f4ebd0' : '#f8fafc',
+                                  color: isActive
+                                    ? readerTheme === 'dark' ? '#93c5fd' : readerTheme === 'sepia' ? '#433422' : '#1e40af'
+                                    : 'inherit',
+                                  fontWeight: isActive ? 800 : 600,
+                                  fontSize: '0.88rem',
+                                  cursor: 'pointer',
+                                  display: 'flex',
+                                  alignItems: 'center',
+                                  justifyContent: 'space-between',
+                                  gap: '10px',
+                                }}
+                              >
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '10px', minWidth: 0 }}>
+                                  <span style={{ fontWeight: 800, opacity: 0.8, minWidth: '22px' }}>
+                                    {ch.number}.
+                                  </span>
+                                  <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                                    {ch.title}
+                                  </span>
+                                </div>
+                                {isActive && <span style={{ fontSize: '0.8rem', fontWeight: 800, color: '#2563eb' }}>● Reading</span>}
+                              </button>
+                            )
+                          })}
+                        </div>
                       </div>
                     </div>
-                  </aside>
+                  )}
 
                   {/* Main Chapter Content Area */}
                   <div
                     style={{
                       flex: 1,
-                      padding: '2.5rem 3.5rem',
+                      padding: isMobile ? '1.25rem 1rem 4rem' : '2.5rem 3.5rem',
                       maxWidth: '900px',
                       margin: '0 auto',
                       width: '100%',
@@ -999,7 +1157,7 @@ export function ResourceLibrary() {
                     {activeHandbook.chapters[activeChapterIndex] ? (
                       <div>
                         {/* Chapter Title Badge */}
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '0.5rem' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '0.5rem', flexWrap: 'wrap' }}>
                           <span
                             style={{
                               background: readerTheme === 'dark' ? 'rgba(59, 130, 246, 0.2)' : readerTheme === 'sepia' ? '#e8d5b0' : '#e0e7ff',
@@ -1016,11 +1174,29 @@ export function ResourceLibrary() {
                           <span style={{ fontSize: '0.75rem', opacity: 0.6 }}>
                             Module Syllabus Unit
                           </span>
+                          {isMobile && (
+                            <button
+                              type="button"
+                              onClick={() => setShowMobileToc(true)}
+                              style={{
+                                marginLeft: 'auto',
+                                background: 'transparent',
+                                border: 'none',
+                                color: '#2563eb',
+                                fontSize: '0.75rem',
+                                fontWeight: 800,
+                                cursor: 'pointer',
+                                padding: '2px 6px',
+                              }}
+                            >
+                              📑 Change Chapter ▾
+                            </button>
+                          )}
                         </div>
 
                         <h1
                           style={{
-                            fontSize: '1.85rem',
+                            fontSize: isMobile ? '1.4rem' : '1.85rem',
                             fontWeight: 900,
                             color: readerTheme === 'dark' ? '#ffffff' : readerTheme === 'sepia' ? '#2d2215' : '#0f172a',
                             margin: '0 0 1rem',
@@ -1035,10 +1211,10 @@ export function ResourceLibrary() {
                           style={{
                             background: readerTheme === 'dark' ? '#131b2e' : readerTheme === 'sepia' ? '#f4ebd0' : '#f1f5f9',
                             borderLeft: '4px solid #3b82f6',
-                            padding: '0.85rem 1.25rem',
+                            padding: isMobile ? '0.75rem 1rem' : '0.85rem 1.25rem',
                             borderRadius: '0 12px 12px 0',
-                            fontSize: '0.92rem',
-                            marginBottom: '2rem',
+                            fontSize: isMobile ? '0.85rem' : '0.92rem',
+                            marginBottom: '1.75rem',
                             fontStyle: 'italic',
                           }}
                         >
@@ -1047,10 +1223,10 @@ export function ResourceLibrary() {
 
                         {/* Sections */}
                         {activeHandbook.chapters[activeChapterIndex].sections.map((sec, secIdx) => (
-                          <div key={secIdx} style={{ marginBottom: '2.5rem' }}>
+                          <div key={secIdx} style={{ marginBottom: isMobile ? '2rem' : '2.5rem' }}>
                             <h2
                               style={{
-                                fontSize: '1.25rem',
+                                fontSize: isMobile ? '1.1rem' : '1.25rem',
                                 fontWeight: 800,
                                 color: readerTheme === 'dark' ? '#f8fafc' : readerTheme === 'sepia' ? '#2d2215' : '#1e293b',
                                 margin: '0 0 0.85rem',
@@ -1062,7 +1238,7 @@ export function ResourceLibrary() {
                             </h2>
 
                             {sec.content.map((p, pIdx) => (
-                              <p key={pIdx} style={{ margin: '0 0 1rem', fontSize: '0.95rem' }}>
+                              <p key={pIdx} style={{ margin: '0 0 1rem', fontSize: isMobile ? '0.9rem' : '0.95rem' }}>
                                 {p}
                               </p>
                             ))}
@@ -1093,18 +1269,19 @@ export function ResourceLibrary() {
                                   }}
                                 >
                                   <span>💻 {sec.codeLanguage || 'Code snippet'}</span>
-                                  <span>🔒 In-App Academic Example</span>
+                                  <span>🔒 Academic Example</span>
                                 </div>
                                 <pre
                                   style={{
                                     margin: 0,
-                                    padding: '1.2rem',
+                                    padding: isMobile ? '0.85rem' : '1.2rem',
                                     fontFamily: 'Fira Code, Consolas, Monaco, monospace',
-                                    fontSize: '0.85rem',
+                                    fontSize: isMobile ? '0.78rem' : '0.85rem',
                                     lineHeight: 1.6,
                                     color: '#38bdf8',
                                     overflowX: 'auto',
                                     userSelect: 'none',
+                                    WebkitOverflowScrolling: 'touch',
                                   }}
                                 >
                                   <code>{sec.codeSnippet}</code>
@@ -1119,7 +1296,7 @@ export function ResourceLibrary() {
                                   background: readerTheme === 'dark' ? 'rgba(34, 197, 94, 0.1)' : readerTheme === 'sepia' ? '#f5eedb' : '#f0fdf4',
                                   border: readerTheme === 'dark' ? '1px solid rgba(34, 197, 94, 0.3)' : readerTheme === 'sepia' ? '1px solid #d4c5a3' : '1px solid #bbf7d0',
                                   borderRadius: '14px',
-                                  padding: '1.1rem 1.4rem',
+                                  padding: isMobile ? '0.85rem 1rem' : '1.1rem 1.4rem',
                                   margin: '1.25rem 0',
                                 }}
                               >
@@ -1127,7 +1304,7 @@ export function ResourceLibrary() {
                                   <span>💡</span>
                                   <span>Key Examination & Practical Takeaways</span>
                                 </div>
-                                <ul style={{ margin: 0, paddingLeft: '1.2rem', fontSize: '0.88rem' }}>
+                                <ul style={{ margin: 0, paddingLeft: isMobile ? '1rem' : '1.2rem', fontSize: isMobile ? '0.82rem' : '0.88rem' }}>
                                   {sec.keyPoints.map((kp, kpIdx) => (
                                     <li key={kpIdx} style={{ margin: '0.35rem 0' }}>{kp}</li>
                                   ))}
@@ -1142,7 +1319,7 @@ export function ResourceLibrary() {
                                   background: readerTheme === 'dark' ? 'rgba(212, 175, 55, 0.1)' : readerTheme === 'sepia' ? '#f7ebd2' : '#fefce8',
                                   border: readerTheme === 'dark' ? '1px solid rgba(212, 175, 55, 0.3)' : readerTheme === 'sepia' ? '1px solid #d9c49c' : '1px solid #fef08a',
                                   borderRadius: '14px',
-                                  padding: '1.1rem 1.4rem',
+                                  padding: isMobile ? '0.85rem 1rem' : '1.1rem 1.4rem',
                                   margin: '1.25rem 0',
                                 }}
                               >
@@ -1152,8 +1329,8 @@ export function ResourceLibrary() {
                                 </div>
                                 {sec.practiceQuestions.map((pq, pqIdx) => (
                                   <div key={pqIdx} style={{ marginTop: '0.6rem' }}>
-                                    <div style={{ fontWeight: 700, fontSize: '0.88rem', marginBottom: '0.25rem' }}>{pq.q}</div>
-                                    <div style={{ fontSize: '0.84rem', opacity: 0.9, paddingLeft: '0.75rem', borderLeft: '2px solid #eab308' }}>{pq.a}</div>
+                                    <div style={{ fontWeight: 700, fontSize: isMobile ? '0.82rem' : '0.88rem', marginBottom: '0.25rem' }}>{pq.q}</div>
+                                    <div style={{ fontSize: isMobile ? '0.78rem' : '0.84rem', opacity: 0.9, paddingLeft: '0.75rem', borderLeft: '2px solid #eab308' }}>{pq.a}</div>
                                   </div>
                                 ))}
                               </div>
@@ -1161,58 +1338,80 @@ export function ResourceLibrary() {
                           </div>
                         ))}
 
-                        {/* Chapter Navigation Footer */}
+                        {/* Chapter Navigation Footer (Thumb Friendly on Mobile) */}
                         <div
                           style={{
                             display: 'flex',
+                            flexDirection: isMobile ? 'column' : 'row',
                             justifyContent: 'space-between',
                             alignItems: 'center',
-                            marginTop: '3rem',
-                            paddingTop: '1.5rem',
+                            gap: '1rem',
+                            marginTop: '2.5rem',
+                            paddingTop: '1.25rem',
                             borderTop: readerTheme === 'dark' ? '1px solid #1e293b' : readerTheme === 'sepia' ? '1px solid #e6d7b9' : '1px solid #e2e8f0',
                           }}
                         >
-                          <button
-                            type="button"
-                            disabled={activeChapterIndex === 0}
-                            onClick={() => setActiveChapterIndex((i) => Math.max(0, i - 1))}
-                            style={{
-                              background: readerTheme === 'dark' ? '#1e293b' : readerTheme === 'sepia' ? '#e8d5b0' : '#f1f5f9',
-                              color: readerTheme === 'dark' ? '#f8fafc' : readerTheme === 'sepia' ? '#433422' : '#0f172a',
-                              border: 'none',
-                              padding: '0.6rem 1.25rem',
-                              borderRadius: '10px',
-                              fontWeight: 700,
-                              fontSize: '0.84rem',
-                              cursor: activeChapterIndex === 0 ? 'not-allowed' : 'pointer',
-                              opacity: activeChapterIndex === 0 ? 0.4 : 1,
-                            }}
-                          >
-                            ← Previous Chapter
-                          </button>
+                          <div style={{ display: 'flex', gap: '0.75rem', width: isMobile ? '100%' : 'auto', justifyContent: 'space-between' }}>
+                            <button
+                              type="button"
+                              disabled={activeChapterIndex === 0}
+                              onClick={() => {
+                                setActiveChapterIndex((i) => Math.max(0, i - 1))
+                                window.scrollTo({ top: 0, behavior: 'smooth' })
+                              }}
+                              style={{
+                                flex: isMobile ? 1 : 'initial',
+                                minHeight: '44px',
+                                background: readerTheme === 'dark' ? '#1e293b' : readerTheme === 'sepia' ? '#e8d5b0' : '#f1f5f9',
+                                color: readerTheme === 'dark' ? '#f8fafc' : readerTheme === 'sepia' ? '#433422' : '#0f172a',
+                                border: 'none',
+                                padding: '0.6rem 1.25rem',
+                                borderRadius: '12px',
+                                fontWeight: 700,
+                                fontSize: '0.85rem',
+                                cursor: activeChapterIndex === 0 ? 'not-allowed' : 'pointer',
+                                opacity: activeChapterIndex === 0 ? 0.4 : 1,
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                gap: '6px',
+                              }}
+                            >
+                              ← Prev Chapter
+                            </button>
 
-                          <span style={{ fontSize: '0.8rem', opacity: 0.7, fontWeight: 700 }}>
+                            <button
+                              type="button"
+                              disabled={activeChapterIndex === activeHandbook.chapters.length - 1}
+                              onClick={() => {
+                                setActiveChapterIndex((i) => Math.min(activeHandbook.chapters.length - 1, i + 1))
+                                window.scrollTo({ top: 0, behavior: 'smooth' })
+                              }}
+                              style={{
+                                flex: isMobile ? 1 : 'initial',
+                                minHeight: '44px',
+                                background: '#2563eb',
+                                color: '#ffffff',
+                                border: 'none',
+                                padding: '0.6rem 1.25rem',
+                                borderRadius: '12px',
+                                fontWeight: 800,
+                                fontSize: '0.85rem',
+                                cursor: activeChapterIndex === activeHandbook.chapters.length - 1 ? 'not-allowed' : 'pointer',
+                                opacity: activeChapterIndex === activeHandbook.chapters.length - 1 ? 0.4 : 1,
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                gap: '6px',
+                              }}
+                            >
+                              Next Chapter →
+                            </button>
+                          </div>
+
+                          <div style={{ fontSize: '0.8rem', opacity: 0.7, fontWeight: 700, textAlign: 'center' }}>
                             Chapter {activeChapterIndex + 1} of {activeHandbook.chapters.length}
-                          </span>
-
-                          <button
-                            type="button"
-                            disabled={activeChapterIndex === activeHandbook.chapters.length - 1}
-                            onClick={() => setActiveChapterIndex((i) => Math.min(activeHandbook.chapters.length - 1, i + 1))}
-                            style={{
-                              background: '#2563eb',
-                              color: '#ffffff',
-                              border: 'none',
-                              padding: '0.6rem 1.25rem',
-                              borderRadius: '10px',
-                              fontWeight: 800,
-                              fontSize: '0.84rem',
-                              cursor: activeChapterIndex === activeHandbook.chapters.length - 1 ? 'not-allowed' : 'pointer',
-                              opacity: activeChapterIndex === activeHandbook.chapters.length - 1 ? 0.4 : 1,
-                            }}
-                          >
-                            Next Chapter →
-                          </button>
+                          </div>
                         </div>
                       </div>
                     ) : null}
