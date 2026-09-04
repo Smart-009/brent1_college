@@ -202,11 +202,6 @@ export function ResourceLibrary() {
   const [showAppDownloadPrompt, setShowAppDownloadPrompt] = useState(false)
 
   const handleOpenReader = (res: AcademicResource) => {
-    if (!isNativeApp && !isAdmin) {
-      setShowAppDownloadPrompt(true)
-      return
-    }
-
     setReadingResource(res)
 
     // Only increment unique student reads once per browser session
