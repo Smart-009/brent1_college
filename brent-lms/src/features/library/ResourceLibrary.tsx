@@ -1594,28 +1594,135 @@ export function ResourceLibrary() {
                     ) : null}
                   </div>
                 </div>
-              ) : /\.(png|jpe?g|webp|gif|svg)$/i.test(readingResource.file_url || '') ? (
+              ) : /\.(png|jpe?g|webp|gif|svg)$/i.test(readingResource.file_url || '') || readingResource.file_url?.startsWith('data:image/') ? (
                 // 2. IMAGE VIEWER
-                <div style={{ padding: '1.5rem', height: '100%', overflowY: 'auto', textAlign: 'center' }}>
+                <div style={{ padding: isMobile ? '1rem' : '2rem', height: '100%', overflowY: 'auto', textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
                   <img
                     src={readingResource.file_url}
                     alt={readingResource.title}
                     onContextMenu={(e) => e.preventDefault()}
                     onDragStart={(e) => e.preventDefault()}
-                    style={{ maxWidth: '100%', maxHeight: '90vh', objectFit: 'contain', borderRadius: '8px', boxShadow: '0 4px 12px rgba(0,0,0,0.1)', pointerEvents: 'none' }}
+                    style={{
+                      maxWidth: '100%',
+                      maxHeight: '85vh',
+                      objectFit: 'contain',
+                      borderRadius: '12px',
+                      boxShadow: '0 8px 30px rgba(0,0,0,0.25)',
+                      pointerEvents: 'none',
+                    }}
                   />
-                </div>
-              ) : readingResource.file_url?.endsWith('.pdf') || readingResource.file_url?.startsWith('data:application/pdf') || readingResource.file_url?.startsWith('blob:') ? (
-                // 3. NATIVE PDF EMBED
-                <object
-                  data={readingResource.file_url}
-                  type="application/pdf"
-                  style={{ width: '100%', height: '100%', minHeight: '80vh', border: 'none' }}
-                >
-                  <div style={{ padding: '2rem', textAlign: 'center' }}>
-                    <p>Protected Academic Document ready.</p>
+                  <div style={{ marginTop: '1rem', fontSize: '0.85rem', opacity: 0.75, fontWeight: 700 }}>
+                    {readingResource.title} • {readingResource.subject}
                   </div>
-                </object>
+                </div>
+              ) : readingResource.file_url ? (
+                // 3. UNIVERSAL ACADEMIC IN-APP DOCUMENT VIEWER (PDF, DOCS, REVISION MATERIALS)
+                <div
+                  style={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    flex: 1,
+                    minHeight: '100%',
+                    padding: isMobile ? '0.75rem' : '1.5rem 2.5rem',
+                    boxSizing: 'border-box',
+                    gap: '1rem',
+                  }}
+                >
+                  {/* Document Header Card */}
+                  <div
+                    style={{
+                      background: readerTheme === 'dark' ? '#0f172a' : readerTheme === 'sepia' ? '#f4ebd0' : '#f8fafc',
+                      border: `1px solid ${readerTheme === 'dark' ? '#1e293b' : readerTheme === 'sepia' ? '#e6d7b9' : '#e2e8f0'}`,
+                      borderRadius: '16px',
+                      padding: isMobile ? '1rem' : '1.25rem 1.75rem',
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      alignItems: 'center',
+                      flexWrap: 'wrap',
+                      gap: '0.75rem',
+                    }}
+                  >
+                    <div>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
+                        <span
+                          style={{
+                            background: '#2563eb',
+                            color: '#ffffff',
+                            padding: '2px 8px',
+                            borderRadius: '6px',
+                            fontSize: '0.72rem',
+                            fontWeight: 800,
+                            textTransform: 'uppercase',
+                          }}
+                        >
+                          {readingResource.category}
+                        </span>
+                        <span style={{ fontSize: '0.75rem', fontWeight: 700, opacity: 0.8 }}>
+                          {readingResource.subject}
+                        </span>
+                      </div>
+                      <h2
+                        style={{
+                          margin: '2px 0 4px',
+                          fontSize: isMobile ? '1.15rem' : '1.45rem',
+                          fontWeight: 900,
+                          color: readerTheme === 'dark' ? '#ffffff' : readerTheme === 'sepia' ? '#2d2215' : '#0f172a',
+                        }}
+                      >
+                        {readingResource.title}
+                      </h2>
+                      <div style={{ fontSize: '0.75rem', opacity: 0.7 }}>
+                        Academic Material • Uploaded by {readingResource.uploaded_by || 'Éclat Academic Board'} • Size: {readingResource.file_size || 'Official File'}
+                      </div>
+                    </div>
+
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                      <span
+                        style={{
+                          background: 'rgba(34, 197, 94, 0.15)',
+                          color: '#16a34a',
+                          border: '1px solid rgba(34, 197, 94, 0.3)',
+                          padding: '4px 10px',
+                          borderRadius: '8px',
+                          fontSize: '0.75rem',
+                          fontWeight: 800,
+                        }}
+                      >
+                        🔒 DRM Protected Viewer
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* High-Performance Embedded Document Frame */}
+                  <div
+                    style={{
+                      flex: 1,
+                      minHeight: isMobile ? '70vh' : '82vh',
+                      borderRadius: '16px',
+                      overflow: 'hidden',
+                      boxShadow: '0 8px 30px rgba(0,0,0,0.15)',
+                      border: `1.5px solid ${readerTheme === 'dark' ? '#1e293b' : readerTheme === 'sepia' ? '#d4af37' : '#cbd5e1'}`,
+                      background: '#ffffff',
+                      position: 'relative',
+                    }}
+                  >
+                    <iframe
+                      src={
+                        readingResource.file_url.startsWith('http') && !readingResource.file_url.includes('drive.google.com') && !readingResource.file_url.includes('supabase')
+                          ? `https://docs.google.com/viewer?url=${encodeURIComponent(readingResource.file_url)}&embedded=true`
+                          : readingResource.file_url
+                      }
+                      title={readingResource.title}
+                      style={{
+                        width: '100%',
+                        height: '100%',
+                        minHeight: isMobile ? '70vh' : '82vh',
+                        border: 'none',
+                        background: '#ffffff',
+                      }}
+                    />
+                  </div>
+                </div>
               ) : (
                 // 4. INSTITUTIONAL FALLBACK DOCUMENT VIEW (ZERO THIRD-PARTY LEAKS)
                 <div style={{ padding: '3rem', maxWidth: '750px', margin: '0 auto', textAlign: 'center' }}>

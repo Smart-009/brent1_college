@@ -1028,6 +1028,32 @@ class SchoolDataStore {
           schoolEventBus.publish('PAYMENT_RECORDED')
         }
       }
+
+      // 5. Sync Academic Library Resources from Supabase (Preserving user uploads)
+      const { data: cloudResources } = await supabase.from('library_resources').select('*').order('created_at', { ascending: false })
+      if (cloudResources && cloudResources.length > 0) {
+        const localResources = this.getResources()
+        const resourceMap = new Map<string, AcademicResource>()
+        for (const lr of localResources) resourceMap.set(lr.id, lr)
+        for (const cr of cloudResources) {
+          resourceMap.set(cr.id, {
+            id: cr.id,
+            title: cr.title,
+            category: cr.category,
+            subject: cr.subject,
+            class_level: cr.class_level || 'Short Course / Certificate',
+            file_url: cr.file_url,
+            file_size: cr.file_size || 'Academic Document',
+            file_type: cr.file_type || 'PDF',
+            downloads_count: cr.downloads_count || 0,
+            year: cr.year || new Date().getFullYear(),
+            uploaded_by: cr.uploaded_by || 'Academic Administrator',
+            created_at: cr.created_at || new Date().toISOString(),
+          })
+        }
+        const merged = Array.from(resourceMap.values())
+        this.set('resources', merged)
+      }
     } catch (err) {
       console.warn('Cloud store sync notice:', err)
     } finally {
@@ -1036,19 +1062,7 @@ class SchoolDataStore {
   }
 
   private cleanLegacyMockData() {
-    try {
-      // Purge legacy cached resources containing third-party storage vendor links
-      const cachedResources = localStorage.getItem('eclat_school_resources')
-      if (cachedResources && cachedResources.includes('drive.google.com')) {
-        localStorage.removeItem('eclat_school_resources')
-      }
-
-      const isCleaned = localStorage.getItem('eclat_launch_pure_v10')
-      if (!isCleaned) {
-        localStorage.removeItem('eclat_school_resources')
-        localStorage.setItem('eclat_launch_pure_v10', 'true')
-      }
-    } catch {}
+    // Non-destructive: Preserve all real student records, uploads, and data permanently
   }
 
   purgeAllDataForLaunch(): void {
