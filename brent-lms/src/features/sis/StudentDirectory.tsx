@@ -5,19 +5,21 @@ import type { StudentRecord, PaymentReminder } from '@/types/school'
 import { BiometricEnrollModal } from '@/components/biometrics/BiometricEnrollModal'
 import { BiometricScannerModal } from '@/components/biometrics/BiometricScannerModal'
 import { INSTITUTION_CONFIG } from '@/config/institution'
+import { OFFICIAL_COURSES } from '@/config/officialCourses'
 
 export function StudentDirectory() {
   const [students, setStudents] = useState<StudentRecord[]>(() => schoolStore.getStudents())
   const [departments] = useState(() => schoolStore.getDepartments())
   const [subjects] = useState(() => schoolStore.getSubjects())
 
-  // Dynamic program options derived from active course units, departments and subjects
+  // Dynamic program options derived from active course units, departments, subjects, and official accredited registry
   const programOptions = useMemo(() => {
+    const fromOfficial = OFFICIAL_COURSES.map((c) => c.title)
     const fromUnits = schoolStore.getCourseUnits().map((u) => u.title)
     const fromPrograms = schoolStore.getCourseUnits().map((u) => u.program).filter(Boolean)
     const fromSubjects = subjects.map((s) => s.name)
     const fromDepts = departments.flatMap((d) => d.programs || [])
-    return Array.from(new Set([...fromUnits, ...fromPrograms, ...fromSubjects, ...fromDepts]))
+    return Array.from(new Set([...fromOfficial, ...fromUnits, ...fromPrograms, ...fromSubjects, ...fromDepts]))
   }, [departments, subjects, students])
 
   const [searchTerm, setSearchTerm] = useState('')

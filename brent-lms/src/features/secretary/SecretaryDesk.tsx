@@ -3,6 +3,7 @@ import { useAuth } from '@/hooks/useAuth'
 import { schoolStore } from '@/lib/schoolData'
 import type { StudentRecord, SecretaryInquiry, CourseUnit, UnitRegistrationReceipt } from '@/types/school'
 import { UnitRegistrationSlip } from '@/components/shared/UnitRegistrationSlip'
+import { OFFICIAL_COURSES } from '@/config/officialCourses'
 
 export function SecretaryDesk() {
   const { profile } = useAuth()
@@ -568,7 +569,19 @@ export function SecretaryDesk() {
                 </div>
                 <div>
                   <label className="label">Program of Interest</label>
-                  <input type="text" className="input" value={newInquiry.program_of_interest} onChange={(e) => setNewInquiry({ ...newInquiry, program_of_interest: e.target.value })} />
+                  <select
+                    className="input"
+                    value={newInquiry.program_of_interest}
+                    onChange={(e) => setNewInquiry({ ...newInquiry, program_of_interest: e.target.value })}
+                  >
+                    <option value="">-- Choose Program of Interest or Type Notes Below --</option>
+                    {OFFICIAL_COURSES.map((c) => (
+                      <option key={c.id} value={c.title}>
+                        {c.icon} {c.shortTitle} (${c.feeUsd} / KES {c.feeKes.toLocaleString()}) • {c.duration}
+                      </option>
+                    ))}
+                    <option value="General Admissions Consultation">General Admissions Consultation</option>
+                  </select>
                 </div>
                 <div>
                   <label className="label">Notes / Inquiry Summary</label>
