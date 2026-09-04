@@ -10,14 +10,14 @@ import '@/styles/index.css'
 import '@/styles/components.css'
 import '@/styles/pages.css'
 
-import { registerSW } from 'virtual:pwa-register'
-
-const updateSW = registerSW({
-  immediate: true,
-  onNeedRefresh() {
-    updateSW(true)
-  },
-})
+// Force unregister any legacy PWA service workers on client devices
+if (typeof window !== 'undefined' && 'serviceWorker' in navigator) {
+  navigator.serviceWorker.getRegistrations().then((registrations) => {
+    for (const registration of registrations) {
+      registration.unregister()
+    }
+  }).catch(() => {})
+}
 
 const queryClient = new QueryClient({
   defaultOptions: {
