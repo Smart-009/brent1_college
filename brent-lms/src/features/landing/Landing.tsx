@@ -7,7 +7,7 @@ import { DesktopCommandPalette } from '@/components/shared/DesktopCommandPalette
 import { supabase } from '@/lib/supabase'
 import { schoolStore } from '@/lib/schoolData'
 import { INSTITUTION_CONFIG, getWhatsAppInquiryUrl } from '@/config/institution'
-import { OFFICIAL_COURSES } from '@/config/officialCourses'
+import { OFFICIAL_COURSES, getDynamicCoursesList } from '@/config/officialCourses'
 import { IntakeAdvertsSection } from './IntakeAdvertsSection'
 import type { Role } from '@/lib/database.types'
 
@@ -38,7 +38,7 @@ interface CourseItem {
   syllabus?: { week: string; topic: string; practicalLab: string }[]
 }
 
-const DEFAULT_COURSES_DATA: CourseItem[] = OFFICIAL_COURSES.map((c) => ({
+const mapProgramToCourseItem = (c: any): CourseItem => ({
   id: c.id,
   title: c.title,
   category: c.category,
@@ -63,7 +63,9 @@ const DEFAULT_COURSES_DATA: CourseItem[] = OFFICIAL_COURSES.map((c) => ({
   popular: c.popular,
   bestseller: c.bestseller,
   syllabus: c.syllabus,
-}))
+})
+
+const DEFAULT_COURSES_DATA: CourseItem[] = OFFICIAL_COURSES.map(mapProgramToCourseItem)
 
 const TESTIMONIALS = [
   {
@@ -359,179 +361,20 @@ export function Landing() {
   }
 
   // Dynamic courses synchronized with Admin Curriculum & Courses Store
-  // Dynamic courses synchronized with Admin Curriculum & Courses Store
-  const [coursesList, setCoursesList] = useState<CourseItem[]>(() => {
-    const units = schoolStore.getCourseUnits()
+  const buildCourseItems = (): CourseItem[] => {
     const storeSubjects = schoolStore.getSubjects()
+    const storeUnits = schoolStore.getCourseUnits()
+    const dynamicList = getDynamicCoursesList(storeSubjects, storeUnits)
+    return dynamicList.map(mapProgramToCourseItem)
+  }
 
-    const customCourses: CourseItem[] = units.map((u) => {
-      const matchedSub = storeSubjects.find(
-        (s) => s.code.toLowerCase() === u.code.toLowerCase() || s.name.toLowerCase() === u.title.toLowerCase()
-      )
-      const feeVal = u.fee || matchedSub?.fee || 60
-      const catVal = matchedSub?.category || (
-        (u.department?.toLowerCase().includes('soft') || u.department?.toLowerCase().includes('python') || u.department?.toLowerCase().includes('cyber') || u.program?.toLowerCase().includes('code') || u.program?.toLowerCase().includes('web') || u.title?.toLowerCase().includes('react')) ? 'Tech & Programming'
-        : (u.department?.toLowerCase().includes('lang') || u.department?.toLowerCase().includes('ielts') || u.department?.toLowerCase().includes('kisw') || u.program?.toLowerCase().includes('english') || u.program?.toLowerCase().includes('arabic') || u.program?.toLowerCase().includes('french')) ? 'Languages & Communication'
-        : (u.department?.toLowerCase().includes('account') || u.department?.toLowerCase().includes('biz') || u.program?.toLowerCase().includes('tax') || u.program?.toLowerCase().includes('quickbooks')) ? 'Business Tech & Accounting'
-        : 'Computer & Digital Skills'
-      )
+  const [coursesList, setCoursesList] = useState<CourseItem[]>(() => buildCourseItems())
 
-      return {
-        id: u.id,
-        title: u.title,
-        category: catVal,
-        tag: `🏛️ ${u.program || u.department || 'Online Course'}`,
-        tagColor: '#0f172a',
-        duration: u.course_duration || matchedSub?.duration || '3 Months Certificate',
-        schedule: u.live_schedule_text || 'Live Online Batches & 24/7 LMS',
-        fee: `$${feeVal}`,
-        installment: `2 installments of $${Math.ceil(feeVal / 2)}`,
-        careerOutcome: u.description || (matchedSub?.description || 'Certified Online Graduate'),
-        skills: matchedSub?.careers || u.syllabus_modules?.flatMap((m) => m.topics) || ['Live Interactive Virtual Classes', 'Verified E-Certificate'],
-        icon: matchedSub?.icon || '🎨',
-        popular: true,
-        syllabus: u.syllabus_modules?.map((m, idx) => ({
-          week: `Week ${idx + 1}`,
-          topic: m.title,
-          practicalLab: m.learning_outcomes?.[0] || 'Live online hands-on exercises and project labs.',
-        })),
-      }
-    })
-
-    const subjectCourses: CourseItem[] = storeSubjects
-      .filter((s) => !customCourses.some((c) => c.title.toLowerCase().trim() === s.name.toLowerCase().trim() || c.id === s.id))
-      .map((s) => ({
-        id: s.id,
-        title: s.name,
-        category: s.category || 'Tech & Programming',
-        tag: `🏛️ ${s.department_name || 'Academic Course'}`,
-        tagColor: '#0f172a',
-        duration: s.duration || '3 Months Certificate',
-        schedule: 'Live Online Batches & 24/7 LMS',
-        fee: `$${s.fee || 60}`,
-        installment: `2 installments of $${Math.ceil((s.fee || 60) / 2)}`,
-        careerOutcome: s.description || `${s.name} Certified Specialist`,
-        skills: s.careers || ['Live Virtual Classes', 'Verified E-Certificate'],
-        icon: s.icon || '💻',
-        popular: true,
-        syllabus: [
-          { week: 'Module 1-2', topic: 'Core Foundations & Interactive Practice', practicalLab: 'Live virtual classroom lab and tools setup.' },
-          { week: 'Module 3-4', topic: 'Capstone Lab & Evaluation', practicalLab: 'Online evaluation and certification project.' },
-        ],
-      }))
-
-    const combined = [...customCourses, ...subjectCourses]
-    for (const def of DEFAULT_COURSES_DATA) {
-      if (!combined.some((c) => c.title.toLowerCase() === def.title.toLowerCase())) {
-        combined.push(def)
-      }
-    }
-    return combined
-  })
-
-  // Synchronize immediately on store change, Supabase Cloud fetch, and Realtime event
+  // Synchronize immediately on store change, Supabase Cloud fetch, and Realtime events
   useEffect(() => {
     const syncAllSources = async () => {
-      // 1. Local storage store units & subjects
-      const units = schoolStore.getCourseUnits()
-      const storeSubjects = schoolStore.getSubjects()
-
-      const customCourses: CourseItem[] = units.map((u) => {
-        const matchedSub = storeSubjects.find(
-          (s) => s.code.toLowerCase() === u.code.toLowerCase() || s.name.toLowerCase() === u.title.toLowerCase()
-        )
-        const feeVal = u.fee || matchedSub?.fee || 60
-        const catVal = matchedSub?.category || (
-          (u.department?.toLowerCase().includes('soft') || u.department?.toLowerCase().includes('python') || u.department?.toLowerCase().includes('cyber') || u.program?.toLowerCase().includes('code') || u.program?.toLowerCase().includes('web') || u.title?.toLowerCase().includes('react')) ? 'Tech & Programming'
-          : (u.department?.toLowerCase().includes('lang') || u.department?.toLowerCase().includes('ielts') || u.department?.toLowerCase().includes('kisw') || u.program?.toLowerCase().includes('english') || u.program?.toLowerCase().includes('arabic') || u.program?.toLowerCase().includes('french')) ? 'Languages & Communication'
-          : (u.department?.toLowerCase().includes('account') || u.department?.toLowerCase().includes('biz') || u.program?.toLowerCase().includes('tax') || u.program?.toLowerCase().includes('quickbooks')) ? 'Business Tech & Accounting'
-          : 'Computer & Digital Skills'
-        )
-
-        return {
-          id: u.id,
-          title: u.title,
-          category: catVal,
-          tag: `🏛️ ${u.program || u.department || 'Online Course'}`,
-          tagColor: '#0f172a',
-          duration: u.course_duration || matchedSub?.duration || '3 Months Certificate',
-          schedule: u.live_schedule_text || 'Live Online Batches & 24/7 LMS',
-          fee: `$${feeVal}`,
-          installment: `2 installments of $${Math.ceil(feeVal / 2)}`,
-          careerOutcome: u.description || (matchedSub?.description || 'Certified Online Graduate'),
-          skills: matchedSub?.careers || u.syllabus_modules?.flatMap((m) => m.topics) || ['Live Interactive Virtual Classes', 'Verified E-Certificate'],
-          icon: matchedSub?.icon || '💻',
-          popular: true,
-          syllabus: u.syllabus_modules?.map((m, idx) => ({
-            week: `Week ${idx + 1}`,
-            topic: m.title,
-            practicalLab: m.learning_outcomes?.[0] || 'Live online hands-on exercises and project labs.',
-          })),
-        }
-      })
-
-      const subjectCourses: CourseItem[] = storeSubjects
-        .filter((s) => !customCourses.some((c) => c.title.toLowerCase().trim() === s.name.toLowerCase().trim() || c.id === s.id))
-        .map((s) => ({
-          id: s.id,
-          title: s.name,
-          category: s.category || 'Tech & Programming',
-          tag: `🏛️ ${s.department_name || 'Academic Course'}`,
-          tagColor: '#0f172a',
-          duration: s.duration || '3 Months Certificate',
-          schedule: 'Live Online Batches & 24/7 LMS',
-          fee: `$${s.fee || 75}`,
-          installment: `2 installments of $${Math.ceil((s.fee || 75) / 2)}`,
-          careerOutcome: s.description || `${s.name} Certified Specialist`,
-          skills: s.careers || ['Live Virtual Classes', 'Verified E-Certificate'],
-          icon: s.icon || '💻',
-          popular: true,
-          syllabus: [
-            { week: 'Module 1-2', topic: 'Core Foundations & Interactive Practice', practicalLab: 'Live virtual classroom lab and tools setup.' },
-            { week: 'Module 3-4', topic: 'Capstone Lab & Evaluation', practicalLab: 'Online evaluation and certification project.' },
-          ],
-        }))
-
-      // 2. Supabase Cloud Database courses
-      let cloudMapped: CourseItem[] = []
-      try {
-        const { data: cloudCourses } = await supabase.from('courses').select('*').order('created_at', { ascending: false })
-        if (cloudCourses && cloudCourses.length > 0) {
-          cloudMapped = cloudCourses.map((c: any) => ({
-            id: c.id,
-            title: c.title,
-            category: (c.title?.toLowerCase().includes('code') || c.title?.toLowerCase().includes('web') || c.title?.toLowerCase().includes('python') || c.title?.toLowerCase().includes('cyber') || c.title?.toLowerCase().includes('software')) ? 'Tech & Programming'
-              : (c.title?.toLowerCase().includes('language') || c.title?.toLowerCase().includes('english') || c.title?.toLowerCase().includes('kiswahili') || c.title?.toLowerCase().includes('ielts') || c.title?.toLowerCase().includes('arabic') || c.title?.toLowerCase().includes('french') || c.title?.toLowerCase().includes('german')) ? 'Languages & Communication'
-              : (c.title?.toLowerCase().includes('quickbooks') || c.title?.toLowerCase().includes('accounting') || c.title?.toLowerCase().includes('tax')) ? 'Business Tech & Accounting'
-              : 'Computer & Digital Skills',
-            tag: '🌟 Online Certified Course',
-            tagColor: '#0f172a',
-            duration: '4 to 8 Weeks',
-            schedule: 'Live Online Batches',
-            fee: '$75',
-            installment: '2 installments of $38',
-            careerOutcome: c.description || 'Certified Online Graduate',
-            skills: ['Live Zoom Interactive Training', 'Verified E-Certificate'],
-            icon: '💻',
-            popular: true,
-            syllabus: [
-              { week: 'Week 1-2', topic: 'Live Interactive Masterclasses', practicalLab: 'Live coding and interactive language sessions.' },
-              { week: 'Week 3-4', topic: 'Capstone Practical Project & Exam', practicalLab: 'Online project submission and certification assessment.' },
-            ],
-          }))
-        }
-      } catch (err) {
-        console.error('Cloud courses load:', err)
-      }
-
-      // Merge: Cloud + Local Custom CourseUnits + Local Subjects + Default baseline
-      const merged = [...cloudMapped, ...customCourses, ...subjectCourses]
-      for (const def of DEFAULT_COURSES_DATA) {
-        if (!merged.some((c) => c.title.toLowerCase().trim() === def.title.toLowerCase().trim())) {
-          merged.push(def)
-        }
-      }
-      setCoursesList(merged)
+      const freshCourses = buildCourseItems()
+      setCoursesList(freshCourses)
     }
 
     syncAllSources()
@@ -544,6 +387,9 @@ export function Landing() {
     const channel = supabase
       .channel('realtime_public_courses')
       .on('postgres_changes', { event: '*', schema: 'public', table: 'courses' }, () => {
+        syncAllSources()
+      })
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'app_cloud_sync' }, () => {
         syncAllSources()
       })
       .subscribe()
@@ -2316,9 +2162,10 @@ export function Landing() {
                   {/* Udemy-Style Pricing & Direct Enrollment CTA */}
                   <div style={{ borderTop: '1px solid #f1f5f9', paddingTop: '1rem', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end' }}>
                     <div>
-                      <div style={{ display: 'flex', alignItems: 'baseline', gap: '6px' }}>
+                      <div style={{ display: 'flex', alignItems: 'baseline', gap: '6px', flexWrap: 'wrap' }}>
                         <span style={{ fontSize: '1.4rem', fontWeight: 900, color: '#0f172a' }}>{course.fee}</span>
-                        <span style={{ fontSize: '0.9rem', color: '#94a3b8', textDecoration: 'line-through' }}>{course.originalFee || '$180'}</span>
+                        <span style={{ fontSize: '0.85rem', color: '#64748b', fontWeight: 600 }}>/ KES {((course.feeUsd || Number(course.fee?.replace(/[^0-9]/g, '')) || 60) * 130).toLocaleString()}</span>
+                        <span style={{ fontSize: '0.9rem', color: '#94a3b8', textDecoration: 'line-through' }}>{course.originalFee || `$${(course.feeUsd || 60) * 2}`}</span>
                         <span style={{ fontSize: '0.75rem', color: '#16a34a', fontWeight: 800 }}>{course.discountBadge || '50% OFF'}</span>
                       </div>
                       <div style={{ fontSize: '0.72rem', color: '#64748b', fontWeight: 600 }}>

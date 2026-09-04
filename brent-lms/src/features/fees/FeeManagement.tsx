@@ -7,7 +7,7 @@ import { BiometricEnrollModal } from '@/components/biometrics/BiometricEnrollMod
 import { BiometricClearancePassModal } from '@/components/biometrics/BiometricClearancePassModal'
 import { generateBiometricVerificationCode } from '@/lib/biometricEngine'
 import { INSTITUTION_CONFIG } from '@/config/institution'
-import { OFFICIAL_COURSES } from '@/config/officialCourses'
+import { OFFICIAL_COURSES, getDynamicCoursesList } from '@/config/officialCourses'
 
 export function FeeManagement() {
   const { profile } = useAuth()
@@ -1001,7 +1001,7 @@ export function FeeManagement() {
               Standard Short Course Fees • Dual Currency (USD & KES) • Payable in Flexible Installments via Card or Bank.
             </p>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '0.65rem', fontSize: '0.88rem' }}>
-              {OFFICIAL_COURSES.map((course) => (
+              {getDynamicCoursesList(schoolStore.getSubjects(), schoolStore.getCourseUnits()).map((course) => (
                 <div
                   key={course.id}
                   style={{

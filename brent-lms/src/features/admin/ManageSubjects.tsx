@@ -155,7 +155,7 @@ export function ManageSubjects() {
   const [subCode, setSubCode] = useState('')
   const [subName, setSubName] = useState('')
   const [subDeptId, setSubDeptId] = useState('')
-  const [subFee, setSubFee] = useState<number>(5000)
+  const [subFee, setSubFee] = useState<number>(60)
   const [subDuration, setSubDuration] = useState('4 Weeks (1 Month)')
   const [subBadge, setSubBadge] = useState('Certified')
   const [subDescription, setSubDescription] = useState('')
@@ -180,7 +180,7 @@ export function ManageSubjects() {
         name: subName.trim(),
         department_id: parentDept?.id || 'dept-general',
         department_name: parentDept?.name || 'General Studies',
-        fee: Number(subFee) || 5000,
+        fee: Number(subFee) || 60,
         duration: subDuration || '4 Weeks (1 Month)',
         badge: subBadge || 'Certified',
         description: subDescription,
@@ -203,7 +203,7 @@ export function ManageSubjects() {
   const handleOpenEditSubject = (sub: CollegeSubject) => {
     setEditingSub(sub)
     setEditName(sub.name)
-    setEditFee(sub.fee || 5000)
+    setEditFee(sub.fee || 60)
     setEditDuration(sub.duration || '4 Weeks (1 Month)')
     setEditDescription(sub.description || '')
     setEditBadge(sub.badge || 'Certified')
@@ -422,8 +422,11 @@ export function ManageSubjects() {
                         <td><span className="badge badge-info">{sub.department_name}</span></td>
                         <td>
                           <span style={{ fontSize: '0.95rem', fontWeight: 800, color: '#16a34a' }}>
-                            ${(sub.fee || 75).toLocaleString()}
+                            ${(sub.fee || 60).toLocaleString()}
                           </span>
+                          <div style={{ fontSize: '0.72rem', color: 'var(--color-text-secondary)', fontWeight: 600 }}>
+                            KES {Math.round((sub.fee || 60) * 130).toLocaleString()}
+                          </div>
                         </td>
                         <td>
                           <span style={{ fontSize: '0.82rem', color: '#475569', fontWeight: 600 }}>

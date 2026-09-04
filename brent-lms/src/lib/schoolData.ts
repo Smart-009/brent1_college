@@ -2218,7 +2218,7 @@ class SchoolDataStore {
   async updateCourseUnit(id: string, updated: Partial<CourseUnit>): Promise<void> {
     await txEngine.executeAtomic(
       `UPDATE_COURSE_UNIT_${id}`,
-      ['eclat_school_course_units'],
+      ['eclat_school_course_units', 'eclat_school_subjects'],
       () => {
         const list = this.getCourseUnits()
         const idx = list.findIndex((u) => u.id === id)
@@ -2226,11 +2226,38 @@ class SchoolDataStore {
           list[idx] = { ...list[idx], ...updated }
           this.set('course_units', list)
         }
+
+        // Synchronize fee with corresponding subjects if fee was updated
+        if (typeof updated.fee === 'number') {
+          const targetUnit = idx !== -1 ? list[idx] : updated
+          const subjects = this.getSubjects()
+          let subChanged = false
+          for (let i = 0; i < subjects.length; i++) {
+            const s = subjects[i]
+            if (
+              s.id === id ||
+              (targetUnit.code && s.code?.toLowerCase() === targetUnit.code.toLowerCase()) ||
+              (targetUnit.title && s.name?.toLowerCase().trim() === targetUnit.title.toLowerCase().trim())
+            ) {
+              subjects[i] = { ...s, fee: updated.fee }
+              subChanged = true
+            }
+          }
+          if (subChanged) {
+            this.set('subjects', subjects)
+          }
+        }
       }
     )
     schoolEventBus.publish('COURSE_UNIT_UPDATED' as any, updated)
     this.broadcastChange('COURSE_UNIT_UPDATED', updated)
+    if (typeof window !== 'undefined') {
+      window.dispatchEvent(new CustomEvent('eclat-courses-updated', { detail: { type: 'course_unit', id, updated } }))
+    }
     await this.pushCollectionToCloud('course_units', this.getCourseUnits())
+    if (typeof updated.fee === 'number') {
+      await this.pushCollectionToCloud('subjects', this.getSubjects())
+    }
   }
 
   async updateLesson(courseId: string, lessonId: string, updatedLesson: { title?: string; video_url?: string; content?: string; duration_minutes?: number; meeting_url?: string }): Promise<void> {
@@ -2518,18 +2545,68 @@ class SchoolDataStore {
   async updateSubject(id: string, updated: Partial<CollegeSubject>): Promise<void> {
     await txEngine.executeAtomic(
       `UPDATE_SUBJECT_${id}`,
-      ['eclat_school_subjects'],
+      ['eclat_school_subjects', 'eclat_school_course_units'],
       () => {
         const list = this.getSubjects()
-        const idx = list.findIndex((s) => s.id === id)
+        let idx = list.findIndex((s) => s.id === id)
+        if (idx === -1 && updated.code) {
+          idx = list.findIndex((s) => s.code.toLowerCase() === updated.code!.toLowerCase())
+        }
+        if (idx === -1 && updated.name) {
+          idx = list.findIndex((s) => s.name.toLowerCase() === updated.name!.toLowerCase())
+        }
+
         if (idx !== -1) {
           list[idx] = { ...list[idx], ...updated }
           this.set('subjects', list)
+        } else {
+          const newSub: CollegeSubject = {
+            id,
+            code: updated.code || id.toUpperCase(),
+            name: updated.name || 'Accredited Course',
+            department_id: updated.department_id || 'dept-general',
+            department_name: updated.department_name || 'Academic Faculty',
+            fee: updated.fee || 60,
+            duration: updated.duration || '3 Months Certificate',
+            color_hex: updated.color_hex || '#1e3a8a',
+            created_at: new Date().toISOString(),
+            ...updated,
+          }
+          list.push(newSub)
+          this.set('subjects', list)
+        }
+
+        // Synchronize fee with corresponding course units if fee was updated
+        if (typeof updated.fee === 'number') {
+          const targetSub = idx !== -1 ? list[idx] : updated
+          const units = this.getCourseUnits()
+          let unitChanged = false
+          for (let i = 0; i < units.length; i++) {
+            const u = units[i]
+            if (
+              u.id === id ||
+              (targetSub.code && u.code?.toLowerCase() === targetSub.code.toLowerCase()) ||
+              (targetSub.name && u.title?.toLowerCase().trim() === targetSub.name.toLowerCase().trim())
+            ) {
+              units[i] = { ...u, fee: updated.fee }
+              unitChanged = true
+            }
+          }
+          if (unitChanged) {
+            this.set('course_units', units)
+          }
         }
       }
     )
+    schoolEventBus.publish('SUBJECT_UPDATED' as any, updated)
     this.broadcastChange('SUBJECT_UPDATED', updated)
+    if (typeof window !== 'undefined') {
+      window.dispatchEvent(new CustomEvent('eclat-courses-updated', { detail: { type: 'subject', id, updated } }))
+    }
     await this.pushCollectionToCloud('subjects', this.getSubjects())
+    if (typeof updated.fee === 'number') {
+      await this.pushCollectionToCloud('course_units', this.getCourseUnits())
+    }
   }
 
   async deleteSubject(id: string): Promise<void> {

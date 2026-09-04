@@ -4,7 +4,8 @@ import { useAuthContext } from '@/features/auth/AuthContext'
 import { MobileAppBottomNav } from '@/components/layout/MobileAppBottomNav'
 import { DesktopCommandPalette } from '@/components/shared/DesktopCommandPalette'
 import { getWhatsAppInquiryUrl, INSTITUTION_CONFIG } from '@/config/institution'
-import { OFFICIAL_COURSES } from '@/config/officialCourses'
+import { getDynamicCoursesList } from '@/config/officialCourses'
+import { schoolStore } from '@/lib/schoolData'
 import { intakeStore } from '@/lib/intakeStore'
 import { formatDate } from '@/lib/utils'
 import type { IntakeSchedule } from '@/types/intake'
@@ -26,22 +27,27 @@ export interface CourseItem {
   syllabus?: { week: string; topic: string; practicalLab: string }[]
 }
 
-const ALL_PROGRAMS: CourseItem[] = OFFICIAL_COURSES.map((c) => ({
-  id: c.id,
-  title: c.title,
-  category: c.category,
-  tag: c.tag,
-  tagColor: c.tagColor,
-  duration: c.duration,
-  schedule: c.schedule,
-  fee: `$${c.feeUsd} (KES ${c.feeKes.toLocaleString()})`,
-  installment: c.installmentText,
-  careerOutcome: c.careerOutcome,
-  skills: c.skills,
-  icon: c.icon,
-  popular: c.popular || c.bestseller,
-  syllabus: c.syllabus,
-}))
+const buildCatalogCourses = (): CourseItem[] => {
+  const subs = schoolStore.getSubjects()
+  const units = schoolStore.getCourseUnits()
+  const dynamic = getDynamicCoursesList(subs, units)
+  return dynamic.map((c) => ({
+    id: c.id,
+    title: c.title,
+    category: c.category,
+    tag: c.tag,
+    tagColor: c.tagColor,
+    duration: c.duration,
+    schedule: c.schedule,
+    fee: `$${c.feeUsd} (KES ${c.feeKes.toLocaleString()})`,
+    installment: c.installmentText,
+    careerOutcome: c.careerOutcome,
+    skills: c.skills,
+    icon: c.icon,
+    popular: c.popular || c.bestseller,
+    syllabus: c.syllabus,
+  }))
+}
 
 const CATEGORIES = [
   'All',
@@ -60,6 +66,7 @@ export function CourseCatalogPage() {
   const [selectedCat, setSelectedCat] = useState('All')
   const [search, setSearch] = useState('')
   const [selectedCourse, setSelectedCourse] = useState<CourseItem | null>(null)
+  const [courses, setCourses] = useState<CourseItem[]>(() => buildCatalogCourses())
   const [intakes, setIntakes] = useState<IntakeSchedule[]>(() => intakeStore.getPublishedIntakes())
 
   useEffect(() => {
@@ -68,13 +75,27 @@ export function CourseCatalogPage() {
     })
   }, [])
 
+  useEffect(() => {
+    const refreshCourses = () => {
+      setCourses(buildCatalogCourses())
+    }
+    window.addEventListener('storage', refreshCourses)
+    window.addEventListener('focus', refreshCourses)
+    window.addEventListener('eclat-courses-updated', refreshCourses)
+    return () => {
+      window.removeEventListener('storage', refreshCourses)
+      window.removeEventListener('focus', refreshCourses)
+      window.removeEventListener('eclat-courses-updated', refreshCourses)
+    }
+  }, [])
+
   const matchedIntake = useMemo(() => {
     if (!intakeParam) return intakes.find((i) => i.featured) || intakes[0] || null
     return intakes.find((i) => i.id === intakeParam || i.title.toLowerCase().includes(intakeParam.toLowerCase())) || intakes[0] || null
   }, [intakes, intakeParam])
 
   const filteredCourses = useMemo(() => {
-    return ALL_PROGRAMS.filter((c) => {
+    return courses.filter((c) => {
       const matchCat = selectedCat === 'All' || c.category === selectedCat
       const matchSearch =
         !search ||
@@ -83,7 +104,7 @@ export function CourseCatalogPage() {
         c.careerOutcome.toLowerCase().includes(search.toLowerCase())
       return matchCat && matchSearch
     })
-  }, [selectedCat, search])
+  }, [courses, selectedCat, search])
 
   return (
     <div

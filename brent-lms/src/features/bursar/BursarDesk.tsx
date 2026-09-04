@@ -18,7 +18,7 @@ import { BiometricEnrollModal } from '@/components/biometrics/BiometricEnrollMod
 import { BiometricClearancePassModal } from '@/components/biometrics/BiometricClearancePassModal'
 import { generateBiometricVerificationCode } from '@/lib/biometricEngine'
 import { INSTITUTION_CONFIG } from '@/config/institution'
-import { OFFICIAL_COURSES } from '@/config/officialCourses'
+import { OFFICIAL_COURSES, getDynamicCoursesList } from '@/config/officialCourses'
 
 export function BursarDesk() {
   const [invoices, setInvoices] = useState<FeeInvoice[]>(() => schoolStore.getInvoices())
@@ -1774,7 +1774,8 @@ export function BursarDesk() {
                   <select
                     className="input"
                     onChange={(e) => {
-                      const selected = OFFICIAL_COURSES.find((c) => c.id === e.target.value)
+                      const dynamicList = getDynamicCoursesList(schoolStore.getSubjects(), schoolStore.getCourseUnits())
+                      const selected = dynamicList.find((c) => c.id === e.target.value)
                       if (selected) {
                         setNewInvoice({
                           ...newInvoice,
@@ -1787,7 +1788,7 @@ export function BursarDesk() {
                     }}
                   >
                     <option value="">-- Choose from Accredited 2026 Programs or Type Custom Below --</option>
-                    {OFFICIAL_COURSES.map((c) => (
+                    {getDynamicCoursesList(schoolStore.getSubjects(), schoolStore.getCourseUnits()).map((c) => (
                       <option key={c.id} value={c.id}>
                         {c.icon} {c.shortTitle} — ${c.feeUsd} (KES {c.feeKes.toLocaleString()}) • {c.duration}
                       </option>
@@ -1921,7 +1922,7 @@ export function BursarDesk() {
                     value={newInquiry.program_of_interest}
                     onChange={(e) => setNewInquiry({ ...newInquiry, program_of_interest: e.target.value })}
                   >
-                    {OFFICIAL_COURSES.map((c) => (
+                    {getDynamicCoursesList(schoolStore.getSubjects(), schoolStore.getCourseUnits()).map((c) => (
                       <option key={c.id} value={c.title}>
                         {c.icon} {c.shortTitle} (${c.feeUsd} / KES {c.feeKes.toLocaleString()})
                       </option>

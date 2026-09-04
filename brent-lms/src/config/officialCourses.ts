@@ -1,4 +1,4 @@
-﻿// ============================================================
+// ============================================================
 // Éclat Institute — Official Institutional Courses & Fee Registry
 // Single authoritative source of truth across Landing, Catalog, 
 // E-Reader, Fees Management, and SIMS Invoicing.
@@ -362,10 +362,140 @@ export const OFFICIAL_COURSES: CourseProgram[] = [
   },
 ]
 
-export function getOfficialCourseById(id: string): CourseProgram | undefined {
-  return OFFICIAL_COURSES.find((c) => c.id === id || c.shortTitle.toLowerCase().includes(id.toLowerCase()))
+export function calculateDynamicFeeFields(feeUsd: number, originalBaseUsd?: number) {
+  const safeUsd = Math.max(1, Number(feeUsd) || 60)
+  const feeKes = Math.round(safeUsd * 130)
+  const feeDisplay = `$${safeUsd} / KES ${feeKes.toLocaleString()}`
+  const originalFeeUsd = originalBaseUsd && originalBaseUsd > safeUsd ? originalBaseUsd : Math.round(safeUsd * 2)
+  const discountBadge = '50% OFF'
+  const installmentText = safeUsd <= 55
+    ? `Single payment of $${safeUsd} (KES ${feeKes.toLocaleString()})`
+    : `2 installments of $${Math.ceil(safeUsd / 2)} (KES ${Math.ceil(feeKes / 2).toLocaleString()})`
+  return { feeUsd: safeUsd, feeKes, feeDisplay, originalFeeUsd, discountBadge, installmentText }
 }
 
-export function getOfficialCourseByTitle(title: string): CourseProgram | undefined {
-  return OFFICIAL_COURSES.find((c) => c.title.toLowerCase() === title.toLowerCase() || title.toLowerCase().includes(c.shortTitle.toLowerCase()))
+export function getDynamicCoursesList(
+  storeSubjects: Array<{ id: string; code: string; name: string; fee?: number; duration?: string; description?: string; category?: string; icon?: string; badge?: string; careers?: string[]; color_hex?: string; department_id?: string; department_name?: string }> = [],
+  storeUnits: Array<{ id: string; code: string; title: string; fee?: number; course_duration?: string; description?: string; department?: string; program?: string; teacher_name?: string; live_schedule_text?: string; syllabus_modules?: any[] }> = []
+): CourseProgram[] {
+  const programs: CourseProgram[] = []
+  const usedSubjectIds = new Set<string>()
+  const usedUnitIds = new Set<string>()
+
+  for (const base of OFFICIAL_COURSES) {
+    const matchedSub = storeSubjects.find((s) => {
+      if (s.id === base.id || s.id === `sub-${base.id.replace(/^c-/, '')}`) return true
+      if (s.code && (s.code.toLowerCase() === base.id.toLowerCase() || s.code.toLowerCase() === base.shortTitle.toLowerCase())) return true
+      const baseClean = base.shortTitle.toLowerCase().replace(/[^a-z0-9]/g, '')
+      const subClean = s.name.toLowerCase().replace(/[^a-z0-9]/g, '')
+      return baseClean.includes(subClean) || subClean.includes(baseClean)
+    })
+    if (matchedSub) usedSubjectIds.add(matchedSub.id)
+
+    const matchedUnit = storeUnits.find((u) => {
+      if (u.id === base.id) return true
+      if (u.code && (u.code.toLowerCase() === base.id.toLowerCase() || u.code.toLowerCase() === base.shortTitle.toLowerCase())) return true
+      const baseClean = base.shortTitle.toLowerCase().replace(/[^a-z0-9]/g, '')
+      const unitClean = u.title.toLowerCase().replace(/[^a-z0-9]/g, '')
+      return baseClean.includes(unitClean) || unitClean.includes(baseClean)
+    })
+    if (matchedUnit) usedUnitIds.add(matchedUnit.id)
+
+    const liveFeeUsd = (typeof matchedSub?.fee === 'number' && matchedSub.fee > 0)
+      ? matchedSub.fee
+      : (typeof matchedUnit?.fee === 'number' && matchedUnit.fee > 0)
+      ? matchedUnit.fee
+      : base.feeUsd
+
+    const feeCalculations = calculateDynamicFeeFields(liveFeeUsd, base.originalFeeUsd)
+
+    programs.push({
+      ...base,
+      ...feeCalculations,
+      title: matchedSub?.name || matchedUnit?.title || base.title,
+      duration: matchedSub?.duration || matchedUnit?.course_duration || base.duration,
+      careerOutcome: matchedSub?.description || base.careerOutcome,
+      skills: matchedSub?.careers && matchedSub.careers.length > 0 ? matchedSub.careers : base.skills,
+    })
+  }
+
+  // Also append custom subjects created by admin
+  for (const sub of storeSubjects) {
+    if (usedSubjectIds.has(sub.id)) continue
+    const feeUsd = typeof sub.fee === 'number' && sub.fee > 0 ? sub.fee : 60
+    const feeCalculations = calculateDynamicFeeFields(feeUsd)
+    programs.push({
+      id: sub.id,
+      title: sub.name,
+      shortTitle: sub.name,
+      category: (sub.category as any) || 'Tech & Programming',
+      tag: `🏛️ ${sub.department_name || 'Academic Program'}`,
+      tagColor: sub.color_hex || '#0f172a',
+      duration: sub.duration || '3 Months Certificate',
+      durationWeeks: 12,
+      schedule: 'Live Online Evening Classes / Self-Paced',
+      ...feeCalculations,
+      instructor: 'Éclat Institute Certified Faculty',
+      departmentId: sub.department_id || 'dept-general',
+      departmentName: sub.department_name || 'Academic Faculty',
+      careerOutcome: sub.description || `${sub.name} Certified Specialist`,
+      skills: sub.careers || ['Live Virtual Classes', 'Verified E-Certificate'],
+      icon: sub.icon || '💻',
+      popular: true,
+      rating: 4.9,
+      ratingCount: 120,
+      studentsEnrolled: 450,
+      syllabus: [
+        { week: 'Module 1-2', topic: 'Foundations & Interactive Practice', practicalLab: 'Live virtual classroom lab and tools setup.' },
+        { week: 'Module 3-4', topic: 'Capstone Lab & Evaluation', practicalLab: 'Online evaluation and certification project.' },
+      ],
+    })
+  }
+
+  // Also append custom course units created by faculty
+  for (const unit of storeUnits) {
+    if (usedUnitIds.has(unit.id)) continue
+    const feeUsd = typeof unit.fee === 'number' && unit.fee > 0 ? unit.fee : 60
+    const feeCalculations = calculateDynamicFeeFields(feeUsd)
+    programs.push({
+      id: unit.id,
+      title: unit.title,
+      shortTitle: unit.title,
+      category: 'Tech & Programming',
+      tag: `🏛️ ${unit.program || unit.department || 'Online Course'}`,
+      tagColor: '#0f172a',
+      duration: unit.course_duration || '3 Months Certificate',
+      durationWeeks: 12,
+      schedule: unit.live_schedule_text || 'Live Online Batches & 24/7 LMS',
+      ...feeCalculations,
+      instructor: unit.teacher_name || 'Éclat Faculty Specialist',
+      departmentId: 'dept-curriculum',
+      departmentName: unit.department || 'Department of Technology',
+      careerOutcome: unit.description || 'Certified Online Graduate',
+      skills: unit.syllabus_modules?.flatMap((m) => m.topics) || ['Live Interactive Virtual Classes', 'Verified E-Certificate'],
+      icon: '🎨',
+      popular: true,
+      rating: 4.9,
+      ratingCount: 85,
+      studentsEnrolled: 320,
+      syllabus: unit.syllabus_modules?.map((m, idx) => ({
+        week: `Week ${idx + 1}`,
+        topic: m.title,
+        practicalLab: m.learning_outcomes?.[0] || 'Live online hands-on exercises and project labs.',
+      })) || [],
+    })
+  }
+
+  return programs
 }
+
+export function getOfficialCourseById(id: string, storeSubjects?: any[], storeUnits?: any[]): CourseProgram | undefined {
+  const list = storeSubjects || storeUnits ? getDynamicCoursesList(storeSubjects, storeUnits) : OFFICIAL_COURSES
+  return list.find((c) => c.id === id || c.shortTitle.toLowerCase().includes(id.toLowerCase()))
+}
+
+export function getOfficialCourseByTitle(title: string, storeSubjects?: any[], storeUnits?: any[]): CourseProgram | undefined {
+  const list = storeSubjects || storeUnits ? getDynamicCoursesList(storeSubjects, storeUnits) : OFFICIAL_COURSES
+  return list.find((c) => c.title.toLowerCase() === title.toLowerCase() || title.toLowerCase().includes(c.shortTitle.toLowerCase()))
+}
+
