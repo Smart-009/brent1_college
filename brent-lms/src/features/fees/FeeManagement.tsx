@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useAuth } from '@/hooks/useAuth'
 import { schoolStore } from '@/lib/schoolData'
 import type { FeeInvoice, FeeInvoiceItem, FeePaymentReceipt, StudentRecord, BiometricFeeClearancePass } from '@/types/school'
@@ -7,7 +7,7 @@ import { BiometricEnrollModal } from '@/components/biometrics/BiometricEnrollMod
 import { BiometricClearancePassModal } from '@/components/biometrics/BiometricClearancePassModal'
 import { generateBiometricVerificationCode } from '@/lib/biometricEngine'
 import { INSTITUTION_CONFIG } from '@/config/institution'
-import { OFFICIAL_COURSES, getDynamicCoursesList } from '@/config/officialCourses'
+import { CourseProgram, OFFICIAL_COURSES, getDynamicCoursesList } from '@/config/officialCourses'
 
 export function FeeManagement() {
   const { profile } = useAuth()
@@ -27,6 +27,27 @@ export function FeeManagement() {
   const [showEnrollModal, setShowEnrollModal] = useState(false)
   const [studentToEnroll, setStudentToEnroll] = useState<StudentRecord | null>(null)
   const [selectedPass, setSelectedPass] = useState<BiometricFeeClearancePass | null>(null)
+
+  // Course Fee Structure Editing
+  const [editingCourseFee, setEditingCourseFee] = useState<CourseProgram | null>(null)
+  const [editFeeUsd, setEditFeeUsd] = useState<number>(60)
+  const [isSavingFee, setIsSavingFee] = useState(false)
+  const [feeSaveSuccess, setFeeSaveSuccess] = useState<string | null>(null)
+  const [courseListTick, setCourseListTick] = useState(0)
+
+  useEffect(() => {
+    const handleCoursesUpdate = () => {
+      setCourseListTick((t) => t + 1)
+    }
+    window.addEventListener('eclat-courses-updated', handleCoursesUpdate)
+    window.addEventListener('eclat-data-synced', handleCoursesUpdate)
+    window.addEventListener('storage', handleCoursesUpdate)
+    return () => {
+      window.removeEventListener('eclat-courses-updated', handleCoursesUpdate)
+      window.removeEventListener('eclat-data-synced', handleCoursesUpdate)
+      window.removeEventListener('storage', handleCoursesUpdate)
+    }
+  }, [])
 
   const [editingReceipt, setEditingReceipt] = useState<FeePaymentReceipt | null>(null)
   const [editFormData, setEditFormData] = useState({
@@ -78,6 +99,33 @@ export function FeeManagement() {
   const totalCollected = receipts.reduce((acc, r) => acc + r.amount, 0)
   const totalOutstanding = invoices.reduce((acc, inv) => acc + inv.balance, 0)
   const totalBilled = invoices.reduce((acc, inv) => acc + inv.total_amount, 0)
+
+  const handleOpenEditCourseFee = (course: CourseProgram) => {
+    setEditingCourseFee(course)
+    setEditFeeUsd(course.feeUsd)
+    setFeeSaveSuccess(null)
+  }
+
+  const handleSaveCourseFee = async (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!editingCourseFee) return
+    setIsSavingFee(true)
+    try {
+      const numVal = Math.max(0, Math.round(Number(editFeeUsd)))
+      await schoolStore.setCourseFee(editingCourseFee.id, numVal)
+      setFeeSaveSuccess(`Tuition fee for "${editingCourseFee.shortTitle}" updated to $${numVal} (KES ${(numVal * 130).toLocaleString()})!`)
+      setCourseListTick((t) => t + 1)
+      setTimeout(() => {
+        setEditingCourseFee(null)
+        setFeeSaveSuccess(null)
+      }, 1000)
+    } catch (err) {
+      console.error(err)
+      alert('Failed to save fee update.')
+    } finally {
+      setIsSavingFee(false)
+    }
+  }
 
   const handleOpenEdit = (rec: FeePaymentReceipt) => {
     setEditingReceipt(rec)
@@ -1025,12 +1073,36 @@ export function FeeManagement() {
                       <span>💳 {course.installmentText}</span>
                     </div>
                   </div>
-                  <div style={{ textAlign: 'right', whiteSpace: 'nowrap' }}>
+                  <div style={{ textAlign: 'right', whiteSpace: 'nowrap', display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '0.2rem' }}>
                     <div style={{ fontWeight: 800, color: '#16a34a', fontSize: '0.95rem' }}>
                       ${course.feeUsd} <span style={{ fontSize: '0.75rem', color: 'var(--color-text-secondary)', fontWeight: 500 }}>(KES {course.feeKes.toLocaleString()})</span>
                     </div>
-                    <div style={{ fontSize: '0.7rem', color: '#94a3b8', textDecoration: 'line-through' }}>
-                      ${course.originalFeeUsd}
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                      <span style={{ fontSize: '0.7rem', color: '#94a3b8', textDecoration: 'line-through' }}>
+                        ${course.originalFeeUsd}
+                      </span>
+                      {!isStudent && (
+                        <button
+                          type="button"
+                          onClick={() => handleOpenEditCourseFee(course)}
+                          style={{
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            gap: '0.2rem',
+                            padding: '0.2rem 0.5rem',
+                            fontSize: '0.72rem',
+                            fontWeight: 700,
+                            borderRadius: '6px',
+                            border: '1px solid #3b82f6',
+                            background: '#eff6ff',
+                            color: '#1d4ed8',
+                            cursor: 'pointer',
+                          }}
+                          title={`Edit fee for ${course.shortTitle}`}
+                        >
+                          ✏️ Edit Fee
+                        </button>
+                      )}
                     </div>
                   </div>
                 </div>
@@ -1529,6 +1601,154 @@ export function FeeManagement() {
                 </button>
                 <button type="submit" className="btn btn-primary" style={{ fontWeight: 700 }}>
                   Save & Update Invoice ✓
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Edit & Update Course Fee Schedule Modal */}
+      {editingCourseFee && (
+        <div className="modal-overlay" onClick={() => !isSavingFee && setEditingCourseFee(null)}>
+          <div className="modal-content" onClick={(e) => e.stopPropagation()} style={{ maxWidth: '520px' }}>
+            <div className="modal-header" style={{ borderBottom: '1px solid var(--color-border)', paddingBottom: '0.85rem' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem' }}>
+                <span style={{ fontSize: '1.75rem' }}>{editingCourseFee.icon || '🎓'}</span>
+                <div>
+                  <h3 className="modal-title" style={{ fontSize: '1.15rem', fontWeight: 800, margin: 0, color: 'var(--color-text-primary)' }}>
+                    Edit Course Tuition Fee
+                  </h3>
+                  <p style={{ margin: 0, fontSize: '0.8rem', color: 'var(--color-text-secondary)' }}>
+                    {editingCourseFee.shortTitle} • {editingCourseFee.category}
+                  </p>
+                </div>
+              </div>
+              <button
+                type="button"
+                className="modal-close"
+                disabled={isSavingFee}
+                onClick={() => setEditingCourseFee(null)}
+              >
+                ✕
+              </button>
+            </div>
+
+            <form onSubmit={handleSaveCourseFee}>
+              <div className="modal-body" style={{ display: 'flex', flexDirection: 'column', gap: '1.1rem', paddingTop: '1rem' }}>
+                {feeSaveSuccess && (
+                  <div
+                    style={{
+                      background: '#ecfdf5',
+                      border: '1px solid #6ee7b7',
+                      color: '#065f46',
+                      padding: '0.75rem 1rem',
+                      borderRadius: '8px',
+                      fontSize: '0.88rem',
+                      fontWeight: 600,
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '0.5rem',
+                    }}
+                  >
+                    <span>✓</span>
+                    <span>{feeSaveSuccess}</span>
+                  </div>
+                )}
+
+                <div className="form-group">
+                  <label className="form-label" style={{ fontWeight: 700, fontSize: '0.9rem', display: 'flex', justifyContent: 'space-between' }}>
+                    <span>Official Tuition Fee (USD $)</span>
+                    <span style={{ color: '#2563eb', fontWeight: 600, fontSize: '0.82rem' }}>Authoritative Live Base</span>
+                  </label>
+                  <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
+                    <span style={{ position: 'absolute', left: '12px', fontWeight: 700, color: '#64748b', fontSize: '1.1rem' }}>$</span>
+                    <input
+                      type="number"
+                      className="form-input"
+                      style={{ paddingLeft: '2rem', fontSize: '1.15rem', fontWeight: 700, color: '#0f172a' }}
+                      value={editFeeUsd}
+                      onChange={(e) => setEditFeeUsd(Math.max(0, Number(e.target.value)))}
+                      min="0"
+                      step="1"
+                      required
+                    />
+                  </div>
+                </div>
+
+                {/* Quick Presets */}
+                <div>
+                  <label style={{ fontSize: '0.75rem', fontWeight: 600, color: 'var(--color-text-secondary)', display: 'block', marginBottom: '0.35rem' }}>
+                    Quick Fee Presets:
+                  </label>
+                  <div style={{ display: 'flex', gap: '0.4rem', flexWrap: 'wrap' }}>
+                    {[45, 60, 75, 89, 95, 120, 150].map((preset) => (
+                      <button
+                        key={preset}
+                        type="button"
+                        onClick={() => setEditFeeUsd(preset)}
+                        style={{
+                          padding: '0.25rem 0.6rem',
+                          borderRadius: '6px',
+                          border: editFeeUsd === preset ? '2px solid #2563eb' : '1px solid var(--color-border)',
+                          background: editFeeUsd === preset ? '#eff6ff' : 'var(--color-bg-secondary)',
+                          color: editFeeUsd === preset ? '#1d4ed8' : 'var(--color-text-primary)',
+                          fontWeight: editFeeUsd === preset ? 700 : 500,
+                          fontSize: '0.78rem',
+                          cursor: 'pointer',
+                        }}
+                      >
+                        ${preset}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Live Real-Time Multi-Currency Calculation Preview */}
+                <div
+                  style={{
+                    background: '#f8fafc',
+                    border: '1px solid #e2e8f0',
+                    borderRadius: '10px',
+                    padding: '0.9rem 1rem',
+                  }}
+                >
+                  <div style={{ fontSize: '0.75rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em', color: '#64748b', marginBottom: '0.5rem' }}>
+                    ⚡ Real-Time Breakdown & Currency Sync Preview
+                  </div>
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem', marginBottom: '0.65rem' }}>
+                    <div style={{ background: '#ffffff', padding: '0.6rem 0.75rem', borderRadius: '6px', border: '1px solid #e2e8f0' }}>
+                      <div style={{ fontSize: '0.72rem', color: '#64748b' }}>USD Dollar Fee</div>
+                      <div style={{ fontSize: '1.15rem', fontWeight: 800, color: '#16a34a' }}>${editFeeUsd}</div>
+                    </div>
+                    <div style={{ background: '#ffffff', padding: '0.6rem 0.75rem', borderRadius: '6px', border: '1px solid #e2e8f0' }}>
+                      <div style={{ fontSize: '0.72rem', color: '#64748b' }}>Kenya Shilling (KES)</div>
+                      <div style={{ fontSize: '1.15rem', fontWeight: 800, color: '#2563eb' }}>KES {(editFeeUsd * 130).toLocaleString()}</div>
+                    </div>
+                  </div>
+                  <div style={{ fontSize: '0.8rem', color: '#475569', display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
+                    <div>• <strong>Installment Plan:</strong> {editFeeUsd <= 55 ? `Single payment of $${editFeeUsd} (KES ${(editFeeUsd * 130).toLocaleString()})` : `2 installments of $${Math.ceil(editFeeUsd / 2)} (KES ${Math.ceil((editFeeUsd * 130) / 2).toLocaleString()})`}</div>
+                    <div>• <strong>Cross-Platform Sync:</strong> Changes reflect immediately on Landing Page, Course Catalog, Bursar Invoicing, and Student Portals.</div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="modal-footer" style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.75rem', marginTop: '1rem', borderTop: '1px solid var(--color-border)', paddingTop: '0.85rem' }}>
+                <button
+                  type="button"
+                  className="btn btn-secondary"
+                  disabled={isSavingFee}
+                  onClick={() => setEditingCourseFee(null)}
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="btn btn-primary"
+                  disabled={isSavingFee}
+                  style={{ fontWeight: 700, minWidth: '160px', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: '0.4rem' }}
+                >
+                  {isSavingFee ? '💾 Saving & Syncing...' : '💾 Save & Sync Fee ✓'}
                 </button>
               </div>
             </form>

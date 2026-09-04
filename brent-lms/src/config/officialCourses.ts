@@ -376,8 +376,18 @@ export function calculateDynamicFeeFields(feeUsd: number, originalBaseUsd?: numb
 
 export function getDynamicCoursesList(
   storeSubjects: Array<{ id: string; code: string; name: string; fee?: number; duration?: string; description?: string; category?: string; icon?: string; badge?: string; careers?: string[]; color_hex?: string; department_id?: string; department_name?: string }> = [],
-  storeUnits: Array<{ id: string; code: string; title: string; fee?: number; course_duration?: string; description?: string; department?: string; program?: string; teacher_name?: string; live_schedule_text?: string; syllabus_modules?: any[] }> = []
+  storeUnits: Array<{ id: string; code: string; title: string; fee?: number; course_duration?: string; description?: string; department?: string; program?: string; teacher_name?: string; live_schedule_text?: string; syllabus_modules?: any[] }> = [],
+  customFees?: Record<string, number>
 ): CourseProgram[] {
+  const activeCustomFees = customFees || (typeof window !== 'undefined' ? (() => {
+    try {
+      const stored = localStorage.getItem('eclat_school_custom_course_fees')
+      return stored ? JSON.parse(stored) : {}
+    } catch {
+      return {}
+    }
+  })() : {})
+
   const programs: CourseProgram[] = []
   const usedSubjectIds = new Set<string>()
   const usedUnitIds = new Set<string>()
@@ -401,7 +411,11 @@ export function getDynamicCoursesList(
     })
     if (matchedUnit) usedUnitIds.add(matchedUnit.id)
 
-    const liveFeeUsd = (typeof matchedSub?.fee === 'number' && matchedSub.fee > 0)
+    const customOverrideFee = activeCustomFees?.[base.id] ?? (matchedSub?.id ? activeCustomFees?.[matchedSub.id] : undefined) ?? (matchedUnit?.id ? activeCustomFees?.[matchedUnit.id] : undefined)
+
+    const liveFeeUsd = (typeof customOverrideFee === 'number' && customOverrideFee >= 0)
+      ? customOverrideFee
+      : (typeof matchedSub?.fee === 'number' && matchedSub.fee > 0)
       ? matchedSub.fee
       : (typeof matchedUnit?.fee === 'number' && matchedUnit.fee > 0)
       ? matchedUnit.fee
@@ -422,7 +436,10 @@ export function getDynamicCoursesList(
   // Also append custom subjects created by admin
   for (const sub of storeSubjects) {
     if (usedSubjectIds.has(sub.id)) continue
-    const feeUsd = typeof sub.fee === 'number' && sub.fee > 0 ? sub.fee : 60
+    const customOverrideFee = activeCustomFees?.[sub.id]
+    const feeUsd = (typeof customOverrideFee === 'number' && customOverrideFee >= 0)
+      ? customOverrideFee
+      : typeof sub.fee === 'number' && sub.fee > 0 ? sub.fee : 60
     const feeCalculations = calculateDynamicFeeFields(feeUsd)
     programs.push({
       id: sub.id,
@@ -455,7 +472,10 @@ export function getDynamicCoursesList(
   // Also append custom course units created by faculty
   for (const unit of storeUnits) {
     if (usedUnitIds.has(unit.id)) continue
-    const feeUsd = typeof unit.fee === 'number' && unit.fee > 0 ? unit.fee : 60
+    const customOverrideFee = activeCustomFees?.[unit.id]
+    const feeUsd = (typeof customOverrideFee === 'number' && customOverrideFee >= 0)
+      ? customOverrideFee
+      : typeof unit.fee === 'number' && unit.fee > 0 ? unit.fee : 60
     const feeCalculations = calculateDynamicFeeFields(feeUsd)
     programs.push({
       id: unit.id,

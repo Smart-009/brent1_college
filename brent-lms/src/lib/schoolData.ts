@@ -913,6 +913,10 @@ class SchoolDataStore {
             this.set('resources', remaining)
             schoolEventBus.publish('LIBRARY_UPDATED' as any)
             window.dispatchEvent(new CustomEvent('eclat-data-synced'))
+          } else if (eventType === 'COLLECTION_UPDATED_FEE_STRUCTURES' && typeof eventData === 'object') {
+            this.set('custom_course_fees', eventData)
+            window.dispatchEvent(new CustomEvent('eclat-courses-updated'))
+            window.dispatchEvent(new CustomEvent('eclat-data-synced'))
           }
           this.syncWithCloud(true).catch(() => {})
         })
@@ -1053,6 +1057,9 @@ class SchoolDataStore {
               this.set('notices', row.data)
             } else if (row.key === 'students' && Array.isArray(row.data)) {
               this.set('students', row.data)
+            } else if ((row.key === 'fee_structures' || row.key === 'custom_course_fees') && typeof row.data === 'object' && row.data !== null) {
+              this.set('custom_course_fees', row.data)
+              window.dispatchEvent(new CustomEvent('eclat-courses-updated'))
             }
           }
         }
@@ -1128,6 +1135,9 @@ class SchoolDataStore {
                   this.set('notices', parsed.data)
                 } else if (parsed.key === 'students' && Array.isArray(parsed.data)) {
                   this.set('students', parsed.data)
+                } else if ((parsed.key === 'fee_structures' || parsed.key === 'custom_course_fees') && typeof parsed.data === 'object' && parsed.data !== null) {
+                  this.set('custom_course_fees', parsed.data)
+                  unitsUpdated = true
                 }
               }
             } catch (syncParseErr) {
@@ -1349,6 +1359,7 @@ class SchoolDataStore {
     localStorage.removeItem('eclat_school_inquiries')
     localStorage.removeItem('eclat_school_course_units')
     localStorage.removeItem('eclat_school_unit_registrations')
+    localStorage.removeItem('eclat_school_custom_course_fees')
     schoolEventBus.publish('STUDENT_UPDATED')
     schoolEventBus.publish('PAYMENT_RECORDED')
   }
@@ -2809,6 +2820,84 @@ class SchoolDataStore {
     )
   }
 
+  // --- Custom Course Fee Schedule (ACID Protected & Cloud Synced) ---
+  getCustomCourseFees(): Record<string, number> {
+    const raw = this.get<Record<string, number>>('custom_course_fees', {})
+    try {
+      const stored = localStorage.getItem('eclat_school_custom_course_fees')
+      if (stored) {
+        const parsed = JSON.parse(stored)
+        if (parsed && typeof parsed === 'object') {
+          return { ...parsed, ...raw }
+        }
+      }
+    } catch {}
+    return raw
+  }
+
+  async setCourseFee(courseId: string, feeUsd: number): Promise<void> {
+    const safeFee = Math.max(0, Math.round(feeUsd))
+    await txEngine.executeAtomic(
+      `SET_COURSE_FEE_${courseId}`,
+      ['eclat_school_custom_course_fees', 'eclat_school_subjects', 'eclat_school_course_units'],
+      () => {
+        const feesMap = { ...this.getCustomCourseFees() }
+        feesMap[courseId] = safeFee
+        this.set('custom_course_fees', feesMap)
+        try {
+          localStorage.setItem('eclat_school_custom_course_fees', JSON.stringify(feesMap))
+        } catch {}
+
+        // Also sync any matching subjects in store
+        const subjects = this.getSubjects()
+        let subUpdated = false
+        for (let i = 0; i < subjects.length; i++) {
+          const s = subjects[i]
+          if (
+            s.id === courseId ||
+            s.id === `sub-${courseId.replace(/^c-/, '')}` ||
+            (s.code && s.code.toLowerCase() === courseId.toLowerCase()) ||
+            (s.name && s.name.toLowerCase().includes(courseId.toLowerCase()))
+          ) {
+            subjects[i] = { ...s, fee: safeFee }
+            subUpdated = true
+          }
+        }
+        if (subUpdated) {
+          this.set('subjects', subjects)
+        }
+
+        // Also sync any matching course units in store
+        const units = this.getCourseUnits()
+        let unitUpdated = false
+        for (let i = 0; i < units.length; i++) {
+          const u = units[i]
+          if (
+            u.id === courseId ||
+            (u.code && u.code.toLowerCase() === courseId.toLowerCase()) ||
+            (u.title && u.title.toLowerCase().includes(courseId.toLowerCase()))
+          ) {
+            units[i] = { ...u, fee: safeFee }
+            unitUpdated = true
+          }
+        }
+        if (unitUpdated) {
+          this.set('course_units', units)
+        }
+      }
+    )
+
+    schoolEventBus.publish('COURSE_UNIT_UPDATED' as any, { courseId, feeUsd: safeFee })
+    this.broadcastChange('COLLECTION_UPDATED_FEE_STRUCTURES', this.getCustomCourseFees())
+    if (typeof window !== 'undefined') {
+      window.dispatchEvent(new CustomEvent('eclat-courses-updated', { detail: { courseId, feeUsd: safeFee } }))
+      window.dispatchEvent(new CustomEvent('eclat-data-synced'))
+    }
+    await this.pushCollectionToCloud('fee_structures', this.getCustomCourseFees())
+    await this.pushCollectionToCloud('subjects', this.getSubjects())
+    await this.pushCollectionToCloud('course_units', this.getCourseUnits())
+  }
+
   // --- Complete Factory Reset ---
   resetToCleanSlate() {
     localStorage.removeItem('eclat_school_students')
@@ -2827,6 +2916,7 @@ class SchoolDataStore {
     localStorage.removeItem('eclat_school_departments')
     localStorage.removeItem('eclat_school_subjects')
     localStorage.removeItem('eclat_school_biometric_passes')
+    localStorage.removeItem('eclat_school_custom_course_fees')
   }
 }
 
