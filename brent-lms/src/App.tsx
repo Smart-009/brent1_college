@@ -6,6 +6,7 @@ import { schoolStore } from '@/lib/schoolData'
 import { LayoutShell } from '@/components/layout/LayoutShell'
 import { LoadingScreen, AppOpeningSplashScreen } from '@/components/ui/Spinner'
 import { PullToRefresh } from '@/components/shared/PullToRefresh'
+import { FloatingIntakesWidget } from '@/components/shared/FloatingIntakesWidget'
 
 // Direct import for Home/Landing page for instant render
 import { Landing } from '@/features/landing/Landing'
@@ -102,6 +103,7 @@ export function App() {
         <AppOpeningSplashScreen onFinished={() => setShowOpeningSplash(false)} />
       )}
       <PullToRefresh />
+      <FloatingIntakesWidget />
       <Routes>
         {/* Public Landing, About & Login */}
         <Route path="/" element={<Landing />} />
