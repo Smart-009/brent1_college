@@ -23,6 +23,7 @@ import type {
 } from '@/types/school'
 import { txEngine, IntegrityError } from './transactionManager'
 import { schoolEventBus } from './eventBus'
+export { schoolEventBus }
 import { generateBiometricTemplate } from './biometricEngine'
 import { supabase } from './supabase'
 import { INSTITUTION_CONFIG } from '@/config/institution'
@@ -857,6 +858,21 @@ class SchoolDataStore {
     this.cleanLegacyMockData()
     this.setupRealtimeSync()
     this.syncWithCloud().catch(() => {})
+
+    // Sync automatically on window focus, device wake, or network reconnect
+    if (typeof window !== 'undefined') {
+      window.addEventListener('focus', () => {
+        this.syncWithCloud(true).catch(() => {})
+      })
+      window.addEventListener('online', () => {
+        this.syncWithCloud(true).catch(() => {})
+      })
+      document.addEventListener('visibilitychange', () => {
+        if (!document.hidden) {
+          this.syncWithCloud(true).catch(() => {})
+        }
+      })
+    }
   }
 
   private setupRealtimeSync() {
@@ -880,7 +896,66 @@ class SchoolDataStore {
       }
       window.dispatchEvent(new Event('storage'))
       window.dispatchEvent(new CustomEvent('eclat-courses-updated'))
+      window.dispatchEvent(new CustomEvent('eclat-data-synced'))
     } catch {}
+  }
+
+  async pushCollectionToCloud(collectionKey: string, data: any): Promise<void> {
+    try {
+      await supabase.from('app_cloud_sync').upsert(
+        {
+          key: collectionKey,
+          data: data,
+          updated_at: new Date().toISOString(),
+        },
+        { onConflict: 'key' }
+      )
+      this.broadcastChange(`COLLECTION_UPDATED_${collectionKey.toUpperCase()}`, data)
+    } catch (err) {
+      console.warn(`Failed to push collection ${collectionKey} to cloud sync:`, err)
+    }
+  }
+
+  // --- Dynamic Custom Library Categories (Synced Across Devices) ---
+  getCustomCategories(): string[] {
+    const raw = this.get<string[]>('custom_categories', [])
+    try {
+      const stored = localStorage.getItem('eclat_custom_library_categories')
+      if (stored) {
+        const parsed = JSON.parse(stored)
+        if (Array.isArray(parsed)) {
+          return Array.from(new Set([...raw, ...parsed]))
+        }
+      }
+    } catch {}
+    return raw
+  }
+
+  async addCustomCategory(category: string): Promise<void> {
+    const trimmed = category.trim()
+    if (!trimmed) return
+    const list = this.getCustomCategories()
+    if (!list.includes(trimmed)) {
+      list.push(trimmed)
+      this.set('custom_categories', list)
+      try {
+        localStorage.setItem('eclat_custom_library_categories', JSON.stringify(list))
+      } catch {}
+      await this.pushCollectionToCloud('custom_categories', list)
+      schoolEventBus.publish('LIBRARY_UPDATED' as any)
+      window.dispatchEvent(new CustomEvent('eclat-data-synced'))
+    }
+  }
+
+  async deleteCustomCategory(category: string): Promise<void> {
+    const list = this.getCustomCategories().filter((c) => c !== category)
+    this.set('custom_categories', list)
+    try {
+      localStorage.setItem('eclat_custom_library_categories', JSON.stringify(list))
+    } catch {}
+    await this.pushCollectionToCloud('custom_categories', list)
+    schoolEventBus.publish('LIBRARY_UPDATED' as any)
+    window.dispatchEvent(new CustomEvent('eclat-data-synced'))
   }
 
   async syncWithCloud(force: boolean = false): Promise<void> {
@@ -888,7 +963,90 @@ class SchoolDataStore {
     this.isSyncing = true
 
     try {
-      // 1. Sync Courses & Lessons from Supabase
+      // 1. Sync from Universal Cloud State Sync Table (app_cloud_sync)
+      const { data: cloudSyncRows, error: syncErr } = await supabase
+        .from('app_cloud_sync')
+        .select('*')
+
+      if (!syncErr && cloudSyncRows && cloudSyncRows.length > 0) {
+        for (const row of cloudSyncRows) {
+          if (!row.key || !row.data) continue
+
+          if (row.key === 'resources' && Array.isArray(row.data)) {
+            const localRes = this.getResources()
+            const resMap = new Map<string, AcademicResource>()
+            for (const item of localRes) resMap.set(item.id, item)
+            for (const item of row.data) resMap.set(item.id, item)
+            const merged = Array.from(resMap.values())
+            this.set('resources', merged)
+          } else if (row.key === 'custom_categories' && Array.isArray(row.data)) {
+            const localCats = this.getCustomCategories()
+            const mergedCats = Array.from(new Set([...localCats, ...row.data]))
+            this.set('custom_categories', mergedCats)
+            try {
+              localStorage.setItem('eclat_custom_library_categories', JSON.stringify(mergedCats))
+            } catch {}
+          } else if (row.key === 'course_units' && Array.isArray(row.data)) {
+            const localUnits = this.getCourseUnits()
+            const unitMap = new Map<string, CourseUnit>()
+            for (const item of localUnits) unitMap.set(item.id, item)
+            for (const item of row.data) unitMap.set(item.id, item)
+            const merged = Array.from(unitMap.values())
+            this.set('course_units', merged)
+          } else if (row.key === 'subjects' && Array.isArray(row.data)) {
+            const localSubs = this.getSubjects()
+            const subMap = new Map<string, CollegeSubject>()
+            for (const item of localSubs) subMap.set(item.id, item)
+            for (const item of row.data) subMap.set(item.id, item)
+            const merged = Array.from(subMap.values())
+            this.set('subjects', merged)
+          } else if (row.key === 'notices' && Array.isArray(row.data)) {
+            const localNotices = this.getNotices()
+            const notMap = new Map<string, SchoolNotice>()
+            for (const item of localNotices) notMap.set(item.id, item)
+            for (const item of row.data) notMap.set(item.id, item)
+            const merged = Array.from(notMap.values())
+            this.set('notices', merged)
+          } else if (row.key === 'students' && Array.isArray(row.data)) {
+            const localStds = this.getStudents()
+            const stdMap = new Map<string, StudentRecord>()
+            for (const item of localStds) stdMap.set(item.id, item)
+            for (const item of row.data) stdMap.set(item.id, item)
+            const merged = Array.from(stdMap.values())
+            this.set('students', merged)
+          }
+        }
+      }
+
+      // 2. Sync Academic Library Resources from Supabase (Preserving user uploads & custom categories)
+      const { data: cloudResources } = await supabase.from('library_resources').select('*').order('created_at', { ascending: false })
+      if (cloudResources && cloudResources.length > 0) {
+        const localResources = this.getResources()
+        const resourceMap = new Map<string, AcademicResource>()
+        for (const lr of localResources) resourceMap.set(lr.id, lr)
+        for (const cr of cloudResources) {
+          resourceMap.set(cr.id, {
+            id: cr.id,
+            title: cr.title,
+            category: cr.category,
+            subject: cr.subject,
+            class_level: cr.class_level || 'Short Course / Certificate',
+            file_url: cr.file_url,
+            file_size: cr.file_size || 'Academic Document',
+            file_type: cr.file_type || 'PDF',
+            downloads_count: cr.downloads_count || 0,
+            year: cr.year || new Date().getFullYear(),
+            uploaded_by: cr.uploaded_by || 'Academic Administrator',
+            created_at: cr.created_at || new Date().toISOString(),
+            description: cr.description || undefined,
+            tags: cr.tags || undefined,
+          })
+        }
+        const merged = Array.from(resourceMap.values())
+        this.set('resources', merged)
+      }
+
+      // 3. Sync Courses & Lessons from Supabase
       const { data: cloudCourses } = await supabase
         .from('courses')
         .select('*, lessons(*)')
@@ -957,7 +1115,7 @@ class SchoolDataStore {
         }
       }
 
-      // 2. Sync Profiles from Supabase to Students
+      // 4. Sync Profiles from Supabase to Students
       const { data: profiles } = await supabase.from('profiles').select('*')
       if (profiles && profiles.length > 0) {
         const studentProfiles = profiles.filter((p) => p.role === 'student')
@@ -1005,7 +1163,7 @@ class SchoolDataStore {
         }
       }
 
-      // 3. Sync Fee Invoices & Receipts with Supabase
+      // 5. Sync Fee Invoices & Receipts with Supabase
       const { data: cloudInvoices } = await supabase.from('fee_invoices').select('*')
       if (cloudInvoices && cloudInvoices.length > 0) {
         const localInvoices = this.getInvoices()
@@ -1042,7 +1200,7 @@ class SchoolDataStore {
         }
       }
 
-      // 4. Sync Fee Payment Receipts
+      // 6. Sync Fee Payment Receipts
       const { data: cloudPayments } = await supabase.from('fee_payments').select('*')
       if (cloudPayments && cloudPayments.length > 0) {
         const localReceipts = this.getReceipts()
@@ -1077,31 +1235,9 @@ class SchoolDataStore {
         }
       }
 
-      // 5. Sync Academic Library Resources from Supabase (Preserving user uploads)
-      const { data: cloudResources } = await supabase.from('library_resources').select('*').order('created_at', { ascending: false })
-      if (cloudResources && cloudResources.length > 0) {
-        const localResources = this.getResources()
-        const resourceMap = new Map<string, AcademicResource>()
-        for (const lr of localResources) resourceMap.set(lr.id, lr)
-        for (const cr of cloudResources) {
-          resourceMap.set(cr.id, {
-            id: cr.id,
-            title: cr.title,
-            category: cr.category,
-            subject: cr.subject,
-            class_level: cr.class_level || 'Short Course / Certificate',
-            file_url: cr.file_url,
-            file_size: cr.file_size || 'Academic Document',
-            file_type: cr.file_type || 'PDF',
-            downloads_count: cr.downloads_count || 0,
-            year: cr.year || new Date().getFullYear(),
-            uploaded_by: cr.uploaded_by || 'Academic Administrator',
-            created_at: cr.created_at || new Date().toISOString(),
-          })
-        }
-        const merged = Array.from(resourceMap.values())
-        this.set('resources', merged)
-      }
+      // Publish global synced notification to UI components
+      schoolEventBus.publish('LIBRARY_UPDATED' as any)
+      window.dispatchEvent(new CustomEvent('eclat-data-synced'))
     } catch (err) {
       console.warn('Cloud store sync notice:', err)
     } finally {
@@ -1245,6 +1381,7 @@ class SchoolDataStore {
     schoolEventBus.publish('INVOICE_CREATED')
     schoolEventBus.publish('STUDENT_UPDATED')
     this.broadcastChange('STUDENT_ADDED', student)
+    await this.pushCollectionToCloud('students', this.getStudents())
 
     try {
       supabase.from('profiles').upsert({
@@ -1279,6 +1416,7 @@ class SchoolDataStore {
     )
     schoolEventBus.publish('STUDENT_UPDATED', updated)
     this.broadcastChange('STUDENT_UPDATED', updated)
+    await this.pushCollectionToCloud('students', this.getStudents())
   }
 
   async deleteStudent(id: string): Promise<void> {
@@ -1366,6 +1504,10 @@ class SchoolDataStore {
         supabase.from('profiles').delete().eq('admission_number', targetAdm).then(() => {})
       }
     } catch {}
+
+    await this.pushCollectionToCloud('students', this.getStudents())
+    await this.pushCollectionToCloud('invoices', this.getInvoices())
+    await this.pushCollectionToCloud('receipts', this.getReceipts())
 
     schoolEventBus.publish('STUDENT_DELETED', targetId)
     schoolEventBus.publish('STUDENT_UPDATED')
@@ -1838,6 +1980,8 @@ class SchoolDataStore {
       }
     )
     schoolEventBus.publish('NOTICE_POSTED', notice)
+    this.broadcastChange('NOTICE_POSTED', notice)
+    await this.pushCollectionToCloud('notices', this.getNotices())
   }
 
   async updateNotice(id: string, updated: Partial<SchoolNotice>): Promise<void> {
@@ -1854,6 +1998,8 @@ class SchoolDataStore {
       }
     )
     schoolEventBus.publish('NOTICE_POSTED', updated)
+    this.broadcastChange('NOTICE_UPDATED', updated)
+    await this.pushCollectionToCloud('notices', this.getNotices())
   }
 
   async deleteNotice(id: string): Promise<void> {
@@ -1866,6 +2012,8 @@ class SchoolDataStore {
       }
     )
     schoolEventBus.publish('NOTICE_POSTED')
+    this.broadcastChange('NOTICE_DELETED', { id })
+    await this.pushCollectionToCloud('notices', this.getNotices())
   }
 
   // --- Exams & Reports ---
@@ -1883,6 +2031,7 @@ class SchoolDataStore {
         this.set('exams', list)
       }
     )
+    await this.pushCollectionToCloud('exams', this.getExams())
   }
 
   getReportCards(): ReportCard[] {
@@ -1899,6 +2048,7 @@ class SchoolDataStore {
         this.set('report_cards', list)
       }
     )
+    await this.pushCollectionToCloud('report_cards', this.getReportCards())
   }
 
   getResources(): AcademicResource[] {
@@ -1911,10 +2061,38 @@ class SchoolDataStore {
       ['eclat_school_resources'],
       () => {
         const list = this.getResources()
-        list.unshift(resource)
+        const existingIdx = list.findIndex((r) => r.id === resource.id)
+        if (existingIdx !== -1) {
+          list[existingIdx] = resource
+        } else {
+          list.unshift(resource)
+        }
         this.set('resources', list)
       }
     )
+    schoolEventBus.publish('LIBRARY_UPDATED' as any, resource)
+    this.broadcastChange('RESOURCE_ADDED', resource)
+
+    // Push to library_resources and universal cloud sync store
+    try {
+      await supabase.from('library_resources').upsert({
+        id: resource.id,
+        title: resource.title,
+        category: resource.category,
+        subject: resource.subject,
+        class_level: resource.class_level || 'Short Course / Certificate',
+        file_url: resource.file_url,
+        file_size: resource.file_size,
+        file_type: resource.file_type || 'PDF',
+        downloads_count: resource.downloads_count || 0,
+        year: resource.year,
+        uploaded_by: resource.uploaded_by,
+        description: resource.description || null,
+        tags: resource.tags || [],
+        created_at: resource.created_at,
+      }, { onConflict: 'id' })
+    } catch {}
+    await this.pushCollectionToCloud('resources', this.getResources())
   }
 
   async updateResource(id: string, updated: Partial<AcademicResource>): Promise<void> {
@@ -1930,6 +2108,15 @@ class SchoolDataStore {
         }
       }
     )
+    schoolEventBus.publish('LIBRARY_UPDATED' as any, updated)
+    this.broadcastChange('RESOURCE_UPDATED', updated)
+
+    try {
+      await supabase.from('library_resources').update({
+        ...updated,
+      }).eq('id', id)
+    } catch {}
+    await this.pushCollectionToCloud('resources', this.getResources())
   }
 
   async deleteResource(id: string): Promise<void> {
@@ -1941,6 +2128,13 @@ class SchoolDataStore {
         this.set('resources', list)
       }
     )
+    schoolEventBus.publish('LIBRARY_UPDATED' as any, id)
+    this.broadcastChange('RESOURCE_DELETED', id)
+
+    try {
+      await supabase.from('library_resources').delete().eq('id', id)
+    } catch {}
+    await this.pushCollectionToCloud('resources', this.getResources())
   }
 
   getDiscipline(): DisciplineRecord[] {
@@ -1957,6 +2151,7 @@ class SchoolDataStore {
         this.set('discipline', list)
       }
     )
+    await this.pushCollectionToCloud('discipline', this.getDiscipline())
   }
 
   // --- Course Units & Curriculum Builder (ACID Protected) ---
@@ -1983,6 +2178,7 @@ class SchoolDataStore {
     )
     schoolEventBus.publish('COURSE_UNIT_CREATED' as any, unit)
     this.broadcastChange('COURSE_UNIT_CREATED', unit)
+    await this.pushCollectionToCloud('course_units', this.getCourseUnits())
 
     // Asynchronously push to Supabase courses & lessons
     try {
@@ -2034,6 +2230,7 @@ class SchoolDataStore {
     )
     schoolEventBus.publish('COURSE_UNIT_UPDATED' as any, updated)
     this.broadcastChange('COURSE_UNIT_UPDATED', updated)
+    await this.pushCollectionToCloud('course_units', this.getCourseUnits())
   }
 
   async updateLesson(courseId: string, lessonId: string, updatedLesson: { title?: string; video_url?: string; content?: string; duration_minutes?: number; meeting_url?: string }): Promise<void> {
@@ -2062,6 +2259,7 @@ class SchoolDataStore {
     )
     schoolEventBus.publish('COURSE_UNIT_UPDATED' as any, { courseId, lessonId })
     this.broadcastChange('COURSE_UNIT_UPDATED', { courseId, lessonId })
+    await this.pushCollectionToCloud('course_units', this.getCourseUnits())
   }
 
   async deleteCourseUnit(id: string): Promise<void> {
@@ -2074,6 +2272,7 @@ class SchoolDataStore {
       }
     )
     this.broadcastChange('COURSE_UNIT_DELETED', { id })
+    await this.pushCollectionToCloud('course_units', this.getCourseUnits())
   }
 
   // --- Formal Unit Registration by Management (With Official Receipts) ---
@@ -2312,6 +2511,8 @@ class SchoolDataStore {
       }
     )
     schoolEventBus.publish('SUBJECT_CREATED' as any, sub)
+    this.broadcastChange('SUBJECT_CREATED', sub)
+    await this.pushCollectionToCloud('subjects', this.getSubjects())
   }
 
   async updateSubject(id: string, updated: Partial<CollegeSubject>): Promise<void> {
@@ -2327,6 +2528,8 @@ class SchoolDataStore {
         }
       }
     )
+    this.broadcastChange('SUBJECT_UPDATED', updated)
+    await this.pushCollectionToCloud('subjects', this.getSubjects())
   }
 
   async deleteSubject(id: string): Promise<void> {
@@ -2338,6 +2541,8 @@ class SchoolDataStore {
         this.set('subjects', list)
       }
     )
+    this.broadcastChange('SUBJECT_DELETED', { id })
+    await this.pushCollectionToCloud('subjects', this.getSubjects())
   }
 
   // --- Biometric Security & Fingerprint Verification (ACID Protected) ---

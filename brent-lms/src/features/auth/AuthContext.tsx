@@ -155,6 +155,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     localStorage.setItem('eclat_active_profile', JSON.stringify(demoProf))
     sessionStorage.setItem('eclat_active_profile', JSON.stringify(demoProf))
     setProfile(demoProf)
+    schoolStore.syncWithCloud(true).catch(() => {})
   }
 
   async function signIn(inputIdentifier: string, password: string): Promise<{ error: string | null }> {

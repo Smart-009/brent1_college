@@ -1,7 +1,7 @@
 import { useState, useMemo, useEffect } from 'react'
 import { useAuth } from '@/hooks/useAuth'
 import { useIsMobile } from '@/hooks/useMediaQuery'
-import { schoolStore } from '@/lib/schoolData'
+import { schoolStore, schoolEventBus } from '@/lib/schoolData'
 import { supabase } from '@/lib/supabase'
 import { getEmbeddableDocumentUrl, getGoogleDrivePreviewUrl } from '@/lib/utils'
 import { isNativeApp, OFFICIAL_APK_URL, LOCAL_APK_URL } from '@/utils/platform'
@@ -58,47 +58,33 @@ export function ResourceLibrary() {
   // Session Read Tracking (prevents repeated view increments on open/close)
   const [readResourcesSession, setReadResourcesSession] = useState<Set<string>>(new Set())
 
-  // Fetch live resources from Supabase database on mount
+  // Sync live resources and dynamic categories on mount, focus, and cross-device realtime events
   useEffect(() => {
     let isMounted = true
-    async function loadDatabaseResources() {
-      try {
-        const { data, error } = await supabase
-          .from('library_resources')
-          .select('*')
-          .order('created_at', { ascending: false })
 
-        if (!error && data && data.length > 0 && isMounted) {
-          const dbList: AcademicResource[] = data.map((d: any) => ({
-            id: d.id,
-            title: d.title,
-            category: d.category,
-            subject: d.subject,
-            class_level: d.class_level || 'Short Course / Certificate',
-            file_url: d.file_url,
-            file_size: d.file_size || '1.5 MB',
-            file_type: d.file_type || 'PDF',
-            downloads_count: d.downloads_count || 0,
-            year: d.year || new Date().getFullYear(),
-            uploaded_by: d.uploaded_by || 'Academic Administrator',
-            created_at: d.created_at || new Date().toISOString(),
-          }))
-
-          // Merge with local store to ensure offline and online consistency
-          const localList = schoolStore.getResources()
-          const combinedMap = new Map<string, AcademicResource>()
-          for (const item of localList) combinedMap.set(item.id, item)
-          for (const item of dbList) combinedMap.set(item.id, item)
-          const merged = Array.from(combinedMap.values())
-          setResources(merged)
-        }
-      } catch {
-        // Fallback to local store
-      }
+    const handleSync = () => {
+      if (!isMounted) return
+      setResources(schoolStore.getResources())
+      setCustomCategories(schoolStore.getCustomCategories())
     }
-    loadDatabaseResources()
+
+    handleSync()
+    schoolStore.syncWithCloud(true).then(handleSync).catch(() => {})
+
+    const unsub = schoolEventBus.subscribe('LIBRARY_UPDATED' as any, handleSync)
+    window.addEventListener('storage', handleSync)
+    window.addEventListener('eclat-data-synced', handleSync)
+    const handleFocus = () => {
+      schoolStore.syncWithCloud(true).then(handleSync).catch(() => {})
+    }
+    window.addEventListener('focus', handleFocus)
+
     return () => {
       isMounted = false
+      unsub()
+      window.removeEventListener('storage', handleSync)
+      window.removeEventListener('eclat-data-synced', handleSync)
+      window.removeEventListener('focus', handleFocus)
     }
   }, [])
 
@@ -144,38 +130,25 @@ export function ResourceLibrary() {
   const [comicViewLayout, setComicViewLayout] = useState<'webtoon' | 'panel'>('webtoon')
   const [comicTheme, setComicTheme] = useState<'cyber' | 'noir' | 'sepia' | 'dark' | 'light'>('cyber')
 
-  // Dynamic Custom Categories State
-  const [customCategories, setCustomCategories] = useState<string[]>(() => {
-    try {
-      const stored = localStorage.getItem('eclat_custom_library_categories')
-      return stored ? JSON.parse(stored) : []
-    } catch {
-      return []
-    }
-  })
+  // Dynamic Custom Categories State (Synced Across Devices)
+  const [customCategories, setCustomCategories] = useState<string[]>(() => schoolStore.getCustomCategories())
   const [showAddCatModal, setShowAddCatModal] = useState(false)
   const [newCustomCategoryInput, setNewCustomCategoryInput] = useState('')
 
   const handleAddCustomCategory = (catName: string) => {
     const trimmed = catName.trim()
     if (!trimmed) return
-    if (!customCategories.includes(trimmed)) {
-      const next = [...customCategories, trimmed]
-      setCustomCategories(next)
-      try {
-        localStorage.setItem('eclat_custom_library_categories', JSON.stringify(next))
-      } catch {}
-    }
+    schoolStore.addCustomCategory(trimmed).then(() => {
+      setCustomCategories(schoolStore.getCustomCategories())
+    })
     setNewCustomCategoryInput('')
     setShowAddCatModal(false)
   }
 
   const handleDeleteCustomCategory = (catName: string) => {
-    const next = customCategories.filter((c) => c !== catName)
-    setCustomCategories(next)
-    try {
-      localStorage.setItem('eclat_custom_library_categories', JSON.stringify(next))
-    } catch {}
+    schoolStore.deleteCustomCategory(catName).then(() => {
+      setCustomCategories(schoolStore.getCustomCategories())
+    })
     if (selectedCat === catName) setSelectedCat('All')
   }
 
@@ -287,19 +260,37 @@ export function ResourceLibrary() {
     }
   }, [readingResource])
 
-  // Upload Modal State (for admin only)
+  // Upload Modal State (for admin only - Clean empty state without pre-filled values)
   const [showUploadModal, setShowUploadModal] = useState(false)
   const [resourceToDelete, setResourceToDelete] = useState<AcademicResource | null>(null)
   const [uploadSource, setUploadSource] = useState<'file' | 'gdrive'>('file')
   const [selectedFile, setSelectedFile] = useState<File | null>(null)
   const [googleDriveUrl, setGoogleDriveUrl] = useState('')
   const [newTitle, setNewTitle] = useState('')
-  const [newCategory, setNewCategory] = useState<string>('Comic Books')
-  const [newSubject, setNewSubject] = useState(storeSubjects[0] || 'General Studies')
-  const [newClassLevel, setNewClassLevel] = useState('All Trainees / Diploma')
+  const [newCategory, setNewCategory] = useState<string>('')
+  const [newSubject, setNewSubject] = useState('')
+  const [newClassLevel, setNewClassLevel] = useState('')
   const [newYear, setNewYear] = useState<number | string>('')
   const [newDescription, setNewDescription] = useState('')
   const [newTagsInput, setNewTagsInput] = useState('')
+
+  const resetUploadModal = () => {
+    setUploadSource('file')
+    setSelectedFile(null)
+    setGoogleDriveUrl('')
+    setNewTitle('')
+    setNewCategory('')
+    setNewSubject('')
+    setNewClassLevel('')
+    setNewYear('')
+    setNewDescription('')
+    setNewTagsInput('')
+  }
+
+  const handleOpenUploadModal = () => {
+    resetUploadModal()
+    setShowUploadModal(true)
+  }
 
   // Enhanced Multi-Word Fuzzy & Semantic Search Engine
   const filteredResources = useMemo(() => {
@@ -545,7 +536,8 @@ export function ResourceLibrary() {
 
       // Save into Supabase library_resources table
       try {
-        await supabase.from('library_resources').insert({
+        await supabase.from('library_resources').upsert({
+          id: item.id,
           title: item.title,
           category: item.category,
           subject: item.subject,
@@ -558,7 +550,9 @@ export function ResourceLibrary() {
           year: item.year,
           uploaded_by: item.uploaded_by,
           uploaded_by_id: profile?.id || null,
-        })
+          description: item.description || null,
+          tags: item.tags || [],
+        }, { onConflict: 'id' })
       } catch (dbErr) {
         console.warn('Supabase DB library insert notice:', dbErr)
       }
@@ -566,10 +560,7 @@ export function ResourceLibrary() {
       await schoolStore.addResource(item)
       setResources(schoolStore.getResources())
       setShowUploadModal(false)
-      setNewTitle('')
-      setNewDescription('')
-      setNewTagsInput('')
-      setSelectedFile(null)
+      resetUploadModal()
     } finally {
       setIsUploading(false)
     }
@@ -593,10 +584,8 @@ export function ResourceLibrary() {
               </span>
             )}
           </div>
-          <p className="page-subtitle">
-            {isAdmin
-              ? 'Administrator Console: Curate, upload, and publish short course past examination papers and modular learning resources for trainees.'
-              : 'Institutional short course past papers, marking schemes, revision handbooks, and modular lab manuals for online reading.'}
+          <p className="page-subtitle" style={{ margin: 0 }}>
+            Curriculum revision resources, interactive comic books, and academic references.
           </p>
         </div>
         {isAdmin && (
@@ -612,7 +601,7 @@ export function ResourceLibrary() {
             <button
               type="button"
               className="btn btn-primary"
-              onClick={() => setShowUploadModal(true)}
+              onClick={handleOpenUploadModal}
               style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontWeight: 700 }}
             >
               + 📁 Upload Material / Document
