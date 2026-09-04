@@ -52,7 +52,17 @@ const ResourceLibrary = lazy(() => import('@/features/library/ResourceLibrary').
 const DisciplineTracker = lazy(() => import('@/features/discipline/DisciplineTracker').then((m) => ({ default: m.DisciplineTracker })))
 const ParentDashboard = lazy(() => import('@/features/parent/ParentDashboard').then((m) => ({ default: m.ParentDashboard })))
 const SchoolNoticeboard = lazy(() => import('@/features/announcements/SchoolNoticeboard').then((m) => ({ default: m.SchoolNoticeboard })))
-const BursarDesk = lazy(() => import('@/features/bursar/BursarDesk').then((m) => ({ default: m.BursarDesk })))
+import { BursarDesk } from '@/features/bursar/BursarDesk'
+import { isNativeApp } from '@/utils/platform'
+import { NativeAppDRMGuard } from '@/components/shared/NativeAppDRMGuard'
+
+/** Native App DRM Guard for Student Learning */
+function StudentNativeGuard({ children }: { children: ReactElement }) {
+  if (!isNativeApp()) {
+    return <NativeAppDRMGuard />
+  }
+  return children
+}
 
 /** Auth Guard Component */
 function RequireAuth({ children, allowedRoles }: { children: ReactElement; allowedRoles?: string[] }) {
@@ -119,12 +129,47 @@ export function App() {
           <Route path="/secretary" element={<Navigate to="/bursar" replace />} />
           <Route path="/parent" element={<ParentDashboard />} />
 
-          {/* Student Portal Routes */}
-          <Route path="/student" element={<StudentDashboard />} />
-          <Route path="/student/courses" element={<CourseList />} />
-          <Route path="/student/courses/:id" element={<CourseDetail />} />
-          <Route path="/student/lesson/:lessonId" element={<LessonPlayer />} />
-          <Route path="/student/progress" element={<ProgressView />} />
+          {/* Student Portal Routes (Protected with Native App Hardware DRM) */}
+          <Route
+            path="/student"
+            element={
+              <StudentNativeGuard>
+                <StudentDashboard />
+              </StudentNativeGuard>
+            }
+          />
+          <Route
+            path="/student/courses"
+            element={
+              <StudentNativeGuard>
+                <CourseList />
+              </StudentNativeGuard>
+            }
+          />
+          <Route
+            path="/student/courses/:id"
+            element={
+              <StudentNativeGuard>
+                <CourseDetail />
+              </StudentNativeGuard>
+            }
+          />
+          <Route
+            path="/student/lesson/:lessonId"
+            element={
+              <StudentNativeGuard>
+                <LessonPlayer />
+              </StudentNativeGuard>
+            }
+          />
+          <Route
+            path="/student/progress"
+            element={
+              <StudentNativeGuard>
+                <ProgressView />
+              </StudentNativeGuard>
+            }
+          />
 
           {/* Teacher Portal Routes */}
           <Route

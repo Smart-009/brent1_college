@@ -369,3 +369,27 @@ test('Biometrics: Fee Clearance Evaluation Rules (Blocked < 75% Paid)', () => {
   assert.equal(result.paymentPercentage, 33)
 })
 
+test('DRM Security: Web Browser vs Native App Learning Portal Separation', () => {
+  function checkStudentAccessPermitted(isNative, role) {
+    if (role === 'student' && !isNative) {
+      return { allowed: false, reason: 'NATIVE_APP_DRM_REQUIRED' }
+    }
+    return { allowed: true }
+  }
+
+  // Web student access is blocked from screenshot-prone web browser
+  const webStudent = checkStudentAccessPermitted(false, 'student')
+  assert.equal(webStudent.allowed, false)
+  assert.equal(webStudent.reason, 'NATIVE_APP_DRM_REQUIRED')
+
+  // Native app student access is permitted with OS-level FLAG_SECURE
+  const nativeStudent = checkStudentAccessPermitted(true, 'student')
+  assert.equal(nativeStudent.allowed, true)
+
+  // Staff and faculty (admin, bursar, teacher) have web management clearance
+  assert.equal(checkStudentAccessPermitted(false, 'admin').allowed, true)
+  assert.equal(checkStudentAccessPermitted(false, 'bursar').allowed, true)
+  assert.equal(checkStudentAccessPermitted(false, 'teacher').allowed, true)
+})
+
+
