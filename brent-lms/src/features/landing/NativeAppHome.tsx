@@ -1,7 +1,8 @@
-﻿import { useState, useMemo } from 'react'
+import { useState, useMemo } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useAuthContext } from '@/features/auth/AuthContext'
 import { MobileAppBottomNav } from '@/components/layout/MobileAppBottomNav'
+import { IntakeAdvertsSection } from './IntakeAdvertsSection'
 import { INSTITUTION_CONFIG, getWhatsAppInquiryUrl } from '@/config/institution'
 
 interface CourseItem {
@@ -354,6 +355,9 @@ export function NativeAppHome({ courses, onSelectCourse }: { courses: CourseItem
           </a>
         </div>
       </div>
+
+      {/* Featured Upcoming Academic Intakes */}
+      <IntakeAdvertsSection />
 
       {/* 4. Active Programs & Skill Pathways */}
       <div style={{ padding: '1.5rem 1rem 0' }}>

@@ -1021,6 +1021,10 @@ export function Landing() {
             {!isMobile && (
               <>
                 <nav className="desktop-nav-links" style={{ fontSize: '0.88rem', fontWeight: 600, marginRight: '0.25rem', display: 'flex', gap: '1rem', alignItems: 'center' }}>
+                  <a href="#intakes-section" style={{ color: '#d97706', fontWeight: 800, textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                    <span>🗓️</span>
+                    <span>Intakes</span>
+                  </a>
                   <Link to="/library" style={{ color: '#2563eb', fontWeight: 800, textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '4px' }}>
                     <span>📖</span>
                     <span>E-Library</span>
@@ -1138,6 +1142,15 @@ export function Landing() {
             }}
           >
             <nav style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem', fontSize: '0.94rem', fontWeight: 600 }}>
+              <a
+                href="#intakes-section"
+                onClick={() => setMobileNavOpen(false)}
+                style={{ color: '#d97706', fontWeight: 850, textDecoration: 'none', padding: '0.65rem 0.75rem', borderRadius: '8px', display: 'flex', alignItems: 'center', gap: '10px', background: '#fffbeb', border: '1px solid #fde68a' }}
+              >
+                <span style={{ fontSize: '1.1rem' }}>🗓️</span>
+                <span>Upcoming Intakes & Admissions</span>
+              </a>
+
               <a
                 href="#about"
                 onClick={() => setMobileNavOpen(false)}
@@ -1486,6 +1499,9 @@ export function Landing() {
         </div>
       </section>
 
+      {/* Featured Scheduled Academic Intakes & Enrollments */}
+      <IntakeAdvertsSection />
+
       {/* Featured Courses Spotlight: Interactive Animated Promotional Carousel Banner */}
       <section
         onMouseEnter={() => setHeroSliderPaused(true)}
@@ -1812,9 +1828,6 @@ export function Landing() {
           </div>
         </div>
       </section>
-
-      {/* Featured Scheduled Academic Intakes Section */}
-      <IntakeAdvertsSection />
 
       {/* About Us & Institutional Advantage */}
       <section id="about" style={{ padding: isMobile ? '3.5rem 1rem' : '5rem 1.5rem', maxWidth: '1240px', margin: '0 auto' }}>

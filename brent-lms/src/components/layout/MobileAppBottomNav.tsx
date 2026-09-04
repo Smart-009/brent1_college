@@ -1,7 +1,11 @@
 import { Link, useLocation } from 'react-router-dom'
 import { useAuthContext } from '@/features/auth/AuthContext'
+import { isNativeApp } from '@/utils/platform'
 
 export function MobileAppBottomNav() {
+  const isNative = isNativeApp()
+  if (!isNative) return null
+
   const location = useLocation()
   const { profile } = useAuthContext()
 

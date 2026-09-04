@@ -1,7 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
+import { isNativeApp } from '@/utils/platform';
 
 export function PullToRefresh() {
+  if (!isNativeApp()) return null;
+
   const queryClient = useQueryClient();
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [startY, setStartY] = useState(0);
