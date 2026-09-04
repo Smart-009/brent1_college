@@ -298,6 +298,62 @@
   </head>
   <body>
     <div id="root">
+      <!-- Instant Luxury Splash Screen (Replaced once React mounts) -->
+      <div
+        id="initial-splash"
+        style="
+          position: fixed;
+          inset: 0;
+          z-index: 999999;
+          background: radial-gradient(circle at 50% 35%, #131d36 0%, #080d1a 50%, #03060c 100%);
+          color: #ffffff;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          padding: 2rem;
+          text-align: center;
+          overflow: hidden;
+          font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+        "
+      >
+        <div style="position: relative; display: flex; flex-direction: column; align-items: center; gap: 1.25rem; max-width: 400px; width: 100%;">
+          <!-- Glowing Crest -->
+          <div style="position: relative;">
+            <div style="position: absolute; inset: -8px; border-radius: 50%; background: linear-gradient(135deg, #d4af37, #3b82f6, #eab308); opacity: 0.7; filter: blur(10px);"></div>
+            <img
+              src="/logo.png"
+              alt="Éclat Institute"
+              style="position: relative; width: 110px; height: 110px; border-radius: 50%; border: 3px solid #d4af37; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6), 0 0 25px rgba(212, 175, 55, 0.45); object-fit: cover; background: #090d16;"
+            />
+          </div>
+
+          <!-- Titles -->
+          <div>
+            <h1 style="margin: 0 0 0.35rem; font-family: 'Cinzel', Georgia, serif; font-size: 1.75rem; font-weight: 900; letter-spacing: 0.12em; color: #d4af37; text-shadow: 0 4px 15px rgba(212, 175, 55, 0.3);">
+              ÉCLAT INSTITUTE
+            </h1>
+            <div style="font-size: 0.78rem; font-weight: 700; color: #94a3b8; letter-spacing: 0.18em; text-transform: uppercase;">
+              Shaping Minds, Inspiring Success
+            </div>
+          </div>
+
+          <!-- Badge -->
+          <div style="background: rgba(255, 255, 255, 0.06); border: 1px solid rgba(212, 175, 55, 0.3); border-radius: 999px; padding: 4px 14px; font-size: 0.72rem; font-weight: 800; color: #fbbf24; letter-spacing: 0.08em; text-transform: uppercase;">
+            🎓 100% Online Global Academy
+          </div>
+
+          <!-- Animated Loading Bar -->
+          <div style="width: 200px; height: 4px; background: rgba(255, 255, 255, 0.1); border-radius: 999px; overflow: hidden; margin-top: 0.5rem; position: relative;">
+            <div style="width: 100%; height: 100%; background: linear-gradient(90deg, #d4af37, #60a5fa, #d4af37); border-radius: 999px;"></div>
+          </div>
+
+          <p style="margin: 0; font-size: 0.8rem; font-weight: 600; color: #cbd5e1; letter-spacing: 0.04em;">
+            Loading Éclat Portal…
+          </p>
+        </div>
+      </div>
+
       <!-- Prerendered Semantic SEO Content for Search Engine Crawlers (Googlebot, Bingbot, Social Preview) -->
       <noscript>
         <header style="background: #0f172a; color: #ffffff; padding: 2rem; text-align: center;">
