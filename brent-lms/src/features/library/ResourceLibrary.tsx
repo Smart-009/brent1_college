@@ -5,10 +5,21 @@ import { schoolStore } from '@/lib/schoolData'
 import { supabase } from '@/lib/supabase'
 import { getEmbeddableDocumentUrl, getGoogleDrivePreviewUrl } from '@/lib/utils'
 import { isNativeApp, OFFICIAL_APK_URL, LOCAL_APK_URL } from '@/utils/platform'
-import { ACADEMIC_HANDBOOKS, AcademicHandbook } from './academicHandbookData'
+import { ACADEMIC_HANDBOOKS, COMIC_BOOKS_DATA, AcademicHandbook, ComicBook } from './academicHandbookData'
 import type { AcademicResource } from '@/types/school'
 
-const CATEGORIES = ['All', '⭐ Starred / Saved Books', 'Textbooks', 'Lab Manuals & Code', 'Revision Notes', 'Past Papers', 'Syllabus']
+export const DEFAULT_CATEGORIES = [
+  'All',
+  '⭐ Starred / Saved Books',
+  'Comic Books',
+  'Graphic Novels & Manga',
+  'Textbooks',
+  'Revision Notes',
+  'Lab Manuals & Code',
+  'Past Papers',
+  'Syllabus',
+  'Marking Schemes',
+]
 
 export function ResourceLibrary() {
   const { profile } = useAuth()
@@ -114,6 +125,66 @@ export function ResourceLibrary() {
     })
     return fuzzyKey ? ACADEMIC_HANDBOOKS[fuzzyKey] : null
   }, [readingResource])
+
+  const activeComicBook: ComicBook | null = useMemo(() => {
+    if (!readingResource) return null
+    if (COMIC_BOOKS_DATA[readingResource.id]) return COMIC_BOOKS_DATA[readingResource.id]
+    const cleanId = readingResource.file_url?.replace('comic://', '')
+    if (cleanId && COMIC_BOOKS_DATA[cleanId]) return COMIC_BOOKS_DATA[cleanId]
+    const fuzzyKey = Object.keys(COMIC_BOOKS_DATA).find((k) => {
+      const stem = k.replace('comic-', '').split('-')[0]
+      return readingResource.title.toLowerCase().includes(stem) || readingResource.id.includes(stem)
+    })
+    return fuzzyKey ? COMIC_BOOKS_DATA[fuzzyKey] : null
+  }, [readingResource])
+
+  // Comic Viewer State
+  const [activeIssueIndex, setActiveIssueIndex] = useState<number>(0)
+  const [activePanelIndex, setActivePanelIndex] = useState<number>(0)
+  const [comicViewLayout, setComicViewLayout] = useState<'webtoon' | 'panel'>('webtoon')
+  const [comicTheme, setComicTheme] = useState<'cyber' | 'noir' | 'sepia' | 'dark' | 'light'>('cyber')
+
+  // Dynamic Custom Categories State
+  const [customCategories, setCustomCategories] = useState<string[]>(() => {
+    try {
+      const stored = localStorage.getItem('eclat_custom_library_categories')
+      return stored ? JSON.parse(stored) : []
+    } catch {
+      return []
+    }
+  })
+  const [showAddCatModal, setShowAddCatModal] = useState(false)
+  const [newCustomCategoryInput, setNewCustomCategoryInput] = useState('')
+
+  const handleAddCustomCategory = (catName: string) => {
+    const trimmed = catName.trim()
+    if (!trimmed) return
+    if (!customCategories.includes(trimmed)) {
+      const next = [...customCategories, trimmed]
+      setCustomCategories(next)
+      try {
+        localStorage.setItem('eclat_custom_library_categories', JSON.stringify(next))
+      } catch {}
+    }
+    setNewCustomCategoryInput('')
+    setShowAddCatModal(false)
+  }
+
+  const handleDeleteCustomCategory = (catName: string) => {
+    const next = customCategories.filter((c) => c !== catName)
+    setCustomCategories(next)
+    try {
+      localStorage.setItem('eclat_custom_library_categories', JSON.stringify(next))
+    } catch {}
+    if (selectedCat === catName) setSelectedCat('All')
+  }
+
+  const dynamicCategories = useMemo(() => {
+    const base = DEFAULT_CATEGORIES
+    const resourceCats = Array.from(new Set(resources.map((r) => r.category).filter(Boolean)))
+    const combined = Array.from(new Set([...base, ...resourceCats, ...customCategories]))
+    return combined
+  }, [resources, customCategories])
 
   // Dynamic Hardware Screen Capture Security (Enables FLAG_SECURE only while reading resources)
   useEffect(() => {
@@ -223,29 +294,111 @@ export function ResourceLibrary() {
   const [selectedFile, setSelectedFile] = useState<File | null>(null)
   const [googleDriveUrl, setGoogleDriveUrl] = useState('')
   const [newTitle, setNewTitle] = useState('')
-  const [newCategory, setNewCategory] = useState<AcademicResource['category']>('Past Papers')
+  const [newCategory, setNewCategory] = useState<string>('Comic Books')
   const [newSubject, setNewSubject] = useState(storeSubjects[0] || 'General Studies')
-  const [newClassLevel, setNewClassLevel] = useState('Short Course / Certificate')
+  const [newClassLevel, setNewClassLevel] = useState('All Trainees / Diploma')
   const [newYear, setNewYear] = useState<number | string>('')
+  const [newDescription, setNewDescription] = useState('')
+  const [newTagsInput, setNewTagsInput] = useState('')
 
+  // Enhanced Multi-Word Fuzzy & Semantic Search Engine
   const filteredResources = useMemo(() => {
-    return resources.filter((res) => {
-      const matchSearch =
-        res.title.toLowerCase().includes(search.toLowerCase()) ||
-        res.subject.toLowerCase().includes(search.toLowerCase()) ||
-        res.uploaded_by.toLowerCase().includes(search.toLowerCase())
+    const rawSearch = search.trim().toLowerCase()
+    const tokens = rawSearch.split(/[\s,+/_-]+/).filter((t) => t.length > 0)
 
-      const matchCat =
-        selectedCat === 'All'
-          ? true
-          : selectedCat === '⭐ Starred / Saved Books'
-          ? bookmarkedIds.includes(res.id)
-          : res.category === selectedCat || (selectedCat === 'Lab Manuals & Code' && (res.category === 'Lab Manuals' || res.category.includes('Lab')))
+    const scored = resources
+      .map((res) => {
+        // Category filter
+        const matchCat =
+          selectedCat === 'All'
+            ? true
+            : selectedCat === '⭐ Starred / Saved Books'
+            ? bookmarkedIds.includes(res.id)
+            : res.category.toLowerCase() === selectedCat.toLowerCase() ||
+              (selectedCat === 'Lab Manuals & Code' && (res.category.toLowerCase().includes('lab') || res.category.toLowerCase().includes('code'))) ||
+              (selectedCat === 'Comic Books' && (res.category.toLowerCase().includes('comic') || res.category.toLowerCase().includes('graphic'))) ||
+              (selectedCat === 'Graphic Novels & Manga' && (res.category.toLowerCase().includes('manga') || res.category.toLowerCase().includes('graphic') || res.category.toLowerCase().includes('comic')))
 
-      const matchSub = selectedSub === 'All' || res.subject.toLowerCase().includes(selectedSub.toLowerCase())
+        if (!matchCat) return null
 
-      return matchSearch && matchCat && matchSub
-    })
+        // Subject filter
+        const matchSub = selectedSub === 'All' || res.subject.toLowerCase().includes(selectedSub.toLowerCase())
+        if (!matchSub) return null
+
+        // If no search query, return full match with base score
+        if (tokens.length === 0) {
+          return { res, score: 100 }
+        }
+
+        // Calculate search score across multiple fields
+        let score = 0
+        const titleLower = res.title.toLowerCase()
+        const subjectLower = res.subject.toLowerCase()
+        const categoryLower = res.category.toLowerCase()
+        const authorLower = (res.uploaded_by || '').toLowerCase()
+        const classLevelLower = (res.class_level || '').toLowerCase()
+        const fileTypeLower = (res.file_type || '').toLowerCase()
+        const descLower = (res.description || '').toLowerCase()
+        const tagsLower = (res.tags || []).map((t) => t.toLowerCase())
+        const corpus = `${titleLower} ${subjectLower} ${categoryLower} ${authorLower} ${classLevelLower} ${fileTypeLower} ${descLower} ${tagsLower.join(' ')} ${res.year || ''}`
+
+        // Exact match boost
+        if (titleLower.includes(rawSearch)) score += 100
+        else if (corpus.includes(rawSearch)) score += 60
+
+        let matchedTokensCount = 0
+        for (const token of tokens) {
+          let tokenMatched = false
+
+          if (titleLower.includes(token)) {
+            score += 35
+            tokenMatched = true
+          }
+          if (subjectLower.includes(token)) {
+            score += 25
+            tokenMatched = true
+          }
+          if (categoryLower.includes(token)) {
+            score += 25
+            tokenMatched = true
+          }
+          if (tagsLower.some((t) => t.includes(token))) {
+            score += 20
+            tokenMatched = true
+          }
+          if (descLower.includes(token)) {
+            score += 15
+            tokenMatched = true
+          }
+          if (authorLower.includes(token) || classLevelLower.includes(token) || fileTypeLower.includes(token)) {
+            score += 10
+            tokenMatched = true
+          }
+
+          // Partial prefix / stem matching (e.g. "prog" -> "programming", "sec" -> "security", "com" -> "comics")
+          if (!tokenMatched && token.length >= 3) {
+            if (corpus.includes(token.slice(0, 3))) {
+              score += 8
+              tokenMatched = true
+            }
+          }
+
+          if (tokenMatched) matchedTokensCount++
+        }
+
+        // Require at least one token to match or positive score
+        if (matchedTokensCount === 0 && score === 0) return null
+
+        score += matchedTokensCount * 15
+        return { res, score }
+      })
+      .filter((item): item is { res: AcademicResource; score: number } => item !== null)
+
+    if (tokens.length > 0) {
+      scored.sort((a, b) => b.score - a.score)
+    }
+
+    return scored.map((item) => item.res)
   }, [resources, search, selectedCat, selectedSub, bookmarkedIds])
 
   const isNative = isNativeApp()
@@ -312,23 +465,24 @@ export function ResourceLibrary() {
         ? `${(selectedFile.size / (1024 * 1024)).toFixed(1)} MB`
         : 'Academic Document'
 
-      let fileExt: AcademicResource['file_type'] = 'PDF'
+      let fileExt = 'PDF'
       let fileBlobUrl = ''
 
       if (isGDrive) {
         fileBlobUrl = getGoogleDrivePreviewUrl(googleDriveUrl) || googleDriveUrl.trim()
         fileSizeFormatted = 'Academic Document'
-        fileExt = 'PDF'
+        fileExt = newCategory.toLowerCase().includes('comic') || newCategory.toLowerCase().includes('manga') ? 'COMIC' : 'PDF'
       } else if (selectedFile) {
-        const rawExt = selectedFile.name.split('.').pop()?.toUpperCase()
-        fileExt =
-          rawExt === 'DOCX' || rawExt === 'DOC'
-            ? 'DOCX'
-            : rawExt === 'PPTX' || rawExt === 'PPT'
-            ? 'PPTX'
-            : rawExt === 'EPUB'
-            ? 'EPUB'
-            : 'PDF'
+        const rawExt = selectedFile.name.split('.').pop()?.toUpperCase() || 'PDF'
+        if (['DOCX', 'DOC'].includes(rawExt)) fileExt = 'DOCX'
+        else if (['PPTX', 'PPT'].includes(rawExt)) fileExt = 'PPTX'
+        else if (['XLSX', 'XLS', 'CSV'].includes(rawExt)) fileExt = 'SHEET'
+        else if (['EPUB', 'MOBI'].includes(rawExt)) fileExt = 'EPUB'
+        else if (['CBZ', 'CBR'].includes(rawExt) || newCategory.toLowerCase().includes('comic') || newCategory.toLowerCase().includes('manga')) fileExt = 'COMIC'
+        else if (['PNG', 'JPG', 'JPEG', 'WEBP', 'GIF', 'SVG'].includes(rawExt)) fileExt = 'IMAGE'
+        else if (['TXT', 'MD', 'JSON', 'PY', 'JS', 'TS', 'HTML', 'CSS'].includes(rawExt)) fileExt = 'TEXT'
+        else if (['MP4', 'WEBM', 'MP3', 'WAV'].includes(rawExt)) fileExt = 'MEDIA'
+        else fileExt = rawExt
 
         // Read file as Base64 Data URL so it is self-contained and immediately viewable everywhere
         const base64DataUrl = await new Promise<string>((resolve) => {
@@ -345,7 +499,7 @@ export function ResourceLibrary() {
           const { error: storageErr } = await supabase.storage
             .from('library-resources')
             .upload(filePath, selectedFile, {
-              contentType: selectedFile.type || 'application/pdf',
+              contentType: selectedFile.type || 'application/octet-stream',
               upsert: true,
             })
 
@@ -364,10 +518,18 @@ export function ResourceLibrary() {
         fileBlobUrl = 'https://eclatinstitute.internal/docs/' + encodeURIComponent(newTitle)
       }
 
+      // Auto-register new custom category if not in list
+      const trimmedCat = (newCategory || 'General Studies').trim()
+      if (trimmedCat && !DEFAULT_CATEGORIES.includes(trimmedCat) && !customCategories.includes(trimmedCat)) {
+        handleAddCustomCategory(trimmedCat)
+      }
+
+      const tagsList = newTagsInput.split(',').map((t) => t.trim().toLowerCase()).filter(Boolean)
+
       const item: AcademicResource = {
         id: `res-${Date.now()}`,
         title: newTitle.trim(),
-        category: newCategory,
+        category: trimmedCat,
         subject: newSubject,
         class_level: newClassLevel,
         file_url: fileBlobUrl,
@@ -377,6 +539,8 @@ export function ResourceLibrary() {
         year: newYear ? Number(newYear) : undefined,
         uploaded_by: profile?.full_name || 'Academic Administrator',
         created_at: new Date().toISOString(),
+        description: newDescription.trim() || undefined,
+        tags: tagsList.length > 0 ? tagsList : undefined,
       }
 
       // Save into Supabase library_resources table
@@ -403,6 +567,8 @@ export function ResourceLibrary() {
       setResources(schoolStore.getResources())
       setShowUploadModal(false)
       setNewTitle('')
+      setNewDescription('')
+      setNewTagsInput('')
       setSelectedFile(null)
     } finally {
       setIsUploading(false)
@@ -434,14 +600,22 @@ export function ResourceLibrary() {
           </p>
         </div>
         {isAdmin && (
-          <div style={{ display: 'flex', gap: '0.75rem' }}>
+          <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap' }}>
+            <button
+              type="button"
+              className="btn btn-secondary"
+              onClick={() => setShowAddCatModal(true)}
+              style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', fontWeight: 700, fontSize: '0.85rem' }}
+            >
+              🏷️ + Add Custom Category
+            </button>
             <button
               type="button"
               className="btn btn-primary"
               onClick={() => setShowUploadModal(true)}
               style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontWeight: 700 }}
             >
-              + 📁 Upload Material from Local Storage
+              + 📁 Upload Material / Document
             </button>
           </div>
         )}
@@ -471,7 +645,7 @@ export function ResourceLibrary() {
                 Hardware Anti-Screenshot Protection Active
               </div>
               <div style={{ fontSize: '0.82rem', color: '#94a3b8', marginTop: '2px', lineHeight: 1.4 }}>
-                To protect institutional copyright, all academic handbooks, lab manuals, and syllabus files are readable exclusively inside the <strong>Official Éclat Native App</strong>.
+                To protect institutional copyright, all comic books, academic handbooks, lab manuals, and syllabus files are readable exclusively inside the <strong>Official Éclat Native App</strong>.
               </div>
             </div>
           </div>
@@ -502,7 +676,7 @@ export function ResourceLibrary() {
       {/* Filter and Search Bar */}
       <div className="card mb-6" style={{ padding: '1.25rem', borderRadius: '16px', background: 'var(--color-surface)', boxShadow: '0 4px 20px rgba(0,0,0,0.06)' }}>
         <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-          {/* Main Search Bar */}
+          {/* Main Search Bar with Multi-Word Token Engine */}
           <div style={{ position: 'relative', width: '100%' }}>
             <span style={{ position: 'absolute', left: '16px', top: '50%', transform: 'translateY(-50%)', fontSize: '1.1rem', opacity: 0.6 }}>
               🔍
@@ -517,10 +691,10 @@ export function ResourceLibrary() {
                 paddingBottom: '0.85rem',
                 fontSize: '0.95rem',
                 borderRadius: '12px',
-                border: '2px solid var(--color-border)',
+                border: search ? '2px solid #2563eb' : '2px solid var(--color-border)',
                 background: 'var(--color-bg)',
               }}
-              placeholder="Search e-library by document title, subject, category, author, or keyword..."
+              placeholder="Search e-library: type title, 'comic', 'cyber', 'python', 'manga', author, year, or keyword..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
             />
@@ -546,29 +720,129 @@ export function ResourceLibrary() {
             )}
           </div>
 
-          {/* Quick Filter Tag Buttons */}
-          <div style={{ display: 'flex', gap: '0.5rem', overflowX: 'auto', paddingBottom: '4px', scrollbarWidth: 'none' }}>
-            {['All', 'Revision Notes', 'Past Papers', 'Lab Manuals', 'Textbooks', '⭐ Starred / Saved Books'].map((cat) => (
+          {/* Search Result Feedback Badge */}
+          {search.trim() && (
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontSize: '0.82rem', color: '#2563eb', fontWeight: 700 }}>
+              <span>
+                ⚡ Found {filteredResources.length} {filteredResources.length === 1 ? 'document' : 'documents'} matching &quot;{search}&quot;
+              </span>
               <button
-                key={cat}
                 type="button"
-                onClick={() => setSelectedCat(cat)}
+                onClick={() => setSearch('')}
+                style={{ background: 'none', border: 'none', color: '#64748b', cursor: 'pointer', fontSize: '0.78rem', textDecoration: 'underline' }}
+              >
+                Clear Search Filter
+              </button>
+            </div>
+          )}
+
+          {/* Dynamic Category Tag Buttons */}
+          <div style={{ display: 'flex', gap: '0.5rem', overflowX: 'auto', paddingBottom: '4px', scrollbarWidth: 'none', alignItems: 'center' }}>
+            {dynamicCategories.map((cat) => {
+              const isSelected = selectedCat === cat
+              const isCustom = customCategories.includes(cat)
+              const count = cat === 'All'
+                ? resources.length
+                : cat === '⭐ Starred / Saved Books'
+                ? resources.filter((r) => bookmarkedIds.includes(r.id)).length
+                : cat === 'Comic Books'
+                ? resources.filter((r) => r.category.toLowerCase().includes('comic') || r.category.toLowerCase().includes('graphic')).length
+                : cat === 'Graphic Novels & Manga'
+                ? resources.filter((r) => r.category.toLowerCase().includes('manga') || r.category.toLowerCase().includes('graphic')).length
+                : resources.filter((r) => r.category.toLowerCase() === cat.toLowerCase()).length
+
+              const emoji = cat === 'All'
+                ? '📚'
+                : cat === '⭐ Starred / Saved Books'
+                ? '⭐'
+                : cat.toLowerCase().includes('comic')
+                ? '🦸'
+                : cat.toLowerCase().includes('manga') || cat.toLowerCase().includes('graphic')
+                ? '🎨'
+                : cat.toLowerCase().includes('textbook')
+                ? '📖'
+                : cat.toLowerCase().includes('lab')
+                ? '💻'
+                : cat.toLowerCase().includes('past')
+                ? '📝'
+                : cat.toLowerCase().includes('notes')
+                ? '📓'
+                : '🏷️'
+
+              return (
+                <div key={cat} style={{ display: 'inline-flex', alignItems: 'center' }}>
+                  <button
+                    type="button"
+                    onClick={() => setSelectedCat(cat)}
+                    style={{
+                      padding: '0.45rem 0.9rem',
+                      borderRadius: isCustom && isAdmin ? '999px 0 0 999px' : '999px',
+                      fontSize: '0.8rem',
+                      fontWeight: isSelected ? 800 : 600,
+                      whiteSpace: 'nowrap',
+                      border: isSelected ? '2px solid #2563eb' : '1px solid var(--color-border)',
+                      borderRight: isCustom && isAdmin ? 'none' : undefined,
+                      background: isSelected ? '#eff6ff' : 'var(--color-surface)',
+                      color: isSelected ? '#1e3a8a' : 'var(--color-text)',
+                      cursor: 'pointer',
+                      transition: 'all 0.15s ease',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '4px',
+                    }}
+                  >
+                    <span>{emoji}</span>
+                    <span>{cat}</span>
+                    <span style={{ fontSize: '0.72rem', opacity: isSelected ? 0.9 : 0.6, fontWeight: 700, marginLeft: '2px' }}>
+                      ({count})
+                    </span>
+                  </button>
+                  {isCustom && isAdmin && (
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation()
+                        handleDeleteCustomCategory(cat)
+                      }}
+                      title={`Delete "${cat}" category`}
+                      style={{
+                        padding: '0.45rem 0.5rem',
+                        borderRadius: '0 999px 999px 0',
+                        fontSize: '0.75rem',
+                        border: isSelected ? '2px solid #2563eb' : '1px solid var(--color-border)',
+                        borderLeft: '1px solid rgba(0,0,0,0.1)',
+                        background: isSelected ? '#eff6ff' : 'var(--color-surface)',
+                        color: '#ef4444',
+                        cursor: 'pointer',
+                        fontWeight: 900,
+                      }}
+                    >
+                      ✕
+                    </button>
+                  )}
+                </div>
+              )
+            })}
+
+            {isAdmin && (
+              <button
+                type="button"
+                onClick={() => setShowAddCatModal(true)}
                 style={{
-                  padding: '0.45rem 0.9rem',
+                  padding: '0.45rem 0.85rem',
                   borderRadius: '999px',
-                  fontSize: '0.8rem',
-                  fontWeight: selectedCat === cat ? 800 : 600,
+                  fontSize: '0.78rem',
+                  fontWeight: 700,
                   whiteSpace: 'nowrap',
-                  border: selectedCat === cat ? '2px solid #2563eb' : '1px solid var(--color-border)',
-                  background: selectedCat === cat ? '#eff6ff' : 'var(--color-surface)',
-                  color: selectedCat === cat ? '#1e3a8a' : 'var(--color-text)',
+                  border: '1.5px dashed #2563eb',
+                  background: 'transparent',
+                  color: '#2563eb',
                   cursor: 'pointer',
-                  transition: 'all 0.15s ease',
                 }}
               >
-                {cat}
+                + Add Category
               </button>
-            ))}
+            )}
           </div>
         </div>
       </div>
@@ -1072,8 +1346,354 @@ export function ResourceLibrary() {
                 </div>
               )}
 
-              {activeHandbook ? (
-                // 1. NATIVE ACADEMIC HANDBOOK & E-TEXTBOOK READER
+              {activeComicBook ? (
+                // 1. INTERACTIVE COMIC BOOK & MANGA VIEWER
+                <div style={{ display: 'flex', flexDirection: 'column', flex: 1, minHeight: '100%', position: 'relative' }}>
+                  {/* Comic Reader Top Bar */}
+                  <div
+                    style={{
+                      background: comicTheme === 'cyber' ? 'linear-gradient(135deg, #090d16, #022c22)' : comicTheme === 'noir' ? '#000000' : comicTheme === 'sepia' ? '#f4ebd0' : '#f8fafc',
+                      borderBottom: comicTheme === 'cyber' ? '2px solid #059669' : comicTheme === 'noir' ? '1px solid #334155' : '1px solid #e2e8f0',
+                      padding: isMobile ? '0.75rem 1rem' : '1rem 1.75rem',
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      alignItems: 'center',
+                      flexWrap: 'wrap',
+                      gap: '0.75rem',
+                    }}
+                  >
+                    <div>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
+                        <span style={{ background: '#059669', color: '#ffffff', padding: '2px 8px', borderRadius: '6px', fontSize: '0.72rem', fontWeight: 800, textTransform: 'uppercase' }}>
+                          🦸 {activeComicBook.genre}
+                        </span>
+                        <span style={{ fontSize: '0.75rem', fontWeight: 700, color: comicTheme === 'cyber' ? '#34d399' : '#059669' }}>
+                          {activeComicBook.volume}
+                        </span>
+                      </div>
+                      <h2 style={{ margin: '4px 0 2px', fontSize: isMobile ? '1.15rem' : '1.45rem', fontWeight: 900, color: comicTheme === 'cyber' || comicTheme === 'noir' ? '#ffffff' : '#0f172a' }}>
+                        {activeComicBook.title}
+                      </h2>
+                      <div style={{ fontSize: '0.75rem', opacity: 0.8, color: comicTheme === 'cyber' || comicTheme === 'noir' ? '#94a3b8' : '#475569' }}>
+                        ✍️ Written by {activeComicBook.author} • 🎨 Art by {activeComicBook.illustrator} • ⏱️ {activeComicBook.estimatedReadTime}
+                      </div>
+                    </div>
+
+                    {/* Comic Reading Mode Switcher & Theme Selector */}
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
+                      <div style={{ display: 'flex', background: 'rgba(255,255,255,0.08)', borderRadius: '8px', padding: '2px', border: '1px solid rgba(255,255,255,0.15)' }}>
+                        <button
+                          type="button"
+                          onClick={() => setComicViewLayout('webtoon')}
+                          style={{
+                            padding: '4px 8px',
+                            borderRadius: '6px',
+                            fontSize: '0.75rem',
+                            fontWeight: 700,
+                            border: 'none',
+                            background: comicViewLayout === 'webtoon' ? '#059669' : 'transparent',
+                            color: comicViewLayout === 'webtoon' ? '#ffffff' : 'inherit',
+                            cursor: 'pointer',
+                          }}
+                        >
+                          📜 Webtoon Vertical
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => setComicViewLayout('panel')}
+                          style={{
+                            padding: '4px 8px',
+                            borderRadius: '6px',
+                            fontSize: '0.75rem',
+                            fontWeight: 700,
+                            border: 'none',
+                            background: comicViewLayout === 'panel' ? '#059669' : 'transparent',
+                            color: comicViewLayout === 'panel' ? '#ffffff' : 'inherit',
+                            cursor: 'pointer',
+                          }}
+                        >
+                          📑 Panel Flip
+                        </button>
+                      </div>
+
+                      {/* Theme switcher */}
+                      <div style={{ display: 'flex', gap: '4px' }}>
+                        {(['cyber', 'noir', 'sepia', 'light'] as const).map((t) => (
+                          <button
+                            key={t}
+                            type="button"
+                            onClick={() => setComicTheme(t)}
+                            style={{
+                              padding: '4px 7px',
+                              borderRadius: '6px',
+                              fontSize: '0.72rem',
+                              fontWeight: 700,
+                              border: comicTheme === t ? '1.5px solid #10b981' : '1px solid rgba(255,255,255,0.2)',
+                              background: t === 'cyber' ? '#064e3b' : t === 'noir' ? '#18181b' : t === 'sepia' ? '#78350f' : '#f1f5f9',
+                              color: t === 'light' ? '#0f172a' : '#ffffff',
+                              cursor: 'pointer',
+                            }}
+                          >
+                            {t === 'cyber' ? '⚡ Cyber' : t === 'noir' ? '🕶️ Noir' : t === 'sepia' ? '📜 Sepia' : '☀️ Day'}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Issue Selector Tabs */}
+                  {activeComicBook.issues.length > 1 && (
+                    <div style={{ display: 'flex', gap: '6px', padding: '0.5rem 1.5rem', background: comicTheme === 'cyber' ? 'rgba(0,0,0,0.3)' : 'rgba(0,0,0,0.05)', borderBottom: '1px solid rgba(255,255,255,0.05)', overflowX: 'auto' }}>
+                      {activeComicBook.issues.map((iss, iIdx) => (
+                        <button
+                          key={iIdx}
+                          type="button"
+                          onClick={() => {
+                            setActiveIssueIndex(iIdx)
+                            setActivePanelIndex(0)
+                          }}
+                          style={{
+                            padding: '4px 10px',
+                            borderRadius: '8px',
+                            fontSize: '0.75rem',
+                            fontWeight: activeIssueIndex === iIdx ? 800 : 600,
+                            border: activeIssueIndex === iIdx ? '1.5px solid #10b981' : '1px solid transparent',
+                            background: activeIssueIndex === iIdx ? '#064e3b' : 'transparent',
+                            color: activeIssueIndex === iIdx ? '#34d399' : 'inherit',
+                            cursor: 'pointer',
+                            whiteSpace: 'nowrap',
+                          }}
+                        >
+                          {iss.coverEmoji} {iss.title}
+                        </button>
+                      ))}
+                    </div>
+                  )}
+
+                  {/* Comic Reader Body */}
+                  <div
+                    style={{
+                      flex: 1,
+                      overflowY: 'auto',
+                      padding: isMobile ? '1rem 0.75rem' : '2rem 1.5rem',
+                      background: comicTheme === 'cyber' ? '#040711' : comicTheme === 'noir' ? '#000000' : comicTheme === 'sepia' ? '#fbf0d9' : '#f8fafc',
+                      color: comicTheme === 'cyber' || comicTheme === 'noir' ? '#f8fafc' : '#1e293b',
+                    }}
+                  >
+                    {(() => {
+                      const currentIssue = activeComicBook.issues[activeIssueIndex] || activeComicBook.issues[0]
+                      if (!currentIssue) return null
+
+                      if (comicViewLayout === 'panel') {
+                        const currentPanel = currentIssue.panels[activePanelIndex] || currentIssue.panels[0]
+                        return (
+                          <div style={{ maxWidth: '750px', margin: '0 auto', display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
+                            {/* Panel Flip Progress Header */}
+                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '0.82rem', fontWeight: 800, color: '#10b981' }}>
+                              <span>{currentIssue.title}</span>
+                              <span>Panel {activePanelIndex + 1} of {currentIssue.panels.length}</span>
+                            </div>
+
+                            {/* Single Large Active Panel */}
+                            <div
+                              style={{
+                                background: comicTheme === 'cyber' ? '#0a0f1d' : comicTheme === 'noir' ? '#09090b' : comicTheme === 'sepia' ? '#f4ebd0' : '#ffffff',
+                                border: comicTheme === 'cyber' ? '2px solid #059669' : comicTheme === 'noir' ? '2px solid #27272a' : '2px solid #0f172a',
+                                borderRadius: '16px',
+                                overflow: 'hidden',
+                                boxShadow: comicTheme === 'cyber' ? '0 12px 35px rgba(5, 150, 105, 0.25)' : '0 12px 30px rgba(0,0,0,0.15)',
+                                position: 'relative',
+                              }}
+                            >
+                              {currentPanel.narrative && (
+                                <div style={{ background: '#fef08a', color: '#713f12', padding: '0.75rem 1.25rem', fontSize: '0.85rem', fontWeight: 800, borderBottom: '2px solid #0f172a', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
+                                  📌 {currentPanel.narrative}
+                                </div>
+                              )}
+
+                              <div style={{ padding: isMobile ? '2rem 1rem' : '3.5rem 2rem', background: 'radial-gradient(ellipse at center, rgba(16, 185, 129, 0.15), transparent 70%)', display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', position: 'relative' }}>
+                                {currentPanel.sfx && (
+                                  <div style={{ position: 'absolute', top: '16px', right: '18px', background: '#dc2626', color: '#ffffff', fontWeight: 900, fontStyle: 'italic', fontSize: '0.95rem', padding: '4px 12px', borderRadius: '6px', transform: 'rotate(-5deg)', boxShadow: '0 4px 12px rgba(220, 38, 38, 0.4)' }}>
+                                    💥 {currentPanel.sfx}
+                                  </div>
+                                )}
+                                <div style={{ fontSize: isMobile ? '4.5rem' : '6rem', marginBottom: '1rem', filter: 'drop-shadow(0 8px 20px rgba(0,0,0,0.4))' }}>
+                                  {currentPanel.illustrationEmoji}
+                                </div>
+                                <div style={{ fontSize: isMobile ? '0.95rem' : '1.15rem', fontWeight: 700, opacity: 0.95, maxWidth: '580px', lineHeight: 1.5 }}>
+                                  {currentPanel.illustrationVisual}
+                                </div>
+                              </div>
+
+                              {currentPanel.codeSnippet && (
+                                <div style={{ margin: '0 1.25rem 1.25rem', background: '#020617', border: '1px solid #1e293b', borderRadius: '10px', overflow: 'hidden' }}>
+                                  <div style={{ background: '#0f172a', padding: '4px 10px', fontSize: '0.72rem', color: '#38bdf8', fontWeight: 800, display: 'flex', justifyContent: 'space-between' }}>
+                                    <span>💻 Live Terminal Protocol</span>
+                                    <span>🔒 Sandbox Verified</span>
+                                  </div>
+                                  <pre style={{ margin: 0, padding: '0.85rem', fontFamily: 'monospace', fontSize: '0.82rem', color: '#4ade80', overflowX: 'auto', lineHeight: 1.5 }}>
+                                    <code>{currentPanel.codeSnippet}</code>
+                                  </pre>
+                                </div>
+                              )}
+
+                              {currentPanel.terminalOutput && (
+                                <div style={{ margin: '0 1.25rem 1.25rem', background: '#020617', border: '1px solid #059669', borderRadius: '10px', padding: '0.85rem', fontFamily: 'monospace', fontSize: '0.8rem', color: '#34d399', whiteSpace: 'pre-wrap', lineHeight: 1.5 }}>
+                                  {currentPanel.terminalOutput}
+                                </div>
+                              )}
+
+                              {currentPanel.dialogue && (
+                                <div style={{ padding: '1.25rem', borderTop: comicTheme === 'cyber' ? '1px solid #1e293b' : '1px solid #e2e8f0', background: comicTheme === 'cyber' ? 'rgba(255,255,255,0.02)' : 'rgba(0,0,0,0.02)', display: 'flex', gap: '1rem', alignItems: 'flex-start' }}>
+                                  <div style={{ fontSize: '2.5rem', flexShrink: 0 }}>{currentPanel.avatarEmoji || '🧑‍💻'}</div>
+                                  <div style={{ flex: 1 }}>
+                                    <div style={{ fontWeight: 800, fontSize: '0.82rem', color: '#10b981', textTransform: 'uppercase', marginBottom: '4px' }}>
+                                      {currentPanel.characterName || 'Character'}
+                                    </div>
+                                    <div style={{ background: comicTheme === 'cyber' ? '#131c31' : '#f1f5f9', border: '1.5px solid #2563eb', borderRadius: '0 14px 14px 14px', padding: '0.85rem 1.15rem', fontSize: '0.95rem', fontWeight: 600, color: comicTheme === 'cyber' || comicTheme === 'noir' ? '#ffffff' : '#0f172a', lineHeight: 1.45 }}>
+                                      💬 “{currentPanel.dialogue}”
+                                    </div>
+                                    {currentPanel.thought && (
+                                      <div style={{ marginTop: '6px', fontStyle: 'italic', fontSize: '0.82rem', opacity: 0.8, color: '#93c5fd', paddingLeft: '8px' }}>
+                                        💭 <em>(Thought: {currentPanel.thought})</em>
+                                      </div>
+                                    )}
+                                  </div>
+                                </div>
+                              )}
+                            </div>
+
+                            {/* Panel Navigation Controls */}
+                            <div style={{ display: 'flex', justifyContent: 'space-between', gap: '1rem' }}>
+                              <button
+                                type="button"
+                                disabled={activePanelIndex === 0}
+                                onClick={() => setActivePanelIndex((p) => Math.max(0, p - 1))}
+                                style={{
+                                  flex: 1,
+                                  padding: '0.75rem',
+                                  borderRadius: '12px',
+                                  border: 'none',
+                                  background: activePanelIndex === 0 ? 'rgba(255,255,255,0.1)' : '#1e293b',
+                                  color: '#ffffff',
+                                  fontWeight: 800,
+                                  cursor: activePanelIndex === 0 ? 'not-allowed' : 'pointer',
+                                  opacity: activePanelIndex === 0 ? 0.4 : 1,
+                                }}
+                              >
+                                ← Previous Panel
+                              </button>
+
+                              <button
+                                type="button"
+                                disabled={activePanelIndex === currentIssue.panels.length - 1}
+                                onClick={() => setActivePanelIndex((p) => Math.min(currentIssue.panels.length - 1, p + 1))}
+                                style={{
+                                  flex: 1,
+                                  padding: '0.75rem',
+                                  borderRadius: '12px',
+                                  border: 'none',
+                                  background: activePanelIndex === currentIssue.panels.length - 1 ? 'rgba(255,255,255,0.1)' : 'linear-gradient(135deg, #059669, #10b981)',
+                                  color: '#ffffff',
+                                  fontWeight: 900,
+                                  cursor: activePanelIndex === currentIssue.panels.length - 1 ? 'not-allowed' : 'pointer',
+                                  opacity: activePanelIndex === currentIssue.panels.length - 1 ? 0.4 : 1,
+                                }}
+                              >
+                                Next Panel →
+                              </button>
+                            </div>
+                          </div>
+                        )
+                      }
+
+                      // Webtoon Vertical Continuous Flow
+                      return (
+                        <div style={{ maxWidth: '820px', margin: '0 auto', display: 'flex', flexDirection: 'column', gap: '1.75rem' }}>
+                          {/* Issue Header Banner */}
+                          <div style={{ textAlign: 'center', padding: '1.25rem', background: 'rgba(5, 150, 105, 0.1)', border: '1px solid rgba(5, 150, 105, 0.3)', borderRadius: '16px' }}>
+                            <div style={{ fontSize: '2.5rem', marginBottom: '6px' }}>{currentIssue.coverEmoji}</div>
+                            <h3 style={{ fontSize: '1.35rem', fontWeight: 900, margin: '0 0 4px', color: '#10b981' }}>{currentIssue.title}</h3>
+                            <p style={{ fontSize: '0.88rem', opacity: 0.8, margin: 0, fontStyle: 'italic' }}>{currentIssue.synopsis}</p>
+                          </div>
+
+                          {currentIssue.panels.map((panel, pIdx) => (
+                            <div
+                              key={pIdx}
+                              style={{
+                                background: comicTheme === 'cyber' ? '#0a0f1d' : comicTheme === 'noir' ? '#09090b' : comicTheme === 'sepia' ? '#f4ebd0' : '#ffffff',
+                                border: comicTheme === 'cyber' ? '2px solid #059669' : comicTheme === 'noir' ? '2px solid #27272a' : '2px solid #0f172a',
+                                borderRadius: '16px',
+                                overflow: 'hidden',
+                                boxShadow: comicTheme === 'cyber' ? '0 8px 30px rgba(5, 150, 105, 0.2)' : '0 8px 24px rgba(0,0,0,0.12)',
+                                position: 'relative',
+                              }}
+                            >
+                              {panel.narrative && (
+                                <div style={{ background: '#fef08a', color: '#713f12', padding: '0.65rem 1rem', fontSize: '0.82rem', fontWeight: 800, borderBottom: '2px solid #0f172a', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
+                                  📌 {panel.narrative}
+                                </div>
+                              )}
+
+                              <div style={{ padding: isMobile ? '1.5rem 1rem' : '2.5rem 1.5rem', background: 'radial-gradient(ellipse at center, rgba(16, 185, 129, 0.12), transparent 70%)', display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', position: 'relative' }}>
+                                {panel.sfx && (
+                                  <div style={{ position: 'absolute', top: '10px', right: '12px', background: '#dc2626', color: '#ffffff', fontWeight: 900, fontStyle: 'italic', fontSize: '0.85rem', padding: '3px 10px', borderRadius: '6px', transform: 'rotate(-5deg)', boxShadow: '0 4px 10px rgba(220, 38, 38, 0.4)', letterSpacing: '0.05em' }}>
+                                    💥 {panel.sfx}
+                                  </div>
+                                )}
+                                <div style={{ fontSize: isMobile ? '3.5rem' : '4.5rem', marginBottom: '0.5rem', filter: 'drop-shadow(0 6px 16px rgba(0,0,0,0.4))' }}>
+                                  {panel.illustrationEmoji}
+                                </div>
+                                <div style={{ fontSize: isMobile ? '0.85rem' : '0.98rem', fontWeight: 700, opacity: 0.9, maxWidth: '600px', lineHeight: 1.45 }}>
+                                  {panel.illustrationVisual}
+                                </div>
+                              </div>
+
+                              {panel.codeSnippet && (
+                                <div style={{ margin: '0 1rem 1rem', background: '#020617', border: '1px solid #1e293b', borderRadius: '10px', overflow: 'hidden' }}>
+                                  <div style={{ background: '#0f172a', padding: '4px 10px', fontSize: '0.72rem', color: '#38bdf8', fontWeight: 800, display: 'flex', justifyContent: 'space-between' }}>
+                                    <span>💻 Terminal Intrusion Log</span>
+                                    <span>🔒 Live Cyber Execution</span>
+                                  </div>
+                                  <pre style={{ margin: 0, padding: '0.75rem', fontFamily: 'monospace', fontSize: '0.78rem', color: '#4ade80', overflowX: 'auto', lineHeight: 1.5 }}>
+                                    <code>{panel.codeSnippet}</code>
+                                  </pre>
+                                </div>
+                              )}
+
+                              {panel.terminalOutput && (
+                                <div style={{ margin: '0 1rem 1rem', background: '#020617', border: '1px solid #059669', borderRadius: '10px', padding: '0.75rem', fontFamily: 'monospace', fontSize: '0.76rem', color: '#34d399', whiteSpace: 'pre-wrap', lineHeight: 1.5 }}>
+                                  {panel.terminalOutput}
+                                </div>
+                              )}
+
+                              {panel.dialogue && (
+                                <div style={{ padding: '1rem', borderTop: comicTheme === 'cyber' ? '1px solid #1e293b' : '1px solid #e2e8f0', background: comicTheme === 'cyber' ? 'rgba(255,255,255,0.02)' : 'rgba(0,0,0,0.02)', display: 'flex', gap: '0.75rem', alignItems: 'flex-start' }}>
+                                  <div style={{ fontSize: '2rem', flexShrink: 0 }}>{panel.avatarEmoji || '🧑‍💻'}</div>
+                                  <div style={{ flex: 1 }}>
+                                    <div style={{ fontWeight: 800, fontSize: '0.78rem', color: '#10b981', textTransform: 'uppercase', marginBottom: '2px' }}>
+                                      {panel.characterName || 'Character'}
+                                    </div>
+                                    <div style={{ background: comicTheme === 'cyber' ? '#131c31' : '#f1f5f9', border: '1.5px solid #2563eb', borderRadius: '0 12px 12px 12px', padding: '0.75rem 1rem', fontSize: '0.88rem', fontWeight: 600, color: comicTheme === 'cyber' || comicTheme === 'noir' ? '#ffffff' : '#0f172a', lineHeight: 1.45 }}>
+                                      💬 “{panel.dialogue}”
+                                    </div>
+                                    {panel.thought && (
+                                      <div style={{ marginTop: '6px', fontStyle: 'italic', fontSize: '0.78rem', opacity: 0.8, color: '#93c5fd', paddingLeft: '8px' }}>
+                                        💭 <em>(Thought: {panel.thought})</em>
+                                      </div>
+                                    )}
+                                  </div>
+                                </div>
+                              )}
+                            </div>
+                          ))}
+                        </div>
+                      )
+                    })()}
+                  </div>
+                </div>
+              ) : activeHandbook ? (
+                // 2. NATIVE ACADEMIC HANDBOOK & E-TEXTBOOK READER
                 <div style={{ display: 'flex', flex: 1, minHeight: '100%', position: 'relative' }}>
                   {/* Desktop Left Table of Contents Sidebar */}
                   {!isMobile && !isTocCollapsed && (
@@ -2099,13 +2719,19 @@ export function ResourceLibrary() {
                     </label>
                     <input
                       type="text"
+                      list="categorySuggestions"
                       required
                       className="input"
                       style={{ fontSize: '0.9rem', padding: '0.75rem' }}
-                      placeholder="Type category (e.g. Revision Notes, Past Papers, Lab Manual)"
+                      placeholder="e.g. Comic Books, Textbooks, Past Papers"
                       value={newCategory}
-                      onChange={(e) => setNewCategory(e.target.value as any)}
+                      onChange={(e) => setNewCategory(e.target.value)}
                     />
+                    <datalist id="categorySuggestions">
+                      {dynamicCategories.filter((c) => c !== 'All' && !c.includes('Starred')).map((cat) => (
+                        <option key={cat} value={cat} />
+                      ))}
+                    </datalist>
                   </div>
                   <div style={{ flex: '1 1 140px', minWidth: '120px' }}>
                     <label className="label" style={{ fontWeight: 700, fontSize: '0.82rem', marginBottom: '0.35rem' }}>
@@ -2131,7 +2757,7 @@ export function ResourceLibrary() {
                     required
                     className="input"
                     style={{ fontSize: '0.9rem', padding: '0.75rem' }}
-                    placeholder="Type subject (e.g. Full-Stack Web Development, Python, French, Accounting)"
+                    placeholder="Type subject (e.g. Cybersecurity, Full-Stack Development, Graphic Arts)"
                     value={newSubject}
                     onChange={(e) => setNewSubject(e.target.value)}
                   />
@@ -2145,9 +2771,37 @@ export function ResourceLibrary() {
                     type="text"
                     className="input"
                     style={{ fontSize: '0.9rem', padding: '0.75rem' }}
-                    placeholder="e.g. Certificate / Diploma / All Trainees"
+                    placeholder="e.g. All Trainees / Diploma / Certificate"
                     value={newClassLevel}
                     onChange={(e) => setNewClassLevel(e.target.value)}
+                  />
+                </div>
+
+                <div>
+                  <label className="label" style={{ fontWeight: 700, fontSize: '0.82rem', marginBottom: '0.35rem' }}>
+                    Synopsis / Summary Description (Optional)
+                  </label>
+                  <textarea
+                    rows={2}
+                    className="input"
+                    style={{ fontSize: '0.85rem', padding: '0.65rem', resize: 'vertical' }}
+                    placeholder="Provide a brief summary or key study outcomes for this resource..."
+                    value={newDescription}
+                    onChange={(e) => setNewDescription(e.target.value)}
+                  />
+                </div>
+
+                <div>
+                  <label className="label" style={{ fontWeight: 700, fontSize: '0.82rem', marginBottom: '0.35rem' }}>
+                    Search Keywords & Tags (Optional, comma-separated)
+                  </label>
+                  <input
+                    type="text"
+                    className="input"
+                    style={{ fontSize: '0.85rem', padding: '0.65rem' }}
+                    placeholder="e.g. comic, hacker, python, cybersecurity, exam, revision"
+                    value={newTagsInput}
+                    onChange={(e) => setNewTagsInput(e.target.value)}
                   />
                 </div>
 
@@ -2177,6 +2831,146 @@ export function ResourceLibrary() {
                   style={{ fontWeight: 800, padding: '0.75rem 1.5rem' }}
                 >
                   {isUploading ? '⏳ Uploading & Saving...' : '✓ Publish to E-Library'}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Add Custom Category Modal (Faculty Only) */}
+      {showAddCatModal && (
+        <div className="modal-overlay" onClick={() => setShowAddCatModal(false)}>
+          <div
+            className="modal-content modal-sm"
+            onClick={(e) => e.stopPropagation()}
+            style={{
+              borderRadius: '20px',
+              maxWidth: '460px',
+              width: '92%',
+              overflow: 'hidden',
+              boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.5)',
+              background: '#ffffff',
+            }}
+          >
+            <div style={{ padding: '1.25rem 1.5rem', background: '#0f172a', color: '#ffffff', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                <span style={{ fontSize: '1.25rem' }}>🏷️</span>
+                <h3 style={{ color: '#ffffff', fontSize: '1.05rem', fontWeight: 800, margin: 0 }}>
+                  Add Custom Category
+                </h3>
+              </div>
+              <button
+                type="button"
+                onClick={() => setShowAddCatModal(false)}
+                style={{ color: '#ffffff', background: 'rgba(255, 255, 255, 0.15)', border: 'none', borderRadius: '50%', width: '28px', height: '28px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+              >
+                ✕
+              </button>
+            </div>
+
+            <form
+              onSubmit={(e) => {
+                e.preventDefault()
+                handleAddCustomCategory(newCustomCategoryInput)
+              }}
+              style={{ padding: '1.25rem 1.5rem', display: 'flex', flexDirection: 'column', gap: '1rem' }}
+            >
+              <div>
+                <label className="label" style={{ fontWeight: 700, fontSize: '0.82rem', marginBottom: '0.35rem' }}>
+                  New Category Name *
+                </label>
+                <input
+                  type="text"
+                  required
+                  autoFocus
+                  className="input"
+                  style={{ fontSize: '0.9rem', padding: '0.75rem' }}
+                  placeholder="e.g. Comic Books, Audiobooks, CPA Revision"
+                  value={newCustomCategoryInput}
+                  onChange={(e) => setNewCustomCategoryInput(e.target.value)}
+                />
+              </div>
+
+              {/* Quick Preset Suggestions */}
+              <div>
+                <div style={{ fontSize: '0.75rem', fontWeight: 700, color: '#64748b', marginBottom: '0.4rem' }}>
+                  Quick Suggestions:
+                </div>
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.4rem' }}>
+                  {['Comic Books', 'Graphic Novels & Manga', 'Audiobooks', 'Podcasts & Media', 'KASNEB / CPA', 'International Exams', 'Barista Guides', 'Research Papers'].map((sug) => (
+                    <button
+                      key={sug}
+                      type="button"
+                      onClick={() => setNewCustomCategoryInput(sug)}
+                      style={{
+                        background: '#f1f5f9',
+                        border: '1px solid #cbd5e1',
+                        borderRadius: '6px',
+                        padding: '3px 8px',
+                        fontSize: '0.72rem',
+                        fontWeight: 600,
+                        color: '#334155',
+                        cursor: 'pointer',
+                      }}
+                    >
+                      + {sug}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Active Custom Categories */}
+              {customCategories.length > 0 && (
+                <div>
+                  <div style={{ fontSize: '0.75rem', fontWeight: 700, color: '#64748b', marginBottom: '0.4rem' }}>
+                    Active Custom Categories:
+                  </div>
+                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.35rem' }}>
+                    {customCategories.map((c) => (
+                      <span
+                        key={c}
+                        style={{
+                          background: '#eff6ff',
+                          color: '#1e40af',
+                          border: '1px solid #bfdbfe',
+                          borderRadius: '8px',
+                          padding: '2px 8px',
+                          fontSize: '0.72rem',
+                          fontWeight: 700,
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          gap: '4px',
+                        }}
+                      >
+                        {c}
+                        <button
+                          type="button"
+                          onClick={() => handleDeleteCustomCategory(c)}
+                          style={{ border: 'none', background: 'none', color: '#ef4444', cursor: 'pointer', fontWeight: 900, padding: 0 }}
+                        >
+                          ✕
+                        </button>
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.75rem', marginTop: '0.5rem' }}>
+                <button
+                  type="button"
+                  className="btn btn-secondary btn-sm"
+                  onClick={() => setShowAddCatModal(false)}
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="btn btn-primary btn-sm"
+                  style={{ fontWeight: 800 }}
+                >
+                  ✓ Save Category
                 </button>
               </div>
             </form>

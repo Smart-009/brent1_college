@@ -197,16 +197,18 @@ export interface BiometricFeeClearancePass {
 export interface AcademicResource {
   id: string
   title: string
-  category: 'Past Papers' | 'Revision Notes' | 'Textbooks' | 'Syllabus' | 'Marking Schemes' | 'Lab Manuals'
+  category: 'Past Papers' | 'Revision Notes' | 'Textbooks' | 'Syllabus' | 'Marking Schemes' | 'Lab Manuals' | 'Comic Books' | 'Graphic Novels & Manga' | string
   subject: string
   class_level: string // e.g. "All Forms", "Form 4 / Year 12", "Form 3"
   file_url: string
   file_size: string
-  file_type: 'PDF' | 'DOCX' | 'PPTX' | 'EPUB'
+  file_type: 'PDF' | 'DOCX' | 'PPTX' | 'EPUB' | 'COMIC' | 'IMAGE' | 'SHEET' | 'TEXT' | 'MEDIA' | string
   downloads_count: number
   year?: number
   uploaded_by: string
   created_at: string
+  description?: string
+  tags?: string[]
 }
 
 export interface DisciplineRecord {

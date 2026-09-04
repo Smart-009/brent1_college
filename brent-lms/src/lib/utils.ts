@@ -231,8 +231,8 @@ export function getEmbeddableDocumentUrl(url: string, engine: 'cloud' | 'direct'
     return gdriveEmbed
   }
 
-  // 2. Base64 Data URL or Blob URL or internal academic scheme
-  if (trimmed.startsWith('data:') || trimmed.startsWith('blob:') || trimmed.startsWith('academic://')) {
+  // 2. Base64 Data URL or Blob URL or internal academic/comic scheme
+  if (trimmed.startsWith('data:') || trimmed.startsWith('blob:') || trimmed.startsWith('academic://') || trimmed.startsWith('comic://')) {
     return trimmed
   }
 

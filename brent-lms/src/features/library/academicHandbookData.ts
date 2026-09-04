@@ -367,3 +367,283 @@ export const ACADEMIC_HANDBOOKS: Record<string, AcademicHandbook> = {
     ],
   },
 }
+
+// ============================================================
+// COMIC BOOKS & GRAPHIC NOVELS ENGINE
+// ============================================================
+
+export interface ComicPanel {
+  panelNumber: number
+  characterName?: string
+  avatarEmoji?: string
+  dialogue?: string
+  thought?: string
+  narrative?: string
+  sfx?: string
+  backgroundTheme: 'cyber' | 'action' | 'noir' | 'scifi' | 'campus' | 'dramatic'
+  illustrationEmoji: string
+  illustrationVisual: string
+  codeSnippet?: string
+  terminalOutput?: string
+}
+
+export interface ComicIssue {
+  issueNumber: number
+  title: string
+  synopsis: string
+  coverEmoji: string
+  panels: ComicPanel[]
+}
+
+export interface ComicBook {
+  id: string
+  title: string
+  series: string
+  volume: string
+  genre: 'Cyberpunk & Security' | 'Tech Mystery & Noir' | 'Manga & Sci-Fi' | 'AI & Future Tech'
+  author: string
+  illustrator: string
+  year: number
+  estimatedReadTime: string
+  coverEmoji: string
+  coverColor: string
+  synopsis: string
+  issues: ComicIssue[]
+}
+
+export const COMIC_BOOKS_DATA: Record<string, ComicBook> = {
+  'comic-cyber-sentinel': {
+    id: 'comic-cyber-sentinel',
+    title: 'The Cyber Sentinel: Rise of the White Hat',
+    series: 'Cyber Sentinel Chronicles',
+    volume: 'Volume 1 — Genesis Breach',
+    genre: 'Cyberpunk & Security',
+    author: 'Alex Mwangi',
+    illustrator: 'Éclat Interactive Studios',
+    year: 2026,
+    estimatedReadTime: '15 mins',
+    coverEmoji: '🛡️',
+    coverColor: '#0ea5e9',
+    synopsis: 'When a rogue AI syndicate infiltrates the national power grid, trainee cybersecurity engineer Kaelen must deploy zero-day countermeasures before the city goes dark.',
+    issues: [
+      {
+        issueNumber: 1,
+        title: 'Issue #1: Midnight Protocol',
+        synopsis: 'A suspicious beacon blinks on the terminal at 02:43 AM. The mainframe defense alarms trigger.',
+        coverEmoji: '⚡',
+        panels: [
+          {
+            panelNumber: 1,
+            narrative: 'Nairobi Metropolis — 02:43 AM. The servers in the Éclat Cyber Range hum under an unprecedented surge.',
+            backgroundTheme: 'cyber',
+            illustrationEmoji: '🏙️',
+            illustrationVisual: 'Towering neon skyscrapers reflected across rain-slicked server farm glass.',
+            sfx: '*HUMMMMMMMM*',
+          },
+          {
+            panelNumber: 2,
+            characterName: 'Kaelen (White Hat Trainee)',
+            avatarEmoji: '👨‍💻',
+            dialogue: 'Wait… this isn’t a standard port scan. Someone is injecting encrypted payload packets into port 443!',
+            thought: 'If that rogue packet hits the authentication gateway, all credentials will be wiped!',
+            backgroundTheme: 'cyber',
+            illustrationEmoji: '🚨',
+            illustrationVisual: 'Red telemetry alerts flash violently across three curved OLED monitors.',
+            sfx: '*BEEP-BEEP-BEEP*',
+            codeSnippet: 'tcpdump -i eth0 "tcp[tcpflags] & (tcp-syn) != 0" -c 50\nALERT: [192.168.1.105 -> 10.0.0.1:443] MALICIOUS SYN FLOOD DETECTED',
+          },
+          {
+            panelNumber: 3,
+            characterName: 'Dr. Naomi (Chief Cyber Instructor)',
+            avatarEmoji: '👩‍🏫',
+            dialogue: 'Stay calm, Kaelen! Isolate the subnet immediately and spin up the honeypot firewall!',
+            backgroundTheme: 'action',
+            illustrationEmoji: '⚡',
+            illustrationVisual: 'Dr. Naomi steps into the command cockpit, deploying biometric override authorization.',
+            sfx: '*ACCESS AUTHORIZED*',
+          },
+          {
+            panelNumber: 4,
+            characterName: 'Kaelen',
+            avatarEmoji: '👨‍💻',
+            dialogue: 'Executing iptables rate-limiting rules and tracing source hops now!',
+            backgroundTheme: 'cyber',
+            illustrationEmoji: '💻',
+            illustrationVisual: 'Fingers fly across the mechanical keyboard at 120 words per minute.',
+            sfx: '*CLACK-CLACK-CLACK-ENTER!*',
+            terminalOutput: '[+] iptables -A INPUT -p tcp --dport 443 -m connlimit --connlimit-above 20 -j DROP\n[+] Threat Neutralized: 45,000 Botnet IP Addresses Blocked.',
+          },
+          {
+            panelNumber: 5,
+            narrative: 'The alarm silence descends. But deep inside the log files, a hidden digital signature remains...',
+            backgroundTheme: 'dramatic',
+            illustrationEmoji: '👁️',
+            illustrationVisual: 'A mysterious neon emblem with the letters "SYN-X" flashes for 0.1 seconds before dissolving.',
+            sfx: '*STATIC SHIVER*',
+          },
+        ],
+      },
+      {
+        issueNumber: 2,
+        title: 'Issue #2: The Shadow Infiltration',
+        synopsis: 'Kaelen and team follow the digital breadcrumbs to an abandoned data center in the industrial district.',
+        coverEmoji: '🕵️',
+        panels: [
+          {
+            panelNumber: 1,
+            narrative: 'Next Morning — The forensics team recovers an encrypted USB drive left on the server chassis.',
+            backgroundTheme: 'noir',
+            illustrationEmoji: '💾',
+            illustrationVisual: 'High security evidence locker glowing in ultraviolet light.',
+            sfx: '*CLICK*',
+          },
+          {
+            panelNumber: 2,
+            characterName: 'Kaelen',
+            avatarEmoji: '👨‍💻',
+            dialogue: 'Sandboxing this binary inside an isolated Linux VM... let’s see what payload they tried to deliver.',
+            backgroundTheme: 'cyber',
+            illustrationEmoji: '🔬',
+            illustrationVisual: 'Hex dump stream unrolling on screen revealing hidden ASCII art.',
+            codeSnippet: 'gdb ./suspect_payload.bin\n(gdb) disassemble main\n0x08048430: mov eax, 0x1\n0x08048435: int 0x80 ; Syscall Exfiltration Routine',
+          },
+          {
+            panelNumber: 3,
+            characterName: 'Dr. Naomi',
+            avatarEmoji: '👩‍🏫',
+            dialogue: 'This is military-grade encryption. Whoever built this knows our architecture inside out.',
+            backgroundTheme: 'dramatic',
+            illustrationEmoji: '⚠️',
+            illustrationVisual: 'A satellite link map tracing servers across 6 continents.',
+            sfx: '*PING-PONG*',
+          },
+        ],
+      },
+    ],
+  },
+
+  'comic-sql-detective': {
+    id: 'comic-sql-detective',
+    title: 'Data Detective: The SQL Injection Mystery',
+    series: 'Tech Detective Bureau',
+    volume: 'Case File #101',
+    genre: 'Tech Mystery & Noir',
+    author: 'Samira Noor',
+    illustrator: 'Kenya Manga Guild',
+    year: 2026,
+    estimatedReadTime: '12 mins',
+    coverEmoji: '🔍',
+    coverColor: '#eab308',
+    synopsis: 'When a bank ledger is modified without an audit trail, Detective Cipher uses parameterized queries and database forensics to catch the digital phantom.',
+    issues: [
+      {
+        issueNumber: 1,
+        title: 'Case 1: The Dropped Table Incident',
+        synopsis: 'A classic SQL injection vulnerability leaves a financial database wide open.',
+        coverEmoji: '🗄️',
+        panels: [
+          {
+            panelNumber: 1,
+            narrative: 'The Bank of Rift Valley — 11:00 PM. A mysterious transfer of KES 50,000,000 disappears into thin air.',
+            backgroundTheme: 'noir',
+            illustrationEmoji: '🏦',
+            illustrationVisual: 'Dimly lit audit office with towering paper records and glowing terminal matrices.',
+            sfx: '*TICK... TOCK...*',
+          },
+          {
+            panelNumber: 2,
+            characterName: 'Detective Cipher',
+            avatarEmoji: '🕵️‍♂️',
+            dialogue: 'Let me look at the backend login script... Great heavens, look at this query concatenation!',
+            backgroundTheme: 'noir',
+            illustrationEmoji: '🔎',
+            illustrationVisual: 'Magnifying glass focused over raw backend PHP script from 2012.',
+            codeSnippet: '// VULNERABLE CODE FOUND:\n$query = "SELECT * FROM users WHERE user=\'" . $_POST["user"] . "\' AND pass=\'" . $_POST["pass"] . "\'";',
+          },
+          {
+            panelNumber: 3,
+            characterName: 'Detective Cipher',
+            avatarEmoji: '🕵️‍♂️',
+            dialogue: 'The suspect entered: \' OR \'1\'=\'1\' -- and bypassed the entire authentication layer!',
+            backgroundTheme: 'action',
+            illustrationEmoji: '💡',
+            illustrationVisual: 'Lightbulb moment illuminating the entire detective squad room.',
+            sfx: '*EUREKA!*',
+          },
+          {
+            panelNumber: 4,
+            characterName: 'Trainee Junior',
+            avatarEmoji: '🧑‍💻',
+            dialogue: 'How do we secure this permanently, Detective?',
+            backgroundTheme: 'campus',
+            illustrationEmoji: '🛡️',
+            illustrationVisual: 'Detective Cipher writing parameterized prepared statements on the glass whiteboard.',
+            codeSnippet: '// SECURE PARAMETERIZED QUERY (PREVENTS INJECTION 100%):\n$stmt = $pdo->prepare("SELECT id, name FROM users WHERE user = :user AND pass_hash = :hash");\n$stmt->execute([":user" => $cleanUser, ":hash" => $passwordHash]);',
+          },
+        ],
+      },
+    ],
+  },
+
+  'comic-silicon-savannah': {
+    id: 'comic-silicon-savannah',
+    title: 'Silicon Savannah: Zawadi’s AI Quest',
+    series: 'African Tech Heroes Manga',
+    volume: 'Volume 1 — Zero to One',
+    genre: 'Manga & Sci-Fi',
+    author: 'Zawadi Mwangi & Studio 254',
+    illustrator: 'Nairobi Graphic Arts',
+    year: 2026,
+    estimatedReadTime: '18 mins',
+    coverEmoji: '🌱',
+    coverColor: '#10b981',
+    synopsis: 'Armed with a laptop and solar panels, a young Kenyan inventor builds an AI drone ecosystem to protect crops against climate volatility.',
+    issues: [
+      {
+        issueNumber: 1,
+        title: 'Episode 1: The Hackathon Spark',
+        synopsis: 'The 48-hour Pan-African Innovation Challenge begins at Éclat Institute.',
+        coverEmoji: '🚀',
+        panels: [
+          {
+            panelNumber: 1,
+            narrative: 'Nairobi Innovation Hub — 48 hours remain on the grand hackathon timer.',
+            backgroundTheme: 'campus',
+            illustrationEmoji: '🎪',
+            illustrationVisual: 'Packed auditorium filled with 500 enthusiastic developers, hardware kits, and espresso machines.',
+            sfx: '*CHEERING & BUZZ*',
+          },
+          {
+            panelNumber: 2,
+            characterName: 'Zawadi',
+            avatarEmoji: '👩‍🔬',
+            dialogue: 'If we train an edge-AI computer vision model on low-power Raspberry Pi chips, farmers can diagnose crop blight in real time without needing 5G internet!',
+            backgroundTheme: 'action',
+            illustrationEmoji: '🤖',
+            illustrationVisual: 'Zawadi holds up an ultra-compact carbon-fiber quadcopter drone.',
+            sfx: '*WHIRRRRRRR*',
+          },
+          {
+            panelNumber: 3,
+            characterName: 'Team Coder (Juma)',
+            avatarEmoji: '🧑‍💻',
+            dialogue: 'Deploying our PyTorch Mobile model with 98.4% accuracy on African maize blight datasets!',
+            backgroundTheme: 'cyber',
+            illustrationEmoji: '📊',
+            illustrationVisual: 'Live computer vision boundary boxes tagging healthy vs diseased leaves.',
+            terminalOutput: 'Model: CropVision-YOLO-v11-Edge\nLatency: 14ms per frame\nInference: ONNX Runtime Optimized\nVerdict: 100% Offline Capable',
+          },
+          {
+            panelNumber: 4,
+            narrative: 'The judges award First Place to Team Savannah. A new generation of African tech leadership is born!',
+            backgroundTheme: 'dramatic',
+            illustrationEmoji: '🏆',
+            illustrationVisual: 'Gold trophy raised high under confetti cannons.',
+            sfx: '*CONFETTI POP!*',
+          },
+        ],
+      },
+    ],
+  },
+}
+
