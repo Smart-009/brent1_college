@@ -101,6 +101,14 @@ export function ResourceLibrary() {
     }
   }, [])
 
+  const handleClearAllResources = async () => {
+    if (!isAdmin) return
+    if (window.confirm('Are you sure you want to delete ALL library resources across all devices?')) {
+      await schoolStore.clearAllResources()
+      setResources([])
+    }
+  }
+
   // Fullscreen In-App Viewer State
   const [readingResource, setReadingResource] = useState<AcademicResource | null>(null)
   const [readerTheme, setReaderTheme] = useState<'light' | 'sepia' | 'dark'>('light')
@@ -642,6 +650,16 @@ export function ResourceLibrary() {
               >
                 + 📁 Upload Material / Document
               </button>
+              {resources.length > 0 && (
+                <button
+                  type="button"
+                  className="btn btn-outline"
+                  onClick={handleClearAllResources}
+                  style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', fontWeight: 600, fontSize: '0.85rem', color: '#dc2626', borderColor: '#fca5a5' }}
+                >
+                  🗑️ Clear All
+                </button>
+              )}
             </>
           )}
         </div>

@@ -679,7 +679,8 @@ export const INITIAL_COURSE_UNITS: CourseUnit[] = [
 
 export const INITIAL_INVOICES: FeeInvoice[] = []
 export const INITIAL_RECEIPTS: FeePaymentReceipt[] = []
-export const INITIAL_RESOURCES: AcademicResource[] = [
+export const INITIAL_RESOURCES: AcademicResource[] = []
+export const FALLBACK_SAMPLE_RESOURCES: AcademicResource[] = [
   {
     id: 'res-fullstack-guide',
     title: 'Full-Stack Web Development & Modern React 19 Mastery Handbook',
@@ -896,7 +897,23 @@ class SchoolDataStore {
   private setupRealtimeSync() {
     try {
       this.syncChannel = supabase.channel('eclat-cloud-sync')
-        .on('broadcast', { event: 'store_data_sync' }, () => {
+        .on('broadcast', { event: 'store_data_sync' }, (payload: any) => {
+          const eventType = payload?.payload?.type
+          const eventData = payload?.payload?.data
+          if (eventType === 'COLLECTION_UPDATED_RESOURCES' && Array.isArray(eventData)) {
+            this.set('resources', eventData)
+            schoolEventBus.publish('LIBRARY_UPDATED' as any)
+            window.dispatchEvent(new CustomEvent('eclat-data-synced'))
+          } else if (eventType === 'COLLECTION_UPDATED_CUSTOM_CATEGORIES' && Array.isArray(eventData)) {
+            this.set('custom_categories', eventData)
+            schoolEventBus.publish('LIBRARY_UPDATED' as any)
+            window.dispatchEvent(new CustomEvent('eclat-data-synced'))
+          } else if (eventType === 'RESOURCE_DELETED' && typeof eventData === 'string') {
+            const remaining = this.getResources().filter((r) => r.id !== eventData)
+            this.set('resources', remaining)
+            schoolEventBus.publish('LIBRARY_UPDATED' as any)
+            window.dispatchEvent(new CustomEvent('eclat-data-synced'))
+          }
           this.syncWithCloud(true).catch(() => {})
         })
         .subscribe()
@@ -1006,6 +1023,8 @@ class SchoolDataStore {
     let libraryUpdated = false
 
     try {
+      let syncedResourcesFromCloud = false
+
       // 1. Sync from Universal Cloud State Sync Table (app_cloud_sync) if present
       try {
         const { data: cloudSyncRows, error: syncErr } = await supabase
@@ -1014,52 +1033,26 @@ class SchoolDataStore {
 
         if (!syncErr && cloudSyncRows && cloudSyncRows.length > 0) {
           for (const row of cloudSyncRows) {
-            if (!row.key || !row.data) continue
+            if (!row.key || row.data === undefined) continue
 
-            if (row.key === 'resources' && Array.isArray(row.data) && row.data.length > 0) {
-              const localRes = this.getResources()
-              const resMap = new Map<string, AcademicResource>()
-              for (const item of localRes) resMap.set(item.id, item)
-              for (const item of row.data) resMap.set(item.id, item)
-              const merged = Array.from(resMap.values())
-              this.set('resources', merged)
+            if (row.key === 'resources' && Array.isArray(row.data)) {
+              this.set('resources', row.data)
+              syncedResourcesFromCloud = true
               libraryUpdated = true
             } else if (row.key === 'custom_categories' && Array.isArray(row.data)) {
-              const localCats = this.getCustomCategories()
-              const mergedCats = Array.from(new Set([...localCats, ...row.data]))
-              this.set('custom_categories', mergedCats)
+              this.set('custom_categories', row.data)
               try {
-                localStorage.setItem('eclat_custom_library_categories', JSON.stringify(mergedCats))
+                localStorage.setItem('eclat_custom_library_categories', JSON.stringify(row.data))
               } catch {}
               libraryUpdated = true
             } else if (row.key === 'course_units' && Array.isArray(row.data)) {
-              const localUnits = this.getCourseUnits()
-              const unitMap = new Map<string, CourseUnit>()
-              for (const item of localUnits) unitMap.set(item.id, item)
-              for (const item of row.data) unitMap.set(item.id, item)
-              const merged = Array.from(unitMap.values())
-              this.set('course_units', merged)
+              this.set('course_units', row.data)
             } else if (row.key === 'subjects' && Array.isArray(row.data)) {
-              const localSubs = this.getSubjects()
-              const subMap = new Map<string, CollegeSubject>()
-              for (const item of localSubs) subMap.set(item.id, item)
-              for (const item of row.data) subMap.set(item.id, item)
-              const merged = Array.from(subMap.values())
-              this.set('subjects', merged)
+              this.set('subjects', row.data)
             } else if (row.key === 'notices' && Array.isArray(row.data)) {
-              const localNotices = this.getNotices()
-              const notMap = new Map<string, SchoolNotice>()
-              for (const item of localNotices) notMap.set(item.id, item)
-              for (const item of row.data) notMap.set(item.id, item)
-              const merged = Array.from(notMap.values())
-              this.set('notices', merged)
+              this.set('notices', row.data)
             } else if (row.key === 'students' && Array.isArray(row.data)) {
-              const localStds = this.getStudents()
-              const stdMap = new Map<string, StudentRecord>()
-              for (const item of localStds) stdMap.set(item.id, item)
-              for (const item of row.data) stdMap.set(item.id, item)
-              const merged = Array.from(stdMap.values())
-              this.set('students', merged)
+              this.set('students', row.data)
             }
           }
         }
@@ -1067,32 +1060,34 @@ class SchoolDataStore {
 
       // 2. Sync Academic Library Resources from Supabase library_resources table
       try {
-        const { data: cloudResources } = await supabase.from('library_resources').select('*').order('created_at', { ascending: false })
-        if (cloudResources && cloudResources.length > 0) {
-          const localResources = this.getResources()
-          const resourceMap = new Map<string, AcademicResource>()
-          for (const lr of localResources) resourceMap.set(lr.id, lr)
-          for (const cr of cloudResources) {
-            resourceMap.set(cr.id, {
-              id: cr.id,
-              title: cr.title,
-              category: cr.category,
-              subject: cr.subject,
-              class_level: cr.class_level || 'Short Course / Certificate',
-              file_url: cr.file_url,
-              file_size: cr.file_size || 'Academic Document',
-              file_type: cr.file_type || 'PDF',
-              downloads_count: cr.downloads_count || 0,
-              year: cr.year || new Date().getFullYear(),
-              uploaded_by: cr.uploaded_by || 'Academic Administrator',
-              created_at: cr.created_at || new Date().toISOString(),
-              description: cr.description || undefined,
-              tags: cr.tags || undefined,
-            })
+        const { data: cloudResources, error: libErr } = await supabase
+          .from('library_resources')
+          .select('*')
+          .order('created_at', { ascending: false })
+
+        if (!libErr && Array.isArray(cloudResources)) {
+          const mapped: AcademicResource[] = cloudResources.map((cr) => ({
+            id: cr.id,
+            title: cr.title,
+            category: cr.category,
+            subject: cr.subject,
+            class_level: cr.class_level || 'Short Course / Certificate',
+            file_url: cr.file_url,
+            file_size: cr.file_size || 'Academic Document',
+            file_type: cr.file_type || 'PDF',
+            downloads_count: cr.downloads_count || 0,
+            year: cr.year || new Date().getFullYear(),
+            uploaded_by: cr.uploaded_by || 'Academic Administrator',
+            created_at: cr.created_at || new Date().toISOString(),
+            description: cr.description || undefined,
+            tags: cr.tags || undefined,
+          }))
+
+          if (!syncedResourcesFromCloud || mapped.length > 0) {
+            this.set('resources', mapped)
+            syncedResourcesFromCloud = true
+            libraryUpdated = true
           }
-          const merged = Array.from(resourceMap.values())
-          this.set('resources', merged)
-          libraryUpdated = true
         }
       } catch {}
 
@@ -1112,50 +1107,27 @@ class SchoolDataStore {
             try {
               if (cc.description && cc.description.startsWith('{')) {
                 const parsed = JSON.parse(cc.description)
-                if (parsed.key === 'resources' && Array.isArray(parsed.data) && parsed.data.length > 0) {
-                  const localRes = this.getResources()
-                  const resMap = new Map<string, AcademicResource>()
-                  for (const item of localRes) resMap.set(item.id, item)
-                  for (const item of parsed.data) resMap.set(item.id, item)
-                  const merged = Array.from(resMap.values())
-                  this.set('resources', merged)
-                  libraryUpdated = true
+                if (parsed.key === 'resources' && Array.isArray(parsed.data)) {
+                  if (!syncedResourcesFromCloud) {
+                    this.set('resources', parsed.data)
+                    syncedResourcesFromCloud = true
+                    libraryUpdated = true
+                  }
                 } else if (parsed.key === 'custom_categories' && Array.isArray(parsed.data)) {
-                  const localCats = this.getCustomCategories()
-                  const mergedCats = Array.from(new Set([...localCats, ...parsed.data]))
-                  this.set('custom_categories', mergedCats)
+                  this.set('custom_categories', parsed.data)
                   try {
-                    localStorage.setItem('eclat_custom_library_categories', JSON.stringify(mergedCats))
+                    localStorage.setItem('eclat_custom_library_categories', JSON.stringify(parsed.data))
                   } catch {}
                   libraryUpdated = true
                 } else if (parsed.key === 'course_units' && Array.isArray(parsed.data)) {
-                  const unitMap = new Map<string, CourseUnit>()
-                  for (const item of localUnits) unitMap.set(item.id, item)
-                  for (const item of parsed.data) unitMap.set(item.id, item)
-                  const merged = Array.from(unitMap.values())
-                  this.set('course_units', merged)
+                  this.set('course_units', parsed.data)
                   unitsUpdated = true
                 } else if (parsed.key === 'subjects' && Array.isArray(parsed.data)) {
-                  const localSubs = this.getSubjects()
-                  const subMap = new Map<string, CollegeSubject>()
-                  for (const item of localSubs) subMap.set(item.id, item)
-                  for (const item of parsed.data) subMap.set(item.id, item)
-                  const merged = Array.from(subMap.values())
-                  this.set('subjects', merged)
+                  this.set('subjects', parsed.data)
                 } else if (parsed.key === 'notices' && Array.isArray(parsed.data)) {
-                  const localNotices = this.getNotices()
-                  const notMap = new Map<string, SchoolNotice>()
-                  for (const item of localNotices) notMap.set(item.id, item)
-                  for (const item of parsed.data) notMap.set(item.id, item)
-                  const merged = Array.from(notMap.values())
-                  this.set('notices', merged)
+                  this.set('notices', parsed.data)
                 } else if (parsed.key === 'students' && Array.isArray(parsed.data)) {
-                  const localStds = this.getStudents()
-                  const stdMap = new Map<string, StudentRecord>()
-                  for (const item of localStds) stdMap.set(item.id, item)
-                  for (const item of parsed.data) stdMap.set(item.id, item)
-                  const merged = Array.from(stdMap.values())
-                  this.set('students', merged)
+                  this.set('students', parsed.data)
                 }
               }
             } catch (syncParseErr) {
@@ -2233,21 +2205,39 @@ class SchoolDataStore {
   }
 
   async deleteResource(id: string): Promise<void> {
+    let remainingList: AcademicResource[] = []
     await txEngine.executeAtomic(
       `DELETE_RESOURCE_${id}`,
       ['eclat_school_resources'],
       () => {
-        const list = this.getResources().filter((r) => r.id !== id)
-        this.set('resources', list)
+        remainingList = this.getResources().filter((r) => r.id !== id)
+        this.set('resources', remainingList)
       }
     )
     schoolEventBus.publish('LIBRARY_UPDATED' as any, id)
     this.broadcastChange('RESOURCE_DELETED', id)
+    this.broadcastChange('COLLECTION_UPDATED_RESOURCES', remainingList)
 
     try {
       await supabase.from('library_resources').delete().eq('id', id)
     } catch {}
-    await this.pushCollectionToCloud('resources', this.getResources())
+    await this.pushCollectionToCloud('resources', remainingList)
+  }
+
+  async clearAllResources(): Promise<void> {
+    await txEngine.executeAtomic(
+      'CLEAR_ALL_RESOURCES',
+      ['eclat_school_resources'],
+      () => {
+        this.set('resources', [])
+      }
+    )
+    schoolEventBus.publish('LIBRARY_UPDATED' as any)
+    this.broadcastChange('COLLECTION_UPDATED_RESOURCES', [])
+    try {
+      await supabase.from('library_resources').delete().neq('id', 'placeholder-none')
+    } catch {}
+    await this.pushCollectionToCloud('resources', [])
   }
 
   getDiscipline(): DisciplineRecord[] {
