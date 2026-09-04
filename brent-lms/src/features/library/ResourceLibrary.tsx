@@ -95,6 +95,7 @@ export function ResourceLibrary() {
   const [readerZoom, setReaderZoom] = useState<number>(100)
   const [drmWarning, setDrmWarning] = useState<string | null>(null)
   const [activeChapterIndex, setActiveChapterIndex] = useState<number>(0)
+  const [isBlurred, setIsBlurred] = useState<boolean>(false)
 
   const activeHandbook: AcademicHandbook | null = useMemo(() => {
     if (!readingResource) return null
@@ -121,6 +122,37 @@ export function ResourceLibrary() {
     }
   }, [readingResource])
 
+  // Anti-Screenshot Focus-Loss & Snipping Tool Detection
+  useEffect(() => {
+    if (!readingResource) return
+
+    const handleWindowBlur = () => {
+      setIsBlurred(true)
+    }
+
+    const handleWindowFocus = () => {
+      setIsBlurred(false)
+    }
+
+    const handleVisibilityChange = () => {
+      if (document.hidden) {
+        setIsBlurred(true)
+      } else {
+        setIsBlurred(false)
+      }
+    }
+
+    window.addEventListener('blur', handleWindowBlur)
+    window.addEventListener('focus', handleWindowFocus)
+    document.addEventListener('visibilitychange', handleVisibilityChange)
+
+    return () => {
+      window.removeEventListener('blur', handleWindowBlur)
+      window.removeEventListener('focus', handleWindowFocus)
+      document.removeEventListener('visibilitychange', handleVisibilityChange)
+    }
+  }, [readingResource])
+
   // DRM Protection: Keyboard save, print, copy and inspect prevention
   useEffect(() => {
     if (!readingResource) return
@@ -142,9 +174,13 @@ export function ResourceLibrary() {
         return
       }
 
-      // Intercept PrintScreen key
-      if (e.key === 'PrintScreen' || e.code === 'PrintScreen') {
+      // Intercept PrintScreen key & Win+Shift+S snipping
+      if (e.key === 'PrintScreen' || e.code === 'PrintScreen' || (e.shiftKey && (e.metaKey || (e as any).key === 'Meta') && e.key.toLowerCase() === 's')) {
         e.preventDefault()
+        setIsBlurred(true)
+        try {
+          navigator.clipboard?.writeText?.('🔒 Protected academic content — Éclat Institute')
+        } catch {}
         setDrmWarning('🔒 Screenshot capture is restricted by DRM policy.')
         setTimeout(() => setDrmWarning(null), 3000)
         return
@@ -827,6 +863,52 @@ export function ResourceLibrary() {
                 position: 'relative',
               }}
             >
+              {/* Blur / Screenshot Blackout Shield */}
+              {isBlurred && (
+                <div
+                  onClick={() => setIsBlurred(false)}
+                  style={{
+                    position: 'absolute',
+                    inset: 0,
+                    zIndex: 99999,
+                    background: 'rgba(7, 10, 18, 0.98)',
+                    backdropFilter: 'blur(35px)',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    color: '#ffffff',
+                    textAlign: 'center',
+                    padding: '2rem',
+                    cursor: 'pointer',
+                  }}
+                >
+                  <div style={{ fontSize: '3.5rem', marginBottom: '1rem' }}>🛡️</div>
+                  <h3 style={{ fontSize: '1.4rem', fontWeight: 900, margin: '0 0 0.5rem', color: '#d4af37' }}>
+                    Screen Capture Protection Active
+                  </h3>
+                  <p style={{ fontSize: '0.92rem', color: '#94a3b8', maxWidth: '420px', margin: '0 0 1.5rem', lineHeight: 1.5 }}>
+                    Screen recording, snipping tools, or background window switching detected.
+                  </p>
+                  <button
+                    type="button"
+                    onClick={() => setIsBlurred(false)}
+                    style={{
+                      background: 'linear-gradient(135deg, #2563eb, #1d4ed8)',
+                      color: '#ffffff',
+                      border: 'none',
+                      padding: '0.65rem 1.6rem',
+                      borderRadius: '12px',
+                      fontWeight: 800,
+                      fontSize: '0.9rem',
+                      cursor: 'pointer',
+                    }}
+                  >
+                    Resume Reading →
+                  </button>
+                </div>
+              )}
+
               {activeHandbook ? (
                 // 1. NATIVE ACADEMIC HANDBOOK & E-TEXTBOOK READER
                 <div style={{ display: 'flex', flex: 1, minHeight: '100%' }}>

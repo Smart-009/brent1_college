@@ -104,6 +104,24 @@ function createWindow() {
     mainWindow.setContentProtection(true)
   } catch (e) {}
 
+  mainWindow.once('ready-to-show', () => {
+    try {
+      mainWindow.setContentProtection(true)
+    } catch (e) {}
+  })
+
+  mainWindow.on('focus', () => {
+    try {
+      mainWindow.setContentProtection(true)
+    } catch (e) {}
+  })
+
+  mainWindow.webContents.on('did-finish-load', () => {
+    try {
+      mainWindow.setContentProtection(true)
+    } catch (e) {}
+  })
+
   // Load app from live production server with auto OTA updates
   if (isDev) {
     mainWindow.loadURL('http://localhost:5173')
