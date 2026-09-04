@@ -1,5 +1,5 @@
 // ============================================================
-// Brent College — ACID Transaction Manager & Data Integrity Engine
+// Éclat Institute — ACID Transaction Manager & Data Integrity Engine
 // ============================================================
 // Enforces:
 // 1. ATOMICITY: Multi-step mutations execute as an all-or-nothing unit with automatic rollback.

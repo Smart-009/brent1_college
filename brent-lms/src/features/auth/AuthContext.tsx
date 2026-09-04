@@ -11,10 +11,10 @@ export const ADMIN_PROFILE: Profile = {
   full_name: `${INSTITUTION_CONFIG.name} Principal & Administrator`,
   admission_number: 'Eclat2026@admin',
   role: 'admin',
-  first_login_at: '2024-01-01T00:00:00Z',
+  first_login_at: '2026-01-01T00:00:00Z',
   access_expires_at: null,
   is_active: true,
-  created_at: '2024-01-01T00:00:00Z',
+  created_at: '2026-01-01T00:00:00Z',
 }
 
 export const DEMO_PROFILES: Record<Role, Profile> = {

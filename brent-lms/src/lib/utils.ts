@@ -1,5 +1,5 @@
 // ============================================================
-// Brent College LMS — Utility Functions
+// Éclat Institute — Utility Functions
 // ============================================================
 
 /** Extract YouTube video ID from any YouTube URL format */
@@ -40,12 +40,12 @@ export function getYouTubeThumbnail(videoId: string): string {
   return `https://img.youtube.com/vi/${videoId}/hqdefault.jpg`
 }
 
-/** Generate a unique activation code like BRENT-X7K2-9PQM */
+/** Generate a unique activation code like ECLAT-X7K2-9PQM */
 export function generateActivationCode(): string {
   const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'
   const rand = (n: number) =>
     Array.from({ length: n }, () => chars[Math.floor(Math.random() * chars.length)]).join('')
-  return `BRENT-${rand(4)}-${rand(4)}`
+  return `ECLAT-${rand(4)}-${rand(4)}`
 }
 
 /** Check if a content item is still within the 24-hour edit window */

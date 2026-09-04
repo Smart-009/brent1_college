@@ -1,9 +1,10 @@
-﻿// ============================================================
+// ============================================================
 // Éclat Institute — Cloud Database Seeder & Sync Utility
 // ============================================================
 
 import { supabase } from './supabase'
 import { INITIAL_DEPARTMENTS, schoolStore } from './schoolData'
+import { OFFICIAL_COURSES } from '@/config/officialCourses'
 import { ACADEMIC_HANDBOOKS } from '@/features/library/academicHandbookData'
 
 export interface SeedResult {
@@ -118,53 +119,18 @@ export async function seedCloudDatabase(): Promise<SeedResult> {
       await supabase.from('courses').upsert(coursePayload, { onConflict: 'id' })
     }
 
-    // 4. Seed Standard Class Cohorts
-    const classesPayload = [
-      {
-        id: 'class-swe-2026',
-        name: 'Full-Stack Web Development (React & Node.js)',
-        grade_level: 'Diploma Cohort 2026',
-        academic_year: '2026',
-        hod_name: 'Eng. Alex Mwangi',
-        fee_amount: 75,
-        duration: '3 Months (Certificate)',
-        shifts: 'Mon, Wed & Fri: 7:30 PM - 9:30 PM EAT',
-        icon: '💻',
-      },
-      {
-        id: 'class-python-2026',
-        name: 'Python for Beginners & Data Analytics',
-        grade_level: 'Diploma Cohort 2026',
-        academic_year: '2026',
-        hod_name: 'Dr. Brian Ochieng',
-        fee_amount: 75,
-        duration: '3 Months (Certificate)',
-        shifts: 'Tue & Thu: 7:30 PM - 9:30 PM EAT',
-        icon: '🐍',
-      },
-      {
-        id: 'class-cyber-2026',
-        name: 'Cybersecurity Fundamentals & Network Defense',
-        grade_level: 'Diploma Cohort 2026',
-        academic_year: '2026',
-        hod_name: 'Mr. David Kiprono',
-        fee_amount: 80,
-        duration: '3 Months (Certificate)',
-        shifts: 'Sat & Sun: 10:00 AM - 1:00 PM EAT',
-        icon: '🛡️',
-      },
-      {
-        id: 'class-comp-2026',
-        name: 'Comprehensive Computer Packages & Digital Skills',
-        grade_level: 'Certificate Cohort 2026',
-        academic_year: '2026',
-        hod_name: 'Mr. James Mutua',
-        fee_amount: 50,
-        duration: '2 Months (Certificate)',
-        shifts: 'Daily Mon-Fri: 6:00 PM - 7:30 PM EAT',
-        icon: '🖥️',
-      },
-    ]
+    // 4. Seed Standard Class Cohorts from Official Course Registry
+    const classesPayload = OFFICIAL_COURSES.map((c) => ({
+      id: `class-${c.id}-2026`,
+      name: c.title,
+      grade_level: 'Cohort 2026',
+      academic_year: '2026',
+      hod_name: c.instructor,
+      fee_amount: c.feeUsd,
+      duration: c.duration,
+      shifts: c.schedule,
+      icon: c.icon,
+    }))
 
     const { error: clErr } = await supabase
       .from('classes')

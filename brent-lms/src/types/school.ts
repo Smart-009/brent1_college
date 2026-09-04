@@ -177,7 +177,7 @@ export interface FeePaymentReceipt {
 
 export interface BiometricFeeClearancePass {
   id: string
-  clearance_code: string // e.g. "BRENT-BIO-2026-98124"
+  clearance_code: string // e.g. "ECLAT-BIO-2026-98124"
   student_id: string
   student_name: string
   admission_number: string

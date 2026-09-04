@@ -8,6 +8,7 @@ import { PageWrapper } from '@/components/layout/PageWrapper'
 import { Button } from '@/components/ui/Button'
 import { Spinner } from '@/components/ui/Spinner'
 import { isAccessExpired, formatDate } from '@/lib/utils'
+import { OFFICIAL_COURSES } from '@/config/officialCourses'
 import type { Profile, Course } from '@/lib/database.types'
 
 export function AdminDashboard() {
@@ -49,7 +50,7 @@ export function AdminDashboard() {
       const teachers = profiles?.filter((p) => p.role === 'teacher') || []
       const expiredStudents = students.filter((s) => isAccessExpired(s.access_expires_at))
 
-      const totalActiveCourses = Math.max(courseCount || 0, storeUnits.length, storeSubjects.length, 12)
+      const totalActiveCourses = Math.max(courseCount || 0, storeUnits.length, storeSubjects.length, OFFICIAL_COURSES.length)
       const totalLessons = storeUnits.reduce((acc, u) => acc + (u.lessons?.length || 0), 0) || Math.max(lessonCount || 0, 24)
 
       return {
