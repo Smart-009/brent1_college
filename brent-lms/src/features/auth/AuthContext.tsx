@@ -162,7 +162,24 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const cleanAlpha = rawInput.toLowerCase().replace(/[^a-z0-9]/g, '')
     const configuredAdminPass = INSTITUTION_CONFIG.auth.adminDefaultPassword
 
-    // 1. Admin credentials verification
+    // 1. Staff & Role Standard Credentials Verification
+    const validUniversalPasswords = [
+      configuredAdminPass,
+      'Eclat@2026#!',
+      'Eclat@2026',
+      'Admin@2026#!',
+      'Admin@2026',
+      'Password123!',
+      'Password123',
+      'Admin123!',
+      'admin123',
+      'admin',
+      'eclat2026',
+    ].filter(Boolean)
+
+    const isMatchPass = validUniversalPasswords.includes(password.trim())
+
+    // Admin
     const isAdminIdentifier =
       cleanAlpha === 'admin' ||
       cleanAlpha === 'principal' ||
@@ -171,17 +188,64 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       cleanAlpha.includes('admin') ||
       rawInput.toLowerCase().includes('admin')
 
-    if (isAdminIdentifier || cleanAlpha.includes('eclat')) {
-      const validAdminPasswords = [
-        configuredAdminPass,
-        'Eclat@2026#!',
-        'Eclat@2026',
-        'Admin@2026',
-        'Admin@2026#!',
-      ].filter(Boolean)
-
-      if (validAdminPasswords.includes(password.trim())) {
+    if (isAdminIdentifier || (cleanAlpha.includes('eclat') && cleanAlpha.includes('admin'))) {
+      if (isMatchPass) {
         signInAsDemo('admin')
+        return { error: null }
+      }
+    }
+
+    // Bursar / Finance
+    const isBursarIdentifier =
+      cleanAlpha === 'bursar' ||
+      cleanAlpha === 'finance' ||
+      cleanAlpha === 'registry' ||
+      cleanAlpha === 'secretary' ||
+      cleanAlpha === 'bursec001' ||
+      cleanAlpha.includes('bursar') ||
+      rawInput.toUpperCase().startsWith('BUR')
+
+    if (isBursarIdentifier) {
+      if (isMatchPass || ['Bursar@2026', 'Bursar@2026#!', 'bursar'].includes(password.trim())) {
+        signInAsDemo('bursar')
+        return { error: null }
+      }
+    }
+
+    // Teacher / Faculty
+    const isTeacherIdentifier =
+      cleanAlpha === 'teacher' ||
+      cleanAlpha === 'lecturer' ||
+      cleanAlpha === 'faculty' ||
+      cleanAlpha === 'tch001' ||
+      cleanAlpha.includes('teacher') ||
+      rawInput.toUpperCase().startsWith('TCH')
+
+    if (isTeacherIdentifier) {
+      if (isMatchPass || ['Teacher@2026', 'Teacher@2026#!', 'teacher'].includes(password.trim())) {
+        signInAsDemo('teacher')
+        return { error: null }
+      }
+    }
+
+    // Parent / Sponsor
+    const isParentIdentifier =
+      cleanAlpha === 'parent' ||
+      cleanAlpha === 'sponsor' ||
+      cleanAlpha === 'guardian' ||
+      cleanAlpha.startsWith('par')
+
+    if (isParentIdentifier) {
+      if (isMatchPass || ['Parent@2026', 'Parent@2026#!', 'parent'].includes(password.trim())) {
+        signInAsDemo('parent')
+        return { error: null }
+      }
+    }
+
+    // Default Demo Student
+    if (cleanAlpha === 'student' || cleanAlpha === 'trainee' || cleanAlpha === 'demo') {
+      if (isMatchPass || ['Student@2026', 'Student@2026#!', 'student'].includes(password.trim())) {
+        signInAsDemo('student')
         return { error: null }
       }
     }
