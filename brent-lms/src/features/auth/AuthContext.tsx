@@ -9,7 +9,7 @@ import type { Profile, Role } from '@/lib/database.types'
 export const ADMIN_PROFILE: Profile = {
   id: '40bcf126-5fa0-4df1-be4b-480088ce315a',
   full_name: `${INSTITUTION_CONFIG.name} Principal & Administrator`,
-  admission_number: 'admin',
+  admission_number: 'Eclat2026@admin',
   role: 'admin',
   first_login_at: '2024-01-01T00:00:00Z',
   access_expires_at: null,
@@ -181,6 +181,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     // Admin
     const isAdminIdentifier =
+      rawInput.toLowerCase() === 'eclat2026@admin' ||
+      rawInput === 'Eclat2026@admin' ||
+      cleanAlpha === 'eclat2026admin' ||
       cleanAlpha === 'admin' ||
       cleanAlpha === 'principal' ||
       cleanAlpha === 'admin001' ||

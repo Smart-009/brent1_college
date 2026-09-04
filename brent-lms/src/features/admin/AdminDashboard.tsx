@@ -32,14 +32,6 @@ export function AdminDashboard() {
     }
   }
 
-  const handlePurgeForLaunch = () => {
-    if (window.confirm('Are you sure you want to purge all test student records, invoices, and inquiries for live production launch?')) {
-      schoolStore.purgeAllDataForLaunch()
-      alert('All system records have been reset cleanly. The system is ready for live production registration.')
-      window.location.reload()
-    }
-  }
-
   // Fetch all user counts
   const { data: stats, isLoading: loadingStats } = useQuery({
     queryKey: ['admin-stats'],
@@ -141,9 +133,6 @@ export function AdminDashboard() {
             </Button>
             <Button variant="outline" size="sm" style={{ color: 'white', borderColor: 'white' }} onClick={() => navigate('/admin/moderation')}>
               🛡️ Content Moderation
-            </Button>
-            <Button variant="danger" size="sm" onClick={handlePurgeForLaunch}>
-              🧹 Launch Mode (Clean Reset)
             </Button>
           </div>
         </div>
