@@ -198,57 +198,83 @@ ALTER TABLE public.exam_sessions ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.report_cards ENABLE ROW LEVEL SECURITY;
 
 -- Read policies for public/students
+DROP POLICY IF EXISTS "Public can view departments" ON public.departments;
 CREATE POLICY "Public can view departments" ON public.departments FOR SELECT USING (true);
+
+DROP POLICY IF EXISTS "Public can view faculty" ON public.faculty_teachers;
 CREATE POLICY "Public can view faculty" ON public.faculty_teachers FOR SELECT USING (true);
+
+DROP POLICY IF EXISTS "Authenticated users can read academic handbooks" ON public.academic_handbooks;
 CREATE POLICY "Authenticated users can read academic handbooks" ON public.academic_handbooks FOR SELECT USING (true);
+
+DROP POLICY IF EXISTS "Public can view course units" ON public.course_units;
 CREATE POLICY "Public can view course units" ON public.course_units FOR SELECT USING (true);
+
+DROP POLICY IF EXISTS "Public can view timetable" ON public.timetable_periods;
 CREATE POLICY "Public can view timetable" ON public.timetable_periods FOR SELECT USING (true);
+
+DROP POLICY IF EXISTS "Public can view published exams" ON public.exam_sessions;
 CREATE POLICY "Public can view published exams" ON public.exam_sessions FOR SELECT USING (true);
 
 -- Student own data policies
+DROP POLICY IF EXISTS "Students can view own biometric passes" ON public.biometric_clearance_passes;
 CREATE POLICY "Students can view own biometric passes" ON public.biometric_clearance_passes
   FOR SELECT USING (student_id = auth.uid()::text OR auth.uid() IS NOT NULL);
 
+DROP POLICY IF EXISTS "Students can view own unit registrations" ON public.unit_registrations;
 CREATE POLICY "Students can view own unit registrations" ON public.unit_registrations
   FOR SELECT USING (student_id = auth.uid()::text OR auth.uid() IS NOT NULL);
 
+DROP POLICY IF EXISTS "Students can view own report cards" ON public.report_cards;
 CREATE POLICY "Students can view own report cards" ON public.report_cards
   FOR SELECT USING (student_id = auth.uid()::text OR auth.uid() IS NOT NULL);
 
 -- Staff Full Access Policies
+DROP POLICY IF EXISTS "Staff can manage departments" ON public.departments;
 CREATE POLICY "Staff can manage departments" ON public.departments
   FOR ALL USING (public.get_auth_role() IN ('admin', 'teacher'));
 
+DROP POLICY IF EXISTS "Staff can manage faculty" ON public.faculty_teachers;
 CREATE POLICY "Staff can manage faculty" ON public.faculty_teachers
   FOR ALL USING (public.get_auth_role() IN ('admin'));
 
+DROP POLICY IF EXISTS "Staff can manage academic handbooks" ON public.academic_handbooks;
 CREATE POLICY "Staff can manage academic handbooks" ON public.academic_handbooks
   FOR ALL USING (public.get_auth_role() IN ('admin', 'teacher'));
 
+DROP POLICY IF EXISTS "Staff can manage course units" ON public.course_units;
 CREATE POLICY "Staff can manage course units" ON public.course_units
   FOR ALL USING (public.get_auth_role() IN ('admin', 'teacher'));
 
+DROP POLICY IF EXISTS "Staff can manage timetable" ON public.timetable_periods;
 CREATE POLICY "Staff can manage timetable" ON public.timetable_periods
   FOR ALL USING (public.get_auth_role() IN ('admin', 'teacher'));
 
+DROP POLICY IF EXISTS "Staff can manage exams and reports" ON public.exam_sessions;
 CREATE POLICY "Staff can manage exams and reports" ON public.exam_sessions
   FOR ALL USING (public.get_auth_role() IN ('admin', 'teacher'));
 
+DROP POLICY IF EXISTS "Staff can manage report cards" ON public.report_cards;
 CREATE POLICY "Staff can manage report cards" ON public.report_cards
   FOR ALL USING (public.get_auth_role() IN ('admin', 'teacher'));
 
+DROP POLICY IF EXISTS "Bursar and Admin manage clearance passes" ON public.biometric_clearance_passes;
 CREATE POLICY "Bursar and Admin manage clearance passes" ON public.biometric_clearance_passes
   FOR ALL USING (public.get_auth_role() IN ('admin', 'bursar'));
 
+DROP POLICY IF EXISTS "Anyone can log DRM security events" ON public.drm_security_events;
 CREATE POLICY "Anyone can log DRM security events" ON public.drm_security_events
   FOR INSERT WITH CHECK (true);
 
+DROP POLICY IF EXISTS "Admin can view DRM security events" ON public.drm_security_events;
 CREATE POLICY "Admin can view DRM security events" ON public.drm_security_events
   FOR SELECT USING (public.get_auth_role() IN ('admin'));
 
+DROP POLICY IF EXISTS "Anyone can submit inquiry" ON public.secretary_inquiries;
 CREATE POLICY "Anyone can submit inquiry" ON public.secretary_inquiries
   FOR INSERT WITH CHECK (true);
 
+DROP POLICY IF EXISTS "Staff can manage inquiries" ON public.secretary_inquiries;
 CREATE POLICY "Staff can manage inquiries" ON public.secretary_inquiries
   FOR ALL USING (public.get_auth_role() IN ('admin', 'bursar'));
 
