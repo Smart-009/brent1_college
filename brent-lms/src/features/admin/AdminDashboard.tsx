@@ -130,15 +130,95 @@ export function AdminDashboard() {
       title="School Administration Control Panel"
       subtitle="Eclat Institute • Student admissions, activation codes, school terms & content moderation."
     >
+      {/* Dedicated Cloud Database Synchronization Hub Card */}
+      <div
+        className="card mb-6"
+        style={{
+          background: 'linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%)',
+          border: '1.5px solid #334155',
+          borderRadius: '18px',
+          boxShadow: '0 8px 24px rgba(0, 0, 0, 0.25)',
+          overflow: 'hidden',
+        }}
+      >
+        <div
+          style={{
+            padding: '1.25rem 1.5rem',
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            flexWrap: 'wrap',
+            gap: '1rem',
+          }}
+        >
+          <div style={{ minWidth: '280px', flex: 1 }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
+              <span style={{ fontSize: '1.4rem' }}>☁️</span>
+              <h3 style={{ margin: 0, color: '#ffffff', fontSize: '1.15rem', fontWeight: 900 }}>
+                Cloud Database & Live Synchronization Hub
+              </h3>
+              <span
+                style={{
+                  background: 'rgba(34, 197, 94, 0.2)',
+                  color: '#4ade80',
+                  border: '1px solid rgba(34, 197, 94, 0.4)',
+                  padding: '2px 8px',
+                  borderRadius: '999px',
+                  fontSize: '0.72rem',
+                  fontWeight: 800,
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '4px',
+                }}
+              >
+                <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#22c55e' }} />
+                Live Connected
+              </span>
+            </div>
+            <p style={{ margin: '2px 0 0', fontSize: '0.82rem', color: '#94a3b8', lineHeight: 1.5 }}>
+              Push and backup faculties, courses, syllabus handbooks, DRM library materials, and intake schedules to Supabase.
+            </p>
+          </div>
+
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', flexWrap: 'wrap' }}>
+            <button
+              type="button"
+              onClick={handleSeedCloud}
+              disabled={seeding}
+              style={{
+                background: seeding
+                  ? '#334155'
+                  : 'linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%)',
+                color: '#ffffff',
+                border: 'none',
+                borderRadius: '12px',
+                padding: '10px 20px',
+                fontSize: '0.9rem',
+                fontWeight: 800,
+                cursor: seeding ? 'not-allowed' : 'pointer',
+                boxShadow: seeding ? 'none' : '0 4px 14px rgba(37, 99, 235, 0.4)',
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '8px',
+                transition: 'all 0.2s ease',
+              }}
+            >
+              <span>{seeding ? '⏳' : '☁️'}</span>
+              <span>{seeding ? 'Synchronizing Cloud Database...' : 'Sync & Seed Cloud DB'}</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
       {/* Quick Action Control Bar */}
       <div className="card mb-6" style={{ background: 'linear-gradient(135deg, #1a2a6e 0%, #243A8E 100%)', color: 'white' }}>
         <div className="card-body flex justify-between items-center flex-wrap gap-4">
           <div>
             <h2 style={{ color: 'white', fontFamily: 'var(--font-heading)', margin: 0, fontSize: 'var(--text-xl)' }}>
-              Administrator Actions
+              Administrator Quick Actions
             </h2>
             <p style={{ color: 'rgba(255,255,255,0.85)', margin: 'var(--space-1) 0 0', fontSize: 'var(--text-xs)' }}>
-              Issue admission numbers, renew 30-day access windows, or override 24-hour video locks.
+              Issue admission numbers, schedule cohort intakes, or manage student access codes.
             </p>
           </div>
           <div className="flex gap-2 flex-wrap">
@@ -150,9 +230,6 @@ export function AdminDashboard() {
             </Button>
             <Button variant="outline" size="sm" style={{ color: 'white', borderColor: 'white' }} onClick={() => navigate('/library')}>
               + 📚 Upload E-Resource
-            </Button>
-            <Button variant="primary" size="sm" onClick={handleSeedCloud} disabled={seeding}>
-              {seeding ? '⏳ Seeding Cloud...' : '☁️ Sync & Seed Cloud DB'}
             </Button>
             <Button variant="accent" size="sm" onClick={() => navigate('/admin/users')}>
               + Issue Admission / User
