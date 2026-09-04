@@ -2,7 +2,7 @@
 // Eclat Institute — Native Desktop Application Main Process
 // ============================================================
 
-const { app, BrowserWindow, Menu, shell, ipcMain } = require('electron')
+const { app, BrowserWindow, Menu, shell, ipcMain, globalShortcut, clipboard } = require('electron')
 const path = require('path')
 
 const isDev = !app.isPackaged && process.env.NODE_ENV !== 'production'
@@ -161,11 +161,27 @@ function createWindow() {
 app.whenReady().then(() => {
   createWindow()
 
+  // Register native global screenshot interceptors
+  try {
+    globalShortcut.register('PrintScreen', () => {
+      clipboard.clear()
+    })
+    globalShortcut.register('CommandOrControl+Shift+S', () => {
+      clipboard.clear()
+    })
+  } catch (e) {}
+
   app.on('activate', () => {
     if (BrowserWindow.getAllWindows().length === 0) {
       createWindow()
     }
   })
+})
+
+app.on('will-quit', () => {
+  try {
+    globalShortcut.unregisterAll()
+  } catch (e) {}
 })
 
 app.on('window-all-closed', () => {

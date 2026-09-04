@@ -1,7 +1,7 @@
 {
   "name": "eclat-institute-lms",
   "private": true,
-  "version": "0.0.0",
+  "version": "1.0.0",
   "type": "module",
   "main": "electron/main.cjs",
   "scripts": {
@@ -13,6 +13,7 @@
     "desktop": "electron .",
     "desktop:build": "npm run build && electron .",
     "desktop:dist": "npm run build && electron-builder --win",
+    "desktop:store": "npm run build && electron-builder --win appx",
     "cap:sync": "npm run build && npx cap sync",
     "android:open": "npm run build && npx cap open android",
     "ios:open": "npm run build && npx cap open ios"
@@ -30,10 +31,18 @@
     ],
     "win": {
       "target": [
+        "appx",
         "nsis",
         "portable"
       ],
       "icon": "public/logo.png"
+    },
+    "appx": {
+      "identityName": "clatInstitute.EclatInstitute",
+      "publisher": "CN=E227A441-60A1-4818-8C91-AA5CDA56D0DE",
+      "publisherDisplayName": "Éclat Institute",
+      "applicationId": "clatInstitute.EclatInstitute",
+      "backgroundColor": "#0c0e12"
     },
     "nsis": {
       "oneClick": false,
