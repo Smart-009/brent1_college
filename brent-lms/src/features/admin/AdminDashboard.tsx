@@ -1,7 +1,9 @@
-import { useQuery } from '@tanstack/react-query'
+import { useState } from 'react'
+import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { useNavigate } from 'react-router-dom'
 import { supabase } from '@/lib/supabase'
 import { schoolStore } from '@/lib/schoolData'
+import { seedCloudDatabase } from '@/lib/databaseSeeder'
 import { PageWrapper } from '@/components/layout/PageWrapper'
 import { Button } from '@/components/ui/Button'
 import { Spinner } from '@/components/ui/Spinner'
@@ -10,6 +12,25 @@ import type { Profile, Course } from '@/lib/database.types'
 
 export function AdminDashboard() {
   const navigate = useNavigate()
+  const queryClient = useQueryClient()
+  const [seeding, setSeeding] = useState(false)
+
+  const handleSeedCloud = async () => {
+    setSeeding(true)
+    try {
+      const res = await seedCloudDatabase()
+      if (res.success) {
+        alert(res.message)
+        queryClient.invalidateQueries({ queryKey: ['admin-stats'] })
+      } else {
+        alert(`Seeding error: ${res.message}`)
+      }
+    } catch (err: any) {
+      alert(`Error seeding database: ${err?.message || err}`)
+    } finally {
+      setSeeding(false)
+    }
+  }
 
   const handlePurgeForLaunch = () => {
     if (window.confirm('Are you sure you want to purge all test student records, invoices, and inquiries for live production launch?')) {
@@ -108,6 +129,9 @@ export function AdminDashboard() {
             </Button>
             <Button variant="outline" size="sm" style={{ color: 'white', borderColor: 'white' }} onClick={() => navigate('/library')}>
               + 📚 Upload E-Resource
+            </Button>
+            <Button variant="primary" size="sm" onClick={handleSeedCloud} disabled={seeding}>
+              {seeding ? '⏳ Seeding Cloud...' : '☁️ Sync & Seed Cloud DB'}
             </Button>
             <Button variant="accent" size="sm" onClick={() => navigate('/admin/users')}>
               + Issue Admission / User
