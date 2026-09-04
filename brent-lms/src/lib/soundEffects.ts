@@ -1,4 +1,4 @@
-﻿// ============================================================
+// ============================================================
 // Éclat Institute — Authentic Web Audio School Bell Synthesizer
 // Zero external mp3 dependencies; works 100% offline & in all modern browsers.
 // ============================================================
@@ -105,3 +105,60 @@ export function playChime() {
     console.warn('Chime audio error:', err)
   }
 }
+
+let bellIntervalTimer: any = null
+let isBellContinuousRunning = false
+
+/**
+ * Starts an authentic continuous school bell alarm loop that keeps ringing
+ * and vibrating the device repeatedly until stopContinuousSchoolBell() is called.
+ */
+export function startContinuousSchoolBell() {
+  if (isBellContinuousRunning) return
+  isBellContinuousRunning = true
+
+  // Initial immediate ring
+  ringSchoolBell(2.6)
+
+  // Trigger continuous vibration pattern on mobile devices
+  if (typeof navigator !== 'undefined' && 'vibrate' in navigator) {
+    try {
+      navigator.vibrate([500, 200, 500, 200, 800])
+    } catch {}
+  }
+
+  // Repeat every 3.2 seconds until explicitly muted or dismissed
+  bellIntervalTimer = setInterval(() => {
+    if (!isBellContinuousRunning) {
+      if (bellIntervalTimer) clearInterval(bellIntervalTimer)
+      return
+    }
+    ringSchoolBell(2.6)
+    if (typeof navigator !== 'undefined' && 'vibrate' in navigator) {
+      try {
+        navigator.vibrate([500, 200, 500, 200, 800])
+      } catch {}
+    }
+  }, 3200)
+}
+
+/**
+ * Immediately silences and halts the continuous school bell alarm and cancels vibration.
+ */
+export function stopContinuousSchoolBell() {
+  isBellContinuousRunning = false
+  if (bellIntervalTimer) {
+    clearInterval(bellIntervalTimer)
+    bellIntervalTimer = null
+  }
+  if (typeof navigator !== 'undefined' && 'vibrate' in navigator) {
+    try {
+      navigator.vibrate(0)
+    } catch {}
+  }
+}
+
+export function isContinuousBellRinging() {
+  return isBellContinuousRunning
+}
+
