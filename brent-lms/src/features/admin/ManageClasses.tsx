@@ -41,7 +41,7 @@ export function ManageClasses() {
         .order('created_at', { ascending: false })
 
       if (error) throw error
-      const rows = (data || []) as any[]
+      const rows = ((data || []) as any[]).filter((r) => !r.title?.startsWith('__ECLAT_SYNC_') && !r.id?.startsWith('aaaaaaaa-'))
       return rows.map((r) => ({
         ...r,
         subjects: Array.isArray(r.subjects) ? (r.subjects[0] || null) : (r.subjects || null),

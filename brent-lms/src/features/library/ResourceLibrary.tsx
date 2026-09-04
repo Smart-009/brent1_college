@@ -35,6 +35,19 @@ export function ResourceLibrary() {
   const [selectedCat, setSelectedCat] = useState('All')
   const [selectedSub, setSelectedSub] = useState('All')
   const [isUploading, setIsUploading] = useState(false)
+  const [isSyncingCloud, setIsSyncingCloud] = useState(false)
+
+  const handleManualSync = async () => {
+    setIsSyncingCloud(true)
+    try {
+      await schoolStore.syncWithCloud(true)
+      setResources(schoolStore.getResources())
+      setCustomCategories(schoolStore.getCustomCategories())
+    } catch {}
+    finally {
+      setTimeout(() => setIsSyncingCloud(false), 500)
+    }
+  }
 
   // Starred / Saved Favorites State
   const [bookmarkedIds, setBookmarkedIds] = useState<string[]>(() => {
@@ -588,26 +601,50 @@ export function ResourceLibrary() {
             Curriculum revision resources, interactive comic books, and academic references.
           </p>
         </div>
-        {isAdmin && (
-          <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap' }}>
-            <button
-              type="button"
-              className="btn btn-secondary"
-              onClick={() => setShowAddCatModal(true)}
-              style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', fontWeight: 700, fontSize: '0.85rem' }}
-            >
-              🏷️ + Add Custom Category
-            </button>
-            <button
-              type="button"
-              className="btn btn-primary"
-              onClick={handleOpenUploadModal}
-              style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontWeight: 700 }}
-            >
-              + 📁 Upload Material / Document
-            </button>
-          </div>
-        )}
+        <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap', alignItems: 'center' }}>
+          <button
+            type="button"
+            className="btn btn-outline"
+            onClick={handleManualSync}
+            disabled={isSyncingCloud}
+            title="Fetch latest updates from cloud database"
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '0.4rem',
+              fontWeight: 700,
+              fontSize: '0.84rem',
+              borderColor: '#cbd5e1',
+              background: isSyncingCloud ? '#f1f5f9' : '#ffffff',
+            }}
+          >
+            <span style={{ display: 'inline-block', transform: isSyncingCloud ? 'rotate(360deg)' : 'none', transition: 'transform 0.5s ease' }}>
+              🔄
+            </span>
+            <span>{isSyncingCloud ? 'Syncing...' : 'Sync Cloud'}</span>
+          </button>
+
+          {isAdmin && (
+            <>
+              <button
+                type="button"
+                className="btn btn-secondary"
+                onClick={() => setShowAddCatModal(true)}
+                style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', fontWeight: 700, fontSize: '0.85rem' }}
+              >
+                🏷️ + Add Custom Category
+              </button>
+              <button
+                type="button"
+                className="btn btn-primary"
+                onClick={handleOpenUploadModal}
+                style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontWeight: 700 }}
+              >
+                + 📁 Upload Material / Document
+              </button>
+            </>
+          )}
+        </div>
       </div>
 
       {/* Web DRM Anti-Screenshot Banner */}

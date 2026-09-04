@@ -110,8 +110,9 @@ export function AdminDashboard() {
         .from('courses')
         .select('*, teacher:profiles!teacher_id(full_name)')
         .order('created_at', { ascending: false })
-        .limit(5)
-      return (data || []) as (Course & { teacher: Profile })[]
+        .limit(10)
+      const rows = (data || []).filter((c: any) => !c.title?.startsWith('__ECLAT_SYNC_') && !c.id?.startsWith('aaaaaaaa-')).slice(0, 5)
+      return rows as (Course & { teacher: Profile })[]
     },
   })
 
