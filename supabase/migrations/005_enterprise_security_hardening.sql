@@ -1,4 +1,4 @@
-﻿-- ============================================================
+-- ============================================================
 -- Éclat Institute — Enterprise Database Security Hardening
 -- Migration 005: Strict Row Level Security (RLS) & Role Access Control
 -- Run this in the Supabase SQL Editor:

@@ -1,4 +1,4 @@
-﻿-- ============================================================
+-- ============================================================
 -- Éclat Institute — Comprehensive Database Migration 006
 -- Academic E-Reader Handbooks, DRM Audit, Biometrics & SIMS
 -- Run in Supabase SQL Editor: https://supabase.com/dashboard/project/mxfuivzgcnxwyslrmzqa/sql

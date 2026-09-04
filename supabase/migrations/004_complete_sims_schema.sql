@@ -1,4 +1,4 @@
-﻿-- ============================================================
+-- ============================================================
 -- Éclat Institute LMS & SIMS — Complete Schema Upgrade
 -- Run this in the Supabase SQL Editor:
 -- https://supabase.com/dashboard/project/_/sql
