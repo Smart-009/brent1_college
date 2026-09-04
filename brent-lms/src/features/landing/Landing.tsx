@@ -1256,13 +1256,13 @@ export function Landing() {
     window.scrollTo({ top: 0, behavior: 'smooth' })
   }
 
-  const isNativeApp =
+  const isNativeMobileApp =
     typeof window !== 'undefined' &&
     (Boolean((window as any).Capacitor?.isNativePlatform?.()) ||
       Boolean((window as any).AndroidSecurity) ||
-      /Capacitor|Electron/i.test(navigator.userAgent))
+      (/Capacitor/i.test(navigator.userAgent) && !/Electron/i.test(navigator.userAgent)))
 
-  if (isNativeApp) {
+  if (isNativeMobileApp) {
     return <NativeAppHome courses={coursesList} onSelectCourse={(c) => setSelectedCourseForModal(c as any)} />
   }
 
