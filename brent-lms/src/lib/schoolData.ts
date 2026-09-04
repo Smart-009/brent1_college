@@ -956,6 +956,78 @@ class SchoolDataStore {
           }
         }
       }
+
+      // 3. Sync Fee Invoices & Receipts with Supabase
+      const { data: cloudInvoices } = await supabase.from('fee_invoices').select('*')
+      if (cloudInvoices && cloudInvoices.length > 0) {
+        const localInvoices = this.getInvoices()
+        let invUpdated = false
+        for (const ci of cloudInvoices) {
+          const idx = localInvoices.findIndex((inv) => inv.id === ci.id || inv.invoice_number === ci.invoice_number)
+          const mappedInv: FeeInvoice = {
+            id: ci.id,
+            invoice_number: ci.invoice_number,
+            student_id: ci.student_id,
+            student_name: ci.student_name,
+            admission_number: ci.admission_number,
+            class_name: 'Online Vocational Program',
+            term: ci.term_name || 'Term 1',
+            academic_year: ci.academic_year || '2026',
+            issue_date: ci.issue_date || new Date().toISOString().split('T')[0],
+            due_date: ci.due_date || new Date().toISOString().split('T')[0],
+            items: [{ id: `item-${ci.id}`, description: 'Tuition & Practical Levy', amount: Number(ci.total_amount) || 60 }],
+            total_amount: Number(ci.total_amount) || 60,
+            paid_amount: Number(ci.amount_paid) || 0,
+            balance: Number(ci.balance_due) || 0,
+            status: ci.status === 'PAID' ? 'Paid' : ci.status === 'PARTIAL' ? 'Partial' : 'Pending',
+          }
+          if (idx !== -1) {
+            localInvoices[idx] = { ...localInvoices[idx], ...mappedInv }
+          } else {
+            localInvoices.push(mappedInv)
+            invUpdated = true
+          }
+        }
+        if (invUpdated) {
+          this.set('invoices', localInvoices)
+          schoolEventBus.publish('PAYMENT_RECORDED')
+        }
+      }
+
+      // 4. Sync Fee Payment Receipts
+      const { data: cloudPayments } = await supabase.from('fee_payments').select('*')
+      if (cloudPayments && cloudPayments.length > 0) {
+        const localReceipts = this.getReceipts()
+        let recUpdated = false
+        for (const cp of cloudPayments) {
+          const idx = localReceipts.findIndex((r) => r.id === cp.id || r.receipt_number === cp.receipt_number)
+          const mappedRec: FeePaymentReceipt = {
+            id: cp.id,
+            receipt_number: cp.receipt_number,
+            invoice_id: cp.invoice_id || `inv-${cp.student_id}`,
+            student_id: cp.student_id,
+            student_name: cp.student_name,
+            admission_number: cp.admission_number,
+            amount: Number(cp.amount_paid) || 0,
+            payment_method: cp.payment_method === 'MPESA' ? 'M-Pesa' : 'Bank Transfer',
+            reference_code: cp.transaction_reference || cp.receipt_number,
+            payment_date: cp.payment_date || new Date().toISOString().split('T')[0],
+            paid_by: cp.student_name,
+            recorded_by: cp.received_by || 'Bursar',
+            balance_after: 0,
+          }
+          if (idx !== -1) {
+            localReceipts[idx] = { ...localReceipts[idx], ...mappedRec }
+          } else {
+            localReceipts.push(mappedRec)
+            recUpdated = true
+          }
+        }
+        if (recUpdated) {
+          this.set('receipts', localReceipts)
+          schoolEventBus.publish('PAYMENT_RECORDED')
+        }
+      }
     } catch (err) {
       console.warn('Cloud store sync notice:', err)
     } finally {

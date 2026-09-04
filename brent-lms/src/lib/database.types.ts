@@ -214,6 +214,114 @@ export interface Streak {
   last_activity_date: string | null
 }
 
+export interface Department {
+  id: string
+  name: string
+  code: string
+  description?: string | null
+  hod_name: string
+  hod_email: string
+  programs: string[]
+  created_at: string
+}
+
+export interface FacultyTeacherRecord {
+  id: string
+  full_name: string
+  email: string
+  phone?: string | null
+  department: string
+  designation: string
+  qualifications: string[]
+  created_at: string
+}
+
+export interface AcademicHandbookRow {
+  id: string
+  title: string
+  discipline: string
+  level: string
+  author: string
+  year: number
+  readings_count: number
+  chapters: any
+  takeaways: any
+  is_drm_protected: boolean
+  created_at: string
+  updated_at: string
+}
+
+export interface BiometricClearancePassRow {
+  id: string
+  clearance_code: string
+  student_id: string
+  admission_number: string
+  student_name: string
+  course_name: string
+  timestamp: string
+  verification_hash: string
+  verified_by: string
+  status: 'VERIFIED_CLEARED' | 'PROVISIONAL' | 'REVOKED'
+  qr_payload: string
+  created_at: string
+}
+
+export interface CourseUnitRow {
+  id: string
+  unit_code: string
+  title: string
+  department_id?: string | null
+  level: string
+  credit_hours: number
+  instructor_name: string
+  is_core: boolean
+  description?: string | null
+  created_at: string
+}
+
+export interface UnitRegistrationRow {
+  id: string
+  receipt_number: string
+  student_id: string
+  admission_number: string
+  student_name: string
+  academic_year: string
+  semester: string
+  registered_units: any
+  total_credit_hours: number
+  registration_date: string
+  status: 'CONFIRMED' | 'PENDING' | 'DROPPED'
+  created_at: string
+}
+
+export interface DrmSecurityEventRow {
+  id?: string
+  student_id?: string | null
+  admission_number?: string | null
+  event_type: 'PRINTSCREEN_BLOCKED' | 'FOCUS_LOSS_BLACKOUT' | 'WINDOW_PROTECTION_ENABLED' | 'UNAUTHORIZED_CLIPBOARD_COPY' | 'WATERMARK_TAMPER_ATTEMPT'
+  window_title?: string | null
+  ip_address?: string | null
+  platform?: string | null
+  action_taken: string
+  created_at?: string
+}
+
+export interface SecretaryInquiryRow {
+  id: string
+  tracking_number: string
+  student_id?: string | null
+  parent_name: string
+  phone: string
+  student_admission?: string | null
+  category: 'Fee Inquiry' | 'Admission' | 'Academic Transcript' | 'Discipline / Clearance' | 'General'
+  subject: string
+  description: string
+  status: 'OPEN' | 'IN_PROGRESS' | 'RESOLVED' | 'CLOSED'
+  resolved_by?: string | null
+  resolution_notes?: string | null
+  created_at: string
+}
+
 // ---- College & Tertiary Grading Helpers ----
 export function getCollegeGrade(percentage: number): string {
   if (percentage >= 70) return 'A'
@@ -246,3 +354,4 @@ export function getCollegeColor(grade: string): string {
 export const getCBCGrade = getCollegeGrade
 export const getCBCLabel = getCollegeLabel
 export const getCBCColor = getCollegeColor
+

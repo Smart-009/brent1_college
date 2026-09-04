@@ -20,7 +20,7 @@
   },
   "build": {
     "appId": "com.eclatinstitute.lms",
-    "productName": "Éclat Institute",
+    "productName": "Eclat Institute",
     "directories": {
       "output": "dist-electron"
     },
@@ -41,6 +41,7 @@
       "identityName": "clatInstitute.EclatInstitute",
       "publisher": "CN=E227A441-60A1-4818-8C91-AA5CDA56D0DE",
       "publisherDisplayName": "Éclat Institute",
+      "displayName": "Eclat Institute",
       "applicationId": "clatInstitute.EclatInstitute",
       "backgroundColor": "#0c0e12"
     },
