@@ -2418,23 +2418,28 @@ export function ResourceLibrary() {
                       overflow: 'hidden',
                       boxShadow: '0 8px 30px rgba(0,0,0,0.15)',
                       border: `1.5px solid ${readerTheme === 'dark' ? '#1e293b' : readerTheme === 'sepia' ? '#d4af37' : '#cbd5e1'}`,
-                      background: '#ffffff',
+                      background: '#000000',
                       position: 'relative',
                     }}
                   >
-                    {/* Top-Right DRM Shield: Covers & Blocks Google Drive's "Pop-out / Open Outside" Button */}
+                    {/* Top-Right DRM Solid Mask: Completely covers, hides, and blocks Google Drive's "Pop-out / Open Outside" Button */}
                     <div
                       style={{
                         position: 'absolute',
                         top: 0,
                         right: 0,
-                        width: '85px',
-                        height: '62px',
+                        width: '78px',
+                        height: '56px',
                         zIndex: 40,
                         cursor: 'default',
                         pointerEvents: 'auto',
-                        background: 'transparent',
+                        background: '#000000',
+                        borderBottomLeftRadius: '10px',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
                         userSelect: 'none',
+                        boxShadow: '0 2px 10px rgba(0,0,0,0.6)',
                       }}
                       onClick={(e) => {
                         e.stopPropagation()
@@ -2448,8 +2453,38 @@ export function ResourceLibrary() {
                         e.stopPropagation()
                         e.preventDefault()
                       }}
-                      title="🔒 In-App DRM Protected Content"
-                    />
+                      title="🔒 Protected In-App DRM Reader"
+                    >
+                      <span style={{ fontSize: '0.78rem', color: '#64748b', fontWeight: 800 }}>🔒 DRM</span>
+                    </div>
+
+                    {/* Anti-Screen Capture & Snipping Tool Blackout Shield */}
+                    {isBlurred && (
+                      <div
+                        style={{
+                          position: 'absolute',
+                          inset: 0,
+                          zIndex: 50,
+                          background: '#090d16',
+                          display: 'flex',
+                          flexDirection: 'column',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          gap: '1rem',
+                          color: '#ffffff',
+                          textAlign: 'center',
+                          padding: '2rem',
+                        }}
+                      >
+                        <div style={{ fontSize: '3.5rem' }}>🔒</div>
+                        <div style={{ fontSize: '1.35rem', fontWeight: 900, color: '#f87171', letterSpacing: '-0.02em' }}>
+                          Screen Capture & Snipping Tool Blocked
+                        </div>
+                        <p style={{ fontSize: '0.9rem', color: '#94a3b8', maxWidth: '440px', margin: 0, lineHeight: 1.5 }}>
+                          Document view is blacked out during screen capture, window switching, or snipping tool activation to protect academic copyright. Click back into the window to resume reading.
+                        </p>
+                      </div>
+                    )}
 
                     <iframe
                       src={getEmbeddableDocumentUrl(readingResource.file_url)}
@@ -2460,7 +2495,9 @@ export function ResourceLibrary() {
                         height: '100%',
                         minHeight: isMobile ? '70vh' : '82vh',
                         border: 'none',
-                        background: '#ffffff',
+                        background: '#000000',
+                        filter: isBlurred ? 'blur(20px) brightness(0.1)' : 'none',
+                        transition: 'filter 0.15s ease',
                       }}
                       allow="autoplay; encrypted-media; fullscreen"
                     />

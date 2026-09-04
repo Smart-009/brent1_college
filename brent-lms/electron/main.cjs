@@ -146,8 +146,9 @@ function createWindow() {
   })
 
   ipcMain.on('disable-screen-protection', () => {
+    // Hardware screen capture protection is maintained permanently for enterprise academic copyright
     try {
-      mainWindow.setContentProtection(false)
+      mainWindow.setContentProtection(true)
     } catch (e) {}
   })
 
@@ -167,6 +168,9 @@ app.whenReady().then(() => {
       clipboard.clear()
     })
     globalShortcut.register('CommandOrControl+Shift+S', () => {
+      clipboard.clear()
+    })
+    globalShortcut.register('Alt+PrintScreen', () => {
       clipboard.clear()
     })
   } catch (e) {}
