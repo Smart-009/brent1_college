@@ -120,6 +120,7 @@ export function Login() {
       } else {
         setError(`${res.error} (${5 - nextFailed} attempts remaining before temporary security lock)`)
       }
+    } else {
       setFailedAttempts(0)
       setLockoutSeconds(0)
       const role = res.profile?.role || selectedRole
