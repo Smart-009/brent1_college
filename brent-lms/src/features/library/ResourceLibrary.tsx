@@ -916,7 +916,7 @@ export function ResourceLibrary() {
             </div>
           </div>
           <a
-            href={LOCAL_APK_URL}
+            href={OFFICIAL_APK_URL}
             download="eclat-institute.apk"
             className="btn"
             style={{
@@ -3610,7 +3610,7 @@ export function ResourceLibrary() {
 
             <div style={{ display: 'flex', flexDirection: 'column', gap: '0.85rem', alignItems: 'center', width: '100%', maxWidth: '360px', margin: '0 auto' }}>
               <a
-                href={LOCAL_APK_URL}
+                href={OFFICIAL_APK_URL}
                 download="eclat-institute.apk"
                 className="btn"
                 style={{
@@ -3812,7 +3812,7 @@ export function ResourceLibrary() {
 
             <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', marginBottom: '1.25rem' }}>
               <a
-                href={LOCAL_APK_URL}
+                href={OFFICIAL_APK_URL}
                 download="eclat-institute.apk"
                 style={{
                   display: 'flex',

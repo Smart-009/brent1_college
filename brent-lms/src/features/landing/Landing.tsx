@@ -3379,7 +3379,7 @@ export function Landing() {
                   </div>
 
                   <a
-                    href="/downloads/eclat-institute.apk"
+                    href="https://github.com/Smart-009/brent1_college/releases/download/latest/eclat-institute.apk"
                     download="eclat-institute.apk"
                     style={{
                       width: '100%',

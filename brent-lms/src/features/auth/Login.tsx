@@ -394,7 +394,7 @@ export function Login() {
                 </div>
                 <div style={{ display: 'flex', gap: '0.4rem' }}>
                   <a
-                    href={LOCAL_APK_URL}
+                    href={OFFICIAL_APK_URL}
                     download="eclat-institute.apk"
                     style={{
                       background: '#16a34a',

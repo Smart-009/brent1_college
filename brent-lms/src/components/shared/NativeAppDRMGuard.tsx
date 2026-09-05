@@ -164,7 +164,7 @@ export function NativeAppDRMGuard({
         <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
           {/* Android App Button */}
           <a
-            href={LOCAL_APK_URL}
+            href={OFFICIAL_APK_URL}
             download="eclat-institute.apk"
             style={{
               display: 'flex',
