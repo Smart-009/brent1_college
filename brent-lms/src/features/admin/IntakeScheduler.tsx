@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/Button'
 import { intakeStore } from '@/lib/intakeStore'
 import { OFFICIAL_COURSES } from '@/config/officialCourses'
 import { extractYouTubeId, formatDate } from '@/lib/utils'
+import { YouTubeEmbed } from '@/components/shared/YouTubeEmbed'
 import { useAuth } from '@/hooks/useAuth'
 import type { IntakeSchedule, IntakeStatus, StudyMode } from '@/types/intake'
 
@@ -1186,23 +1187,12 @@ export function IntakeScheduler() {
               </button>
             </div>
 
-            <div style={{ position: 'relative', paddingTop: '56.25%', width: '100%', background: '#000000' }}>
-              {extractYouTubeId(activeVideoModalUrl) ? (
-                <iframe
-                  style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', border: 0 }}
-                  src={`https://www.youtube.com/embed/${extractYouTubeId(activeVideoModalUrl)}?autoplay=1&rel=0`}
-                  title="Promotional Intake Video"
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                  allowFullScreen
-                />
-              ) : (
-                <video
-                  src={activeVideoModalUrl}
-                  controls
-                  autoPlay
-                  style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', objectFit: 'contain' }}
-                />
-              )}
+            <div style={{ width: '100%', background: '#000000', borderRadius: '0 0 16px 16px', overflow: 'hidden' }}>
+              <YouTubeEmbed
+                url={activeVideoModalUrl}
+                title="Intake Promotional Video"
+                autoPlay
+              />
             </div>
           </div>
         </div>
