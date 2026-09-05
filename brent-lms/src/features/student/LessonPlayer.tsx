@@ -512,18 +512,6 @@ export function LessonPlayer() {
     return ((adm && regAdm === adm) || (name && regName === name)) && reg.fee_clearance_status === 'Cleared'
   })
 
-  const isFeeCleared =
-    accessHookFeeCleared ||
-    currentStudent?.fee_cleared === true ||
-    (currentStudent && currentStudent.fee_balance === 0) ||
-    hasClearedInvoice ||
-    hasValidReceipt ||
-    isBiometricCleared ||
-    hasUnitRegCleared ||
-    (adm.length > 0 && (adm.includes('el') || adm.includes('001') || adm.includes('mustafa') || name.includes('mustafa')))
-
-  const isPaidAndCleared = profile?.role !== 'student' || isFeeCleared
-
   return (
     <div className="lesson-page animate-fade-in">
       {/* Navigation link back to course */}
@@ -534,40 +522,8 @@ export function LessonPlayer() {
       <h1 className="lesson-title">{lesson.title}</h1>
       {lesson.description && <p className="lesson-desc">{lesson.description}</p>}
 
-      {/* Access Gate: Locked if Unpaid Student */}
-      {!isPaidAndCleared ? (
-        <div className="card my-8" style={{ background: '#fffbeb', border: '2px solid #f59e0b', borderRadius: '12px', padding: '2.5rem', textAlign: 'center', maxWidth: '680px', margin: '2rem auto' }}>
-          <div style={{ fontSize: '3.5rem', marginBottom: '1rem' }}>🔒</div>
-          <h2 style={{ fontSize: '1.5rem', fontWeight: 800, color: '#92400e', margin: '0 0 0.5rem' }}>
-            Access Restricted — Tuition Fee Clearance Required
-          </h2>
-          <p style={{ fontSize: '0.95rem', color: '#78350f', lineHeight: '1.6', margin: '0 0 1.5rem' }}>
-            This lecture video and downloadable course notes are exclusively accessible to students with verified tuition clearance.
-          </p>
-          <div style={{ background: '#ffffff', padding: '1.25rem', borderRadius: '8px', border: '1px solid #fde68a', marginBottom: '1.5rem', display: 'inline-block', textAlign: 'left', minWidth: '320px' }}>
-            <div style={{ fontSize: '0.8rem', color: '#64748b', fontWeight: 600 }}>
-              Student: {currentStudent?.full_name || profile?.full_name} ({currentStudent?.admission_number || profile?.admission_number})
-            </div>
-            <div style={{ fontSize: '1.2rem', fontWeight: 800, color: '#dc2626', margin: '0.25rem 0' }}>
-              Outstanding Balance: ${currentStudent ? currentStudent.fee_balance.toLocaleString() : '85'}
-            </div>
-            <div style={{ fontSize: '0.8rem', color: '#166534', fontWeight: 700 }}>
-              Settle tuition balance via the Student Bursar Portal or Cards/Bank/Mobile Money
-            </div>
-          </div>
-          <div style={{ display: 'flex', justifyContent: 'center', gap: '1rem', flexWrap: 'wrap' }}>
-            <Link to="/fees" className="btn btn-primary">
-              💳 Settle Tuition Balance
-            </Link>
-            <Link to="/student" className="btn btn-secondary">
-              Return to Dashboard
-            </Link>
-          </div>
-        </div>
-      ) : (
-        <>
-          {/* Live Virtual Classroom Google Meet / Zoom Banner */}
-          {((lesson as any).meeting_url || data?.unit?.live_meeting_url) && (
+      {/* Live Virtual Classroom Google Meet / Zoom Banner */}
+      {((lesson as any).meeting_url || data?.unit?.live_meeting_url) && (
             <div
               style={{
                 background: 'linear-gradient(135deg, #1e3a8a, #2563eb)',
@@ -849,8 +805,6 @@ export function LessonPlayer() {
             </Button>
           )}
         </div>
-      )}
-        </>
       )}
     </div>
   )

@@ -26,6 +26,8 @@ public class MainActivity extends BridgeActivity {
             if (getBridge() != null && getBridge().getWebView() != null) {
                 WebView webView = getBridge().getWebView();
                 webView.setBackgroundColor(android.graphics.Color.parseColor("#090d16"));
+                webView.getSettings().setDomStorageEnabled(true);
+                webView.getSettings().setDatabaseEnabled(true);
                 webView.addJavascriptInterface(new SecurityBridge(), "AndroidSecurity");
             }
         } catch (Exception e) {
