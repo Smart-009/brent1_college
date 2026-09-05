@@ -25,3 +25,9 @@ pnpm-debug.log*
 .idea/
 .DS_Store
 Thumbs.db
+
+# App Binaries (Hosted on GitHub Releases)
+*.apk
+*.exe
+brent-lms/public/*.apk
+brent-lms/public/downloads/*.apk

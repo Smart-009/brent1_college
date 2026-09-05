@@ -54,7 +54,7 @@ export function isIOSDevice(): boolean {
   return /iphone|ipad|ipod/i.test(navigator.userAgent)
 }
 
-export const OFFICIAL_APK_URL = 'https://github.com/Smart-009/brent1_college/releases/download/latest/eclat-institute.apk'
+export const OFFICIAL_APK_URL = 'https://github.com/Smart-009/brent1_college/releases/latest/download/eclat-institute.apk'
 export const LOCAL_APK_URL = '/downloads/eclat-institute.apk'
 export const OFFICIAL_DESKTOP_URL = '/downloads/eclat-institute-setup.exe'
 export const LOCAL_DESKTOP_URL = '/eclat-institute-setup.exe'
