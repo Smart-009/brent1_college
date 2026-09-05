@@ -7,7 +7,32 @@
 const LOCAL_BUILD_TIME_KEY = 'eclat_ota_build_timestamp'
 let isCheckingUpdate = false
 
-export async function checkForOTAUpdates(): Promise<boolean> {
+export function getCurrentRuntimeBuildTimestamp(): number {
+  try {
+    if (typeof __APP_BUILD_TIMESTAMP__ !== 'undefined' && typeof __APP_BUILD_TIMESTAMP__ === 'number') {
+      return __APP_BUILD_TIMESTAMP__
+    }
+  } catch {}
+  return 0
+}
+
+export async function clearAllWebCaches(): Promise<void> {
+  if (typeof window === 'undefined') return
+  try {
+    if ('caches' in window) {
+      const cacheKeys = await caches.keys()
+      await Promise.all(cacheKeys.map((k) => caches.delete(k)))
+    }
+    if ('serviceWorker' in navigator) {
+      const registrations = await navigator.serviceWorker.getRegistrations()
+      await Promise.all(registrations.map((r) => r.unregister()))
+    }
+  } catch (e) {
+    console.debug('[OTA] Cache clearing notice:', e)
+  }
+}
+
+export async function checkForOTAUpdates(force: boolean = false): Promise<boolean> {
   if (isCheckingUpdate || typeof window === 'undefined' || !navigator.onLine) {
     return false
   }
@@ -20,6 +45,7 @@ export async function checkForOTAUpdates(): Promise<boolean> {
       headers: {
         'Cache-Control': 'no-cache, no-store, must-revalidate',
         'Pragma': 'no-cache',
+        'Expires': '0',
       },
       cache: 'no-store',
     })
@@ -30,31 +56,34 @@ export async function checkForOTAUpdates(): Promise<boolean> {
     const remoteBuildTime = Number(remoteManifest?.buildTime) || 0
     if (!remoteBuildTime) return false
 
+    const runtimeBuildTime = getCurrentRuntimeBuildTimestamp()
     const storedBuildTime = Number(localStorage.getItem(LOCAL_BUILD_TIME_KEY)) || 0
 
-    if (storedBuildTime === 0) {
-      // First run: save current timestamp baseline
+    const isOutdated =
+      (runtimeBuildTime > 0 && remoteBuildTime > runtimeBuildTime) ||
+      (storedBuildTime > 0 && remoteBuildTime > storedBuildTime) ||
+      (force && remoteBuildTime !== runtimeBuildTime && remoteBuildTime !== storedBuildTime)
+
+    if (isOutdated) {
+      console.log(
+        `[OTA Update] New cloud version detected: ${remoteBuildTime} (current: ${runtimeBuildTime || storedBuildTime}). Updating live...`
+      )
       localStorage.setItem(LOCAL_BUILD_TIME_KEY, remoteBuildTime.toString())
-      return false
-    }
 
-    if (remoteBuildTime > storedBuildTime) {
-      console.log('[OTA Update] New cloud version detected:', remoteBuildTime, '(current:', storedBuildTime, '). Applying live update...')
-      localStorage.setItem(LOCAL_BUILD_TIME_KEY, remoteBuildTime.toString())
+      await clearAllWebCaches()
 
-      // Invalidate web cache storage if supported
-      if ('caches' in window) {
-        try {
-          const cacheKeys = await caches.keys()
-          await Promise.all(cacheKeys.map((k) => caches.delete(k)))
-        } catch {}
-      }
-
-      // Hot-reload the app to load new bundles seamlessly
+      // Perform a clean cache-busting reload to load fresh chunks immediately
       setTimeout(() => {
-        window.location.reload()
-      }, 500)
+        const url = new URL(window.location.href)
+        url.searchParams.set('_ota', remoteBuildTime.toString())
+        window.location.replace(url.toString())
+      }, 300)
       return true
+    } else {
+      // Keep stored timestamp in sync
+      if (remoteBuildTime > storedBuildTime) {
+        localStorage.setItem(LOCAL_BUILD_TIME_KEY, remoteBuildTime.toString())
+      }
     }
   } catch (err) {
     console.debug('[OTA Update] Silent check completed:', err)
@@ -86,10 +115,10 @@ export function initOTAUpdater(): () => void {
   window.addEventListener('focus', handleVisibility)
   window.addEventListener('online', handleOnline)
 
-  // 4. Background heartbeat check every 30 seconds
+  // 4. Background heartbeat check every 20 seconds
   const intervalTimer = setInterval(() => {
     checkForOTAUpdates().catch(() => {})
-  }, 30000)
+  }, 20000)
 
   return () => {
     document.removeEventListener('visibilitychange', handleVisibility)

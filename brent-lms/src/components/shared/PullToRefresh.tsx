@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 import { isNativeApp } from '@/utils/platform';
+import { schoolStore } from '@/lib/schoolData';
+import { checkForOTAUpdates } from '@/lib/otaUpdater';
 
 export function PullToRefresh() {
   if (!isNativeApp()) return null;
@@ -13,7 +15,13 @@ export function PullToRefresh() {
   const handleRefresh = async () => {
     setIsRefreshing(true);
     try {
-      await queryClient.invalidateQueries();
+      await Promise.allSettled([
+        schoolStore.syncWithCloud(true),
+        checkForOTAUpdates(true),
+        queryClient.invalidateQueries(),
+      ]);
+      window.dispatchEvent(new CustomEvent('eclat-data-synced'));
+      window.dispatchEvent(new Event('storage'));
       await new Promise((res) => setTimeout(res, 600));
     } catch (e) {
       // ignore

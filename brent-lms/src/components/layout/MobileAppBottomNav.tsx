@@ -1,6 +1,9 @@
+import { useState } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import { useAuthContext } from '@/features/auth/AuthContext'
 import { isNativeApp } from '@/utils/platform'
+import { schoolStore } from '@/lib/schoolData'
+import { checkForOTAUpdates } from '@/lib/otaUpdater'
 
 export function MobileAppBottomNav() {
   const isNative = isNativeApp()
@@ -8,8 +11,24 @@ export function MobileAppBottomNav() {
 
   const location = useLocation()
   const { profile } = useAuthContext()
+  const [isSyncing, setIsSyncing] = useState(false)
 
   const currentPath = location.pathname
+
+  const handleManualSync = async () => {
+    if (isSyncing) return
+    setIsSyncing(true)
+    try {
+      await Promise.allSettled([
+        schoolStore.syncWithCloud(true),
+        checkForOTAUpdates(true),
+      ])
+      window.dispatchEvent(new CustomEvent('eclat-data-synced'))
+      window.dispatchEvent(new Event('storage'))
+    } finally {
+      setTimeout(() => setIsSyncing(false), 800)
+    }
+  }
 
   const getHomeLink = () => {
     if (!profile) return '/'
@@ -157,6 +176,36 @@ export function MobileAppBottomNav() {
           <span style={{ width: '4px', height: '4px', borderRadius: '50%', background: '#60a5fa', boxShadow: '0 0 8px #60a5fa' }} />
         )}
       </Link>
+
+      {/* Live Cloud OTA Sync Button */}
+      <button
+        type="button"
+        onClick={handleManualSync}
+        className="mobile-nav-item"
+        style={{
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          justifyContent: 'center',
+          flex: 1,
+          height: '100%',
+          background: 'none',
+          border: 'none',
+          color: isSyncing ? '#38bdf8' : '#94a3b8',
+          transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
+          fontSize: '0.7rem',
+          fontWeight: 600,
+          gap: '2px',
+          cursor: 'pointer',
+          padding: 0,
+        }}
+        title="Sync Cloud Data & Live Updates"
+      >
+        <span style={{ fontSize: '1.25rem', lineHeight: 1, display: 'inline-block', animation: isSyncing ? 'spin 0.8s linear infinite' : 'none' }}>
+          🔄
+        </span>
+        <span>{isSyncing ? 'Syncing...' : 'Live Sync'}</span>
+      </button>
 
       {/* Portal / Account Tab */}
       <Link

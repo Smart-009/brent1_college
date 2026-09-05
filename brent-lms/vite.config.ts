@@ -3,14 +3,16 @@ import react from '@vitejs/plugin-react'
 import fs from 'node:fs'
 import path from 'node:path'
 
+const currentBuildTimestamp = Date.now()
+
 function otaVersionPlugin(): Plugin {
   return {
     name: 'ota-version-generator',
     buildStart() {
       const versionData = {
         version: '1.0.0',
-        buildTime: Date.now(),
-        builtAt: new Date().toISOString(),
+        buildTime: currentBuildTimestamp,
+        builtAt: new Date(currentBuildTimestamp).toISOString(),
       }
       const publicDir = path.resolve(__dirname, 'public')
       if (!fs.existsSync(publicDir)) {
@@ -24,8 +26,8 @@ function otaVersionPlugin(): Plugin {
         fileName: 'version.json',
         source: JSON.stringify({
           version: '1.0.0',
-          buildTime: Date.now(),
-          builtAt: new Date().toISOString(),
+          buildTime: currentBuildTimestamp,
+          builtAt: new Date(currentBuildTimestamp).toISOString(),
         }, null, 2),
       })
     },
@@ -33,6 +35,9 @@ function otaVersionPlugin(): Plugin {
 }
 
 export default defineConfig({
+  define: {
+    __APP_BUILD_TIMESTAMP__: JSON.stringify(currentBuildTimestamp),
+  },
   plugins: [
     react(),
     otaVersionPlugin(),
