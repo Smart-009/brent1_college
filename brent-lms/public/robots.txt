@@ -19,6 +19,6 @@ Allow: /
 User-agent: Applebot-Extended
 Allow: /
 
-Sitemap: https://eclat.institute/sitemap.xml
+Sitemap: https://www.eclat.institute/sitemap.xml
 # LLM & AI Knowledge Grounding
-# https://eclat.institute/llms.txt
+# https://www.eclat.institute/llms.txt
