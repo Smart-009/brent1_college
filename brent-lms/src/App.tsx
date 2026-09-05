@@ -202,6 +202,14 @@ export function App() {
             }
           />
           <Route
+            path="/student/lessons/:lessonId"
+            element={
+              <StudentNativeGuard>
+                <LessonPlayer />
+              </StudentNativeGuard>
+            }
+          />
+          <Route
             path="/student/progress"
             element={
               <StudentNativeGuard>

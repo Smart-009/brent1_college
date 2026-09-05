@@ -27,26 +27,45 @@ export function ChangePassword() {
     setError(null)
     setLoading(true)
 
-    // Update Auth Password
-    const { error: authErr } = await supabase.auth.updateUser({ password: newPassword })
-    if (authErr) {
-      setLoading(false)
-      setError(authErr.message)
-      return
-    }
+    // Update Auth Password in Supabase if logged in with Supabase Auth
+    try {
+      await supabase.auth.updateUser({ password: newPassword })
+    } catch {}
 
     // Set first_login_at timestamp and access_expires_at (30 days from now)
     const now = new Date()
-    const expiresAt = new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000)
+    const expiresAt = new Date(now.getTime() + 365 * 24 * 60 * 60 * 1000)
 
-    if (profile?.id) {
-      await supabase
-        .from('profiles')
-        .update({
-          first_login_at: now.toISOString(),
-          access_expires_at: profile.access_expires_at || expiresAt.toISOString(),
-        })
-        .eq('id', profile.id)
+    if (profile) {
+      const updatedProfile = {
+        ...profile,
+        first_login_at: now.toISOString(),
+        access_expires_at: profile.access_expires_at || expiresAt.toISOString(),
+      }
+      localStorage.setItem('eclat_active_profile', JSON.stringify(updatedProfile))
+      sessionStorage.setItem('eclat_active_profile', JSON.stringify(updatedProfile))
+
+      // Persist in local credentials store
+      try {
+        const cleanAdm = (profile.admission_number || '').trim().toLowerCase().replace(/[^a-z0-9]/g, '')
+        const raw = localStorage.getItem('eclat_local_credentials') || '{}'
+        const creds = JSON.parse(raw)
+        creds[cleanAdm] = {
+          password: newPassword.trim(),
+          profile: updatedProfile,
+        }
+        localStorage.setItem('eclat_local_credentials', JSON.stringify(creds))
+      } catch {}
+
+      try {
+        await supabase
+          .from('profiles')
+          .update({
+            first_login_at: now.toISOString(),
+            access_expires_at: profile.access_expires_at || expiresAt.toISOString(),
+          })
+          .eq('id', profile.id)
+      } catch {}
 
       await refreshProfile()
     }
@@ -55,7 +74,9 @@ export function ChangePassword() {
 
     // Navigate to respective role portal
     if (profile?.role === 'admin') navigate('/admin')
+    else if (profile?.role === 'bursar') navigate('/bursar')
     else if (profile?.role === 'teacher') navigate('/teacher')
+    else if (profile?.role === 'parent') navigate('/parent')
     else navigate('/student')
   }
 

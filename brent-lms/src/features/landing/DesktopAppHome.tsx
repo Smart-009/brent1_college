@@ -421,7 +421,7 @@ export function DesktopAppHome({ courses, onSelectCourse }: { courses: CourseIte
                   </button>
                   <button
                     type="button"
-                    onClick={() => navigate(`/student/lessons/${u.lessons?.[0]?.id || u.id}`)}
+                    onClick={() => navigate(`/student/lesson/${u.lessons?.[0]?.id || u.id}`)}
                     style={{
                       flex: 1,
                       background: 'linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%)',
