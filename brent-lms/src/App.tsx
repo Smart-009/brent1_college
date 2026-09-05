@@ -3,6 +3,7 @@ import { Routes, Route, Navigate } from 'react-router-dom'
 import type { ReactElement } from 'react'
 import { useAuth } from '@/hooks/useAuth'
 import { schoolStore } from '@/lib/schoolData'
+import { initOTAUpdater } from '@/lib/otaUpdater'
 import { LayoutShell } from '@/components/layout/LayoutShell'
 import { LoadingScreen, AppOpeningSplashScreen } from '@/components/ui/Spinner'
 import { PullToRefresh } from '@/components/shared/PullToRefresh'
@@ -126,6 +127,10 @@ export function App() {
 
   useEffect(() => {
     schoolStore.syncWithCloud().catch(() => {})
+    const cleanupOTA = initOTAUpdater()
+    return () => {
+      cleanupOTA()
+    }
   }, [])
 
   return (

@@ -1,9 +1,41 @@
-import { defineConfig } from 'vite'
+import { defineConfig, type Plugin } from 'vite'
 import react from '@vitejs/plugin-react'
+import fs from 'node:fs'
+import path from 'node:path'
+
+function otaVersionPlugin(): Plugin {
+  return {
+    name: 'ota-version-generator',
+    buildStart() {
+      const versionData = {
+        version: '1.0.0',
+        buildTime: Date.now(),
+        builtAt: new Date().toISOString(),
+      }
+      const publicDir = path.resolve(__dirname, 'public')
+      if (!fs.existsSync(publicDir)) {
+        fs.mkdirSync(publicDir, { recursive: true })
+      }
+      fs.writeFileSync(path.resolve(publicDir, 'version.json'), JSON.stringify(versionData, null, 2))
+    },
+    generateBundle() {
+      this.emitFile({
+        type: 'asset',
+        fileName: 'version.json',
+        source: JSON.stringify({
+          version: '1.0.0',
+          buildTime: Date.now(),
+          builtAt: new Date().toISOString(),
+        }, null, 2),
+      })
+    },
+  }
+}
 
 export default defineConfig({
   plugins: [
     react(),
+    otaVersionPlugin(),
   ],
   resolve: {
     alias: { '@': '/src' },
