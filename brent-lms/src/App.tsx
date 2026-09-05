@@ -60,10 +60,34 @@ import { NativeAppDRMGuard } from '@/components/shared/NativeAppDRMGuard'
 
 /** Native App DRM Guard for Student Learning */
 function StudentNativeGuard({ children }: { children: ReactElement }) {
-  if (!isNativeApp()) {
-    return <NativeAppDRMGuard />
+  const { profile } = useAuth()
+  const [allowWebOverride, setAllowWebOverride] = useState(() => {
+    try {
+      return localStorage.getItem('eclat_allow_web_classroom') === 'true'
+    } catch {
+      return false
+    }
+  })
+
+  // Admins, teachers, and bursars always bypass to inspect and manage
+  if (profile?.role === 'admin' || profile?.role === 'teacher' || (profile?.role as any) === 'bursar') {
+    return children
   }
-  return children
+
+  if (isNativeApp() || allowWebOverride) {
+    return children
+  }
+
+  return (
+    <NativeAppDRMGuard
+      onContinueInWeb={() => {
+        try {
+          localStorage.setItem('eclat_allow_web_classroom', 'true')
+        } catch {}
+        setAllowWebOverride(true)
+      }}
+    />
+  )
 }
 
 /** Auth Guard Component */

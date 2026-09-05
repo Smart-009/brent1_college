@@ -1219,14 +1219,22 @@ class SchoolDataStore {
           let stdUpdated = false
 
           for (const sp of studentProfiles) {
-            const exists = localStudents.find(
-              (s) => s.admission_number.toLowerCase() === sp.admission_number.toLowerCase() || s.id === sp.id
+            const existsIdx = localStudents.findIndex(
+              (s) => (sp.admission_number && s.admission_number.toLowerCase() === sp.admission_number.toLowerCase()) || s.id === sp.id
             )
-            if (!exists) {
+            const isCloudAccessActive = sp.access_expires_at ? new Date(sp.access_expires_at).getTime() > Date.now() : true
+
+            if (existsIdx !== -1) {
+              if (isCloudAccessActive && (!localStudents[existsIdx].fee_cleared || localStudents[existsIdx].fee_balance > 0)) {
+                localStudents[existsIdx].fee_cleared = true
+                localStudents[existsIdx].fee_balance = 0
+                stdUpdated = true
+              }
+            } else {
               localStudents.push({
                 id: sp.id,
-                admission_number: sp.admission_number,
-                full_name: sp.full_name,
+                admission_number: sp.admission_number || `EI-2026-${Math.floor(100 + Math.random() * 900)}`,
+                full_name: sp.full_name || 'Enrolled Trainee',
                 gender: 'Male',
                 dob: '2004-01-01',
                 class_id: 'class-main',
@@ -1240,7 +1248,7 @@ class SchoolDataStore {
                 emergency_contact: '',
                 fee_balance: 0,
                 term_fee_total: 60,
-                fee_cleared: true,
+                fee_cleared: isCloudAccessActive,
                 attendance_rate: 100,
                 discipline_points: 100,
                 merits_count: 0,
@@ -1399,11 +1407,16 @@ class SchoolDataStore {
       const totalPaid = studentReceipts.reduce((acc, r) => acc + (Number(r.amount) || 0), 0)
       const billed = Number(s.term_fee_total) || 60
       const liveBalance = Math.max(0, billed - totalPaid)
-      const isCleared = liveBalance === 0 && totalPaid >= billed && billed > 0
+      
+      const isExplicitlyCleared = s.fee_cleared === true || s.fee_balance === 0
+      const isReceiptCleared = (billed > 0 && totalPaid >= billed) || (totalPaid > 0 && liveBalance === 0)
+      const isCleared = isExplicitlyCleared || isReceiptCleared
+      const finalBalance = isExplicitlyCleared ? (s.fee_balance ?? 0) : liveBalance
+
       return {
         ...s,
         term_fee_total: billed,
-        fee_balance: liveBalance,
+        fee_balance: finalBalance,
         fee_cleared: isCleared,
       }
     })

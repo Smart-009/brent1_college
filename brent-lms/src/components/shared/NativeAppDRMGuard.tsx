@@ -4,11 +4,13 @@ import { OFFICIAL_APK_URL, LOCAL_APK_URL, OFFICIAL_DESKTOP_URL, LOCAL_DESKTOP_UR
 interface NativeAppDRMGuardProps {
   title?: string
   description?: string
+  onContinueInWeb?: () => void
 }
 
 export function NativeAppDRMGuard({
   title = 'Hardware DRM Protected Classroom & Portals',
   description = 'To protect academic intellectual property, student examinations, and video lecture materials against unauthorized screen recording or piracy, student learning and student portals are strictly accessible through the Official Éclat Native Applications.',
+  onContinueInWeb,
 }: NativeAppDRMGuardProps) {
   return (
     <div
@@ -207,6 +209,31 @@ export function NativeAppDRMGuard({
             <span style={{ fontSize: '1.25rem' }}>💻</span>
             <span>Download Desktop Laptop App (Windows / Mac)</span>
           </a>
+
+          {onContinueInWeb && (
+            <button
+              type="button"
+              onClick={onContinueInWeb}
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '8px',
+                padding: '0.85rem 1.4rem',
+                borderRadius: '14px',
+                background: 'rgba(255, 255, 255, 0.08)',
+                color: '#f1f5f9',
+                border: '1px solid rgba(255, 255, 255, 0.2)',
+                fontWeight: 700,
+                fontSize: '0.92rem',
+                cursor: 'pointer',
+                transition: 'all 0.2s',
+              }}
+            >
+              <span>🌐</span>
+              <span>Open Online Classroom in Web Browser</span>
+            </button>
+          )}
 
           <div style={{ marginTop: '0.5rem', display: 'flex', justifyContent: 'center', gap: '1rem', flexWrap: 'wrap' }}>
             <Link
