@@ -698,14 +698,14 @@ export function IntakeScheduler() {
                           }}
                         >
                           <span style={{ fontSize: '1.5rem', marginBottom: '4px' }}>🎥</span>
-                          <span style={{ fontSize: '0.75rem' }}>No Video Attached</span>
+                          <span style={{ fontSize: '0.75rem', fontWeight: 600 }}>No Video (Optional)</span>
                           <button
                             type="button"
                             className="btn btn-ghost btn-xs"
                             style={{ color: '#2563eb', fontSize: '0.72rem', marginTop: '4px' }}
                             onClick={() => openEditModal(intake)}
                           >
-                            + Add Video URL
+                            + Add Video (Optional)
                           </button>
                         </div>
                       )}
@@ -905,19 +905,25 @@ export function IntakeScheduler() {
                     )}
                   </div>
 
-                  {/* Promo Video */}
+                  {/* Promo Video (Optional) */}
                   <div>
-                    <label className="label" style={{ fontWeight: 700, fontSize: '0.8rem', marginBottom: '0.35rem' }}>
-                      Promotional Video Trailer URL (YouTube / Video Link)
-                    </label>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.35rem' }}>
+                      <label className="label" style={{ fontWeight: 700, fontSize: '0.8rem', margin: 0 }}>
+                        Promotional Video Trailer URL (Optional)
+                      </label>
+                      <span style={{ fontSize: '0.72rem', color: '#64748b', fontWeight: 600 }}>Optional</span>
+                    </div>
                     <input
                       type="url"
                       className="input"
                       style={{ fontSize: '0.85rem' }}
-                      placeholder="e.g. https://www.youtube.com/watch?v=..."
+                      placeholder="Optional — e.g. https://www.youtube.com/watch?v=... (or leave blank)"
                       value={formVideoUrl}
                       onChange={(e) => setFormVideoUrl(e.target.value)}
                     />
+                    <div style={{ fontSize: '0.72rem', color: '#64748b', marginTop: '3px' }}>
+                      Optional YouTube or video teaser link. You can leave this blank if you do not have a promotional video.
+                    </div>
                     {formVideoUrl && extractYouTubeId(formVideoUrl) && (
                       <div style={{ fontSize: '0.75rem', color: '#2563eb', fontWeight: 700, marginTop: '4px' }}>
                         ✓ YouTube Video identified (ID: {extractYouTubeId(formVideoUrl)})
