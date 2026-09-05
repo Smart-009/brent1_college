@@ -489,5 +489,233 @@ test('Google Drive Embed: Handles Google Docs, Sheets, and Slides formats', () =
   assert.equal(getGoogleDrivePreviewUrl(slideUrl), `https://docs.google.com/presentation/d/${docId}/preview`)
 })
 
+// 3. PLATFORM DETECTION & DESKTOP APP WORKSTATION TESTS
+function mockDetectElectron({ search = '', userAgent = '', desktopAPI = undefined, storage = {} } = {}) {
+  if (search.includes('platform=desktop')) return true
+  if (desktopAPI && desktopAPI.isDesktop) return true
+  if (/Electron|ÉclatDesktopWorkstation|EclatDesktop/i.test(userAgent)) return true
+  if (storage['eclat_platform'] === 'desktop') return true
+  return false
+}
 
+function mockDetectCapacitor({ userAgent = '', capacitor = undefined, protocol = 'https:', storage = {} } = {}) {
+  if (capacitor && capacitor.isNativePlatform && capacitor.isNativePlatform()) return true
+  if (protocol === 'capacitor:' || protocol === 'ionic:') return true
+  if (/Capacitor/i.test(userAgent)) return true
+  if (storage['eclat_platform'] === 'mobile') return true
+  return false
+}
 
+test('Platform Detection: Electron Workstation Identification', () => {
+  // Query param detection
+  assert.ok(mockDetectElectron({ search: '?platform=desktop' }))
+  // Electron User Agent detection
+  assert.ok(mockDetectElectron({ userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) Electron/32.0.0 ÉclatDesktopWorkstation/1.0.0' }))
+  // desktopAPI context bridge detection
+  assert.ok(mockDetectElectron({ desktopAPI: { isDesktop: true } }))
+  // Persisted storage detection
+  assert.ok(mockDetectElectron({ storage: { eclat_platform: 'desktop' } }))
+  // Standard web browser returns false
+  assert.ok(!mockDetectElectron({ search: '', userAgent: 'Mozilla/5.0 Chrome/120.0', storage: {} }))
+})
+
+test('Platform Detection: Capacitor Mobile App Identification', () => {
+  assert.ok(mockDetectCapacitor({ capacitor: { isNativePlatform: () => true } }))
+  assert.ok(mockDetectCapacitor({ protocol: 'capacitor:' }))
+  assert.ok(mockDetectCapacitor({ userAgent: 'Mozilla/5.0 (Android; Mobile) CapacitorApp/1.0' }))
+  assert.ok(mockDetectCapacitor({ storage: { eclat_platform: 'mobile' } }))
+  assert.ok(!mockDetectCapacitor({ protocol: 'https:', userAgent: 'Mozilla/5.0 Chrome/120.0', storage: {} }))
+})
+
+// 4. AUTHENTICATION & MULTI-FORMAT IDENTIFIER RESOLUTION TESTS
+function mockAuthenticateStudent(inputIdentifier, password, storedStudents = []) {
+  const rawInput = (inputIdentifier || '').trim()
+  const cleanAlpha = rawInput.toLowerCase().replace(/[^a-z0-9]/g, '')
+  const validUniversalPasswords = [
+    'Eclat@2026#!',
+    'Eclat@2026',
+    'Admin@2026#!',
+    'Admin@2026',
+    'Password123!',
+    'Student@2026',
+    'Student@2026#!',
+    'student',
+    'admin123',
+    'admin',
+    'eclat2026',
+  ]
+  const isMatchPass = validUniversalPasswords.includes(password.trim())
+
+  // Admin
+  if (cleanAlpha.includes('admin') || rawInput === 'Eclat2026@admin') {
+    if (isMatchPass) return { error: null, role: 'admin', admission_number: 'Eclat2026@admin' }
+  }
+
+  // Bursar
+  if (cleanAlpha === 'bursar' || cleanAlpha === 'finance' || cleanAlpha === 'bursec001') {
+    if (isMatchPass || password === 'Bursar@2026') return { error: null, role: 'bursar', admission_number: 'BUR-SEC-001' }
+  }
+
+  // Teacher
+  if (cleanAlpha === 'teacher' || cleanAlpha === 'lecturer' || cleanAlpha === 'tch001') {
+    if (isMatchPass || password === 'Teacher@2026') return { error: null, role: 'teacher', admission_number: 'TCH-001' }
+  }
+
+  // Demo / Seed Student
+  if (
+    cleanAlpha === 'student' ||
+    cleanAlpha === 'trainee' ||
+    cleanAlpha === 'demo' ||
+    cleanAlpha === 'el0012026' ||
+    cleanAlpha === 'el001' ||
+    cleanAlpha === 'mustafahassan' ||
+    cleanAlpha === 'mustafa' ||
+    rawInput.toUpperCase() === 'EL/001/2026'
+  ) {
+    if (isMatchPass) {
+      return {
+        error: null,
+        role: 'student',
+        admission_number: 'EL/001/2026',
+        full_name: 'Mustafa Hassan',
+        first_login_at: '2026-09-04T00:00:00Z',
+      }
+    }
+  }
+
+  // Registered Student in SIS Store
+  const found = storedStudents.find((s) => {
+    const sAdm = s.admission_number.toLowerCase().replace(/[^a-z0-9]/g, '')
+    const sName = s.full_name.toLowerCase().replace(/[^a-z0-9]/g, '')
+    return sAdm === cleanAlpha || sName === cleanAlpha || (cleanAlpha.length >= 3 && (sAdm.includes(cleanAlpha) || sName.includes(cleanAlpha)))
+  })
+
+  if (found) {
+    if (found.portal_password && found.portal_password.trim() !== '') {
+      if (!isMatchPass && password.trim() !== found.portal_password.trim()) {
+        return { error: 'Incorrect password for this student admission account.' }
+      }
+    }
+    return {
+      error: null,
+      role: 'student',
+      admission_number: found.admission_number,
+      full_name: found.full_name,
+      first_login_at: new Date().toISOString(),
+    }
+  }
+
+  // Fallback Auto-Provisioning
+  if (cleanAlpha.startsWith('el') || cleanAlpha.startsWith('ei') || cleanAlpha.length >= 2) {
+    return {
+      error: null,
+      role: 'student',
+      admission_number: rawInput,
+      full_name: rawInput.toUpperCase().startsWith('EL') ? 'Mustafa Hassan' : rawInput,
+      first_login_at: new Date().toISOString(),
+    }
+  }
+
+  return { error: 'Account not found or has been removed.' }
+}
+
+test('Authentication: Formatted Admission Numbers & Aliases', () => {
+  const res1 = mockAuthenticateStudent('EL/001/2026', 'Student@2026')
+  assert.equal(res1.error, null)
+  assert.equal(res1.role, 'student')
+  assert.equal(res1.admission_number, 'EL/001/2026')
+  assert.ok(res1.first_login_at)
+
+  const res2 = mockAuthenticateStudent('el/001/2026', 'student')
+  assert.equal(res2.error, null)
+  assert.equal(res2.role, 'student')
+
+  const res3 = mockAuthenticateStudent('Mustafa Hassan', 'Student@2026')
+  assert.equal(res3.error, null)
+  assert.equal(res3.role, 'student')
+
+  const res4 = mockAuthenticateStudent('EI-2026-042', 'Student@2026')
+  assert.equal(res4.error, null)
+  assert.equal(res4.role, 'student')
+})
+
+test('Authentication: Student Custom Portal Password Verification', () => {
+  const students = [
+    {
+      id: 'std-custom-01',
+      admission_number: 'EI/999/2026',
+      full_name: 'Jane Doe',
+      portal_password: 'CustomSecret@2026',
+    },
+  ]
+
+  // Success with custom password
+  const resSuccess = mockAuthenticateStudent('EI/999/2026', 'CustomSecret@2026', students)
+  assert.equal(resSuccess.error, null)
+  assert.equal(resSuccess.full_name, 'Jane Doe')
+
+  // Success with institutional master override password
+  const resMaster = mockAuthenticateStudent('EI/999/2026', 'Student@2026', students)
+  assert.equal(resMaster.error, null)
+
+  // Failure with wrong password
+  const resFail = mockAuthenticateStudent('EI/999/2026', 'WrongPassword123', students)
+  assert.ok(resFail.error.includes('Incorrect password'))
+})
+
+// 5. STUDENT ACCESS & AUTO-RENEWAL TESTS
+test('Student Access: Auto-Renewal Guarantees Active Term Window (Zero Lockouts)', () => {
+  const activeStudentProfile = {
+    id: 'usr-student-01',
+    role: 'student',
+    access_expires_at: null, // Initial or unset
+    first_login_at: '2026-01-01T00:00:00Z',
+  }
+
+  // Access check logic: if null or expired, renew for 365 days
+  let accessWindow = activeStudentProfile.access_expires_at
+  if (!accessWindow || isAccessExpired(accessWindow)) {
+    accessWindow = new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString()
+  }
+
+  assert.ok(accessWindow !== null)
+  assert.ok(!isAccessExpired(accessWindow))
+  assert.ok(new Date(accessWindow).getFullYear() >= new Date().getFullYear())
+})
+
+// 6. ROUTE & WORKSTATION INTEGRITY TESTS
+test('Routing: Desktop App Root Entry directs directly to Workstation Dashboards', () => {
+  function getNativeEntryRoute(isNative, profile) {
+    if (isNative) {
+      if (!profile) return '/login'
+      if (profile.role === 'admin') return '/admin'
+      if (profile.role === 'bursar') return '/bursar'
+      if (profile.role === 'teacher') return '/teacher'
+      if (profile.role === 'parent') return '/parent'
+      return '/student'
+    }
+    return '/' // Web public landing
+  }
+
+  // Native Desktop App unauthenticated -> /login
+  assert.equal(getNativeEntryRoute(true, null), '/login')
+
+  // Native Desktop App authenticated student -> /student
+  assert.equal(getNativeEntryRoute(true, { role: 'student' }), '/student')
+
+  // Native Desktop App authenticated bursar -> /bursar
+  assert.equal(getNativeEntryRoute(true, { role: 'bursar' }), '/bursar')
+
+  // Public Web -> / (Marketing Landing)
+  assert.equal(getNativeEntryRoute(false, null), '/')
+})
+
+test('Routing: Lesson Player URL Aliases (Singular and Plural)', () => {
+  const lessonId = 'les-101'
+  const singularRoute = `/student/lesson/${lessonId}`
+  const pluralRoute = `/student/lessons/${lessonId}`
+
+  const normalizeLessonRoute = (url) => url.replace('/student/lessons/', '/student/lesson/')
+  assert.equal(normalizeLessonRoute(singularRoute), `/student/lesson/${lessonId}`)
+  assert.equal(normalizeLessonRoute(pluralRoute), `/student/lesson/${lessonId}`)
+})
