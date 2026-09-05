@@ -877,7 +877,7 @@ class SchoolDataStore {
     this.setupRealtimeSync()
     this.syncWithCloud().catch(() => {})
 
-    // Sync automatically on window focus, device wake, or network reconnect
+    // Sync automatically on window focus, device wake, or network reconnect across Desktop and Mobile
     if (typeof window !== 'undefined') {
       window.addEventListener('focus', () => {
         this.syncWithCloud(true).catch(() => {})
@@ -885,16 +885,25 @@ class SchoolDataStore {
       window.addEventListener('online', () => {
         this.syncWithCloud(true).catch(() => {})
       })
+      window.addEventListener('pageshow', () => {
+        this.syncWithCloud(true).catch(() => {})
+      })
       document.addEventListener('visibilitychange', () => {
         if (!document.hidden) {
           this.syncWithCloud(true).catch(() => {})
         }
       })
+      document.addEventListener('deviceready', () => {
+        this.syncWithCloud(true).catch(() => {})
+      })
+      document.addEventListener('resume', () => {
+        this.syncWithCloud(true).catch(() => {})
+      })
 
-      // Periodic cloud background heartbeat (every 15s) for instant cross-device updates
+      // Periodic cloud background heartbeat (every 10s) for instant cross-device updates
       this.autoSyncTimer = setInterval(() => {
         this.syncWithCloud(false).catch(() => {})
-      }, 15000)
+      }, 10000)
     }
   }
 
@@ -945,6 +954,50 @@ class SchoolDataStore {
           }
           this.syncWithCloud(true).catch(() => {})
         })
+        .on('postgres_changes', { event: '*', schema: 'public', table: 'app_cloud_sync' }, (payload: any) => {
+          const row = payload?.new
+          if (row && row.key && row.data !== undefined) {
+            if (row.key === 'resources' && Array.isArray(row.data)) {
+              this.set('resources', row.data)
+              schoolEventBus.publish('LIBRARY_UPDATED' as any)
+            } else if (row.key === 'students' && Array.isArray(row.data)) {
+              this.mergeCloudStudents(row.data)
+              schoolEventBus.publish('STUDENT_UPDATED')
+            } else if (row.key === 'invoices' && Array.isArray(row.data)) {
+              this.set('invoices', row.data)
+              schoolEventBus.publish('INVOICE_CREATED')
+            } else if (row.key === 'receipts' && Array.isArray(row.data)) {
+              this.set('receipts', row.data)
+              schoolEventBus.publish('PAYMENT_RECORDED')
+            } else if (row.key === 'unit_registrations' && Array.isArray(row.data)) {
+              this.set('unit_registrations', row.data)
+              schoolEventBus.publish('UNIT_REGISTRATION_COMPLETED' as any)
+            } else if (row.key === 'course_units' && Array.isArray(row.data)) {
+              this.set('course_units', row.data)
+              schoolEventBus.publish('COURSE_UNIT_CREATED' as any)
+            }
+            window.dispatchEvent(new CustomEvent('eclat-data-synced'))
+          }
+          this.syncWithCloud(true).catch(() => {})
+        })
+        .on('postgres_changes', { event: '*', schema: 'public', table: 'profiles' }, () => {
+          this.syncWithCloud(true).catch(() => {})
+        })
+        .on('postgres_changes', { event: '*', schema: 'public', table: 'courses' }, () => {
+          this.syncWithCloud(true).catch(() => {})
+        })
+        .on('postgres_changes', { event: '*', schema: 'public', table: 'lessons' }, () => {
+          this.syncWithCloud(true).catch(() => {})
+        })
+        .on('postgres_changes', { event: '*', schema: 'public', table: 'library_resources' }, () => {
+          this.syncWithCloud(true).catch(() => {})
+        })
+        .on('postgres_changes', { event: '*', schema: 'public', table: 'fee_invoices' }, () => {
+          this.syncWithCloud(true).catch(() => {})
+        })
+        .on('postgres_changes', { event: '*', schema: 'public', table: 'enrollments' }, () => {
+          this.syncWithCloud(true).catch(() => {})
+        })
         .subscribe()
     } catch {}
   }
@@ -965,9 +1018,7 @@ class SchoolDataStore {
   }
 
   async pushCollectionToCloud(collectionKey: string, data: any): Promise<void> {
-    // 1. Native app_cloud_sync table persistence (isolated from public courses table)
-
-    // 2. Try native app_cloud_sync table if exists
+    // 1. Primary app_cloud_sync table persistence
     try {
       await supabase.from('app_cloud_sync').upsert(
         {
@@ -976,6 +1027,25 @@ class SchoolDataStore {
           updated_at: new Date().toISOString(),
         },
         { onConflict: 'key' }
+      )
+    } catch {}
+
+    // 2. Secondary fallback sync container in courses table (ensures universal cross-platform redundancy)
+    try {
+      const containerTitle = `__ECLAT_SYNC_${collectionKey.toUpperCase()}__`
+      const payloadString = JSON.stringify({ key: collectionKey, data })
+      await supabase.from('courses').upsert(
+        {
+          id: `aaaaaaaa-0000-0000-0000-${collectionKey.slice(0, 12).padEnd(12, '0').replace(/[^0-9a-f]/g, 'a')}`,
+          title: containerTitle,
+          description: payloadString,
+          subject_id: 'sub-computing',
+          teacher_id: 'tch-faculty',
+          is_published: false,
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString(),
+        },
+        { onConflict: 'id' }
       )
     } catch {}
 
