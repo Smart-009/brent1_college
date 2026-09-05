@@ -7,6 +7,7 @@ import { RoleBadge } from '@/components/ui/Badge'
 import { RoleSwitcher } from '@/components/shared/RoleSwitcher'
 import { dispatchSchoolBellAlert } from '@/components/shared/ClassBellReminderModal'
 import { formatDateTime } from '@/lib/utils'
+import { isNativeApp, isElectronApp } from '@/utils/platform'
 
 export function Navbar({ onToggleSidebar }: { onToggleSidebar: () => void }) {
   const { profile, signOut } = useAuth()
@@ -94,54 +95,83 @@ export function Navbar({ onToggleSidebar }: { onToggleSidebar: () => void }) {
           <span className="hide-on-mobile">School Bell</span>
         </button>
 
-        {/* Download Native Apps Link (Desktop only) */}
-        <a
-          href="/#app-download"
-          className="btn btn-sm hide-mobile"
-          style={{
-            background: 'rgba(255, 255, 255, 0.15)',
-            color: '#ffffff',
-            border: '1px solid rgba(255, 255, 255, 0.3)',
-            display: 'inline-flex',
-            alignItems: 'center',
-            gap: '0.35rem',
-            fontSize: '0.8rem',
-            fontWeight: 600,
-            textDecoration: 'none',
-          }}
-          title="Download Official Native Desktop & Mobile Apps"
-        >
-          <span>📲</span>
-          <span>Get Apps</span>
-        </a>
+        {/* Download Native Apps Link (Public Website Only) */}
+        {!isNativeApp() && (
+          <a
+            href="/#app-download"
+            className="btn btn-sm hide-mobile"
+            style={{
+              background: 'rgba(255, 255, 255, 0.15)',
+              color: '#ffffff',
+              border: '1px solid rgba(255, 255, 255, 0.3)',
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '0.35rem',
+              fontSize: '0.8rem',
+              fontWeight: 600,
+              textDecoration: 'none',
+            }}
+            title="Download Official Native Desktop & Mobile Apps"
+          >
+            <span>📲</span>
+            <span>Get Apps</span>
+          </a>
+        )}
 
-        {/* Direct E-Library Link (Desktop only - mobile has bottom navigation) */}
-        <Link
-          to="/library"
-          className="btn btn-sm hide-mobile"
-          style={{
-            background: 'rgba(59, 130, 246, 0.18)',
-            color: '#93c5fd',
-            border: '1px solid rgba(59, 130, 246, 0.4)',
-            borderRadius: '8px',
-            padding: '4px 12px',
-            fontSize: '0.8rem',
-            fontWeight: 800,
-            display: 'inline-flex',
-            alignItems: 'center',
-            gap: '5px',
-            textDecoration: 'none',
-          }}
-          title="Browse Open E-Library & Academic Resources"
-        >
-          <span>📖</span>
-          <span>E-Library</span>
-        </Link>
+        {/* Desktop Workstation Status Pill */}
+        {isElectronApp() && (
+          <div
+            className="hide-mobile"
+            style={{
+              background: 'rgba(16, 185, 129, 0.15)',
+              color: '#34d399',
+              border: '1px solid rgba(16, 185, 129, 0.35)',
+              padding: '4px 10px',
+              borderRadius: '8px',
+              fontSize: '0.74rem',
+              fontWeight: 800,
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '6px',
+            }}
+            title="Hardware DRM Screenshot & Recording Protection Active"
+          >
+            <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#34d399', boxShadow: '0 0 6px #34d399' }} />
+            <span>Desktop Workstation</span>
+          </div>
+        )}
 
-        {/* Role Simulator Switcher (Desktop only) */}
-        <div className="hide-mobile">
-          <RoleSwitcher />
-        </div>
+        {/* Direct E-Library Link (Desktop web only - mobile has bottom navigation) */}
+        {!isNativeApp() && (
+          <Link
+            to="/library"
+            className="btn btn-sm hide-mobile"
+            style={{
+              background: 'rgba(59, 130, 246, 0.18)',
+              color: '#93c5fd',
+              border: '1px solid rgba(59, 130, 246, 0.4)',
+              borderRadius: '8px',
+              padding: '4px 12px',
+              fontSize: '0.8rem',
+              fontWeight: 800,
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '5px',
+              textDecoration: 'none',
+            }}
+            title="Browse Open E-Library & Academic Resources"
+          >
+            <span>📖</span>
+            <span>E-Library</span>
+          </Link>
+        )}
+
+        {/* Role Simulator Switcher (Public Website Only) */}
+        {!isNativeApp() && (
+          <div className="hide-mobile">
+            <RoleSwitcher />
+          </div>
+        )}
 
         {!profile && (
           <Link

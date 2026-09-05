@@ -9,36 +9,30 @@ export function isElectronApp(): boolean {
   return Boolean(
     w.desktopAPI?.isDesktop ||
     w.electronAPI ||
-    /Electron/i.test(navigator.userAgent)
+    /Electron/i.test(navigator.userAgent) ||
+    w.process?.versions?.electron ||
+    (typeof sessionStorage !== 'undefined' && sessionStorage.getItem('eclat_platform') === 'desktop')
   )
 }
 
-export function isNativeApp(): boolean {
+export function isCapacitorApp(): boolean {
   if (typeof window === 'undefined') return false
-
   const w = window as any
-
-  // 1. Electron Desktop Native Laptop App (Windows / Mac)
-  if (isElectronApp()) return true
-
-  // 2. Capacitor Native Mobile Platform check (Android / iOS)
-  const isCapacitor = Boolean(
+  return Boolean(
     w.Capacitor?.isNativePlatform?.() ||
     w.Capacitor?.getPlatform?.() === 'android' ||
     w.Capacitor?.getPlatform?.() === 'ios' ||
     window.location.protocol === 'capacitor:' ||
     window.location.protocol === 'ionic:' ||
     /Capacitor/i.test(navigator.userAgent) ||
-    Boolean(w.AndroidSecurity)
+    Boolean(w.AndroidSecurity) ||
+    (typeof document !== 'undefined' && typeof document.referrer === 'string' && document.referrer.includes('android-app://')) ||
+    (typeof sessionStorage !== 'undefined' && sessionStorage.getItem('eclat_platform') === 'mobile')
   )
+}
 
-  // 3. Android Intent / Native Wrapper
-  const isAndroidAppWrapper =
-    typeof document !== 'undefined' &&
-    typeof document.referrer === 'string' &&
-    document.referrer.includes('android-app://')
-
-  return isCapacitor || isAndroidAppWrapper
+export function isNativeApp(): boolean {
+  return isElectronApp() || isCapacitorApp()
 }
 
 export function isAndroidDevice(): boolean {

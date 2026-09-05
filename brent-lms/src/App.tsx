@@ -111,6 +111,23 @@ function RequireAuth({ children, allowedRoles }: { children: ReactElement; allow
   return children
 }
 
+/** Clean Platform-Aware Entry Router */
+function RootEntryRouter() {
+  const { profile, loading } = useAuth()
+  if (loading) return <LoadingScreen message="Opening learning workstation..." />
+  if (isNativeApp()) {
+    if (profile) {
+      if (profile.role === 'admin') return <Navigate to="/admin" replace />
+      if (profile.role === 'bursar') return <Navigate to="/bursar" replace />
+      if (profile.role === 'teacher') return <Navigate to="/teacher" replace />
+      if (profile.role === 'parent') return <Navigate to="/parent" replace />
+      return <Navigate to="/student" replace />
+    }
+    return <Navigate to="/login" replace />
+  }
+  return <Landing />
+}
+
 export function App() {
   const [showOpeningSplash, setShowOpeningSplash] = useState(() => {
     if (typeof window === 'undefined') return false
@@ -141,8 +158,8 @@ export function App() {
       <PullToRefresh />
       <FloatingIntakesWidget />
       <Routes>
-        {/* Public Landing, About & Login */}
-        <Route path="/" element={<Landing />} />
+        {/* Platform-Aware Root Route */}
+        <Route path="/" element={<RootEntryRouter />} />
         <Route path="/about" element={<AboutPage />} />
         <Route path="/privacy" element={<PrivacyPolicy />} />
         <Route path="/courses" element={<CourseCatalogPage />} />
