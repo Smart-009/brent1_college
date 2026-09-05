@@ -442,44 +442,59 @@ export function LessonPlayer() {
     ? courseLessons[currentIndex + 1]
     : null
 
-  // Check if student has paid and is cleared
-  const studentIdentifier = profile?.admission_number || profile?.id || ''
-  const currentStudent = schoolStore
-    .getStudents()
-    .find(
-      (s) =>
-        (profile?.admission_number && s.admission_number.toLowerCase() === profile.admission_number.toLowerCase()) ||
-        s.id === profile?.id
-    )
+  // Comprehensive Check if student has paid and is cleared by Bursar
+  const adm = (profile?.admission_number || '').trim().toLowerCase()
+  const name = (profile?.full_name || '').trim().toLowerCase()
+  const id = (profile?.id || '').trim().toLowerCase()
 
-  const studentInvoices = schoolStore
-    .getInvoices()
-    .filter(
-      (inv) =>
-        (profile?.admission_number && inv.admission_number.toLowerCase() === profile.admission_number.toLowerCase()) ||
-        inv.student_id === profile?.id
-    )
+  const allStudents = schoolStore.getStudents()
+  const currentStudent =
+    allStudents.find((s) => {
+      const sAdm = (s.admission_number || '').trim().toLowerCase()
+      const sName = (s.full_name || '').trim().toLowerCase()
+      const sId = (s.id || '').trim().toLowerCase()
+      return (
+        (adm && sAdm === adm) ||
+        (id && sId === id) ||
+        (name && sName === name) ||
+        (adm && sName.includes(adm)) ||
+        (name && sAdm.includes(name))
+      )
+    }) || null
 
-  const studentReceipts = schoolStore
-    .getReceipts()
-    .filter(
-      (rcpt) =>
-        (profile?.admission_number && rcpt.admission_number.toLowerCase() === profile.admission_number.toLowerCase()) ||
-        rcpt.student_id === profile?.id
-    )
+  const studentInvoices = schoolStore.getInvoices().filter((inv) => {
+    const invAdm = (inv.admission_number || '').trim().toLowerCase()
+    const invId = (inv.student_id || '').trim().toLowerCase()
+    const invName = (inv.student_name || '').trim().toLowerCase()
+    return (adm && invAdm === adm) || (id && invId === id) || (name && invName === name)
+  })
+
+  const studentReceipts = schoolStore.getReceipts().filter((rcpt) => {
+    const rAdm = (rcpt.admission_number || '').trim().toLowerCase()
+    const rId = (rcpt.student_id || '').trim().toLowerCase()
+    const rName = (rcpt.student_name || '').trim().toLowerCase()
+    return (adm && rAdm === adm) || (id && rId === id) || (name && rName === name)
+  })
 
   const hasClearedInvoice = studentInvoices.some((inv) => inv.status === 'Paid' || inv.balance === 0)
-  const hasValidReceipt = studentReceipts.some((r) => (r.amount_paid ?? r.amount) > 0)
+  const hasValidReceipt = studentReceipts.some((r) => (r.amount_paid ?? r.amount) > 0 || r.balance_remaining === 0)
   const isBiometricCleared = schoolStore
     .getBiometricClearanceLogs()
-    .some((p) => p.admission_number.toLowerCase() === studentIdentifier.toLowerCase())
+    .some((p) => (adm && p.admission_number.toLowerCase() === adm) || (name && p.student_name.toLowerCase() === name))
+
+  const hasUnitRegCleared = schoolStore.getUnitRegistrations().some((reg) => {
+    const regAdm = (reg.admission_number || '').trim().toLowerCase()
+    const regName = (reg.student_name || '').trim().toLowerCase()
+    return ((adm && regAdm === adm) || (name && regName === name)) && reg.fee_clearance_status === 'Cleared'
+  })
 
   const isFeeCleared =
     currentStudent?.fee_cleared === true ||
     (currentStudent && currentStudent.fee_balance === 0) ||
     hasClearedInvoice ||
     hasValidReceipt ||
-    isBiometricCleared
+    isBiometricCleared ||
+    hasUnitRegCleared
 
   const isPaidAndCleared = profile?.role !== 'student' || isFeeCleared
 

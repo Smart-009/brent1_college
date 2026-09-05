@@ -182,15 +182,15 @@ export function CourseDetail() {
 
   // Auto-enroll and navigate to lesson
   const handleLessonClick = async (lessonId: string) => {
-    if (!profile?.id || !courseId) return
-
-    if (!enrollment) {
-      await supabase.from('enrollments').insert({
-        student_id: profile.id,
-        course_id: courseId,
-        completed_lesson_ids: [],
-      })
-      queryClient.invalidateQueries({ queryKey: ['student-course-enrollment', courseId, profile.id] })
+    if (isValidUuid(courseId) && isValidUuid(profile?.id) && !enrollment) {
+      try {
+        await supabase.from('enrollments').insert({
+          student_id: profile!.id,
+          course_id: courseId,
+          completed_lesson_ids: [],
+        })
+        queryClient.invalidateQueries({ queryKey: ['student-course-enrollment', courseId, profile!.id] })
+      } catch {}
     }
 
     navigate(`/student/lesson/${lessonId}`)
