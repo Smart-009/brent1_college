@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect } from 'react'
+import { useState, useMemo, useEffect, useRef, useCallback } from 'react'
 import { useAuth } from '@/hooks/useAuth'
 import { useIsMobile } from '@/hooks/useMediaQuery'
 import { schoolStore, schoolEventBus } from '@/lib/schoolData'
@@ -7,6 +7,23 @@ import { getEmbeddableDocumentUrl, getGoogleDrivePreviewUrl } from '@/lib/utils'
 import { isNativeApp, OFFICIAL_APK_URL, LOCAL_APK_URL } from '@/utils/platform'
 import { ACADEMIC_HANDBOOKS, COMIC_BOOKS_DATA, AcademicHandbook, ComicBook } from './academicHandbookData'
 import type { AcademicResource } from '@/types/school'
+
+export interface AnnotationStroke {
+  id: string
+  tool: 'pen' | 'highlighter'
+  color: string
+  width: number
+  points: { x: number; y: number }[]
+}
+
+export interface StickyNote {
+  id: string
+  x: number // 0..100 percentage
+  y: number // 0..100 percentage
+  text: string
+  color: string
+  isOpen: boolean
+}
 
 export const DEFAULT_CATEGORIES = [
   'All',
@@ -120,6 +137,211 @@ export function ResourceLibrary() {
   const [showMobileToc, setShowMobileToc] = useState<boolean>(false)
   const [isTocCollapsed, setIsTocCollapsed] = useState<boolean>(false)
   const [isInlineTocOpen, setIsInlineTocOpen] = useState<boolean>(false)
+
+  // WPS Annotation, Drawing & Highlighter Suite State
+  const canvasRef = useRef<HTMLCanvasElement | null>(null)
+  const [annotations, setAnnotations] = useState<AnnotationStroke[]>([])
+  const [currentStroke, setCurrentStroke] = useState<AnnotationStroke | null>(null)
+  const [annotationTool, setAnnotationTool] = useState<'cursor' | 'highlighter' | 'pen' | 'eraser' | 'sticky'>('cursor')
+  const [highlighterColor, setHighlighterColor] = useState<string>('#fef08a')
+  const [penColor, setPenColor] = useState<string>('#ef4444')
+  const [stickyNotes, setStickyNotes] = useState<StickyNote[]>([])
+  const [isFullscreen, setIsFullscreen] = useState<boolean>(false)
+
+  // Load saved annotations for current resource
+  useEffect(() => {
+    if (!readingResource) {
+      setAnnotations([])
+      setStickyNotes([])
+      return
+    }
+    try {
+      const savedStrokes = localStorage.getItem(`eclat_pdf_annotations_${readingResource.id}`)
+      if (savedStrokes) setAnnotations(JSON.parse(savedStrokes))
+      else setAnnotations([])
+
+      const savedNotes = localStorage.getItem(`eclat_pdf_notes_${readingResource.id}`)
+      if (savedNotes) setStickyNotes(JSON.parse(savedNotes))
+      else setStickyNotes([])
+    } catch {
+      setAnnotations([])
+      setStickyNotes([])
+    }
+  }, [readingResource])
+
+  // Redraw canvas whenever annotations or currentStroke change
+  const redrawCanvas = useCallback(() => {
+    const canvas = canvasRef.current
+    if (!canvas) return
+    const ctx = canvas.getContext('2d')
+    if (!ctx) return
+
+    ctx.clearRect(0, 0, canvas.width, canvas.height)
+
+    const allStrokes = currentStroke ? [...annotations, currentStroke] : annotations
+
+    for (const stroke of allStrokes) {
+      if (stroke.points.length < 1) continue
+      ctx.save()
+      if (stroke.tool === 'highlighter') {
+        ctx.strokeStyle = stroke.color
+        ctx.lineWidth = stroke.width || 22
+        ctx.lineCap = 'round'
+        ctx.lineJoin = 'round'
+        ctx.globalAlpha = 0.45
+        ctx.globalCompositeOperation = 'source-over'
+      } else {
+        ctx.strokeStyle = stroke.color
+        ctx.lineWidth = stroke.width || 3
+        ctx.lineCap = 'round'
+        ctx.lineJoin = 'round'
+        ctx.globalAlpha = 1
+        ctx.globalCompositeOperation = 'source-over'
+      }
+
+      ctx.beginPath()
+      ctx.moveTo(stroke.points[0].x * canvas.width, stroke.points[0].y * canvas.height)
+      for (let i = 1; i < stroke.points.length; i++) {
+        ctx.lineTo(stroke.points[i].x * canvas.width, stroke.points[i].y * canvas.height)
+      }
+      ctx.stroke()
+      ctx.restore()
+    }
+  }, [annotations, currentStroke])
+
+  useEffect(() => {
+    redrawCanvas()
+  }, [redrawCanvas])
+
+  // Auto-resize canvas on zoom / layout change
+  useEffect(() => {
+    const canvas = canvasRef.current
+    if (!canvas) return
+    const rect = canvas.getBoundingClientRect()
+    if (rect.width > 0 && rect.height > 0) {
+      canvas.width = rect.width
+      canvas.height = rect.height
+      redrawCanvas()
+    }
+  }, [readingResource, readerZoom, redrawCanvas])
+
+  const handlePointerDown = (e: React.PointerEvent<HTMLCanvasElement>) => {
+    if (annotationTool === 'cursor') return
+    const canvas = canvasRef.current
+    if (!canvas) return
+    const rect = canvas.getBoundingClientRect()
+    const normX = (e.clientX - rect.left) / rect.width
+    const normY = (e.clientY - rect.top) / rect.height
+
+    if (annotationTool === 'sticky') {
+      const newNote: StickyNote = {
+        id: Date.now().toString(),
+        x: Math.min(85, Math.max(5, normX * 100)),
+        y: Math.min(90, Math.max(5, normY * 100)),
+        text: '',
+        color: '#fef08a',
+        isOpen: true,
+      }
+      const updated = [...stickyNotes, newNote]
+      setStickyNotes(updated)
+      if (readingResource) {
+        localStorage.setItem(`eclat_pdf_notes_${readingResource.id}`, JSON.stringify(updated))
+      }
+      setAnnotationTool('cursor')
+      return
+    }
+
+    if (annotationTool === 'eraser') {
+      const threshold = 0.04
+      const filtered = annotations.filter((s) => {
+        return !s.points.some((p) => Math.hypot(p.x - normX, p.y - normY) < threshold)
+      })
+      setAnnotations(filtered)
+      if (readingResource) {
+        localStorage.setItem(`eclat_pdf_annotations_${readingResource.id}`, JSON.stringify(filtered))
+      }
+      return
+    }
+
+    const newStroke: AnnotationStroke = {
+      id: Date.now().toString(),
+      tool: annotationTool === 'highlighter' ? 'highlighter' : 'pen',
+      color: annotationTool === 'highlighter' ? highlighterColor : penColor,
+      width: annotationTool === 'highlighter' ? 22 : 3,
+      points: [{ x: normX, y: normY }],
+    }
+    setCurrentStroke(newStroke)
+  }
+
+  const handlePointerMove = (e: React.PointerEvent<HTMLCanvasElement>) => {
+    if (!currentStroke || annotationTool === 'cursor') return
+    const canvas = canvasRef.current
+    if (!canvas) return
+    const rect = canvas.getBoundingClientRect()
+    const normX = (e.clientX - rect.left) / rect.width
+    const normY = (e.clientY - rect.top) / rect.height
+
+    setCurrentStroke((prev) => {
+      if (!prev) return null
+      return {
+        ...prev,
+        points: [...prev.points, { x: normX, y: normY }],
+      }
+    })
+  }
+
+  const handlePointerUp = () => {
+    if (currentStroke && readingResource) {
+      const updated = [...annotations, currentStroke]
+      setAnnotations(updated)
+      setCurrentStroke(null)
+      localStorage.setItem(`eclat_pdf_annotations_${readingResource.id}`, JSON.stringify(updated))
+    }
+  }
+
+  const handleClearAnnotations = () => {
+    if (window.confirm('Clear all page highlights and revision notes for this document?')) {
+      setAnnotations([])
+      setStickyNotes([])
+      if (readingResource) {
+        localStorage.removeItem(`eclat_pdf_annotations_${readingResource.id}`)
+        localStorage.removeItem(`eclat_pdf_notes_${readingResource.id}`)
+      }
+    }
+  }
+
+  const handleToggleFullscreen = () => {
+    if (!document.fullscreenElement) {
+      document.documentElement.requestFullscreen().then(() => setIsFullscreen(true)).catch(() => {})
+    } else {
+      document.exitFullscreen().then(() => setIsFullscreen(false)).catch(() => {})
+    }
+  }
+
+  const handleUpdateStickyNote = (id: string, text: string) => {
+    const updated = stickyNotes.map((n) => (n.id === id ? { ...n, text } : n))
+    setStickyNotes(updated)
+    if (readingResource) {
+      localStorage.setItem(`eclat_pdf_notes_${readingResource.id}`, JSON.stringify(updated))
+    }
+  }
+
+  const handleDeleteStickyNote = (id: string) => {
+    const updated = stickyNotes.filter((n) => n.id !== id)
+    setStickyNotes(updated)
+    if (readingResource) {
+      localStorage.setItem(`eclat_pdf_notes_${readingResource.id}`, JSON.stringify(updated))
+    }
+  }
+
+  const handleToggleStickyOpen = (id: string) => {
+    const updated = stickyNotes.map((n) => (n.id === id ? { ...n, isOpen: !n.isOpen } : n))
+    setStickyNotes(updated)
+    if (readingResource) {
+      localStorage.setItem(`eclat_pdf_notes_${readingResource.id}`, JSON.stringify(updated))
+    }
+  }
+
 
   const activeHandbook: AcademicHandbook | null = useMemo(() => {
     if (!readingResource) return null
@@ -1043,124 +1265,435 @@ export function ResourceLibrary() {
             </div>
           )}
 
-          {/* Minimal Fullscreen Header Toolbar */}
+          {/* WPS-Style Fullscreen Document Toolbar */}
           <div
             style={{
-              paddingTop: 'calc(0.6rem + env(safe-area-inset-top, 0px))',
-              paddingLeft: isMobile ? '0.75rem' : '1.25rem',
-              paddingRight: isMobile ? '0.75rem' : '1.25rem',
-              paddingBottom: '0.6rem',
+              paddingTop: 'calc(0.4rem + env(safe-area-inset-top, 0px))',
+              paddingLeft: isMobile ? '0.5rem' : '1rem',
+              paddingRight: isMobile ? '0.5rem' : '1rem',
+              paddingBottom: '0.4rem',
               display: 'flex',
-              flexDirection: 'column',
-              justifyContent: 'center',
+              alignItems: 'center',
+              justifyContent: 'space-between',
               borderBottom: `1px solid ${readerTheme === 'dark' ? '#1e293b' : readerTheme === 'sepia' ? '#e6d7b9' : '#e2e8f0'}`,
               background: readerTheme === 'dark' ? '#0f172a' : readerTheme === 'sepia' ? '#f4ebd0' : '#ffffff',
               flexShrink: 0,
               gap: '0.5rem',
-              boxShadow: '0 2px 10px rgba(0,0,0,0.06)',
+              boxShadow: '0 2px 10px rgba(0,0,0,0.08)',
+              zIndex: 50,
+              flexWrap: 'wrap',
             }}
           >
-            {/* Top Row: Close + Book Info + Reader Appearance Actions */}
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '0.75rem' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', minWidth: 0, flex: 1 }}>
-                {/* Back / Close button */}
-                <button
-                  type="button"
-                  onClick={() => setReadingResource(null)}
+            {/* Left: Back + Doc Title */}
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', minWidth: 0 }}>
+              <button
+                type="button"
+                onClick={() => setReadingResource(null)}
+                style={{
+                  background: readerTheme === 'dark' ? '#1e293b' : '#f1f5f9',
+                  color: readerTheme === 'dark' ? '#94a3b8' : '#475569',
+                  border: 'none',
+                  borderRadius: '8px',
+                  padding: isMobile ? '5px 8px' : '6px 12px',
+                  fontWeight: 800,
+                  fontSize: isMobile ? '0.75rem' : '0.82rem',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '4px',
+                  flexShrink: 0,
+                }}
+                title="Close Reader and return to Library"
+              >
+                <span>←</span>
+                <span>{isMobile ? 'Back' : 'Back to Library'}</span>
+              </button>
+
+              <div style={{ minWidth: 0, overflow: 'hidden' }}>
+                <h3
                   style={{
-                    background: readerTheme === 'dark' ? '#1e293b' : '#f1f5f9',
-                    color: readerTheme === 'dark' ? '#94a3b8' : '#475569',
-                    border: 'none',
-                    borderRadius: '10px',
-                    padding: isMobile ? '6px 10px' : '7px 14px',
-                    fontWeight: 800,
-                    fontSize: isMobile ? '0.78rem' : '0.85rem',
-                    cursor: 'pointer',
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '5px',
-                    flexShrink: 0,
+                    margin: 0,
+                    fontSize: isMobile ? '0.82rem' : '0.96rem',
+                    fontWeight: 900,
+                    color: readerTheme === 'dark' ? '#93c5fd' : readerTheme === 'sepia' ? '#2d2215' : '#1e3a8a',
+                    whiteSpace: 'nowrap',
+                    overflow: 'hidden',
+                    textOverflow: 'ellipsis',
+                    maxWidth: isMobile ? '120px' : '240px',
                   }}
-                  title="Close Reader and return to Library"
                 >
-                  <span>←</span>
-                  <span>{isMobile ? 'Back' : 'Back to Library'}</span>
-                </button>
-
-                <div style={{ minWidth: 0, overflow: 'hidden' }}>
-                  <h3
-                    style={{
-                      margin: 0,
-                      fontSize: isMobile ? '0.88rem' : '1.02rem',
-                      fontWeight: 900,
-                      color: readerTheme === 'dark' ? '#93c5fd' : readerTheme === 'sepia' ? '#2d2215' : '#1e3a8a',
-                      whiteSpace: 'nowrap',
-                      overflow: 'hidden',
-                      textOverflow: 'ellipsis',
-                    }}
-                  >
-                    {readingResource.title}
-                  </h3>
-                  <div style={{ fontSize: '0.7rem', opacity: 0.75, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-                    {readingResource.category} • {readingResource.subject} {readingResource.year ? `(${readingResource.year})` : ''}
-                  </div>
-                </div>
-              </div>
-
-              {/* Right Side: Bookmark & Themes */}
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexShrink: 0 }}>
-                {/* Bookmark Toggle */}
-                <button
-                  type="button"
-                  onClick={() => toggleBookmark(readingResource.id)}
-                  style={{
-                    background: bookmarkedIds.includes(readingResource.id) ? 'rgba(245, 158, 11, 0.15)' : 'transparent',
-                    border: bookmarkedIds.includes(readingResource.id) ? '1px solid #f59e0b' : '1px solid transparent',
-                    color: bookmarkedIds.includes(readingResource.id) ? '#f59e0b' : 'inherit',
-                    fontSize: isMobile ? '0.9rem' : '0.82rem',
-                    padding: isMobile ? '5px 8px' : '5px 10px',
-                    borderRadius: '8px',
-                    fontWeight: 700,
-                    cursor: 'pointer',
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '4px',
-                  }}
-                  title={bookmarkedIds.includes(readingResource.id) ? 'Saved in My Books' : 'Save Book'}
-                >
-                  <span>{bookmarkedIds.includes(readingResource.id) ? '⭐' : '☆'}</span>
-                  {!isMobile && <span>{bookmarkedIds.includes(readingResource.id) ? 'Saved' : 'Save'}</span>}
-                </button>
-
-                {/* Theme Selector */}
-                <div style={{ display: 'flex', gap: '2px', background: readerTheme === 'dark' ? '#1e293b' : readerTheme === 'sepia' ? '#e2cca4' : '#e2e8f0', borderRadius: '8px', padding: '2px' }}>
-                  <button
-                    type="button"
-                    style={{ background: readerTheme === 'light' ? '#fff' : 'transparent', color: readerTheme === 'light' ? '#000' : 'inherit', border: 'none', padding: isMobile ? '4px 7px' : '4px 9px', borderRadius: '6px', cursor: 'pointer', fontSize: isMobile ? '0.72rem' : '0.78rem' }}
-                    onClick={() => setReaderTheme('light')}
-                    title="Light Mode"
-                  >
-                    ☀️
-                  </button>
-                  <button
-                    type="button"
-                    style={{ background: readerTheme === 'sepia' ? '#fdf6e2' : 'transparent', color: readerTheme === 'sepia' ? '#78350f' : 'inherit', border: 'none', padding: isMobile ? '4px 7px' : '4px 9px', borderRadius: '6px', cursor: 'pointer', fontSize: isMobile ? '0.72rem' : '0.78rem' }}
-                    onClick={() => setReaderTheme('sepia')}
-                    title="Sepia Mode"
-                  >
-                    📜
-                  </button>
-                  <button
-                    type="button"
-                    style={{ background: readerTheme === 'dark' ? '#334155' : 'transparent', color: readerTheme === 'dark' ? '#fff' : 'inherit', border: 'none', padding: isMobile ? '4px 7px' : '4px 9px', borderRadius: '6px', cursor: 'pointer', fontSize: isMobile ? '0.72rem' : '0.78rem' }}
-                    onClick={() => setReaderTheme('dark')}
-                    title="Dark Night Mode"
-                  >
-                    🌙
-                  </button>
+                  {readingResource.title}
+                </h3>
+                <div style={{ fontSize: '0.68rem', opacity: 0.75, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                  {readingResource.subject} {readingResource.category ? `• ${readingResource.category}` : ''}
                 </div>
               </div>
             </div>
+
+            {/* Center: WPS Annotation & Highlighter Suite */}
+            <div
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '3px',
+                background: readerTheme === 'dark' ? '#1e293b' : '#f1f5f9',
+                padding: '2px 4px',
+                borderRadius: '10px',
+                border: `1px solid ${readerTheme === 'dark' ? '#334155' : '#cbd5e1'}`,
+              }}
+            >
+              {/* Scroll / Read Mode */}
+              <button
+                type="button"
+                onClick={() => setAnnotationTool('cursor')}
+                style={{
+                  background: annotationTool === 'cursor' ? '#2563eb' : 'transparent',
+                  color: annotationTool === 'cursor' ? '#ffffff' : 'inherit',
+                  border: 'none',
+                  padding: isMobile ? '4px 6px' : '4px 8px',
+                  borderRadius: '6px',
+                  cursor: 'pointer',
+                  fontSize: isMobile ? '0.72rem' : '0.78rem',
+                  fontWeight: 700,
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '3px',
+                }}
+                title="Read / Scroll Mode"
+              >
+                <span>👆</span>
+                {!isMobile && <span>Read</span>}
+              </button>
+
+              {/* WPS Highlighter */}
+              <button
+                type="button"
+                onClick={() => {
+                  setAnnotationTool('highlighter')
+                }}
+                style={{
+                  background: annotationTool === 'highlighter' ? highlighterColor : 'transparent',
+                  color: annotationTool === 'highlighter' ? '#713f12' : 'inherit',
+                  border: annotationTool === 'highlighter' ? '1.5px solid #eab308' : 'none',
+                  padding: isMobile ? '4px 6px' : '4px 8px',
+                  borderRadius: '6px',
+                  cursor: 'pointer',
+                  fontSize: isMobile ? '0.72rem' : '0.78rem',
+                  fontWeight: 800,
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '3px',
+                }}
+                title="WPS Highlighter: Drag to highlight lines of text"
+              >
+                <span>🖍️</span>
+                {!isMobile && <span>Highlight</span>}
+              </button>
+
+              {/* Highlighter Color Swatches */}
+              {annotationTool === 'highlighter' && (
+                <div style={{ display: 'flex', gap: '2px', alignItems: 'center', marginLeft: '2px', paddingLeft: '2px', borderLeft: '1px solid rgba(0,0,0,0.1)' }}>
+                  {[
+                    { color: '#fef08a', title: 'Yellow' },
+                    { color: '#86efac', title: 'Green' },
+                    { color: '#fbcfe8', title: 'Pink' },
+                    { color: '#a5f3fc', title: 'Cyan' },
+                  ].map((sw) => (
+                    <button
+                      key={sw.color}
+                      type="button"
+                      onClick={() => setHighlighterColor(sw.color)}
+                      style={{
+                        width: '14px',
+                        height: '14px',
+                        borderRadius: '50%',
+                        background: sw.color,
+                        border: highlighterColor === sw.color ? '2px solid #000' : '1px solid rgba(0,0,0,0.2)',
+                        cursor: 'pointer',
+                        padding: 0,
+                      }}
+                      title={sw.title}
+                    />
+                  ))}
+                </div>
+              )}
+
+              {/* Pen / Freehand Draw */}
+              <button
+                type="button"
+                onClick={() => setAnnotationTool('pen')}
+                style={{
+                  background: annotationTool === 'pen' ? '#dc2626' : 'transparent',
+                  color: annotationTool === 'pen' ? '#ffffff' : 'inherit',
+                  border: 'none',
+                  padding: isMobile ? '4px 6px' : '4px 8px',
+                  borderRadius: '6px',
+                  cursor: 'pointer',
+                  fontSize: isMobile ? '0.72rem' : '0.78rem',
+                  fontWeight: 700,
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '3px',
+                }}
+                title="Pen Tool: Draw notes, circle formulas"
+              >
+                <span>✏️</span>
+                {!isMobile && <span>Pen</span>}
+              </button>
+
+              {/* Pen Color Swatches */}
+              {annotationTool === 'pen' && (
+                <div style={{ display: 'flex', gap: '2px', alignItems: 'center', marginLeft: '2px', paddingLeft: '2px', borderLeft: '1px solid rgba(0,0,0,0.1)' }}>
+                  {[
+                    { color: '#ef4444', title: 'Red' },
+                    { color: '#2563eb', title: 'Blue' },
+                    { color: '#0f172a', title: 'Black' },
+                  ].map((sw) => (
+                    <button
+                      key={sw.color}
+                      type="button"
+                      onClick={() => setPenColor(sw.color)}
+                      style={{
+                        width: '14px',
+                        height: '14px',
+                        borderRadius: '50%',
+                        background: sw.color,
+                        border: penColor === sw.color ? '2px solid #fff' : '1px solid rgba(0,0,0,0.2)',
+                        cursor: 'pointer',
+                        padding: 0,
+                      }}
+                      title={sw.title}
+                    />
+                  ))}
+                </div>
+              )}
+
+              {/* Sticky Note */}
+              <button
+                type="button"
+                onClick={() => setAnnotationTool('sticky')}
+                style={{
+                  background: annotationTool === 'sticky' ? '#f59e0b' : 'transparent',
+                  color: annotationTool === 'sticky' ? '#ffffff' : 'inherit',
+                  border: 'none',
+                  padding: isMobile ? '4px 6px' : '4px 8px',
+                  borderRadius: '6px',
+                  cursor: 'pointer',
+                  fontSize: isMobile ? '0.72rem' : '0.78rem',
+                  fontWeight: 700,
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '3px',
+                }}
+                title="Sticky Note: Tap document to place revision note"
+              >
+                <span>📝</span>
+                {!isMobile && <span>Note</span>}
+              </button>
+
+              {/* Eraser */}
+              <button
+                type="button"
+                onClick={() => setAnnotationTool('eraser')}
+                style={{
+                  background: annotationTool === 'eraser' ? '#64748b' : 'transparent',
+                  color: annotationTool === 'eraser' ? '#ffffff' : 'inherit',
+                  border: 'none',
+                  padding: isMobile ? '4px 6px' : '4px 8px',
+                  borderRadius: '6px',
+                  cursor: 'pointer',
+                  fontSize: isMobile ? '0.72rem' : '0.78rem',
+                  fontWeight: 700,
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '3px',
+                }}
+                title="Eraser: Tap stroke to erase"
+              >
+                <span>🧽</span>
+                {!isMobile && <span>Eraser</span>}
+              </button>
+
+              {/* Clear All Annotations */}
+              {(annotations.length > 0 || stickyNotes.length > 0) && (
+                <button
+                  type="button"
+                  onClick={handleClearAnnotations}
+                  style={{
+                    background: '#fee2e2',
+                    color: '#991b1b',
+                    border: 'none',
+                    padding: '3px 6px',
+                    borderRadius: '6px',
+                    cursor: 'pointer',
+                    fontSize: '0.7rem',
+                    fontWeight: 700,
+                  }}
+                  title="Clear all highlights & notes"
+                >
+                  🗑️
+                </button>
+              )}
+            </div>
+
+            {/* Right: Working Zoom Engine + Fullscreen + Themes */}
+            <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+              {/* Working Zoom Controls */}
+              <div
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '1px',
+                  background: readerTheme === 'dark' ? '#1e293b' : '#f1f5f9',
+                  padding: '2px 4px',
+                  borderRadius: '8px',
+                  border: `1px solid ${readerTheme === 'dark' ? '#334155' : '#cbd5e1'}`,
+                }}
+              >
+                <button
+                  type="button"
+                  onClick={() => setReaderZoom((z) => Math.max(50, z - 15))}
+                  style={{
+                    background: 'transparent',
+                    border: 'none',
+                    color: 'inherit',
+                    padding: '2px 6px',
+                    cursor: 'pointer',
+                    fontWeight: 800,
+                    fontSize: '0.8rem',
+                  }}
+                  title="Zoom Out (−)"
+                >
+                  −
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setReaderZoom(100)}
+                  style={{
+                    background: 'transparent',
+                    border: 'none',
+                    fontSize: '0.74rem',
+                    fontWeight: 800,
+                    minWidth: '38px',
+                    textAlign: 'center',
+                    cursor: 'pointer',
+                    color: readerTheme === 'dark' ? '#93c5fd' : '#2563eb',
+                    padding: '1px 2px',
+                  }}
+                  title="Click to reset 100%"
+                >
+                  {readerZoom}%
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setReaderZoom((z) => Math.min(250, z + 15))}
+                  style={{
+                    background: 'transparent',
+                    border: 'none',
+                    color: 'inherit',
+                    padding: '2px 6px',
+                    cursor: 'pointer',
+                    fontWeight: 800,
+                    fontSize: '0.8rem',
+                  }}
+                  title="Zoom In (+)"
+                >
+                  +
+                </button>
+                {!isMobile && (
+                  <button
+                    type="button"
+                    onClick={() => setReaderZoom(130)}
+                    style={{
+                      background: readerZoom === 130 ? '#dbeafe' : 'transparent',
+                      border: 'none',
+                      color: readerZoom === 130 ? '#1e40af' : '#64748b',
+                      padding: '2px 5px',
+                      borderRadius: '4px',
+                      cursor: 'pointer',
+                      fontSize: '0.68rem',
+                      fontWeight: 700,
+                    }}
+                    title="Fit Page Width"
+                  >
+                    ↔ Fit
+                  </button>
+                )}
+              </div>
+
+              {/* Fullscreen Toggle */}
+              <button
+                type="button"
+                onClick={handleToggleFullscreen}
+                style={{
+                  background: isFullscreen ? '#2563eb' : (readerTheme === 'dark' ? '#1e293b' : '#f1f5f9'),
+                  color: isFullscreen ? '#ffffff' : 'inherit',
+                  border: `1px solid ${readerTheme === 'dark' ? '#334155' : '#cbd5e1'}`,
+                  borderRadius: '8px',
+                  padding: isMobile ? '4px 6px' : '4px 8px',
+                  cursor: 'pointer',
+                  fontSize: '0.78rem',
+                  fontWeight: 700,
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '3px',
+                }}
+                title={isFullscreen ? 'Exit Fullscreen' : 'Open Fullscreen (WPS Mode)'}
+              >
+                <span>{isFullscreen ? '🗗' : '⛶'}</span>
+                {!isMobile && <span>{isFullscreen ? 'Window' : 'Fullscreen'}</span>}
+              </button>
+
+              {/* Bookmark Toggle */}
+              <button
+                type="button"
+                onClick={() => toggleBookmark(readingResource.id)}
+                style={{
+                  background: bookmarkedIds.includes(readingResource.id) ? 'rgba(245, 158, 11, 0.15)' : 'transparent',
+                  border: bookmarkedIds.includes(readingResource.id) ? '1px solid #f59e0b' : '1px solid transparent',
+                  color: bookmarkedIds.includes(readingResource.id) ? '#f59e0b' : 'inherit',
+                  fontSize: '0.85rem',
+                  padding: '4px 6px',
+                  borderRadius: '8px',
+                  fontWeight: 700,
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                }}
+                title={bookmarkedIds.includes(readingResource.id) ? 'Saved in My Books' : 'Save Book'}
+              >
+                <span>{bookmarkedIds.includes(readingResource.id) ? '⭐' : '☆'}</span>
+              </button>
+
+              {/* Theme Selector */}
+              <div style={{ display: 'flex', gap: '1px', background: readerTheme === 'dark' ? '#1e293b' : readerTheme === 'sepia' ? '#e2cca4' : '#e2e8f0', borderRadius: '8px', padding: '2px' }}>
+                <button
+                  type="button"
+                  style={{ background: readerTheme === 'light' ? '#fff' : 'transparent', color: readerTheme === 'light' ? '#000' : 'inherit', border: 'none', padding: '3px 6px', borderRadius: '6px', cursor: 'pointer', fontSize: '0.72rem' }}
+                  onClick={() => setReaderTheme('light')}
+                  title="Light Mode"
+                >
+                  ☀️
+                </button>
+                <button
+                  type="button"
+                  style={{ background: readerTheme === 'sepia' ? '#fdf6e2' : 'transparent', color: readerTheme === 'sepia' ? '#78350f' : 'inherit', border: 'none', padding: '3px 6px', borderRadius: '6px', cursor: 'pointer', fontSize: '0.72rem' }}
+                  onClick={() => setReaderTheme('sepia')}
+                  title="Sepia Mode"
+                >
+                  📜
+                </button>
+                <button
+                  type="button"
+                  style={{ background: readerTheme === 'dark' ? '#334155' : 'transparent', color: readerTheme === 'dark' ? '#fff' : 'inherit', border: 'none', padding: '3px 6px', borderRadius: '6px', cursor: 'pointer', fontSize: '0.72rem' }}
+                  onClick={() => setReaderTheme('dark')}
+                  title="Dark Night Mode"
+                >
+                  🌙
+                </button>
+              </div>
+            </div>
+          </div>
 
             {/* Dedicated Collapsible Table of Contents & Chapter Navigation Bar */}
             {activeHandbook && (
@@ -1275,7 +1808,6 @@ export function ResourceLibrary() {
                 </div>
               </div>
             )}
-          </div>
 
           {/* Fullscreen Document Content Viewport */}
           <div style={{ flex: 1, position: 'relative', overflow: 'auto', WebkitOverflowScrolling: 'touch', background: readerTheme === 'dark' ? '#0b0f19' : readerTheme === 'sepia' ? '#fdf6e2' : '#f8fafc' }}>
@@ -2332,97 +2864,64 @@ export function ResourceLibrary() {
                   </div>
                 </div>
               ) : readingResource.file_url ? (
-                // 3. UNIVERSAL ACADEMIC IN-APP DOCUMENT VIEWER (PDF, DOCS, REVISION MATERIALS)
+                // 3. WPS OFFICE / ACROBAT-STYLE FULL-SCREEN ANNOTATED VIEWER (PDF, DOCS, REVISION MATERIALS)
                 <div
                   style={{
                     display: 'flex',
                     flexDirection: 'column',
                     flex: 1,
-                    minHeight: '100%',
-                    padding: isMobile ? '0' : '1.25rem 2rem',
+                    width: '100%',
+                    height: isMobile ? 'calc(100dvh - 54px)' : 'calc(100vh - 54px)',
+                    minHeight: isMobile ? 'calc(100dvh - 54px)' : 'calc(100vh - 54px)',
+                    padding: 0,
+                    margin: 0,
                     boxSizing: 'border-box',
-                    gap: isMobile ? '0' : '1rem',
+                    overflow: 'auto',
+                    background: readerTheme === 'dark' ? '#090d16' : readerTheme === 'sepia' ? '#241a10' : '#334155',
+                    position: 'relative',
+                    alignItems: 'center',
                   }}
                 >
-                  {/* Document Header Card (Only on desktop/tablet to maximize reading viewport on phones) */}
-                  {!isMobile && (
+                  {/* Anti-Screen Capture & Snipping Tool Blackout Shield */}
+                  {isBlurred && (
                     <div
                       style={{
-                        background: readerTheme === 'dark' ? '#0f172a' : readerTheme === 'sepia' ? '#f4ebd0' : '#f8fafc',
-                        border: `1px solid ${readerTheme === 'dark' ? '#1e293b' : readerTheme === 'sepia' ? '#e6d7b9' : '#e2e8f0'}`,
-                        borderRadius: '16px',
-                        padding: '1.25rem 1.75rem',
+                        position: 'fixed',
+                        inset: 0,
+                        zIndex: 100,
+                        background: '#090d16',
                         display: 'flex',
-                        justifyContent: 'space-between',
+                        flexDirection: 'column',
                         alignItems: 'center',
-                        flexWrap: 'wrap',
-                        gap: '0.75rem',
+                        justifyContent: 'center',
+                        gap: '1rem',
+                        color: '#ffffff',
+                        textAlign: 'center',
+                        padding: '2rem',
                       }}
                     >
-                      <div>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
-                          <span
-                            style={{
-                              background: '#2563eb',
-                              color: '#ffffff',
-                              padding: '2px 8px',
-                              borderRadius: '6px',
-                              fontSize: '0.72rem',
-                              fontWeight: 800,
-                              textTransform: 'uppercase',
-                            }}
-                          >
-                            {readingResource.category}
-                          </span>
-                          <span style={{ fontSize: '0.75rem', fontWeight: 700, opacity: 0.8 }}>
-                            {readingResource.subject}
-                          </span>
-                        </div>
-                        <h2
-                          style={{
-                            margin: '2px 0 4px',
-                            fontSize: '1.45rem',
-                            fontWeight: 900,
-                            color: readerTheme === 'dark' ? '#ffffff' : readerTheme === 'sepia' ? '#2d2215' : '#0f172a',
-                          }}
-                        >
-                          {readingResource.title}
-                        </h2>
-                        <div style={{ fontSize: '0.75rem', opacity: 0.7 }}>
-                          Academic Material • Uploaded by {readingResource.uploaded_by || 'Éclat Academic Board'} • Size: {readingResource.file_size || 'Official File'}
-                        </div>
+                      <div style={{ fontSize: '3.5rem' }}>🔒</div>
+                      <div style={{ fontSize: '1.35rem', fontWeight: 900, color: '#f87171', letterSpacing: '-0.02em' }}>
+                        Screen Capture & Snipping Tool Blocked
                       </div>
-
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                        <span
-                          style={{
-                            background: 'rgba(34, 197, 94, 0.15)',
-                            color: '#16a34a',
-                            border: '1px solid rgba(34, 197, 94, 0.3)',
-                            padding: '4px 10px',
-                            borderRadius: '8px',
-                            fontSize: '0.75rem',
-                            fontWeight: 800,
-                          }}
-                        >
-                          🔒 DRM Protected Viewer
-                        </span>
-                      </div>
+                      <p style={{ fontSize: '0.9rem', color: '#94a3b8', maxWidth: '440px', margin: 0, lineHeight: 1.5 }}>
+                        Document view is blacked out during screen capture, window switching, or snipping tool activation to protect academic copyright. Click back into the window to resume reading.
+                      </p>
                     </div>
                   )}
 
-                  {/* High-Performance Embedded Document Frame */}
+                  {/* Zoomable & Annotatable Document Viewport Canvas Container */}
                   <div
                     style={{
-                      flex: 1,
-                      minHeight: isMobile ? 'calc(100dvh - 54px)' : '82vh',
-                      height: isMobile ? 'calc(100dvh - 54px)' : '82vh',
-                      borderRadius: isMobile ? '0px' : '16px',
-                      overflow: 'hidden',
-                      boxShadow: isMobile ? 'none' : '0 8px 30px rgba(0,0,0,0.15)',
-                      border: isMobile ? 'none' : `1.5px solid ${readerTheme === 'dark' ? '#1e293b' : readerTheme === 'sepia' ? '#d4af37' : '#cbd5e1'}`,
-                      background: '#000000',
+                      width: readerZoom <= 100 ? '100%' : `${readerZoom}%`,
+                      minWidth: '100%',
+                      height: '100%',
+                      minHeight: isMobile ? 'calc(100dvh - 54px)' : 'calc(100vh - 54px)',
                       position: 'relative',
+                      background: '#000000',
+                      transition: 'width 0.15s ease',
+                      display: 'flex',
+                      flexDirection: 'column',
                     }}
                   >
                     {/* Top-Right DRM Solid Mask: Completely covers, hides, and blocks Google Drive's "Pop-out / Open Outside" Button */}
@@ -2431,13 +2930,13 @@ export function ResourceLibrary() {
                         position: 'absolute',
                         top: 0,
                         right: 0,
-                        width: '90px',
+                        width: '92px',
                         height: '62px',
-                        zIndex: 45,
+                        zIndex: 48,
                         cursor: 'default',
                         pointerEvents: 'auto',
                         background: '#000000',
-                        borderBottomLeftRadius: isMobile ? '8px' : '10px',
+                        borderBottomLeftRadius: '10px',
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
@@ -2460,39 +2959,89 @@ export function ResourceLibrary() {
                         e.stopPropagation()
                         e.preventDefault()
                       }}
-                      title="🔒 Protected In-App DRM Reader"
+                      title="🔒 Protected In-App Document Reader"
                     >
                       <span style={{ fontSize: '0.74rem', color: '#94a3b8', fontWeight: 800 }}>🔒 DRM</span>
                     </div>
 
-                    {/* Anti-Screen Capture & Snipping Tool Blackout Shield */}
-                    {isBlurred && (
+                    {/* Interactive Annotation Canvas Overlay (Draw, Highlight, Erase) */}
+                    <canvas
+                      ref={canvasRef}
+                      onPointerDown={handlePointerDown}
+                      onPointerMove={handlePointerMove}
+                      onPointerUp={handlePointerUp}
+                      onPointerCancel={handlePointerUp}
+                      style={{
+                        position: 'absolute',
+                        inset: 0,
+                        width: '100%',
+                        height: '100%',
+                        zIndex: 35,
+                        pointerEvents: annotationTool === 'cursor' ? 'none' : 'auto',
+                        touchAction: annotationTool === 'cursor' ? 'auto' : 'none',
+                        cursor:
+                          annotationTool === 'highlighter' || annotationTool === 'pen'
+                            ? 'crosshair'
+                            : annotationTool === 'eraser'
+                            ? 'cell'
+                            : annotationTool === 'sticky'
+                            ? 'copy'
+                            : 'default',
+                      }}
+                    />
+
+                    {/* Interactive Draggable Sticky Notes */}
+                    {stickyNotes.map((note) => (
                       <div
+                        key={note.id}
                         style={{
                           position: 'absolute',
-                          inset: 0,
-                          zIndex: 50,
-                          background: '#090d16',
-                          display: 'flex',
-                          flexDirection: 'column',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          gap: '1rem',
-                          color: '#ffffff',
-                          textAlign: 'center',
-                          padding: '2rem',
+                          left: `${note.x * 100}%`,
+                          top: `${note.y * 100}%`,
+                          zIndex: 42,
+                          background: note.color,
+                          color: '#1e293b',
+                          padding: '8px 10px',
+                          borderRadius: '8px',
+                          boxShadow: '0 4px 16px rgba(0,0,0,0.4)',
+                          maxWidth: '220px',
+                          minWidth: '150px',
+                          fontSize: '0.8rem',
+                          fontWeight: 600,
+                          border: '1px solid rgba(0,0,0,0.15)',
                         }}
                       >
-                        <div style={{ fontSize: '3.5rem' }}>🔒</div>
-                        <div style={{ fontSize: '1.35rem', fontWeight: 900, color: '#f87171', letterSpacing: '-0.02em' }}>
-                          Screen Capture & Snipping Tool Blocked
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '4px' }}>
+                          <span style={{ fontSize: '0.7rem', fontWeight: 800 }}>📌 Study Note</span>
+                          <button
+                            type="button"
+                            onClick={() => handleDeleteStickyNote(note.id)}
+                            style={{ background: 'transparent', border: 'none', cursor: 'pointer', fontSize: '0.75rem', padding: '0 2px', opacity: 0.7 }}
+                            title="Delete note"
+                          >
+                            ✕
+                          </button>
                         </div>
-                        <p style={{ fontSize: '0.9rem', color: '#94a3b8', maxWidth: '440px', margin: 0, lineHeight: 1.5 }}>
-                          Document view is blacked out during screen capture, window switching, or snipping tool activation to protect academic copyright. Click back into the window to resume reading.
-                        </p>
+                        <textarea
+                          value={note.text}
+                          onChange={(e) => handleUpdateStickyNote(note.id, e.target.value)}
+                          placeholder="Type revision note..."
+                          style={{
+                            width: '100%',
+                            minHeight: '48px',
+                            border: 'none',
+                            background: 'transparent',
+                            resize: 'vertical',
+                            fontSize: '0.78rem',
+                            fontFamily: 'inherit',
+                            outline: 'none',
+                            color: '#1e293b',
+                          }}
+                        />
                       </div>
-                    )}
+                    ))}
 
+                    {/* Document Embed Iframe */}
                     <iframe
                       src={getEmbeddableDocumentUrl(readingResource.file_url)}
                       title={readingResource.title}
@@ -2500,7 +3049,8 @@ export function ResourceLibrary() {
                       style={{
                         width: '100%',
                         height: '100%',
-                        minHeight: isMobile ? 'calc(100dvh - 54px)' : '82vh',
+                        minHeight: isMobile ? 'calc(100dvh - 54px)' : 'calc(100vh - 54px)',
+                        flex: 1,
                         border: 'none',
                         background: '#000000',
                         filter: isBlurred ? 'blur(20px) brightness(0.1)' : 'none',
@@ -2542,77 +3092,6 @@ export function ResourceLibrary() {
                   </div>
                 </div>
               )}
-            </div>
-
-            {/* Discreet Floating Zoom Controls (Positioned at bottom-right, completely separated from TOC & Header) */}
-            <div
-              style={{
-                position: 'fixed',
-                bottom: '1.25rem',
-                right: '1.25rem',
-                zIndex: 60,
-                display: 'flex',
-                alignItems: 'center',
-                gap: '2px',
-                background: readerTheme === 'dark' ? '#0f172a' : '#ffffff',
-                border: `1.5px solid ${readerTheme === 'dark' ? '#334155' : '#cbd5e1'}`,
-                borderRadius: '999px',
-                padding: '3px 6px',
-                boxShadow: '0 8px 24px rgba(0,0,0,0.22)',
-                backdropFilter: 'blur(10px)',
-              }}
-            >
-              <button
-                type="button"
-                onClick={() => setReaderZoom((z) => Math.max(75, z - 20))}
-                style={{
-                  background: 'transparent',
-                  color: readerTheme === 'dark' ? '#94a3b8' : '#475569',
-                  border: 'none',
-                  padding: '6px 8px',
-                  borderRadius: '999px',
-                  cursor: 'pointer',
-                  fontWeight: 800,
-                  fontSize: '0.85rem',
-                }}
-                title="Zoom Out (-)"
-              >
-                🔍 −
-              </button>
-              <button
-                type="button"
-                onClick={() => setReaderZoom(100)}
-                style={{
-                  background: readerTheme === 'dark' ? '#1e293b' : '#f1f5f9',
-                  color: readerTheme === 'dark' ? '#93c5fd' : '#2563eb',
-                  border: 'none',
-                  padding: '4px 8px',
-                  borderRadius: '999px',
-                  cursor: 'pointer',
-                  fontWeight: 800,
-                  fontSize: '0.75rem',
-                }}
-                title="Reset Zoom (100%)"
-              >
-                {readerZoom}%
-              </button>
-              <button
-                type="button"
-                onClick={() => setReaderZoom((z) => Math.min(250, z + 20))}
-                style={{
-                  background: 'transparent',
-                  color: readerTheme === 'dark' ? '#94a3b8' : '#475569',
-                  border: 'none',
-                  padding: '6px 8px',
-                  borderRadius: '999px',
-                  cursor: 'pointer',
-                  fontWeight: 800,
-                  fontSize: '0.85rem',
-                }}
-                title="Zoom In (+)"
-              >
-                🔍 +
-              </button>
             </div>
           </div>
         </div>
