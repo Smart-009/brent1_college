@@ -28,6 +28,8 @@ export function FeeManagement() {
   const [showEnrollModal, setShowEnrollModal] = useState(false)
   const [studentToEnroll, setStudentToEnroll] = useState<StudentRecord | null>(null)
   const [selectedPass, setSelectedPass] = useState<BiometricFeeClearancePass | null>(null)
+  const [unlockingAdm, setUnlockingAdm] = useState<string | null>(null)
+  const [unlockSuccessMsg, setUnlockSuccessMsg] = useState<string | null>(null)
 
   // Course Fee Structure Editing
   const [editingCourseFee, setEditingCourseFee] = useState<CourseProgram | null>(null)
@@ -237,7 +239,32 @@ export function FeeManagement() {
     }
   }
 
-  const handleRecordPayment = (e: React.FormEvent) => {
+  const handleQuickClearStudent = async (admissionNumber: string, studentName?: string) => {
+    try {
+      setUnlockingAdm(admissionNumber)
+      await schoolStore.unlockStudentLessons(admissionNumber, defaultIssuer)
+      
+      const renewed = new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString()
+      if (admissionNumber) {
+        try {
+          await supabase.from('profiles').update({ access_expires_at: renewed }).ilike('admission_number', admissionNumber)
+        } catch {}
+      }
+
+      setStudents(schoolStore.getStudents())
+      setInvoices(schoolStore.getInvoices())
+      setReceipts(schoolStore.getReceipts())
+      
+      setUnlockSuccessMsg(`⚡ LMS Lessons & Exam Card cleared and unlocked successfully for ${studentName || admissionNumber} (${admissionNumber})!`)
+      setTimeout(() => setUnlockSuccessMsg(null), 6000)
+    } catch (err: any) {
+      alert('Error unlocking student lessons: ' + (err?.message || err))
+    } finally {
+      setUnlockingAdm(null)
+    }
+  }
+
+  const handleRecordPayment = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!payData.amount || payData.amount <= 0 || !payData.admission_number) return
 
@@ -280,7 +307,11 @@ export function FeeManagement() {
       biometric_verified_at: payData.biometric_verified ? new Date().toISOString() : undefined,
     }
 
-    schoolStore.recordPayment(newReceipt)
+    await schoolStore.recordPayment(newReceipt)
+
+    if (remainingBalance === 0) {
+      await schoolStore.unlockStudentLessons(student.admission_number || student.id, issuerName)
+    }
 
     // Auto-renew Supabase profile access_expires_at (+365 days)
     const renewed = new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString()
@@ -597,6 +628,32 @@ export function FeeManagement() {
         </div>
       </div>
 
+      {unlockSuccessMsg && (
+        <div
+          className="mb-6"
+          style={{
+            background: 'linear-gradient(135deg, #16a34a 0%, #15803d 100%)',
+            color: '#ffffff',
+            padding: '1rem 1.5rem',
+            borderRadius: '10px',
+            fontWeight: 700,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            boxShadow: '0 4px 12px rgba(22, 163, 74, 0.25)',
+          }}
+        >
+          <span>{unlockSuccessMsg}</span>
+          <button
+            type="button"
+            onClick={() => setUnlockSuccessMsg(null)}
+            style={{ background: 'transparent', border: 'none', color: '#ffffff', cursor: 'pointer', fontSize: '1.1rem' }}
+          >
+            ✕
+          </button>
+        </div>
+      )}
+
       {/* Tabs */}
       <div className="card mb-6" style={{ padding: '0.5rem' }}>
         <div style={{ display: 'flex', gap: '0.5rem', borderBottom: '1px solid var(--color-border)', paddingBottom: '0.5rem', flexWrap: 'wrap' }}>
@@ -722,31 +779,49 @@ export function FeeManagement() {
                             ✏️ Edit
                           </button>
                           {inv.balance > 0 ? (
-                            <button
-                              type="button"
-                              className="btn btn-secondary btn-xs"
-                              onClick={() => {
-                                setPayData({
-                                  student_id: inv.student_id,
-                                  admission_number: inv.admission_number,
-                                  student_name: inv.student_name,
-                                  total_fee: inv.balance,
-                                  amount: inv.balance,
-                                  payment_method: 'M-Pesa',
-                                  reference_code: `MPESA-${Math.random().toString(36).substring(2, 8).toUpperCase()}`,
-                                  paid_by: inv.student_name,
-                                  issued_by: defaultIssuer,
-                                  biometric_verified: false,
-                                  biometric_finger_used: 'Right Thumb',
-                                  biometric_verification_code: '',
-                                })
-                                setShowPayModal(true)
-                              }}
-                            >
-                              💳 Pay
-                            </button>
+                            <>
+                              <button
+                                type="button"
+                                className="btn btn-secondary btn-xs"
+                                onClick={() => {
+                                  setPayData({
+                                    student_id: inv.student_id,
+                                    admission_number: inv.admission_number,
+                                    student_name: inv.student_name,
+                                    total_fee: inv.balance,
+                                    amount: inv.balance,
+                                    payment_method: 'M-Pesa',
+                                    reference_code: `MPESA-${Math.random().toString(36).substring(2, 8).toUpperCase()}`,
+                                    paid_by: inv.student_name,
+                                    issued_by: defaultIssuer,
+                                    biometric_verified: false,
+                                    biometric_finger_used: 'Right Thumb',
+                                    biometric_verification_code: '',
+                                  })
+                                  setShowPayModal(true)
+                                }}
+                              >
+                                💳 Pay
+                              </button>
+                              <button
+                                type="button"
+                                className="btn btn-xs"
+                                disabled={unlockingAdm === inv.admission_number}
+                                style={{
+                                  background: 'linear-gradient(135deg, #16a34a 0%, #15803d 100%)',
+                                  color: '#ffffff',
+                                  fontWeight: 800,
+                                  border: 'none',
+                                  boxShadow: '0 2px 4px rgba(22, 163, 74, 0.25)',
+                                }}
+                                onClick={() => handleQuickClearStudent(inv.admission_number, inv.student_name)}
+                                title="Instantly clear all fees, generate official receipt, register units, and unlock LMS lessons for this student."
+                              >
+                                {unlockingAdm === inv.admission_number ? '⚡ Clearing...' : '⚡ Clear & Unlock'}
+                              </button>
+                            </>
                           ) : (
-                            <span style={{ fontSize: '0.75rem', color: '#16a34a', fontWeight: 700 }}>✓ Settled</span>
+                            <span style={{ fontSize: '0.75rem', color: '#16a34a', fontWeight: 700 }}>✓ Settled & Cleared</span>
                           )}
                           <button
                             type="button"

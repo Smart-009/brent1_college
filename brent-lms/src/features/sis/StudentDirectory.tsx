@@ -52,13 +52,14 @@ export function StudentDirectory() {
   // Helper to persist student login credentials
   const saveStudentCredentials = (adm: string, fullName: string, password: string) => {
     const cleanAdm = adm.trim().toLowerCase().replace(/[^a-z0-9]/g, '')
+    const renewed = new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString()
     const profileObj = {
       id: `usr-${cleanAdm}`,
       full_name: fullName,
       admission_number: adm,
       role: 'student',
-      first_login_at: null,
-      access_expires_at: null,
+      first_login_at: new Date().toISOString(),
+      access_expires_at: renewed,
       is_active: true,
       created_at: new Date().toISOString(),
     }

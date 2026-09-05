@@ -37,41 +37,74 @@ export function useAccess() {
 
   // Determine if student has active fee clearance or payments from Bursar desk
   const studentIdentifier = profile?.admission_number || profile?.id || ''
+  const cleanId = studentIdentifier.toLowerCase().trim()
+  const cleanAlpha = cleanId.replace(/[^a-z0-9]/g, '')
+  const profileNameAlpha = (profile?.full_name || '').toLowerCase().replace(/[^a-z0-9]/g, '')
+
   const studentRecord = schoolStore
     .getStudents()
-    .find(
-      (s) =>
-        (profile?.admission_number && s.admission_number.toLowerCase() === profile.admission_number.toLowerCase()) ||
-        s.id === profile?.id
-    )
+    .find((s) => {
+      const sAdm = s.admission_number.toLowerCase().trim()
+      const sAdmAlpha = sAdm.replace(/[^a-z0-9]/g, '')
+      const sNameAlpha = s.full_name.toLowerCase().replace(/[^a-z0-9]/g, '')
+      return (
+        s.id === profile?.id ||
+        sAdm === cleanId ||
+        (cleanAlpha.length > 0 && sAdmAlpha === cleanAlpha) ||
+        (profileNameAlpha.length > 3 && sNameAlpha === profileNameAlpha)
+      )
+    })
 
   const studentInvoices = schoolStore
     .getInvoices()
-    .filter(
-      (inv) =>
-        (profile?.admission_number && inv.admission_number.toLowerCase() === profile.admission_number.toLowerCase()) ||
-        inv.student_id === profile?.id
-    )
+    .filter((inv) => {
+      const iAdm = inv.admission_number.toLowerCase().trim()
+      const iAdmAlpha = iAdm.replace(/[^a-z0-9]/g, '')
+      return (
+        inv.student_id === profile?.id ||
+        iAdm === cleanId ||
+        (cleanAlpha.length > 0 && iAdmAlpha === cleanAlpha)
+      )
+    })
 
   const studentReceipts = schoolStore
     .getReceipts()
-    .filter(
-      (rcpt) =>
-        (profile?.admission_number && rcpt.admission_number.toLowerCase() === profile.admission_number.toLowerCase()) ||
-        rcpt.student_id === profile?.id
-    )
+    .filter((rcpt) => {
+      const rAdm = rcpt.admission_number.toLowerCase().trim()
+      const rAdmAlpha = rAdm.replace(/[^a-z0-9]/g, '')
+      return (
+        rcpt.student_id === profile?.id ||
+        rAdm === cleanId ||
+        (cleanAlpha.length > 0 && rAdmAlpha === cleanAlpha)
+      )
+    })
+
+  const studentUnitRegs = schoolStore
+    .getUnitRegistrations()
+    .filter((reg) => {
+      const uAdm = reg.admission_number.toLowerCase().trim()
+      const uAdmAlpha = uAdm.replace(/[^a-z0-9]/g, '')
+      return (
+        reg.student_id === profile?.id ||
+        uAdm === cleanId ||
+        (cleanAlpha.length > 0 && uAdmAlpha === cleanAlpha)
+      )
+    })
 
   const hasClearedInvoice = studentInvoices.some((inv) => inv.status === 'Paid' || inv.balance === 0)
   const hasValidReceipt = studentReceipts.some((r) => (r.amount_paid ?? r.amount) > 0)
+  const hasUnitRegistrationSlip = studentUnitRegs.some((r) => r.fee_clearance_status === 'Cleared' || r.exam_card_issued)
   const isBiometricCleared = schoolStore
     .getBiometricClearanceLogs()
-    .some((p) => p.admission_number.toLowerCase() === studentIdentifier.toLowerCase())
+    .some((p) => p.admission_number.toLowerCase().replace(/[^a-z0-9]/g, '') === cleanAlpha)
 
+  // Any verified Bursar clearance, payment, or enrollment grants active LMS access
   const isFeeCleared =
     studentRecord?.fee_cleared === true ||
     (studentRecord && studentRecord.fee_balance === 0) ||
     hasClearedInvoice ||
     hasValidReceipt ||
+    hasUnitRegistrationSlip ||
     isBiometricCleared
 
   useEffect(() => {

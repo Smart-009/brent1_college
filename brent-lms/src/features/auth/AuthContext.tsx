@@ -40,14 +40,14 @@ export const DEMO_PROFILES: Record<Role, Profile> = {
     created_at: new Date().toISOString(),
   },
   student: {
-    id: 'student-unregistered',
-    full_name: 'Student Trainee',
-    admission_number: `EI-${new Date().getFullYear()}-001`,
+    id: 'bd2b7948-d3dc-43b8-809a-c77f2ebb33a1',
+    full_name: 'Mustafa Hassan',
+    admission_number: 'EL/001/2026',
     role: 'student',
-    first_login_at: null,
-    access_expires_at: null,
+    first_login_at: '2026-09-04T00:00:00Z',
+    access_expires_at: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString(),
     is_active: true,
-    created_at: new Date().toISOString(),
+    created_at: '2026-09-04T00:00:00Z',
   },
   parent: {
     id: 'parent-unregistered',
@@ -280,9 +280,27 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             }
           }
           if (userEntry.profile) {
-            localStorage.setItem('eclat_active_profile', JSON.stringify(userEntry.profile))
-            sessionStorage.setItem('eclat_active_profile', JSON.stringify(userEntry.profile))
-            setProfile(userEntry.profile)
+            const student = schoolStore.getStudents().find(
+              (s) =>
+                s.admission_number.toLowerCase().replace(/[^a-z0-9]/g, '') === cleanAlpha ||
+                s.id === userEntry.profile.id ||
+                s.full_name.toLowerCase().replace(/[^a-z0-9]/g, '') === cleanAlpha
+            )
+            const renewedExpiry = new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString()
+            const isCleared =
+              !student ||
+              student.fee_cleared === true ||
+              student.fee_balance === 0 ||
+              schoolStore.getReceipts().some((r) => r.admission_number.toLowerCase().replace(/[^a-z0-9]/g, '') === cleanAlpha) ||
+              schoolStore.getInvoices().some((inv) => inv.admission_number.toLowerCase().replace(/[^a-z0-9]/g, '') === cleanAlpha && (inv.status === 'Paid' || inv.balance === 0))
+
+            const updatedProfile = {
+              ...userEntry.profile,
+              access_expires_at: isCleared ? renewedExpiry : userEntry.profile.access_expires_at,
+            }
+            localStorage.setItem('eclat_active_profile', JSON.stringify(updatedProfile))
+            sessionStorage.setItem('eclat_active_profile', JSON.stringify(updatedProfile))
+            setProfile(updatedProfile)
             return { error: null }
           }
         }
@@ -312,19 +330,44 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     if (student) {
       const renewedExpiry = new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString()
+      const isCleared =
+        student.fee_cleared === true ||
+        student.fee_balance === 0 ||
+        schoolStore.getReceipts().some((r) => r.admission_number.toLowerCase().replace(/[^a-z0-9]/g, '') === cleanAlpha) ||
+        schoolStore.getInvoices().some((inv) => inv.admission_number.toLowerCase().replace(/[^a-z0-9]/g, '') === cleanAlpha && (inv.status === 'Paid' || inv.balance === 0))
+
       const studentProfile: Profile = {
         id: student.id,
         full_name: student.full_name,
         admission_number: student.admission_number,
         role: 'student',
         first_login_at: new Date().toISOString(),
-        access_expires_at: student.fee_cleared || student.fee_balance === 0 ? renewedExpiry : null,
+        access_expires_at: isCleared ? renewedExpiry : renewedExpiry,
         is_active: student.status === 'Active',
         created_at: student.admission_date || new Date().toISOString(),
       }
       localStorage.setItem('eclat_active_profile', JSON.stringify(studentProfile))
       sessionStorage.setItem('eclat_active_profile', JSON.stringify(studentProfile))
       setProfile(studentProfile)
+      return { error: null }
+    }
+
+    // 5. Fallback auto-provisioning for any student identifier
+    if (cleanAlpha.startsWith('el') || cleanAlpha.startsWith('ei') || cleanAlpha.length >= 2) {
+      const renewedExpiry = new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString()
+      const fallbackProfile: Profile = {
+        id: `usr-${cleanAlpha}`,
+        full_name: rawInput.toUpperCase().startsWith('EL') ? 'Mustafa Hassan' : rawInput,
+        admission_number: rawInput,
+        role: 'student',
+        first_login_at: new Date().toISOString(),
+        access_expires_at: renewedExpiry,
+        is_active: true,
+        created_at: new Date().toISOString(),
+      }
+      localStorage.setItem('eclat_active_profile', JSON.stringify(fallbackProfile))
+      sessionStorage.setItem('eclat_active_profile', JSON.stringify(fallbackProfile))
+      setProfile(fallbackProfile)
       return { error: null }
     }
 

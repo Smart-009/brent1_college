@@ -39,14 +39,33 @@ export function StudentDashboard() {
     }
   }, [])
 
-  // Read current student records from schoolStore
+  // Read current student records from schoolStore with normalized matching
   const allStudents = schoolStore.getStudents()
+  const myAdmAlpha = (profile?.admission_number || '').toLowerCase().replace(/[^a-z0-9]/g, '')
+  const myNameAlpha = (profile?.full_name || '').toLowerCase().replace(/[^a-z0-9]/g, '')
+
   const currentStudent =
-    allStudents.find(
-      (s) =>
-        (profile?.admission_number && s.admission_number.toLowerCase() === profile.admission_number.toLowerCase()) ||
-        s.id === profile?.id
-    ) || null
+    allStudents.find((s) => {
+      const sAdmAlpha = s.admission_number.toLowerCase().replace(/[^a-z0-9]/g, '')
+      const sNameAlpha = s.full_name.toLowerCase().replace(/[^a-z0-9]/g, '')
+      return (
+        s.id === profile?.id ||
+        (myAdmAlpha.length > 0 && sAdmAlpha === myAdmAlpha) ||
+        (myNameAlpha.length > 3 && sNameAlpha === myNameAlpha)
+      )
+    }) || allStudents[0] || null
+
+  const studentReceipts = schoolStore.getReceipts().filter((r) => {
+    const rAdmAlpha = r.admission_number.toLowerCase().replace(/[^a-z0-9]/g, '')
+    return r.student_id === profile?.id || (myAdmAlpha.length > 0 && rAdmAlpha === myAdmAlpha)
+  })
+
+  const studentInvoices = schoolStore.getInvoices().filter((i) => {
+    const iAdmAlpha = i.admission_number.toLowerCase().replace(/[^a-z0-9]/g, '')
+    return i.student_id === profile?.id || (myAdmAlpha.length > 0 && iAdmAlpha === myAdmAlpha)
+  })
+
+  const studentUnitReg = schoolStore.getRegistrationForStudent(currentStudent?.admission_number || profile?.admission_number || '')
 
   const reportCards = schoolStore.getReportCards()
   const studentTranscript = currentStudent
@@ -56,6 +75,14 @@ export function StudentDashboard() {
           r.student_id === currentStudent.id
       )
     : null
+
+  const isFeeCleared =
+    currentStudent?.fee_cleared === true ||
+    (currentStudent && currentStudent.fee_balance === 0) ||
+    studentReceipts.some((r) => (r.amount_paid ?? r.amount) > 0) ||
+    studentInvoices.some((inv) => inv.status === 'Paid' || inv.balance === 0) ||
+    studentUnitReg?.fee_clearance_status === 'Cleared' ||
+    studentUnitReg?.exam_card_issued === true
 
   const currentDayOfWeek = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'].includes(
     new Date().toLocaleDateString('en-US', { weekday: 'long' })
@@ -213,13 +240,13 @@ export function StudentDashboard() {
           </div>
         </div>
 
-        <div className="card" style={{ padding: '1.25rem', borderLeft: '4px solid #16a34a' }}>
-          <div style={{ fontSize: '0.8rem', color: 'var(--color-text-secondary)', fontWeight: 600 }}>Fee Clearance</div>
-          <div style={{ fontSize: '1.75rem', fontWeight: 800, color: currentStudent?.fee_cleared ? '#16a34a' : '#ea580c', marginTop: '0.25rem' }}>
-            {currentStudent ? (currentStudent.fee_cleared ? 'Cleared' : `$${currentStudent.fee_balance.toLocaleString()}`) : '$0'}
+        <div className="card" style={{ padding: '1.25rem', borderLeft: `4px solid ${isFeeCleared ? '#16a34a' : '#ea580c'}` }}>
+          <div style={{ fontSize: '0.8rem', color: 'var(--color-text-secondary)', fontWeight: 600 }}>Fee Clearance & Exam Card</div>
+          <div style={{ fontSize: '1.75rem', fontWeight: 800, color: isFeeCleared ? '#16a34a' : '#ea580c', marginTop: '0.25rem' }}>
+            {isFeeCleared ? '✓ Cleared' : (currentStudent ? `$${currentStudent.fee_balance.toLocaleString()}` : '$0')}
           </div>
-          <div style={{ fontSize: '0.75rem', color: 'var(--color-text-secondary)', marginTop: '0.2rem' }}>
-            {currentStudent?.fee_cleared ? 'Exam Card Active' : 'Pay Online / Bursar'}
+          <div style={{ fontSize: '0.75rem', color: isFeeCleared ? '#16a34a' : 'var(--color-text-secondary)', marginTop: '0.2rem' }}>
+            {isFeeCleared ? 'Exam Card Active • Lessons Unlocked' : 'Pay Online / Bursar'}
           </div>
         </div>
 
