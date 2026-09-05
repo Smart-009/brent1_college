@@ -1,8 +1,8 @@
-import { useEffect } from 'react'
+import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from './useAuth'
 import { isAccessExpired } from '@/lib/utils'
-import { schoolStore } from '@/lib/schoolData'
+import { schoolStore, schoolEventBus } from '@/lib/schoolData'
 import { supabase } from '@/lib/supabase'
 
 /**
@@ -13,6 +13,27 @@ import { supabase } from '@/lib/supabase'
 export function useAccess() {
   const { profile } = useAuth()
   const navigate = useNavigate()
+  const [, setSyncTick] = useState(0)
+
+  useEffect(() => {
+    let isMounted = true
+    const handleSync = () => {
+      if (isMounted) setSyncTick((t) => t + 1)
+    }
+
+    const unsubStudent = schoolEventBus.subscribe('STUDENT_UPDATED', handleSync)
+    const unsubPayment = schoolEventBus.subscribe('PAYMENT_RECORDED', handleSync)
+    window.addEventListener('storage', handleSync)
+    window.addEventListener('eclat-data-synced', handleSync)
+
+    return () => {
+      isMounted = false
+      unsubStudent()
+      unsubPayment()
+      window.removeEventListener('storage', handleSync)
+      window.removeEventListener('eclat-data-synced', handleSync)
+    }
+  }, [])
 
   // Determine if student has active fee clearance or payments from Bursar desk
   const studentIdentifier = profile?.admission_number || profile?.id || ''

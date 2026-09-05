@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { Link } from 'react-router-dom'
 import { useAuth } from '@/hooks/useAuth'
@@ -8,12 +8,36 @@ import { CourseCard } from '@/components/shared/CourseCard'
 import { AnnouncementCard } from '@/components/shared/AnnouncementCard'
 import { Spinner } from '@/components/ui/Spinner'
 import { CertificateGenerator } from '@/components/shared/CertificateGenerator'
-import { schoolStore } from '@/lib/schoolData'
+import { schoolStore, schoolEventBus } from '@/lib/schoolData'
 import type { Course, Enrollment, Announcement } from '@/lib/database.types'
 
 export function StudentDashboard() {
   const { profile } = useAuth()
   const [showCertModal, setShowCertModal] = useState(false)
+  const [studentsVersion, setStudentsVersion] = useState(0)
+
+  // Realtime Cloud Sync & Event Listener for Student Clearance
+  useEffect(() => {
+    let isMounted = true
+    const handleSync = () => {
+      if (isMounted) setStudentsVersion((v) => v + 1)
+    }
+
+    schoolStore.syncWithCloud(true).then(handleSync).catch(() => {})
+
+    const unsubStudent = schoolEventBus.subscribe('STUDENT_UPDATED', handleSync)
+    const unsubPayment = schoolEventBus.subscribe('PAYMENT_RECORDED', handleSync)
+    window.addEventListener('storage', handleSync)
+    window.addEventListener('eclat-data-synced', handleSync)
+
+    return () => {
+      isMounted = false
+      unsubStudent()
+      unsubPayment()
+      window.removeEventListener('storage', handleSync)
+      window.removeEventListener('eclat-data-synced', handleSync)
+    }
+  }, [])
 
   // Read current student records from schoolStore
   const allStudents = schoolStore.getStudents()

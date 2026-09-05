@@ -4,7 +4,7 @@ import { useIsMobile } from '@/hooks/useMediaQuery'
 import { schoolStore, schoolEventBus } from '@/lib/schoolData'
 import { supabase } from '@/lib/supabase'
 import { getEmbeddableDocumentUrl, getGoogleDrivePreviewUrl } from '@/lib/utils'
-import { isNativeApp, OFFICIAL_APK_URL, LOCAL_APK_URL } from '@/utils/platform'
+import { isNativeApp, OFFICIAL_APK_URL, LOCAL_APK_URL, OFFICIAL_DESKTOP_URL, LOCAL_DESKTOP_URL } from '@/utils/platform'
 import { ACADEMIC_HANDBOOKS, COMIC_BOOKS_DATA, AcademicHandbook, ComicBook } from './academicHandbookData'
 import type { AcademicResource } from '@/types/school'
 
@@ -3736,6 +3736,141 @@ export function ResourceLibrary() {
                 🗑️ Remove Resource
               </button>
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* App-Only DRM Access Modal for Web Users */}
+      {showAppDownloadPrompt && (
+        <div
+          style={{
+            position: 'fixed',
+            inset: 0,
+            zIndex: 99999,
+            background: 'rgba(9, 13, 22, 0.85)',
+            backdropFilter: 'blur(10px)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            padding: '1.25rem',
+            animation: 'fadeIn 0.2s ease-out',
+          }}
+          onClick={() => setShowAppDownloadPrompt(false)}
+        >
+          <div
+            style={{
+              background: '#ffffff',
+              borderRadius: '20px',
+              maxWidth: '520px',
+              width: '100%',
+              padding: '2rem',
+              boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.5)',
+              textAlign: 'center',
+              border: '2px solid #d4af37',
+            }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div
+              style={{
+                width: '64px',
+                height: '64px',
+                borderRadius: '50%',
+                background: 'linear-gradient(135deg, #fef3c7 0%, #fde68a 100%)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                margin: '0 auto 1.25rem',
+                fontSize: '2rem',
+                border: '2px solid #d4af37',
+              }}
+            >
+              🔒
+            </div>
+
+            <span
+              style={{
+                background: '#e0f2fe',
+                color: '#0369a1',
+                fontSize: '0.72rem',
+                fontWeight: 800,
+                padding: '4px 12px',
+                borderRadius: '20px',
+                letterSpacing: '0.05em',
+                textTransform: 'uppercase',
+              }}
+            >
+              Hardware DRM Protected
+            </span>
+
+            <h3 style={{ fontSize: '1.3rem', fontWeight: 900, color: '#0f172a', margin: '0.75rem 0 0.5rem' }}>
+              Library Protected Inside Official Apps
+            </h3>
+
+            <p style={{ fontSize: '0.86rem', color: '#475569', lineHeight: 1.6, margin: '0 0 1.5rem' }}>
+              To safeguard academic copyright, past papers, textbooks, and interactive comic readers cannot be viewed or downloaded in standard web browsers. Please open our <strong>Official Android or Desktop App</strong> for unrestricted study.
+            </p>
+
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', marginBottom: '1.25rem' }}>
+              <a
+                href={LOCAL_APK_URL}
+                download="eclat-institute.apk"
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '8px',
+                  padding: '0.85rem 1rem',
+                  borderRadius: '12px',
+                  background: 'linear-gradient(135deg, #16a34a 0%, #15803d 100%)',
+                  color: '#ffffff',
+                  fontWeight: 800,
+                  fontSize: '0.92rem',
+                  textDecoration: 'none',
+                  boxShadow: '0 4px 12px rgba(22, 163, 74, 0.3)',
+                }}
+              >
+                <span style={{ fontSize: '1.2rem' }}>🤖</span>
+                <span>Download Android App (.APK)</span>
+              </a>
+
+              <a
+                href={LOCAL_DESKTOP_URL}
+                download="eclat-institute-setup.exe"
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '8px',
+                  padding: '0.85rem 1rem',
+                  borderRadius: '12px',
+                  background: 'linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%)',
+                  color: '#ffffff',
+                  fontWeight: 800,
+                  fontSize: '0.92rem',
+                  textDecoration: 'none',
+                  boxShadow: '0 4px 12px rgba(37, 99, 235, 0.3)',
+                }}
+              >
+                <span style={{ fontSize: '1.2rem' }}>💻</span>
+                <span>Download Windows Desktop App (.EXE)</span>
+              </a>
+            </div>
+
+            <button
+              type="button"
+              onClick={() => setShowAppDownloadPrompt(false)}
+              style={{
+                background: 'none',
+                border: 'none',
+                color: '#64748b',
+                fontSize: '0.82rem',
+                fontWeight: 600,
+                cursor: 'pointer',
+                padding: '0.5rem',
+              }}
+            >
+              Close Window ✕
+            </button>
           </div>
         </div>
       )}
