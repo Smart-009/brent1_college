@@ -1,16 +1,40 @@
-import { useState } from 'react'
-import { schoolStore } from '@/lib/schoolData'
+import { useState, useEffect } from 'react'
+import { schoolStore, schoolEventBus } from '@/lib/schoolData'
 import type { ReportCard, StudentRecord } from '@/types/school'
 import { ReportCardGenerator } from '@/features/exams/ReportCardGenerator'
 import { Link } from 'react-router-dom'
 
 export function ParentDashboard() {
-  const [students] = useState<StudentRecord[]>(() => schoolStore.getStudents())
-  const [selectedStudentId, setSelectedStudentId] = useState<string>(students[0]?.id || '')
-  const [reportCards] = useState<ReportCard[]>(() => schoolStore.getReportCards())
+  const [students, setStudents] = useState<StudentRecord[]>(() => schoolStore.getStudents())
+  const [selectedStudentId, setSelectedStudentId] = useState<string>(() => schoolStore.getStudents()[0]?.id || '')
+  const [reportCards, setReportCards] = useState<ReportCard[]>(() => schoolStore.getReportCards())
   const [selectedReportCard, setSelectedReportCard] = useState<ReportCard | null>(null)
   const [showAppointmentModal, setShowAppointmentModal] = useState(false)
   const [appointmentSent, setAppointmentSent] = useState(false)
+
+  // Real-time synchronization with Admissions and Bursar desks
+  useEffect(() => {
+    const handleSync = () => {
+      const freshStudents = schoolStore.getStudents()
+      setStudents(freshStudents)
+      setReportCards(schoolStore.getReportCards())
+      if (!selectedStudentId && freshStudents[0]?.id) {
+        setSelectedStudentId(freshStudents[0].id)
+      }
+    }
+
+    const unsubStudent = schoolEventBus.subscribe('STUDENT_UPDATED', handleSync)
+    const unsubPayment = schoolEventBus.subscribe('PAYMENT_RECORDED', handleSync)
+    window.addEventListener('storage', handleSync)
+    window.addEventListener('eclat-data-synced', handleSync)
+
+    return () => {
+      unsubStudent()
+      unsubPayment()
+      window.removeEventListener('storage', handleSync)
+      window.removeEventListener('eclat-data-synced', handleSync)
+    }
+  }, [selectedStudentId])
 
   const activeWard = students.find((s) => s.id === selectedStudentId) || students[0]
   const wardReportCard = activeWard ? reportCards.find((r) => r.student_id === activeWard.id || r.admission_number === activeWard.admission_number) : null
