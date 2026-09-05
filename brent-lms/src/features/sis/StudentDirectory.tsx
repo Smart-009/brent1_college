@@ -47,10 +47,11 @@ export function StudentDirectory() {
   const [studentPasswordInput, setStudentPasswordInput] = useState('Student@2026')
   const [studentPhoneInput, setStudentPhoneInput] = useState('')
   const [editPasswordInput, setEditPasswordInput] = useState('')
+  const [inlinePassEdit, setInlinePassEdit] = useState('')
   const [copiedNotification, setCopiedNotification] = useState(false)
 
   // Helper to persist student login credentials
-  const saveStudentCredentials = (adm: string, fullName: string, password: string) => {
+  const saveStudentCredentials = async (adm: string, fullName: string, password: string) => {
     const cleanAdm = adm.trim().toLowerCase().replace(/[^a-z0-9]/g, '')
     const renewed = new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString()
     const profileObj = {
@@ -73,6 +74,18 @@ export function StudentDirectory() {
       }
       localStorage.setItem('eclat_local_credentials', JSON.stringify(creds))
     } catch {}
+
+    // Persist custom password directly into student record for cloud cross-device sync
+    const stds = schoolStore.getStudents()
+    const matchedIdx = stds.findIndex(
+      (s) =>
+        s.admission_number.toLowerCase().trim() === adm.toLowerCase().trim() ||
+        s.admission_number.toLowerCase().replace(/[^a-z0-9]/g, '') === cleanAdm
+    )
+    if (matchedIdx !== -1) {
+      await schoolStore.updateStudent(stds[matchedIdx].id, { portal_password: password.trim() })
+      setStudents(schoolStore.getStudents())
+    }
 
     try {
       supabase.from('profiles').upsert({
@@ -679,16 +692,21 @@ export function StudentDirectory() {
                           style={{ background: '#f8fafc', border: '1px solid #cbd5e1', color: '#1e3a8a', fontWeight: 700 }}
                           onClick={() => {
                             const cleanAdm = std.admission_number.trim().toLowerCase().replace(/[^a-z0-9]/g, '')
-                            let currentPass = 'Student@2026'
-                            try {
-                              const raw = localStorage.getItem('eclat_local_credentials')
-                              if (raw) {
-                                const parsed = JSON.parse(raw)
-                                if (parsed[cleanAdm]?.password) {
-                                  currentPass = parsed[cleanAdm].password
+                            let currentPass = std.portal_password || ''
+                            if (!currentPass) {
+                              try {
+                                const raw = localStorage.getItem('eclat_local_credentials')
+                                if (raw) {
+                                  const parsed = JSON.parse(raw)
+                                  if (parsed[cleanAdm]?.password) {
+                                    currentPass = parsed[cleanAdm].password
+                                  }
                                 }
-                              }
-                            } catch {}
+                              } catch {}
+                            }
+                            if (!currentPass) currentPass = 'Student@2026'
+
+                            setInlinePassEdit('')
                             setCredentialsModalData({
                               studentName: std.full_name,
                               admissionNumber: std.admission_number,
@@ -1551,6 +1569,41 @@ export function StudentDirectory() {
                     <span style={{ fontSize: '1.05rem', fontWeight: 900, color: '#15803d', fontFamily: 'monospace', background: '#dcfce7', padding: '2px 8px', borderRadius: '4px' }}>
                       {credentialsModalData.password}
                     </span>
+                  </div>
+
+                  {/* Change/Set Custom Password Field */}
+                  <div style={{ background: '#f1f5f9', padding: '0.65rem 0.85rem', borderRadius: '6px', marginTop: '0.25rem' }}>
+                    <label style={{ fontSize: '0.75rem', fontWeight: 700, color: '#334155', display: 'block', marginBottom: '0.35rem' }}>
+                      ✏️ Change / Set Custom Password for this Student:
+                    </label>
+                    <div style={{ display: 'flex', gap: '0.4rem' }}>
+                      <input
+                        type="text"
+                        placeholder="Type custom student password..."
+                        value={inlinePassEdit}
+                        onChange={(e) => setInlinePassEdit(e.target.value)}
+                        className="form-input form-input-sm"
+                        style={{ flex: 1, fontFamily: 'monospace', background: '#ffffff' }}
+                      />
+                      <button
+                        type="button"
+                        className="btn btn-sm btn-primary"
+                        style={{ fontWeight: 700, whiteSpace: 'nowrap' }}
+                        onClick={async () => {
+                          if (!inlinePassEdit.trim()) {
+                            alert('Please enter a custom password first.')
+                            return
+                          }
+                          const newPass = inlinePassEdit.trim()
+                          await saveStudentCredentials(credentialsModalData.admissionNumber, credentialsModalData.studentName, newPass)
+                          setCredentialsModalData({ ...credentialsModalData, password: newPass })
+                          setInlinePassEdit('')
+                          alert(`Custom login password for ${credentialsModalData.studentName} updated to "${newPass}"!`)
+                        }}
+                      >
+                        💾 Save Password
+                      </button>
+                    </div>
                   </div>
 
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>

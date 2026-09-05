@@ -49,6 +49,7 @@ export interface StudentRecord {
   certificate_granted_at?: string
   certificate_number?: string
   certificate_grade?: string
+  portal_password?: string
 }
 
 export interface TimetablePeriod {
