@@ -856,6 +856,10 @@ export const CLOUD_SYNC_SYSTEM_IDS: Record<string, string> = {
   students: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaa06',
   timetable: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaa07',
   fee_structures: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaa08',
+  invoices: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaa09',
+  receipts: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaa10',
+  biometric_passes: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaa11',
+  unit_registrations: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaa12',
 }
 const DEFAULT_SYSTEM_SUBJECT_ID = '11111111-1111-1111-1111-111111111101'
 
@@ -979,7 +983,52 @@ class SchoolDataStore {
     this.broadcastChange(`COLLECTION_UPDATED_${collectionKey.toUpperCase()}`, data)
   }
 
-  // --- Dynamic Custom Library Categories (Synced Across Devices) ---
+  mergeCloudStudents(cloudList: StudentRecord[]): void {
+    if (!Array.isArray(cloudList)) return
+    const currentList = this.get<StudentRecord[]>('students', INITIAL_STUDENTS)
+    const map = new Map<string, StudentRecord>()
+    currentList.forEach((s) => map.set(s.admission_number.toLowerCase(), s))
+
+    cloudList.forEach((cs) => {
+      const key = cs.admission_number.toLowerCase()
+      const local = map.get(key)
+      if (local) {
+        const isCleared = local.fee_cleared === true || cs.fee_cleared === true || (local.fee_balance === 0) || (cs.fee_balance === 0)
+        const lowestBalance = isCleared ? 0 : Math.min(local.fee_balance ?? 60, cs.fee_balance ?? 60)
+        map.set(key, {
+          ...cs,
+          ...local,
+          fee_cleared: isCleared,
+          fee_balance: lowestBalance,
+        })
+      } else {
+        map.set(key, cs)
+      }
+    })
+    this.set('students', Array.from(map.values()))
+  }
+
+  async syncStudentProfileToSupabase(student: StudentRecord): Promise<void> {
+    try {
+      const renewed = new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString()
+      if (student.id) {
+        await supabase.from('profiles').upsert({
+          id: student.id,
+          full_name: student.full_name,
+          admission_number: student.admission_number,
+          role: 'student',
+          access_expires_at: renewed,
+          is_active: student.status === 'Active',
+        }, { onConflict: 'id' })
+      }
+      if (student.admission_number) {
+        await supabase.from('profiles').update({
+          access_expires_at: renewed,
+          is_active: true,
+        }).ilike('admission_number', student.admission_number)
+      }
+    } catch {}
+  }
   getCustomCategories(): string[] {
     const raw = this.get<string[]>('custom_categories', [])
     try {
@@ -1056,7 +1105,13 @@ class SchoolDataStore {
             } else if (row.key === 'notices' && Array.isArray(row.data)) {
               this.set('notices', row.data)
             } else if (row.key === 'students' && Array.isArray(row.data)) {
-              this.set('students', row.data)
+              this.mergeCloudStudents(row.data)
+            } else if (row.key === 'invoices' && Array.isArray(row.data)) {
+              this.set('invoices', row.data)
+            } else if (row.key === 'receipts' && Array.isArray(row.data)) {
+              this.set('receipts', row.data)
+            } else if (row.key === 'unit_registrations' && Array.isArray(row.data)) {
+              this.set('unit_registrations', row.data)
             } else if ((row.key === 'fee_structures' || row.key === 'custom_course_fees') && typeof row.data === 'object' && row.data !== null) {
               this.set('custom_course_fees', row.data)
               window.dispatchEvent(new CustomEvent('eclat-courses-updated'))
@@ -1134,7 +1189,13 @@ class SchoolDataStore {
                 } else if (parsed.key === 'notices' && Array.isArray(parsed.data)) {
                   this.set('notices', parsed.data)
                 } else if (parsed.key === 'students' && Array.isArray(parsed.data)) {
-                  this.set('students', parsed.data)
+                  this.mergeCloudStudents(parsed.data)
+                } else if (parsed.key === 'invoices' && Array.isArray(parsed.data)) {
+                  this.set('invoices', parsed.data)
+                } else if (parsed.key === 'receipts' && Array.isArray(parsed.data)) {
+                  this.set('receipts', parsed.data)
+                } else if (parsed.key === 'unit_registrations' && Array.isArray(parsed.data)) {
+                  this.set('unit_registrations', parsed.data)
                 } else if ((parsed.key === 'fee_structures' || parsed.key === 'custom_course_fees') && typeof parsed.data === 'object' && parsed.data !== null) {
                   this.set('custom_course_fees', parsed.data)
                   unitsUpdated = true
@@ -1938,6 +1999,17 @@ class SchoolDataStore {
 
     schoolEventBus.publish('PAYMENT_RECORDED', receipt)
     schoolEventBus.publish('STUDENT_UPDATED')
+    this.broadcastChange('PAYMENT_RECORDED', receipt)
+    await this.pushCollectionToCloud('receipts', this.getReceipts())
+    await this.pushCollectionToCloud('invoices', this.getInvoices())
+    await this.pushCollectionToCloud('students', this.getStudents())
+
+    const matchedStd = this.getStudents().find(
+      (s) => s.id === receipt.student_id || s.admission_number.toLowerCase() === receipt.admission_number.toLowerCase()
+    )
+    if (matchedStd) {
+      await this.syncStudentProfileToSupabase(matchedStd)
+    }
   }
 
   async updateReceipt(receiptId: string, updated: Partial<FeePaymentReceipt>, adminName?: string): Promise<void> {
@@ -1987,6 +2059,9 @@ class SchoolDataStore {
     )
     schoolEventBus.publish('PAYMENT_RECORDED', updated)
     schoolEventBus.publish('STUDENT_UPDATED')
+    await this.pushCollectionToCloud('receipts', this.getReceipts())
+    await this.pushCollectionToCloud('invoices', this.getInvoices())
+    await this.pushCollectionToCloud('students', this.getStudents())
   }
 
   async deleteReceipt(receiptId: string): Promise<void> {
@@ -2019,6 +2094,9 @@ class SchoolDataStore {
     )
     schoolEventBus.publish('PAYMENT_RECORDED', receiptId)
     schoolEventBus.publish('STUDENT_UPDATED')
+    await this.pushCollectionToCloud('receipts', this.getReceipts())
+    await this.pushCollectionToCloud('invoices', this.getInvoices())
+    await this.pushCollectionToCloud('students', this.getStudents())
   }
 
   async clearAllReceipts(): Promise<void> {
@@ -2707,6 +2785,18 @@ class SchoolDataStore {
     schoolEventBus.publish('INVOICE_CREATED')
     schoolEventBus.publish('UNIT_REGISTRATION_COMPLETED' as any)
     this.broadcastChange('STUDENT_LESSONS_UNLOCKED', { identifier })
+
+    await this.pushCollectionToCloud('students', this.getStudents())
+    await this.pushCollectionToCloud('invoices', this.getInvoices())
+    await this.pushCollectionToCloud('receipts', this.getReceipts())
+    await this.pushCollectionToCloud('unit_registrations', this.getUnitRegistrations())
+
+    const studentRecord = this.getStudents().find(
+      (s) => s.id.toLowerCase() === clean || s.admission_number.toLowerCase() === clean
+    )
+    if (studentRecord) {
+      await this.syncStudentProfileToSupabase(studentRecord)
+    }
   }
 
   // --- Faculty Teachers & Course Assignments (ACID Protected) ---
