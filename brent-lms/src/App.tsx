@@ -115,14 +115,25 @@ function RequireAuth({ children, allowedRoles }: { children: ReactElement; allow
 }
 
 export function App() {
-  const [showOpeningSplash, setShowOpeningSplash] = useState(true)
+  const [showOpeningSplash, setShowOpeningSplash] = useState(() => {
+    if (typeof window === 'undefined') return false
+    if (!isNativeApp()) return false
+    try {
+      const seen = sessionStorage.getItem('eclat_app_splash_seen')
+      if (seen) return false
+      sessionStorage.setItem('eclat_app_splash_seen', 'true')
+      return true
+    } catch {
+      return false
+    }
+  })
 
   useEffect(() => {
     schoolStore.syncWithCloud().catch(() => {})
   }, [])
 
   return (
-    <Suspense fallback={<LoadingScreen message="Loading Eclat Institute Portal..." />}>
+    <Suspense fallback={<LoadingScreen message="Loading Éclat Institute Portal..." />}>
       {showOpeningSplash && (
         <AppOpeningSplashScreen onFinished={() => setShowOpeningSplash(false)} />
       )}
