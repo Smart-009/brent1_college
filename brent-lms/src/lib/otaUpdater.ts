@@ -39,7 +39,11 @@ export async function checkForOTAUpdates(force: boolean = false): Promise<boolea
 
   isCheckingUpdate = true
   try {
-    const versionUrl = '/version.json?_nocache=' + Date.now()
+    const isNative = typeof window !== 'undefined' && ((window as any).Capacitor?.isNativePlatform?.() || window.location.origin.includes('localhost'))
+    const versionUrl = isNative
+      ? 'https://www.eclat.institute/version.json?_nocache=' + Date.now()
+      : '/version.json?_nocache=' + Date.now()
+
     const response = await fetch(versionUrl, {
       method: 'GET',
       headers: {
