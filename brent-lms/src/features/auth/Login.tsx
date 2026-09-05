@@ -99,14 +99,6 @@ export function Login() {
       return
     }
 
-    // DRM Protection Policy Check: Student accounts require native app for hardware anti-screenshot DRM
-    if (!isNative && selectedRole === 'student') {
-      setError(
-        '🛡️ Hardware DRM Protection: Student learning portals and video classrooms are restricted to the Official Éclat Native App to prevent unauthorized screen recording. Please download the app below.'
-      )
-      return
-    }
-
     if (!admissionNumber.trim() || !password) {
       setError('Please enter your Admission Number or Staff Username and Password.')
       return
@@ -380,183 +372,125 @@ export function Login() {
               </div>
             )}
 
-            {/* IF ON WEB AND STUDENT ROLE SELECTED: Show DRM Anti-Screenshot App Download Card */}
-            {!isNative && selectedRole === 'student' ? (
+            <form onSubmit={handleSubmit}>
+              <div style={{ marginBottom: '1.1rem' }}>
+                <label className="label" style={{ fontSize: '0.84rem', fontWeight: 700, color: '#1e293b' }}>
+                  {selectedRole === 'student' ? 'Admission Number' : 'Username / Admission Number'}
+                </label>
+                <input
+                  type="text"
+                  required
+                  autoCapitalize="none"
+                  autoCorrect="off"
+                  spellCheck={false}
+                  className="input"
+                  value={admissionNumber}
+                  onChange={(e) => setAdmissionNumber(e.target.value)}
+                  placeholder={selectedRole === 'student' ? 'e.g. EI-2026-001 or Mustafa Hassan' : 'e.g. Eclat2026@admin or username'}
+                  style={{ fontSize: '0.95rem', padding: '0.75rem 0.9rem' }}
+                />
+              </div>
+
+              <div style={{ marginBottom: '1.3rem' }}>
+                <div
+                  style={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    marginBottom: '0.35rem',
+                  }}
+                >
+                  <label className="label" style={{ margin: 0, fontSize: '0.84rem', fontWeight: 700, color: '#1e293b' }}>
+                    Password
+                  </label>
+                  <button
+                    type="button"
+                    style={{
+                      background: 'none',
+                      border: 'none',
+                      color: '#2563eb',
+                      fontSize: '0.78rem',
+                      cursor: 'pointer',
+                      fontWeight: 600,
+                    }}
+                    onClick={() => setShowPassword(!showPassword)}
+                  >
+                    {showPassword ? 'Hide' : 'Show'}
+                  </button>
+                </div>
+                <input
+                  type={showPassword ? 'text' : 'password'}
+                  required
+                  autoCapitalize="none"
+                  autoCorrect="off"
+                  spellCheck={false}
+                  className="input"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  placeholder="Enter password"
+                  style={{ fontSize: '0.95rem', padding: '0.75rem 0.9rem' }}
+                />
+              </div>
+
+              <button
+                type="submit"
+                className="btn btn-primary btn-full"
+                disabled={loading}
+                style={{ fontWeight: 800, padding: '0.85rem', borderRadius: '12px', fontSize: '0.95rem' }}
+              >
+                {loading ? 'Authenticating...' : `Sign In to Portal →`}
+              </button>
+            </form>
+
+            {/* Optional Official Native App Download Section */}
+            {!isNative && selectedRole === 'student' && (
               <div
                 style={{
-                  background: 'linear-gradient(135deg, #090d16 0%, #0f172a 100%)',
-                  borderRadius: '16px',
-                  padding: '1.25rem',
-                  border: '1px solid rgba(212, 175, 55, 0.4)',
-                  boxShadow: '0 10px 25px rgba(0,0,0,0.2)',
-                  color: '#f8fafc',
+                  marginTop: '1.25rem',
+                  padding: '0.9rem 1rem',
+                  background: '#f8fafc',
+                  borderRadius: '12px',
+                  border: '1px solid #e2e8f0',
                 }}
               >
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '0.75rem' }}>
-                  <span style={{ fontSize: '1.3rem' }}>🛡️</span>
-                  <div>
-                    <div style={{ fontSize: '0.92rem', fontWeight: 900, color: '#d4af37' }}>
-                      Native App DRM Enforcement
-                    </div>
-                    <div style={{ fontSize: '0.72rem', color: '#94a3b8' }}>
-                      OS-Level Hardware Anti-Screenshot Protection
-                    </div>
-                  </div>
+                <div style={{ fontSize: '0.75rem', fontWeight: 700, color: '#475569', marginBottom: '0.5rem', display: 'flex', alignItems: 'center', gap: '5px' }}>
+                  <span>📱</span> Prefer Native App Experience?
                 </div>
-
-                <p style={{ fontSize: '0.82rem', color: '#cbd5e1', lineHeight: 1.5, margin: '0 0 1.1rem' }}>
-                  To protect intellectual property, prevent unauthorized recording of proprietary video lectures, and ensure
-                  examination integrity, all enrolled students sign in via the <strong>Official Éclat Apps</strong>.
-                </p>
-
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.65rem' }}>
-                  {/* Android App Button */}
+                <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
                   <a
                     href={LOCAL_APK_URL}
                     download="eclat-institute.apk"
                     style={{
-                      background: 'linear-gradient(135deg, #16a34a 0%, #15803d 100%)',
-                      color: '#ffffff',
-                      fontWeight: 800,
-                      padding: '0.85rem 1rem',
-                      borderRadius: '12px',
-                      fontSize: '0.92rem',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      gap: '8px',
+                      fontSize: '0.74rem',
+                      fontWeight: 700,
+                      color: '#15803d',
                       textDecoration: 'none',
-                      boxShadow: '0 4px 14px rgba(22, 163, 74, 0.35)',
+                      background: '#dcfce7',
+                      padding: '4px 8px',
+                      borderRadius: '6px',
+                      border: '1px solid #86efac',
                     }}
                   >
-                    <span>🤖</span>
-                    <span>Download Official Android App (.APK)</span>
+                    🤖 Download Android APK
                   </a>
-
-                  {/* Laptop / Desktop App Button */}
                   <a
                     href={LOCAL_DESKTOP_URL}
                     download="eclat-institute-setup.exe"
                     style={{
-                      background: 'linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%)',
-                      color: '#ffffff',
-                      fontWeight: 800,
-                      padding: '0.85rem 1rem',
-                      borderRadius: '12px',
-                      fontSize: '0.92rem',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      gap: '8px',
+                      fontSize: '0.74rem',
+                      fontWeight: 700,
+                      color: '#1d4ed8',
                       textDecoration: 'none',
-                      boxShadow: '0 4px 14px rgba(37, 99, 235, 0.35)',
+                      background: '#dbeafe',
+                      padding: '4px 8px',
+                      borderRadius: '6px',
+                      border: '1px solid #93c5fd',
                     }}
                   >
-                    <span>💻</span>
-                    <span>Download Desktop Laptop App (.exe)</span>
+                    💻 Download Desktop Laptop App
                   </a>
                 </div>
-
-                <div
-                  style={{
-                    marginTop: '0.85rem',
-                    paddingTop: '0.75rem',
-                    borderTop: '1px solid rgba(255, 255, 255, 0.1)',
-                    fontSize: '0.72rem',
-                    color: '#64748b',
-                    textAlign: 'center',
-                  }}
-                >
-                  Are you a Lecturer or Administrator?{' '}
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setIsStaffMode(true)
-                      setSelectedRole('admin')
-                    }}
-                    style={{
-                      background: 'none',
-                      border: 'none',
-                      color: '#38bdf8',
-                      cursor: 'pointer',
-                      fontWeight: 700,
-                      padding: 0,
-                    }}
-                  >
-                    Switch to Staff Terminal →
-                  </button>
-                </div>
               </div>
-            ) : (
-              <form onSubmit={handleSubmit}>
-                <div style={{ marginBottom: '1.1rem' }}>
-                  <label className="label" style={{ fontSize: '0.84rem', fontWeight: 700, color: '#1e293b' }}>
-                    {selectedRole === 'student' ? 'Admission Number' : 'Username / Admission Number'}
-                  </label>
-                  <input
-                    type="text"
-                    required
-                    autoCapitalize="none"
-                    autoCorrect="off"
-                    spellCheck={false}
-                    className="input"
-                    value={admissionNumber}
-                    onChange={(e) => setAdmissionNumber(e.target.value)}
-                    placeholder={selectedRole === 'student' ? 'e.g. EI-2026-001' : 'e.g. Eclat2026@admin or username'}
-                    style={{ fontSize: '0.95rem', padding: '0.75rem 0.9rem' }}
-                  />
-                </div>
-
-                <div style={{ marginBottom: '1.3rem' }}>
-                  <div
-                    style={{
-                      display: 'flex',
-                      justifyContent: 'space-between',
-                      alignItems: 'center',
-                      marginBottom: '0.35rem',
-                    }}
-                  >
-                    <label className="label" style={{ margin: 0, fontSize: '0.84rem', fontWeight: 700, color: '#1e293b' }}>
-                      Password
-                    </label>
-                    <button
-                      type="button"
-                      style={{
-                        background: 'none',
-                        border: 'none',
-                        color: '#2563eb',
-                        fontSize: '0.78rem',
-                        cursor: 'pointer',
-                        fontWeight: 600,
-                      }}
-                      onClick={() => setShowPassword(!showPassword)}
-                    >
-                      {showPassword ? 'Hide' : 'Show'}
-                    </button>
-                  </div>
-                  <input
-                    type={showPassword ? 'text' : 'password'}
-                    required
-                    autoCapitalize="none"
-                    autoCorrect="off"
-                    spellCheck={false}
-                    className="input"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    placeholder="Enter password"
-                    style={{ fontSize: '0.95rem', padding: '0.75rem 0.9rem' }}
-                  />
-                </div>
-
-                <button
-                  type="submit"
-                  className="btn btn-primary btn-full"
-                  disabled={loading}
-                  style={{ fontWeight: 800, padding: '0.85rem', borderRadius: '12px', fontSize: '0.95rem' }}
-                >
-                  {loading ? 'Authenticating...' : `Sign In to Portal →`}
-                </button>
-              </form>
             )}
           </div>
 
