@@ -29,7 +29,32 @@ import { supabase } from './supabase'
 import { INSTITUTION_CONFIG } from '@/config/institution'
 
 // Official Enrolled Students
-export const INITIAL_STUDENTS: StudentRecord[] = []
+export const INITIAL_STUDENTS: StudentRecord[] = [
+  {
+    id: 'bd2b7948-d3dc-43b8-809a-c77f2ebb33a1',
+    admission_number: 'EL/001/2026',
+    full_name: 'Mustafa Hassan',
+    gender: 'Male',
+    dob: '2005-01-01',
+    class_id: 'unit-grd1',
+    class_name: 'Graphics Design & Animation',
+    grade_level: '40 Credits (3 Months (Certificate Course))',
+    stream: 'Main Campus',
+    enrollment_date: '2026-09-04',
+    admission_date: '2026-09-04',
+    status: 'Active',
+    guardian: { name: 'Self-Sponsored', relationship: 'Self', phone: '+254 700 000 000', email: 'mustafa@eclat.institute' },
+    emergency_contact: '+254 700 000 000',
+    fee_balance: 0,
+    term_fee_total: 60,
+    fee_cleared: true,
+    attendance_rate: 100,
+    discipline_points: 100,
+    merits_count: 10,
+    demerits_count: 0,
+    biometric_enrolled: true,
+  },
+]
 export const INITIAL_TIMETABLE: TimetablePeriod[] = []
 export const INITIAL_EXAMS: ExamSession[] = []
 export const INITIAL_REPORT_CARDS: ReportCard[] = []
@@ -677,8 +702,53 @@ export const INITIAL_COURSE_UNITS: CourseUnit[] = [
   },
 ]
 
-export const INITIAL_INVOICES: FeeInvoice[] = []
-export const INITIAL_RECEIPTS: FeePaymentReceipt[] = []
+export const INITIAL_INVOICES: FeeInvoice[] = [
+  {
+    id: 'inv-bd2b7948-d3dc-43b8-809a-c77f2ebb33a1',
+    invoice_number: 'INV-2026-001',
+    student_id: 'bd2b7948-d3dc-43b8-809a-c77f2ebb33a1',
+    student_name: 'Mustafa Hassan',
+    admission_number: 'EL/001/2026',
+    class_name: 'Graphics Design & Animation',
+    term: 'Short Course',
+    academic_year: '2026/2027',
+    issue_date: '4 Sep 2026',
+    due_date: '4 Sep 2026',
+    items: [
+      {
+        id: 'item-1',
+        description: 'Tuition & Practical LMS Access',
+        amount: 60,
+      },
+    ],
+    total_amount: 60,
+    paid_amount: 60,
+    balance: 0,
+    status: 'Paid',
+  },
+]
+
+export const INITIAL_RECEIPTS: FeePaymentReceipt[] = [
+  {
+    id: 'rcpt-bd2b7948-d3dc-43b8-809a-c77f2ebb33a1',
+    receipt_number: 'RCT-2026-001',
+    invoice_id: 'inv-bd2b7948-d3dc-43b8-809a-c77f2ebb33a1',
+    student_id: 'bd2b7948-d3dc-43b8-809a-c77f2ebb33a1',
+    student_name: 'Mustafa Hassan',
+    admission_number: 'EL/001/2026',
+    amount: 60,
+    amount_paid: 60,
+    payment_method: 'Cash Deposit',
+    reference_code: 'BURSAR-CLEAR-001',
+    payment_date: '4 Sep 2026',
+    received_by: 'Bursar & Admissions Office',
+    recorded_by: 'Bursar & Admissions Office',
+    balance_after: 0,
+    balance_remaining: 0,
+    paid_by: 'Mustafa Hassan',
+  },
+]
+
 export const INITIAL_RESOURCES: AcademicResource[] = []
 export const FALLBACK_SAMPLE_RESOURCES: AcademicResource[] = [
   {
