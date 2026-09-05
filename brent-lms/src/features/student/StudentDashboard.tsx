@@ -41,31 +41,84 @@ export function StudentDashboard() {
 
   // Read current student records from schoolStore with normalized matching
   const allStudents = schoolStore.getStudents()
-  const myAdmAlpha = (profile?.admission_number || '').toLowerCase().replace(/[^a-z0-9]/g, '')
+  const myAdmClean = (profile?.admission_number || '').trim().toLowerCase()
+  const myAdmAlpha = myAdmClean.replace(/[^a-z0-9]/g, '')
   const myNameAlpha = (profile?.full_name || '').toLowerCase().replace(/[^a-z0-9]/g, '')
+  const myIdClean = (profile?.id || '').toLowerCase()
 
-  const currentStudent =
+  const matchedStudent =
     allStudents.find((s) => {
-      const sAdmAlpha = s.admission_number.toLowerCase().replace(/[^a-z0-9]/g, '')
+      const sAdm = s.admission_number.trim().toLowerCase()
+      const sAdmAlpha = sAdm.replace(/[^a-z0-9]/g, '')
       const sNameAlpha = s.full_name.toLowerCase().replace(/[^a-z0-9]/g, '')
+      const sId = s.id.toLowerCase()
       return (
-        s.id === profile?.id ||
-        (myAdmAlpha.length > 0 && sAdmAlpha === myAdmAlpha) ||
-        (myNameAlpha.length > 3 && sNameAlpha === myNameAlpha)
+        sId === myIdClean ||
+        (myAdmClean && sAdm === myAdmClean) ||
+        (myAdmAlpha && sAdmAlpha === myAdmAlpha) ||
+        (myNameAlpha && myNameAlpha.length > 3 && sNameAlpha === myNameAlpha)
       )
-    }) || allStudents[0] || null
+    })
 
   const studentReceipts = schoolStore.getReceipts().filter((r) => {
-    const rAdmAlpha = r.admission_number.toLowerCase().replace(/[^a-z0-9]/g, '')
-    return r.student_id === profile?.id || (myAdmAlpha.length > 0 && rAdmAlpha === myAdmAlpha)
+    const rAdmClean = (r.admission_number || '').trim().toLowerCase()
+    const rAdmAlpha = rAdmClean.replace(/[^a-z0-9]/g, '')
+    const rStdId = (r.student_id || '').toLowerCase()
+    return (
+      (matchedStudent?.id && rStdId === matchedStudent.id.toLowerCase()) ||
+      (myIdClean && rStdId === myIdClean) ||
+      (myAdmClean && rAdmClean === myAdmClean) ||
+      (myAdmAlpha && rAdmAlpha === myAdmAlpha)
+    )
   })
 
   const studentInvoices = schoolStore.getInvoices().filter((i) => {
-    const iAdmAlpha = i.admission_number.toLowerCase().replace(/[^a-z0-9]/g, '')
-    return i.student_id === profile?.id || (myAdmAlpha.length > 0 && iAdmAlpha === myAdmAlpha)
+    const iAdmClean = (i.admission_number || '').trim().toLowerCase()
+    const iAdmAlpha = iAdmClean.replace(/[^a-z0-9]/g, '')
+    const iStdId = (i.student_id || '').toLowerCase()
+    return (
+      (matchedStudent?.id && iStdId === matchedStudent.id.toLowerCase()) ||
+      (myIdClean && iStdId === myIdClean) ||
+      (myAdmClean && iAdmClean === myAdmClean) ||
+      (myAdmAlpha && iAdmAlpha === myAdmAlpha)
+    )
   })
 
-  const studentUnitReg = schoolStore.getRegistrationForStudent(currentStudent?.admission_number || profile?.admission_number || '')
+  const studentUnitReg = schoolStore.getRegistrationForStudent(matchedStudent?.admission_number || profile?.admission_number || '')
+
+  const isFeeCleared =
+    matchedStudent?.fee_cleared === true ||
+    (matchedStudent && matchedStudent.fee_balance === 0) ||
+    studentReceipts.some((r) => (r.amount_paid ?? r.amount) > 0) ||
+    studentInvoices.some((inv) => inv.status === 'Paid' || inv.balance === 0) ||
+    studentUnitReg?.fee_clearance_status === 'Cleared' ||
+    studentUnitReg?.exam_card_issued === true
+
+  const currentStudent = matchedStudent || {
+    id: profile?.id || 'std-active',
+    admission_number: profile?.admission_number || 'EI-2026-001',
+    full_name: profile?.full_name || 'Enrolled Student',
+    gender: 'Male',
+    dob: '2004-01-01',
+    class_id: 'class-main',
+    class_name: 'Short Course Program',
+    grade_level: '2026 Intake',
+    stream: 'Main Campus',
+    enrollment_date: new Date().toISOString().split('T')[0],
+    admission_date: new Date().toISOString().split('T')[0],
+    status: 'Active',
+    guardian: { name: 'Guardian', relationship: 'Parent', phone: '', email: '' },
+    emergency_contact: '',
+    fee_balance: isFeeCleared ? 0 : 0,
+    term_fee_total: 60,
+    fee_cleared: isFeeCleared,
+    attendance_rate: 100,
+    discipline_points: 100,
+    merits_count: 10,
+    demerits_count: 0,
+    biometric_enrolled: true,
+    certificate_granted: false,
+  }
 
   const reportCards = schoolStore.getReportCards()
   const studentTranscript = currentStudent
@@ -75,14 +128,6 @@ export function StudentDashboard() {
           r.student_id === currentStudent.id
       )
     : null
-
-  const isFeeCleared =
-    currentStudent?.fee_cleared === true ||
-    (currentStudent && currentStudent.fee_balance === 0) ||
-    studentReceipts.some((r) => (r.amount_paid ?? r.amount) > 0) ||
-    studentInvoices.some((inv) => inv.status === 'Paid' || inv.balance === 0) ||
-    studentUnitReg?.fee_clearance_status === 'Cleared' ||
-    studentUnitReg?.exam_card_issued === true
 
   const currentDayOfWeek = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'].includes(
     new Date().toLocaleDateString('en-US', { weekday: 'long' })

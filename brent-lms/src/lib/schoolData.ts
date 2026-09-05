@@ -921,6 +921,27 @@ class SchoolDataStore {
             this.set('custom_course_fees', eventData)
             window.dispatchEvent(new CustomEvent('eclat-courses-updated'))
             window.dispatchEvent(new CustomEvent('eclat-data-synced'))
+          } else if (eventType === 'COLLECTION_UPDATED_STUDENTS' && Array.isArray(eventData)) {
+            this.mergeCloudStudents(eventData)
+            schoolEventBus.publish('STUDENT_UPDATED')
+            window.dispatchEvent(new CustomEvent('eclat-data-synced'))
+          } else if (eventType === 'COLLECTION_UPDATED_INVOICES' && Array.isArray(eventData)) {
+            this.set('invoices', eventData)
+            schoolEventBus.publish('INVOICE_CREATED')
+            window.dispatchEvent(new CustomEvent('eclat-data-synced'))
+          } else if (eventType === 'COLLECTION_UPDATED_RECEIPTS' && Array.isArray(eventData)) {
+            this.set('receipts', eventData)
+            schoolEventBus.publish('PAYMENT_RECORDED')
+            window.dispatchEvent(new CustomEvent('eclat-data-synced'))
+          } else if (eventType === 'COLLECTION_UPDATED_UNIT_REGISTRATIONS' && Array.isArray(eventData)) {
+            this.set('unit_registrations', eventData)
+            schoolEventBus.publish('UNIT_REGISTRATION_COMPLETED' as any)
+            window.dispatchEvent(new CustomEvent('eclat-data-synced'))
+          } else if (eventType === 'STUDENT_LESSONS_UNLOCKED' || eventType === 'STUDENT_UPDATED' || eventType === 'PAYMENT_RECORDED') {
+            this.syncWithCloud(true).catch(() => {})
+            schoolEventBus.publish('STUDENT_UPDATED')
+            schoolEventBus.publish('PAYMENT_RECORDED')
+            window.dispatchEvent(new CustomEvent('eclat-data-synced'))
           }
           this.syncWithCloud(true).catch(() => {})
         })
@@ -1545,10 +1566,10 @@ class SchoolDataStore {
   async updateStudent(id: string, updated: Partial<StudentRecord>): Promise<void> {
     await txEngine.executeAtomic(
       `UPDATE_STUDENT_${id}`,
-      ['eclat_school_students'],
+      ['eclat_school_students', 'eclat_school_invoices', 'eclat_school_receipts', 'eclat_school_unit_registrations'],
       () => {
         const list = this.getStudents()
-        const idx = list.findIndex((s) => s.id === id)
+        const idx = list.findIndex((s) => s.id === id || s.admission_number.toLowerCase() === id.toLowerCase())
         if (idx === -1) throw new IntegrityError(`Student ID "${id}" not found.`)
 
         if (updated.admission_number) {
@@ -1558,13 +1579,97 @@ class SchoolDataStore {
           }
         }
 
-        list[idx] = { ...list[idx], ...updated }
+        const isCleared = updated.fee_cleared === true || updated.fee_balance === 0
+        const finalBalance = isCleared ? 0 : (updated.fee_balance !== undefined ? updated.fee_balance : list[idx].fee_balance)
+        const merged: StudentRecord = {
+          ...list[idx],
+          ...updated,
+          fee_balance: finalBalance,
+          fee_cleared: isCleared || list[idx].fee_cleared,
+        }
+
+        list[idx] = merged
         this.set('students', list)
+
+        if (isCleared) {
+          const adm = merged.admission_number.toLowerCase().trim()
+          const admAlpha = adm.replace(/[^a-z0-9]/g, '')
+
+          // Settle invoices
+          const invoices = this.getInvoices()
+          invoices.forEach((inv) => {
+            if (
+              inv.student_id === merged.id ||
+              inv.admission_number.toLowerCase().trim() === adm ||
+              inv.admission_number.toLowerCase().replace(/[^a-z0-9]/g, '') === admAlpha
+            ) {
+              inv.paid_amount = inv.total_amount
+              inv.balance = 0
+              inv.status = 'Paid'
+            }
+          })
+          this.set('invoices', invoices)
+
+          // Ensure unit registration is cleared
+          const unitRegs = this.getUnitRegistrations()
+          unitRegs.forEach((reg) => {
+            if (
+              reg.student_id === merged.id ||
+              reg.admission_number.toLowerCase().trim() === adm ||
+              reg.admission_number.toLowerCase().replace(/[^a-z0-9]/g, '') === admAlpha
+            ) {
+              reg.fee_clearance_status = 'Cleared'
+              reg.exam_card_issued = true
+            }
+          })
+          this.set('unit_registrations', unitRegs)
+
+          // Ensure clearance receipt exists
+          const receipts = this.getReceipts()
+          const hasReceipt = receipts.some(
+            (r) =>
+              r.student_id === merged.id ||
+              r.admission_number.toLowerCase().trim() === adm ||
+              r.admission_number.toLowerCase().replace(/[^a-z0-9]/g, '') === admAlpha
+          )
+          if (!hasReceipt) {
+            receipts.unshift({
+              id: `rec-clear-${merged.id}`,
+              receipt_number: `REC-${new Date().getFullYear()}-${Math.floor(1000 + Math.random() * 9000)}`,
+              student_id: merged.id,
+              student_name: merged.full_name,
+              admission_number: merged.admission_number,
+              amount: merged.term_fee_total || 60,
+              amount_paid: merged.term_fee_total || 60,
+              payment_method: 'Bank Transfer',
+              reference_code: `INSTITUTIONAL-CLEAR-${Math.random().toString(36).substring(2, 8).toUpperCase()}`,
+              payment_date: new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }),
+              paid_by: merged.full_name,
+              recorded_by: 'Academic Registrar & Admissions Desk',
+              balance_after: 0,
+              balance_remaining: 0,
+            })
+            this.set('receipts', receipts)
+          }
+        }
       }
     )
+
     schoolEventBus.publish('STUDENT_UPDATED', updated)
+    schoolEventBus.publish('PAYMENT_RECORDED')
+    schoolEventBus.publish('INVOICE_CREATED')
+    schoolEventBus.publish('UNIT_REGISTRATION_COMPLETED' as any)
     this.broadcastChange('STUDENT_UPDATED', updated)
+
     await this.pushCollectionToCloud('students', this.getStudents())
+    await this.pushCollectionToCloud('invoices', this.getInvoices())
+    await this.pushCollectionToCloud('receipts', this.getReceipts())
+    await this.pushCollectionToCloud('unit_registrations', this.getUnitRegistrations())
+
+    const std = this.getStudents().find((s) => s.id === id || s.admission_number.toLowerCase() === id.toLowerCase())
+    if (std) {
+      await this.syncStudentProfileToSupabase(std)
+    }
   }
 
   async deleteStudent(id: string): Promise<void> {

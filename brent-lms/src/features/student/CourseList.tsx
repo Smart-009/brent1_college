@@ -1,8 +1,8 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { useAuth } from '@/hooks/useAuth'
 import { PageWrapper } from '@/components/layout/PageWrapper'
-import { schoolStore } from '@/lib/schoolData'
+import { schoolStore, schoolEventBus } from '@/lib/schoolData'
 import { UnitRegistrationSlip } from '@/components/shared/UnitRegistrationSlip'
 import type { CourseUnit } from '@/types/school'
 
@@ -11,6 +11,36 @@ export function CourseList() {
   const [selectedUnit, setSelectedUnit] = useState<CourseUnit | null>(null)
   const [showSlipModal, setShowSlipModal] = useState(false)
   const [viewMode, setViewMode] = useState<'my_courses' | 'all_catalog'>('my_courses')
+  const [version, setVersion] = useState(0)
+
+  useEffect(() => {
+    let isMounted = true
+    const handleSync = () => {
+      if (isMounted) setVersion((v) => v + 1)
+    }
+
+    schoolStore.syncWithCloud(true).then(handleSync).catch(() => {})
+
+    const unsubStd = schoolEventBus.subscribe('STUDENT_UPDATED', handleSync)
+    const unsubReg = schoolEventBus.subscribe('UNIT_REGISTRATION_COMPLETED' as any, handleSync)
+    const unsubPay = schoolEventBus.subscribe('PAYMENT_RECORDED', handleSync)
+    const unsubCourse = schoolEventBus.subscribe('COURSE_UNIT_CREATED' as any, handleSync)
+
+    window.addEventListener('eclat-data-synced', handleSync)
+    window.addEventListener('eclat-courses-updated', handleSync)
+    window.addEventListener('storage', handleSync)
+
+    return () => {
+      isMounted = false
+      unsubStd()
+      unsubReg()
+      unsubPay()
+      unsubCourse()
+      window.removeEventListener('eclat-data-synced', handleSync)
+      window.removeEventListener('eclat-courses-updated', handleSync)
+      window.removeEventListener('storage', handleSync)
+    }
+  }, [])
 
   // Fetch registration for the current student
   const studentIdentifier = profile?.admission_number || profile?.id || ''

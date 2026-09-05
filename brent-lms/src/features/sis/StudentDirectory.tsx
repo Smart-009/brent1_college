@@ -359,6 +359,19 @@ export function StudentDirectory() {
     }
   }
 
+  const handleQuickClearFees = async (student: StudentRecord) => {
+    try {
+      await schoolStore.unlockStudentLessons(student.admission_number, 'Academic Registrar & Admissions Desk')
+      setStudents(schoolStore.getStudents())
+      if (selectedStudent && selectedStudent.id === student.id) {
+        setSelectedStudent({ ...selectedStudent, fee_cleared: true, fee_balance: 0 })
+      }
+      alert(`✓ Tuition fees 100% cleared and lessons unlocked for ${student.full_name} (${student.admission_number}).`)
+    } catch (err: any) {
+      alert('Error clearing fees: ' + (err?.message || err))
+    }
+  }
+
   // --- Send Single Payment Reminder ---
   const handleDispatchReminder = (student: StudentRecord) => {
     const reminder: PaymentReminder = {
@@ -724,6 +737,20 @@ export function StudentDirectory() {
                           type="button"
                           className="btn btn-sm"
                           style={{
+                            background: std.fee_cleared ? '#f0fdf4' : '#fffbeb',
+                            border: `1px solid ${std.fee_cleared ? '#86efac' : '#fcd34d'}`,
+                            color: std.fee_cleared ? '#16a34a' : '#b45309',
+                            fontWeight: 700,
+                          }}
+                          onClick={() => handleQuickClearFees(std)}
+                          title={std.fee_cleared ? 'Tuition Fee 100% Cleared (Click to re-verify)' : 'Click to 100% Clear Tuition Fees & Unlock Lessons'}
+                        >
+                          {std.fee_cleared ? '⚡ Cleared ✓' : '⚡ Clear Fees'}
+                        </button>
+                        <button
+                          type="button"
+                          className="btn btn-sm"
+                          style={{
                             background: std.certificate_granted ? '#fef3c7' : '#f8fafc',
                             border: std.certificate_granted ? '1px solid #f59e0b' : '1px solid #cbd5e1',
                             color: std.certificate_granted ? '#b45309' : '#475569',
@@ -1034,6 +1061,20 @@ export function StudentDirectory() {
                   }}
                 >
                   🔑 View Login Pass
+                </button>
+                <button
+                  type="button"
+                  className="btn"
+                  style={{
+                    background: selectedStudent.fee_cleared ? '#f0fdf4' : '#fffbeb',
+                    color: selectedStudent.fee_cleared ? '#16a34a' : '#b45309',
+                    border: `1px solid ${selectedStudent.fee_cleared ? '#86efac' : '#fcd34d'}`,
+                    fontWeight: 700,
+                  }}
+                  onClick={() => handleQuickClearFees(selectedStudent)}
+                  title={selectedStudent.fee_cleared ? 'Tuition Fee 100% Cleared (Click to re-verify)' : 'Click to 100% Clear Tuition Fees & Unlock Lessons'}
+                >
+                  {selectedStudent.fee_cleared ? '⚡ Fees 100% Cleared ✓' : '⚡ Clear Fees & Unlock'}
                 </button>
                 <button
                   type="button"

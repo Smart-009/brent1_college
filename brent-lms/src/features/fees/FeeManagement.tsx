@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useAuth } from '@/hooks/useAuth'
-import { schoolStore } from '@/lib/schoolData'
+import { schoolStore, schoolEventBus } from '@/lib/schoolData'
 import { supabase } from '@/lib/supabase'
 import type { FeeInvoice, FeeInvoiceItem, FeePaymentReceipt, StudentRecord, BiometricFeeClearancePass } from '@/types/school'
 import { BiometricScannerModal } from '@/components/biometrics/BiometricScannerModal'
@@ -39,16 +39,36 @@ export function FeeManagement() {
   const [courseListTick, setCourseListTick] = useState(0)
 
   useEffect(() => {
-    const handleCoursesUpdate = () => {
+    let isMounted = true
+    const handleSync = () => {
+      if (!isMounted) return
+      setInvoices(schoolStore.getInvoices())
+      setReceipts(schoolStore.getReceipts())
+      setStudents(schoolStore.getStudents())
+      setClearanceLogs(schoolStore.getBiometricClearanceLogs())
       setCourseListTick((t) => t + 1)
     }
-    window.addEventListener('eclat-courses-updated', handleCoursesUpdate)
-    window.addEventListener('eclat-data-synced', handleCoursesUpdate)
-    window.addEventListener('storage', handleCoursesUpdate)
+
+    schoolStore.syncWithCloud(true).then(handleSync).catch(() => {})
+
+    const unsubStd = schoolEventBus.subscribe('STUDENT_UPDATED', handleSync)
+    const unsubPay = schoolEventBus.subscribe('PAYMENT_RECORDED', handleSync)
+    const unsubInv = schoolEventBus.subscribe('INVOICE_CREATED', handleSync)
+    const unsubReg = schoolEventBus.subscribe('UNIT_REGISTRATION_COMPLETED' as any, handleSync)
+
+    window.addEventListener('eclat-courses-updated', handleSync)
+    window.addEventListener('eclat-data-synced', handleSync)
+    window.addEventListener('storage', handleSync)
+
     return () => {
-      window.removeEventListener('eclat-courses-updated', handleCoursesUpdate)
-      window.removeEventListener('eclat-data-synced', handleCoursesUpdate)
-      window.removeEventListener('storage', handleCoursesUpdate)
+      isMounted = false
+      unsubStd()
+      unsubPay()
+      unsubInv()
+      unsubReg()
+      window.removeEventListener('eclat-courses-updated', handleSync)
+      window.removeEventListener('eclat-data-synced', handleSync)
+      window.removeEventListener('storage', handleSync)
     }
   }, [])
 
@@ -70,18 +90,85 @@ export function FeeManagement() {
     update_notes: '',
   })
 
-  const currentStudent = students.find(
-    (s) => s.admission_number.toLowerCase() === profile?.admission_number?.toLowerCase() || s.id === profile?.id
-  ) || null
+  const myAdmClean = (profile?.admission_number || '').trim().toLowerCase()
+  const myAdmAlpha = myAdmClean.replace(/[^a-z0-9]/g, '')
+  const myNameAlpha = (profile?.full_name || '').toLowerCase().replace(/[^a-z0-9]/g, '')
+  const myIdClean = (profile?.id || '').toLowerCase()
 
-  const myReceipts = receipts.filter(
-    (r) => r.admission_number.toLowerCase() === profile?.admission_number?.toLowerCase() || r.student_id === currentStudent?.id
-  )
+  const currentStudent =
+    students.find((s) => {
+      const sAdm = s.admission_number.trim().toLowerCase()
+      const sAdmAlpha = sAdm.replace(/[^a-z0-9]/g, '')
+      const sNameAlpha = s.full_name.toLowerCase().replace(/[^a-z0-9]/g, '')
+      const sId = s.id.toLowerCase()
+      return (
+        sId === myIdClean ||
+        (myAdmClean && sAdm === myAdmClean) ||
+        (myAdmAlpha && sAdmAlpha === myAdmAlpha) ||
+        (myNameAlpha && myNameAlpha.length > 3 && sNameAlpha === myNameAlpha)
+      )
+    }) || null
 
-  const myBilled = currentStudent?.term_fee_total ?? 60
-  const myPaid = myReceipts.reduce((sum, r) => sum + r.amount, 0)
-  const myBalance = currentStudent?.fee_balance ?? Math.max(0, myBilled - myPaid)
-  const isCleared = currentStudent?.fee_cleared ?? (myBalance === 0)
+  const unitReg = schoolStore.getRegistrationForStudent(currentStudent?.admission_number || profile?.admission_number || '')
+
+  let myReceipts = receipts.filter((r) => {
+    const rAdmClean = (r.admission_number || '').trim().toLowerCase()
+    const rAdmAlpha = rAdmClean.replace(/[^a-z0-9]/g, '')
+    const rStdId = (r.student_id || '').toLowerCase()
+    return (
+      (currentStudent?.id && rStdId === currentStudent.id.toLowerCase()) ||
+      (myIdClean && rStdId === myIdClean) ||
+      (myAdmClean && rAdmClean === myAdmClean) ||
+      (myAdmAlpha && rAdmAlpha === myAdmAlpha)
+    )
+  })
+
+  const myInvoices = invoices.filter((inv) => {
+    const iAdmClean = (inv.admission_number || '').trim().toLowerCase()
+    const iAdmAlpha = iAdmClean.replace(/[^a-z0-9]/g, '')
+    const iStdId = (inv.student_id || '').toLowerCase()
+    return (
+      (currentStudent?.id && iStdId === currentStudent.id.toLowerCase()) ||
+      (myIdClean && iStdId === myIdClean) ||
+      (myAdmClean && iAdmClean === myAdmClean) ||
+      (myAdmAlpha && iAdmAlpha === myAdmAlpha)
+    )
+  })
+
+  const isExplicitlyCleared =
+    currentStudent?.fee_cleared === true ||
+    (currentStudent && currentStudent.fee_balance === 0) ||
+    unitReg?.fee_clearance_status === 'Cleared' ||
+    unitReg?.exam_card_issued === true ||
+    myInvoices.some((inv) => inv.status === 'Paid' || inv.balance === 0)
+
+  const myBilled = currentStudent?.term_fee_total ?? (myInvoices[0]?.total_amount ?? 60)
+  const rawPaid = myReceipts.reduce((sum, r) => sum + (r.amount_paid ?? r.amount), 0)
+  const isCleared = isExplicitlyCleared || (currentStudent?.fee_balance === 0) || (myBilled > 0 && rawPaid >= myBilled)
+  const myBalance = isCleared ? 0 : (currentStudent?.fee_balance ?? Math.max(0, myBilled - rawPaid))
+  const myPaid = isCleared ? Math.max(rawPaid, myBilled) : rawPaid
+
+  // If student is cleared but has no individual receipts, provide institutional clearance pass receipt
+  if (isCleared && myReceipts.length === 0) {
+    myReceipts = [{
+      id: `rec-clearance-${currentStudent?.id || profile?.id || 'std'}`,
+      receipt_number: `RCT-${new Date().getFullYear()}-${Math.floor(1000 + Math.random() * 9000)}`,
+      invoice_id: `inv-${currentStudent?.id || profile?.id || 'auto'}`,
+      student_id: currentStudent?.id || profile?.id || 'std-1',
+      student_name: currentStudent?.full_name || profile?.full_name || 'Enrolled Student',
+      admission_number: currentStudent?.admission_number || profile?.admission_number || 'EI-2026-001',
+      amount: myBilled,
+      amount_paid: myBilled,
+      payment_method: 'Bank Transfer',
+      reference_code: `INSTITUTIONAL-CLEARANCE-PASS`,
+      payment_date: new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }),
+      paid_by: currentStudent?.full_name || profile?.full_name || 'Enrolled Student',
+      recorded_by: 'Bursar & Finance Office',
+      received_by: 'Academic Registrar',
+      balance_after: 0,
+      balance_remaining: 0,
+    }]
+  }
 
   // Payment Form
   const [payData, setPayData] = useState({
