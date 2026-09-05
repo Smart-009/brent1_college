@@ -503,6 +503,30 @@ export function ResourceLibrary() {
     }
   }, [readingResource])
 
+  // Network & In-App Security State
+  const [isNetworkOnline, setIsNetworkOnline] = useState<boolean>(() =>
+    typeof navigator !== 'undefined' ? navigator.onLine : true
+  )
+  const [iframeLoadError, setIframeLoadError] = useState<boolean>(false)
+  const [showAppRequiredModal, setShowAppRequiredModal] = useState<boolean>(false)
+  const [pendingResource, setPendingResource] = useState<AcademicResource | null>(null)
+
+  useEffect(() => {
+    const handleOnline = () => {
+      setIsNetworkOnline(true)
+      setIframeLoadError(false)
+    }
+    const handleOffline = () => {
+      setIsNetworkOnline(false)
+    }
+    window.addEventListener('online', handleOnline)
+    window.addEventListener('offline', handleOffline)
+    return () => {
+      window.removeEventListener('online', handleOnline)
+      window.removeEventListener('offline', handleOffline)
+    }
+  }, [])
+
   // Upload Modal State (for admin only - Clean empty state without pre-filled values)
   const [showUploadModal, setShowUploadModal] = useState(false)
   const [resourceToDelete, setResourceToDelete] = useState<AcademicResource | null>(null)
@@ -638,7 +662,16 @@ export function ResourceLibrary() {
   const isNative = isNativeApp()
 
   const handleOpenReader = (res: AcademicResource) => {
+    // 1. Outside the apps (public web), protect resources behind the official native apps
+    if (!isNative && !isAdmin) {
+      setPendingResource(res)
+      setShowAppRequiredModal(true)
+      return
+    }
+
     setActiveChapterIndex(0)
+    setIframeLoadError(false)
+    setIsNetworkOnline(typeof navigator !== 'undefined' ? navigator.onLine : true)
     setReadingResource(res)
 
     // Only increment unique student reads once per browser session
@@ -2982,23 +3015,112 @@ export function ResourceLibrary() {
                       </div>
                     ))}
 
-                    {/* Document Embed Iframe */}
-                    <iframe
-                      src={getEmbeddableDocumentUrl(readingResource.file_url)}
-                      title={readingResource.title}
-                      sandbox="allow-scripts allow-same-origin allow-forms"
-                      style={{
-                        width: '100%',
-                        height: '100%',
-                        minHeight: isMobile ? 'calc(100dvh - 54px)' : 'calc(100vh - 54px)',
-                        flex: 1,
-                        border: 'none',
-                        background: '#000000',
-                        filter: isBlurred ? 'blur(20px) brightness(0.1)' : 'none',
-                        transition: 'filter 0.15s ease',
-                      }}
-                      allow="autoplay; encrypted-media; fullscreen"
-                    />
+                    {/* Document Embed Viewport with In-App Offline Protection */}
+                    {!isNetworkOnline || iframeLoadError ? (
+                      <div
+                        style={{
+                          display: 'flex',
+                          flexDirection: 'column',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          minHeight: isMobile ? 'calc(100dvh - 54px)' : 'calc(100vh - 54px)',
+                          height: '100%',
+                          background: readerTheme === 'dark' ? '#090d16' : '#f8fafc',
+                          color: readerTheme === 'dark' ? '#ffffff' : '#0f172a',
+                          padding: '2.5rem 1.5rem',
+                          textAlign: 'center',
+                          flex: 1,
+                        }}
+                      >
+                        <div style={{ fontSize: '4rem', marginBottom: '1rem', animation: 'bounce 2s infinite' }}>
+                          📡
+                        </div>
+                        <div
+                          style={{
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            gap: '6px',
+                            background: 'rgba(239, 68, 68, 0.15)',
+                            border: '1px solid rgba(239, 68, 68, 0.35)',
+                            color: '#f87171',
+                            padding: '4px 14px',
+                            borderRadius: '999px',
+                            fontSize: '0.78rem',
+                            fontWeight: 800,
+                            textTransform: 'uppercase',
+                            marginBottom: '1rem',
+                            letterSpacing: '0.04em',
+                          }}
+                        >
+                          <span>●</span> Offline Mode
+                        </div>
+                        <h3
+                          style={{
+                            fontSize: '1.4rem',
+                            fontWeight: 900,
+                            margin: '0 0 0.5rem',
+                            color: readerTheme === 'dark' ? '#ffffff' : '#0f172a',
+                          }}
+                        >
+                          You Are Currently Offline
+                        </h3>
+                        <p
+                          style={{
+                            fontSize: '0.92rem',
+                            color: '#94a3b8',
+                            maxWidth: '460px',
+                            margin: '0 auto 1.75rem',
+                            lineHeight: 1.6,
+                          }}
+                        >
+                          This protected academic study document requires an active internet connection to stream securely. Please connect your device to WiFi or cellular data and tap retry.
+                        </p>
+                        <div style={{ display: 'flex', gap: '0.75rem', justifyContent: 'center', flexWrap: 'wrap' }}>
+                          <button
+                            type="button"
+                            className="btn btn-primary"
+                            onClick={() => {
+                              if (navigator.onLine) {
+                                setIsNetworkOnline(true)
+                                setIframeLoadError(false)
+                              } else {
+                                alert('Your device is still offline. Please check your WiFi or mobile data connection.')
+                              }
+                            }}
+                            style={{ fontWeight: 800, padding: '0.75rem 1.5rem', borderRadius: '12px' }}
+                          >
+                            🔄 Check Connection & Retry
+                          </button>
+                          <button
+                            type="button"
+                            className="btn btn-secondary"
+                            onClick={() => setReadingResource(null)}
+                            style={{ fontWeight: 700, padding: '0.75rem 1.5rem', borderRadius: '12px' }}
+                          >
+                            ✕ Close Document
+                          </button>
+                        </div>
+                      </div>
+                    ) : (
+                      /* Document Embed Iframe (Zero Storage Leaks) */
+                      <iframe
+                        src={getEmbeddableDocumentUrl(readingResource.file_url)}
+                        title={readingResource.title}
+                        sandbox="allow-scripts allow-same-origin allow-forms"
+                        onError={() => setIframeLoadError(true)}
+                        style={{
+                          width: '100%',
+                          height: '100%',
+                          minHeight: isMobile ? 'calc(100dvh - 54px)' : 'calc(100vh - 54px)',
+                          flex: 1,
+                          border: 'none',
+                          background: '#000000',
+                          filter: isBlurred ? 'blur(20px) brightness(0.1)' : 'none',
+                          transition: 'filter 0.15s ease',
+                        }}
+                        allow="autoplay; encrypted-media; fullscreen"
+                      />
+                    )}
                   </div>
                 </div>
               ) : (
@@ -3608,6 +3730,132 @@ export function ResourceLibrary() {
                 🗑️ Remove Resource
               </button>
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* Native App DRM Restriction Modal (Web Protection) */}
+      {showAppRequiredModal && (
+        <div
+          className="modal-overlay"
+          onClick={() => setShowAppRequiredModal(false)}
+          style={{ zIndex: 999999, backdropFilter: 'blur(12px)', WebkitBackdropFilter: 'blur(12px)' }}
+        >
+          <div
+            className="modal-content modal-md"
+            onClick={(e) => e.stopPropagation()}
+            style={{
+              borderRadius: '24px',
+              maxWidth: '540px',
+              width: '92%',
+              background: 'linear-gradient(145deg, #090e1f, #0f172a)',
+              border: '1.5px solid rgba(212, 175, 55, 0.45)',
+              padding: '2rem',
+              textAlign: 'center',
+              boxShadow: '0 25px 60px rgba(0, 0, 0, 0.8), 0 0 35px rgba(212, 175, 55, 0.2)',
+              color: '#ffffff',
+            }}
+          >
+            {/* Header Icon */}
+            <div
+              style={{
+                width: '72px',
+                height: '72px',
+                borderRadius: '50%',
+                background: 'linear-gradient(135deg, #1e293b, #0f172a)',
+                border: '2px solid #d4af37',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                fontSize: '2rem',
+                margin: '0 auto 1.25rem',
+                boxShadow: '0 0 20px rgba(212, 175, 55, 0.3)',
+              }}
+            >
+              🔒
+            </div>
+
+            <div style={{ marginBottom: '0.5rem' }}>
+              <span
+                style={{
+                  fontSize: '0.72rem',
+                  fontWeight: 900,
+                  letterSpacing: '0.08em',
+                  color: '#d4af37',
+                  textTransform: 'uppercase',
+                  background: 'rgba(212, 175, 55, 0.15)',
+                  padding: '4px 12px',
+                  borderRadius: '20px',
+                  border: '1px solid rgba(212, 175, 55, 0.3)',
+                }}
+              >
+                In-App DRM Protection
+              </span>
+            </div>
+
+            <h2 style={{ fontSize: '1.35rem', fontWeight: 900, color: '#ffffff', margin: '0.5rem 0' }}>
+              Official App Required to Access Resources
+            </h2>
+
+            <p style={{ fontSize: '0.88rem', color: '#94a3b8', lineHeight: 1.6, marginBottom: '1.75rem' }}>
+              To protect academic copyright, prevent unauthorized downloading, and block screen scraping, institutional library books and course materials are accessible exclusively inside the{' '}
+              <strong style={{ color: '#ffffff' }}>Official Éclat Native Applications</strong>.
+            </p>
+
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', marginBottom: '1.25rem' }}>
+              <a
+                href={OFFICIAL_APK_URL}
+                download="eclat-institute.apk"
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '10px',
+                  padding: '0.85rem 1.25rem',
+                  borderRadius: '14px',
+                  background: 'linear-gradient(135deg, #16a34a, #15803d)',
+                  color: '#ffffff',
+                  fontWeight: 800,
+                  fontSize: '0.92rem',
+                  textDecoration: 'none',
+                  boxShadow: '0 6px 18px rgba(22, 163, 74, 0.35)',
+                }}
+              >
+                <span>🤖</span>
+                <span>Download Official Android App (.APK)</span>
+              </a>
+
+              <a
+                href={LOCAL_DESKTOP_URL}
+                download="eclat-institute-setup.exe"
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '10px',
+                  padding: '0.85rem 1.25rem',
+                  borderRadius: '14px',
+                  background: 'linear-gradient(135deg, #2563eb, #1d4ed8)',
+                  color: '#ffffff',
+                  fontWeight: 800,
+                  fontSize: '0.92rem',
+                  textDecoration: 'none',
+                  boxShadow: '0 6px 18px rgba(37, 99, 235, 0.35)',
+                }}
+              >
+                <span>💻</span>
+                <span>Download Desktop Laptop App (Windows)</span>
+              </a>
+            </div>
+
+            <button
+              type="button"
+              onClick={() => setShowAppRequiredModal(false)}
+              className="btn btn-ghost btn-sm"
+              style={{ color: '#94a3b8', fontSize: '0.82rem' }}
+            >
+              ✕ Close
+            </button>
           </div>
         </div>
       )}

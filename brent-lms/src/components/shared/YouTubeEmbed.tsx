@@ -69,6 +69,22 @@ export function YouTubeEmbed({
   const [completedNotice, setCompletedNotice] = useState(false)
   const hasTriggeredCompleteRef = useRef(false)
 
+  // Network Online/Offline State
+  const [isNetworkOnline, setIsNetworkOnline] = useState<boolean>(() =>
+    typeof navigator !== 'undefined' ? navigator.onLine : true
+  )
+
+  useEffect(() => {
+    const handleOnline = () => setIsNetworkOnline(true)
+    const handleOffline = () => setIsNetworkOnline(false)
+    window.addEventListener('online', handleOnline)
+    window.addEventListener('offline', handleOffline)
+    return () => {
+      window.removeEventListener('online', handleOnline)
+      window.removeEventListener('offline', handleOffline)
+    }
+  }, [])
+
   // Retrieve saved timestamp
   useEffect(() => {
     if (!storageKey) return
@@ -542,6 +558,71 @@ export function YouTubeEmbed({
             </div>
           </div>
         </div>
+      </div>
+    )
+  }
+
+  // 0. OFFLINE DISPLAY SCREEN (CONCEALS ALL URLS AND AVOIDS BROWSER ERROR PAGES)
+  if (!isNetworkOnline && !isDirect) {
+    return (
+      <div
+        className="video-wrapper"
+        style={{
+          position: 'relative',
+          borderRadius: '16px',
+          overflow: 'hidden',
+          background: 'linear-gradient(145deg, #090e1f, #0f172a)',
+          border: '1.5px solid rgba(239, 68, 68, 0.3)',
+          padding: '2.5rem 1.5rem',
+          textAlign: 'center',
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          justifyContent: 'center',
+          minHeight: '260px',
+          boxShadow: '0 8px 24px rgba(0,0,0,0.4)',
+        }}
+      >
+        <div style={{ fontSize: '3.5rem', marginBottom: '0.75rem', animation: 'bounce 2s infinite' }}>📡</div>
+        <div
+          style={{
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: '6px',
+            background: 'rgba(239, 68, 68, 0.15)',
+            border: '1px solid rgba(239, 68, 68, 0.35)',
+            color: '#f87171',
+            padding: '4px 12px',
+            borderRadius: '999px',
+            fontSize: '0.75rem',
+            fontWeight: 800,
+            textTransform: 'uppercase',
+            marginBottom: '0.75rem',
+            letterSpacing: '0.04em',
+          }}
+        >
+          <span>●</span> Offline Mode
+        </div>
+        <h4 style={{ fontSize: '1.2rem', fontWeight: 900, color: '#ffffff', margin: '0 0 0.5rem' }}>
+          You Are Currently Offline
+        </h4>
+        <p style={{ fontSize: '0.88rem', color: '#94a3b8', maxWidth: '420px', margin: '0 auto 1.25rem', lineHeight: 1.5 }}>
+          This lecture video requires an active internet connection to stream. Please connect to WiFi or cellular data to resume learning.
+        </p>
+        <button
+          type="button"
+          onClick={() => {
+            if (navigator.onLine) {
+              setIsNetworkOnline(true)
+            } else {
+              alert('Device is still offline. Please check your network connection.')
+            }
+          }}
+          className="btn btn-primary btn-sm"
+          style={{ fontWeight: 800, padding: '0.65rem 1.35rem', borderRadius: '10px' }}
+        >
+          🔄 Check Connection & Retry
+        </button>
       </div>
     )
   }

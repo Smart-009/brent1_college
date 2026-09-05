@@ -59,6 +59,22 @@ export function LessonPlayer() {
   const { isFeeCleared: accessHookFeeCleared } = useAccess()
   const navigate = useNavigate()
   const queryClient = useQueryClient()
+
+  // Offline detection
+  const [isNetworkOnline, setIsNetworkOnline] = useState<boolean>(() =>
+    typeof navigator !== 'undefined' ? navigator.onLine : true
+  )
+
+  useEffect(() => {
+    const handleOnline = () => setIsNetworkOnline(true)
+    const handleOffline = () => setIsNetworkOnline(false)
+    window.addEventListener('online', handleOnline)
+    window.addEventListener('offline', handleOffline)
+    return () => {
+      window.removeEventListener('online', handleOnline)
+      window.removeEventListener('offline', handleOffline)
+    }
+  }, [])
   const [, setSyncTick] = useState(0)
 
   const [activeHtmlUrl, setActiveHtmlUrl] = useState<string | null>(null)
@@ -738,19 +754,60 @@ export function LessonPlayer() {
                         >
                           <span style={{ fontSize: '0.74rem', color: '#94a3b8', fontWeight: 800 }}>🔒 DRM</span>
                         </div>
-                        <iframe
-                          src={getEmbeddableDocumentUrl(res.file_url, docEngine)}
-                          title={res.file_name}
-                          sandbox="allow-scripts allow-same-origin allow-forms"
-                          style={{
-                            width: '100%',
-                            height: 580,
-                            border: '1px solid var(--color-border)',
-                            borderRadius: 8,
-                            background: '#ffffff',
-                          }}
-                          allow="autoplay"
-                        />
+                        {!isNetworkOnline ? (
+                          <div
+                            style={{
+                              width: '100%',
+                              minHeight: 320,
+                              borderRadius: 8,
+                              background: '#0f172a',
+                              color: '#ffffff',
+                              display: 'flex',
+                              flexDirection: 'column',
+                              alignItems: 'center',
+                              justifyContent: 'center',
+                              padding: '2rem 1.5rem',
+                              textAlign: 'center',
+                              border: '1px solid rgba(239, 68, 68, 0.3)',
+                            }}
+                          >
+                            <div style={{ fontSize: '3rem', marginBottom: '0.75rem' }}>📡</div>
+                            <div style={{ fontSize: '0.75rem', fontWeight: 800, color: '#f87171', textTransform: 'uppercase', marginBottom: '0.5rem' }}>
+                              ● Offline Mode
+                            </div>
+                            <h4 style={{ fontSize: '1.15rem', fontWeight: 800, margin: '0 0 0.4rem' }}>
+                              You Are Currently Offline
+                            </h4>
+                            <p style={{ fontSize: '0.85rem', color: '#94a3b8', maxWidth: '380px', margin: '0 auto 1.25rem', lineHeight: 1.5 }}>
+                              This study document requires an active internet connection to stream. Please reconnect to WiFi or mobile data and retry.
+                            </p>
+                            <button
+                              type="button"
+                              onClick={() => {
+                                if (navigator.onLine) setIsNetworkOnline(true)
+                                else alert('Still offline. Please check your connection.')
+                              }}
+                              className="btn btn-primary btn-sm"
+                              style={{ fontWeight: 800, padding: '0.55rem 1.2rem', borderRadius: '8px' }}
+                            >
+                              🔄 Check Connection & Retry
+                            </button>
+                          </div>
+                        ) : (
+                          <iframe
+                            src={getEmbeddableDocumentUrl(res.file_url, docEngine)}
+                            title={res.file_name}
+                            sandbox="allow-scripts allow-same-origin allow-forms"
+                            style={{
+                              width: '100%',
+                              height: 580,
+                              border: '1px solid var(--color-border)',
+                              borderRadius: 8,
+                              background: '#ffffff',
+                            }}
+                            allow="autoplay"
+                          />
+                        )}
                       </div>
                     </div>
                   )}
