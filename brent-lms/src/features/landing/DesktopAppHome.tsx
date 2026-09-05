@@ -1,7 +1,8 @@
 import { useState, useMemo } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuthContext } from '@/features/auth/AuthContext'
-import { INSTITUTION_CONFIG, getWhatsAppInquiryUrl } from '@/config/institution'
+import { schoolStore } from '@/lib/schoolData'
+import { INSTITUTION_CONFIG } from '@/config/institution'
 
 interface CourseItem {
   id: string
@@ -329,56 +330,39 @@ export function DesktopAppHome({ courses, onSelectCourse }: { courses: CourseIte
           </div>
         </div>
 
-        {/* 4. Programs Explorer */}
+        {/* 4. Active Instructional Units & Curriculum Modules */}
         <div>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.25rem' }}>
-            <h2 style={{ fontSize: '1.25rem', fontWeight: 900, color: '#ffffff', margin: 0, fontFamily: 'var(--font-heading)' }}>
-              Course Modules & Training Programs
-            </h2>
-            <input
-              type="text"
-              placeholder="🔍 Search programs, skills, frameworks..."
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
+            <div>
+              <h2 style={{ fontSize: '1.25rem', fontWeight: 900, color: '#ffffff', margin: 0, fontFamily: 'var(--font-heading)' }}>
+                Accredited Course Units & Practical LMS
+              </h2>
+              <p style={{ fontSize: '0.8rem', color: '#94a3b8', margin: '0.2rem 0 0' }}>
+                Access comprehensive vocational modules, interactive lecture players, and digital lab assignments.
+              </p>
+            </div>
+            <button
+              type="button"
+              onClick={() => navigate('/student/courses')}
               style={{
-                background: 'rgba(15, 23, 42, 0.8)',
-                border: '1px solid rgba(255, 255, 255, 0.15)',
-                color: '#ffffff',
-                padding: '0.55rem 1.25rem',
-                borderRadius: '12px',
-                fontSize: '0.85rem',
-                width: '300px',
-                outline: 'none',
+                background: 'rgba(59, 130, 246, 0.15)',
+                color: '#60a5fa',
+                border: '1px solid rgba(59, 130, 246, 0.3)',
+                padding: '0.5rem 1.1rem',
+                borderRadius: '10px',
+                fontSize: '0.82rem',
+                fontWeight: 700,
+                cursor: 'pointer',
               }}
-            />
-          </div>
-
-          <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '1.25rem', flexWrap: 'wrap' }}>
-            {categories.map((cat) => (
-              <button
-                key={cat}
-                type="button"
-                onClick={() => setSelectedCat(cat)}
-                style={{
-                  padding: '0.4rem 0.9rem',
-                  borderRadius: '20px',
-                  border: selectedCat === cat ? '1px solid #3b82f6' : '1px solid rgba(255, 255, 255, 0.1)',
-                  background: selectedCat === cat ? 'rgba(59, 130, 246, 0.2)' : 'rgba(15, 23, 42, 0.4)',
-                  color: selectedCat === cat ? '#60a5fa' : '#94a3b8',
-                  fontSize: '0.8rem',
-                  fontWeight: 700,
-                  cursor: 'pointer',
-                }}
-              >
-                {cat}
-              </button>
-            ))}
+            >
+              🎓 Open My Registered Units →
+            </button>
           </div>
 
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '1.25rem' }}>
-            {filteredCourses.map((c) => (
+            {schoolStore.getCourseUnits().slice(0, 6).map((u) => (
               <div
-                key={c.id}
+                key={u.id}
                 style={{
                   background: 'rgba(15, 23, 42, 0.5)',
                   border: '1px solid rgba(255, 255, 255, 0.08)',
@@ -392,70 +376,72 @@ export function DesktopAppHome({ courses, onSelectCourse }: { courses: CourseIte
               >
                 <div>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '0.5rem' }}>
-                    <span style={{ fontSize: '1.8rem' }}>{c.icon}</span>
-                    <span style={{ fontSize: '0.7rem', fontWeight: 800, color: c.tagColor, background: 'rgba(255,255,255,0.06)', padding: '0.2rem 0.5rem', borderRadius: '10px', border: `1px solid ${c.tagColor}40` }}>
-                      {c.tag}
+                    <span style={{ fontSize: '0.75rem', fontWeight: 800, color: '#93c5fd', background: 'rgba(59, 130, 246, 0.12)', padding: '0.2rem 0.5rem', borderRadius: '8px', border: '1px solid rgba(59, 130, 246, 0.25)' }}>
+                      {u.code}
+                    </span>
+                    <span style={{ fontSize: '0.72rem', color: '#34d399', fontWeight: 700 }}>
+                      ⚡ 100% Online
                     </span>
                   </div>
                   <h3 style={{ fontSize: '1.1rem', fontWeight: 800, color: '#ffffff', margin: '0 0 0.4rem', lineHeight: 1.35 }}>
-                    {c.title}
+                    {u.title}
                   </h3>
-                  <div style={{ display: 'flex', gap: '0.75rem', fontSize: '0.78rem', color: '#94a3b8', marginBottom: '0.75rem' }}>
-                    <span>⏱️ {c.duration}</span>
-                    <span>💰 {c.fee}</span>
-                  </div>
-                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.3rem' }}>
-                    {c.skills?.map((s) => (
-                      <span key={s} style={{ fontSize: '0.7rem', background: 'rgba(255,255,255,0.06)', padding: '0.15rem 0.45rem', borderRadius: '6px', color: '#cbd5e1' }}>
-                        {s}
-                      </span>
-                    ))}
+                  <p style={{ fontSize: '0.8rem', color: '#94a3b8', margin: '0 0 0.75rem', lineHeight: 1.4 }}>
+                    {u.description || 'Hands-on training, interactive live video sessions, and assessment rubrics.'}
+                  </p>
+                  <div style={{ display: 'flex', gap: '0.75rem', fontSize: '0.78rem', color: '#cbd5e1' }}>
+                    <span>⏱️ {u.course_duration || '3 Months'}</span>
+                    <span>•</span>
+                    <span>📚 {u.credit_hours || 40} Credit Hours</span>
                   </div>
                 </div>
 
                 <div style={{ display: 'flex', gap: '0.5rem', marginTop: '0.5rem' }}>
                   <button
                     type="button"
-                    onClick={() => {
-                      if (onSelectCourse) onSelectCourse(c)
-                      else navigate(`/courses`)
-                    }}
+                    onClick={() => navigate('/student/courses')}
                     style={{
                       flex: 1,
-                      background: 'rgba(59, 130, 246, 0.15)',
-                      color: '#60a5fa',
-                      border: '1px solid rgba(59, 130, 246, 0.3)',
-                      padding: '0.55rem',
-                      borderRadius: '8px',
+                      background: 'rgba(59, 130, 246, 0.2)',
+                      color: '#93c5fd',
+                      border: '1px solid rgba(59, 130, 246, 0.35)',
+                      padding: '0.6rem',
+                      borderRadius: '10px',
                       fontWeight: 700,
-                      fontSize: '0.8rem',
+                      fontSize: '0.82rem',
                       cursor: 'pointer',
-                    }}
-                  >
-                    📖 View Details
-                  </button>
-                  <a
-                    href={getWhatsAppInquiryUrl(`Hello Admissions, I would like to enroll in ${c.title}`)}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    style={{
-                      flex: 1,
-                      background: 'linear-gradient(135deg, #15803d 0%, #16a34a 100%)',
-                      color: '#ffffff',
-                      textDecoration: 'none',
-                      padding: '0.55rem',
-                      borderRadius: '8px',
-                      fontWeight: 800,
-                      fontSize: '0.8rem',
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
                       gap: '4px',
                     }}
                   >
-                    <span>💬</span>
-                    <span>Enroll Now</span>
-                  </a>
+                    <span>📖</span>
+                    <span>Syllabus & Units</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => navigate(`/student/lessons/${u.lessons?.[0]?.id || u.id}`)}
+                    style={{
+                      flex: 1,
+                      background: 'linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%)',
+                      color: '#ffffff',
+                      border: 'none',
+                      padding: '0.6rem',
+                      borderRadius: '10px',
+                      fontWeight: 800,
+                      fontSize: '0.82rem',
+                      cursor: 'pointer',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      gap: '4px',
+                      boxShadow: '0 2px 8px rgba(37, 99, 235, 0.3)',
+                    }}
+                  >
+                    <span>▶️</span>
+                    <span>Start Lessons</span>
+                  </button>
                 </div>
               </div>
             ))}

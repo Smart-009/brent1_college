@@ -133,7 +133,7 @@ export function App() {
         <AppOpeningSplashScreen onFinished={() => setShowOpeningSplash(false)} />
       )}
       <PullToRefresh />
-      <FloatingIntakesWidget />
+      {!isNativeApp() && <FloatingIntakesWidget />}
       <Routes>
         {/* Platform-Aware Root Route */}
         <Route path="/" element={<RootEntryRouter />} />
