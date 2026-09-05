@@ -443,13 +443,45 @@ export function LessonPlayer() {
     : null
 
   // Check if student has paid and is cleared
-  const allStudents = schoolStore.getStudents()
-  const currentStudent = allStudents.find(
-    (s) => s.admission_number === profile?.admission_number || s.id === profile?.id
-  )
-  const isPaidAndCleared =
-    profile?.role !== 'student' ||
-    (currentStudent ? currentStudent.fee_cleared || currentStudent.fee_balance === 0 : true)
+  const studentIdentifier = profile?.admission_number || profile?.id || ''
+  const currentStudent = schoolStore
+    .getStudents()
+    .find(
+      (s) =>
+        (profile?.admission_number && s.admission_number.toLowerCase() === profile.admission_number.toLowerCase()) ||
+        s.id === profile?.id
+    )
+
+  const studentInvoices = schoolStore
+    .getInvoices()
+    .filter(
+      (inv) =>
+        (profile?.admission_number && inv.admission_number.toLowerCase() === profile.admission_number.toLowerCase()) ||
+        inv.student_id === profile?.id
+    )
+
+  const studentReceipts = schoolStore
+    .getReceipts()
+    .filter(
+      (rcpt) =>
+        (profile?.admission_number && rcpt.admission_number.toLowerCase() === profile.admission_number.toLowerCase()) ||
+        rcpt.student_id === profile?.id
+    )
+
+  const hasClearedInvoice = studentInvoices.some((inv) => inv.status === 'Paid' || inv.balance === 0)
+  const hasValidReceipt = studentReceipts.some((r) => (r.amount_paid ?? r.amount) > 0)
+  const isBiometricCleared = schoolStore
+    .getBiometricClearanceLogs()
+    .some((p) => p.admission_number.toLowerCase() === studentIdentifier.toLowerCase())
+
+  const isFeeCleared =
+    currentStudent?.fee_cleared === true ||
+    (currentStudent && currentStudent.fee_balance === 0) ||
+    hasClearedInvoice ||
+    hasValidReceipt ||
+    isBiometricCleared
+
+  const isPaidAndCleared = profile?.role !== 'student' || isFeeCleared
 
   return (
     <div className="lesson-page animate-fade-in">

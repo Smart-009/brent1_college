@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useAuth } from '@/hooks/useAuth'
 import { schoolStore } from '@/lib/schoolData'
+import { supabase } from '@/lib/supabase'
 import type {
   FeeInvoice,
   FeeInvoiceItem,
@@ -29,6 +30,8 @@ export function BursarDesk() {
   const [courseUnits] = useState<CourseUnit[]>(() => schoolStore.getCourseUnits())
   const [unitRegistrations, setUnitRegistrations] = useState<UnitRegistrationReceipt[]>(() => schoolStore.getUnitRegistrations())
   const [clearanceLogs, setClearanceLogs] = useState<BiometricFeeClearancePass[]>(() => schoolStore.getBiometricClearanceLogs())
+  const [unlockingAdm, setUnlockingAdm] = useState<string | null>(null)
+  const [unlockSuccessMsg, setUnlockSuccessMsg] = useState<string | null>(null)
 
   // Tab State
   const [activeTab, setActiveTab] = useState<
@@ -324,11 +327,54 @@ export function BursarDesk() {
     }
 
     await schoolStore.recordPayment(receipt)
+    
+    // Auto-renew Supabase profile access_expires_at (+365 days)
+    const renewed = new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString()
+    if (student.admission_number) {
+      Promise.resolve(supabase.from('profiles').update({ access_expires_at: renewed }).ilike('admission_number', student.admission_number)).catch(() => {})
+    }
+    if (student.id) {
+      Promise.resolve(supabase.from('profiles').update({ access_expires_at: renewed }).eq('id', student.id)).catch(() => {})
+    }
+
     setReceipts(schoolStore.getReceipts())
     setInvoices(schoolStore.getInvoices())
     setStudents(schoolStore.getStudents())
     setShowPayModal(false)
     setSelectedReceipt(receipt)
+  }
+
+  // Quick 1-Click Action: Clear & Unlock LMS Lessons for any student
+  const handleQuickUnlockStudent = async (std: StudentRecord) => {
+    try {
+      setUnlockingAdm(std.admission_number)
+      
+      await schoolStore.unlockStudentLessons(std.admission_number || std.id, defaultIssuer)
+      
+      const renewed = new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString()
+      if (std.admission_number) {
+        try {
+          await supabase.from('profiles').update({ access_expires_at: renewed }).ilike('admission_number', std.admission_number)
+        } catch {}
+      }
+      if (std.id) {
+        try {
+          await supabase.from('profiles').update({ access_expires_at: renewed }).eq('id', std.id)
+        } catch {}
+      }
+
+      setStudents(schoolStore.getStudents())
+      setInvoices(schoolStore.getInvoices())
+      setReceipts(schoolStore.getReceipts())
+      setUnitRegistrations(schoolStore.getUnitRegistrations())
+      
+      setUnlockSuccessMsg(`⚡ LMS Lessons & Exam Card cleared and unlocked successfully for ${std.full_name} (${std.admission_number})!`)
+      setTimeout(() => setUnlockSuccessMsg(null), 6000)
+    } catch (err: any) {
+      alert('Error unlocking student lessons: ' + (err?.message || err))
+    } finally {
+      setUnlockingAdm(null)
+    }
   }
 
   // Handle Unit Selection Toggle
@@ -1080,14 +1126,34 @@ export function BursarDesk() {
       {/* Tab 4: Admissions & Calling Letters */}
       {activeTab === 'admissions' && (
         <div className="card" style={{ padding: '1.5rem' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem', flexWrap: 'wrap', gap: '1rem' }}>
             <div>
               <h3 style={{ fontSize: '1.2rem', fontWeight: 700, margin: 0 }}>Student Admissions & Calling Letters</h3>
               <p style={{ fontSize: '0.85rem', color: 'var(--color-text-secondary)', margin: '0.25rem 0 0' }}>
-                View enrolled vocational trainees and generate official provisional calling letters.
+                View enrolled vocational trainees, manage fee clearance, unlock LMS lessons, and generate calling letters.
               </p>
             </div>
           </div>
+
+          {unlockSuccessMsg && (
+            <div
+              style={{
+                background: '#f0fdf4',
+                color: '#15803d',
+                border: '1px solid #86efac',
+                padding: '0.85rem 1.25rem',
+                borderRadius: '8px',
+                fontWeight: 600,
+                fontSize: '0.9rem',
+                marginBottom: '1.25rem',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '0.5rem',
+              }}
+            >
+              <span>✅</span> {unlockSuccessMsg}
+            </div>
+          )}
 
           {students.length === 0 ? (
             <div style={{ padding: '3rem', textAlign: 'center', color: 'var(--color-text-secondary)' }}>
@@ -1121,7 +1187,25 @@ export function BursarDesk() {
                         </span>
                       </td>
                       <td>
-                        <div style={{ display: 'flex', gap: '0.5rem' }}>
+                        <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
+                          <button
+                            type="button"
+                            className="btn btn-sm"
+                            style={{
+                              background: std.fee_cleared ? '#f0fdf4' : '#fffbeb',
+                              color: std.fee_cleared ? '#16a34a' : '#b45309',
+                              border: `1px solid ${std.fee_cleared ? '#86efac' : '#fcd34d'}`,
+                              fontWeight: 700,
+                              display: 'flex',
+                              alignItems: 'center',
+                              gap: '0.3rem',
+                            }}
+                            disabled={unlockingAdm === std.admission_number}
+                            onClick={() => handleQuickUnlockStudent(std)}
+                            title="Instantly clear fees, issue course registration slip, and unlock full online lessons access"
+                          >
+                            {unlockingAdm === std.admission_number ? '⏳ Unlocking...' : std.fee_cleared ? '⚡ Lessons Active' : '⚡ Clear & Unlock Lessons'}
+                          </button>
                           <button type="button" className="btn btn-sm btn-secondary" onClick={() => setSelectedStudentForLetter(std)}>
                             📜 Admission Letter
                           </button>

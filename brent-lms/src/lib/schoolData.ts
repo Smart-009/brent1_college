@@ -2535,6 +2535,164 @@ class SchoolDataStore {
     return []
   }
 
+  async unlockStudentLessons(identifier: string, officerName: string = 'Bursar & Admissions Office'): Promise<void> {
+    const clean = identifier.trim().toLowerCase()
+    await txEngine.executeAtomic(
+      `UNLOCK_STUDENT_LESSONS_${clean}`,
+      ['eclat_school_students', 'eclat_school_invoices', 'eclat_school_receipts', 'eclat_school_unit_registrations'],
+      () => {
+        // 1. Update Student record
+        const students = this.getStudents()
+        const stdIdx = students.findIndex(
+          (s) => s.id.toLowerCase() === clean || s.admission_number.toLowerCase() === clean
+        )
+        const targetStudent = stdIdx !== -1 ? students[stdIdx] : null
+
+        if (targetStudent) {
+          targetStudent.fee_balance = 0
+          targetStudent.fee_cleared = true
+          students[stdIdx] = targetStudent
+          this.set('students', students)
+        }
+
+        const studentId = targetStudent?.id || identifier
+        const studentAdm = targetStudent?.admission_number || identifier
+        const studentName = targetStudent?.full_name || 'Enrolled Student'
+        const studentClass = targetStudent?.class_name || 'Vocational Short Course'
+
+        // 2. Mark existing invoices as Paid or create a fully settled invoice
+        const invoices = this.getInvoices()
+        const matchedInvoices = invoices.filter(
+          (inv) => inv.student_id.toLowerCase() === clean || inv.admission_number.toLowerCase() === clean
+        )
+
+        if (matchedInvoices.length > 0) {
+          matchedInvoices.forEach((inv) => {
+            inv.paid_amount = inv.total_amount
+            inv.balance = 0
+            inv.status = 'Paid'
+          })
+          this.set('invoices', invoices)
+        } else {
+          const newInv: FeeInvoice = {
+            id: `inv-${Date.now()}`,
+            invoice_number: `INV-${new Date().getFullYear()}-${Math.floor(1000 + Math.random() * 9000)}`,
+            student_id: studentId,
+            student_name: studentName,
+            admission_number: studentAdm,
+            class_name: studentClass,
+            term: 'Short Course',
+            academic_year: `${new Date().getFullYear()}/${new Date().getFullYear() + 1}`,
+            issue_date: new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }),
+            due_date: new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }),
+            items: [{ id: 'item-1', description: 'Tuition & Practical LMS Access', amount: 75 }],
+            total_amount: 75,
+            paid_amount: 75,
+            balance: 0,
+            status: 'Paid',
+          }
+          invoices.unshift(newInv)
+          this.set('invoices', invoices)
+        }
+
+        // 3. Issue a Bursar Fee Clearance Receipt
+        const receipts = this.getReceipts()
+        const hasReceipt = receipts.some(
+          (r) => r.student_id.toLowerCase() === clean || r.admission_number.toLowerCase() === clean
+        )
+        if (!hasReceipt) {
+          const rcpt: FeePaymentReceipt = {
+            id: `rcpt-${Date.now()}`,
+            receipt_number: `RCT-${new Date().getFullYear()}-${Math.floor(1000 + Math.random() * 9000)}`,
+            invoice_id: matchedInvoices[0]?.id || `inv-${Date.now()}`,
+            student_id: studentId,
+            student_name: studentName,
+            admission_number: studentAdm,
+            amount: 75,
+            amount_paid: 75,
+            payment_method: 'Cash Deposit',
+            reference_code: `BURSAR-CLEAR-${Math.random().toString(36).substring(2, 7).toUpperCase()}`,
+            received_by: officerName,
+            recorded_by: officerName,
+            paid_by: studentName,
+            payment_date: new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }),
+            balance_after: 0,
+            balance_remaining: 0,
+          }
+          receipts.unshift(rcpt)
+          this.set('receipts', receipts)
+        }
+
+        // 4. Ensure Unit Registration Slip is present with all units registered
+        const unitRegs = this.getUnitRegistrations()
+        const existingRegIdx = unitRegs.findIndex(
+          (r) => r.student_id.toLowerCase() === clean || r.admission_number.toLowerCase() === clean
+        )
+
+        const allUnits = this.getCourseUnits()
+        const programUnits = allUnits.filter((u) => {
+          if (!studentClass) return true
+          const c = studentClass.toLowerCase()
+          return (
+            u.title.toLowerCase().includes(c) ||
+            c.includes(u.title.toLowerCase()) ||
+            (u.program && c.includes(u.program.toLowerCase())) ||
+            (u.program && u.program.toLowerCase().includes(c))
+          )
+        })
+        const selectedUnits = programUnits.length > 0 ? programUnits : allUnits
+
+        if (existingRegIdx !== -1) {
+          unitRegs[existingRegIdx].fee_clearance_status = 'Cleared'
+          unitRegs[existingRegIdx].exam_card_issued = true
+          if (!unitRegs[existingRegIdx].registered_unit_ids || unitRegs[existingRegIdx].registered_unit_ids.length === 0) {
+            unitRegs[existingRegIdx].registered_unit_ids = selectedUnits.map((u) => u.id)
+            unitRegs[existingRegIdx].registered_units = selectedUnits.map((u) => ({
+              code: u.code,
+              title: u.title,
+              credit_hours: u.credit_hours || 3,
+              teacher_name: u.teacher_name,
+            }))
+            unitRegs[existingRegIdx].total_credits = selectedUnits.reduce((acc, u) => acc + (u.credit_hours || 3), 0)
+          }
+          this.set('unit_registrations', unitRegs)
+        } else {
+          const newSlip: UnitRegistrationReceipt = {
+            id: `reg-${Date.now()}`,
+            receipt_number: `UNIT-REG-${new Date().getFullYear()}-${Math.floor(1000 + Math.random() * 9000)}`,
+            student_id: studentId,
+            student_name: studentName,
+            admission_number: studentAdm,
+            program: studentClass,
+            academic_year: `${new Date().getFullYear()}/${new Date().getFullYear() + 1}`,
+            course_duration: '3 Months (Certificate Program)',
+            semester: 'Term 1 / Module 1',
+            registered_unit_ids: selectedUnits.map((u) => u.id),
+            registered_units: selectedUnits.map((u) => ({
+              code: u.code,
+              title: u.title,
+              credit_hours: u.credit_hours || 3,
+              teacher_name: u.teacher_name,
+            })),
+            total_credits: selectedUnits.reduce((acc, u) => acc + (u.credit_hours || 3), 0),
+            fee_clearance_status: 'Cleared',
+            registered_by: officerName,
+            registered_at: new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }),
+            exam_card_issued: true,
+          }
+          unitRegs.unshift(newSlip)
+          this.set('unit_registrations', unitRegs)
+        }
+      }
+    )
+
+    schoolEventBus.publish('STUDENT_UPDATED')
+    schoolEventBus.publish('PAYMENT_RECORDED')
+    schoolEventBus.publish('INVOICE_CREATED')
+    schoolEventBus.publish('UNIT_REGISTRATION_COMPLETED' as any)
+    this.broadcastChange('STUDENT_LESSONS_UNLOCKED', { identifier })
+  }
+
   // --- Faculty Teachers & Course Assignments (ACID Protected) ---
   getTeachers(): FacultyTeacher[] {
     return this.get<FacultyTeacher[]>('faculty_teachers', INITIAL_FACULTY_TEACHERS)

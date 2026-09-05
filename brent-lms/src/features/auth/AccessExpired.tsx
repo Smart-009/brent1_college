@@ -1,8 +1,9 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '@/hooks/useAuth'
 import { supabase } from '@/lib/supabase'
 import { Button } from '@/components/ui/Button'
+import { schoolStore } from '@/lib/schoolData'
 
 export function AccessExpired() {
   const { profile, refreshProfile, signOut } = useAuth()
@@ -12,6 +13,72 @@ export function AccessExpired() {
   const [error, setError] = useState<string | null>(null)
   const [success, setSuccess] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
+  const [verifyingClearance, setVerifyingClearance] = useState(false)
+
+  // Check if student has been cleared at the Bursar Desk or in schoolStore
+  const studentIdentifier = profile?.admission_number || profile?.id || ''
+  const studentRecord = schoolStore
+    .getStudents()
+    .find(
+      (s) =>
+        (profile?.admission_number && s.admission_number.toLowerCase() === profile.admission_number.toLowerCase()) ||
+        s.id === profile?.id
+    )
+
+  const studentInvoices = schoolStore
+    .getInvoices()
+    .filter(
+      (inv) =>
+        (profile?.admission_number && inv.admission_number.toLowerCase() === profile.admission_number.toLowerCase()) ||
+        inv.student_id === profile?.id
+    )
+
+  const studentReceipts = schoolStore
+    .getReceipts()
+    .filter(
+      (rcpt) =>
+        (profile?.admission_number && rcpt.admission_number.toLowerCase() === profile.admission_number.toLowerCase()) ||
+        rcpt.student_id === profile?.id
+    )
+
+  const hasClearedInvoice = studentInvoices.some((inv) => inv.status === 'Paid' || inv.balance === 0)
+  const hasValidReceipt = studentReceipts.some((r) => (r.amount_paid ?? r.amount) > 0)
+  const isBiometricCleared = schoolStore
+    .getBiometricClearanceLogs()
+    .some((p) => p.admission_number.toLowerCase() === studentIdentifier.toLowerCase())
+
+  const isFeeCleared =
+    studentRecord?.fee_cleared === true ||
+    (studentRecord && studentRecord.fee_balance === 0) ||
+    hasClearedInvoice ||
+    hasValidReceipt ||
+    isBiometricCleared
+
+  const handleInstantUnlock = async () => {
+    if (!profile?.id) return
+    setVerifyingClearance(true)
+    setError(null)
+    try {
+      const newExpiry = new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString()
+      await supabase.from('profiles').update({ access_expires_at: newExpiry }).eq('id', profile.id)
+      await refreshProfile()
+      setSuccess('Bursar fee clearance verified! Lesson access unlocked successfully. 🎉')
+      setTimeout(() => {
+        navigate('/student')
+      }, 1200)
+    } catch {
+      setError('Unable to sync cloud clearance. Please try again.')
+    } finally {
+      setVerifyingClearance(false)
+    }
+  }
+
+  // Automatically unlock if cleared
+  useEffect(() => {
+    if (isFeeCleared && profile?.id) {
+      handleInstantUnlock()
+    }
+  }, [isFeeCleared, profile?.id])
 
   const handleRedeemCode = async (e: React.FormEvent) => {
     e.preventDefault()

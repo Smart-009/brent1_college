@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useAuth } from '@/hooks/useAuth'
 import { schoolStore } from '@/lib/schoolData'
+import { supabase } from '@/lib/supabase'
 import type { FeeInvoice, FeeInvoiceItem, FeePaymentReceipt, StudentRecord, BiometricFeeClearancePass } from '@/types/school'
 import { BiometricScannerModal } from '@/components/biometrics/BiometricScannerModal'
 import { BiometricEnrollModal } from '@/components/biometrics/BiometricEnrollModal'
@@ -280,6 +281,16 @@ export function FeeManagement() {
     }
 
     schoolStore.recordPayment(newReceipt)
+
+    // Auto-renew Supabase profile access_expires_at (+365 days)
+    const renewed = new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString()
+    if (student.admission_number) {
+      Promise.resolve(supabase.from('profiles').update({ access_expires_at: renewed }).ilike('admission_number', student.admission_number)).catch(() => {})
+    }
+    if (student.id) {
+      Promise.resolve(supabase.from('profiles').update({ access_expires_at: renewed }).eq('id', student.id)).catch(() => {})
+    }
+
     setInvoices(schoolStore.getInvoices())
     setReceipts(schoolStore.getReceipts())
     setStudents(schoolStore.getStudents())
