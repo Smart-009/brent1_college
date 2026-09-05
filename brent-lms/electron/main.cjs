@@ -33,8 +33,28 @@ function createWindow() {
       submenu: [
         { label: `About ${institutionName}`, click: () => shell.openExternal(websiteUrl) },
         { type: 'separator' },
-        { role: 'reload' },
-        { role: 'forceReload' },
+        {
+          label: '🔄 Refresh Workstation from Cloud',
+          accelerator: 'CmdOrCtrl+R',
+          click: () => {
+            mainWindow.webContents.session.clearCache().then(() => {
+              mainWindow.loadURL(getUrl('/login'))
+            }).catch(() => {
+              mainWindow.reload()
+            })
+          },
+        },
+        {
+          label: '⚡ Force Cloud Sync & Clear Cache',
+          accelerator: 'CmdOrCtrl+Shift+R',
+          click: () => {
+            mainWindow.webContents.session.clearCache().then(() => {
+              mainWindow.loadURL(getUrl('/login'))
+            }).catch(() => {
+              mainWindow.webContents.reloadIgnoringCache()
+            })
+          },
+        },
         { role: 'toggleDevTools' },
         { type: 'separator' },
         { role: 'quit' },
@@ -96,6 +116,11 @@ function createWindow() {
     const connector = routePath.includes('?') ? '&' : '?'
     return `${base}${routePath}${connector}platform=desktop`
   }
+
+  // Ensure fresh cache on workstation launch
+  try {
+    mainWindow.webContents.session.clearCache().catch(() => {})
+  } catch (e) {}
 
   // Hardware Screen Capture Protection Active by Default
   try {
