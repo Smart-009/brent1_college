@@ -318,9 +318,8 @@ export function CourseDetail() {
           <div>
             {lessons.map((lesson, idx) => {
               const isCompleted = completedIds.includes(lesson.id)
-              // First lesson (idx === 0) is ALWAYS unlocked.
-              // Subsequent lessons require previous lesson completed.
-              const isLocked = idx > 0 && !completedIds.includes(lessons[idx - 1].id)
+              // All course lessons are fully unlocked and accessible
+              const isLocked = false
 
               return (
                 <LessonRow

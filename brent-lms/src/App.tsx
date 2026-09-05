@@ -69,12 +69,8 @@ function StudentNativeGuard({ children }: { children: ReactElement }) {
     }
   })
 
-  // Admins, teachers, and bursars always bypass to inspect and manage
-  if (profile?.role === 'admin' || profile?.role === 'teacher' || (profile?.role as any) === 'bursar') {
-    return children
-  }
-
-  if (isNativeApp() || allowWebOverride) {
+  // Admins, teachers, bursars, and enrolled students always access their lessons directly
+  if (profile?.role === 'admin' || profile?.role === 'teacher' || (profile?.role as any) === 'bursar' || profile?.role === 'student' || isNativeApp() || allowWebOverride) {
     return children
   }
 
