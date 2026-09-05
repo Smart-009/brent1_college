@@ -346,9 +346,7 @@ export function Login() {
                 {currentActiveRole.label}
               </h2>
               <p style={{ fontSize: '0.82rem', color: '#475569', margin: 0 }}>
-                {!isNative && selectedRole === 'student' && !isStaffMode
-                  ? 'Student login & video lessons are exclusively accessed through the official Native Applications.'
-                  : 'Enter your registered credentials to sign in to your dashboard.'}
+                Enter your registered credentials to sign in to your dashboard.
               </p>
             </div>
 
@@ -372,130 +370,64 @@ export function Login() {
               </div>
             )}
 
-            {!isNative && selectedRole === 'student' && !isStaffMode ? (
-              /* Web Student: Exclusive Native App Download Showcase */
+            {!isNative && selectedRole === 'student' && !isStaffMode && (
               <div
                 style={{
-                  background: '#f8fafc',
-                  border: '1.5px solid #cbd5e1',
-                  borderRadius: '16px',
-                  padding: '1.25rem',
-                  textAlign: 'center',
+                  background: '#f0fdf4',
+                  border: '1px solid #bbf7d0',
+                  borderRadius: '12px',
+                  padding: '0.75rem 0.9rem',
+                  marginBottom: '1.25rem',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  gap: '0.75rem',
                 }}
               >
-                <div
-                  style={{
-                    display: 'inline-flex',
-                    alignItems: 'center',
-                    gap: '6px',
-                    background: '#e0f2fe',
-                    color: '#0369a1',
-                    fontSize: '0.75rem',
-                    fontWeight: 800,
-                    padding: '4px 10px',
-                    borderRadius: '20px',
-                    marginBottom: '0.75rem',
-                  }}
-                >
-                  <span>🛡️</span> HARDWARE ENCRYPTED CLASSROOM
+                <div>
+                  <div style={{ fontSize: '0.78rem', fontWeight: 800, color: '#166534' }}>
+                    📱 Mobile & Desktop Apps Available
+                  </div>
+                  <div style={{ fontSize: '0.72rem', color: '#15803d' }}>
+                    Enjoy seamless offline video playback & notifications.
+                  </div>
                 </div>
-
-                <h3 style={{ fontSize: '1.05rem', fontWeight: 800, color: '#0f172a', margin: '0 0 0.5rem' }}>
-                  Download the Official App to Sign In
-                </h3>
-
-                <p style={{ fontSize: '0.82rem', color: '#475569', lineHeight: 1.5, margin: '0 0 1.25rem' }}>
-                  Student logins, coursework, live webinars, and exams are strictly enabled through our verified native applications for mobile phones and laptops.
-                </p>
-
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+                <div style={{ display: 'flex', gap: '0.4rem' }}>
                   <a
                     href={LOCAL_APK_URL}
                     download="eclat-institute.apk"
                     style={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      gap: '8px',
-                      padding: '0.85rem 1rem',
-                      borderRadius: '12px',
-                      background: 'linear-gradient(135deg, #16a34a 0%, #15803d 100%)',
+                      background: '#16a34a',
                       color: '#ffffff',
-                      fontWeight: 800,
-                      fontSize: '0.92rem',
+                      padding: '4px 8px',
+                      borderRadius: '6px',
+                      fontSize: '0.7rem',
+                      fontWeight: 700,
                       textDecoration: 'none',
-                      boxShadow: '0 4px 12px rgba(22, 163, 74, 0.3)',
                     }}
                   >
-                    <span style={{ fontSize: '1.2rem' }}>🤖</span>
-                    <span>Download Android App (.APK)</span>
+                    🤖 APK
                   </a>
-
                   <a
                     href={LOCAL_DESKTOP_URL}
                     download="eclat-institute-setup.exe"
                     style={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      gap: '8px',
-                      padding: '0.85rem 1rem',
-                      borderRadius: '12px',
-                      background: 'linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%)',
+                      background: '#2563eb',
                       color: '#ffffff',
-                      fontWeight: 800,
-                      fontSize: '0.92rem',
+                      padding: '4px 8px',
+                      borderRadius: '6px',
+                      fontSize: '0.7rem',
+                      fontWeight: 700,
                       textDecoration: 'none',
-                      boxShadow: '0 4px 12px rgba(37, 99, 235, 0.3)',
                     }}
                   >
-                    <span style={{ fontSize: '1.2rem' }}>💻</span>
-                    <span>Download Desktop Laptop App (.EXE)</span>
+                    💻 EXE
                   </a>
                 </div>
-
-                <div
-                  style={{
-                    marginTop: '1.25rem',
-                    paddingTop: '0.85rem',
-                    borderTop: '1px dashed #cbd5e1',
-                    fontSize: '0.78rem',
-                    color: '#64748b',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    gap: '6px',
-                  }}
-                >
-                  <div>
-                    ✨ <strong>Already installed?</strong> Open the app and log in with your Admission Number.
-                  </div>
-                  <div>
-                    🏛️ Faculty or Staff member?{' '}
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setIsStaffMode(true)
-                        setSelectedRole('admin')
-                        setError(null)
-                      }}
-                      style={{
-                        background: 'none',
-                        border: 'none',
-                        color: '#2563eb',
-                        fontWeight: 700,
-                        cursor: 'pointer',
-                        padding: 0,
-                        textDecoration: 'underline',
-                      }}
-                    >
-                      Sign In via Staff Terminal →
-                    </button>
-                  </div>
-                </div>
               </div>
-            ) : (
-              /* Native App or Staff Mode: Direct Login Form */
-              <form onSubmit={handleSubmit}>
+            )}
+
+            <form onSubmit={handleSubmit}>
                 <div style={{ marginBottom: '1.1rem' }}>
                   <label className="label" style={{ fontSize: '0.84rem', fontWeight: 700, color: '#1e293b' }}>
                     {selectedRole === 'student' ? 'Admission Number' : 'Username / Admission Number'}
@@ -564,7 +496,6 @@ export function Login() {
                   {loading ? 'Authenticating...' : `Sign In to Portal →`}
                 </button>
               </form>
-            )}
           </div>
 
           <div style={{ fontSize: '0.75rem', color: '#64748b', textAlign: 'center', marginTop: '1.25rem' }}>
