@@ -2539,13 +2539,16 @@ class SchoolDataStore {
           (u) =>
             u.title.toLowerCase().includes(classNameLower) ||
             classNameLower.includes(u.title.toLowerCase()) ||
-            (u.program && classNameLower.includes(u.program.toLowerCase()))
+            (u.program && classNameLower.includes(u.program.toLowerCase())) ||
+            (u.program && u.program.toLowerCase().includes(classNameLower))
         )
         if (matched.length > 0) return matched
       }
+
+      if (allUnits.length > 0) return allUnits
     }
 
-    return []
+    return allUnits
   }
 
   async unlockStudentLessons(identifier: string, officerName: string = 'Bursar & Admissions Office'): Promise<void> {

@@ -18,12 +18,18 @@ export function StudentDashboard() {
   // Read current student records from schoolStore
   const allStudents = schoolStore.getStudents()
   const currentStudent =
-    allStudents.find((s) => s.admission_number === profile?.admission_number) || null
+    allStudents.find(
+      (s) =>
+        (profile?.admission_number && s.admission_number.toLowerCase() === profile.admission_number.toLowerCase()) ||
+        s.id === profile?.id
+    ) || null
 
   const reportCards = schoolStore.getReportCards()
   const studentTranscript = currentStudent
     ? reportCards.find(
-        (r) => r.admission_number === currentStudent.admission_number || r.student_id === currentStudent.id
+        (r) =>
+          (currentStudent.admission_number && r.admission_number?.toLowerCase() === currentStudent.admission_number.toLowerCase()) ||
+          r.student_id === currentStudent.id
       )
     : null
 

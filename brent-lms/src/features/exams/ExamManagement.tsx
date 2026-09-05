@@ -18,10 +18,19 @@ export function ExamManagement() {
   const [activeTab, setActiveTab] = useState<'sessions' | 'reportcards' | 'ranking'>('reportcards')
 
   const allStudents = schoolStore.getStudents()
-  const currentStudent = allStudents.find((s) => s.admission_number === profile?.admission_number) || null
+  const currentStudent =
+    allStudents.find(
+      (s) =>
+        (profile?.admission_number && s.admission_number.toLowerCase() === profile.admission_number.toLowerCase()) ||
+        s.id === profile?.id
+    ) || null
 
   const myReportCard: ReportCard | null = currentStudent
-    ? reportCards.find((r) => r.admission_number === currentStudent.admission_number || r.student_id === currentStudent.id) || {
+    ? reportCards.find(
+        (r) =>
+          (currentStudent.admission_number && r.admission_number?.toLowerCase() === currentStudent.admission_number.toLowerCase()) ||
+          r.student_id === currentStudent.id
+      ) || {
         id: `rc-${currentStudent.admission_number}`,
         student_id: currentStudent.id,
         student_name: currentStudent.full_name,
