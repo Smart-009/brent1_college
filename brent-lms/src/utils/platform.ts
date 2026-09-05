@@ -6,12 +6,21 @@
 export function isElectronApp(): boolean {
   if (typeof window === 'undefined') return false
   const w = window as any
+  const search = typeof window.location !== 'undefined' ? window.location.search : ''
+  if (search.includes('platform=desktop')) {
+    try {
+      sessionStorage.setItem('eclat_platform', 'desktop')
+      localStorage.setItem('eclat_platform', 'desktop')
+    } catch {}
+    return true
+  }
   return Boolean(
     w.desktopAPI?.isDesktop ||
     w.electronAPI ||
-    /Electron/i.test(navigator.userAgent) ||
+    /Electron|ÉclatDesktopWorkstation|EclatDesktop/i.test(navigator.userAgent) ||
     w.process?.versions?.electron ||
-    (typeof sessionStorage !== 'undefined' && sessionStorage.getItem('eclat_platform') === 'desktop')
+    (typeof sessionStorage !== 'undefined' && sessionStorage.getItem('eclat_platform') === 'desktop') ||
+    (typeof localStorage !== 'undefined' && localStorage.getItem('eclat_platform') === 'desktop')
   )
 }
 

@@ -1,8 +1,9 @@
-// ============================================================
-// Eclat Institute — Native Desktop Preload Bridge
-// ============================================================
-
 const { contextBridge, ipcRenderer } = require('electron')
+
+try {
+  window.sessionStorage?.setItem('eclat_platform', 'desktop')
+  window.localStorage?.setItem('eclat_platform', 'desktop')
+} catch (e) {}
 
 contextBridge.exposeInMainWorld('desktopAPI', {
   isDesktop: true,

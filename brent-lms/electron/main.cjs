@@ -22,7 +22,7 @@ function createWindow() {
       preload: path.join(__dirname, 'preload.cjs'),
       nodeIntegration: false,
       contextIsolation: true,
-      sandbox: true,
+      sandbox: false,
     },
   })
 
@@ -90,13 +90,11 @@ function createWindow() {
   Menu.setApplicationMenu(menu)
 
   function getUrl(routePath = '') {
-    if (isDev && process.env.VITE_DEV_SERVER_URL) {
-      return `${process.env.VITE_DEV_SERVER_URL}${routePath}`
-    }
-    if (isDev) {
-      return `http://localhost:5173${routePath}`
-    }
-    return `https://www.eclat.institute${routePath}`
+    const base = isDev
+      ? (process.env.VITE_DEV_SERVER_URL || 'http://localhost:5173')
+      : 'https://www.eclat.institute'
+    const connector = routePath.includes('?') ? '&' : '?'
+    return `${base}${routePath}${connector}platform=desktop`
   }
 
   // Hardware Screen Capture Protection Active by Default
@@ -122,12 +120,14 @@ function createWindow() {
     } catch (e) {}
   })
 
-  // Load app from live production server with auto OTA updates
-  if (isDev) {
-    mainWindow.loadURL('http://localhost:5173')
-  } else {
-    mainWindow.loadURL('https://www.eclat.institute')
-  }
+  // Set Workstation User Agent
+  try {
+    const defaultUA = mainWindow.webContents.getUserAgent()
+    mainWindow.webContents.setUserAgent(`${defaultUA} Electron ÉclatDesktopWorkstation/1.0.0`)
+  } catch (e) {}
+
+  // Load workstation directly into portal / login
+  mainWindow.loadURL(getUrl('/login'))
 
   // Open external links in default system browser
   mainWindow.webContents.setWindowOpenHandler(({ url }) => {
