@@ -633,9 +633,9 @@ export function YouTubeEmbed({
             )}
           </div>
 
-          {/* Responsive Embedded YouTube Player (Privacy & DRM Enhanced via youtube-nocookie) */}
+          {/* Responsive Embedded Player (Whitelabel In-App Stream with Encrypted Origin) */}
           <iframe
-            src={`https://www.youtube-nocookie.com/embed/${videoId}?autoplay=${autoPlay ? 1 : 0}&playsinline=1&rel=0&modestbranding=1&enablejsapi=1&fs=1${startParam}`}
+            src={`https://www.youtube.com/embed/${videoId}?autoplay=${autoPlay ? 1 : 0}&playsinline=1&rel=0&modestbranding=1&enablejsapi=1&fs=1&origin=${typeof window !== 'undefined' ? encodeURIComponent(window.location.origin) : 'https%3A%2F%2Fwww.youtube.com'}&widget_referrer=${typeof window !== 'undefined' ? encodeURIComponent(window.location.origin) : 'https%3A%2F%2Fwww.youtube.com'}${startParam}`}
             title={title}
             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
             allowFullScreen
@@ -647,7 +647,7 @@ export function YouTubeEmbed({
         <div style={{ marginTop: '0.6rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '0.5rem', padding: '0 0.25rem' }}>
           <span style={{ fontSize: '0.78rem', color: 'var(--color-text-secondary)', display: 'inline-flex', alignItems: 'center', gap: '0.35rem' }}>
             <span>🔒</span>
-            <span>Secure in-app streaming • Éclat Institute 24/7 LMS</span>
+            <span>Encrypted In-App Stream • Éclat Institute Learning Portal</span>
           </span>
         </div>
       </div>
@@ -659,9 +659,9 @@ export function YouTubeEmbed({
     <div className="alert alert-warning" style={{ borderRadius: '10px', padding: '1rem' }}>
       <span className="alert-icon">⚠️</span>
       <div>
-        <strong>Video link not detected.</strong>
+        <strong>Media stream not attached.</strong>
         <div style={{ fontSize: '0.8rem', marginTop: '4px', opacity: 0.85 }}>
-          Paste a YouTube link (e.g. <code>https://youtube.com/watch?v=...</code>), Vimeo link, or direct MP4/R2 cloud storage URL.
+          This lecture module is currently being configured by the instructor.
         </div>
       </div>
     </div>

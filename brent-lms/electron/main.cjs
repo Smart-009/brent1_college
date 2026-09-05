@@ -122,6 +122,68 @@ function createWindow() {
     mainWindow.webContents.session.clearCache().catch(() => {})
   } catch (e) {}
 
+  // Seamless In-App Resource & Video Streaming Interceptor
+  // Spoofs headers so YouTube, Google Drive, and Cloud resources stream directly in-app without embedding errors
+  const session = mainWindow.webContents.session
+
+  session.webRequest.onBeforeSendHeaders(
+    {
+      urls: [
+        '*://*.youtube.com/*',
+        '*://*.youtube-nocookie.com/*',
+        '*://*.googlevideo.com/*',
+        '*://*.google.com/*',
+        '*://*.googleapis.com/*',
+        '*://*.drive.google.com/*',
+        '*://*.docs.google.com/*',
+      ],
+    },
+    (details, callback) => {
+      const url = details.url.toLowerCase()
+      if (url.includes('youtube.com') || url.includes('youtube-nocookie.com') || url.includes('googlevideo.com')) {
+        details.requestHeaders['Referer'] = 'https://www.youtube.com/'
+        details.requestHeaders['Origin'] = 'https://www.youtube.com'
+      } else if (url.includes('drive.google.com') || url.includes('docs.google.com')) {
+        details.requestHeaders['Referer'] = 'https://drive.google.com/'
+        details.requestHeaders['Origin'] = 'https://drive.google.com'
+      }
+      callback({ cancel: false, requestHeaders: details.requestHeaders })
+    }
+  )
+
+  session.webRequest.onHeadersReceived(
+    {
+      urls: [
+        '*://*.youtube.com/*',
+        '*://*.youtube-nocookie.com/*',
+        '*://*.googlevideo.com/*',
+        '*://*.google.com/*',
+        '*://*.googleapis.com/*',
+        '*://*.drive.google.com/*',
+        '*://*.docs.google.com/*',
+      ],
+    },
+    (details, callback) => {
+      const responseHeaders = { ...details.responseHeaders }
+      delete responseHeaders['x-frame-options']
+      delete responseHeaders['X-Frame-Options']
+      delete responseHeaders['x-frame-options'.toLowerCase()]
+
+      if (responseHeaders['content-security-policy']) {
+        responseHeaders['content-security-policy'] = responseHeaders['content-security-policy'].map((csp) =>
+          csp.replace(/frame-ancestors[^;]+;?/gi, '')
+        )
+      }
+      if (responseHeaders['Content-Security-Policy']) {
+        responseHeaders['Content-Security-Policy'] = responseHeaders['Content-Security-Policy'].map((csp) =>
+          csp.replace(/frame-ancestors[^;]+;?/gi, '')
+        )
+      }
+
+      callback({ cancel: false, responseHeaders })
+    }
+  )
+
   // Hardware Screen Capture Protection Active by Default
   try {
     mainWindow.setContentProtection(true)
@@ -154,13 +216,30 @@ function createWindow() {
   // Load workstation directly into portal / login
   mainWindow.loadURL(getUrl('/login'))
 
-  // Open external links in default system browser
+  // All resources open in-app; strictly deny external window pop-outs to conceal storage providers
   mainWindow.webContents.setWindowOpenHandler(({ url }) => {
-    if (url.startsWith('http://localhost') || url.includes('eclat.institute')) {
+    if (url.startsWith('http://localhost') || url.includes('eclat.institute') || url.includes('eclat-institute')) {
       return { action: 'allow' }
     }
-    shell.openExternal(url)
+    // Deny third-party popouts (YouTube, Google Drive, cloud buckets)
     return { action: 'deny' }
+  })
+
+  // Prevent iframe or top-level from navigating away from the LMS
+  mainWindow.webContents.on('will-navigate', (event, navigationUrl) => {
+    try {
+      const parsedUrl = new URL(navigationUrl)
+      const isAppUrl =
+        parsedUrl.hostname === 'localhost' ||
+        parsedUrl.hostname === '127.0.0.1' ||
+        parsedUrl.hostname.includes('eclat.institute') ||
+        parsedUrl.hostname.includes('eclat-institute')
+      if (!isAppUrl) {
+        event.preventDefault()
+      }
+    } catch {
+      event.preventDefault()
+    }
   })
 
   // Hardware Screen Capture Protection & Native Desktop Utilities

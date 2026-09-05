@@ -627,23 +627,13 @@ export function LessonPlayer() {
 
                     <div className="flex gap-2">
                       {isHtml && (
-                        <>
-                          <button
-                            type="button"
-                            className="btn btn-sm btn-secondary"
-                            onClick={() => setActiveHtmlUrl(activeHtmlUrl === res.file_url ? null : res.file_url)}
-                          >
-                            {activeHtmlUrl === res.file_url ? 'Hide Preview 👁️' : 'Preview Interactive HTML 👁️'}
-                          </button>
-
-                          <button
-                            type="button"
-                            className="btn btn-sm btn-outline"
-                            onClick={() => handleOpenHtmlInNewTab(res.file_url)}
-                          >
-                            Open in New Tab ↗
-                          </button>
-                        </>
+                        <button
+                          type="button"
+                          className="btn btn-sm btn-secondary"
+                          onClick={() => setActiveHtmlUrl(activeHtmlUrl === res.file_url ? null : res.file_url)}
+                        >
+                          {activeHtmlUrl === res.file_url ? 'Hide Interactive Lab ✕' : 'Open Interactive Lab Online 🔒'}
+                        </button>
                       )}
 
                       {!isHtml && (
