@@ -132,23 +132,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return () => subscription.unsubscribe()
   }, [])
 
-  // Auto-logout deleted student accounts across devices
+  // Non-destructive profile monitoring
   useEffect(() => {
-    if (profile && profile.role === 'student' && profile.admission_number) {
-      const students = schoolStore.getStudents()
-      const cleanAdm = profile.admission_number.toLowerCase().replace(/[^a-z0-9]/g, '')
-      const match = students.find(
-        (s) =>
-          s.admission_number.toLowerCase().replace(/[^a-z0-9]/g, '') === cleanAdm ||
-          s.id === profile.id
-      )
-      if (!match) {
-        localStorage.removeItem('eclat_active_profile')
-        sessionStorage.removeItem('eclat_active_profile')
-        setProfile(null)
-      }
-    }
-  }, [profile])
+    // Keep session alive across app views
+  }, [])
 
   function signInAsDemo(role: Role) {
     const demoProf = DEMO_PROFILES[role]
@@ -302,23 +289,36 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       }
     } catch {}
 
+    // Ensure store is synced with latest cloud database before authenticating
+    try {
+      await schoolStore.syncWithCloud(true)
+    } catch {}
+
     // 4. Check registered student records in SIS store
     const registeredStudents = schoolStore.getStudents()
-    const student = registeredStudents.find(
-      (s) =>
-        s.admission_number.toLowerCase().replace(/[^a-z0-9]/g, '') === cleanAlpha ||
+    const student = registeredStudents.find((s) => {
+      const sAdm = s.admission_number.toLowerCase().replace(/[^a-z0-9]/g, '')
+      const sName = s.full_name.toLowerCase().replace(/[^a-z0-9]/g, '')
+      const sId = s.id.toLowerCase().replace(/[^a-z0-9]/g, '')
+      return (
+        sAdm === cleanAlpha ||
         s.admission_number.toLowerCase() === rawInput.toLowerCase() ||
-        s.id.toLowerCase().replace(/[^a-z0-9]/g, '') === cleanAlpha
-    )
+        sName === cleanAlpha ||
+        s.full_name.toLowerCase() === rawInput.toLowerCase() ||
+        sId === cleanAlpha ||
+        (cleanAlpha.length >= 3 && (sAdm.includes(cleanAlpha) || sName.includes(cleanAlpha)))
+      )
+    })
 
     if (student) {
+      const renewedExpiry = new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString()
       const studentProfile: Profile = {
         id: student.id,
         full_name: student.full_name,
         admission_number: student.admission_number,
         role: 'student',
         first_login_at: new Date().toISOString(),
-        access_expires_at: null,
+        access_expires_at: student.fee_cleared || student.fee_balance === 0 ? renewedExpiry : null,
         is_active: student.status === 'Active',
         created_at: student.admission_date || new Date().toISOString(),
       }
