@@ -1,13 +1,12 @@
 import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { intakeStore } from '@/lib/intakeStore'
-import { extractYouTubeId, formatDate } from '@/lib/utils'
+import { formatDate } from '@/lib/utils'
 import { getWhatsAppInquiryUrl } from '@/config/institution'
 import type { IntakeSchedule } from '@/types/intake'
 
 export function IntakeAdvertsSection() {
   const [intakes, setIntakes] = useState<IntakeSchedule[]>(() => intakeStore.getPublishedIntakes())
-  const [activeVideoUrl, setActiveVideoUrl] = useState<string | null>(null)
   const [activePosterUrl, setActivePosterUrl] = useState<string | null>(null)
 
   useEffect(() => {
@@ -114,7 +113,6 @@ export function IntakeAdvertsSection() {
         {/* Intakes Cards Grid */}
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(340px, 1fr))', gap: '2rem' }}>
           {intakes.map((intake) => {
-            const ytId = intake.promo_video_url ? extractYouTubeId(intake.promo_video_url) : null
             const isFillingFast = intake.status === 'Filling Fast'
 
             return (
@@ -132,17 +130,11 @@ export function IntakeAdvertsSection() {
                   position: 'relative',
                 }}
               >
-                {/* Top Poster Image / Video Banner */}
+                {/* Top Poster Image / Banner */}
                 <div style={{ position: 'relative', height: '210px', background: '#090e1f', overflow: 'hidden' }}>
                   {intake.poster_image_url ? (
                     <img
                       src={intake.poster_image_url}
-                      alt={intake.title}
-                      style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-                    />
-                  ) : ytId ? (
-                    <img
-                      src={`https://img.youtube.com/vi/${ytId}/hqdefault.jpg`}
                       alt={intake.title}
                       style={{ width: '100%', height: '100%', objectFit: 'cover' }}
                     />
@@ -194,56 +186,32 @@ export function IntakeAdvertsSection() {
                     </span>
                   </div>
 
-                  {/* Poster Enlarge or Video Play Trigger */}
-                  <div style={{ position: 'absolute', bottom: '12px', right: '14px', display: 'flex', gap: '8px' }}>
-                    {intake.poster_image_url && (
+                  {/* Poster Enlarge Trigger */}
+                  {intake.poster_image_url && (
+                    <div style={{ position: 'absolute', bottom: '12px', right: '14px', display: 'flex', gap: '8px' }}>
                       <button
                         type="button"
                         onClick={() => setActivePosterUrl(intake.poster_image_url || null)}
                         style={{
-                          background: 'rgba(0, 0, 0, 0.7)',
-                          backdropFilter: 'blur(4px)',
+                          background: 'rgba(0, 0, 0, 0.75)',
+                          backdropFilter: 'blur(6px)',
                           color: '#ffffff',
-                          border: '1px solid rgba(255,255,255,0.3)',
+                          border: '1px solid rgba(255,255,255,0.35)',
                           borderRadius: '8px',
-                          padding: '4px 10px',
-                          fontSize: '0.72rem',
+                          padding: '5px 12px',
+                          fontSize: '0.74rem',
                           fontWeight: 800,
                           cursor: 'pointer',
                           display: 'flex',
                           alignItems: 'center',
-                          gap: '4px',
+                          gap: '5px',
                         }}
                       >
                         <span>🖼️</span>
                         <span>View Poster</span>
                       </button>
-                    )}
-
-                    {intake.promo_video_url && (
-                      <button
-                        type="button"
-                        onClick={() => setActiveVideoUrl(intake.promo_video_url || null)}
-                        style={{
-                          background: '#dc2626',
-                          color: '#ffffff',
-                          border: 'none',
-                          borderRadius: '8px',
-                          padding: '4px 10px',
-                          fontSize: '0.72rem',
-                          fontWeight: 800,
-                          cursor: 'pointer',
-                          display: 'flex',
-                          alignItems: 'center',
-                          gap: '4px',
-                          boxShadow: '0 4px 12px rgba(220, 38, 38, 0.5)',
-                        }}
-                      >
-                        <span>▶</span>
-                        <span>Watch Video Trailer</span>
-                      </button>
-                    )}
-                  </div>
+                    </div>
+                  )}
                 </div>
 
                 {/* Card Body */}
@@ -409,57 +377,6 @@ export function IntakeAdvertsSection() {
             >
               ✕ Close Poster
             </button>
-          </div>
-        </div>
-      )}
-
-      {/* Video Trailer Modal */}
-      {activeVideoUrl && (
-        <div className="modal-overlay" onClick={() => setActiveVideoUrl(null)} style={{ zIndex: 999999 }}>
-          <div
-            className="modal-content modal-lg"
-            onClick={(e) => e.stopPropagation()}
-            style={{
-              maxWidth: '850px',
-              width: '95%',
-              background: '#090e1f',
-              borderRadius: '20px',
-              overflow: 'hidden',
-              boxShadow: '0 25px 60px rgba(0, 0, 0, 0.8)',
-            }}
-          >
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '1rem 1.5rem', borderBottom: '1px solid #1e293b', color: '#ffffff' }}>
-              <div style={{ fontWeight: 800, fontSize: '0.95rem', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <span>🎬</span>
-                <span>Promotional Intake Video Trailer</span>
-              </div>
-              <button
-                type="button"
-                onClick={() => setActiveVideoUrl(null)}
-                style={{ background: 'none', border: 'none', color: '#ffffff', fontSize: '1.2rem', cursor: 'pointer', fontWeight: 800 }}
-              >
-                ✕
-              </button>
-            </div>
-
-            <div style={{ position: 'relative', paddingTop: '56.25%', width: '100%', background: '#000000' }}>
-              {extractYouTubeId(activeVideoUrl) ? (
-                <iframe
-                  style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', border: 0 }}
-                  src={`https://www.youtube.com/embed/${extractYouTubeId(activeVideoUrl)}?autoplay=1&rel=0`}
-                  title="Promotional Intake Video"
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                  allowFullScreen
-                />
-              ) : (
-                <video
-                  src={activeVideoUrl}
-                  controls
-                  autoPlay
-                  style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', objectFit: 'contain' }}
-                />
-              )}
-            </div>
           </div>
         </div>
       )}

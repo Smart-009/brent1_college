@@ -19,7 +19,6 @@ export const INITIAL_INTAKE_SCHEDULES: IntakeSchedule[] = [
       'Enroll in accredited career-ready programs across Full-Stack Web Engineering (React 19 & Node.js), Python Data Science, IELTS Band 8.5 Preparation, Cybersecurity SOC Operations, and Computerized Accounting. Evening and weekend cohorts available with live mentor code reviews.',
     poster_image_url:
       'https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&w=1200&q=80',
-    promo_video_url: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
     application_deadline: '2027-01-15',
     orientation_date: '2027-01-18',
     commencement_date: '2027-01-20',
@@ -56,7 +55,6 @@ export const INITIAL_INTAKE_SCHEDULES: IntakeSchedule[] = [
       'Designed for working professionals, university researchers, and international visa applicants. Hands-on training in RStudio biostatistics, SPSS survey econometric modeling, French & German language certifications, and Canva Pro digital graphics.',
     poster_image_url:
       'https://images.unsplash.com/photo-1531482615713-2afd69097998?auto=format&fit=crop&w=1200&q=80',
-    promo_video_url: 'https://www.youtube.com/watch?v=kqtD5dpn9C8',
     application_deadline: '2026-09-10',
     orientation_date: '2026-09-12',
     commencement_date: '2026-09-14',
