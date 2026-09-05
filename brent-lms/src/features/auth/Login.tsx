@@ -120,20 +120,19 @@ export function Login() {
       } else {
         setError(`${res.error} (${5 - nextFailed} attempts remaining before temporary security lock)`)
       }
-    } else {
       setFailedAttempts(0)
       setLockoutSeconds(0)
-      if (selectedRole === 'admin' || cleanAdmission.toLowerCase().includes('admin')) {
+      const role = res.profile?.role || selectedRole
+      if (role === 'admin' || cleanAdmission.toLowerCase().includes('admin')) {
         navigate('/admin')
-      } else if (selectedRole === 'bursar') {
+      } else if (role === 'bursar') {
         navigate('/bursar')
-      } else if (selectedRole === 'student' && !isNative) {
-        // Double check DRM guard redirect
-        navigate('/student')
+      } else if (role === 'teacher') {
+        navigate('/teacher')
+      } else if (role === 'parent') {
+        navigate('/parent')
       } else {
-        const allRoles = [...publicRoles, ...staffRoles]
-        const activeCfg = allRoles.find((r) => r.role === selectedRole) || allRoles[0]
-        navigate(activeCfg.route)
+        navigate('/student')
       }
     }
   }

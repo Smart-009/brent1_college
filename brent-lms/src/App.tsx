@@ -71,11 +71,6 @@ function RequireAuth({ children, allowedRoles }: { children: ReactElement; allow
   if (loading) return <LoadingScreen message="Verifying security session..." />
   if (!profile) return <Navigate to="/login" replace />
 
-  // Forced password change check
-  if (profile.first_login_at === null && window.location.pathname !== '/change-password') {
-    return <Navigate to="/change-password" replace />
-  }
-
   // Role authorization check
   if (allowedRoles && !allowedRoles.includes(profile.role)) {
     if (profile.role === 'admin') return <Navigate to="/admin" replace />

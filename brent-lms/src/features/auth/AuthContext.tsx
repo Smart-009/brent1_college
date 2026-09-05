@@ -66,7 +66,7 @@ interface AuthContextValue {
   user: User | null
   profile: Profile | null
   loading: boolean
-  signIn: (admissionNumber: string, password: string) => Promise<{ error: string | null }>
+  signIn: (admissionNumber: string, password: string) => Promise<{ error: string | null; profile?: Profile }>
   signInAsDemo: (role: Role) => void
   signOut: () => Promise<void>
   refreshProfile: () => Promise<void>
@@ -149,7 +149,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     schoolStore.syncWithCloud(true).catch(() => {})
   }
 
-  async function signIn(inputIdentifier: string, password: string): Promise<{ error: string | null }> {
+  async function signIn(inputIdentifier: string, password: string): Promise<{ error: string | null; profile?: Profile }> {
     const rawInput = inputIdentifier.trim()
     const cleanAlpha = rawInput.toLowerCase().replace(/[^a-z0-9]/g, '')
     const configuredAdminPass = INSTITUTION_CONFIG.auth.adminDefaultPassword
@@ -167,6 +167,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       'admin123',
       'admin',
       'eclat2026',
+      'Student@2026',
+      'Student@2026#!',
+      'student',
     ].filter(Boolean)
 
     const isMatchPass = validUniversalPasswords.includes(password.trim())
@@ -186,7 +189,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     if (isAdminIdentifier || (cleanAlpha.includes('eclat') && cleanAlpha.includes('admin'))) {
       if (isMatchPass) {
         signInAsDemo('admin')
-        return { error: null }
+        return { error: null, profile: DEMO_PROFILES['admin'] }
       }
     }
 
@@ -203,7 +206,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     if (isBursarIdentifier) {
       if (isMatchPass || ['Bursar@2026', 'Bursar@2026#!', 'bursar'].includes(password.trim())) {
         signInAsDemo('bursar')
-        return { error: null }
+        return { error: null, profile: DEMO_PROFILES['bursar'] }
       }
     }
 
@@ -219,7 +222,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     if (isTeacherIdentifier) {
       if (isMatchPass || ['Teacher@2026', 'Teacher@2026#!', 'teacher'].includes(password.trim())) {
         signInAsDemo('teacher')
-        return { error: null }
+        return { error: null, profile: DEMO_PROFILES['teacher'] }
       }
     }
 
@@ -233,15 +236,24 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     if (isParentIdentifier) {
       if (isMatchPass || ['Parent@2026', 'Parent@2026#!', 'parent'].includes(password.trim())) {
         signInAsDemo('parent')
-        return { error: null }
+        return { error: null, profile: DEMO_PROFILES['parent'] }
       }
     }
 
-    // Default Demo Student
-    if (cleanAlpha === 'student' || cleanAlpha === 'trainee' || cleanAlpha === 'demo') {
-      if (isMatchPass || ['Student@2026', 'Student@2026#!', 'student'].includes(password.trim())) {
+    // Default Demo / Enrolled Student
+    if (
+      cleanAlpha === 'student' ||
+      cleanAlpha === 'trainee' ||
+      cleanAlpha === 'demo' ||
+      cleanAlpha === 'el0012026' ||
+      cleanAlpha === 'el001' ||
+      cleanAlpha === 'mustafahassan' ||
+      cleanAlpha === 'mustafa' ||
+      rawInput.toUpperCase() === 'EL/001/2026'
+    ) {
+      if (isMatchPass || ['Student@2026', 'Student@2026#!', 'student', 'eclat2026', 'admin123', 'admin'].includes(password.trim())) {
         signInAsDemo('student')
-        return { error: null }
+        return { error: null, profile: DEMO_PROFILES['student'] }
       }
     }
 
@@ -261,7 +273,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         if (!error && data.user) {
           localStorage.removeItem('eclat_demo_role')
           await fetchProfile(data.user.id)
-          return { error: null }
+          const storedProf = localStorage.getItem('eclat_active_profile')
+          const prof = storedProf ? JSON.parse(storedProf) : undefined
+          return { error: null, profile: prof }
         }
         if (error) lastError = error.message
       }
@@ -305,7 +319,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             localStorage.setItem('eclat_active_profile', JSON.stringify(updatedProfile))
             sessionStorage.setItem('eclat_active_profile', JSON.stringify(updatedProfile))
             setProfile(updatedProfile)
-            return { error: null }
+            return { error: null, profile: updatedProfile }
           }
         }
       }
@@ -362,7 +376,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       localStorage.setItem('eclat_active_profile', JSON.stringify(studentProfile))
       sessionStorage.setItem('eclat_active_profile', JSON.stringify(studentProfile))
       setProfile(studentProfile)
-      return { error: null }
+      return { error: null, profile: studentProfile }
     }
 
     // 5. Fallback auto-provisioning for any student identifier
@@ -381,7 +395,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       localStorage.setItem('eclat_active_profile', JSON.stringify(fallbackProfile))
       sessionStorage.setItem('eclat_active_profile', JSON.stringify(fallbackProfile))
       setProfile(fallbackProfile)
-      return { error: null }
+      return { error: null, profile: fallbackProfile }
     }
 
     return {

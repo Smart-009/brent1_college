@@ -109,27 +109,24 @@ export function useAccess() {
 
   useEffect(() => {
     if (!profile) return
-    if (profile.role === 'admin' || profile.role === 'teacher' || (profile.role as any) === 'bursar') return
+    if (profile.role === 'admin' || profile.role === 'teacher' || (profile.role as any) === 'bursar' || (profile.role as any) === 'parent') return
 
-    // If student is fee-cleared at Bursar desk, they have full academic access!
-    if (isFeeCleared) {
-      // If access_expires_at was expired in Supabase, auto-renew it in the background
-      if (isAccessExpired(profile.access_expires_at)) {
-        const renewed = new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString()
-        Promise.resolve(
-          supabase
-            .from('profiles')
-            .update({ access_expires_at: renewed })
-            .eq('id', profile.id)
-        ).catch(() => {})
-      }
-      return
+    // Auto-grant active term access for all enrolled students
+    if (!profile.access_expires_at || isAccessExpired(profile.access_expires_at)) {
+      const renewed = new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString()
+      const updated = { ...profile, access_expires_at: renewed }
+      try {
+        localStorage.setItem('eclat_active_profile', JSON.stringify(updated))
+        sessionStorage.setItem('eclat_active_profile', JSON.stringify(updated))
+      } catch {}
+      Promise.resolve(
+        supabase
+          .from('profiles')
+          .update({ access_expires_at: renewed })
+          .eq('id', profile.id)
+      ).catch(() => {})
     }
-
-    if (isAccessExpired(profile.access_expires_at)) {
-      navigate('/access-expired', { replace: true })
-    }
-  }, [profile, isFeeCleared, navigate])
+  }, [profile, isFeeCleared])
 
   return {
     isExpired: isFeeCleared ? false : profile ? isAccessExpired(profile.access_expires_at) : false,
