@@ -639,12 +639,6 @@ export function ResourceLibrary() {
   const [showAppDownloadPrompt, setShowAppDownloadPrompt] = useState(false)
 
   const handleOpenReader = (res: AcademicResource) => {
-    // Hardware anti-screenshot DRM protection: Block full textbook/document reading on standard web browsers
-    if (!isNative && !isAdmin) {
-      setShowAppDownloadPrompt(true)
-      return
-    }
-
     setActiveChapterIndex(0)
     setReadingResource(res)
 
@@ -886,58 +880,6 @@ export function ResourceLibrary() {
           )}
         </div>
       </div>
-
-      {/* Web DRM Anti-Screenshot Banner */}
-      {!isNative && !isAdmin && (
-        <div
-          style={{
-            background: 'linear-gradient(135deg, #090d16 0%, #0f172a 100%)',
-            border: '1.5px solid rgba(212, 175, 55, 0.4)',
-            borderRadius: '16px',
-            padding: '1.15rem 1.35rem',
-            marginBottom: '1.5rem',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            flexWrap: 'wrap',
-            gap: '1rem',
-            boxShadow: '0 8px 24px rgba(0,0,0,0.3)',
-          }}
-        >
-          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-            <span style={{ fontSize: '1.8rem' }}>🛡️</span>
-            <div>
-              <div style={{ fontWeight: 900, color: '#d4af37', fontSize: '0.98rem', letterSpacing: '0.02em' }}>
-                Hardware Anti-Screenshot Protection Active
-              </div>
-              <div style={{ fontSize: '0.82rem', color: '#94a3b8', marginTop: '2px', lineHeight: 1.4 }}>
-                To protect institutional copyright, all comic books, academic handbooks, lab manuals, and syllabus files are readable exclusively inside the <strong>Official Éclat Native App</strong>.
-              </div>
-            </div>
-          </div>
-          <a
-            href={OFFICIAL_APK_URL}
-            download="eclat-institute.apk"
-            className="btn"
-            style={{
-              background: 'linear-gradient(135deg, #16a34a, #15803d)',
-              color: '#ffffff',
-              fontWeight: 800,
-              padding: '0.65rem 1.25rem',
-              borderRadius: '10px',
-              fontSize: '0.88rem',
-              textDecoration: 'none',
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: '6px',
-              boxShadow: '0 4px 12px rgba(22, 163, 74, 0.35)',
-            }}
-          >
-            <span>🤖</span>
-            <span>Download Android App (.APK)</span>
-          </a>
-        </div>
-      )}
 
       {/* Filter and Search Bar */}
       <div className="card mb-6" style={{ padding: '1.25rem', borderRadius: '16px', background: 'var(--color-surface)', boxShadow: '0 4px 20px rgba(0,0,0,0.06)' }}>
@@ -1199,7 +1141,7 @@ export function ResourceLibrary() {
                     className="btn btn-primary btn-sm"
                     onClick={() => handleOpenReader(res)}
                   >
-                    {isNative || isAdmin ? '📖 Read Online 🔒' : '📲 Read in Official App 🔒'}
+                    📖 Read Document 🔒
                   </button>
                 </div>
               </div>

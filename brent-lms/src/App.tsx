@@ -59,32 +59,9 @@ import { BursarDesk } from '@/features/bursar/BursarDesk'
 import { isNativeApp } from '@/utils/platform'
 import { NativeAppDRMGuard } from '@/components/shared/NativeAppDRMGuard'
 
-/** Native App DRM Guard for Student Learning */
+/** Student Portal Direct Access Guard */
 function StudentNativeGuard({ children }: { children: ReactElement }) {
-  const { profile } = useAuth()
-  const [allowWebOverride, setAllowWebOverride] = useState(() => {
-    try {
-      return localStorage.getItem('eclat_allow_web_classroom') === 'true'
-    } catch {
-      return false
-    }
-  })
-
-  // Admins, teachers, bursars, and enrolled students always access their lessons directly
-  if (profile?.role === 'admin' || profile?.role === 'teacher' || (profile?.role as any) === 'bursar' || profile?.role === 'student' || isNativeApp() || allowWebOverride) {
-    return children
-  }
-
-  return (
-    <NativeAppDRMGuard
-      onContinueInWeb={() => {
-        try {
-          localStorage.setItem('eclat_allow_web_classroom', 'true')
-        } catch {}
-        setAllowWebOverride(true)
-      }}
-    />
-  )
+  return children
 }
 
 /** Auth Guard Component */

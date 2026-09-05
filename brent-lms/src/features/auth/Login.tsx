@@ -370,63 +370,6 @@ export function Login() {
               </div>
             )}
 
-            {!isNative && selectedRole === 'student' && !isStaffMode && (
-              <div
-                style={{
-                  background: '#f0fdf4',
-                  border: '1px solid #bbf7d0',
-                  borderRadius: '12px',
-                  padding: '0.75rem 0.9rem',
-                  marginBottom: '1.25rem',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'space-between',
-                  gap: '0.75rem',
-                }}
-              >
-                <div>
-                  <div style={{ fontSize: '0.78rem', fontWeight: 800, color: '#166534' }}>
-                    📱 Mobile & Desktop Apps Available
-                  </div>
-                  <div style={{ fontSize: '0.72rem', color: '#15803d' }}>
-                    Enjoy seamless offline video playback & notifications.
-                  </div>
-                </div>
-                <div style={{ display: 'flex', gap: '0.4rem' }}>
-                  <a
-                    href={OFFICIAL_APK_URL}
-                    download="eclat-institute.apk"
-                    style={{
-                      background: '#16a34a',
-                      color: '#ffffff',
-                      padding: '4px 8px',
-                      borderRadius: '6px',
-                      fontSize: '0.7rem',
-                      fontWeight: 700,
-                      textDecoration: 'none',
-                    }}
-                  >
-                    🤖 APK
-                  </a>
-                  <a
-                    href={LOCAL_DESKTOP_URL}
-                    download="eclat-institute-setup.exe"
-                    style={{
-                      background: '#2563eb',
-                      color: '#ffffff',
-                      padding: '4px 8px',
-                      borderRadius: '6px',
-                      fontSize: '0.7rem',
-                      fontWeight: 700,
-                      textDecoration: 'none',
-                    }}
-                  >
-                    💻 EXE
-                  </a>
-                </div>
-              </div>
-            )}
-
             <form onSubmit={handleSubmit}>
                 <div style={{ marginBottom: '1.1rem' }}>
                   <label className="label" style={{ fontSize: '0.84rem', fontWeight: 700, color: '#1e293b' }}>
