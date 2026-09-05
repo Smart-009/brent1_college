@@ -31,22 +31,32 @@ const buildCatalogCourses = (): CourseItem[] => {
   const subs = schoolStore.getSubjects()
   const units = schoolStore.getCourseUnits()
   const dynamic = getDynamicCoursesList(subs, units)
-  return dynamic.map((c) => ({
-    id: c.id,
-    title: c.title,
-    category: c.category,
-    tag: c.tag,
-    tagColor: c.tagColor,
-    duration: c.duration,
-    schedule: c.schedule,
-    fee: `$${c.feeUsd} (KES ${c.feeKes.toLocaleString()})`,
-    installment: c.installmentText,
-    careerOutcome: c.careerOutcome,
-    skills: c.skills,
-    icon: c.icon,
-    popular: c.popular || c.bestseller,
-    syllabus: c.syllabus,
-  }))
+  return dynamic
+    .filter(
+      (c) =>
+        c &&
+        !c.id?.startsWith('aaaaaaaa-') &&
+        !c.id?.startsWith('__ECLAT_') &&
+        !c.title?.startsWith('__ECLAT_') &&
+        !c.careerOutcome?.startsWith('{') &&
+        !c.careerOutcome?.includes('{"key"')
+    )
+    .map((c) => ({
+      id: c.id,
+      title: c.title,
+      category: c.category,
+      tag: c.tag,
+      tagColor: c.tagColor,
+      duration: c.duration,
+      schedule: c.schedule,
+      fee: `$${c.feeUsd} (KES ${c.feeKes.toLocaleString()})`,
+      installment: c.installmentText,
+      careerOutcome: c.careerOutcome,
+      skills: c.skills,
+      icon: c.icon,
+      popular: c.popular || c.bestseller,
+      syllabus: c.syllabus,
+    }))
 }
 
 const CATEGORIES = [

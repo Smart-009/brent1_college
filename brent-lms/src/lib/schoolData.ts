@@ -944,29 +944,7 @@ class SchoolDataStore {
   }
 
   async pushCollectionToCloud(collectionKey: string, data: any): Promise<void> {
-    const syncId = CLOUD_SYNC_SYSTEM_IDS[collectionKey]
-    const syncTitle = `__ECLAT_SYNC_${collectionKey.toUpperCase()}__`
-
-    // 1. Guaranteed cloud persistence in courses table sync container (accessible across all devices & anon role)
-    if (syncId) {
-      try {
-        const payload = JSON.stringify({
-          key: collectionKey,
-          data: data,
-          updated_at: new Date().toISOString(),
-        })
-
-        await supabase.from('courses').upsert({
-          id: syncId,
-          title: syncTitle,
-          description: payload,
-          subject_id: DEFAULT_SYSTEM_SUBJECT_ID,
-          is_published: false,
-        })
-      } catch (err) {
-        console.warn(`Cloud sync container upsert notice for ${collectionKey}:`, err)
-      }
-    }
+    // 1. Native app_cloud_sync table persistence (isolated from public courses table)
 
     // 2. Try native app_cloud_sync table if exists
     try {
@@ -2374,7 +2352,17 @@ class SchoolDataStore {
 
   // --- Course Units & Curriculum Builder (ACID Protected) ---
   getCourseUnits(): CourseUnit[] {
-    return this.get<CourseUnit[]>('course_units', INITIAL_COURSE_UNITS)
+    const raw = this.get<CourseUnit[]>('course_units', INITIAL_COURSE_UNITS)
+    return raw.filter((u) => (
+      u &&
+      typeof u.id === 'string' &&
+      !u.id.startsWith('aaaaaaaa-') &&
+      !u.id.startsWith('__ECLAT_') &&
+      !u.title?.startsWith('__ECLAT_') &&
+      !u.title?.includes('SYNC') &&
+      !u.description?.startsWith('{"key":') &&
+      !u.description?.startsWith('{"')
+    ))
   }
 
   async addCourseUnit(unit: CourseUnit): Promise<void> {
@@ -2945,7 +2933,17 @@ class SchoolDataStore {
 
   // --- Admin Subjects / Disciplines Management (ACID Protected) ---
   getSubjects(): CollegeSubject[] {
-    return this.get<CollegeSubject[]>('subjects', INITIAL_SUBJECTS)
+    const raw = this.get<CollegeSubject[]>('subjects', INITIAL_SUBJECTS)
+    return raw.filter((s) => (
+      s &&
+      typeof s.id === 'string' &&
+      !s.id.startsWith('aaaaaaaa-') &&
+      !s.id.startsWith('__ECLAT_') &&
+      !s.name?.startsWith('__ECLAT_') &&
+      !s.name?.includes('SYNC') &&
+      !s.description?.startsWith('{"key":') &&
+      !s.description?.startsWith('{"')
+    ))
   }
 
   async addSubject(sub: CollegeSubject): Promise<void> {

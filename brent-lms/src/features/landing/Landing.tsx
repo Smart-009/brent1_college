@@ -365,7 +365,17 @@ export function Landing() {
     const storeSubjects = schoolStore.getSubjects()
     const storeUnits = schoolStore.getCourseUnits()
     const dynamicList = getDynamicCoursesList(storeSubjects, storeUnits)
-    return dynamicList.map(mapProgramToCourseItem)
+    return dynamicList
+      .filter(
+        (c) =>
+          c &&
+          !c.id?.startsWith('aaaaaaaa-') &&
+          !c.id?.startsWith('__ECLAT_') &&
+          !c.title?.startsWith('__ECLAT_') &&
+          !c.careerOutcome?.startsWith('{') &&
+          !c.careerOutcome?.includes('{"key"')
+      )
+      .map(mapProgramToCourseItem)
   }
 
   const [coursesList, setCoursesList] = useState<CourseItem[]>(() => buildCourseItems())

@@ -388,12 +388,36 @@ export function getDynamicCoursesList(
     }
   })() : {})
 
+  const safeStoreSubjects = (storeSubjects || []).filter(
+    (s) =>
+      s &&
+      typeof s.id === 'string' &&
+      !s.id.startsWith('aaaaaaaa-') &&
+      !s.id.startsWith('__ECLAT_') &&
+      !s.name?.startsWith('__ECLAT_') &&
+      !s.name?.includes('SYNC') &&
+      !s.description?.startsWith('{"key":') &&
+      !s.description?.startsWith('{')
+  )
+
+  const safeStoreUnits = (storeUnits || []).filter(
+    (u) =>
+      u &&
+      typeof u.id === 'string' &&
+      !u.id.startsWith('aaaaaaaa-') &&
+      !u.id.startsWith('__ECLAT_') &&
+      !u.title?.startsWith('__ECLAT_') &&
+      !u.title?.includes('SYNC') &&
+      !u.description?.startsWith('{"key":') &&
+      !u.description?.startsWith('{')
+  )
+
   const programs: CourseProgram[] = []
   const usedSubjectIds = new Set<string>()
   const usedUnitIds = new Set<string>()
 
   for (const base of OFFICIAL_COURSES) {
-    const matchedSub = storeSubjects.find((s) => {
+    const matchedSub = safeStoreSubjects.find((s) => {
       if (s.id === base.id || s.id === `sub-${base.id.replace(/^c-/, '')}`) return true
       if (s.code && (s.code.toLowerCase() === base.id.toLowerCase() || s.code.toLowerCase() === base.shortTitle.toLowerCase())) return true
       const baseClean = base.shortTitle.toLowerCase().replace(/[^a-z0-9]/g, '')
@@ -402,7 +426,7 @@ export function getDynamicCoursesList(
     })
     if (matchedSub) usedSubjectIds.add(matchedSub.id)
 
-    const matchedUnit = storeUnits.find((u) => {
+    const matchedUnit = safeStoreUnits.find((u) => {
       if (u.id === base.id) return true
       if (u.code && (u.code.toLowerCase() === base.id.toLowerCase() || u.code.toLowerCase() === base.shortTitle.toLowerCase())) return true
       const baseClean = base.shortTitle.toLowerCase().replace(/[^a-z0-9]/g, '')
@@ -428,13 +452,13 @@ export function getDynamicCoursesList(
       ...feeCalculations,
       title: matchedSub?.name || matchedUnit?.title || base.title,
       duration: matchedSub?.duration || matchedUnit?.course_duration || base.duration,
-      careerOutcome: matchedSub?.description || base.careerOutcome,
+      careerOutcome: (matchedSub?.description && !matchedSub.description.startsWith('{')) ? matchedSub.description : base.careerOutcome,
       skills: matchedSub?.careers && matchedSub.careers.length > 0 ? matchedSub.careers : base.skills,
     })
   }
 
   // Also append custom subjects created by admin
-  for (const sub of storeSubjects) {
+  for (const sub of safeStoreSubjects) {
     if (usedSubjectIds.has(sub.id)) continue
     const customOverrideFee = activeCustomFees?.[sub.id]
     const feeUsd = (typeof customOverrideFee === 'number' && customOverrideFee >= 0)
@@ -455,7 +479,7 @@ export function getDynamicCoursesList(
       instructor: 'Éclat Institute Certified Faculty',
       departmentId: sub.department_id || 'dept-general',
       departmentName: sub.department_name || 'Academic Faculty',
-      careerOutcome: sub.description || `${sub.name} Certified Specialist`,
+      careerOutcome: (sub.description && !sub.description.startsWith('{')) ? sub.description : `${sub.name} Certified Specialist`,
       skills: sub.careers || ['Live Virtual Classes', 'Verified E-Certificate'],
       icon: sub.icon || '💻',
       popular: true,
@@ -470,7 +494,7 @@ export function getDynamicCoursesList(
   }
 
   // Also append custom course units created by faculty
-  for (const unit of storeUnits) {
+  for (const unit of safeStoreUnits) {
     if (usedUnitIds.has(unit.id)) continue
     const customOverrideFee = activeCustomFees?.[unit.id]
     const feeUsd = (typeof customOverrideFee === 'number' && customOverrideFee >= 0)
@@ -491,7 +515,7 @@ export function getDynamicCoursesList(
       instructor: unit.teacher_name || 'Éclat Faculty Specialist',
       departmentId: 'dept-curriculum',
       departmentName: unit.department || 'Department of Technology',
-      careerOutcome: unit.description || 'Certified Online Graduate',
+      careerOutcome: (unit.description && !unit.description.startsWith('{')) ? unit.description : 'Certified Online Graduate',
       skills: unit.syllabus_modules?.flatMap((m) => m.topics) || ['Live Interactive Virtual Classes', 'Verified E-Certificate'],
       icon: '🎨',
       popular: true,
