@@ -134,6 +134,7 @@ export function YouTubeEmbed({
   const [isMuted, setIsMuted] = useState(false)
   const [playbackRate, setPlaybackRate] = useState(1)
   const [isFullscreen, setIsFullscreen] = useState(false)
+  const [screenSize, setScreenSize] = useState<'small' | 'medium' | 'full'>('medium')
   const [isTheater, setIsTheater] = useState(false)
   const [showControls, setShowControls] = useState(true)
   const [isBuffering, setIsBuffering] = useState(false)
@@ -162,6 +163,7 @@ export function YouTubeEmbed({
       )
     }
   }, [])
+
 
   // Fullscreen Listener
   useEffect(() => {
@@ -385,13 +387,31 @@ export function YouTubeEmbed({
     triggerRipple('⚡', `${rate}x Speed`)
   }
 
+
+  // Screen Size Controller (Small, Medium, Full)
+  const setPlayerScreenSize = (mode: 'small' | 'medium' | 'full') => {
+    setScreenSize(mode)
+    if (mode === 'full') {
+      setIsFullscreen(true)
+      if (containerRef.current && !document.fullscreenElement) {
+        containerRef.current.requestFullscreen().catch(() => {})
+      }
+      triggerRipple('⛶', 'Full Screen')
+    } else {
+      setIsFullscreen(false)
+      if (document.fullscreenElement) {
+        document.exitFullscreen().catch(() => {})
+      }
+      triggerRipple(mode === 'small' ? '📱' : '💻', mode === 'small' ? 'Small View' : 'Medium View')
+    }
+  }
+
   // Fullscreen
   const toggleFullscreen = () => {
-    if (!containerRef.current) return
-    if (!document.fullscreenElement) {
-      containerRef.current.requestFullscreen().catch(() => {})
+    if (isFullscreen || screenSize === 'full') {
+      setPlayerScreenSize('medium')
     } else {
-      document.exitFullscreen().catch(() => {})
+      setPlayerScreenSize('full')
     }
   }
 
@@ -644,21 +664,109 @@ export function YouTubeEmbed({
           transition: 'all 0.3s ease',
         }}
       >
+        {/* Screen Size Switcher Bar (Small, Medium, Full) */}
+        {!isFullscreen && screenSize !== 'full' && (
+          <div
+            style={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              marginBottom: '0.5rem',
+              padding: '0 2px',
+            }}
+          >
+            <div style={{ display: 'inline-flex', alignItems: 'center', gap: '4px', background: 'var(--color-bg-secondary)', padding: '3px 4px', borderRadius: '8px', border: '1px solid var(--color-border)' }}>
+              <span style={{ fontSize: '0.72rem', fontWeight: 800, color: 'var(--color-text-secondary)', padding: '0 4px' }}>SCREEN:</span>
+              <button
+                type="button"
+                onClick={() => setPlayerScreenSize('small')}
+                style={{
+                  background: screenSize === 'small' ? '#2563eb' : 'transparent',
+                  color: screenSize === 'small' ? '#ffffff' : 'var(--color-text-secondary)',
+                  border: 'none',
+                  borderRadius: '6px',
+                  padding: '3px 8px',
+                  fontSize: '0.72rem',
+                  fontWeight: 800,
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '3px',
+                }}
+              >
+                <span>📱</span> Small
+              </button>
+              <button
+                type="button"
+                onClick={() => setPlayerScreenSize('medium')}
+                style={{
+                  background: screenSize === 'medium' ? '#2563eb' : 'transparent',
+                  color: screenSize === 'medium' ? '#ffffff' : 'var(--color-text-secondary)',
+                  border: 'none',
+                  borderRadius: '6px',
+                  padding: '3px 8px',
+                  fontSize: '0.72rem',
+                  fontWeight: 800,
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '3px',
+                }}
+              >
+                <span>💻</span> Medium
+              </button>
+              <button
+                type="button"
+                onClick={() => setPlayerScreenSize('full')}
+                style={{
+                  background: 'transparent',
+                  color: 'var(--color-text-secondary)',
+                  border: 'none',
+                  borderRadius: '6px',
+                  padding: '3px 8px',
+                  fontSize: '0.72rem',
+                  fontWeight: 800,
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '3px',
+                }}
+              >
+                <span>⛶</span> Full Screen
+              </button>
+            </div>
+
+            <div style={{ fontSize: '0.72rem', color: 'var(--color-text-secondary)', fontWeight: 600 }}>
+              {screenSize === 'small' ? 'Compact Window' : 'Standard Cinema'}
+            </div>
+          </div>
+        )}
+
         <div
           ref={containerRef}
           onMouseMove={handleMouseMove}
           onMouseLeave={() => isPlaying && !showSettings && setShowControls(false)}
           style={{
-            position: 'relative',
-            width: '100%',
-            paddingTop: isFullscreen ? '0' : (isTheater ? '0' : (isMobile ? '56.25%' : 'min(56.25%, 72vh)')),
-            height: isFullscreen ? '100vh' : (isTheater ? 'calc(82vh)' : 'auto'),
-            minHeight: isFullscreen ? '100vh' : (isTheater ? '480px' : (isMobile ? '240px' : '440px')),
-            maxHeight: isFullscreen ? '100vh' : (isTheater ? 'calc(86vh)' : 'calc(80vh)'),
+            position: isFullscreen || screenSize === 'full' ? 'fixed' : 'relative',
+            top: isFullscreen || screenSize === 'full' ? 0 : 'auto',
+            left: isFullscreen || screenSize === 'full' ? 0 : 'auto',
+            right: isFullscreen || screenSize === 'full' ? 0 : 'auto',
+            bottom: isFullscreen || screenSize === 'full' ? 0 : 'auto',
+            width: isFullscreen || screenSize === 'full' ? '100vw' : '100%',
+            height: isFullscreen || screenSize === 'full'
+              ? '100vh'
+              : (screenSize === 'small'
+                ? (isMobile ? '200px' : '260px')
+                : (isMobile ? 'min(56.25vw, 320px)' : (isTheater ? 'calc(82vh)' : 'calc(65vh)'))),
+            minHeight: isFullscreen || screenSize === 'full'
+              ? '100vh'
+              : (screenSize === 'small' ? (isMobile ? '190px' : '240px') : (isMobile ? '220px' : '400px')),
+            maxHeight: isFullscreen || screenSize === 'full' ? '100vh' : 'none',
+            zIndex: isFullscreen || screenSize === 'full' ? 999999 : 1,
             background: '#040711',
-            borderRadius: isFullscreen ? '0' : '18px',
+            borderRadius: isFullscreen || screenSize === 'full' ? '0' : '18px',
             overflow: 'hidden',
-            boxShadow: '0 16px 48px rgba(0, 0, 0, 0.75), 0 0 0 1px rgba(255, 255, 255, 0.1)',
+            boxShadow: isFullscreen || screenSize === 'full' ? 'none' : '0 16px 48px rgba(0, 0, 0, 0.75), 0 0 0 1px rgba(255, 255, 255, 0.1)',
             userSelect: 'none',
           }}
         >
@@ -805,24 +913,50 @@ export function YouTubeEmbed({
               zIndex: 15,
             }}
           >
-            <div
-              style={{
-                background: 'rgba(9, 13, 22, 0.9)',
-                backdropFilter: 'blur(10px)',
-                color: '#f8fafc',
-                padding: '6px 14px',
-                borderRadius: '10px',
-                fontSize: '0.74rem',
-                fontWeight: 800,
-                display: 'flex',
-                alignItems: 'center',
-                gap: '8px',
-                border: '1px solid rgba(255, 255, 255, 0.15)',
-                boxShadow: '0 4px 16px rgba(0,0,0,0.4)',
-              }}
-            >
-              <span>🎓</span>
-              <span>ÉCLAT INSTITUTE • SECURE IN-APP VIDEO STREAM</span>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <div
+                style={{
+                  background: 'rgba(9, 13, 22, 0.9)',
+                  backdropFilter: 'blur(10px)',
+                  color: '#f8fafc',
+                  padding: '6px 14px',
+                  borderRadius: '10px',
+                  fontSize: '0.74rem',
+                  fontWeight: 800,
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '8px',
+                  border: '1px solid rgba(255, 255, 255, 0.15)',
+                  boxShadow: '0 4px 16px rgba(0,0,0,0.4)',
+                }}
+              >
+                <span>🎓</span>
+                <span>ÉCLAT INSTITUTE • SECURE STREAM</span>
+              </div>
+
+              {(isFullscreen || screenSize === 'full') && (
+                <button
+                  type="button"
+                  onClick={() => setPlayerScreenSize('medium')}
+                  style={{
+                    background: 'rgba(239, 68, 68, 0.85)',
+                    color: '#ffffff',
+                    border: 'none',
+                    borderRadius: '8px',
+                    padding: '6px 12px',
+                    fontSize: '0.74rem',
+                    fontWeight: 800,
+                    cursor: 'pointer',
+                    pointerEvents: 'auto',
+                    boxShadow: '0 4px 12px rgba(239, 68, 68, 0.4)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '4px',
+                  }}
+                >
+                  <span>⤦</span> Exit Full Screen
+                </button>
+              )}
             </div>
 
             {resumedNotice && (

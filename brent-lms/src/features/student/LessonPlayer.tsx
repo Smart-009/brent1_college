@@ -532,21 +532,10 @@ export function LessonPlayer() {
   return (
     <div className="lesson-page animate-fade-in">
       {/* Sleek Minimal Header */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.75rem', flexWrap: 'wrap', gap: '0.5rem' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.75rem' }}>
         <Link to={`/student/courses/${lesson.course_id}`} className="lesson-back-link" style={{ margin: 0, fontWeight: 700, fontSize: '0.85rem' }}>
           ← Back to {course?.title || 'Course'}
         </Link>
-        {((lesson as any).meeting_url || data?.unit?.live_meeting_url) && (
-          <a
-            href={(lesson as any).meeting_url || data?.unit?.live_meeting_url}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="btn btn-xs btn-primary"
-            style={{ fontWeight: 800, padding: '0.35rem 0.85rem', borderRadius: '6px', textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: '0.4rem' }}
-          >
-            <span>🎥</span> Join Google Meet Live Session ↗
-          </a>
-        )}
       </div>
 
       <div style={{ marginBottom: '0.85rem' }}>
@@ -681,6 +670,57 @@ export function LessonPlayer() {
       ) : (
         <div className="alert alert-info mt-6">
           ℹ️ No quiz for this lesson. You may proceed to the next module.
+        </div>
+      )}
+
+      {/* Dedicated Faculty Live Zoom & Google Meet Virtual Classroom (Outside Video Player Environment) */}
+      {((lesson as any).meeting_url || data?.unit?.live_meeting_url) && (
+        <div
+          className="card"
+          style={{
+            marginTop: '2rem',
+            padding: '1.25rem 1.5rem',
+            background: 'linear-gradient(135deg, #1e3a8a 0%, #0f172a 100%)',
+            color: '#ffffff',
+            borderRadius: '12px',
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            flexWrap: 'wrap',
+            gap: '1rem',
+            border: '1px solid rgba(59, 130, 246, 0.3)',
+            boxShadow: '0 4px 18px rgba(30, 58, 138, 0.25)',
+          }}
+        >
+          <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+            <div style={{ fontSize: '2rem', background: 'rgba(255,255,255,0.15)', padding: '0.5rem', borderRadius: '50%' }}>🎥</div>
+            <div>
+              <div style={{ fontSize: '1.05rem', fontWeight: 800 }}>Faculty Live Zoom / Google Meet Session</div>
+              <div style={{ fontSize: '0.82rem', color: '#93c5fd', marginTop: '2px' }}>
+                {data?.unit?.live_schedule_text || 'Interactive live classroom scheduled. Click to join faculty instructor in real time.'}
+              </div>
+            </div>
+          </div>
+          <a
+            href={(lesson as any).meeting_url || data?.unit?.live_meeting_url}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="btn"
+            style={{
+              background: '#2563eb',
+              color: '#ffffff',
+              fontWeight: 800,
+              padding: '0.65rem 1.4rem',
+              borderRadius: '8px',
+              textDecoration: 'none',
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '0.5rem',
+              boxShadow: '0 2px 10px rgba(37,99,235,0.4)',
+            }}
+          >
+            <span>🎥</span> Join Live Class ↗
+          </a>
         </div>
       )}
 
