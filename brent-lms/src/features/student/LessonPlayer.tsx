@@ -12,6 +12,7 @@ import { Button } from '@/components/ui/Button'
 import { Spinner } from '@/components/ui/Spinner'
 import { schoolStore, schoolEventBus } from '@/lib/schoolData'
 import { getEmbeddableDocumentUrl } from '@/lib/utils'
+import { INSTITUTION_CONFIG, getWhatsAppInquiryUrl } from '@/config/institution'
 import type { Lesson, Course, Quiz, LessonResource, Enrollment, QuizAttempt } from '@/lib/database.types'
 
 function HtmlViewer({ fileUrl, title }: { fileUrl: string; title: string }) {
@@ -528,6 +529,159 @@ export function LessonPlayer() {
     const regName = (reg.student_name || '').trim().toLowerCase()
     return ((adm && regAdm === adm) || (name && regName === name)) && reg.fee_clearance_status === 'Cleared'
   })
+
+  const isStudentCleared =
+    profile?.role === 'admin' ||
+    profile?.role === 'teacher' ||
+    (profile?.role as any) === 'bursar' ||
+    currentStudent?.fee_cleared === true ||
+    (currentStudent && currentStudent.fee_balance === 0) ||
+    hasClearedInvoice ||
+    hasValidReceipt ||
+    hasUnitRegCleared ||
+    isBiometricCleared ||
+    accessHookFeeCleared
+
+  if (!isStudentCleared) {
+    return (
+      <PageWrapper title="Tuition Clearance Required">
+        <div style={{ maxWidth: '680px', margin: '1.5rem auto', padding: '0 1rem' }}>
+          <div
+            className="card"
+            style={{
+              padding: '2.5rem 1.75rem',
+              textAlign: 'center',
+              borderRadius: '1.25rem',
+              background: 'linear-gradient(145deg, var(--color-bg-secondary), var(--color-bg-primary))',
+              border: '2px solid rgba(239, 68, 68, 0.4)',
+              boxShadow: '0 20px 40px rgba(0,0,0,0.3)',
+            }}
+          >
+            <div
+              style={{
+                width: '76px',
+                height: '76px',
+                borderRadius: '50%',
+                background: 'rgba(239, 68, 68, 0.15)',
+                border: '2px solid rgba(239, 68, 68, 0.4)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                fontSize: '2.4rem',
+                margin: '0 auto 1.25rem',
+              }}
+            >
+              🔒
+            </div>
+
+            <span
+              style={{
+                display: 'inline-block',
+                padding: '0.35rem 0.85rem',
+                borderRadius: '999px',
+                background: 'rgba(239, 68, 68, 0.15)',
+                border: '1px solid rgba(239, 68, 68, 0.3)',
+                color: '#f87171',
+                fontSize: '0.78rem',
+                fontWeight: 800,
+                textTransform: 'uppercase',
+                letterSpacing: '0.05em',
+                marginBottom: '0.75rem',
+              }}
+            >
+              Bursar & Admin Clearance Required
+            </span>
+
+            <h2 style={{ fontSize: '1.5rem', fontWeight: 900, margin: '0 0 0.5rem', color: 'var(--color-text-primary)' }}>
+              Lesson & Module Access Locked
+            </h2>
+
+            <p style={{ color: 'var(--color-text-secondary)', fontSize: '0.92rem', lineHeight: 1.6, margin: '0 auto 1.5rem', maxWidth: '520px' }}>
+              Hello <strong>{profile?.full_name || 'Student'}</strong> (Admission: <strong>{profile?.admission_number || 'N/A'}</strong>).
+              Course lecture videos, downloadable interactive lab materials, and module quizzes are unlocked immediately once your tuition payment is verified and cleared by the Bursar Desk or Administrator.
+            </p>
+
+            {/* Official M-Pesa Payment Box */}
+            <div
+              style={{
+                background: 'var(--color-bg-primary)',
+                border: '1.5px solid var(--color-border)',
+                borderRadius: '1rem',
+                padding: '1.25rem',
+                textAlign: 'left',
+                marginBottom: '1.5rem',
+                boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
+              }}
+            >
+              <div style={{ fontWeight: 800, fontSize: '0.9rem', marginBottom: '0.75rem', color: 'var(--color-primary)', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                <span>📲</span> Official M-Pesa Payment Details
+              </div>
+              <div style={{ fontSize: '0.86rem', color: 'var(--color-text-secondary)', lineHeight: 1.7 }}>
+                <div>1. Go to M-Pesa → Lipa na M-Pesa → <strong>Paybill</strong></div>
+                <div>2. Business Number: <strong style={{ color: 'var(--color-primary)', fontSize: '1rem' }}>{INSTITUTION_CONFIG.bank.paybillNumber}</strong> ({INSTITUTION_CONFIG.bank.name})</div>
+                <div>3. Account Number: <strong style={{ color: 'var(--color-primary)', fontSize: '1rem' }}>{INSTITUTION_CONFIG.bank.accountNumber}</strong></div>
+                <div>4. Account Name: <strong>{INSTITUTION_CONFIG.bank.accountName}</strong></div>
+              </div>
+            </div>
+
+            {/* Direct Support & Verification Actions */}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', maxWidth: '420px', margin: '0 auto' }}>
+              <a
+                href={getWhatsAppInquiryUrl(`Hello Admissions & Bursar Office! My Name is ${profile?.full_name || ''} (Admission: ${profile?.admission_number || ''}). I would like to confirm my fee clearance and activate my LMS course modules.`)}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="btn btn-primary"
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '8px',
+                  padding: '0.85rem 1.25rem',
+                  fontWeight: 800,
+                  fontSize: '0.95rem',
+                  borderRadius: '0.75rem',
+                  textDecoration: 'none',
+                }}
+              >
+                <span>💬</span> Contact Bursar on WhatsApp
+              </a>
+
+              <Link
+                to="/fees"
+                className="btn btn-secondary"
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '8px',
+                  padding: '0.75rem 1.25rem',
+                  fontWeight: 700,
+                  fontSize: '0.88rem',
+                  borderRadius: '0.75rem',
+                  textDecoration: 'none',
+                }}
+              >
+                <span>💳</span> View Invoices & Payment Receipts
+              </Link>
+
+              <Link
+                to="/student/courses"
+                style={{
+                  color: 'var(--color-text-secondary)',
+                  fontSize: '0.82rem',
+                  fontWeight: 600,
+                  marginTop: '0.25rem',
+                  textDecoration: 'none',
+                }}
+              >
+                ← Return to Course Overview
+              </Link>
+            </div>
+          </div>
+        </div>
+      </PageWrapper>
+    )
+  }
 
   return (
     <div className="lesson-page animate-fade-in">

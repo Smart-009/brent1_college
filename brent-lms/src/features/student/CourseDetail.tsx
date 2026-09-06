@@ -10,6 +10,7 @@ import { ProgressBar } from '@/components/ui/ProgressBar'
 import { Button } from '@/components/ui/Button'
 import { Spinner } from '@/components/ui/Spinner'
 import { schoolStore } from '@/lib/schoolData'
+import { INSTITUTION_CONFIG, getWhatsAppInquiryUrl } from '@/config/institution'
 import type { Course, Lesson, Enrollment } from '@/lib/database.types'
 
 function isValidUuid(id?: string): boolean {
@@ -243,6 +244,60 @@ export function CourseDetail() {
   const progressPct = totalLessons > 0 ? Math.round((completedIds.length / totalLessons) * 100) : 0
   const isCourseComplete = !!enrollment?.completed_at
 
+  // Check if student has cleared fees with Bursar or Admin
+  const studentIdentifier = profile?.admission_number || profile?.id || ''
+  const cleanId = studentIdentifier.toLowerCase().trim()
+  const cleanAlpha = cleanId.replace(/[^a-z0-9]/g, '')
+  const profileNameAlpha = (profile?.full_name || '').toLowerCase().replace(/[^a-z0-9]/g, '')
+
+  const studentRecord = schoolStore.getStudents().find((s) => {
+    const sAdm = s.admission_number.toLowerCase().trim()
+    const sAdmAlpha = sAdm.replace(/[^a-z0-9]/g, '')
+    const sNameAlpha = s.full_name.toLowerCase().replace(/[^a-z0-9]/g, '')
+    return (
+      s.id === profile?.id ||
+      sAdm === cleanId ||
+      (cleanAlpha.length > 0 && sAdmAlpha === cleanAlpha) ||
+      (profileNameAlpha.length > 3 && sNameAlpha === profileNameAlpha)
+    )
+  })
+
+  const studentInvoices = schoolStore.getInvoices().filter((inv) => {
+    const iAdm = inv.admission_number.toLowerCase().trim()
+    const iAdmAlpha = iAdm.replace(/[^a-z0-9]/g, '')
+    return (
+      inv.student_id === profile?.id ||
+      iAdm === cleanId ||
+      (cleanAlpha.length > 0 && iAdmAlpha === cleanAlpha)
+    )
+  })
+
+  const studentReceipts = schoolStore.getReceipts().filter((rcpt) => {
+    const rAdm = rcpt.admission_number.toLowerCase().trim()
+    const rAdmAlpha = rAdm.replace(/[^a-z0-9]/g, '')
+    return (
+      rcpt.student_id === profile?.id ||
+      rAdm === cleanId ||
+      (cleanAlpha.length > 0 && rAdmAlpha === cleanAlpha)
+    )
+  })
+
+  const hasClearedInvoice = studentInvoices.some((inv) => inv.status === 'Paid' || inv.balance === 0)
+  const hasValidReceipt = studentReceipts.some((r) => (r.amount_paid ?? r.amount) > 0 || r.balance_remaining === 0)
+  const isBiometricCleared = schoolStore
+    .getBiometricClearanceLogs()
+    .some((p) => p.admission_number.toLowerCase().replace(/[^a-z0-9]/g, '') === cleanAlpha)
+
+  const isStudentCleared =
+    profile?.role === 'admin' ||
+    profile?.role === 'teacher' ||
+    (profile?.role as any) === 'bursar' ||
+    studentRecord?.fee_cleared === true ||
+    (studentRecord && studentRecord.fee_balance === 0) ||
+    hasClearedInvoice ||
+    hasValidReceipt ||
+    isBiometricCleared
+
   return (
     <PageWrapper title={course.title}>
       {/* Back button */}
@@ -258,6 +313,15 @@ export function CourseDetail() {
             {course.class?.name && (
               <span className="badge badge-secondary">Class: {course.class.name}</span>
             )}
+            {isStudentCleared ? (
+              <span className="badge badge-success" style={{ fontWeight: 800 }}>
+                ✅ Cleared by Bursar
+              </span>
+            ) : (
+              <span className="badge badge-warning" style={{ fontWeight: 800, background: '#fef3c7', color: '#92400e', border: '1px solid #fcd34d' }}>
+                ⏳ Pending Bursar Clearance
+              </span>
+            )}
           </div>
 
           <h1 className="course-card-title" style={{ fontSize: 'var(--text-3xl)' }}>
@@ -272,6 +336,29 @@ export function CourseDetail() {
             <span>👩‍🏫 Instructor: <strong>{course.teacher?.full_name || 'Eclat Teacher'}</strong></span>
             <span>📖 {totalLessons} Modules</span>
           </div>
+
+          {/* Pending Clearance Warning Notice */}
+          {!isStudentCleared && (
+            <div
+              style={{
+                background: 'rgba(239, 68, 68, 0.08)',
+                border: '1.5px solid rgba(239, 68, 68, 0.3)',
+                borderRadius: '8px',
+                padding: '1rem',
+                marginTop: '1rem',
+                fontSize: '0.86rem',
+                color: 'var(--color-text)',
+                lineHeight: 1.6,
+              }}
+            >
+              <div style={{ fontWeight: 800, color: '#dc2626', marginBottom: '0.35rem', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                <span>🔒</span> Bursar Tuition Clearance Required to Stream Video Lectures
+              </div>
+              <div>
+                To unlock lecture videos and interactive materials, please pay tuition via M-Pesa Paybill <strong>{INSTITUTION_CONFIG.bank.paybillNumber}</strong> (Account: <strong>{INSTITUTION_CONFIG.bank.accountNumber}</strong>) and contact the Bursar Desk to clear your portal account.
+              </div>
+            </div>
+          )}
 
           {/* Enrollment or Progress */}
           {!isEnrolled ? (

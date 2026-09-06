@@ -4,6 +4,7 @@ import { useAuth } from '@/hooks/useAuth'
 import { PageWrapper } from '@/components/layout/PageWrapper'
 import { schoolStore, schoolEventBus } from '@/lib/schoolData'
 import { UnitRegistrationSlip } from '@/components/shared/UnitRegistrationSlip'
+import { INSTITUTION_CONFIG, getWhatsAppInquiryUrl } from '@/config/institution'
 import type { CourseUnit } from '@/types/school'
 
 export function CourseList() {
@@ -415,13 +416,14 @@ export function CourseList() {
 
                     <div style={{ background: 'var(--color-bg-secondary)', padding: '1rem', borderRadius: '8px', border: '1px solid var(--color-border)' }}>
                       <div style={{ fontWeight: 800, fontSize: '0.85rem', marginBottom: '0.5rem', color: 'var(--color-primary)' }}>
-                        📲 M-Pesa Payment Instructions:
+                        📲 Official M-Pesa Payment Instructions:
                       </div>
                       <div style={{ fontSize: '0.82rem', color: 'var(--color-text-secondary)', lineHeight: 1.6 }}>
                         1. Go to M-Pesa → Lipa na M-Pesa → <strong>Paybill</strong><br />
-                        2. Business No: <strong>400200</strong><br />
-                        3. Account No: <strong>{profile?.admission_number || 'EI-STUDENT'}</strong><br />
-                        4. Enter Amount and M-Pesa PIN, then enter the Confirmation Code below:
+                        2. Business No: <strong>{INSTITUTION_CONFIG.bank.paybillNumber}</strong> ({INSTITUTION_CONFIG.bank.name})<br />
+                        3. Account No: <strong>{INSTITUTION_CONFIG.bank.accountNumber}</strong><br />
+                        4. Account Name: <strong>{INSTITUTION_CONFIG.bank.accountName}</strong><br />
+                        5. Enter Amount and M-Pesa PIN, then enter your M-Pesa Confirmation Code below:
                       </div>
                     </div>
 

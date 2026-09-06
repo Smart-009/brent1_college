@@ -111,20 +111,22 @@ export function useAccess() {
     if (!profile) return
     if (profile.role === 'admin' || profile.role === 'teacher' || (profile.role as any) === 'bursar' || (profile.role as any) === 'parent') return
 
-    // Auto-grant active term access for all enrolled students
-    if (!profile.access_expires_at || isAccessExpired(profile.access_expires_at)) {
-      const renewed = new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString()
-      const updated = { ...profile, access_expires_at: renewed }
-      try {
-        localStorage.setItem('eclat_active_profile', JSON.stringify(updated))
-        sessionStorage.setItem('eclat_active_profile', JSON.stringify(updated))
-      } catch {}
-      Promise.resolve(
-        supabase
-          .from('profiles')
-          .update({ access_expires_at: renewed })
-          .eq('id', profile.id)
-      ).catch(() => {})
+    // Grant active term access only if student is cleared by Bursar or Admin
+    if (isFeeCleared) {
+      if (!profile.access_expires_at || isAccessExpired(profile.access_expires_at)) {
+        const renewed = new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString()
+        const updated = { ...profile, access_expires_at: renewed }
+        try {
+          localStorage.setItem('eclat_active_profile', JSON.stringify(updated))
+          sessionStorage.setItem('eclat_active_profile', JSON.stringify(updated))
+        } catch {}
+        Promise.resolve(
+          supabase
+            .from('profiles')
+            .update({ access_expires_at: renewed })
+            .eq('id', profile.id)
+        ).catch(() => {})
+      }
     }
   }, [profile, isFeeCleared])
 
