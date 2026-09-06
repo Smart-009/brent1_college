@@ -780,11 +780,12 @@ export function YouTubeEmbed({
             height: isFullscreen || screenSize === 'full'
               ? '100vh'
               : (screenSize === 'small'
-                ? (isMobile ? '240px' : '280px')
-                : (isMobile ? 'clamp(300px, 52vh, 480px)' : (isTheater ? 'calc(82vh)' : 'calc(65vh)'))),
+                ? (isMobile ? '220px' : '260px')
+                : (isTheater ? 'calc(82vh)' : 'auto')),
+            aspectRatio: (!isFullscreen && screenSize !== 'full' && !isTheater && screenSize !== 'small') ? '16 / 9' : 'auto',
             minHeight: isFullscreen || screenSize === 'full'
               ? '100vh'
-              : (screenSize === 'small' ? (isMobile ? '220px' : '260px') : (isMobile ? '300px' : '440px')),
+              : (screenSize === 'small' ? (isMobile ? '200px' : '240px') : (isMobile ? '220px' : '360px')),
             maxHeight: isFullscreen || screenSize === 'full' ? '100vh' : 'none',
             zIndex: isFullscreen || screenSize === 'full' ? 999999 : 1,
             background: '#040711',
@@ -835,7 +836,7 @@ export function YouTubeEmbed({
                   left: 0,
                   width: '100%',
                   height: '100%',
-                  objectFit: 'contain',
+                  objectFit: 'cover',
                 }}
               />
             ) : (
