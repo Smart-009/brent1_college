@@ -138,6 +138,8 @@ export function YouTubeEmbed({
   const [showControls, setShowControls] = useState(true)
   const [isBuffering, setIsBuffering] = useState(false)
   const [showSettings, setShowSettings] = useState(false)
+  const [showZoomMenu, setShowZoomMenu] = useState(false)
+  const [zoomLevel, setZoomLevel] = useState<number | 'fill'>(1)
   const [rippleAction, setRippleAction] = useState<{ icon: string; text: string } | null>(null)
   const [hoverScrubTime, setHoverScrubTime] = useState<number | null>(null)
   const [hoverScrubX, setHoverScrubX] = useState<number>(0)
@@ -178,6 +180,26 @@ export function YouTubeEmbed({
   const triggerRipple = (icon: string, text: string) => {
     setRippleAction({ icon, text })
     setTimeout(() => setRippleAction(null), 650)
+  }
+
+
+  // Zoom Level Cycle
+  const zoomOptions: { label: string; val: number | 'fill' }[] = [
+    { label: '100% Fit', val: 1 },
+    { label: '125%', val: 1.25 },
+    { label: '150%', val: 1.5 },
+    { label: '175%', val: 1.75 },
+    { label: '200%', val: 2 },
+    { label: 'Fill Screen', val: 'fill' },
+  ]
+
+  const cycleZoom = () => {
+    setZoomLevel((prev) => {
+      const idx = zoomOptions.findIndex((o) => o.val === prev)
+      const nextOpt = zoomOptions[(idx + 1) % zoomOptions.length]
+      triggerRipple('🔍', nextOpt.label)
+      return nextOpt.val
+    })
   }
 
   // Direct Video Handlers
@@ -462,6 +484,29 @@ export function YouTubeEmbed({
           else if (videoId) postToYouTube('setVolume', [Math.round(nv * 100)])
           return nv
         })
+      } else if (e.key === 'z' || e.key === 'Z') {
+        e.preventDefault()
+        cycleZoom()
+      } else if (e.key === '+' || e.key === '=') {
+        e.preventDefault()
+        setZoomLevel((prev) => {
+          const cur = typeof prev === 'number' ? prev : 1
+          const nextVal = Math.min(2.5, Number((cur + 0.25).toFixed(2)))
+          triggerRipple('🔍', `${Math.round(nextVal * 100)}%`)
+          return nextVal
+        })
+      } else if (e.key === '-' || e.key === '_') {
+        e.preventDefault()
+        setZoomLevel((prev) => {
+          const cur = typeof prev === 'number' ? prev : 1
+          const nextVal = Math.max(0.75, Number((cur - 0.25).toFixed(2)))
+          triggerRipple('🔍', `${Math.round(nextVal * 100)}%`)
+          return nextVal
+        })
+      } else if (e.key === '0') {
+        e.preventDefault()
+        setZoomLevel(1)
+        triggerRipple('🔍', '100% Fit')
       }
     }
 
@@ -617,52 +662,69 @@ export function YouTubeEmbed({
             userSelect: 'none',
           }}
         >
-          {/* MEDIA RENDERER */}
-          {isDirect ? (
-            <video
-              ref={videoRef}
-              src={url}
-              autoPlay={autoPlay}
-              playsInline
-              onTimeUpdate={handleDirectTimeUpdate}
-              onLoadedMetadata={handleLoadedMetadata}
-              onWaiting={() => setIsBuffering(true)}
-              onPlaying={() => {
-                setIsBuffering(false)
-                setIsPlaying(true)
-              }}
-              onPause={() => setIsPlaying(false)}
-              onEnded={() => {
-                setIsPlaying(false)
-                saveProgress(duration, duration)
-              }}
-              style={{
-                position: isFullscreen ? 'static' : 'absolute',
-                top: 0,
-                left: 0,
-                width: '100%',
-                height: '100%',
-                objectFit: 'contain',
-              }}
-            />
-          ) : (
-            <iframe
-              ref={iframeRef}
-              src={`https://www.youtube-nocookie.com/embed/${videoId}?${ytParams.toString()}`}
-              title={title}
-              onLoad={handleIframeLoad}
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-              style={{
-                position: 'absolute',
-                top: 0,
-                left: 0,
-                width: '100%',
-                height: '100%',
-                border: 0,
-                pointerEvents: 'none',
-              }}
-            />
-          )}
+          {/* MEDIA RENDERER (WITH HARDWARE-ACCELERATED ZOOM ENGINE) */}
+          <div
+            style={{
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              width: '100%',
+              height: '100%',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              transform: zoomLevel === 'fill' ? 'scale(1.35)' : `scale(${zoomLevel})`,
+              transformOrigin: 'center center',
+              transition: 'transform 0.25s cubic-bezier(0.2, 0, 0, 1)',
+              pointerEvents: 'none',
+            }}
+          >
+            {isDirect ? (
+              <video
+                ref={videoRef}
+                src={url}
+                autoPlay={autoPlay}
+                playsInline
+                onTimeUpdate={handleDirectTimeUpdate}
+                onLoadedMetadata={handleLoadedMetadata}
+                onWaiting={() => setIsBuffering(true)}
+                onPlaying={() => {
+                  setIsBuffering(false)
+                  setIsPlaying(true)
+                }}
+                onPause={() => setIsPlaying(false)}
+                onEnded={() => {
+                  setIsPlaying(false)
+                  saveProgress(duration, duration)
+                }}
+                style={{
+                  position: 'absolute',
+                  top: 0,
+                  left: 0,
+                  width: '100%',
+                  height: '100%',
+                  objectFit: 'contain',
+                }}
+              />
+            ) : (
+              <iframe
+                ref={iframeRef}
+                src={`https://www.youtube-nocookie.com/embed/${videoId}?${ytParams.toString()}`}
+                title={title}
+                onLoad={handleIframeLoad}
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                style={{
+                  position: 'absolute',
+                  top: 0,
+                  left: 0,
+                  width: '100%',
+                  height: '100%',
+                  border: 0,
+                  pointerEvents: 'none',
+                }}
+              />
+            )}
+          </div>
 
           {/* INTERACTIVE POINTER INTERCEPTOR AREA */}
           <div
@@ -1059,8 +1121,8 @@ export function YouTubeEmbed({
                   ↻ 10
                 </button>
 
-                {/* Volume & Slide-out slider */}
-                <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                {/* Volume & Slide-out slider with audio percentage feedback */}
+                <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
                   <button
                     type="button"
                     onClick={toggleMute}
@@ -1068,23 +1130,36 @@ export function YouTubeEmbed({
                       background: 'none',
                       color: '#cbd5e1',
                       border: 'none',
-                      fontSize: '1.1rem',
+                      fontSize: '1.15rem',
                       cursor: 'pointer',
                       padding: '2px',
+                      display: 'flex',
+                      alignItems: 'center',
                     }}
-                    title={isMuted || volume === 0 ? 'Unmute (m)' : 'Mute (m)'}
+                    title={isMuted || volume === 0 ? 'Unmute (m)' : `Mute (m) • ${Math.round((isMuted ? 0 : volume) * 100)}%`}
                   >
                     {isMuted || volume === 0 ? '🔇' : volume < 0.5 ? '🔉' : '🔊'}
                   </button>
-                  <input
-                    type="range"
-                    min={0}
-                    max={1}
-                    step={0.05}
-                    value={isMuted ? 0 : volume}
-                    onChange={handleVolumeChange}
-                    style={{ width: '50px', accentColor: '#ef4444', height: '4px', cursor: 'pointer' }}
-                  />
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
+                    <input
+                      type="range"
+                      min={0}
+                      max={1}
+                      step={0.05}
+                      value={isMuted ? 0 : volume}
+                      onChange={handleVolumeChange}
+                      style={{
+                        width: isMobile ? '45px' : '65px',
+                        accentColor: '#3b82f6',
+                        height: '4px',
+                        cursor: 'pointer',
+                      }}
+                      title={`Volume: ${Math.round((isMuted ? 0 : volume) * 100)}%`}
+                    />
+                    <span style={{ fontSize: '0.7rem', color: '#94a3b8', minWidth: '28px', fontWeight: 700 }}>
+                      {Math.round((isMuted ? 0 : volume) * 100)}%
+                    </span>
+                  </div>
                 </div>
 
                 {/* Timestamp */}
@@ -1094,7 +1169,85 @@ export function YouTubeEmbed({
               </div>
 
               {/* Right Controls */}
-              <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                {/* Zoom Control Button & Popover */}
+                <div style={{ position: 'relative' }}>
+                  <button
+                    type="button"
+                    onClick={() => setShowZoomMenu((z) => !z)}
+                    style={{
+                      background: zoomLevel !== 1 ? 'rgba(37, 99, 235, 0.4)' : 'none',
+                      color: zoomLevel !== 1 ? '#60a5fa' : '#cbd5e1',
+                      border: 'none',
+                      borderRadius: '6px',
+                      padding: '4px 7px',
+                      fontSize: '0.78rem',
+                      fontWeight: 800,
+                      cursor: 'pointer',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '3px',
+                    }}
+                    title="Zoom Video (z / + / -)"
+                  >
+                    <span>🔍</span>
+                    <span>{zoomLevel === 'fill' ? 'Fill' : `${Math.round((typeof zoomLevel === 'number' ? zoomLevel : 1) * 100)}%`}</span>
+                  </button>
+
+                  {showZoomMenu && (
+                    <div
+                      onClick={(e) => e.stopPropagation()}
+                      style={{
+                        position: 'absolute',
+                        bottom: '36px',
+                        right: '0',
+                        zIndex: 40,
+                        background: 'rgba(15, 23, 42, 0.98)',
+                        backdropFilter: 'blur(16px)',
+                        border: '1px solid rgba(255, 255, 255, 0.15)',
+                        borderRadius: '10px',
+                        padding: '6px',
+                        width: '140px',
+                        boxShadow: '0 10px 30px rgba(0,0,0,0.6)',
+                        color: '#ffffff',
+                      }}
+                    >
+                      <div style={{ fontSize: '0.7rem', fontWeight: 800, textTransform: 'uppercase', color: '#94a3b8', padding: '2px 6px', borderBottom: '1px solid rgba(255,255,255,0.1)', marginBottom: '4px' }}>
+                        🔍 Video Zoom
+                      </div>
+                      {zoomOptions.map((opt) => (
+                        <button
+                          key={String(opt.val)}
+                          type="button"
+                          onClick={() => {
+                            setZoomLevel(opt.val)
+                            setShowZoomMenu(false)
+                            triggerRipple('🔍', opt.label)
+                          }}
+                          style={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'space-between',
+                            width: '100%',
+                            background: zoomLevel === opt.val ? 'rgba(37, 99, 235, 0.35)' : 'transparent',
+                            color: zoomLevel === opt.val ? '#60a5fa' : '#ffffff',
+                            border: 'none',
+                            borderRadius: '5px',
+                            padding: '5px 8px',
+                            fontSize: '0.75rem',
+                            fontWeight: zoomLevel === opt.val ? 800 : 500,
+                            cursor: 'pointer',
+                            textAlign: 'left',
+                          }}
+                        >
+                          <span>{opt.label}</span>
+                          {zoomLevel === opt.val && <span>✓</span>}
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </div>
+
                 {/* Speed / Settings Button */}
                 <button
                   type="button"

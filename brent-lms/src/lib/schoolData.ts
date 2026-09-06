@@ -2832,8 +2832,12 @@ class SchoolDataStore {
     // 1. Check formal unit registration slip
     const reg = this.getRegistrationForStudent(identifier)
     if (reg && reg.registered_unit_ids && reg.registered_unit_ids.length > 0) {
+      const regIds = new Set(reg.registered_unit_ids.map((id) => id.toLowerCase()))
+      const regCodes = new Set((reg.registered_units || []).map((ru) => ru.code?.toLowerCase()).filter(Boolean))
       return allUnits.filter(
         (u) =>
+          regIds.has(u.id.toLowerCase()) ||
+          regCodes.has(u.code.toLowerCase()) ||
           reg.registered_unit_ids.includes(u.id) ||
           reg.registered_units?.some((ru) => ru.code?.toLowerCase() === u.code?.toLowerCase())
       )
@@ -2868,11 +2872,81 @@ class SchoolDataStore {
         )
         if (matched.length > 0) return matched
       }
-
-      if (allUnits.length > 0) return allUnits
     }
 
-    return allUnits
+    return []
+  }
+
+  async addCourseToStudentProgram(studentIdentifier: string, courseUnitId: string): Promise<boolean> {
+    const clean = studentIdentifier.trim().toLowerCase()
+    const students = this.getStudents()
+    const student = students.find(
+      (s) => s.id.toLowerCase() === clean || s.admission_number.toLowerCase() === clean
+    )
+    if (!student) return false
+
+    const allUnits = this.getCourseUnits()
+    const unit = allUnits.find(
+      (u) => u.id.toLowerCase() === courseUnitId.toLowerCase() || u.code.toLowerCase() === courseUnitId.toLowerCase()
+    )
+    if (!unit) return false
+
+    // 1. Update student enrolled_courses
+    const currentEnrolled = student.enrolled_courses || []
+    if (!currentEnrolled.includes(unit.id) && !currentEnrolled.includes(unit.code)) {
+      student.enrolled_courses = [...currentEnrolled, unit.id]
+      const allStd = this.getStudents()
+      const sIdx = allStd.findIndex(
+        (s) => s.id === student.id || s.admission_number.toLowerCase() === student.admission_number.toLowerCase()
+      )
+      if (sIdx !== -1) {
+        allStd[sIdx] = student
+        this.set('students', allStd)
+      }
+    }
+
+    // 2. Update or create UnitRegistrationReceipt
+    const reg = this.getRegistrationForStudent(student.admission_number) || this.getRegistrationForStudent(student.id)
+    if (reg) {
+      const regIds = reg.registered_unit_ids || []
+      if (!regIds.includes(unit.id)) {
+        reg.registered_unit_ids = [...regIds, unit.id]
+        reg.registered_units = [
+          ...(reg.registered_units || []),
+          { code: unit.code, name: unit.title, credits: unit.credit_hours, lecturer: unit.teacher_name || 'Faculty Lecturer' },
+        ]
+        reg.total_credits = (reg.total_credits || 0) + unit.credit_hours
+        await this.registerStudentUnits(reg)
+      }
+    } else {
+      const newSlip: UnitRegistrationReceipt = {
+        id: `reg-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`,
+        receipt_number: `REG-${new Date().getFullYear()}-${student.admission_number.replace(/[^0-9]/g, '') || Math.floor(1000 + Math.random() * 9000)}`,
+        student_id: student.id,
+        student_name: student.full_name,
+        admission_number: student.admission_number,
+        course_name: unit.title,
+        course_duration: unit.course_duration || '3 Months Short Course',
+        semester: 'Term 1 / Cohort 2026',
+        registered_unit_ids: [unit.id],
+        registered_units: [
+          { code: unit.code, name: unit.title, credits: unit.credit_hours, lecturer: unit.teacher_name || 'Faculty Lecturer' },
+        ],
+        total_credits: unit.credit_hours,
+        fee_clearance_status: 'Cleared',
+        verified_by: 'Academic Registrar & Admissions Desk',
+        timestamp: new Date().toISOString(),
+        qr_code_data: `ECLAT-REG-${student.admission_number}-${unit.code}`,
+      }
+      await this.registerStudentUnits(newSlip)
+    }
+
+    schoolEventBus.publish('STUDENT_UPDATED', student)
+    schoolEventBus.publish('UNIT_REGISTRATION_COMPLETED' as any)
+    window.dispatchEvent(new CustomEvent('eclat-courses-updated', { detail: { studentId: student.id, unitId: unit.id } }))
+    window.dispatchEvent(new CustomEvent('eclat-data-synced'))
+    await this.syncWithCloud(true).catch(() => {})
+    return true
   }
 
   async unlockStudentLessons(identifier: string, officerName: string = 'Bursar & Admissions Office'): Promise<void> {

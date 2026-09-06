@@ -531,96 +531,73 @@ export function LessonPlayer() {
 
   return (
     <div className="lesson-page animate-fade-in">
-      {/* Navigation link back to course */}
-      <Link to={`/student/courses/${lesson.course_id}`} className="lesson-back-link">
-        ← Back to {course?.title || 'Course'}
-      </Link>
+      {/* Sleek Minimal Header */}
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.75rem', flexWrap: 'wrap', gap: '0.5rem' }}>
+        <Link to={`/student/courses/${lesson.course_id}`} className="lesson-back-link" style={{ margin: 0, fontWeight: 700, fontSize: '0.85rem' }}>
+          ← Back to {course?.title || 'Course'}
+        </Link>
+        {((lesson as any).meeting_url || data?.unit?.live_meeting_url) && (
+          <a
+            href={(lesson as any).meeting_url || data?.unit?.live_meeting_url}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="btn btn-xs btn-primary"
+            style={{ fontWeight: 800, padding: '0.35rem 0.85rem', borderRadius: '6px', textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: '0.4rem' }}
+          >
+            <span>🎥</span> Join Google Meet Live Session ↗
+          </a>
+        )}
+      </div>
 
-      <h1 className="lesson-title">{lesson.title}</h1>
-      {lesson.description && <p className="lesson-desc">{lesson.description}</p>}
+      <div style={{ marginBottom: '0.85rem' }}>
+        <h1 className="lesson-title" style={{ fontSize: '1.35rem', margin: '0 0 0.2rem', fontWeight: 800 }}>{lesson.title}</h1>
+        {lesson.description && <p className="lesson-desc" style={{ fontSize: '0.85rem', margin: 0, color: 'var(--color-text-secondary)' }}>{lesson.description}</p>}
+      </div>
 
-      {/* Live Virtual Classroom Google Meet / Zoom Banner */}
-      {((lesson as any).meeting_url || data?.unit?.live_meeting_url) && (
-            <div
-              style={{
-                background: 'linear-gradient(135deg, #1e3a8a, #2563eb)',
-                color: '#ffffff',
-                borderRadius: '12px',
-                padding: '1.25rem 1.5rem',
-                marginBottom: '1.5rem',
-                display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-                flexWrap: 'wrap',
-                gap: '1rem',
-                boxShadow: '0 4px 15px rgba(37,99,235,0.25)',
-              }}
-            >
-              <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-                <div style={{ fontSize: '2.2rem', background: 'rgba(255,255,255,0.2)', padding: '0.5rem', borderRadius: '50%' }}>🎥</div>
-                <div>
-                  <div style={{ fontSize: '1.05rem', fontWeight: 800 }}>Live Virtual Classroom & Interactive Lab</div>
-                  <div style={{ fontSize: '0.8rem', opacity: 0.9 }}>
-                    {data?.unit?.live_schedule_text || 'Interactive live session active. Click to join faculty instructor.'}
-                  </div>
-                </div>
+      {/* Universal Smart Video Player (With Auto-Resume & Auto-Completion) */}
+      <YouTubeEmbed
+        url={lesson.youtube_url}
+        title={lesson.title}
+        lessonId={lesson.id}
+        studentId={profile?.id}
+        onEnded={handleVideoComplete}
+      />
+
+      {/* Video Completion Floating Banner */}
+      {videoCompletedToast && (
+        <div
+          style={{
+            background: '#dcfce7',
+            border: '2px solid #86efac',
+            borderRadius: '10px',
+            padding: '1rem 1.25rem',
+            marginTop: '1rem',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            flexWrap: 'wrap',
+            gap: '0.75rem',
+            boxShadow: '0 4px 12px rgba(22, 101, 52, 0.1)',
+          }}
+        >
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+            <span style={{ fontSize: '1.8rem' }}>🎉</span>
+            <div>
+              <strong style={{ color: '#166534', fontSize: '0.95rem' }}>Video Lecture Finished!</strong>
+              <div style={{ color: '#15803d', fontSize: '0.8rem', marginTop: '2px' }}>
+                {quizzes && quizzes.length > 0
+                  ? 'Great job watching! Complete the quick quiz below to test your understanding.'
+                  : 'Module progress recorded! You can now proceed to the next module.'}
               </div>
-              <a
-                href={(lesson as any).meeting_url || data?.unit?.live_meeting_url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="btn"
-                style={{ background: '#ffffff', color: '#1e3a8a', fontWeight: 800, padding: '0.65rem 1.4rem', borderRadius: '8px', textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: '0.5rem' }}
-              >
-                <span>🎥</span> Join Google Meet Live Class ↗
-              </a>
             </div>
+          </div>
+          {nextLesson && (
+            <Button variant="primary" size="sm" onClick={() => navigate(`/student/lesson/${nextLesson.id}`)}>
+              Next Module: {nextLesson.title} →
+            </Button>
           )}
-
-          {/* Universal Smart Video Player (With Auto-Resume & Auto-Completion) */}
-          <YouTubeEmbed
-            url={lesson.youtube_url}
-            title={lesson.title}
-            lessonId={lesson.id}
-            studentId={profile?.id}
-            onEnded={handleVideoComplete}
-          />
-
-          {/* Video Completion Floating Banner */}
-          {videoCompletedToast && (
-            <div
-              style={{
-                background: '#dcfce7',
-                border: '2px solid #86efac',
-                borderRadius: '10px',
-                padding: '1rem 1.25rem',
-                marginTop: '1rem',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-                flexWrap: 'wrap',
-                gap: '0.75rem',
-                boxShadow: '0 4px 12px rgba(22, 101, 52, 0.1)',
-              }}
-            >
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                <span style={{ fontSize: '1.8rem' }}>🎉</span>
-                <div>
-                  <strong style={{ color: '#166534', fontSize: '0.95rem' }}>Video Lecture Finished!</strong>
-                  <div style={{ color: '#15803d', fontSize: '0.8rem', marginTop: '2px' }}>
-                    {quizzes && quizzes.length > 0
-                      ? 'Great job watching! Complete the quick quiz below to test your understanding.'
-                      : 'Module progress recorded! You can now proceed to the next module.'}
-                  </div>
-                </div>
-              </div>
-              {nextLesson && (
-                <Button variant="primary" size="sm" onClick={() => navigate(`/student/lesson/${nextLesson.id}`)}>
-                  Next Module: {nextLesson.title} →
-                </Button>
-              )}
-            </div>
-          )}
+        </div>
+      )}
 
       {/* PDF & HTML Learning Resources */}
       {resources && resources.length > 0 && (

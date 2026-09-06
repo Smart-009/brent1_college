@@ -24,6 +24,10 @@ export function ManageUsers() {
   const [role, setRole] = useState<Role>('student')
   const [selectedClassIds, setSelectedClassIds] = useState<string[]>([])
   const [modalError, setModalError] = useState<string | null>(null)
+  const [managingStudent, setManagingStudent] = useState<Profile | null>(null)
+  const [selectedUnitToAdd, setSelectedUnitToAdd] = useState<string>('')
+  const [isAddingCourse, setIsAddingCourse] = useState(false)
+  const [courseActionMsg, setCourseActionMsg] = useState<string | null>(null)
 
   // Default institutional programs fallback
   const DEFAULT_PROGRAMS: Class[] = [
@@ -393,7 +397,22 @@ export function ManageUsers() {
                         )}
                       </td>
                       <td className="text-xs text-muted">{formatDate(u.created_at)}</td>
-                      <td style={{ textAlign: 'right' }}>
+                      <td style={{ textAlign: 'right', whiteSpace: 'nowrap' }}>
+                        {u.role === 'student' && (
+                          <button
+                            type="button"
+                            className="btn btn-xs btn-primary"
+                            style={{ fontWeight: 700, marginRight: '6px' }}
+                            onClick={() => {
+                              setManagingStudent(u)
+                              setSelectedUnitToAdd('')
+                              setCourseActionMsg(null)
+                            }}
+                            title="Assign / Add Course Unit to this student program"
+                          >
+                            📚 Add Course
+                          </button>
+                        )}
                         {u.role !== 'admin' && (
                           <button
                             type="button"
@@ -576,6 +595,134 @@ export function ManageUsers() {
           </div>
         </form>
       </Modal>
+
+      {/* Manage Student Courses Modal */}
+      {managingStudent && (
+        <Modal
+          isOpen={!!managingStudent}
+          onClose={() => setManagingStudent(null)}
+          title={`📚 Student Course Program: ${managingStudent.full_name}`}
+          size="lg"
+        >
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
+            <div
+              style={{
+                background: 'linear-gradient(135deg, #1e3a8a, #0f172a)',
+                color: '#ffffff',
+                padding: '1.25rem',
+                borderRadius: '10px',
+              }}
+            >
+              <div style={{ fontSize: '0.75rem', textTransform: 'uppercase', color: '#93c5fd', fontWeight: 700 }}>
+                Student Profile & Program Registration
+              </div>
+              <h3 style={{ fontSize: '1.25rem', fontWeight: 800, margin: '0.25rem 0' }}>
+                {managingStudent.full_name} ({managingStudent.admission_number})
+              </h3>
+              <div style={{ fontSize: '0.8rem', color: '#cbd5e1' }}>
+                Admins can directly assign accredited short courses, practical modules, and certification units to this student program.
+              </div>
+            </div>
+
+            {courseActionMsg && (
+              <div className="alert alert-success">
+                <span>{courseActionMsg}</span>
+              </div>
+            )}
+
+            {/* Currently Enrolled Units */}
+            <div>
+              <h4 style={{ fontSize: '0.95rem', fontWeight: 700, color: 'var(--color-primary)', marginBottom: '0.5rem' }}>
+                Currently Enrolled Courses ({(schoolStore.getRegisteredUnitsForStudent(managingStudent.admission_number) || []).length})
+              </h4>
+              {schoolStore.getRegisteredUnitsForStudent(managingStudent.admission_number).length === 0 ? (
+                <div style={{ padding: '1rem', background: 'var(--color-bg-secondary)', borderRadius: '8px', fontSize: '0.85rem', color: 'var(--color-text-secondary)' }}>
+                  Student has no enrolled courses currently assigned. Select a course below to assign to their program.
+                </div>
+              ) : (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                  {schoolStore.getRegisteredUnitsForStudent(managingStudent.admission_number).map((unit) => (
+                    <div
+                      key={unit.id}
+                      style={{
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        alignItems: 'center',
+                        padding: '0.75rem 1rem',
+                        background: 'var(--color-bg-secondary)',
+                        borderRadius: '8px',
+                        border: '1px solid var(--color-border)',
+                      }}
+                    >
+                      <div>
+                        <div style={{ fontWeight: 800, fontSize: '0.9rem' }}>
+                          <span className="badge badge-primary" style={{ marginRight: '6px' }}>{unit.code}</span>
+                          {unit.title}
+                        </div>
+                        <div style={{ fontSize: '0.75rem', color: 'var(--color-text-secondary)', marginTop: '2px' }}>
+                          {unit.credit_hours} Credits • Lecturer: {unit.teacher_name} • {unit.course_duration || 'Short Course'}
+                        </div>
+                      </div>
+                      <span className="badge badge-success" style={{ fontWeight: 700 }}>✓ Active in Program</span>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {/* Add New Course to Student Program */}
+            <div style={{ borderTop: '1px solid var(--color-border)', paddingTop: '1rem' }}>
+              <h4 style={{ fontSize: '0.95rem', fontWeight: 700, color: 'var(--color-primary)', marginBottom: '0.5rem' }}>
+                ➕ Add Additional Course to Student Program
+              </h4>
+              <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap', alignItems: 'center' }}>
+                <select
+                  className="form-input"
+                  style={{ flex: 1, minWidth: '220px' }}
+                  value={selectedUnitToAdd}
+                  onChange={(e) => setSelectedUnitToAdd(e.target.value)}
+                >
+                  <option value="">-- Select Course Unit to Assign --</option>
+                  {schoolStore.getCourseUnits().filter((u) => u.is_published !== false).map((u) => (
+                    <option key={u.id} value={u.id}>
+                      {u.code} - {u.title} ({u.credit_hours} Credits)
+                    </option>
+                  ))}
+                </select>
+                <Button
+                  variant="primary"
+                  disabled={!selectedUnitToAdd || isAddingCourse}
+                  loading={isAddingCourse}
+                  onClick={async () => {
+                    if (!selectedUnitToAdd || !managingStudent) return
+                    setIsAddingCourse(true)
+                    try {
+                      await schoolStore.addCourseToStudentProgram(managingStudent.admission_number, selectedUnitToAdd)
+                      const assigned = schoolStore.getCourseUnits().find((c) => c.id === selectedUnitToAdd)
+                      setCourseActionMsg(`✅ Successfully added "${assigned?.title || selectedUnitToAdd}" to ${managingStudent.full_name}'s program!`)
+                      setSelectedUnitToAdd('')
+                      queryClient.invalidateQueries({ queryKey: ['admin-manage-users'] })
+                    } catch (err: any) {
+                      alert('Error assigning course: ' + err.message)
+                    } finally {
+                      setIsAddingCourse(false)
+                    }
+                  }}
+                >
+                  ➕ Assign to Program
+                </Button>
+              </div>
+            </div>
+
+            <div className="flex justify-end gap-3 mt-4">
+              <Button variant="secondary" onClick={() => setManagingStudent(null)}>
+                Done / Close
+              </Button>
+            </div>
+          </div>
+        </Modal>
+      )}
+
     </PageWrapper>
   )
 }

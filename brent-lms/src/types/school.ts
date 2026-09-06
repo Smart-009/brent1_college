@@ -160,6 +160,8 @@ export interface FeePaymentReceipt {
   amount_paid?: number
   payment_method: 'Card' | 'Bank Transfer' | 'Paybill' | 'PayPal' | 'M-Pesa' | 'Cash Deposit'
   reference_code: string // e.g. "QWE8736421" or Bank slip #
+  payment_reference?: string
+  description?: string
   payment_date: string
   paid_by: string
   recorded_by: string
@@ -303,6 +305,7 @@ export interface CourseUnit {
   teacher_name: string
   description: string
   fee?: number // USD tuition fee e.g. 60
+  course_fee?: number // KES / USD tuition fee e.g. 15000
   live_meeting_url?: string // e.g. "https://meet.google.com/abc-defg-hij" or Zoom link
   live_schedule_text?: string // e.g. "Mon & Wed 7:30 PM - 9:30 PM EAT"
   resources?: {
@@ -337,22 +340,29 @@ export interface UnitRegistrationReceipt {
   student_id: string
   student_name: string
   admission_number: string
-  program: string
-  academic_year: string
+  program?: string
+  course_name?: string
+  academic_year?: string
   course_duration: string // e.g. "3 Months (Intensive Short Course)"
   semester?: string
   registered_unit_ids: string[]
   registered_units: {
     code: string
-    title: string
-    credit_hours: number
-    teacher_name: string
+    title?: string
+    name?: string
+    credit_hours?: number
+    credits?: number
+    teacher_name?: string
+    lecturer?: string
   }[]
   total_credits: number
-  fee_clearance_status: 'Cleared' | 'Conditional Approval'
-  registered_by: string // e.g. "Academic Registrar (Mrs. Grace Odhiambo)"
-  registered_at: string
-  exam_card_issued: boolean
+  fee_clearance_status: 'Cleared' | 'Conditional Approval' | 'Pending' | string
+  registered_by?: string
+  verified_by?: string
+  registered_at?: string
+  timestamp?: string
+  qr_code_data?: string
+  exam_card_issued?: boolean
 }
 
 export interface CollegeDepartment {
