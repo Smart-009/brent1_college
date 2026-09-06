@@ -134,6 +134,7 @@ export function YouTubeEmbed({
   const [isMuted, setIsMuted] = useState(false)
   const [playbackRate, setPlaybackRate] = useState(1)
   const [isFullscreen, setIsFullscreen] = useState(false)
+  const [isRotatedLandscape, setIsRotatedLandscape] = useState(false)
   const [screenSize, setScreenSize] = useState<'small' | 'medium' | 'full'>('medium')
   const [isTheater, setIsTheater] = useState(false)
   const [showControls, setShowControls] = useState(true)
@@ -367,34 +368,69 @@ export function YouTubeEmbed({
     saveProgress(newT, duration)
   }
 
-  // Volume
+  // Volume / Voice Adjuster with Direct Hardware & API Synchronization
   const handleVolumeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const val = Number(e.target.value)
+    e.stopPropagation()
+    const val = parseFloat(e.target.value)
     setVolume(val)
-    setIsMuted(val === 0)
-    if (isDirect && videoRef.current) {
-      videoRef.current.volume = val
-      videoRef.current.muted = val === 0
-    } else if (videoId) {
-      postToYouTube('setVolume', [Math.round(val * 100)])
-      if (val === 0) postToYouTube('mute')
-      else postToYouTube('unMute')
-    }
-  }
+    const muted = val <= 0.01
+    setIsMuted(muted)
 
-  const toggleMute = () => {
-    const newMute = !isMuted
-    setIsMuted(newMute)
     if (isDirect && videoRef.current) {
-      videoRef.current.muted = newMute
+      videoRef.current.volume = Math.max(0, Math.min(1, val))
+      videoRef.current.muted = muted
     } else if (videoId) {
-      if (newMute) postToYouTube('mute')
-      else {
+      if (muted) {
+        postToYouTube('mute')
+        postToYouTube('setVolume', [0])
+      } else {
         postToYouTube('unMute')
-        postToYouTube('setVolume', [Math.round((volume || 1) * 100)])
+        postToYouTube('setVolume', [Math.round(Math.max(0, Math.min(1, val)) * 100)])
       }
     }
-    triggerRipple(newMute ? '🔇' : '🔊', newMute ? 'Muted' : 'Unmuted')
+    triggerRipple(muted ? '🔇' : val > 0.6 ? '🔊' : '🔉', `${Math.round(val * 100)}% Volume`)
+  }
+
+  const toggleMute = (e?: React.MouseEvent) => {
+    if (e) e.stopPropagation()
+    const newMute = !isMuted
+    setIsMuted(newMute)
+    const targetVol = newMute ? 0 : (volume > 0.05 ? volume : 0.8)
+    if (!newMute && volume <= 0.05) setVolume(0.8)
+
+    if (isDirect && videoRef.current) {
+      videoRef.current.muted = newMute
+      if (!newMute) videoRef.current.volume = targetVol
+    } else if (videoId) {
+      if (newMute) {
+        postToYouTube('mute')
+      } else {
+        postToYouTube('unMute')
+        postToYouTube('setVolume', [Math.round(targetVol * 100)])
+      }
+    }
+    triggerRipple(newMute ? '🔇' : '🔊', newMute ? 'Muted' : `${Math.round(targetVol * 100)}% Volume`)
+  }
+
+  // Screen Rotation & Orientation Controller
+  const handleToggleRotation = async (e?: React.MouseEvent) => {
+    if (e) e.stopPropagation()
+    const nextRotated = !isRotatedLandscape
+    setIsRotatedLandscape(nextRotated)
+
+    // 1. Hardware Screen Orientation Lock
+    try {
+      const orientation = (screen as any).orientation || (screen as any).mozOrientation || (screen as any).msOrientation
+      if (orientation && orientation.lock) {
+        if (nextRotated) {
+          await orientation.lock('landscape').catch(() => {})
+        } else {
+          if (orientation.unlock) orientation.unlock()
+        }
+      }
+    } catch {}
+
+    triggerRipple('🔄', nextRotated ? 'Landscape 90°' : 'Portrait 0°')
   }
 
   // Speed
@@ -411,25 +447,50 @@ export function YouTubeEmbed({
 
 
   // Screen Size Controller (Small, Medium, Full)
-  const setPlayerScreenSize = (mode: 'small' | 'medium' | 'full') => {
+  const setPlayerScreenSize = async (mode: 'small' | 'medium' | 'full') => {
     setScreenSize(mode)
     if (mode === 'full') {
       setIsFullscreen(true)
       if (containerRef.current && !document.fullscreenElement) {
-        containerRef.current.requestFullscreen().catch(() => {})
+        try {
+          if (containerRef.current.requestFullscreen) {
+            await containerRef.current.requestFullscreen()
+          } else if ((containerRef.current as any).webkitRequestFullscreen) {
+            await (containerRef.current as any).webkitRequestFullscreen()
+          }
+        } catch {}
+      }
+      // Auto rotate to landscape in fullscreen on mobile devices
+      if (isMobile) {
+        try {
+          const orientation = (screen as any).orientation
+          if (orientation && orientation.lock) {
+            await orientation.lock('landscape').catch(() => {})
+            setIsRotatedLandscape(true)
+          }
+        } catch {}
       }
       triggerRipple('⛶', 'Full Screen')
     } else {
       setIsFullscreen(false)
+      setIsRotatedLandscape(false)
       if (document.fullscreenElement) {
-        document.exitFullscreen().catch(() => {})
+        try {
+          if (document.exitFullscreen) await document.exitFullscreen()
+          else if ((document as any).webkitExitFullscreen) await (document as any).webkitExitFullscreen()
+        } catch {}
       }
+      try {
+        const orientation = (screen as any).orientation
+        if (orientation && orientation.unlock) orientation.unlock()
+      } catch {}
       triggerRipple(mode === 'small' ? '📱' : '💻', mode === 'small' ? 'Small View' : 'Medium View')
     }
   }
 
   // Fullscreen
-  const toggleFullscreen = () => {
+  const toggleFullscreen = (e?: React.MouseEvent) => {
+    if (e) e.stopPropagation()
     if (isFullscreen || screenSize === 'full') {
       setPlayerScreenSize('medium')
     } else {
@@ -1245,11 +1306,16 @@ export function YouTubeEmbed({
                   ↻ 10
                 </button>
 
-                {/* Volume & Slide-out slider with audio percentage feedback */}
-                <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                {/* Volume / Voice Adjuster with Direct Hardware & API Synchronization */}
+                <div
+                  onClick={(e) => e.stopPropagation()}
+                  onTouchStart={(e) => e.stopPropagation()}
+                  onMouseDown={(e) => e.stopPropagation()}
+                  style={{ display: 'flex', alignItems: 'center', gap: '6px' }}
+                >
                   <button
                     type="button"
-                    onClick={toggleMute}
+                    onClick={(e) => toggleMute(e)}
                     style={{
                       background: 'none',
                       color: '#cbd5e1',
@@ -1269,18 +1335,19 @@ export function YouTubeEmbed({
                       type="range"
                       min={0}
                       max={1}
-                      step={0.05}
+                      step={0.02}
                       value={isMuted ? 0 : volume}
                       onChange={handleVolumeChange}
+                      onInput={handleVolumeChange as any}
                       style={{
-                        width: isMobile ? '45px' : '65px',
+                        width: isMobile ? '55px' : '75px',
                         accentColor: '#3b82f6',
-                        height: '4px',
+                        height: '6px',
                         cursor: 'pointer',
                       }}
                       title={`Volume: ${Math.round((isMuted ? 0 : volume) * 100)}%`}
                     />
-                    <span style={{ fontSize: '0.7rem', color: '#94a3b8', minWidth: '28px', fontWeight: 700 }}>
+                    <span style={{ fontSize: '0.72rem', color: '#93c5fd', minWidth: '32px', fontWeight: 800 }}>
                       {Math.round((isMuted ? 0 : volume) * 100)}%
                     </span>
                   </div>
@@ -1428,17 +1495,41 @@ export function YouTubeEmbed({
                   ⧉
                 </button>
 
+                {/* Screen Rotation Button */}
+                <button
+                  type="button"
+                  onClick={(e) => handleToggleRotation(e)}
+                  style={{
+                    background: isRotatedLandscape ? 'rgba(37, 99, 235, 0.4)' : 'none',
+                    color: isRotatedLandscape ? '#60a5fa' : '#cbd5e1',
+                    border: isRotatedLandscape ? '1px solid rgba(96, 165, 250, 0.5)' : 'none',
+                    borderRadius: '6px',
+                    fontSize: '0.85rem',
+                    fontWeight: 800,
+                    cursor: 'pointer',
+                    padding: '4px 6px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '2px',
+                  }}
+                  title="Rotate Screen (Landscape / Portrait)"
+                >
+                  <span>🔄</span>
+                  {isMobile && <span style={{ fontSize: '0.68rem' }}>Rotate</span>}
+                </button>
+
                 {/* Fullscreen Button */}
                 <button
                   type="button"
-                  onClick={toggleFullscreen}
+                  onClick={(e) => toggleFullscreen(e)}
                   style={{
-                    background: 'none',
+                    background: isFullscreen ? 'rgba(37, 99, 235, 0.35)' : 'none',
                     color: '#ffffff',
                     border: 'none',
+                    borderRadius: '6px',
                     fontSize: '1rem',
                     cursor: 'pointer',
-                    padding: '4px',
+                    padding: '4px 6px',
                   }}
                   title={isFullscreen ? 'Exit Fullscreen (f)' : 'Fullscreen (f)'}
                 >

@@ -64,6 +64,36 @@ export function WpsDocumentViewer({
 
   const containerRef = useRef<HTMLDivElement>(null)
   const canvasRef = useRef<HTMLCanvasElement>(null)
+  const touchStartDistRef = useRef<number | null>(null)
+  const initialZoomRef = useRef<number>(100)
+
+  const handleTouchStart = (e: React.TouchEvent<HTMLDivElement>) => {
+    if (e.touches.length === 2) {
+      const dist = Math.hypot(
+        e.touches[0].clientX - e.touches[1].clientX,
+        e.touches[0].clientY - e.touches[1].clientY
+      )
+      touchStartDistRef.current = dist
+      initialZoomRef.current = zoom
+    }
+  }
+
+  const handleTouchMove = (e: React.TouchEvent<HTMLDivElement>) => {
+    if (e.touches.length === 2 && touchStartDistRef.current !== null && touchStartDistRef.current > 0) {
+      const currentDist = Math.hypot(
+        e.touches[0].clientX - e.touches[1].clientX,
+        e.touches[0].clientY - e.touches[1].clientY
+      )
+      const factor = currentDist / touchStartDistRef.current
+      const targetZoom = Math.min(300, Math.max(50, Math.round(initialZoomRef.current * factor)))
+      setZoom(targetZoom)
+    }
+  }
+
+  const handleTouchEnd = () => {
+    touchStartDistRef.current = null
+  }
+
 
   const [isMobile, setIsMobile] = useState<boolean>(() =>
     typeof window !== 'undefined' ? window.innerWidth < 768 : false
@@ -696,8 +726,12 @@ export function WpsDocumentViewer({
         </div>
       </header>
 
-      {/* 2. DOCUMENT WORKSPACE VIEWPORT */}
+      {/* 2. DOCUMENT WORKSPACE VIEWPORT (WITH 2-FINGER TOUCH PINCH-TO-ZOOM) */}
       <div
+        onTouchStart={handleTouchStart}
+        onTouchMove={handleTouchMove}
+        onTouchEnd={handleTouchEnd}
+        onTouchCancel={handleTouchEnd}
         style={{
           flex: 1,
           position: 'relative',
@@ -707,6 +741,7 @@ export function WpsDocumentViewer({
           alignItems: 'flex-start',
           padding: '0',
           background: themeStyles.bg,
+          touchAction: 'pan-x pan-y pinch-zoom',
         }}
       >
         {isBlurred && (
@@ -841,23 +876,33 @@ export function WpsDocumentViewer({
               background: '#000000',
             }}
           >
-            {/* Invisible Corner Shield */}
+            {/* Solid Opaque Corner Shield covering top-right pop-out square/arrow icon */}
             <div
               style={{
                 position: 'absolute',
                 top: 0,
                 right: 0,
-                width: '42px',
-                height: '42px',
-                zIndex: 45,
-                background: 'transparent',
+                width: '68px',
+                height: '60px',
+                zIndex: 60,
+                background: themeStyles.surface || '#090d16',
+                borderBottomLeftRadius: '12px',
+                borderLeft: `1px solid ${themeStyles.border}`,
+                borderBottom: `1px solid ${themeStyles.border}`,
                 cursor: 'default',
+                pointerEvents: 'auto',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                boxShadow: '-2px 2px 8px rgba(0, 0, 0, 0.4)',
               }}
               onClick={(e) => {
                 e.stopPropagation()
                 e.preventDefault()
               }}
-            />
+            >
+              <span style={{ fontSize: '0.72rem', opacity: 0.4, color: themeStyles.muted }} title="Protected Reader">🔒</span>
+            </div>
 
             {/* Canvas Overlay */}
             <canvas

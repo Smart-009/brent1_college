@@ -128,6 +128,36 @@ export function ResourceLibrary() {
 
   // Fullscreen In-App Viewer State
   const [readingResource, setReadingResource] = useState<AcademicResource | null>(null)
+  const readerTouchStartDistRef = useRef<number | null>(null)
+  const readerInitialZoomRef = useRef<number>(100)
+
+  const handleReaderTouchStart = (e: React.TouchEvent<HTMLDivElement>) => {
+    if (e.touches.length === 2) {
+      const dist = Math.hypot(
+        e.touches[0].clientX - e.touches[1].clientX,
+        e.touches[0].clientY - e.touches[1].clientY
+      )
+      readerTouchStartDistRef.current = dist
+      readerInitialZoomRef.current = readerZoom
+    }
+  }
+
+  const handleReaderTouchMove = (e: React.TouchEvent<HTMLDivElement>) => {
+    if (e.touches.length === 2 && readerTouchStartDistRef.current !== null && readerTouchStartDistRef.current > 0) {
+      const currentDist = Math.hypot(
+        e.touches[0].clientX - e.touches[1].clientX,
+        e.touches[0].clientY - e.touches[1].clientY
+      )
+      const factor = currentDist / readerTouchStartDistRef.current
+      const targetZoom = Math.min(300, Math.max(50, Math.round(readerInitialZoomRef.current * factor)))
+      setReaderZoom(targetZoom)
+    }
+  }
+
+  const handleReaderTouchEnd = () => {
+    readerTouchStartDistRef.current = null
+  }
+
   const [readerTheme, setReaderTheme] = useState<'light' | 'sepia' | 'dark'>('light')
   const [readerZoom, setReaderZoom] = useState<number>(100)
   const [drmWarning, setDrmWarning] = useState<string | null>(null)
@@ -2873,6 +2903,10 @@ export function ResourceLibrary() {
               ) : readingResource.file_url ? (
                 // 3. WPS OFFICE / ACROBAT-STYLE FULL-SCREEN ANNOTATED VIEWER (PDF, DOCS, REVISION MATERIALS)
                 <div
+                  onTouchStart={handleReaderTouchStart}
+                  onTouchMove={handleReaderTouchMove}
+                  onTouchEnd={handleReaderTouchEnd}
+                  onTouchCancel={handleReaderTouchEnd}
                   style={{
                     display: 'flex',
                     flexDirection: 'column',
@@ -2887,6 +2921,7 @@ export function ResourceLibrary() {
                     background: readerTheme === 'dark' ? '#090d16' : readerTheme === 'sepia' ? '#241a10' : '#1e293b',
                     position: 'relative',
                     alignItems: 'center',
+                    touchAction: 'pan-x pan-y pinch-zoom',
                   }}
                 >
                   {/* Anti-Screen Capture & Snipping Tool Blackout Shield */}
@@ -2931,24 +2966,33 @@ export function ResourceLibrary() {
                       flexDirection: 'column',
                     }}
                   >
-                    {/* Invisible Corner Shield to Prevent Accidental Pop-out */}
+                    {/* Solid Opaque Corner Shield covering top-right pop-out square/arrow icon */}
                     <div
                       style={{
                         position: 'absolute',
                         top: 0,
                         right: 0,
-                        width: '42px',
-                        height: '42px',
-                        zIndex: 48,
+                        width: '68px',
+                        height: '60px',
+                        zIndex: 60,
+                        background: readerTheme === 'dark' ? '#0f172a' : readerTheme === 'sepia' ? '#f4ebd0' : '#ffffff',
+                        borderBottomLeftRadius: '12px',
+                        borderLeft: `1px solid ${readerTheme === 'dark' ? '#1e293b' : '#e2e8f0'}`,
+                        borderBottom: `1px solid ${readerTheme === 'dark' ? '#1e293b' : '#e2e8f0'}`,
                         cursor: 'default',
                         pointerEvents: 'auto',
-                        background: 'transparent',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        boxShadow: '-2px 2px 8px rgba(0, 0, 0, 0.4)',
                       }}
                       onClick={(e) => {
                         e.stopPropagation()
                         e.preventDefault()
                       }}
-                    />
+                    >
+                      <span style={{ fontSize: '0.72rem', opacity: 0.4, color: '#94a3b8' }} title="Protected Reader">🔒</span>
+                    </div>
 
                     {/* Interactive Annotation Canvas Overlay (Draw, Highlight, Erase) */}
                     <canvas
