@@ -10,10 +10,15 @@ export function MobileAppBottomNav() {
   if (!isNative) return null
 
   const location = useLocation()
+  const currentPath = location.pathname
+
+  // Hide bottom navigation in the video player learning environment
+  if (currentPath.includes('/lesson/') || currentPath.startsWith('/student/lesson')) {
+    return null
+  }
+
   const { profile } = useAuthContext()
   const [isSyncing, setIsSyncing] = useState(false)
-
-  const currentPath = location.pathname
 
   const handleManualSync = async () => {
     if (isSyncing) return

@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Outlet } from 'react-router-dom'
+import { Outlet, useLocation } from 'react-router-dom'
 import { Navbar } from './Navbar'
 import { Sidebar } from './Sidebar'
 import { OfflineIndicator } from '@/components/shared/OfflineIndicator'
@@ -13,6 +13,8 @@ export function LayoutShell() {
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const isNative = isNativeApp()
   const isDesktop = isElectronApp()
+  const location = useLocation()
+  const isVideoEnvironment = location.pathname.includes('/lesson/') || location.pathname.startsWith('/student/lesson')
 
   return (
     <div className="app-layout">
@@ -22,14 +24,14 @@ export function LayoutShell() {
       <Navbar onToggleSidebar={() => setSidebarOpen(!sidebarOpen)} />
       <div className={`sidebar-backdrop ${sidebarOpen ? 'open' : ''}`} onClick={() => setSidebarOpen(false)} />
       <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
-      <MobileAppBottomNav />
+      {!isVideoEnvironment && <MobileAppBottomNav />}
       <main
         className="main-content"
         style={{
           display: 'flex',
           flexDirection: 'column',
           minHeight: 'calc(100vh - 64px)',
-          paddingBottom: isDesktop ? '1rem' : isNative ? '4.5rem' : '5rem',
+          paddingBottom: isVideoEnvironment ? '0' : (isDesktop ? '1rem' : isNative ? '4.5rem' : '5rem'),
         }}
       >
         <div style={{ flex: 1 }}>
