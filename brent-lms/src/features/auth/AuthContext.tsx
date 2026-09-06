@@ -167,6 +167,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     if (!profile?.id) return
 
+    // Administrators are exempted from single-device restrictions for multi-device management
+    if (profile.role === 'admin') return
+
     // Ensure active device session token exists
     const localToken =
       sessionStorage.getItem('eclat_device_session_token') ||

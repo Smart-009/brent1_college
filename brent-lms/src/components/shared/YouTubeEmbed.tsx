@@ -158,7 +158,7 @@ export function YouTubeEmbed({
     }
   }
   const [showZoomMenu, setShowZoomMenu] = useState(false)
-  const [zoomLevel, setZoomLevel] = useState<number | 'fill'>(1)
+  const [zoomLevel, setZoomLevel] = useState<number | 'fill'>('fill')
   const [rippleAction, setRippleAction] = useState<{ icon: string; text: string } | null>(null)
   const [hoverScrubTime, setHoverScrubTime] = useState<number | null>(null)
   const [hoverScrubX, setHoverScrubX] = useState<number>(0)
@@ -203,14 +203,14 @@ export function YouTubeEmbed({
   }
 
 
-  // Zoom Level Cycle
+  // Zoom Level Cycle (Defaults to 'fill')
   const zoomOptions: { label: string; val: number | 'fill' }[] = [
+    { label: 'Fill Screen (Default)', val: 'fill' },
     { label: '100% Fit', val: 1 },
     { label: '125%', val: 1.25 },
     { label: '150%', val: 1.5 },
     { label: '175%', val: 1.75 },
     { label: '200%', val: 2 },
-    { label: 'Fill Screen', val: 'fill' },
   ]
 
   const cycleZoom = () => {
@@ -739,6 +739,10 @@ export function YouTubeEmbed({
       ytParams.set('start', String(Math.floor(initialStartTime)))
     }
 
+    const isPhysicallyLandscape = typeof window !== 'undefined' && window.innerWidth > window.innerHeight
+    const isRotateMode = isRotatedLandscape
+    const isCssRotated = isRotateMode && !isPhysicallyLandscape
+    const isStandardFull = isFullscreen || screenSize === 'full' || (isRotateMode && isPhysicallyLandscape)
     const progressPct = duration > 0 ? (currentTime / duration) * 100 : 0
 
     return (
@@ -757,28 +761,32 @@ export function YouTubeEmbed({
           onMouseMove={handleMouseMove}
           onMouseLeave={() => isPlaying && !showSettings && setShowControls(false)}
           style={{
-            position: isFullscreen || screenSize === 'full' || isRotatedLandscape ? 'fixed' : 'relative',
-            top: isFullscreen || screenSize === 'full' || isRotatedLandscape ? 0 : 'auto',
-            left: isFullscreen || screenSize === 'full' || isRotatedLandscape ? 0 : 'auto',
-            right: (isFullscreen || screenSize === 'full') && !isRotatedLandscape ? 0 : 'auto',
-            bottom: (isFullscreen || screenSize === 'full') && !isRotatedLandscape ? 0 : 'auto',
-            width: isRotatedLandscape ? '100vh' : (isFullscreen || screenSize === 'full' ? '100vw' : '100%'),
-            height: isRotatedLandscape
-              ? '100vw'
-              : (isFullscreen || screenSize === 'full'
-                ? '100vh'
+            position: isCssRotated || isStandardFull ? 'fixed' : 'relative',
+            top: isCssRotated || isStandardFull ? 0 : 'auto',
+            left: isCssRotated || isStandardFull ? 0 : 'auto',
+            right: isStandardFull ? 0 : 'auto',
+            bottom: isStandardFull ? 0 : 'auto',
+            width: isCssRotated ? '100dvh' : (isStandardFull ? '100dvw' : '100%'),
+            height: isCssRotated
+              ? '100dvw'
+              : (isStandardFull
+                ? '100dvh'
                 : (isMobile ? 'clamp(300px, 48vh, 460px)' : (isTheater ? 'calc(80vh)' : 'calc(58vh)'))),
-            aspectRatio: (!isFullscreen && screenSize !== 'full' && !isRotatedLandscape && !isMobile && !isTheater) ? '16 / 9' : 'auto',
-            minHeight: isFullscreen || screenSize === 'full' || isRotatedLandscape ? '100vh' : (isMobile ? '300px' : '400px'),
-            maxHeight: isFullscreen || screenSize === 'full' || isRotatedLandscape ? '100vh' : 'none',
-            transform: isRotatedLandscape ? 'rotate(90deg) translateY(-100%)' : 'none',
+            minWidth: isCssRotated ? '100vh' : (isStandardFull ? '100vw' : 'unset'),
+            maxWidth: isCssRotated ? '100vh' : (isStandardFull ? '100vw' : 'unset'),
+            minHeight: isCssRotated ? '100vw' : (isStandardFull ? '100vh' : (isMobile ? '300px' : '400px')),
+            maxHeight: isCssRotated ? '100vw' : (isStandardFull ? '100vh' : 'none'),
+            aspectRatio: (!isCssRotated && !isStandardFull && !isMobile && !isTheater) ? '16 / 9' : 'auto',
+            transform: isCssRotated ? 'rotate(90deg) translateY(-100%)' : 'none',
             transformOrigin: 'top left',
-            zIndex: isFullscreen || screenSize === 'full' || isRotatedLandscape ? 99999999 : 1,
+            zIndex: isCssRotated || isStandardFull ? 99999999 : 1,
             background: '#000000',
-            borderRadius: isFullscreen || screenSize === 'full' || isRotatedLandscape ? '0' : (isMobile ? '0' : '14px'),
+            borderRadius: isCssRotated || isStandardFull ? '0' : (isMobile ? '0' : '14px'),
             overflow: 'hidden',
-            boxShadow: isFullscreen || screenSize === 'full' || isRotatedLandscape ? 'none' : '0 8px 30px rgba(0, 0, 0, 0.5)',
+            boxShadow: isCssRotated || isStandardFull ? 'none' : '0 8px 30px rgba(0, 0, 0, 0.5)',
             userSelect: 'none',
+            margin: 0,
+            padding: 0,
           }}
         >
           {/* MEDIA RENDERER (WITH HARDWARE-ACCELERATED ZOOM ENGINE) */}
@@ -792,7 +800,7 @@ export function YouTubeEmbed({
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              transform: zoomLevel === 'fill' ? 'scale(1.35)' : `scale(${zoomLevel})`,
+              transform: zoomLevel === 'fill' ? (isDirect ? 'scale(1.02)' : 'scale(1.36)') : `scale(${zoomLevel})`,
               transformOrigin: 'center center',
               transition: 'transform 0.25s cubic-bezier(0.2, 0, 0, 1)',
               pointerEvents: 'none',
