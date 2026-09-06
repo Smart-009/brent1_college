@@ -109,14 +109,14 @@ export function StudentDashboard() {
     status: 'Active',
     guardian: { name: 'Guardian', relationship: 'Parent', phone: '', email: '' },
     emergency_contact: '',
-    fee_balance: isFeeCleared ? 0 : 0,
+    fee_balance: isFeeCleared ? 0 : 60,
     term_fee_total: 60,
     fee_cleared: isFeeCleared,
-    attendance_rate: 100,
+    attendance_rate: 0,
     discipline_points: 100,
-    merits_count: 10,
+    merits_count: 0,
     demerits_count: 0,
-    biometric_enrolled: true,
+    biometric_enrolled: false,
     certificate_granted: false,
   }
 
@@ -192,8 +192,8 @@ export function StudentDashboard() {
             student_name: currentStudent?.full_name || profile?.full_name || 'Enrolled Trainee',
             admission_number: currentStudent?.admission_number || profile?.admission_number || `EI-${new Date().getFullYear()}-001`,
             course_title: currentStudent?.class_name || 'Comprehensive Practical Short Course',
-            grade: studentTranscript?.mean_grade || 'Distinction (A)',
-            percentage: studentTranscript?.mean_percentage || 90,
+            grade: studentTranscript?.mean_grade || 'Pending Evaluation',
+            percentage: studentTranscript?.mean_percentage || 0,
             issue_date: new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' }),
             certificate_no: `EI-CERT-${(currentStudent?.admission_number || `${new Date().getFullYear()}`).replace(/[^a-zA-Z0-9]/g, '')}`,
             duration: '4 to 12 Weeks Intensive Practical Training',
@@ -278,10 +278,10 @@ export function StudentDashboard() {
         <div className="card" style={{ padding: '1.25rem', borderLeft: '4px solid var(--color-primary)' }}>
           <div style={{ fontSize: '0.8rem', color: 'var(--color-text-secondary)', fontWeight: 600 }}>Lecture Attendance</div>
           <div style={{ fontSize: '1.75rem', fontWeight: 800, color: 'var(--color-primary)', marginTop: '0.25rem' }}>
-            {currentStudent ? `${currentStudent.attendance_rate}%` : '0%'}
+            {currentStudent ? `${currentStudent.attendance_rate || 0}%` : '0%'}
           </div>
-          <div style={{ fontSize: '0.75rem', color: '#16a34a', marginTop: '0.2rem' }}>
-            {currentStudent && currentStudent.attendance_rate >= 75 ? '✓ Meets Exam Minimum (75%)' : 'Attendance Logged Daily'}
+          <div style={{ fontSize: '0.75rem', color: (currentStudent?.attendance_rate || 0) >= 75 ? '#16a34a' : 'var(--color-text-secondary)', marginTop: '0.2rem' }}>
+            {(currentStudent?.attendance_rate || 0) >= 75 ? '✓ Meets Exam Minimum (75%)' : '0 Sessions Logged (Newly Enrolled)'}
           </div>
         </div>
 
