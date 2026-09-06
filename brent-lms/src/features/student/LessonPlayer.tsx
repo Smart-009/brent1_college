@@ -11,7 +11,6 @@ import { QuizWidget } from '@/components/shared/QuizWidget'
 import { Button } from '@/components/ui/Button'
 import { Spinner } from '@/components/ui/Spinner'
 import { schoolStore, schoolEventBus } from '@/lib/schoolData'
-import { getEmbeddableDocumentUrl } from '@/lib/utils'
 import { INSTITUTION_CONFIG, getWhatsAppInquiryUrl } from '@/config/institution'
 import type { Lesson, Course, Quiz, LessonResource, Enrollment, QuizAttempt } from '@/lib/database.types'
 
@@ -62,26 +61,10 @@ export function LessonPlayer() {
   const navigate = useNavigate()
   const queryClient = useQueryClient()
 
-  // Offline detection
-  const [isNetworkOnline, setIsNetworkOnline] = useState<boolean>(() =>
-    typeof navigator !== 'undefined' ? navigator.onLine : true
-  )
-
-  useEffect(() => {
-    const handleOnline = () => setIsNetworkOnline(true)
-    const handleOffline = () => setIsNetworkOnline(false)
-    window.addEventListener('online', handleOnline)
-    window.addEventListener('offline', handleOffline)
-    return () => {
-      window.removeEventListener('online', handleOnline)
-      window.removeEventListener('offline', handleOffline)
-    }
-  }, [])
   const [, setSyncTick] = useState(0)
 
   const [activeHtmlUrl, setActiveHtmlUrl] = useState<string | null>(null)
   const [activeDocUrl, setActiveDocUrl] = useState<string | null>(null)
-  const [docEngine, setDocEngine] = useState<'cloud' | 'direct'>('cloud')
   const [videoCompletedToast, setVideoCompletedToast] = useState(false)
 
   // Reactive listeners for cloud and local synchronization
@@ -351,19 +334,6 @@ export function LessonPlayer() {
     staleTime: 1000 * 60 * 5,
     retry: 1,
   })
-
-  // Open HTML in new tab as rendered web page (overrides plain text CDN headers)
-  const handleOpenHtmlInNewTab = async (fileUrl: string) => {
-    try {
-      const res = await fetch(fileUrl)
-      const text = await res.text()
-      const blob = new Blob([text], { type: 'text/html;charset=utf-8' })
-      const blobUrl = URL.createObjectURL(blob)
-      window.open(blobUrl, '_blank')
-    } catch {
-      window.open(fileUrl, '_blank')
-    }
-  }
 
   if (isLoading) {
     return (

@@ -12,36 +12,25 @@ import { isNativeApp, isElectronApp } from '@/utils/platform'
 
 export function LayoutShell() {
   const [sidebarOpen, setSidebarOpen] = useState(false)
-  const [isVideoRotated, setIsVideoRotated] = useState(false)
   const isNative = isNativeApp()
   const isDesktop = isElectronApp()
   const location = useLocation()
   const isVideoEnvironment = location.pathname.includes('/lesson/') || location.pathname.startsWith('/student/lesson')
 
   useEffect(() => {
-    const handleVideoRotated = (e: any) => {
-      setIsVideoRotated(!!e.detail?.isRotated)
-    }
     const handleToggleSidebar = () => {
       setSidebarOpen((prev) => !prev)
     }
     const handleCloseSidebar = () => {
       setSidebarOpen(false)
     }
-    window.addEventListener('eclat-video-rotated', handleVideoRotated)
     window.addEventListener('eclat-toggle-sidebar', handleToggleSidebar)
     window.addEventListener('eclat-close-sidebar', handleCloseSidebar)
     return () => {
-      window.removeEventListener('eclat-video-rotated', handleVideoRotated)
       window.removeEventListener('eclat-toggle-sidebar', handleToggleSidebar)
       window.removeEventListener('eclat-close-sidebar', handleCloseSidebar)
     }
   }, [])
-
-  // Reset rotation state on navigation
-  useEffect(() => {
-    setIsVideoRotated(false)
-  }, [location.pathname])
 
   return (
     <div className="app-layout">

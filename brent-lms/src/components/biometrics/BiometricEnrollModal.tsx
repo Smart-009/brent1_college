@@ -2,18 +2,14 @@
 // Eclat Institute — Student Biometric Fingerprint Enrollment Modal
 // ============================================================
 
-import React, { useState, useEffect, useRef } from 'react'
+import React, { useState, useEffect } from 'react'
 import { schoolStore } from '@/lib/schoolData'
 import {
   executeRealBiometricScan,
   isWebAuthnAvailable,
-  isWebUSBAvailable,
   isMobileDevice,
-  triggerHaptic,
-  connectWebUSBFingerprintScanner,
   type FingerOption,
   type BiometricMode,
-  type RealBiometricDevice,
 } from '@/lib/biometricEngine'
 import type { StudentRecord } from '@/types/school'
 
@@ -36,36 +32,7 @@ export const BiometricEnrollModal: React.FC<Props> = ({ student, officerName, on
   const [confidenceScore, setConfidenceScore] = useState<number | null>(null)
   const [enrolledStudent, setEnrolledStudent] = useState<StudentRecord | null>(null)
   const [usedDeviceName, setUsedDeviceName] = useState<string>(isMobile ? '📱 Phone Hardware Fingerprint Scanner' : 'Platform Biometric Sensor')
-  const [connectedUsbDev, setConnectedUsbDev] = useState<RealBiometricDevice | null>(null)
-  const [hasWebAuthn, setHasWebAuthn] = useState<boolean>(true)
-  const [hasWebUsb, setHasWebUsb] = useState<boolean>(true)
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
-  const [isSaving, setIsSaving] = useState(false)
-  const [isPressingSensor, setIsPressingSensor] = useState(false)
-
-  const pressTimerRef = useRef<any>(null)
-  const holdProgressRef = useRef(0)
-
-  useEffect(() => {
-    isWebAuthnAvailable().then((avail) => {
-      setHasWebAuthn(avail)
-      if (!avail && biometricMode === 'webauthn') {
-        // Keep webauthn or provide informative message if attempted
-      }
-    })
-    setHasWebUsb(isWebUSBAvailable())
-  }, [isMobile])
-
-  const handleConnectUsbDevice = async () => {
-    try {
-      setErrorMessage(null)
-      const dev = await connectWebUSBFingerprintScanner()
-      setConnectedUsbDev(dev)
-      setBiometricMode('webusb')
-    } catch (err: any) {
-      setErrorMessage(err?.message || 'Failed to connect USB optical scanner.')
-    }
-  }
 
   // Unified Enrollment Execution
   const executeEnrollment = async (chosenMode: BiometricMode = biometricMode) => {
@@ -80,14 +47,13 @@ export const BiometricEnrollModal: React.FC<Props> = ({ student, officerName, on
         student,
         fingerName: selectedFinger,
         officerName,
-        connectedUsbDevice: connectedUsbDev,
+        connectedUsbDevice: undefined,
         onProgress: (label, pct) => {
           setScanStatusText(label)
           setScanProgress(pct)
         },
       })
 
-      setIsSaving(true)
       const updated = await schoolStore.enrollStudentBiometric(
         student.id,
         selectedFinger,
@@ -112,53 +78,6 @@ export const BiometricEnrollModal: React.FC<Props> = ({ student, officerName, on
       }
       setErrorMessage(msg)
       setStep('idle')
-    } finally {
-      setIsSaving(false)
-    }
-  }
-
-  // Interactive Press-and-Hold for Mobile & Touchscreens
-  const handleTouchStart = () => {
-    if (biometricMode === 'webauthn') {
-      executeEnrollment('webauthn')
-      return
-    }
-
-    if (step !== 'idle') return
-    setIsPressingSensor(true)
-    holdProgressRef.current = 10
-    setScanProgress(10)
-    setScanStatusText('📱 Scanning dermal ridge contact...')
-    triggerHaptic(40)
-
-    if (pressTimerRef.current) clearInterval(pressTimerRef.current)
-    pressTimerRef.current = setInterval(() => {
-      holdProgressRef.current += 15
-      setScanProgress(Math.min(holdProgressRef.current, 100))
-      triggerHaptic(30)
-
-      if (holdProgressRef.current >= 40 && holdProgressRef.current < 75) {
-        setScanStatusText('🔍 Extracting minutiae ridge patterns...')
-      } else if (holdProgressRef.current >= 75 && holdProgressRef.current < 100) {
-        setScanStatusText('🔐 Generating encrypted biometric template...')
-      } else if (holdProgressRef.current >= 100) {
-        if (pressTimerRef.current) clearInterval(pressTimerRef.current)
-        triggerHaptic([60, 40, 100])
-        setIsPressingSensor(false)
-        executeEnrollment('mobile_touch')
-      }
-    }, 120)
-  }
-
-  const handleTouchEnd = () => {
-    if (pressTimerRef.current) {
-      clearInterval(pressTimerRef.current)
-      pressTimerRef.current = null
-    }
-    if (isPressingSensor && holdProgressRef.current < 100) {
-      setIsPressingSensor(false)
-      setScanProgress(0)
-      setScanStatusText('Hold finger firmly on sensor until capture reaches 100%.')
     }
   }
 

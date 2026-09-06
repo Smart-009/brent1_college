@@ -4,7 +4,7 @@ import { useIsMobile } from '@/hooks/useMediaQuery'
 import { schoolStore, schoolEventBus } from '@/lib/schoolData'
 import { supabase } from '@/lib/supabase'
 import { getEmbeddableDocumentUrl, getGoogleDrivePreviewUrl } from '@/lib/utils'
-import { isNativeApp, OFFICIAL_APK_URL, LOCAL_APK_URL, OFFICIAL_DESKTOP_URL, LOCAL_DESKTOP_URL } from '@/utils/platform'
+import { OFFICIAL_APK_URL, LOCAL_DESKTOP_URL } from '@/utils/platform'
 import { ACADEMIC_HANDBOOKS, COMIC_BOOKS_DATA, AcademicHandbook, ComicBook } from './academicHandbookData'
 import type { AcademicResource } from '@/types/school'
 
@@ -43,14 +43,11 @@ export function ResourceLibrary() {
   const isAdmin = profile?.role === 'admin'
   const isStudent = profile?.role === 'student' || profile?.role === 'parent'
 
-  // Dynamically load subjects from store
-  const storeSubjects = useMemo(() => schoolStore.getSubjects().map((s) => s.name), [])
-  const dynamicSubjects = useMemo(() => ['All', ...storeSubjects], [storeSubjects])
-
   const [resources, setResources] = useState<AcademicResource[]>(() => schoolStore.getResources())
   const [search, setSearch] = useState('')
   const [selectedCat, setSelectedCat] = useState('All')
-  const [selectedSub, setSelectedSub] = useState('All')
+  const [selectedSub] = useState('All')
+  const [showAppRequiredModal, setShowAppRequiredModal] = useState(false)
   const [isUploading, setIsUploading] = useState(false)
   const [isSyncingCloud, setIsSyncingCloud] = useState(false)
 
@@ -372,15 +369,6 @@ export function ResourceLibrary() {
     }
   }
 
-  const handleToggleStickyOpen = (id: string) => {
-    const updated = stickyNotes.map((n) => (n.id === id ? { ...n, isOpen: !n.isOpen } : n))
-    setStickyNotes(updated)
-    if (readingResource) {
-      localStorage.setItem(`eclat_pdf_notes_${readingResource.id}`, JSON.stringify(updated))
-    }
-  }
-
-
   const activeHandbook: AcademicHandbook | null = useMemo(() => {
     if (!readingResource) return null
     if (ACADEMIC_HANDBOOKS[readingResource.id]) return ACADEMIC_HANDBOOKS[readingResource.id]
@@ -546,8 +534,6 @@ export function ResourceLibrary() {
     typeof navigator !== 'undefined' ? navigator.onLine : true
   )
   const [iframeLoadError, setIframeLoadError] = useState<boolean>(false)
-  const [showAppRequiredModal, setShowAppRequiredModal] = useState<boolean>(false)
-  const [pendingResource, setPendingResource] = useState<AcademicResource | null>(null)
 
   useEffect(() => {
     const handleOnline = () => {
@@ -695,18 +681,9 @@ export function ResourceLibrary() {
     }
 
     return scored.map((item) => item.res)
-  }, [resources, search, selectedCat, selectedSub, bookmarkedIds])
-
-  const isNative = isNativeApp()
+  }, [resources, search, selectedCat, bookmarkedIds])
 
   const handleOpenReader = (res: AcademicResource) => {
-    // 1. Outside the apps (public web), protect resources behind the official native apps
-    if (!isNative && !isAdmin) {
-      setPendingResource(res)
-      setShowAppRequiredModal(true)
-      return
-    }
-
     setActiveChapterIndex(0)
     setIframeLoadError(false)
     setIsNetworkOnline(typeof navigator !== 'undefined' ? navigator.onLine : true)

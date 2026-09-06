@@ -4,7 +4,7 @@ import { useAuth } from '@/hooks/useAuth'
 import { PageWrapper } from '@/components/layout/PageWrapper'
 import { schoolStore, schoolEventBus } from '@/lib/schoolData'
 import { UnitRegistrationSlip } from '@/components/shared/UnitRegistrationSlip'
-import { INSTITUTION_CONFIG, getWhatsAppInquiryUrl } from '@/config/institution'
+import { INSTITUTION_CONFIG } from '@/config/institution'
 import type { CourseUnit } from '@/types/school'
 
 export function CourseList() {
@@ -13,7 +13,7 @@ export function CourseList() {
   const [enrollUnit, setEnrollUnit] = useState<CourseUnit | null>(null)
   const [showSlipModal, setShowSlipModal] = useState(false)
   const [viewMode, setViewMode] = useState<'my_courses' | 'all_catalog'>('my_courses')
-  const [version, setVersion] = useState(0)
+  const [, setVersion] = useState(0)
 
   // Enrollment checkout state
   const [mpesaCode, setMpesaCode] = useState('')

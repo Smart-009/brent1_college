@@ -1,9 +1,9 @@
 import { useState } from 'react'
 import { useAuth } from '@/hooks/useAuth'
 import { schoolStore } from '@/lib/schoolData'
-import type { StudentRecord, SecretaryInquiry, CourseUnit, UnitRegistrationReceipt } from '@/types/school'
 import { UnitRegistrationSlip } from '@/components/shared/UnitRegistrationSlip'
-import { OFFICIAL_COURSES, getDynamicCoursesList } from '@/config/officialCourses'
+import { getDynamicCoursesList } from '@/config/officialCourses'
+import type { StudentRecord, SecretaryInquiry, CourseUnit, UnitRegistrationReceipt } from '@/types/school'
 
 export function SecretaryDesk() {
   const { profile } = useAuth()

@@ -6,7 +6,6 @@ import { OFFICIAL_COURSES } from '@/config/officialCourses'
 import { INSTITUTION_CONFIG } from '@/config/institution'
 import { extractYouTubeId, formatDate } from '@/lib/utils'
 import { YouTubeEmbed } from '@/components/shared/YouTubeEmbed'
-import { useAuth } from '@/hooks/useAuth'
 import type { IntakeSchedule, IntakeStatus, StudyMode } from '@/types/intake'
 
 const STATUS_COLORS: Record<IntakeStatus, { bg: string; text: string; border: string }> = {
@@ -25,7 +24,6 @@ const ALL_STUDY_MODES: StudyMode[] = [
 ]
 
 export function IntakeScheduler() {
-  const { profile } = useAuth()
   const [intakes, setIntakes] = useState<IntakeSchedule[]>(() => intakeStore.getIntakes())
   const [search, setSearch] = useState('')
   const [statusFilter, setStatusFilter] = useState<string>('All')

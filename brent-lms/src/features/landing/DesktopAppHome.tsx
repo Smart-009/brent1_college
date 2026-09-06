@@ -1,8 +1,7 @@
-import { useState, useMemo } from 'react'
+import { useMemo } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuthContext } from '@/features/auth/AuthContext'
 import { schoolStore } from '@/lib/schoolData'
-import { INSTITUTION_CONFIG } from '@/config/institution'
 
 interface CourseItem {
   id: string
@@ -23,26 +22,14 @@ const MOTIVATIONAL_QUOTES = [
   { text: 'Your potential is limitless. Commit to 30 minutes of study today.', author: 'Dean of Studies' },
 ]
 
-export function DesktopAppHome({ courses, onSelectCourse }: { courses: CourseItem[]; onSelectCourse?: (c: CourseItem) => void }) {
+export function DesktopAppHome({ courses: _courses, onSelectCourse: _onSelectCourse }: { courses: CourseItem[]; onSelectCourse?: (c: CourseItem) => void }) {
   const { profile } = useAuthContext()
   const navigate = useNavigate()
-  const [search, setSearch] = useState('')
-  const [selectedCat, setSelectedCat] = useState('All')
 
   const quote = useMemo(() => {
     const day = new Date().getDate()
     return MOTIVATIONAL_QUOTES[day % MOTIVATIONAL_QUOTES.length]
   }, [])
-
-  const categories = ['All', 'Data Science & Research', 'Tech & Programming', 'Creative Arts & Design', 'Languages & Communication', 'Computer & Digital Skills']
-
-  const filteredCourses = useMemo(() => {
-    return courses.filter((c) => {
-      const matchesCat = selectedCat === 'All' || c.category === selectedCat
-      const matchesSearch = !search || c.title.toLowerCase().includes(search.toLowerCase()) || c.skills.some((s) => s.toLowerCase().includes(search.toLowerCase()))
-      return matchesCat && matchesSearch
-    })
-  }, [courses, selectedCat, search])
 
   const handlePortalClick = () => {
     if (profile) {

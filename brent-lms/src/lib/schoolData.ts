@@ -937,7 +937,6 @@ export const CLOUD_SYNC_SYSTEM_IDS: Record<string, string> = {
   biometric_passes: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaa11',
   unit_registrations: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaa12',
 }
-const DEFAULT_SYSTEM_SUBJECT_ID = '11111111-1111-1111-1111-111111111101'
 
 // ============================================================
 // High-Performance Data Access & Transaction Store

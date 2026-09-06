@@ -8,7 +8,7 @@ export const enableScreenSecurity = async () => {
         (window as any).desktopAPI.enableScreenProtection();
       }
     }
-  } catch (e) {
+  } catch {
     // Web fallback
   }
 };
@@ -23,7 +23,7 @@ export const disableScreenSecurity = async () => {
         (window as any).desktopAPI.disableScreenProtection();
       }
     }
-  } catch (e) {
+  } catch {
     // Web fallback
   }
 };

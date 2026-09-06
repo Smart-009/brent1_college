@@ -8,7 +8,7 @@ import { BiometricEnrollModal } from '@/components/biometrics/BiometricEnrollMod
 import { BiometricClearancePassModal } from '@/components/biometrics/BiometricClearancePassModal'
 import { generateBiometricVerificationCode } from '@/lib/biometricEngine'
 import { INSTITUTION_CONFIG } from '@/config/institution'
-import { CourseProgram, OFFICIAL_COURSES, getDynamicCoursesList } from '@/config/officialCourses'
+import { CourseProgram, getDynamicCoursesList } from '@/config/officialCourses'
 
 export function FeeManagement() {
   const { profile } = useAuth()
@@ -36,7 +36,7 @@ export function FeeManagement() {
   const [editFeeUsd, setEditFeeUsd] = useState<number>(60)
   const [isSavingFee, setIsSavingFee] = useState(false)
   const [feeSaveSuccess, setFeeSaveSuccess] = useState<string | null>(null)
-  const [courseListTick, setCourseListTick] = useState(0)
+  const [, setCourseListTick] = useState(0)
 
   useEffect(() => {
     let isMounted = true
@@ -146,7 +146,6 @@ export function FeeManagement() {
   const rawPaid = myReceipts.reduce((sum, r) => sum + (r.amount_paid ?? r.amount), 0)
   const isCleared = isExplicitlyCleared || (currentStudent?.fee_balance === 0) || (myBilled > 0 && rawPaid >= myBilled)
   const myBalance = isCleared ? 0 : (currentStudent?.fee_balance ?? Math.max(0, myBilled - rawPaid))
-  const myPaid = isCleared ? Math.max(rawPaid, myBilled) : rawPaid
 
   // If student is cleared but has no individual receipts, provide institutional clearance pass receipt
   if (isCleared && myReceipts.length === 0) {
@@ -1590,7 +1589,7 @@ export function FeeManagement() {
             setShowEnrollModal(false)
             setStudentToEnroll(null)
           }}
-          onEnrolled={(updated) => {
+          onEnrolled={(_updated) => {
             setStudents(schoolStore.getStudents())
           }}
         />

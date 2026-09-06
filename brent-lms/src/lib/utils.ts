@@ -186,7 +186,7 @@ export function getGoogleDrivePreviewUrl(url: string): string | null {
   }
 
   // 2. Google Drive open?id={id} or uc?id={id} or generic ?id={id}
-  const driveIdMatch = trimmed.match(/(?:drive\.google\.com\/(?:open|uc)\?(?:.*&)?id=|[\?&]id=)([a-zA-Z0-9_-]{15,})/i)
+  const driveIdMatch = trimmed.match(/(?:drive\.google\.com\/(?:open|uc)\?(?:.*&)?id=|[?&]id=)([a-zA-Z0-9_-]{15,})/i)
   if (driveIdMatch && driveIdMatch[1]) {
     return `https://drive.google.com/file/d/${driveIdMatch[1]}/preview`
   }

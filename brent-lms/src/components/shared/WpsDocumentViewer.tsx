@@ -35,8 +35,8 @@ interface DrawStroke {
 export function WpsDocumentViewer({
   title,
   fileUrl,
-  fileSize,
-  subject,
+  fileSize: _fileSize,
+  subject: _subject,
   category,
   studentName,
   studentId,
@@ -57,7 +57,7 @@ export function WpsDocumentViewer({
   const [iframeError, setIframeError] = useState<boolean>(false)
 
   const [annotationTool, setAnnotationTool] = useState<AnnotationTool>('cursor')
-  const [penColor, setPenColor] = useState<string>('#ef4444')
+  const [penColor] = useState<string>('#ef4444')
   const [strokes, setStrokes] = useState<DrawStroke[]>([])
   const [currentStroke, setCurrentStroke] = useState<DrawStroke | null>(null)
   const [stickyNotes, setStickyNotes] = useState<StickyNote[]>([])

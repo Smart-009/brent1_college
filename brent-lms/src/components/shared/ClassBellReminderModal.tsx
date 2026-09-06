@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
-import { startContinuousSchoolBell, stopContinuousSchoolBell, isContinuousBellRinging, ringSchoolBell } from '@/lib/soundEffects'
+import { startContinuousSchoolBell, stopContinuousSchoolBell } from '@/lib/soundEffects'
 import { useAuth } from '@/hooks/useAuth'
 import { schoolStore } from '@/lib/schoolData'
 

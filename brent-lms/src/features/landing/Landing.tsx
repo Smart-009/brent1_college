@@ -277,7 +277,6 @@ export function Landing() {
   const [searchQuery, setSearchQuery] = useState<string>('')
   const [selectedCourseForModal, setSelectedCourseForModal] = useState<CourseItem | null>(null)
   const [inquiryModalOpen, setInquiryModalOpen] = useState(false)
-  const [inquirySuccess, setInquirySuccess] = useState(false)
   const [showPortalDesksModal, setShowPortalDesksModal] = useState(false)
   const [mobileNavOpen, setMobileNavOpen] = useState(false)
   const [categoryDropdownOpen, setCategoryDropdownOpen] = useState(false)
@@ -414,7 +413,6 @@ export function Landing() {
   }, [])
 
   // Interactive Enhancements State
-  const [expandedSyllabusId, setExpandedSyllabusId] = useState<string | null>(null)
   const [calcCourseId, setCalcCourseId] = useState<string>('c-comp')
   const [calcPlan, setCalcPlan] = useState<'full' | 'installments'>('full')
   const [certQuery, setCertQuery] = useState<string>('')

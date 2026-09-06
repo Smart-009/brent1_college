@@ -6,7 +6,6 @@ import { Button } from '@/components/ui/Button'
 import { Spinner } from '@/components/ui/Spinner'
 import { isEditable, formatDate } from '@/lib/utils'
 import { schoolStore } from '@/lib/schoolData'
-import type { Lesson, Course, Profile } from '@/lib/database.types'
 
 export function ContentModeration() {
   const navigate = useNavigate()

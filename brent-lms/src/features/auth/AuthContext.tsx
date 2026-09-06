@@ -90,7 +90,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     } catch {}
     return null
   })
-  const [loading, setLoading] = useState(false)
+  const [loading] = useState(false)
   const [isSessionTerminatedByOtherDevice, setIsSessionTerminatedByOtherDevice] = useState(false)
   const [terminatedDeviceName, setTerminatedDeviceName] = useState('')
 

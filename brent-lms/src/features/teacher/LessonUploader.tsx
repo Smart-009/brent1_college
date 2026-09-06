@@ -182,8 +182,6 @@ export function LessonUploader() {
     }
   }
 
-  const videoId = extractYouTubeId(youtubeUrl)
-
   if (profile?.role !== 'admin') {
     return (
       <PageWrapper title="Access Restricted">

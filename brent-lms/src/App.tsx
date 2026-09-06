@@ -17,7 +17,6 @@ const AboutPage = lazy(() => import('@/features/landing/AboutPage').then((m) => 
 const PrivacyPolicy = lazy(() => import('@/features/landing/PrivacyPolicy').then((m) => ({ default: m.PrivacyPolicy })))
 const Login = lazy(() => import('@/features/auth/Login').then((m) => ({ default: m.Login })))
 const ChangePassword = lazy(() => import('@/features/auth/ChangePassword').then((m) => ({ default: m.ChangePassword })))
-const AccessExpired = lazy(() => import('@/features/auth/AccessExpired').then((m) => ({ default: m.AccessExpired })))
 
 // Lazy-loaded Student Pages
 const StudentDashboard = lazy(() => import('@/features/student/StudentDashboard').then((m) => ({ default: m.StudentDashboard })))
@@ -58,7 +57,6 @@ const ParentDashboard = lazy(() => import('@/features/parent/ParentDashboard').t
 const SchoolNoticeboard = lazy(() => import('@/features/announcements/SchoolNoticeboard').then((m) => ({ default: m.SchoolNoticeboard })))
 import { BursarDesk } from '@/features/bursar/BursarDesk'
 import { isNativeApp } from '@/utils/platform'
-import { NativeAppDRMGuard } from '@/components/shared/NativeAppDRMGuard'
 
 /** Student Portal Direct Access Guard */
 function StudentNativeGuard({ children }: { children: ReactElement }) {

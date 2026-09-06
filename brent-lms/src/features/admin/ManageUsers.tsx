@@ -74,7 +74,7 @@ export function ManageUsers() {
   })
 
   // Fetch classes
-  const { data: classesData } = useQuery({
+  const { data: _classesData } = useQuery({
     queryKey: ['classes-admin-users'],
     queryFn: async () => {
       const { data } = await supabase.from('classes').select('*').order('name')
@@ -139,7 +139,7 @@ export function ManageUsers() {
 
       // 1. Attempt Supabase Auth signUp, catch email rate limit error gracefully
       try {
-        const { data: authData, error: authErr } = await supabase.auth.signUp({
+        const { data: authData, error: _authErr } = await supabase.auth.signUp({
           email,
           password: password.trim(),
           options: {

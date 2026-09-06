@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import { useAuthContext } from '@/features/auth/AuthContext'
 import { MobileAppBottomNav } from '@/components/layout/MobileAppBottomNav'
 import { IntakeAdvertsSection } from './IntakeAdvertsSection'
-import { INSTITUTION_CONFIG, getWhatsAppInquiryUrl } from '@/config/institution'
+import { getWhatsAppInquiryUrl } from '@/config/institution'
 
 interface CourseItem {
   id: string

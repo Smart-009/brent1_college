@@ -3,7 +3,7 @@ const { contextBridge, ipcRenderer } = require('electron')
 try {
   window.sessionStorage?.setItem('eclat_platform', 'desktop')
   window.localStorage?.setItem('eclat_platform', 'desktop')
-} catch (e) {}
+} catch {}
 
 contextBridge.exposeInMainWorld('desktopAPI', {
   isDesktop: true,

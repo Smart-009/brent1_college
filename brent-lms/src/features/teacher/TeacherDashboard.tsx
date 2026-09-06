@@ -8,7 +8,6 @@ import { Button } from '@/components/ui/Button'
 import { Spinner } from '@/components/ui/Spinner'
 import { schoolStore } from '@/lib/schoolData'
 import type { Announcement, Course, Profile } from '@/lib/database.types'
-import type { CourseUnit } from '@/types/school'
 
 export function TeacherDashboard() {
   const { profile } = useAuth()

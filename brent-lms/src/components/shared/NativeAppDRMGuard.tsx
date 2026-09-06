@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom'
-import { OFFICIAL_APK_URL, LOCAL_APK_URL, OFFICIAL_DESKTOP_URL, LOCAL_DESKTOP_URL } from '@/utils/platform'
+import { OFFICIAL_APK_URL, LOCAL_DESKTOP_URL } from '@/utils/platform'
 
 interface NativeAppDRMGuardProps {
   title?: string

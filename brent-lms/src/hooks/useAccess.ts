@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react'
-import { useNavigate } from 'react-router-dom'
 import { useAuth } from './useAuth'
 import { isAccessExpired } from '@/lib/utils'
 import { schoolStore, schoolEventBus } from '@/lib/schoolData'
@@ -12,7 +11,6 @@ import { supabase } from '@/lib/supabase'
  */
 export function useAccess() {
   const { profile } = useAuth()
-  const navigate = useNavigate()
   const [, setSyncTick] = useState(0)
 
   useEffect(() => {

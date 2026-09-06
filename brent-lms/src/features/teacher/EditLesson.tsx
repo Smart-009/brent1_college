@@ -8,8 +8,8 @@ import { YouTubeEmbed } from '@/components/shared/YouTubeEmbed'
 import { Button } from '@/components/ui/Button'
 import { Spinner } from '@/components/ui/Spinner'
 import { schoolStore } from '@/lib/schoolData'
-import { isEditable, getEditTimeRemaining, extractYouTubeId } from '@/lib/utils'
-import type { Lesson, Quiz } from '@/lib/database.types'
+import { isEditable, getEditTimeRemaining } from '@/lib/utils'
+import type { Quiz } from '@/lib/database.types'
 
 function isValidUuid(id?: string): boolean {
   if (!id) return false
@@ -67,7 +67,7 @@ export function EditLesson() {
       // 2. Check Supabase if valid UUID
       if (isValidUuid(lessonId)) {
         try {
-          const { data, error } = await supabase
+          const { data, error: _error } = await supabase
             .from('lessons')
             .select('*, quiz:quizzes(*)')
             .eq('id', lessonId)

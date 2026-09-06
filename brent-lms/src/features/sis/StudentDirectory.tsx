@@ -20,7 +20,7 @@ export function StudentDirectory() {
     const fromSubjects = subjects.map((s) => s.name)
     const fromDepts = departments.flatMap((d) => d.programs || [])
     return Array.from(new Set([...fromOfficial, ...fromUnits, ...fromPrograms, ...fromSubjects, ...fromDepts]))
-  }, [departments, subjects, students])
+  }, [departments, subjects])
 
   const [searchTerm, setSearchTerm] = useState('')
   const [classFilter, setClassFilter] = useState('All')

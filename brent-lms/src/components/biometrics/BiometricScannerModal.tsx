@@ -2,15 +2,12 @@
 // Eclat Institute — Real Biometric Fingerprint Fee Verification Station
 // ============================================================
 
-import React, { useState, useEffect, useRef } from 'react'
+import React, { useState, useEffect } from 'react'
 import { schoolStore } from '@/lib/schoolData'
 import {
   executeRealBiometricScan,
   isWebAuthnAvailable,
-  isWebUSBAvailable,
   isMobileDevice,
-  triggerHaptic,
-  connectWebUSBFingerprintScanner,
   evaluateFeeClearance,
   createClearancePass,
   type BiometricMode,
@@ -30,11 +27,11 @@ export const BiometricScannerModal: React.FC<Props> = ({
   officerName,
   onClose,
   onRecordPayment,
-  onEnrollRequested,
+  onEnrollRequested: _onEnrollRequested,
 }) => {
   const isMobile = isMobileDevice()
-  const [students, setStudents] = useState<StudentRecord[]>(() => schoolStore.getStudents())
-  const [biometricMode, setBiometricMode] = useState<BiometricMode>('webauthn')
+  const [students] = useState<StudentRecord[]>(() => schoolStore.getStudents())
+  const [biometricMode] = useState<BiometricMode>('webauthn')
   const [selectedStudentId, setSelectedStudentId] = useState<string>(
     students.find((s) => s.biometric_enrolled)?.id || students[0]?.id || ''
   )
@@ -44,33 +41,14 @@ export const BiometricScannerModal: React.FC<Props> = ({
   const [matchedStudent, setMatchedStudent] = useState<StudentRecord | null>(null)
   const [confidenceScore, setConfidenceScore] = useState(99.4)
   const [usedDeviceName, setUsedDeviceName] = useState<string>(isMobile ? '📱 Phone Hardware Fingerprint Scanner' : 'Platform Biometric Sensor')
-  const [connectedUsbDev, setConnectedUsbDev] = useState<RealBiometricDevice | null>(null)
+  const [connectedUsbDev] = useState<RealBiometricDevice | null>(null)
   const [selectedPurpose, setSelectedPurpose] = useState<BiometricFeeClearancePass['purpose']>('Exam Entry')
   const [generatedPass, setGeneratedPass] = useState<BiometricFeeClearancePass | null>(null)
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
-  const [isPressingSensor, setIsPressingSensor] = useState(false)
-
-  const pressTimerRef = useRef<any>(null)
-  const holdProgressRef = useRef(0)
 
   useEffect(() => {
-    isWebAuthnAvailable().then((avail) => {
-      if (!avail && biometricMode === 'webauthn') {
-        // Keep webauthn or fallback with explanation
-      }
-    })
+    isWebAuthnAvailable()
   }, [isMobile])
-
-  const handleConnectUsbDevice = async () => {
-    try {
-      setErrorMessage(null)
-      const dev = await connectWebUSBFingerprintScanner()
-      setConnectedUsbDev(dev)
-      setBiometricMode('webusb')
-    } catch (err: any) {
-      setErrorMessage(err?.message || 'Failed to connect USB optical scanner.')
-    }
-  }
 
   // Start Real Fingerprint Verification via Phone's Native Biometrics
   const handleScanFingerprint = async (targetStudent?: StudentRecord, chosenMode: BiometricMode = biometricMode) => {

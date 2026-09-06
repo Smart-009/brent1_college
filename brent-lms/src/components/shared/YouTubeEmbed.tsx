@@ -13,7 +13,7 @@ interface YouTubeEmbedProps {
 
 function extractVimeoId(url: string): string | null {
   if (!url) return null
-  const regExp = /(?:vimeo\.com\/(?:channels\/(?:\w+\/)?|groups\/([^\/]*)\/videos\/|album\/(\d+)\/video\/|video\/|)(\d+))/
+  const regExp = /(?:vimeo\.com\/(?:channels\/(?:\w+\/)?|groups\/([^/]*)\/videos\/|album\/(\d+)\/video\/|video\/|)(\d+))/
   const match = url.match(regExp)
   return match && match[3] ? match[3] : null
 }

@@ -40,7 +40,6 @@ export function CreateCourse() {
   const [isCustomDept, setIsCustomDept] = useState(departments.length === 0)
   const [selectedDeptId, setSelectedDeptId] = useState<string>(departments[0]?.id || '')
   const [customDeptName, setCustomDeptName] = useState('')
-  const [customDeptCode, setCustomDeptCode] = useState('')
 
   const [isCustomProgram, setIsCustomProgram] = useState(true)
   const [selectedProgram, setSelectedProgram] = useState<string>('')
@@ -205,7 +204,7 @@ export function CreateCourse() {
       // 1. If custom department was introduced, persist it
       let finalDeptId = selectedDeptId
       if (isCustomDept && customDeptName.trim()) {
-        const newDeptCode = (customDeptCode.trim() || code.trim().split('-')[0] || 'DEPT').toUpperCase()
+        const newDeptCode = (code.trim().split('-')[0] || 'DEPT').toUpperCase()
         const newDept: CollegeDepartment = {
           id: `dept-${Date.now()}`,
           code: newDeptCode,

@@ -613,7 +613,7 @@ export function createClearancePass(
   officerName: string,
   purpose: BiometricFeeClearancePass['purpose'] = 'Exam Entry',
   confidenceScore = 99.5,
-  deviceUsed = 'Windows Hello / Hardware Sensor'
+  _deviceUsed = 'Windows Hello / Hardware Sensor'
 ): BiometricFeeClearancePass {
   const evalResult = evaluateFeeClearance(student.term_fee_total, student.fee_balance)
   const now = new Date()

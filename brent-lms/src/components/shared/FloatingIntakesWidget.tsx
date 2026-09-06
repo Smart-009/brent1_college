@@ -1,7 +1,7 @@
 import { useState, useEffect, useMemo } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import { intakeStore } from '@/lib/intakeStore'
-import { extractYouTubeId, formatDate } from '@/lib/utils'
+import { formatDate } from '@/lib/utils'
 import { getWhatsAppInquiryUrl } from '@/config/institution'
 import { isNativeApp } from '@/utils/platform'
 import type { IntakeSchedule } from '@/types/intake'

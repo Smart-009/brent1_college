@@ -1,18 +1,17 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 import { isNativeApp } from '@/utils/platform';
 import { schoolStore } from '@/lib/schoolData';
 import { checkForOTAUpdates } from '@/lib/otaUpdater';
 
 export function PullToRefresh() {
-  if (!isNativeApp()) return null;
-
   const queryClient = useQueryClient();
+  const isNative = isNativeApp();
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [startY, setStartY] = useState(0);
   const [pullDistance, setPullDistance] = useState(0);
 
-  const handleRefresh = async () => {
+  const handleRefresh = useCallback(async () => {
     setIsRefreshing(true);
     try {
       await Promise.allSettled([
@@ -23,15 +22,16 @@ export function PullToRefresh() {
       window.dispatchEvent(new CustomEvent('eclat-data-synced'));
       window.dispatchEvent(new Event('storage'));
       await new Promise((res) => setTimeout(res, 600));
-    } catch (e) {
+    } catch {
       // ignore
     } finally {
       setIsRefreshing(false);
       setPullDistance(0);
     }
-  };
+  }, [queryClient]);
 
   useEffect(() => {
+    if (!isNative) return;
     const handleTouchStart = (e: TouchEvent) => {
       if (window.scrollY === 0) {
         setStartY(e.touches[0].clientY);
@@ -67,9 +67,9 @@ export function PullToRefresh() {
       window.removeEventListener('touchmove', handleTouchMove);
       window.removeEventListener('touchend', handleTouchEnd);
     };
-  }, [startY, pullDistance, isRefreshing]);
+  }, [isNative, startY, pullDistance, isRefreshing, handleRefresh]);
 
-  if (pullDistance === 0 && !isRefreshing) return null;
+  if (!isNative || (pullDistance === 0 && !isRefreshing)) return null;
 
   return (
     <div

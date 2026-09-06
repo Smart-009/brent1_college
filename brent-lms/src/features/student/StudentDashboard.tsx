@@ -4,7 +4,6 @@ import { Link } from 'react-router-dom'
 import { useAuth } from '@/hooks/useAuth'
 import { supabase } from '@/lib/supabase'
 import { PageWrapper } from '@/components/layout/PageWrapper'
-import { CourseCard } from '@/components/shared/CourseCard'
 import { AnnouncementCard } from '@/components/shared/AnnouncementCard'
 import { Spinner } from '@/components/ui/Spinner'
 import { CertificateGenerator } from '@/components/shared/CertificateGenerator'
@@ -14,7 +13,7 @@ import type { Course, Enrollment, Announcement } from '@/lib/database.types'
 export function StudentDashboard() {
   const { profile } = useAuth()
   const [showCertModal, setShowCertModal] = useState(false)
-  const [studentsVersion, setStudentsVersion] = useState(0)
+  const [, setStudentsVersion] = useState(0)
 
   // Realtime Cloud Sync & Event Listener for Student Clearance
   useEffect(() => {
@@ -141,7 +140,7 @@ export function StudentDashboard() {
     .slice(0, 3)
 
   // Fetch enrollments with course details from Supabase (if online)
-  const { data: enrollments, isLoading: loadingEnrollments } = useQuery({
+  const { data: _enrollments, isLoading: loadingEnrollments } = useQuery({
     queryKey: ['student-enrollments', profile?.id],
     queryFn: async () => {
       if (!profile?.id) return []

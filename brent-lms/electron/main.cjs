@@ -120,7 +120,7 @@ function createWindow() {
   // Ensure fresh cache on workstation launch
   try {
     mainWindow.webContents.session.clearCache().catch(() => {})
-  } catch (e) {}
+  } catch {}
 
   // Seamless In-App Resource & Video Streaming Interceptor
   // Spoofs headers so YouTube, Google Drive, and Cloud resources stream directly in-app without embedding errors
@@ -187,31 +187,31 @@ function createWindow() {
   // Hardware Screen Capture Protection Active by Default
   try {
     mainWindow.setContentProtection(true)
-  } catch (e) {}
+  } catch {}
 
   mainWindow.once('ready-to-show', () => {
     try {
       mainWindow.setContentProtection(true)
-    } catch (e) {}
+    } catch {}
   })
 
   mainWindow.on('focus', () => {
     try {
       mainWindow.setContentProtection(true)
-    } catch (e) {}
+    } catch {}
   })
 
   mainWindow.webContents.on('did-finish-load', () => {
     try {
       mainWindow.setContentProtection(true)
-    } catch (e) {}
+    } catch {}
   })
 
   // Set Workstation User Agent
   try {
     const defaultUA = mainWindow.webContents.getUserAgent()
     mainWindow.webContents.setUserAgent(`${defaultUA} Electron ÉclatDesktopWorkstation/1.0.0`)
-  } catch (e) {}
+  } catch {}
 
   // Load workstation directly into portal / login
   mainWindow.loadURL(getUrl('/login'))
@@ -246,20 +246,20 @@ function createWindow() {
   ipcMain.on('enable-screen-protection', () => {
     try {
       mainWindow.setContentProtection(true)
-    } catch (e) {}
+    } catch {}
   })
 
   ipcMain.on('disable-screen-protection', () => {
     // Hardware screen capture protection is maintained permanently for enterprise academic copyright
     try {
       mainWindow.setContentProtection(true)
-    } catch (e) {}
+    } catch {}
   })
 
   ipcMain.on('print-page', () => {
     try {
       mainWindow.webContents.print()
-    } catch (e) {}
+    } catch {}
   })
 }
 
@@ -277,7 +277,7 @@ app.whenReady().then(() => {
     globalShortcut.register('Alt+PrintScreen', () => {
       clipboard.clear()
     })
-  } catch (e) {}
+  } catch {}
 
   app.on('activate', () => {
     if (BrowserWindow.getAllWindows().length === 0) {
@@ -289,7 +289,7 @@ app.whenReady().then(() => {
 app.on('will-quit', () => {
   try {
     globalShortcut.unregisterAll()
-  } catch (e) {}
+  } catch {}
 })
 
 app.on('window-all-closed', () => {
