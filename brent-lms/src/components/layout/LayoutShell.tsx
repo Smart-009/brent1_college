@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Outlet, useLocation } from 'react-router-dom'
 import { Navbar } from './Navbar'
 import { Sidebar } from './Sidebar'
@@ -12,10 +12,36 @@ import { isNativeApp, isElectronApp } from '@/utils/platform'
 
 export function LayoutShell() {
   const [sidebarOpen, setSidebarOpen] = useState(false)
+  const [isVideoRotated, setIsVideoRotated] = useState(false)
   const isNative = isNativeApp()
   const isDesktop = isElectronApp()
   const location = useLocation()
   const isVideoEnvironment = location.pathname.includes('/lesson/') || location.pathname.startsWith('/student/lesson')
+
+  useEffect(() => {
+    const handleVideoRotated = (e: any) => {
+      setIsVideoRotated(!!e.detail?.isRotated)
+    }
+    const handleToggleSidebar = () => {
+      setSidebarOpen((prev) => !prev)
+    }
+    const handleCloseSidebar = () => {
+      setSidebarOpen(false)
+    }
+    window.addEventListener('eclat-video-rotated', handleVideoRotated)
+    window.addEventListener('eclat-toggle-sidebar', handleToggleSidebar)
+    window.addEventListener('eclat-close-sidebar', handleCloseSidebar)
+    return () => {
+      window.removeEventListener('eclat-video-rotated', handleVideoRotated)
+      window.removeEventListener('eclat-toggle-sidebar', handleToggleSidebar)
+      window.removeEventListener('eclat-close-sidebar', handleCloseSidebar)
+    }
+  }, [])
+
+  // Reset rotation state on navigation
+  useEffect(() => {
+    setIsVideoRotated(false)
+  }, [location.pathname])
 
   return (
     <div className="app-layout">
@@ -23,10 +49,10 @@ export function LayoutShell() {
       <DesktopCommandPalette />
       <ClassBellReminderModal />
       <ConcurrentSessionAlertModal />
-      <Navbar onToggleSidebar={() => setSidebarOpen(!sidebarOpen)} />
+      {!isVideoRotated && <Navbar onToggleSidebar={() => setSidebarOpen(!sidebarOpen)} />}
       <div className={`sidebar-backdrop ${sidebarOpen ? 'open' : ''}`} onClick={() => setSidebarOpen(false)} />
       <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
-      {!isVideoEnvironment && <MobileAppBottomNav />}
+      {!isVideoEnvironment && !isVideoRotated && <MobileAppBottomNav />}
       <main
         className="main-content"
         style={{
@@ -34,6 +60,7 @@ export function LayoutShell() {
           flexDirection: 'column',
           minHeight: 'calc(100vh - 64px)',
           paddingBottom: isVideoEnvironment ? '0' : (isDesktop ? '1rem' : isNative ? '4.5rem' : '5rem'),
+          paddingTop: isVideoRotated ? '0' : undefined,
         }}
       >
         <div style={{ flex: 1 }}>
