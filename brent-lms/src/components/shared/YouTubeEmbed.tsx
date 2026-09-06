@@ -842,9 +842,9 @@ export function YouTubeEmbed({
                   value={playbackRate}
                   onChange={(e) => handleSpeedChange(Number(e.target.value))}
                   style={{
-                    background: 'rgba(255, 255, 255, 0.12)',
-                    color: '#f8fafc',
-                    border: '1px solid rgba(255, 255, 255, 0.2)',
+                    background: 'rgba(255, 255, 255, 0.15)',
+                    color: '#ffffff',
+                    border: '1px solid rgba(255, 255, 255, 0.3)',
                     borderRadius: '6px',
                     padding: '3px 6px',
                     fontSize: '0.72rem',
@@ -852,11 +852,11 @@ export function YouTubeEmbed({
                     cursor: 'pointer',
                   }}
                 >
-                  <option value={0.75} style={{ color: '#000' }}>0.75x</option>
-                  <option value={1} style={{ color: '#000' }}>1.0x Normal</option>
-                  <option value={1.25} style={{ color: '#000' }}>1.25x</option>
-                  <option value={1.5} style={{ color: '#000' }}>1.5x</option>
-                  <option value={2} style={{ color: '#000' }}>2.0x</option>
+                  <option value={0.75} style={{ background: '#090d16', color: '#ffffff' }}>0.75x</option>
+                  <option value={1} style={{ background: '#090d16', color: '#ffffff' }}>1.0x Normal</option>
+                  <option value={1.25} style={{ background: '#090d16', color: '#ffffff' }}>1.25x</option>
+                  <option value={1.5} style={{ background: '#090d16', color: '#ffffff' }}>1.5x</option>
+                  <option value={2} style={{ background: '#090d16', color: '#ffffff' }}>2.0x</option>
                 </select>
 
                 <button
