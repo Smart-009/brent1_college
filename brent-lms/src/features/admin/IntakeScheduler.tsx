@@ -79,8 +79,25 @@ export function IntakeScheduler() {
       }
     }
     syncData()
+
+    const handleUpdated = (e: any) => {
+      if (!mounted) return
+      if (e?.detail && Array.isArray(e.detail)) {
+        setIntakes(e.detail)
+      } else {
+        setIntakes(intakeStore.getIntakes())
+      }
+    }
+
+    window.addEventListener('eclat-intakes-updated', handleUpdated)
+    window.addEventListener('eclat-data-synced', syncData)
+    window.addEventListener('focus', syncData)
+
     return () => {
       mounted = false
+      window.removeEventListener('eclat-intakes-updated', handleUpdated)
+      window.removeEventListener('eclat-data-synced', syncData)
+      window.removeEventListener('focus', syncData)
     }
   }, [])
 

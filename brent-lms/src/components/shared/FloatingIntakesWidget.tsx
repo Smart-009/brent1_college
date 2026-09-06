@@ -24,14 +24,38 @@ export function FloatingIntakesWidget() {
 
   useEffect(() => {
     let mounted = true
+
+    const syncIntakes = () => {
+      const pub = intakeStore.getPublishedIntakes().filter((i) => i.status !== 'Closed')
+      if (mounted && pub.length > 0) setIntakes(pub)
+    }
+
     intakeStore.fetchCloudIntakes().then((list) => {
       if (mounted) {
         const pub = list.filter((i) => i.is_published && i.status !== 'Closed')
         if (pub.length > 0) setIntakes(pub)
       }
     })
+
+    const handleUpdated = (e: any) => {
+      if (!mounted) return
+      if (e?.detail && Array.isArray(e.detail)) {
+        const pub = e.detail.filter((i: IntakeSchedule) => i.is_published && i.status !== 'Closed')
+        if (pub.length > 0) setIntakes(pub)
+      } else {
+        syncIntakes()
+      }
+    }
+
+    window.addEventListener('eclat-intakes-updated', handleUpdated)
+    window.addEventListener('eclat-data-synced', syncIntakes)
+    window.addEventListener('focus', syncIntakes)
+
     return () => {
       mounted = false
+      window.removeEventListener('eclat-intakes-updated', handleUpdated)
+      window.removeEventListener('eclat-data-synced', syncIntakes)
+      window.removeEventListener('focus', syncIntakes)
     }
   }, [])
 

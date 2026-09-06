@@ -117,7 +117,10 @@ class IntakeStore {
       if (stored) {
         const parsed = JSON.parse(stored)
         if (Array.isArray(parsed) && parsed.length > 0) {
-          this.intakes = parsed
+          this.intakes = parsed.map((i: any) => ({
+            ...i,
+            promo_video_url: i.promo_video_url && i.promo_video_url.trim() !== '' ? i.promo_video_url : undefined,
+          }))
           this.initialized = true
           return
         }
@@ -138,6 +141,26 @@ class IntakeStore {
     }
   }
 
+  public initRealtimeSync() {
+    if (typeof window === 'undefined') return
+    try {
+      supabase
+        .channel('intake_schedules_realtime_channel')
+        .on(
+          'postgres_changes',
+          { event: '*', schema: 'public', table: 'intake_schedules' },
+          async () => {
+            await this.fetchCloudIntakes()
+            window.dispatchEvent(new CustomEvent('eclat-intakes-updated', { detail: this.intakes }))
+            window.dispatchEvent(new CustomEvent('eclat-data-synced'))
+          }
+        )
+        .subscribe()
+    } catch (err) {
+      console.warn('Realtime subscription notice:', err)
+    }
+  }
+
   public async fetchCloudIntakes(): Promise<IntakeSchedule[]> {
     try {
       const { data, error } = await supabase
@@ -153,8 +176,8 @@ class IntakeStore {
           term_session: d.term_session || 'Term 1',
           headline: d.headline || '',
           description: d.description || '',
-          poster_image_url: d.poster_image_url || undefined,
-          promo_video_url: d.promo_video_url || undefined,
+          poster_image_url: d.poster_image_url && d.poster_image_url.trim() !== '' ? d.poster_image_url : undefined,
+          promo_video_url: d.promo_video_url && d.promo_video_url.trim() !== '' ? d.promo_video_url : undefined,
           application_deadline: d.application_deadline,
           orientation_date: d.orientation_date || undefined,
           commencement_date: d.commencement_date,
@@ -172,12 +195,13 @@ class IntakeStore {
           updated_at: d.updated_at || undefined,
         }))
 
-        // Merge with local storage
+        // Cloud is authoritative for existing records
         const map = new Map<string, IntakeSchedule>()
         for (const item of this.intakes) map.set(item.id, item)
         for (const item of cloudList) map.set(item.id, item)
         this.intakes = Array.from(map.values())
         this.saveToStorage()
+        window.dispatchEvent(new CustomEvent('eclat-intakes-updated', { detail: this.intakes }))
       }
     } catch {
       // Fallback to local
@@ -195,34 +219,42 @@ class IntakeStore {
   }
 
   public async addIntake(intake: IntakeSchedule): Promise<void> {
-    this.intakes = [intake, ...this.intakes.filter((i) => i.id !== intake.id)]
+    const cleanedIntake: IntakeSchedule = {
+      ...intake,
+      promo_video_url: intake.promo_video_url?.trim() || undefined,
+      poster_image_url: intake.poster_image_url?.trim() || undefined,
+      updated_at: new Date().toISOString(),
+    }
+    this.intakes = [cleanedIntake, ...this.intakes.filter((i) => i.id !== intake.id)]
     this.saveToStorage()
+    window.dispatchEvent(new CustomEvent('eclat-intakes-updated', { detail: this.intakes }))
+    window.dispatchEvent(new CustomEvent('eclat-data-synced'))
 
     // Save to Supabase
     try {
       await supabase.from('intake_schedules').upsert({
-        id: intake.id,
-        title: intake.title,
-        academic_year: intake.academic_year,
-        term_session: intake.term_session,
-        headline: intake.headline,
-        description: intake.description,
-        poster_image_url: intake.poster_image_url || null,
-        promo_video_url: intake.promo_video_url || null,
-        application_deadline: intake.application_deadline,
-        orientation_date: intake.orientation_date || null,
-        commencement_date: intake.commencement_date,
-        status: intake.status,
-        target_courses: intake.target_courses,
-        early_bird_discount: intake.early_bird_discount || null,
-        installment_plan: intake.installment_plan || null,
-        study_modes: intake.study_modes,
-        contact_phone: intake.contact_phone || null,
-        contact_email: intake.contact_email || null,
-        registration_fee: intake.registration_fee || null,
-        is_published: intake.is_published,
-        featured: intake.featured || false,
-        created_at: intake.created_at,
+        id: cleanedIntake.id,
+        title: cleanedIntake.title,
+        academic_year: cleanedIntake.academic_year,
+        term_session: cleanedIntake.term_session,
+        headline: cleanedIntake.headline,
+        description: cleanedIntake.description,
+        poster_image_url: cleanedIntake.poster_image_url || null,
+        promo_video_url: cleanedIntake.promo_video_url || null,
+        application_deadline: cleanedIntake.application_deadline,
+        orientation_date: cleanedIntake.orientation_date || null,
+        commencement_date: cleanedIntake.commencement_date,
+        status: cleanedIntake.status,
+        target_courses: cleanedIntake.target_courses,
+        early_bird_discount: cleanedIntake.early_bird_discount || null,
+        installment_plan: cleanedIntake.installment_plan || null,
+        study_modes: cleanedIntake.study_modes,
+        contact_phone: cleanedIntake.contact_phone || null,
+        contact_email: cleanedIntake.contact_email || null,
+        registration_fee: cleanedIntake.registration_fee || null,
+        is_published: cleanedIntake.is_published,
+        featured: cleanedIntake.featured || false,
+        created_at: cleanedIntake.created_at,
         updated_at: new Date().toISOString(),
       })
     } catch (err) {
@@ -231,18 +263,52 @@ class IntakeStore {
   }
 
   public async updateIntake(id: string, updates: Partial<IntakeSchedule>): Promise<void> {
-    this.intakes = this.intakes.map((i) =>
-      i.id === id ? { ...i, ...updates, updated_at: new Date().toISOString() } : i
-    )
+    const nowIso = new Date().toISOString()
+    this.intakes = this.intakes.map((i) => {
+      if (i.id !== id) return i
+      const updatedItem = { ...i, ...updates, updated_at: nowIso }
+      if ('promo_video_url' in updates) {
+        updatedItem.promo_video_url = updates.promo_video_url?.trim() || undefined
+      }
+      if ('poster_image_url' in updates) {
+        updatedItem.poster_image_url = updates.poster_image_url?.trim() || undefined
+      }
+      return updatedItem
+    })
     this.saveToStorage()
+    window.dispatchEvent(new CustomEvent('eclat-intakes-updated', { detail: this.intakes }))
+    window.dispatchEvent(new CustomEvent('eclat-data-synced'))
 
     try {
+      const dbPayload: any = {
+        ...updates,
+        updated_at: nowIso,
+      }
+      if ('promo_video_url' in updates) {
+        dbPayload.promo_video_url = updates.promo_video_url?.trim() || null
+      }
+      if ('poster_image_url' in updates) {
+        dbPayload.poster_image_url = updates.poster_image_url?.trim() || null
+      }
+      if ('early_bird_discount' in updates) {
+        dbPayload.early_bird_discount = updates.early_bird_discount?.trim() || null
+      }
+      if ('installment_plan' in updates) {
+        dbPayload.installment_plan = updates.installment_plan?.trim() || null
+      }
+      if ('contact_phone' in updates) {
+        dbPayload.contact_phone = updates.contact_phone?.trim() || null
+      }
+      if ('contact_email' in updates) {
+        dbPayload.contact_email = updates.contact_email?.trim() || null
+      }
+      if ('registration_fee' in updates) {
+        dbPayload.registration_fee = updates.registration_fee?.trim() || null
+      }
+
       await supabase
         .from('intake_schedules')
-        .update({
-          ...updates,
-          updated_at: new Date().toISOString(),
-        })
+        .update(dbPayload)
         .eq('id', id)
     } catch (err) {
       console.warn('Supabase intake schedule update notice:', err)
@@ -252,6 +318,8 @@ class IntakeStore {
   public async deleteIntake(id: string): Promise<void> {
     this.intakes = this.intakes.filter((i) => i.id !== id)
     this.saveToStorage()
+    window.dispatchEvent(new CustomEvent('eclat-intakes-updated', { detail: this.intakes }))
+    window.dispatchEvent(new CustomEvent('eclat-data-synced'))
 
     try {
       await supabase.from('intake_schedules').delete().eq('id', id)
@@ -269,3 +337,4 @@ class IntakeStore {
 }
 
 export const intakeStore = new IntakeStore()
+intakeStore.initRealtimeSync()

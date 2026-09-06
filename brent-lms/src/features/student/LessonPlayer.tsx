@@ -132,7 +132,7 @@ export function LessonPlayer() {
 
         const activeLessonId = localLesson?.id || lessonId
         const activeTitle = localLesson?.title || localUnit.title
-        const activeVideoUrl = localLesson?.video_url || 'https://www.youtube.com/watch?v=kqtD5dpn9C8'
+        const activeVideoUrl = localLesson?.video_url || ''
         const activeContent = localLesson?.content || localUnit.description
         const activeMeetingUrl = localLesson?.meeting_url || localUnit.live_meeting_url
 
@@ -209,7 +209,7 @@ export function LessonPlayer() {
             course_id: matchedSub.id,
             title: matchedSub.name,
             description: matchedSub.description,
-            youtube_url: 'https://www.youtube.com/watch?v=kqtD5dpn9C8',
+            youtube_url: '',
             order_index: 1,
             created_at: new Date().toISOString(),
             edit_locked_at: '',

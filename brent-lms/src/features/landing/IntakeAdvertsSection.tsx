@@ -11,13 +11,36 @@ export function IntakeAdvertsSection() {
 
   useEffect(() => {
     let mounted = true
+
+    const syncIntakes = () => {
+      const pub = intakeStore.getPublishedIntakes()
+      if (mounted) setIntakes(pub)
+    }
+
     intakeStore.fetchCloudIntakes().then((list) => {
       if (mounted) {
         setIntakes(list.filter((i) => i.is_published))
       }
     })
+
+    const handleUpdated = (e: any) => {
+      if (!mounted) return
+      if (e?.detail && Array.isArray(e.detail)) {
+        setIntakes(e.detail.filter((i: IntakeSchedule) => i.is_published))
+      } else {
+        syncIntakes()
+      }
+    }
+
+    window.addEventListener('eclat-intakes-updated', handleUpdated)
+    window.addEventListener('eclat-data-synced', syncIntakes)
+    window.addEventListener('focus', syncIntakes)
+
     return () => {
       mounted = false
+      window.removeEventListener('eclat-intakes-updated', handleUpdated)
+      window.removeEventListener('eclat-data-synced', syncIntakes)
+      window.removeEventListener('focus', syncIntakes)
     }
   }, [])
 
