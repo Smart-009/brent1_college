@@ -700,21 +700,15 @@ export function YouTubeEmbed({
             right: isFullscreen || screenSize === 'full' ? 0 : 'auto',
             bottom: isFullscreen || screenSize === 'full' ? 0 : 'auto',
             width: isFullscreen || screenSize === 'full' ? '100vw' : '100%',
-            height: isFullscreen || screenSize === 'full'
-              ? '100vh'
-              : (screenSize === 'small'
-                ? (isMobile ? '240px' : '280px')
-                : (isTheater ? 'calc(85vh)' : (isMobile ? 'clamp(320px, 56vw, 480px)' : 'calc(68vh)'))),
-            aspectRatio: (!isFullscreen && screenSize !== 'full' && !isTheater && screenSize !== 'small') ? '16 / 9' : 'auto',
-            minHeight: isFullscreen || screenSize === 'full'
-              ? '100vh'
-              : (screenSize === 'small' ? (isMobile ? '220px' : '260px') : (isMobile ? '280px' : '460px')),
+            height: isFullscreen || screenSize === 'full' ? '100vh' : 'auto',
+            aspectRatio: isFullscreen || screenSize === 'full' ? 'auto' : '16 / 9',
+            minHeight: isFullscreen || screenSize === 'full' ? '100vh' : 'unset',
             maxHeight: isFullscreen || screenSize === 'full' ? '100vh' : 'none',
             zIndex: isFullscreen || screenSize === 'full' ? 999999 : 1,
-            background: '#040711',
-            borderRadius: isFullscreen || screenSize === 'full' ? '0' : '18px',
+            background: '#000000',
+            borderRadius: isFullscreen || screenSize === 'full' ? '0' : (isMobile ? '10px' : '14px'),
             overflow: 'hidden',
-            boxShadow: isFullscreen || screenSize === 'full' ? 'none' : '0 16px 48px rgba(0, 0, 0, 0.75), 0 0 0 1px rgba(255, 255, 255, 0.1)',
+            boxShadow: isFullscreen || screenSize === 'full' ? 'none' : '0 8px 30px rgba(0, 0, 0, 0.5)',
             userSelect: 'none',
           }}
         >
