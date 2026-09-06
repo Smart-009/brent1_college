@@ -966,14 +966,14 @@ class SchoolDataStore {
       document.addEventListener('deviceready', () => {
         this.syncWithCloud(true).catch(() => {})
       })
-      document.addEventListener('resume', () => {
-        this.syncWithCloud(true).catch(() => {})
-      })
-
-      // Periodic cloud background heartbeat (every 10s) for instant cross-device updates
+      // Periodic automatic live sync heartbeat (every 4s) for instantaneous cross-device sync
       this.autoSyncTimer = setInterval(() => {
         this.syncWithCloud(false).catch(() => {})
-      }, 10000)
+        // Re-establish realtime websocket subscription if disconnected
+        if (!this.syncChannel || this.syncChannel.state === 'closed' || this.syncChannel.state === 'errored') {
+          this.setupRealtimeSync()
+        }
+      }, 4000)
     }
   }
 

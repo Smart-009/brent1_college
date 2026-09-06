@@ -141,6 +141,15 @@ export function YouTubeEmbed({
   const [rippleAction, setRippleAction] = useState<{ icon: string; text: string } | null>(null)
   const [hoverScrubTime, setHoverScrubTime] = useState<number | null>(null)
   const [hoverScrubX, setHoverScrubX] = useState<number>(0)
+  const [isMobile, setIsMobile] = useState<boolean>(() =>
+    typeof window !== 'undefined' ? window.innerWidth < 768 : false
+  )
+
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth < 768)
+    window.addEventListener('resize', handleResize)
+    return () => window.removeEventListener('resize', handleResize)
+  }, [])
 
   // YouTube PostMessage Helper
   const postToYouTube = useCallback((func: string, args: any[] = []) => {
@@ -585,9 +594,9 @@ export function YouTubeEmbed({
         style={{
           position: 'relative',
           width: '100%',
-          maxWidth: isTheater ? '100%' : '1100px',
+          maxWidth: '100%',
           margin: '0 auto',
-          transition: 'max-width 0.3s ease',
+          transition: 'all 0.3s ease',
         }}
       >
         <div
@@ -597,12 +606,14 @@ export function YouTubeEmbed({
           style={{
             position: 'relative',
             width: '100%',
-            paddingTop: isFullscreen ? '0' : '56.25%',
-            height: isFullscreen ? '100vh' : 'auto',
+            paddingTop: isFullscreen ? '0' : (isTheater ? '0' : (isMobile ? '56.25%' : 'min(56.25%, 72vh)')),
+            height: isFullscreen ? '100vh' : (isTheater ? 'calc(82vh)' : 'auto'),
+            minHeight: isFullscreen ? '100vh' : (isTheater ? '480px' : (isMobile ? '240px' : '440px')),
+            maxHeight: isFullscreen ? '100vh' : (isTheater ? 'calc(86vh)' : 'calc(80vh)'),
             background: '#040711',
-            borderRadius: isFullscreen ? '0' : '16px',
+            borderRadius: isFullscreen ? '0' : '18px',
             overflow: 'hidden',
-            boxShadow: '0 12px 36px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(255, 255, 255, 0.08)',
+            boxShadow: '0 16px 48px rgba(0, 0, 0, 0.75), 0 0 0 1px rgba(255, 255, 255, 0.1)',
             userSelect: 'none',
           }}
         >

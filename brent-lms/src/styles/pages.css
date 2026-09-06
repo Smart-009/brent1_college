@@ -442,9 +442,11 @@
    LESSON PLAYER PAGE
    ===================== */
 .lesson-page {
-  max-width: 900px;
+  max-width: 1440px;
+  width: 100%;
   margin: 0 auto;
-  padding: var(--space-6);
+  padding: var(--space-4);
+  box-sizing: border-box;
 }
 .lesson-back-link {
   display: inline-flex;
