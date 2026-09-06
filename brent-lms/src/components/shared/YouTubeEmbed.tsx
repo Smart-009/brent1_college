@@ -715,10 +715,10 @@ export function YouTubeEmbed({
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                 style={{
                   position: 'absolute',
-                  top: 0,
-                  left: 0,
-                  width: '100%',
-                  height: '100%',
+                  top: '-7%',
+                  left: '-3.5%',
+                  width: '107%',
+                  height: '115%',
                   border: 0,
                   pointerEvents: 'none',
                 }}
@@ -899,17 +899,29 @@ export function YouTubeEmbed({
             </div>
           )}
 
-          {/* BOTTOM RIGHT CORNER SOLID MASK */}
+          {/* SOLID WATERMARK & LOGO BLOCKER SHIELDS */}
           <div
             style={{
               position: 'absolute',
               bottom: 0,
               right: 0,
-              width: '120px',
-              height: '48px',
-              zIndex: 12,
+              width: '280px',
+              height: '70px',
+              zIndex: 14,
               pointerEvents: 'none',
-              background: 'linear-gradient(135deg, transparent 20%, rgba(4, 7, 17, 0.95) 80%)',
+              background: '#040711',
+            }}
+          />
+          <div
+            style={{
+              position: 'absolute',
+              bottom: 0,
+              left: 0,
+              width: '140px',
+              height: '70px',
+              zIndex: 14,
+              pointerEvents: 'none',
+              background: '#040711',
             }}
           />
 
