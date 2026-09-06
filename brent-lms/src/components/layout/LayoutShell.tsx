@@ -5,6 +5,7 @@ import { Sidebar } from './Sidebar'
 import { OfflineIndicator } from '@/components/shared/OfflineIndicator'
 import { DesktopCommandPalette } from '@/components/shared/DesktopCommandPalette'
 import { ClassBellReminderModal } from '@/components/shared/ClassBellReminderModal'
+import { ConcurrentSessionAlertModal } from '@/components/shared/ConcurrentSessionAlertModal'
 import { MobileAppBottomNav } from './MobileAppBottomNav'
 import { INSTITUTION_CONFIG } from '@/config/institution'
 import { isNativeApp, isElectronApp } from '@/utils/platform'
@@ -21,6 +22,7 @@ export function LayoutShell() {
       <OfflineIndicator />
       <DesktopCommandPalette />
       <ClassBellReminderModal />
+      <ConcurrentSessionAlertModal />
       <Navbar onToggleSidebar={() => setSidebarOpen(!sidebarOpen)} />
       <div className={`sidebar-backdrop ${sidebarOpen ? 'open' : ''}`} onClick={() => setSidebarOpen(false)} />
       <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />

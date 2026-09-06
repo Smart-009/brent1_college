@@ -6,6 +6,8 @@ import { INSTITUTION_CONFIG } from '@/config/institution'
 import { verifyPassword } from '@/lib/crypto'
 import type { Profile, Role } from '@/lib/database.types'
 
+import { getFriendlyDeviceName } from '@/utils/platform'
+
 export const ADMIN_PROFILE: Profile = {
   id: '40bcf126-5fa0-4df1-be4b-480088ce315a',
   full_name: `${INSTITUTION_CONFIG.name} Principal & Administrator`,
@@ -66,6 +68,9 @@ interface AuthContextValue {
   user: User | null
   profile: Profile | null
   loading: boolean
+  isSessionTerminatedByOtherDevice: boolean
+  terminatedDeviceName: string
+  dismissTerminatedModal: () => void
   signIn: (admissionNumber: string, password: string) => Promise<{ error: string | null; profile?: Profile }>
   signInAsDemo: (role: Role) => void
   signOut: () => Promise<void>
@@ -86,6 +91,24 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return null
   })
   const [loading, setLoading] = useState(false)
+  const [isSessionTerminatedByOtherDevice, setIsSessionTerminatedByOtherDevice] = useState(false)
+  const [terminatedDeviceName, setTerminatedDeviceName] = useState('')
+
+  function dismissTerminatedModal() {
+    setIsSessionTerminatedByOtherDevice(false)
+    setTerminatedDeviceName('')
+  }
+
+  async function bindActiveDeviceSession(userProfile: Profile) {
+    if (!userProfile?.id) return
+    const sessionToken = `ses-${userProfile.id}-${Date.now()}-${Math.random().toString(36).substring(2, 10)}`
+    try {
+      localStorage.setItem('eclat_device_session_token', sessionToken)
+      sessionStorage.setItem('eclat_device_session_token', sessionToken)
+    } catch {}
+    const deviceName = getFriendlyDeviceName()
+    await schoolStore.registerDeviceSession(userProfile.id, sessionToken, deviceName).catch(() => {})
+  }
 
   async function fetchProfile(userId: string) {
     try {
@@ -101,6 +124,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         }
         setProfile(enriched)
         localStorage.setItem('eclat_active_profile', JSON.stringify(enriched))
+        const existingToken = sessionStorage.getItem('eclat_device_session_token') || localStorage.getItem('eclat_device_session_token')
+        if (!existingToken) {
+          bindActiveDeviceSession(enriched).catch(() => {})
+        }
       }
     } catch {
       // Fallback
@@ -136,16 +163,107 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return () => subscription.unsubscribe()
   }, [])
 
-  // Non-destructive profile monitoring
+  // Single Active Device Session Enforcement (Anti-Account Sharing)
   useEffect(() => {
-    // Keep session alive across app views
-  }, [])
+    if (!profile?.id) return
+
+    // Ensure active device session token exists
+    const localToken =
+      sessionStorage.getItem('eclat_device_session_token') ||
+      localStorage.getItem('eclat_device_session_token')
+    if (!localToken) {
+      bindActiveDeviceSession(profile).catch(() => {})
+    }
+
+    const checkActiveSessionValidity = () => {
+      const currentToken =
+        sessionStorage.getItem('eclat_device_session_token') ||
+        localStorage.getItem('eclat_device_session_token')
+
+      if (!currentToken || !profile?.id) return
+
+      const isValid = schoolStore.validateDeviceSession(profile.id, currentToken)
+      if (!isValid) {
+        const activeSess = schoolStore.getActiveDeviceSession(profile.id)
+        const otherDevice = activeSess?.device_name || 'Another Device'
+
+        // Terminate local session
+        localStorage.removeItem('eclat_active_profile')
+        localStorage.removeItem('eclat_device_session_token')
+        sessionStorage.removeItem('eclat_active_profile')
+        sessionStorage.removeItem('eclat_device_session_token')
+        sessionStorage.clear()
+        setProfile(null)
+        setSession(null)
+        setTerminatedDeviceName(otherDevice)
+        setIsSessionTerminatedByOtherDevice(true)
+      }
+    }
+
+    // 1. Instant cross-tab/window eviction via BroadcastChannel
+    let channel: BroadcastChannel | null = null
+    try {
+      if ('BroadcastChannel' in window) {
+        channel = new BroadcastChannel('eclat_session_channel')
+        channel.onmessage = (event) => {
+          const data = event.data
+          if (data && data.type === 'SESSION_REGISTERED' && data.userId) {
+            const cleanCur = profile.id.toLowerCase().trim()
+            const cleanEvt = data.userId.toLowerCase().trim()
+            if (cleanCur === cleanEvt) {
+              const currentToken =
+                sessionStorage.getItem('eclat_device_session_token') ||
+                localStorage.getItem('eclat_device_session_token')
+              if (currentToken && data.sessionToken && currentToken !== data.sessionToken) {
+                // Evicted!
+                localStorage.removeItem('eclat_active_profile')
+                localStorage.removeItem('eclat_device_session_token')
+                sessionStorage.removeItem('eclat_active_profile')
+                sessionStorage.removeItem('eclat_device_session_token')
+                sessionStorage.clear()
+                setProfile(null)
+                setSession(null)
+                setTerminatedDeviceName(data.deviceName || 'Another Device')
+                setIsSessionTerminatedByOtherDevice(true)
+              }
+            }
+          }
+        }
+      }
+    } catch {}
+
+    // 2. Custom event listeners & focus triggers
+    const handleDeviceSessionEvent = () => {
+      checkActiveSessionValidity()
+    }
+    window.addEventListener('eclat-device-sessions-updated', handleDeviceSessionEvent)
+    window.addEventListener('eclat-data-synced', handleDeviceSessionEvent)
+    window.addEventListener('focus', checkActiveSessionValidity)
+    document.addEventListener('visibilitychange', checkActiveSessionValidity)
+
+    // 3. Periodic heartbeat check every 6 seconds
+    const intervalId = setInterval(checkActiveSessionValidity, 6000)
+
+    return () => {
+      if (channel) {
+        try {
+          channel.close()
+        } catch {}
+      }
+      window.removeEventListener('eclat-device-sessions-updated', handleDeviceSessionEvent)
+      window.removeEventListener('eclat-data-synced', handleDeviceSessionEvent)
+      window.removeEventListener('focus', checkActiveSessionValidity)
+      document.removeEventListener('visibilitychange', checkActiveSessionValidity)
+      clearInterval(intervalId)
+    }
+  }, [profile?.id])
 
   function signInAsDemo(role: Role) {
     const demoProf = DEMO_PROFILES[role]
     localStorage.setItem('eclat_active_profile', JSON.stringify(demoProf))
     sessionStorage.setItem('eclat_active_profile', JSON.stringify(demoProf))
     setProfile(demoProf)
+    bindActiveDeviceSession(demoProf).catch(() => {})
     schoolStore.syncWithCloud(true).catch(() => {})
   }
 
@@ -275,6 +393,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           await fetchProfile(data.user.id)
           const storedProf = localStorage.getItem('eclat_active_profile')
           const prof = storedProf ? JSON.parse(storedProf) : undefined
+          if (prof) await bindActiveDeviceSession(prof)
           return { error: null, profile: prof }
         }
         if (error) lastError = error.message
@@ -319,6 +438,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             localStorage.setItem('eclat_active_profile', JSON.stringify(updatedProfile))
             sessionStorage.setItem('eclat_active_profile', JSON.stringify(updatedProfile))
             setProfile(updatedProfile)
+            await bindActiveDeviceSession(updatedProfile)
             return { error: null, profile: updatedProfile }
           }
         }
@@ -376,6 +496,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       localStorage.setItem('eclat_active_profile', JSON.stringify(studentProfile))
       sessionStorage.setItem('eclat_active_profile', JSON.stringify(studentProfile))
       setProfile(studentProfile)
+      await bindActiveDeviceSession(studentProfile)
       return { error: null, profile: studentProfile }
     }
 
@@ -395,6 +516,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       localStorage.setItem('eclat_active_profile', JSON.stringify(fallbackProfile))
       sessionStorage.setItem('eclat_active_profile', JSON.stringify(fallbackProfile))
       setProfile(fallbackProfile)
+      await bindActiveDeviceSession(fallbackProfile)
       return { error: null, profile: fallbackProfile }
     }
 
@@ -404,12 +526,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }
 
   async function signOut() {
+    if (profile?.id) {
+      schoolStore.terminateDeviceSession(profile.id).catch(() => {})
+    }
     try {
       await supabase.auth.signOut()
     } catch {}
     localStorage.removeItem('eclat_demo_role')
     localStorage.removeItem('eclat_active_profile')
+    localStorage.removeItem('eclat_device_session_token')
     sessionStorage.removeItem('eclat_active_profile')
+    sessionStorage.removeItem('eclat_device_session_token')
     sessionStorage.clear()
     setSession(null)
     setProfile(null)
@@ -418,7 +545,21 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const activeUser = session?.user ?? (profile ? ({ id: profile.id, email: `${profile.admission_number}@${INSTITUTION_CONFIG.auth.internalEmailDomain}` } as unknown as User) : null)
 
   return (
-    <AuthContext.Provider value={{ session, user: activeUser, profile, loading, signIn, signInAsDemo, signOut, refreshProfile }}>
+    <AuthContext.Provider
+      value={{
+        session,
+        user: activeUser,
+        profile,
+        loading,
+        isSessionTerminatedByOtherDevice,
+        terminatedDeviceName,
+        dismissTerminatedModal,
+        signIn,
+        signInAsDemo,
+        signOut,
+        refreshProfile,
+      }}
+    >
       {children}
     </AuthContext.Provider>
   )

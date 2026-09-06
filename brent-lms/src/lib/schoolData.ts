@@ -20,6 +20,7 @@ import type {
   CollegeSubject,
   BiometricFeeClearancePass,
   FacultyTeacher,
+  DeviceSession,
 } from '@/types/school'
 import { txEngine, IntegrityError } from './transactionManager'
 import { schoolEventBus } from './eventBus'
@@ -1254,6 +1255,12 @@ class SchoolDataStore {
             } else if ((row.key === 'fee_structures' || row.key === 'custom_course_fees') && typeof row.data === 'object' && row.data !== null) {
               this.set('custom_course_fees', row.data)
               window.dispatchEvent(new CustomEvent('eclat-courses-updated'))
+            } else if (row.key === 'device_sessions' && typeof row.data === 'object' && row.data !== null) {
+              this.set('device_sessions', row.data)
+              try {
+                localStorage.setItem('eclat_school_device_sessions', JSON.stringify(row.data))
+              } catch {}
+              window.dispatchEvent(new CustomEvent('eclat-device-sessions-updated', { detail: row.data }))
             }
           }
         }
@@ -3529,6 +3536,99 @@ class SchoolDataStore {
     await this.pushCollectionToCloud('course_units', this.getCourseUnits())
   }
 
+  // --- Single Active Device Session Enforcement (Anti-Account Sharing) ---
+  getDeviceSessions(): Record<string, DeviceSession> {
+    const raw = this.get<Record<string, DeviceSession>>('device_sessions', {})
+    try {
+      const stored = localStorage.getItem('eclat_school_device_sessions')
+      if (stored) {
+        const parsed = JSON.parse(stored)
+        if (parsed && typeof parsed === 'object') {
+          return { ...parsed, ...raw }
+        }
+      }
+    } catch {}
+    return raw
+  }
+
+  getActiveDeviceSession(userId: string): DeviceSession | undefined {
+    if (!userId) return undefined
+    const cleanId = userId.toLowerCase().trim()
+    const sessions = this.getDeviceSessions()
+    return sessions[cleanId] || Object.values(sessions).find((s) => s.user_id.toLowerCase().trim() === cleanId)
+  }
+
+  async registerDeviceSession(userId: string, sessionToken: string, deviceName: string): Promise<DeviceSession> {
+    if (!userId || !sessionToken) {
+      throw new Error('User ID and Session Token required')
+    }
+    const cleanId = userId.toLowerCase().trim()
+    const sessionObj: DeviceSession = {
+      user_id: userId,
+      session_token: sessionToken,
+      device_name: deviceName || 'Authorized Device',
+      last_active_at: new Date().toISOString(),
+      created_at: new Date().toISOString(),
+    }
+
+    const currentSessions = { ...this.getDeviceSessions() }
+    currentSessions[cleanId] = sessionObj
+    this.set('device_sessions', currentSessions)
+
+    try {
+      localStorage.setItem('eclat_school_device_sessions', JSON.stringify(currentSessions))
+    } catch {}
+
+    // Broadcast eviction immediately across tabs/windows on the same browser / system
+    if (typeof window !== 'undefined') {
+      try {
+        if ('BroadcastChannel' in window) {
+          const channel = new BroadcastChannel('eclat_session_channel')
+          channel.postMessage({
+            type: 'SESSION_REGISTERED',
+            userId,
+            sessionToken,
+            deviceName: sessionObj.device_name,
+            timestamp: Date.now(),
+          })
+          channel.close()
+        }
+      } catch {}
+      window.dispatchEvent(
+        new CustomEvent('eclat-device-sessions-updated', {
+          detail: { userId, sessionToken, deviceName: sessionObj.device_name },
+        })
+      )
+    }
+
+    schoolEventBus.publish('SESSION_REGISTERED' as any, sessionObj)
+
+    // Push to universal cloud sync so other network devices receive eviction notice
+    this.pushCollectionToCloud('device_sessions', currentSessions).catch(() => {})
+
+    return sessionObj
+  }
+
+  validateDeviceSession(userId: string, currentSessionToken: string): boolean {
+    if (!userId || !currentSessionToken) return true
+    const active = this.getActiveDeviceSession(userId)
+    if (!active) return true
+    // If active session token is different from our local token, account was opened elsewhere
+    return active.session_token === currentSessionToken
+  }
+
+  async terminateDeviceSession(userId: string): Promise<void> {
+    if (!userId) return
+    const cleanId = userId.toLowerCase().trim()
+    const currentSessions = { ...this.getDeviceSessions() }
+    delete currentSessions[cleanId]
+    this.set('device_sessions', currentSessions)
+    try {
+      localStorage.setItem('eclat_school_device_sessions', JSON.stringify(currentSessions))
+    } catch {}
+    this.pushCollectionToCloud('device_sessions', currentSessions).catch(() => {})
+  }
+
   // --- Complete Factory Reset ---
   resetToCleanSlate() {
     localStorage.removeItem('eclat_school_students')
@@ -3548,6 +3648,7 @@ class SchoolDataStore {
     localStorage.removeItem('eclat_school_subjects')
     localStorage.removeItem('eclat_school_biometric_passes')
     localStorage.removeItem('eclat_school_custom_course_fees')
+    localStorage.removeItem('eclat_school_device_sessions')
   }
 }
 

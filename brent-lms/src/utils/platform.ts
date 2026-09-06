@@ -59,3 +59,38 @@ export const LOCAL_APK_URL = '/downloads/eclat-institute.apk'
 export const OFFICIAL_DESKTOP_URL = '/downloads/eclat-institute-setup.exe'
 export const LOCAL_DESKTOP_URL = '/eclat-institute-setup.exe'
 
+export function getFriendlyDeviceName(): string {
+  if (typeof window === 'undefined') return 'Authorized Device'
+  const ua = navigator.userAgent
+  let platform = 'Web Browser'
+  if (isCapacitorApp() || /Capacitor/i.test(ua)) {
+    platform = 'Official Android Mobile App'
+  } else if (isElectronApp() || /Electron/i.test(ua)) {
+    platform = 'Official Desktop Workstation App'
+  } else if (/Android/i.test(ua)) {
+    platform = 'Android Mobile Phone'
+  } else if (/iPhone/i.test(ua)) {
+    platform = 'Apple iPhone'
+  } else if (/iPad/i.test(ua)) {
+    platform = 'Apple iPad'
+  } else if (/Macintosh|Mac OS X/i.test(ua)) {
+    platform = 'macOS Computer'
+  } else if (/Windows NT/i.test(ua)) {
+    platform = 'Windows PC'
+  } else if (/Linux/i.test(ua)) {
+    platform = 'Linux Computer'
+  }
+
+  let browser = ''
+  if (!isNativeApp()) {
+    if (/Edg/i.test(ua)) browser = ' • Edge'
+    else if (/Chrome/i.test(ua)) browser = ' • Chrome'
+    else if (/Safari/i.test(ua)) browser = ' • Safari'
+    else if (/Firefox/i.test(ua)) browser = ' • Firefox'
+    else if (/Opera|OPR/i.test(ua)) browser = ' • Opera'
+  }
+
+  return `${platform}${browser}`
+}
+
+

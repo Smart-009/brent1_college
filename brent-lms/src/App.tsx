@@ -8,6 +8,7 @@ import { LayoutShell } from '@/components/layout/LayoutShell'
 import { LoadingScreen, AppOpeningSplashScreen } from '@/components/ui/Spinner'
 import { PullToRefresh } from '@/components/shared/PullToRefresh'
 import { FloatingIntakesWidget } from '@/components/shared/FloatingIntakesWidget'
+import { ConcurrentSessionAlertModal } from '@/components/shared/ConcurrentSessionAlertModal'
 
 // Direct import for Home/Landing page for instant render
 import { Landing } from '@/features/landing/Landing'
@@ -128,6 +129,7 @@ export function App() {
         <AppOpeningSplashScreen onFinished={() => setShowOpeningSplash(false)} />
       )}
       <PullToRefresh />
+      <ConcurrentSessionAlertModal />
       {!isNativeApp() && <FloatingIntakesWidget />}
       <Routes>
         {/* Platform-Aware Root Route */}
