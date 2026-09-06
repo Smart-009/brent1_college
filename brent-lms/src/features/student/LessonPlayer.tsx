@@ -387,7 +387,7 @@ export function LessonPlayer() {
     )
   }
 
-  const { lesson, resources, quizzes, course, courseLessons, enrollment, attempts } = data
+  const { lesson, resources, quizzes, course, courseLessons, enrollment, attempts, unit } = data
 
   const quizIds = quizzes.map((q) => q.id)
   const isLessonAlreadyCompleted = enrollment?.completed_lesson_ids?.includes(lessonId!) || false
@@ -531,19 +531,7 @@ export function LessonPlayer() {
 
   return (
     <div className="lesson-page animate-fade-in">
-      {/* Sleek Minimal Header */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.75rem' }}>
-        <Link to={`/student/courses/${lesson.course_id}`} className="lesson-back-link" style={{ margin: 0, fontWeight: 700, fontSize: '0.85rem' }}>
-          ← Back to {course?.title || 'Course'}
-        </Link>
-      </div>
-
-      <div style={{ marginBottom: '0.85rem' }}>
-        <h1 className="lesson-title" style={{ fontSize: '1.35rem', margin: '0 0 0.2rem', fontWeight: 800 }}>{lesson.title}</h1>
-        {lesson.description && <p className="lesson-desc" style={{ fontSize: '0.85rem', margin: 0, color: 'var(--color-text-secondary)' }}>{lesson.description}</p>}
-      </div>
-
-      {/* Universal Smart Video Player (With Auto-Resume & Auto-Completion) */}
+      {/* 1. Universal Smart Video Player Pinned at the Very Top */}
       <YouTubeEmbed
         url={lesson.youtube_url}
         title={lesson.title}
@@ -551,6 +539,27 @@ export function LessonPlayer() {
         studentId={profile?.id}
         onEnded={handleVideoComplete}
       />
+
+      {/* 2. Lesson Title, Module Details & Back Link Positioned Below the Video */}
+      <div style={{ marginTop: '0.85rem', marginBottom: '1.25rem' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.4rem', flexWrap: 'wrap', gap: '0.5rem' }}>
+          <Link to={`/student/courses/${lesson.course_id}`} className="lesson-back-link" style={{ margin: 0, fontWeight: 700, fontSize: '0.85rem' }}>
+            ← Back to {course?.title || 'Course'}
+          </Link>
+          <span className="badge badge-primary" style={{ fontWeight: 800, fontSize: '0.74rem' }}>
+            {unit?.code || (course as any)?.code || 'Module'} • Active Lesson
+          </span>
+        </div>
+
+        <h1 className="lesson-title" style={{ fontSize: '1.45rem', margin: '0 0 0.35rem', fontWeight: 900, color: 'var(--color-text-primary)' }}>
+          {lesson.title}
+        </h1>
+        {lesson.description && (
+          <p className="lesson-desc" style={{ fontSize: '0.9rem', margin: 0, color: 'var(--color-text-secondary)', lineHeight: 1.6 }}>
+            {lesson.description}
+          </p>
+        )}
+      </div>
 
       {/* Video Completion Floating Banner */}
       {videoCompletedToast && (

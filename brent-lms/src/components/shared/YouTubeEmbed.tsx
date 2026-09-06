@@ -688,84 +688,7 @@ export function YouTubeEmbed({
           transition: 'all 0.3s ease',
         }}
       >
-        {/* Screen Size Switcher Bar (Small, Medium, Full) */}
-        {!isFullscreen && screenSize !== 'full' && (
-          <div
-            style={{
-              display: 'flex',
-              justifyContent: 'space-between',
-              alignItems: 'center',
-              marginBottom: '0.5rem',
-              padding: '0 2px',
-            }}
-          >
-            <div style={{ display: 'inline-flex', alignItems: 'center', gap: '4px', background: 'var(--color-bg-secondary)', padding: '3px 4px', borderRadius: '8px', border: '1px solid var(--color-border)' }}>
-              <span style={{ fontSize: '0.72rem', fontWeight: 800, color: 'var(--color-text-secondary)', padding: '0 4px' }}>SCREEN:</span>
-              <button
-                type="button"
-                onClick={() => setPlayerScreenSize('small')}
-                style={{
-                  background: screenSize === 'small' ? '#2563eb' : 'transparent',
-                  color: screenSize === 'small' ? '#ffffff' : 'var(--color-text-secondary)',
-                  border: 'none',
-                  borderRadius: '6px',
-                  padding: '3px 8px',
-                  fontSize: '0.72rem',
-                  fontWeight: 800,
-                  cursor: 'pointer',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '3px',
-                }}
-              >
-                <span>📱</span> Small
-              </button>
-              <button
-                type="button"
-                onClick={() => setPlayerScreenSize('medium')}
-                style={{
-                  background: screenSize === 'medium' ? '#2563eb' : 'transparent',
-                  color: screenSize === 'medium' ? '#ffffff' : 'var(--color-text-secondary)',
-                  border: 'none',
-                  borderRadius: '6px',
-                  padding: '3px 8px',
-                  fontSize: '0.72rem',
-                  fontWeight: 800,
-                  cursor: 'pointer',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '3px',
-                }}
-              >
-                <span>💻</span> Medium
-              </button>
-              <button
-                type="button"
-                onClick={() => setPlayerScreenSize('full')}
-                style={{
-                  background: 'transparent',
-                  color: 'var(--color-text-secondary)',
-                  border: 'none',
-                  borderRadius: '6px',
-                  padding: '3px 8px',
-                  fontSize: '0.72rem',
-                  fontWeight: 800,
-                  cursor: 'pointer',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '3px',
-                }}
-              >
-                <span>⛶</span> Full Screen
-              </button>
-            </div>
-
-            <div style={{ fontSize: '0.72rem', color: 'var(--color-text-secondary)', fontWeight: 600 }}>
-              {screenSize === 'small' ? 'Compact Window' : 'Standard Cinema'}
-            </div>
-          </div>
-        )}
-
+        {/* 1. Large Cinema Video Frame PINNED AT THE TOP */}
         <div
           ref={containerRef}
           onMouseMove={handleMouseMove}
@@ -780,12 +703,12 @@ export function YouTubeEmbed({
             height: isFullscreen || screenSize === 'full'
               ? '100vh'
               : (screenSize === 'small'
-                ? (isMobile ? '220px' : '260px')
-                : (isTheater ? 'calc(82vh)' : 'auto')),
+                ? (isMobile ? '240px' : '280px')
+                : (isTheater ? 'calc(85vh)' : (isMobile ? 'clamp(320px, 56vw, 480px)' : 'calc(68vh)'))),
             aspectRatio: (!isFullscreen && screenSize !== 'full' && !isTheater && screenSize !== 'small') ? '16 / 9' : 'auto',
             minHeight: isFullscreen || screenSize === 'full'
               ? '100vh'
-              : (screenSize === 'small' ? (isMobile ? '200px' : '240px') : (isMobile ? '220px' : '360px')),
+              : (screenSize === 'small' ? (isMobile ? '220px' : '260px') : (isMobile ? '280px' : '460px')),
             maxHeight: isFullscreen || screenSize === 'full' ? '100vh' : 'none',
             zIndex: isFullscreen || screenSize === 'full' ? 999999 : 1,
             background: '#040711',
