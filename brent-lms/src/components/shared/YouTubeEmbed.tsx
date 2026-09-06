@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect, useCallback } from 'react'
+import React, { useState, useRef, useEffect, useCallback } from 'react'
 import { extractYouTubeId } from '@/lib/utils'
 
 interface YouTubeEmbedProps {
@@ -9,13 +9,6 @@ interface YouTubeEmbedProps {
   autoPlay?: boolean
   onEnded?: () => void
   onProgress?: (currentTime: number, duration: number) => void
-}
-
-declare global {
-  interface Window {
-    YT: any
-    onYouTubeIframeAPIReady: () => void
-  }
 }
 
 function extractVimeoId(url: string): string | null {
@@ -45,6 +38,11 @@ function formatTime(seconds: number): string {
   if (isNaN(seconds) || seconds < 0) return '00:00'
   const mins = Math.floor(seconds / 60)
   const secs = Math.floor(seconds % 60)
+  const hrs = Math.floor(mins / 60)
+  if (hrs > 0) {
+    const remMins = mins % 60
+    return `${hrs}:${remMins < 10 ? '0' : ''}${remMins}:${secs < 10 ? '0' : ''}${secs}`
+  }
   return `${mins < 10 ? '0' : ''}${mins}:${secs < 10 ? '0' : ''}${secs}`
 }
 
@@ -69,7 +67,7 @@ export function YouTubeEmbed({
   const [completedNotice, setCompletedNotice] = useState(false)
   const hasTriggeredCompleteRef = useRef(false)
 
-  // Network Online/Offline State
+  // Network State
   const [isNetworkOnline, setIsNetworkOnline] = useState<boolean>(() =>
     typeof navigator !== 'undefined' ? navigator.onLine : true
   )
@@ -99,9 +97,7 @@ export function YouTubeEmbed({
           return () => clearTimeout(timer)
         }
       }
-    } catch {
-      // Ignore storage errors
-    }
+    } catch {}
   }, [storageKey])
 
   const saveProgress = useCallback(
@@ -109,7 +105,6 @@ export function YouTubeEmbed({
       if (!storageKey) return
       try {
         if (totalDuration > 0 && time >= totalDuration * 0.92) {
-          // Video finished (>= 92%)
           if (!hasTriggeredCompleteRef.current) {
             hasTriggeredCompleteRef.current = true
             setCompletedNotice(true)
@@ -120,9 +115,7 @@ export function YouTubeEmbed({
           localStorage.setItem(storageKey, time.toFixed(1))
         }
         if (onProgress) onProgress(time, totalDuration)
-      } catch {
-        // Ignore storage errors
-      }
+      } catch {}
     },
     [storageKey, onEnded, onProgress]
   )
@@ -132,6 +125,7 @@ export function YouTubeEmbed({
   const iframeRef = useRef<HTMLIFrameElement>(null)
   const containerRef = useRef<HTMLDivElement>(null)
   const controlsTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const scrubberRef = useRef<HTMLDivElement>(null)
 
   const [isPlaying, setIsPlaying] = useState(autoPlay)
   const [currentTime, setCurrentTime] = useState(0)
@@ -140,8 +134,13 @@ export function YouTubeEmbed({
   const [isMuted, setIsMuted] = useState(false)
   const [playbackRate, setPlaybackRate] = useState(1)
   const [isFullscreen, setIsFullscreen] = useState(false)
+  const [isTheater, setIsTheater] = useState(false)
   const [showControls, setShowControls] = useState(true)
   const [isBuffering, setIsBuffering] = useState(false)
+  const [showSettings, setShowSettings] = useState(false)
+  const [rippleAction, setRippleAction] = useState<{ icon: string; text: string } | null>(null)
+  const [hoverScrubTime, setHoverScrubTime] = useState<number | null>(null)
+  const [hoverScrubX, setHoverScrubX] = useState<number>(0)
 
   // YouTube PostMessage Helper
   const postToYouTube = useCallback((func: string, args: any[] = []) => {
@@ -153,7 +152,7 @@ export function YouTubeEmbed({
     }
   }, [])
 
-  // Unified Fullscreen Listener
+  // Fullscreen Listener
   useEffect(() => {
     const handleFullscreenChange = () => {
       setIsFullscreen(!!document.fullscreenElement)
@@ -165,6 +164,12 @@ export function YouTubeEmbed({
       document.removeEventListener('webkitfullscreenchange', handleFullscreenChange)
     }
   }, [])
+
+  // Trigger brief visual feedback ripple
+  const triggerRipple = (icon: string, text: string) => {
+    setRippleAction({ icon, text })
+    setTimeout(() => setRippleAction(null), 650)
+  }
 
   // Direct Video Handlers
   const handleLoadedMetadata = () => {
@@ -208,18 +213,14 @@ export function YouTubeEmbed({
               saveProgress(c, d)
             }
             if (data.info.playerState === 1) {
-              // Playing
               setIsPlaying(true)
               setIsBuffering(false)
             } else if (data.info.playerState === 2) {
-              // Paused
               setIsPlaying(false)
               setIsBuffering(false)
             } else if (data.info.playerState === 3) {
-              // Buffering
               setIsBuffering(true)
             } else if (data.info.playerState === 0) {
-              // Ended
               setIsPlaying(false)
               setIsBuffering(false)
               if (!hasTriggeredCompleteRef.current) {
@@ -244,11 +245,10 @@ export function YouTubeEmbed({
     const interval = setInterval(() => {
       postToYouTube('getCurrentTime')
       postToYouTube('getDuration')
-    }, 500)
+    }, 400)
     return () => clearInterval(interval)
   }, [videoId, isDirect, isPlaying, postToYouTube])
 
-  // Handle Iframe Initial Ready Event
   const handleIframeLoad = () => {
     if (iframeRef.current?.contentWindow) {
       iframeRef.current.contentWindow.postMessage('{"event":"listening"}', '*')
@@ -262,28 +262,32 @@ export function YouTubeEmbed({
     }
   }
 
-  // Unified Play / Pause Toggle
+  // Play / Pause Toggle
   const togglePlay = () => {
     if (isDirect && videoRef.current) {
       if (videoRef.current.paused) {
         videoRef.current.play()
         setIsPlaying(true)
+        triggerRipple('▶', 'Play')
       } else {
         videoRef.current.pause()
         setIsPlaying(false)
+        triggerRipple('⏸', 'Pause')
       }
     } else if (videoId) {
       if (isPlaying) {
         postToYouTube('pauseVideo')
         setIsPlaying(false)
+        triggerRipple('⏸', 'Pause')
       } else {
         postToYouTube('playVideo')
         setIsPlaying(true)
+        triggerRipple('▶', 'Play')
       }
     }
   }
 
-  // Unified Seek
+  // Seek
   const handleSeek = (e: React.ChangeEvent<HTMLInputElement>) => {
     const targetTime = Number(e.target.value)
     setCurrentTime(targetTime)
@@ -295,7 +299,7 @@ export function YouTubeEmbed({
     saveProgress(targetTime, duration)
   }
 
-  // Unified Skip (±10s)
+  // Skip
   const handleSkip = (seconds: number) => {
     const newT = Math.max(0, Math.min(currentTime + seconds, duration || 99999))
     setCurrentTime(newT)
@@ -304,10 +308,11 @@ export function YouTubeEmbed({
     } else if (videoId) {
       postToYouTube('seekTo', [newT, true])
     }
+    triggerRipple(seconds > 0 ? '⏩' : '⏪', `${seconds > 0 ? '+' : ''}${seconds}s`)
     saveProgress(newT, duration)
   }
 
-  // Unified Volume Control
+  // Volume
   const handleVolumeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const val = Number(e.target.value)
     setVolume(val)
@@ -334,19 +339,22 @@ export function YouTubeEmbed({
         postToYouTube('setVolume', [Math.round((volume || 1) * 100)])
       }
     }
+    triggerRipple(newMute ? '🔇' : '🔊', newMute ? 'Muted' : 'Unmuted')
   }
 
-  // Unified Speed Control
+  // Speed
   const handleSpeedChange = (rate: number) => {
     setPlaybackRate(rate)
+    setShowSettings(false)
     if (isDirect && videoRef.current) {
       videoRef.current.playbackRate = rate
     } else if (videoId) {
       postToYouTube('setPlaybackRate', [rate])
     }
+    triggerRipple('⚡', `${rate}x Speed`)
   }
 
-  // Unified In-App Fullscreen Toggle (Never leaves our branded container)
+  // Fullscreen
   const toggleFullscreen = () => {
     if (!containerRef.current) return
     if (!document.fullscreenElement) {
@@ -356,14 +364,101 @@ export function YouTubeEmbed({
     }
   }
 
-  // Unified Auto-Hide Controls On Idle
+  // Picture in Picture
+  const togglePiP = async () => {
+    try {
+      if (isDirect && videoRef.current) {
+        if (document.pictureInPictureElement) {
+          await document.exitPictureInPicture()
+        } else {
+          await videoRef.current.requestPictureInPicture()
+        }
+      }
+    } catch {}
+  }
+
+  // Auto-hide controls
   const handleMouseMove = () => {
     setShowControls(true)
     if (controlsTimeoutRef.current) clearTimeout(controlsTimeoutRef.current)
     controlsTimeoutRef.current = setTimeout(() => {
-      if (isPlaying) setShowControls(false)
+      if (isPlaying && !showSettings) setShowControls(false)
     }, 2800)
   }
+
+  // Scrubber Hover Tooltip
+  const handleScrubberMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (!scrubberRef.current || duration <= 0) return
+    const rect = scrubberRef.current.getBoundingClientRect()
+    const pos = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width))
+    setHoverScrubTime(pos * duration)
+    setHoverScrubX(e.clientX - rect.left)
+  }
+
+  // Double-tap or double-click to seek/fullscreen
+  const handleVideoAreaClick = (e: React.MouseEvent<HTMLDivElement>) => {
+    const rect = e.currentTarget.getBoundingClientRect()
+    const clickX = e.clientX - rect.left
+    const width = rect.width
+
+    if (e.detail === 2) {
+      // Double click
+      if (clickX < width * 0.35) {
+        handleSkip(-10)
+      } else if (clickX > width * 0.65) {
+        handleSkip(10)
+      } else {
+        toggleFullscreen()
+      }
+    } else if (e.detail === 1) {
+      togglePlay()
+    }
+  }
+
+  // Keyboard Shortcuts (YouTube Style)
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      // Don't capture when typing in inputs or textareas
+      const tag = (e.target as HTMLElement)?.tagName?.toLowerCase()
+      if (tag === 'input' || tag === 'textarea' || tag === 'select') return
+
+      if (e.code === 'Space' || e.key === 'k' || e.key === 'K') {
+        e.preventDefault()
+        togglePlay()
+      } else if (e.key === 'f' || e.key === 'F') {
+        e.preventDefault()
+        toggleFullscreen()
+      } else if (e.key === 'm' || e.key === 'M') {
+        e.preventDefault()
+        toggleMute()
+      } else if (e.key === 'j' || e.key === 'J' || e.code === 'ArrowLeft') {
+        e.preventDefault()
+        handleSkip(-10)
+      } else if (e.key === 'l' || e.key === 'L' || e.code === 'ArrowRight') {
+        e.preventDefault()
+        handleSkip(10)
+      } else if (e.code === 'ArrowUp') {
+        e.preventDefault()
+        setVolume((v) => {
+          const nv = Math.min(1, v + 0.1)
+          if (isDirect && videoRef.current) videoRef.current.volume = nv
+          else if (videoId) postToYouTube('setVolume', [Math.round(nv * 100)])
+          return nv
+        })
+      } else if (e.code === 'ArrowDown') {
+        e.preventDefault()
+        setVolume((v) => {
+          const nv = Math.max(0, v - 0.1)
+          if (isDirect && videoRef.current) videoRef.current.volume = nv
+          else if (videoId) postToYouTube('setVolume', [Math.round(nv * 100)])
+          return nv
+        })
+      }
+    }
+
+    window.addEventListener('keydown', handleKeyDown)
+    return () => window.removeEventListener('keydown', handleKeyDown)
+  }, [togglePlay, toggleFullscreen, toggleMute, isDirect, videoId, postToYouTube])
 
   // Restart Handler
   const handleRestart = () => {
@@ -379,9 +474,10 @@ export function YouTubeEmbed({
     if (storageKey) localStorage.removeItem(storageKey)
     setResumedNotice(null)
     setInitialStartTime(0)
+    triggerRipple('↺', 'Restarted')
   }
 
-  // 0. OFFLINE DISPLAY SCREEN (CONCEALS ALL URLS AND AVOIDS BROWSER ERROR PAGES)
+  // 0. OFFLINE DISPLAY SCREEN
   if (!isNetworkOnline && !isDirect) {
     return (
       <div
@@ -449,7 +545,7 @@ export function YouTubeEmbed({
   // 1. VIMEO PLAYER FALLBACK
   if (vimeoId) {
     return (
-      <div className="video-wrapper" style={{ position: 'relative', borderRadius: '12px', overflow: 'hidden' }}>
+      <div className="video-wrapper" style={{ position: 'relative', borderRadius: '14px', overflow: 'hidden' }}>
         <iframe
           src={`https://player.vimeo.com/video/${vimeoId}?dnt=1&title=0&byline=0&portrait=0`}
           title={title}
@@ -461,15 +557,15 @@ export function YouTubeEmbed({
     )
   }
 
-  // 2. UNIFIED SECURE DRM PLAYER (FOR DIRECT MP4 OR WHITELABELED YOUTUBE STREAMS)
+  // 2. UNIFIED SECURE YOUTUBE / DIRECT DRM CINEMA PLAYER
   if (isDirect || videoId) {
     const origin = typeof window !== 'undefined' ? window.location.origin : 'https://www.youtube.com'
     const ytParams = new URLSearchParams({
       autoplay: autoPlay ? '1' : '0',
-      controls: '0', // Strips YouTube bottom bar, YouTube logo & title link
-      disablekb: '1', // Disables YouTube keyboard navigation
-      fs: '0', // Disables YouTube native fullscreen
-      iv_load_policy: '3', // Hides video annotations and external cards
+      controls: '0',
+      disablekb: '1',
+      fs: '0',
+      iv_load_policy: '3',
       modestbranding: '1',
       rel: '0',
       playsinline: '1',
@@ -482,21 +578,31 @@ export function YouTubeEmbed({
       ytParams.set('start', String(Math.floor(initialStartTime)))
     }
 
+    const progressPct = duration > 0 ? (currentTime / duration) * 100 : 0
+
     return (
-      <div style={{ position: 'relative', width: '100%' }}>
+      <div
+        style={{
+          position: 'relative',
+          width: '100%',
+          maxWidth: isTheater ? '100%' : '1100px',
+          margin: '0 auto',
+          transition: 'max-width 0.3s ease',
+        }}
+      >
         <div
           ref={containerRef}
           onMouseMove={handleMouseMove}
-          onMouseLeave={() => isPlaying && setShowControls(false)}
+          onMouseLeave={() => isPlaying && !showSettings && setShowControls(false)}
           style={{
             position: 'relative',
             width: '100%',
             paddingTop: isFullscreen ? '0' : '56.25%',
             height: isFullscreen ? '100vh' : 'auto',
-            background: '#090d16',
-            borderRadius: isFullscreen ? '0' : '14px',
+            background: '#040711',
+            borderRadius: isFullscreen ? '0' : '16px',
             overflow: 'hidden',
-            boxShadow: '0 8px 28px rgba(0, 0, 0, 0.45)',
+            boxShadow: '0 12px 36px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(255, 255, 255, 0.08)',
             userSelect: 'none',
           }}
         >
@@ -542,15 +648,14 @@ export function YouTubeEmbed({
                 width: '100%',
                 height: '100%',
                 border: 0,
-                pointerEvents: 'none', // Direct all pointer interactions to our DRM interceptor layer
+                pointerEvents: 'none',
               }}
             />
           )}
 
-          {/* INTERACTIVE DRM CLICK INTERCEPTOR OVERLAY */}
+          {/* INTERACTIVE POINTER INTERCEPTOR AREA */}
           <div
-            onClick={togglePlay}
-            onDoubleClick={toggleFullscreen}
+            onClick={handleVideoAreaClick}
             style={{
               position: 'absolute',
               top: 0,
@@ -564,21 +669,46 @@ export function YouTubeEmbed({
               justifyContent: 'center',
             }}
           >
-            {/* Center Play Button Badge when Paused */}
-            {!isPlaying && !isBuffering && (
+            {/* Visual Action Ripple Feedback */}
+            {rippleAction && (
               <div
                 style={{
-                  width: '68px',
-                  height: '68px',
+                  position: 'absolute',
+                  width: '90px',
+                  height: '90px',
                   borderRadius: '50%',
-                  background: 'rgba(37, 99, 235, 0.95)',
-                  boxShadow: '0 8px 30px rgba(37, 99, 235, 0.6), 0 0 0 8px rgba(255, 255, 255, 0.15)',
+                  background: 'rgba(0, 0, 0, 0.75)',
+                  backdropFilter: 'blur(8px)',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  color: '#ffffff',
+                  boxShadow: '0 8px 30px rgba(0,0,0,0.5), 0 0 0 4px rgba(255,255,255,0.2)',
+                  animation: 'pulse 0.6s ease forwards',
+                  pointerEvents: 'none',
+                }}
+              >
+                <span style={{ fontSize: '2rem' }}>{rippleAction.icon}</span>
+                <span style={{ fontSize: '0.72rem', fontWeight: 800, marginTop: '2px' }}>{rippleAction.text}</span>
+              </div>
+            )}
+
+            {/* Big Play Button Overlay when Paused */}
+            {!isPlaying && !isBuffering && !rippleAction && (
+              <div
+                style={{
+                  width: '74px',
+                  height: '74px',
+                  borderRadius: '50%',
+                  background: 'linear-gradient(135deg, #2563eb, #1d4ed8)',
+                  boxShadow: '0 8px 32px rgba(37, 99, 235, 0.6), 0 0 0 8px rgba(255, 255, 255, 0.15)',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
                   color: '#ffffff',
-                  fontSize: '1.8rem',
-                  paddingLeft: '4px',
+                  fontSize: '2rem',
+                  paddingLeft: '5px',
                   backdropFilter: 'blur(6px)',
                   transition: 'transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1)',
                 }}
@@ -588,13 +718,13 @@ export function YouTubeEmbed({
             )}
           </div>
 
-          {/* TOP BRAND WATERMARK & NOTIFICATION BADGES */}
+          {/* TOP BRAND WATERMARK & NOTIFICATIONS */}
           <div
             style={{
               position: 'absolute',
-              top: '12px',
-              left: '14px',
-              right: '14px',
+              top: '14px',
+              left: '16px',
+              right: '16px',
               display: 'flex',
               justifyContent: 'space-between',
               alignItems: 'center',
@@ -604,22 +734,22 @@ export function YouTubeEmbed({
           >
             <div
               style={{
-                background: 'rgba(15, 23, 42, 0.88)',
-                backdropFilter: 'blur(8px)',
+                background: 'rgba(9, 13, 22, 0.9)',
+                backdropFilter: 'blur(10px)',
                 color: '#f8fafc',
-                padding: '5px 12px',
-                borderRadius: '8px',
-                fontSize: '0.72rem',
+                padding: '6px 14px',
+                borderRadius: '10px',
+                fontSize: '0.74rem',
                 fontWeight: 800,
                 display: 'flex',
                 alignItems: 'center',
-                gap: '6px',
+                gap: '8px',
                 border: '1px solid rgba(255, 255, 255, 0.15)',
-                boxShadow: '0 4px 12px rgba(0,0,0,0.3)',
+                boxShadow: '0 4px 16px rgba(0,0,0,0.4)',
               }}
             >
               <span>🎓</span>
-              <span>ÉCLAT INSTITUTE • DRM SECURE LECTURE</span>
+              <span>ÉCLAT INSTITUTE • YOUTUBE-POWERED DRM STREAM</span>
             </div>
 
             {resumedNotice && (
@@ -627,9 +757,9 @@ export function YouTubeEmbed({
                 style={{
                   background: '#2563eb',
                   color: '#ffffff',
-                  padding: '5px 12px',
-                  borderRadius: '8px',
-                  fontSize: '0.72rem',
+                  padding: '6px 14px',
+                  borderRadius: '10px',
+                  fontSize: '0.74rem',
                   fontWeight: 700,
                   boxShadow: '0 4px 14px rgba(37, 99, 235, 0.5)',
                   pointerEvents: 'auto',
@@ -650,10 +780,10 @@ export function YouTubeEmbed({
                     border: 'none',
                     color: '#fff',
                     borderRadius: '4px',
-                    padding: '2px 6px',
-                    fontSize: '0.68rem',
+                    padding: '2px 8px',
+                    fontSize: '0.7rem',
                     cursor: 'pointer',
-                    fontWeight: 700,
+                    fontWeight: 800,
                   }}
                 >
                   Restart ↺
@@ -666,9 +796,9 @@ export function YouTubeEmbed({
                 style={{
                   background: '#16a34a',
                   color: '#ffffff',
-                  padding: '5px 12px',
-                  borderRadius: '8px',
-                  fontSize: '0.72rem',
+                  padding: '6px 14px',
+                  borderRadius: '10px',
+                  fontSize: '0.74rem',
                   fontWeight: 800,
                   boxShadow: '0 4px 12px rgba(22, 163, 74, 0.4)',
                 }}
@@ -687,7 +817,7 @@ export function YouTubeEmbed({
                 left: '50%',
                 transform: 'translate(-50%, -50%)',
                 color: '#3b82f6',
-                fontSize: '2.5rem',
+                fontSize: '2.8rem',
                 zIndex: 15,
                 animation: 'spin 1.2s linear infinite',
               }}
@@ -696,21 +826,72 @@ export function YouTubeEmbed({
             </div>
           )}
 
-          {/* SOLID BOTTOM-RIGHT CORNER MASK */}
+          {/* BOTTOM RIGHT CORNER SOLID MASK */}
           <div
             style={{
               position: 'absolute',
               bottom: 0,
               right: 0,
               width: '120px',
-              height: '42px',
+              height: '48px',
               zIndex: 12,
               pointerEvents: 'none',
-              background: 'linear-gradient(135deg, transparent 20%, rgba(9, 13, 22, 0.85) 80%)',
+              background: 'linear-gradient(135deg, transparent 20%, rgba(4, 7, 17, 0.95) 80%)',
             }}
           />
 
-          {/* CUSTOM IN-APP CONTROL BAR */}
+          {/* SETTINGS GEAR POPUP (Speed Selector) */}
+          {showSettings && (
+            <div
+              onClick={(e) => e.stopPropagation()}
+              style={{
+                position: 'absolute',
+                bottom: '68px',
+                right: '16px',
+                zIndex: 35,
+                background: 'rgba(15, 23, 42, 0.98)',
+                backdropFilter: 'blur(16px)',
+                border: '1px solid rgba(255, 255, 255, 0.15)',
+                borderRadius: '12px',
+                padding: '8px',
+                width: '180px',
+                boxShadow: '0 10px 30px rgba(0,0,0,0.6)',
+                color: '#ffffff',
+              }}
+            >
+              <div style={{ fontSize: '0.72rem', fontWeight: 800, textTransform: 'uppercase', color: '#94a3b8', padding: '4px 8px', borderBottom: '1px solid rgba(255,255,255,0.1)' }}>
+                ⚙️ Playback Speed
+              </div>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '2px', marginTop: '4px' }}>
+                {[0.5, 0.75, 1, 1.25, 1.5, 1.75, 2].map((rate) => (
+                  <button
+                    key={rate}
+                    type="button"
+                    onClick={() => handleSpeedChange(rate)}
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'space-between',
+                      background: playbackRate === rate ? 'rgba(37, 99, 235, 0.3)' : 'transparent',
+                      color: playbackRate === rate ? '#60a5fa' : '#ffffff',
+                      border: 'none',
+                      borderRadius: '6px',
+                      padding: '6px 10px',
+                      fontSize: '0.78rem',
+                      fontWeight: playbackRate === rate ? 800 : 500,
+                      cursor: 'pointer',
+                      textAlign: 'left',
+                    }}
+                  >
+                    <span>{rate === 1 ? '1.0x Normal' : `${rate}x`}</span>
+                    {playbackRate === rate && <span>✓</span>}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* YOUTUBE-STYLE CONTROL BAR */}
           <div
             onClick={(e) => e.stopPropagation()}
             style={{
@@ -718,19 +899,80 @@ export function YouTubeEmbed({
               bottom: 0,
               left: 0,
               right: 0,
-              background: 'linear-gradient(to top, rgba(9, 13, 22, 0.98) 0%, rgba(9, 13, 22, 0.8) 60%, transparent 100%)',
-              padding: '28px 16px 10px',
+              background: 'linear-gradient(to top, rgba(4, 7, 17, 0.98) 0%, rgba(4, 7, 17, 0.8) 60%, transparent 100%)',
+              padding: '24px 16px 12px',
               display: 'flex',
               flexDirection: 'column',
-              gap: '8px',
-              opacity: showControls || !isPlaying ? 1 : 0,
-              pointerEvents: showControls || !isPlaying ? 'auto' : 'none',
+              gap: '6px',
+              opacity: showControls || !isPlaying || showSettings ? 1 : 0,
+              pointerEvents: showControls || !isPlaying || showSettings ? 'auto' : 'none',
               transition: 'opacity 0.25s ease',
               zIndex: 25,
             }}
           >
-            {/* Progress Scrubber */}
-            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+            {/* YOUTUBE-STYLE SCRUBBER BAR WITH HOVER PREVIEW */}
+            <div
+              ref={scrubberRef}
+              onMouseMove={handleScrubberMouseMove}
+              onMouseLeave={() => setHoverScrubTime(null)}
+              style={{
+                position: 'relative',
+                width: '100%',
+                height: '16px',
+                display: 'flex',
+                alignItems: 'center',
+                cursor: 'pointer',
+              }}
+            >
+              {/* Hover Timestamp Tooltip */}
+              {hoverScrubTime !== null && (
+                <div
+                  style={{
+                    position: 'absolute',
+                    bottom: '22px',
+                    left: `${hoverScrubX}px`,
+                    transform: 'translateX(-50%)',
+                    background: 'rgba(15, 23, 42, 0.95)',
+                    color: '#ffffff',
+                    padding: '2px 8px',
+                    borderRadius: '6px',
+                    fontSize: '0.72rem',
+                    fontWeight: 800,
+                    whiteSpace: 'nowrap',
+                    border: '1px solid rgba(255,255,255,0.2)',
+                    boxShadow: '0 4px 10px rgba(0,0,0,0.5)',
+                    pointerEvents: 'none',
+                  }}
+                >
+                  {formatTime(hoverScrubTime)}
+                </div>
+              )}
+
+              {/* Background Track */}
+              <div
+                style={{
+                  position: 'absolute',
+                  left: 0,
+                  right: 0,
+                  height: '4px',
+                  borderRadius: '2px',
+                  background: 'rgba(255, 255, 255, 0.25)',
+                }}
+              />
+
+              {/* Played Progress Track */}
+              <div
+                style={{
+                  position: 'absolute',
+                  left: 0,
+                  width: `${progressPct}%`,
+                  height: '4px',
+                  borderRadius: '2px',
+                  background: '#ef4444',
+                }}
+              />
+
+              {/* Invisible native input range over top */}
               <input
                 type="range"
                 min={0}
@@ -738,37 +980,36 @@ export function YouTubeEmbed({
                 value={currentTime}
                 onChange={handleSeek}
                 style={{
-                  flex: 1,
-                  accentColor: '#3b82f6',
+                  position: 'absolute',
+                  left: 0,
+                  width: '100%',
+                  height: '100%',
+                  opacity: 0,
                   cursor: 'pointer',
-                  height: '4px',
+                  margin: 0,
                 }}
               />
-              <span style={{ color: '#cbd5e1', fontSize: '0.75rem', fontWeight: 600, minWidth: '85px', textAlign: 'right' }}>
-                {formatTime(currentTime)} / {formatTime(duration)}
-              </span>
             </div>
 
-            {/* Bottom Button Row */}
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '8px' }}>
+            {/* BUTTON CONTROLS ROW */}
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'nowrap', gap: '8px' }}>
+              {/* Left Controls */}
               <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                 <button
                   type="button"
                   onClick={togglePlay}
                   style={{
-                    background: '#2563eb',
+                    background: 'none',
                     color: '#ffffff',
                     border: 'none',
-                    borderRadius: '6px',
-                    width: '32px',
-                    height: '32px',
+                    fontSize: '1.25rem',
+                    cursor: 'pointer',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
-                    fontSize: '0.9rem',
-                    cursor: 'pointer',
+                    padding: '4px',
                   }}
-                  title={isPlaying ? 'Pause' : 'Play'}
+                  title={isPlaying ? 'Pause (k / Space)' : 'Play (k / Space)'}
                 >
                   {isPlaying ? '⏸' : '▶'}
                 </button>
@@ -777,52 +1018,52 @@ export function YouTubeEmbed({
                   type="button"
                   onClick={() => handleSkip(-10)}
                   style={{
-                    background: 'rgba(255, 255, 255, 0.1)',
-                    color: '#f8fafc',
+                    background: 'none',
+                    color: '#cbd5e1',
                     border: 'none',
-                    borderRadius: '6px',
-                    padding: '4px 8px',
-                    fontSize: '0.75rem',
-                    fontWeight: 700,
+                    fontSize: '0.82rem',
+                    fontWeight: 800,
                     cursor: 'pointer',
+                    padding: '4px',
                   }}
-                  title="Rewind 10 seconds"
+                  title="Rewind 10s (j / ←)"
                 >
-                  -10s
+                  ↺ 10
                 </button>
 
                 <button
                   type="button"
                   onClick={() => handleSkip(10)}
                   style={{
-                    background: 'rgba(255, 255, 255, 0.1)',
-                    color: '#f8fafc',
+                    background: 'none',
+                    color: '#cbd5e1',
                     border: 'none',
-                    borderRadius: '6px',
-                    padding: '4px 8px',
-                    fontSize: '0.75rem',
-                    fontWeight: 700,
+                    fontSize: '0.82rem',
+                    fontWeight: 800,
                     cursor: 'pointer',
+                    padding: '4px',
                   }}
-                  title="Forward 10 seconds"
+                  title="Forward 10s (l / →)"
                 >
-                  +10s
+                  ↻ 10
                 </button>
 
-                {/* Volume & Mute */}
+                {/* Volume & Slide-out slider */}
                 <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
                   <button
                     type="button"
                     onClick={toggleMute}
                     style={{
-                      background: 'transparent',
+                      background: 'none',
+                      color: '#cbd5e1',
                       border: 'none',
-                      color: '#f8fafc',
+                      fontSize: '1.1rem',
                       cursor: 'pointer',
-                      fontSize: '0.9rem',
+                      padding: '2px',
                     }}
+                    title={isMuted || volume === 0 ? 'Unmute (m)' : 'Mute (m)'}
                   >
-                    {isMuted || volume === 0 ? '🔇' : '🔊'}
+                    {isMuted || volume === 0 ? '🔇' : volume < 0.5 ? '🔉' : '🔊'}
                   </button>
                   <input
                     type="range"
@@ -831,47 +1072,87 @@ export function YouTubeEmbed({
                     step={0.05}
                     value={isMuted ? 0 : volume}
                     onChange={handleVolumeChange}
-                    style={{ width: '55px', accentColor: '#3b82f6', height: '4px' }}
+                    style={{ width: '50px', accentColor: '#ef4444', height: '4px', cursor: 'pointer' }}
                   />
                 </div>
+
+                {/* Timestamp */}
+                <span style={{ color: '#e2e8f0', fontSize: '0.78rem', fontWeight: 600, marginLeft: '4px' }}>
+                  {formatTime(currentTime)} <span style={{ opacity: 0.5 }}>/</span> {formatTime(duration)}
+                </span>
               </div>
 
-              {/* Right Controls: Speed & In-App Fullscreen */}
-              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <select
-                  value={playbackRate}
-                  onChange={(e) => handleSpeedChange(Number(e.target.value))}
+              {/* Right Controls */}
+              <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                {/* Speed / Settings Button */}
+                <button
+                  type="button"
+                  onClick={() => setShowSettings((s) => !s)}
                   style={{
-                    background: 'rgba(255, 255, 255, 0.15)',
-                    color: '#ffffff',
-                    border: '1px solid rgba(255, 255, 255, 0.3)',
+                    background: showSettings ? 'rgba(37, 99, 235, 0.3)' : 'none',
+                    color: '#cbd5e1',
+                    border: 'none',
                     borderRadius: '6px',
-                    padding: '3px 6px',
-                    fontSize: '0.72rem',
-                    fontWeight: 700,
+                    padding: '4px 8px',
+                    fontSize: '0.78rem',
+                    fontWeight: 800,
                     cursor: 'pointer',
                   }}
+                  title="Playback Settings"
                 >
-                  <option value={0.75} style={{ background: '#090d16', color: '#ffffff' }}>0.75x</option>
-                  <option value={1} style={{ background: '#090d16', color: '#ffffff' }}>1.0x Normal</option>
-                  <option value={1.25} style={{ background: '#090d16', color: '#ffffff' }}>1.25x</option>
-                  <option value={1.5} style={{ background: '#090d16', color: '#ffffff' }}>1.5x</option>
-                  <option value={2} style={{ background: '#090d16', color: '#ffffff' }}>2.0x</option>
-                </select>
+                  ⚙️ {playbackRate}x
+                </button>
 
+                {/* Picture-in-Picture (for direct videos) */}
+                {isDirect && (
+                  <button
+                    type="button"
+                    onClick={togglePiP}
+                    style={{
+                      background: 'none',
+                      color: '#cbd5e1',
+                      border: 'none',
+                      fontSize: '0.85rem',
+                      cursor: 'pointer',
+                      padding: '4px',
+                    }}
+                    title="Picture-in-Picture"
+                  >
+                    📺
+                  </button>
+                )}
+
+                {/* Theater Mode Toggle */}
+                <button
+                  type="button"
+                  onClick={() => setIsTheater((t) => !t)}
+                  style={{
+                    background: isTheater ? 'rgba(37, 99, 235, 0.3)' : 'none',
+                    color: '#cbd5e1',
+                    border: 'none',
+                    borderRadius: '6px',
+                    padding: '4px 6px',
+                    fontSize: '0.85rem',
+                    cursor: 'pointer',
+                  }}
+                  title="Theater Mode"
+                >
+                  ⧉
+                </button>
+
+                {/* Fullscreen Button */}
                 <button
                   type="button"
                   onClick={toggleFullscreen}
                   style={{
-                    background: 'rgba(255, 255, 255, 0.1)',
-                    color: '#f8fafc',
+                    background: 'none',
+                    color: '#ffffff',
                     border: 'none',
-                    borderRadius: '6px',
-                    padding: '4px 8px',
-                    fontSize: '0.82rem',
+                    fontSize: '1rem',
                     cursor: 'pointer',
+                    padding: '4px',
                   }}
-                  title={isFullscreen ? 'Exit Fullscreen' : 'Fullscreen'}
+                  title={isFullscreen ? 'Exit Fullscreen (f)' : 'Fullscreen (f)'}
                 >
                   {isFullscreen ? '⤦' : '⛶'}
                 </button>
@@ -880,18 +1161,17 @@ export function YouTubeEmbed({
           </div>
         </div>
 
-        {/* Video Secure In-App Streaming Label */}
+        {/* Streaming Status Bar */}
         <div style={{ marginTop: '0.6rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '0.5rem', padding: '0 0.25rem' }}>
           <span style={{ fontSize: '0.78rem', color: 'var(--color-text-secondary)', display: 'inline-flex', alignItems: 'center', gap: '0.35rem' }}>
             <span>🔒</span>
-            <span>Éclat Institute Secure Media DRM • No External Popouts</span>
+            <span>Éclat YouTube DRM Player • Shortcuts: Space (Play/Pause), F (Fullscreen), M (Mute), J/L (±10s)</span>
           </span>
         </div>
       </div>
     )
   }
 
-  // 3. INVALID / EMPTY URL FALLBACK
   return (
     <div className="alert alert-warning" style={{ borderRadius: '10px', padding: '1rem' }}>
       <span className="alert-icon">⚠️</span>

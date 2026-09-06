@@ -6,6 +6,7 @@ import { useAccess } from '@/hooks/useAccess'
 import { supabase } from '@/lib/supabase'
 import { PageWrapper } from '@/components/layout/PageWrapper'
 import { YouTubeEmbed } from '@/components/shared/YouTubeEmbed'
+import { WpsDocumentViewer } from '@/components/shared/WpsDocumentViewer'
 import { QuizWidget } from '@/components/shared/QuizWidget'
 import { Button } from '@/components/ui/Button'
 import { Spinner } from '@/components/ui/Spinner'
@@ -671,144 +672,19 @@ export function LessonPlayer() {
                     </div>
                   )}
 
-                  {/* DRM Protected Document Viewer */}
+                  {/* WPS Office-Style Interactive Document Viewer Suite */}
                   {!isHtml && activeDocUrl === res.file_url && (
-                    <div
-                      className="mt-3 pt-3 drm-protected-viewport"
-                      onContextMenu={(e) => e.preventDefault()}
-                      style={{ borderTop: '1px solid var(--color-border-light)', position: 'relative', overflow: 'hidden' }}
-                    >
-                      <div
-                        style={{
-                          padding: '0.45rem 0.85rem',
-                          background: '#f8fafc',
-                          border: '1px solid var(--color-border)',
-                          borderRadius: '8px',
-                          marginBottom: '0.6rem',
-                          display: 'flex',
-                          justifyContent: 'space-between',
-                          alignItems: 'center',
-                          flexWrap: 'wrap',
-                          gap: '0.5rem',
-                        }}
-                      >
-                        <div style={{ fontSize: '0.78rem', color: '#1e3a8a', fontWeight: 700 }}>
-                          🔒 Protected Reader: {res.file_name}
-                        </div>
-                        <div style={{ display: 'flex', gap: '4px' }}>
-                          <button
-                            type="button"
-                            className={`btn btn-xs ${docEngine === 'cloud' ? 'btn-primary' : 'btn-ghost'}`}
-                            style={{ fontSize: '0.72rem', padding: '2px 8px', minHeight: 'auto' }}
-                            onClick={() => setDocEngine('cloud')}
-                          >
-                            🌐 Cloud Reader
-                          </button>
-                          <button
-                            type="button"
-                            className={`btn btn-xs ${docEngine === 'direct' ? 'btn-primary' : 'btn-ghost'}`}
-                            style={{ fontSize: '0.72rem', padding: '2px 8px', minHeight: 'auto' }}
-                            onClick={() => setDocEngine('direct')}
-                          >
-                            📄 Direct Stream
-                          </button>
-                        </div>
-                      </div>
-                      <div style={{ position: 'relative', width: '100%', borderRadius: 8, overflow: 'hidden' }}>
-                        {/* Top-Right DRM Shield: Covers & Blocks Google Drive's "Pop-out / Open Outside" Button */}
-                        <div
-                          style={{
-                            position: 'absolute',
-                            top: 0,
-                            right: 0,
-                            width: '90px',
-                            height: '62px',
-                            zIndex: 45,
-                            cursor: 'default',
-                            pointerEvents: 'auto',
-                            background: '#000000',
-                            borderBottomLeftRadius: '10px',
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            userSelect: 'none',
-                            boxShadow: '0 2px 10px rgba(0,0,0,0.8)',
-                          }}
-                          onClick={(e) => {
-                            e.stopPropagation()
-                            e.preventDefault()
-                          }}
-                          onMouseDown={(e) => {
-                            e.stopPropagation()
-                            e.preventDefault()
-                          }}
-                          onTouchStart={(e) => {
-                            e.stopPropagation()
-                            e.preventDefault()
-                          }}
-                          onPointerDown={(e) => {
-                            e.stopPropagation()
-                            e.preventDefault()
-                          }}
-                          title="🔒 In-App DRM Protected Content"
-                        >
-                          <span style={{ fontSize: '0.74rem', color: '#94a3b8', fontWeight: 800 }}>🔒 DRM</span>
-                        </div>
-                        {!isNetworkOnline ? (
-                          <div
-                            style={{
-                              width: '100%',
-                              minHeight: 320,
-                              borderRadius: 8,
-                              background: '#0f172a',
-                              color: '#ffffff',
-                              display: 'flex',
-                              flexDirection: 'column',
-                              alignItems: 'center',
-                              justifyContent: 'center',
-                              padding: '2rem 1.5rem',
-                              textAlign: 'center',
-                              border: '1px solid rgba(239, 68, 68, 0.3)',
-                            }}
-                          >
-                            <div style={{ fontSize: '3rem', marginBottom: '0.75rem' }}>📡</div>
-                            <div style={{ fontSize: '0.75rem', fontWeight: 800, color: '#f87171', textTransform: 'uppercase', marginBottom: '0.5rem' }}>
-                              ● Offline Mode
-                            </div>
-                            <h4 style={{ fontSize: '1.15rem', fontWeight: 800, margin: '0 0 0.4rem' }}>
-                              You Are Currently Offline
-                            </h4>
-                            <p style={{ fontSize: '0.85rem', color: '#94a3b8', maxWidth: '380px', margin: '0 auto 1.25rem', lineHeight: 1.5 }}>
-                              This study document requires an active internet connection to stream. Please reconnect to WiFi or mobile data and retry.
-                            </p>
-                            <button
-                              type="button"
-                              onClick={() => {
-                                if (navigator.onLine) setIsNetworkOnline(true)
-                                else alert('Still offline. Please check your connection.')
-                              }}
-                              className="btn btn-primary btn-sm"
-                              style={{ fontWeight: 800, padding: '0.55rem 1.2rem', borderRadius: '8px' }}
-                            >
-                              🔄 Check Connection & Retry
-                            </button>
-                          </div>
-                        ) : (
-                          <iframe
-                            src={getEmbeddableDocumentUrl(res.file_url, docEngine)}
-                            title={res.file_name}
-                            sandbox="allow-scripts allow-same-origin allow-forms"
-                            style={{
-                              width: '100%',
-                              height: 580,
-                              border: '1px solid var(--color-border)',
-                              borderRadius: 8,
-                              background: '#ffffff',
-                            }}
-                            allow="autoplay"
-                          />
-                        )}
-                      </div>
+                    <div className="mt-3 pt-3" style={{ borderTop: '1px solid var(--color-border-light)' }}>
+                      <WpsDocumentViewer
+                        title={res.file_name}
+                        fileUrl={res.file_url}
+                        subject={course?.title || 'Lesson Resource'}
+                        category="Lesson Attachment"
+                        studentName={profile?.full_name}
+                        studentId={profile?.id}
+                        onClose={() => setActiveDocUrl(null)}
+                        isModal={false}
+                      />
                     </div>
                   )}
                 </div>
