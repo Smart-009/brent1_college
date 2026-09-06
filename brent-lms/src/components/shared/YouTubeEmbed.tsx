@@ -1,7 +1,4 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react'
-import { useNavigate } from 'react-router-dom'
-import { useAuth } from '@/hooks/useAuth'
-import { dispatchSchoolBellAlert } from '@/components/shared/ClassBellReminderModal'
 import { extractYouTubeId } from '@/lib/utils'
 
 interface YouTubeEmbedProps {
@@ -58,12 +55,9 @@ export function YouTubeEmbed({
   onEnded,
   onProgress,
 }: YouTubeEmbedProps) {
-  const { profile, signOut } = useAuth()
-  const navigate = useNavigate()
   const videoId = extractYouTubeId(url)
   const vimeoId = extractVimeoId(url)
   const isDirect = isDirectVideoUrl(url)
-  const [navDrawerOpen, setNavDrawerOpen] = useState(false)
 
   const storageKey = lessonId ? `eclat_progress_${lessonId}_${studentId || 'default'}` : null
 
@@ -934,109 +928,27 @@ export function YouTubeEmbed({
             )}
           </div>
 
-          {/* ROTATED TOP HEADER BAR (Rotates Seamlessly With Video) */}
+          {/* FLOATING PLAYER NOTIFICATIONS & PROMINENT QUICK ACTIONS */}
           <div
             style={{
               position: 'absolute',
-              top: '8px',
-              left: '10px',
-              right: '10px',
+              top: '10px',
+              left: '12px',
+              right: '12px',
               display: 'flex',
               justifyContent: 'space-between',
               alignItems: 'center',
               pointerEvents: 'none',
-              zIndex: 40,
-              opacity: showControls || !isPlaying || navDrawerOpen ? 1 : 0.85,
+              zIndex: 35,
+              opacity: showControls || !isPlaying ? 1 : 0.85,
               transition: 'opacity 0.25s ease',
             }}
           >
-            {/* Top Left: Hamburger Menu (☰) + Éclat Emblem + Institution Title */}
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', pointerEvents: 'auto' }}>
-              <button
-                type="button"
-                onClick={(e) => {
-                  e.stopPropagation()
-                  setNavDrawerOpen((prev) => !prev)
-                }}
-                style={{
-                  background: 'rgba(15, 23, 42, 0.85)',
-                  backdropFilter: 'blur(8px)',
-                  border: '1.5px solid rgba(212, 175, 55, 0.5)',
-                  borderRadius: '8px',
-                  color: '#d4af37',
-                  fontSize: '1.15rem',
-                  cursor: 'pointer',
-                  padding: '4px 10px',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  lineHeight: 1,
-                  boxShadow: '0 4px 14px rgba(0,0,0,0.4)',
-                }}
-                title="Toggle Navigation Menu"
-                aria-label="Toggle Navigation"
-              >
-                ☰
-              </button>
-
-              <div
-                onClick={(e) => {
-                  e.stopPropagation()
-                  if (isRotatedLandscape) {
-                    setIsRotatedLandscape(false)
-                    setIsFullscreen(false)
-                    window.dispatchEvent(new CustomEvent('eclat-video-rotated', { detail: { isRotated: false } }))
-                  }
-                  navigate('/')
-                }}
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '8px',
-                  cursor: 'pointer',
-                  background: 'rgba(12, 14, 18, 0.85)',
-                  backdropFilter: 'blur(8px)',
-                  padding: '4px 10px 4px 4px',
-                  borderRadius: '999px',
-                  border: '1px solid rgba(212, 175, 55, 0.35)',
-                  boxShadow: '0 4px 14px rgba(0,0,0,0.4)',
-                }}
-                title="Éclat Institute Home"
-              >
-                <img
-                  src="/logo.png"
-                  alt="Éclat Institute"
-                  style={{
-                    width: '28px',
-                    height: '28px',
-                    borderRadius: '50%',
-                    border: '2px solid #d4af37',
-                    objectFit: 'cover',
-                  }}
-                />
-                <div style={{ display: 'flex', flexDirection: 'column', lineHeight: 1.1 }}>
-                  <span
-                    style={{
-                      fontFamily: 'var(--font-heading)',
-                      color: '#d4af37',
-                      fontWeight: 900,
-                      fontSize: '0.82rem',
-                      letterSpacing: '0.04em',
-                    }}
-                  >
-                    ÉCLAT INSTITUTE
-                  </span>
-                  <span style={{ fontSize: '0.62rem', color: '#cbd5e1', letterSpacing: '0.02em', fontWeight: 600 }}>
-                    {isRotatedLandscape ? 'HD Video Lecture' : 'Learning Portal'}
-                  </span>
-                </div>
-              </div>
-
-              {(isFullscreen || screenSize === 'full' || isRotatedLandscape) && (
+            <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+              {(isFullscreen || screenSize === 'full' || isRotatedLandscape) ? (
                 <button
                   type="button"
-                  onClick={(e) => {
-                    e.stopPropagation()
+                  onClick={() => {
                     setIsFullscreen(false)
                     setIsRotatedLandscape(false)
                     setPlayerScreenSize('medium')
@@ -1047,49 +959,28 @@ export function YouTubeEmbed({
                     color: '#ffffff',
                     border: 'none',
                     borderRadius: '8px',
-                    padding: '5px 10px',
-                    fontSize: '0.74rem',
+                    padding: '6px 12px',
+                    fontSize: '0.78rem',
                     fontWeight: 800,
                     cursor: 'pointer',
+                    pointerEvents: 'auto',
                     boxShadow: '0 4px 14px rgba(239, 68, 68, 0.5)',
                     display: 'flex',
                     alignItems: 'center',
                     gap: '4px',
                   }}
                 >
-                  <span>⤦</span> Exit
+                  <span>⤦</span> Exit Full Screen
                 </button>
+              ) : (
+                <span style={{ fontSize: '0.72rem', color: '#ffffff', background: 'rgba(0,0,0,0.6)', padding: '4px 8px', borderRadius: '6px', fontWeight: 700 }}>
+                  🎥 HD Lecture
+                </span>
               )}
             </div>
 
-            {/* Top-Right Quick Action Buttons: BELL + ROTATE + FULL SCREEN */}
+            {/* Top-Right Quick Action Buttons: ROTATE & FULL SCREEN */}
             <div style={{ display: 'flex', alignItems: 'center', gap: '6px', pointerEvents: 'auto' }}>
-              <button
-                type="button"
-                onClick={(e) => {
-                  e.stopPropagation()
-                  dispatchSchoolBellAlert()
-                }}
-                style={{
-                  background: 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)',
-                  color: '#ffffff',
-                  border: 'none',
-                  borderRadius: '8px',
-                  padding: '5px 9px',
-                  fontSize: '0.76rem',
-                  fontWeight: 800,
-                  cursor: 'pointer',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '4px',
-                  boxShadow: '0 4px 12px rgba(245, 158, 11, 0.4)',
-                }}
-                title="Ring Live Class Alarm"
-              >
-                <span>🔔</span>
-                <span className="hide-on-mobile">Bell</span>
-              </button>
-
               <button
                 type="button"
                 onClick={(e) => handleToggleRotation(e)}
@@ -1199,200 +1090,6 @@ export function YouTubeEmbed({
               </div>
             )}
           </div>
-
-          {/* ROTATED NAVIGATION DRAWER (Inside Rotated Viewport) */}
-          {navDrawerOpen && (
-            <div
-              onClick={(e) => {
-                e.stopPropagation()
-                setNavDrawerOpen(false)
-              }}
-              style={{
-                position: 'absolute',
-                top: 0,
-                left: 0,
-                right: 0,
-                bottom: 0,
-                background: 'rgba(0, 0, 0, 0.7)',
-                backdropFilter: 'blur(6px)',
-                zIndex: 60,
-                display: 'flex',
-              }}
-            >
-              <div
-                onClick={(e) => e.stopPropagation()}
-                style={{
-                  width: 'min(310px, 80vw)',
-                  height: '100%',
-                  background: '#090d16',
-                  borderRight: '2px solid rgba(212, 175, 55, 0.4)',
-                  boxShadow: '8px 0 30px rgba(0,0,0,0.8)',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  padding: '1.25rem 1rem',
-                  overflowY: 'auto',
-                }}
-              >
-                {/* Drawer Header */}
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1.25rem', paddingBottom: '0.75rem', borderBottom: '1px solid rgba(255,255,255,0.1)' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                    <img
-                      src="/logo.png"
-                      alt="Éclat Institute"
-                      style={{ width: '36px', height: '36px', borderRadius: '50%', border: '2px solid #d4af37', objectFit: 'cover' }}
-                    />
-                    <div>
-                      <div style={{ fontFamily: 'var(--font-heading)', color: '#d4af37', fontWeight: 900, fontSize: '0.92rem' }}>
-                        ÉCLAT INSTITUTE
-                      </div>
-                      <div style={{ fontSize: '0.68rem', color: '#94a3b8' }}>
-                        {profile?.full_name || 'Portal Navigation'}
-                      </div>
-                    </div>
-                  </div>
-                  <button
-                    type="button"
-                    onClick={() => setNavDrawerOpen(false)}
-                    style={{
-                      background: 'rgba(255,255,255,0.1)',
-                      border: 'none',
-                      color: '#fff',
-                      borderRadius: '6px',
-                      width: '28px',
-                      height: '28px',
-                      cursor: 'pointer',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      fontSize: '1rem',
-                      fontWeight: 800,
-                    }}
-                  >
-                    ✕
-                  </button>
-                </div>
-
-                {/* Navigation Links */}
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', flex: 1 }}>
-                  {[
-                    { to: profile?.role === 'admin' ? '/admin' : profile?.role === 'teacher' ? '/teacher' : '/student', label: 'Dashboard & Overview', icon: '🏠' },
-                    { to: profile?.role === 'teacher' ? '/teacher/courses' : '/student/courses', label: 'My Enrolled Lessons & LMS', icon: '📚' },
-                    { to: '/library', label: 'E-Library & Past Papers', icon: '📖' },
-                    { to: '/fees', label: 'Fee Statement & Paybill', icon: '💳' },
-                    { to: '/exams', label: 'Transcripts & Certificates', icon: '📜' },
-                    { to: '/noticeboard', label: 'College Noticeboard', icon: '📢' },
-                  ].map((item) => (
-                    <button
-                      key={item.to}
-                      type="button"
-                      onClick={() => {
-                        setNavDrawerOpen(false)
-                        if (isRotatedLandscape) {
-                          setIsRotatedLandscape(false)
-                          setIsFullscreen(false)
-                          window.dispatchEvent(new CustomEvent('eclat-video-rotated', { detail: { isRotated: false } }))
-                        }
-                        navigate(item.to)
-                      }}
-                      style={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '10px',
-                        padding: '9px 12px',
-                        borderRadius: '8px',
-                        background: 'rgba(255, 255, 255, 0.05)',
-                        border: '1px solid rgba(255, 255, 255, 0.08)',
-                        color: '#e2e8f0',
-                        fontSize: '0.84rem',
-                        fontWeight: 700,
-                        cursor: 'pointer',
-                        textAlign: 'left',
-                        transition: 'all 0.15s ease',
-                      }}
-                    >
-                      <span style={{ fontSize: '1.1rem' }}>{item.icon}</span>
-                      <span>{item.label}</span>
-                    </button>
-                  ))}
-
-                  <button
-                    type="button"
-                    onClick={() => {
-                      dispatchSchoolBellAlert()
-                      setNavDrawerOpen(false)
-                    }}
-                    style={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '10px',
-                      padding: '9px 12px',
-                      borderRadius: '8px',
-                      background: 'linear-gradient(135deg, rgba(245, 158, 11, 0.2), rgba(217, 119, 6, 0.2))',
-                      border: '1px solid rgba(245, 158, 11, 0.4)',
-                      color: '#fcd34d',
-                      fontSize: '0.84rem',
-                      fontWeight: 700,
-                      cursor: 'pointer',
-                      textAlign: 'left',
-                      marginTop: '4px',
-                    }}
-                  >
-                    <span style={{ fontSize: '1.1rem' }}>🔔</span>
-                    <span>School Bell & Class Alarm</span>
-                  </button>
-                </div>
-
-                {/* Bottom Action */}
-                <div style={{ paddingTop: '1rem', borderTop: '1px solid rgba(255,255,255,0.1)', display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setNavDrawerOpen(false)
-                      setIsRotatedLandscape(false)
-                      setIsFullscreen(false)
-                      window.dispatchEvent(new CustomEvent('eclat-video-rotated', { detail: { isRotated: false } }))
-                    }}
-                    style={{
-                      padding: '8px',
-                      background: 'rgba(59, 130, 246, 0.2)',
-                      border: '1px solid rgba(59, 130, 246, 0.4)',
-                      color: '#93c5fd',
-                      borderRadius: '8px',
-                      fontSize: '0.78rem',
-                      fontWeight: 800,
-                      cursor: 'pointer',
-                    }}
-                  >
-                    🔄 Exit Rotated Video Screen
-                  </button>
-
-                  <button
-                    type="button"
-                    onClick={async () => {
-                      setNavDrawerOpen(false)
-                      setIsRotatedLandscape(false)
-                      setIsFullscreen(false)
-                      window.dispatchEvent(new CustomEvent('eclat-video-rotated', { detail: { isRotated: false } }))
-                      await signOut()
-                      navigate('/login')
-                    }}
-                    style={{
-                      padding: '8px',
-                      background: 'rgba(239, 68, 68, 0.2)',
-                      border: '1px solid rgba(239, 68, 68, 0.4)',
-                      color: '#fca5a5',
-                      borderRadius: '8px',
-                      fontSize: '0.78rem',
-                      fontWeight: 800,
-                      cursor: 'pointer',
-                    }}
-                  >
-                    🚪 Sign Out
-                  </button>
-                </div>
-              </div>
-            </div>
-          )}
 
           {/* BUFFERING SPINNER */}
           {isBuffering && (

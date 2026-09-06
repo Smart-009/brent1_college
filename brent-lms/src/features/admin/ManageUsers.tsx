@@ -205,6 +205,7 @@ export function ManageUsers() {
             id: registeredUserId,
             admission_number: cleanAdm,
             full_name: fullName.trim(),
+            portal_password: password.trim(),
             gender: 'Male',
             dob: '2005-01-01',
             class_id: selectedProg?.id || 'prog-comp',

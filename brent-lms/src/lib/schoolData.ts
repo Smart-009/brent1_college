@@ -29,6 +29,11 @@ import { generateBiometricTemplate } from './biometricEngine'
 import { supabase } from './supabase'
 import { INSTITUTION_CONFIG } from '@/config/institution'
 
+function isValidUuid(id?: string): boolean {
+  if (!id) return false
+  return /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id)
+}
+
 // Official Enrolled Students
 export const INITIAL_STUDENTS: StudentRecord[] = [
   {
@@ -1700,14 +1705,21 @@ class SchoolDataStore {
     await this.pushCollectionToCloud('students', this.getStudents())
 
     try {
-      supabase.from('profiles').upsert({
+      const renewed = new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString()
+      await supabase.from('profiles').upsert({
         id: student.id,
         full_name: student.full_name,
         admission_number: student.admission_number,
         role: 'student',
+        access_expires_at: renewed,
         is_active: student.status === 'Active',
-      }).then(() => {})
+      }, { onConflict: 'id' })
     } catch {}
+
+    const std = this.getStudents().find((s) => s.id === student.id || s.admission_number.toLowerCase() === student.admission_number.toLowerCase())
+    if (std) {
+      await this.syncStudentProfileToSupabase(std)
+    }
   }
 
   async updateStudent(id: string, updated: Partial<StudentRecord>): Promise<void> {
@@ -2114,6 +2126,23 @@ class SchoolDataStore {
       }
     )
     schoolEventBus.publish('INVOICE_CREATED', invoice)
+    await this.pushCollectionToCloud('invoices', this.getInvoices())
+
+    // Direct write to Supabase fee_invoices table
+    try {
+      await supabase.from('fee_invoices').upsert({
+        id: isValidUuid(invoice.id) ? invoice.id : undefined,
+        invoice_number: invoice.invoice_number,
+        student_id: isValidUuid(invoice.student_id) ? invoice.student_id : null,
+        term_name: invoice.term,
+        academic_year: invoice.academic_year,
+        total_amount: invoice.total_amount,
+        amount_paid: invoice.paid_amount,
+        balance_due: invoice.balance,
+        due_date: invoice.due_date,
+        status: invoice.status === 'Paid' ? 'PAID' : invoice.status === 'Partial' ? 'PARTIAL' : 'PENDING',
+      }, { onConflict: 'invoice_number' })
+    } catch {}
   }
 
   async createInvoice(invoice: FeeInvoice): Promise<void> {
@@ -2246,6 +2275,21 @@ class SchoolDataStore {
     await this.pushCollectionToCloud('receipts', this.getReceipts())
     await this.pushCollectionToCloud('invoices', this.getInvoices())
     await this.pushCollectionToCloud('students', this.getStudents())
+
+    // Direct write to Supabase fee_payments table
+    try {
+      await supabase.from('fee_payments').upsert({
+        id: isValidUuid(receipt.id) ? receipt.id : undefined,
+        receipt_number: receipt.receipt_number,
+        invoice_id: isValidUuid(receipt.invoice_id) ? receipt.invoice_id : null,
+        student_id: isValidUuid(receipt.student_id) ? receipt.student_id : null,
+        amount_paid: receipt.amount,
+        payment_method: receipt.payment_method === 'M-Pesa' ? 'MPESA' : 'BANK_TRANSFER',
+        transaction_reference: receipt.reference_code || receipt.receipt_number,
+        payment_date: receipt.payment_date || new Date().toISOString().split('T')[0],
+        received_by: receipt.recorded_by || 'Bursar',
+      }, { onConflict: 'receipt_number' })
+    } catch {}
 
     const matchedStd = this.getStudents().find(
       (s) => s.id === receipt.student_id || s.admission_number.toLowerCase() === receipt.admission_number.toLowerCase()

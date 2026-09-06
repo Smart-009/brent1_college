@@ -49,10 +49,10 @@ export function LayoutShell() {
       <DesktopCommandPalette />
       <ClassBellReminderModal />
       <ConcurrentSessionAlertModal />
-      {!isVideoRotated && <Navbar onToggleSidebar={() => setSidebarOpen(!sidebarOpen)} />}
+      <Navbar onToggleSidebar={() => setSidebarOpen(!sidebarOpen)} />
       <div className={`sidebar-backdrop ${sidebarOpen ? 'open' : ''}`} onClick={() => setSidebarOpen(false)} />
       <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
-      {!isVideoEnvironment && !isVideoRotated && <MobileAppBottomNav />}
+      {!isVideoEnvironment && <MobileAppBottomNav />}
       <main
         className="main-content"
         style={{
@@ -60,7 +60,7 @@ export function LayoutShell() {
           flexDirection: 'column',
           minHeight: 'calc(100vh - 64px)',
           paddingBottom: isVideoEnvironment ? '0' : (isDesktop ? '1rem' : isNative ? '4.5rem' : '5rem'),
-          paddingTop: isVideoRotated ? '0' : undefined,
+          
         }}
       >
         <div style={{ flex: 1 }}>
