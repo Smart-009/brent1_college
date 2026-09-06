@@ -633,5 +633,10 @@ html, body, #root, .app-layout {
   .table-responsive table {
     min-width: 480px;
   }
+
+  /* Mobile Lesson Page Big Video View */
+  .lesson-page {
+    padding: 0.5rem 0.35rem calc(80px + env(safe-area-inset-bottom, 0px)) !important;
+  }
 }
 

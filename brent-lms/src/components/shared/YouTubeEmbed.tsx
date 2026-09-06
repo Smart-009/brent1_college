@@ -780,11 +780,11 @@ export function YouTubeEmbed({
             height: isFullscreen || screenSize === 'full'
               ? '100vh'
               : (screenSize === 'small'
-                ? (isMobile ? '200px' : '260px')
-                : (isMobile ? 'min(56.25vw, 320px)' : (isTheater ? 'calc(82vh)' : 'calc(65vh)'))),
+                ? (isMobile ? '240px' : '280px')
+                : (isMobile ? 'clamp(300px, 52vh, 480px)' : (isTheater ? 'calc(82vh)' : 'calc(65vh)'))),
             minHeight: isFullscreen || screenSize === 'full'
               ? '100vh'
-              : (screenSize === 'small' ? (isMobile ? '190px' : '240px') : (isMobile ? '220px' : '400px')),
+              : (screenSize === 'small' ? (isMobile ? '220px' : '260px') : (isMobile ? '300px' : '440px')),
             maxHeight: isFullscreen || screenSize === 'full' ? '100vh' : 'none',
             zIndex: isFullscreen || screenSize === 'full' ? 999999 : 1,
             background: '#040711',
