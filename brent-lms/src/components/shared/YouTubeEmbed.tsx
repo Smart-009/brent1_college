@@ -902,39 +902,40 @@ export function YouTubeEmbed({
             )}
           </div>
 
-          {/* TOP BRAND WATERMARK & NOTIFICATIONS */}
+          {/* TOP BRAND WATERMARK & NOTIFICATIONS (Fades with controls to keep video unobstructed) */}
           <div
             style={{
               position: 'absolute',
-              top: '14px',
-              left: '16px',
-              right: '16px',
+              top: '8px',
+              left: '10px',
+              right: '10px',
               display: 'flex',
               justifyContent: 'space-between',
               alignItems: 'center',
               pointerEvents: 'none',
               zIndex: 15,
+              opacity: showControls || !isPlaying ? 1 : 0,
+              transition: 'opacity 0.25s ease',
             }}
           >
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
               <div
                 style={{
-                  background: 'rgba(9, 13, 22, 0.9)',
-                  backdropFilter: 'blur(10px)',
+                  background: 'rgba(9, 13, 22, 0.75)',
+                  backdropFilter: 'blur(8px)',
                   color: '#f8fafc',
-                  padding: '6px 14px',
-                  borderRadius: '10px',
-                  fontSize: '0.74rem',
+                  padding: '3px 8px',
+                  borderRadius: '6px',
+                  fontSize: '0.66rem',
                   fontWeight: 800,
                   display: 'flex',
                   alignItems: 'center',
-                  gap: '8px',
-                  border: '1px solid rgba(255, 255, 255, 0.15)',
-                  boxShadow: '0 4px 16px rgba(0,0,0,0.4)',
+                  gap: '5px',
+                  border: '1px solid rgba(255, 255, 255, 0.12)',
                 }}
               >
                 <span>🎓</span>
-                <span>ÉCLAT INSTITUTE • SECURE STREAM</span>
+                <span>Éclat Lecture Stream</span>
               </div>
 
               {(isFullscreen || screenSize === 'full') && (
@@ -1036,31 +1037,7 @@ export function YouTubeEmbed({
             </div>
           )}
 
-          {/* SOLID WATERMARK & LOGO BLOCKER SHIELDS */}
-          <div
-            style={{
-              position: 'absolute',
-              bottom: 0,
-              right: 0,
-              width: '280px',
-              height: '70px',
-              zIndex: 14,
-              pointerEvents: 'none',
-              background: '#040711',
-            }}
-          />
-          <div
-            style={{
-              position: 'absolute',
-              bottom: 0,
-              left: 0,
-              width: '140px',
-              height: '70px',
-              zIndex: 14,
-              pointerEvents: 'none',
-              background: '#040711',
-            }}
-          />
+
 
           {/* SETTINGS GEAR POPUP (Speed Selector) */}
           {showSettings && (

@@ -541,7 +541,8 @@ export function LessonPlayer() {
       />
 
       {/* 2. Lesson Title, Module Details & Back Link Positioned Below the Video */}
-      <div style={{ marginTop: '0.85rem', marginBottom: '1.25rem' }}>
+      <div style={{ padding: '0 0.85rem' }}>
+        <div style={{ marginTop: '0.85rem', marginBottom: '1.25rem' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.4rem', flexWrap: 'wrap', gap: '0.5rem' }}>
           <Link to={`/student/courses/${lesson.course_id}`} className="lesson-back-link" style={{ margin: 0, fontWeight: 700, fontSize: '0.85rem' }}>
             ← Back to {course?.title || 'Course'}
@@ -753,6 +754,7 @@ export function LessonPlayer() {
           )}
         </div>
       )}
+      </div>
     </div>
   )
 }
