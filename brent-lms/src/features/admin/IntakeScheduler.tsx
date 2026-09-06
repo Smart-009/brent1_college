@@ -918,16 +918,16 @@ export function IntakeScheduler() {
                       type="url"
                       className="input"
                       style={{ fontSize: '0.85rem' }}
-                      placeholder="Optional — e.g. https://www.youtube.com/watch?v=... (or leave blank)"
+                      placeholder="Optional — e.g. https://.../video.mp4 or stream link (or leave blank)"
                       value={formVideoUrl}
                       onChange={(e) => setFormVideoUrl(e.target.value)}
                     />
                     <div style={{ fontSize: '0.72rem', color: '#64748b', marginTop: '3px' }}>
-                      Optional YouTube or video teaser link. You can leave this blank if you do not have a promotional video.
+                      Optional video teaser stream link. You can leave this blank if you do not have a promotional video.
                     </div>
                     {formVideoUrl && extractYouTubeId(formVideoUrl) && (
                       <div style={{ fontSize: '0.75rem', color: '#2563eb', fontWeight: 700, marginTop: '4px' }}>
-                        ✓ YouTube Video identified (ID: {extractYouTubeId(formVideoUrl)})
+                        ✓ Secure video stream verified
                       </div>
                     )}
                   </div>

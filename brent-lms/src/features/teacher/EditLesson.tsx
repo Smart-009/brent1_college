@@ -237,11 +237,11 @@ export function EditLesson() {
               </div>
 
               <div className="form-group">
-                <label className="form-label" htmlFor="editYt">Video Stream URL (YouTube, MP4, Cloudflare R2, or Vimeo) *</label>
+                <label className="form-label" htmlFor="editYt">Video Stream URL (MP4, Cloudflare R2, or Stream Link) *</label>
                 <input
                   id="editYt"
                   type="url"
-                  placeholder="https://www.youtube.com/watch?v=... OR https://.../lesson.mp4"
+                  placeholder="https://.../lesson.mp4 or video stream URL"
                   value={youtubeUrl}
                   onChange={(e) => setYoutubeUrl(e.target.value)}
                   required

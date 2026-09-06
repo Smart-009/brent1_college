@@ -94,7 +94,7 @@ export function LessonUploader() {
       return
     }
     if (!title.trim() || !youtubeUrl.trim()) {
-      setError('Lesson Title and YouTube Video URL are required.')
+      setError('Lesson Title and Video Stream URL are required.')
       return
     }
 
@@ -239,16 +239,16 @@ export function LessonUploader() {
             </div>
 
             <div className="form-group">
-              <label className="form-label" htmlFor="ytUrl">Video Stream URL (YouTube, MP4, Cloudflare R2, or Vimeo) *</label>
+              <label className="form-label" htmlFor="ytUrl">Video Stream URL (MP4, Cloudflare R2, or Stream Link) *</label>
               <input
                 id="ytUrl"
                 type="url"
-                placeholder="https://www.youtube.com/watch?v=... OR https://.../lesson.mp4"
+                placeholder="https://.../lesson.mp4 or video stream URL"
                 value={youtubeUrl}
                 onChange={(e) => setYoutubeUrl(e.target.value)}
                 required
               />
-              <span className="form-hint">Paste any YouTube unlisted link, direct MP4 cloud URL, or Vimeo stream.</span>
+              <span className="form-hint">Paste any cloud stream URL, direct MP4 video link, or secure video stream.</span>
             </div>
 
             {/* Video Preview */}

@@ -760,7 +760,7 @@ export function YouTubeEmbed({
               }}
             >
               <span>🎓</span>
-              <span>ÉCLAT INSTITUTE • YOUTUBE-POWERED DRM STREAM</span>
+              <span>ÉCLAT INSTITUTE • SECURE IN-APP VIDEO STREAM</span>
             </div>
 
             {resumedNotice && (
@@ -1176,7 +1176,7 @@ export function YouTubeEmbed({
         <div style={{ marginTop: '0.6rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '0.5rem', padding: '0 0.25rem' }}>
           <span style={{ fontSize: '0.78rem', color: 'var(--color-text-secondary)', display: 'inline-flex', alignItems: 'center', gap: '0.35rem' }}>
             <span>🔒</span>
-            <span>Éclat YouTube DRM Player • Shortcuts: Space (Play/Pause), F (Fullscreen), M (Mute), J/L (±10s)</span>
+            <span>Éclat Secure Cinema Player • Shortcuts: Space (Play/Pause), F (Fullscreen), M (Mute), J/L (±10s)</span>
           </span>
         </div>
       </div>

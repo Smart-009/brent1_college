@@ -829,7 +829,7 @@ export function CreateCourse() {
                 </h3>
               </div>
               <p style={{ fontSize: '0.8rem', color: '#64748b', margin: '0.25rem 0 0' }}>
-                Add YouTube, direct MP4, Vimeo, or Cloudflare R2 links for student streaming.
+                Add direct MP4, Vimeo, Cloudflare R2, or cloud stream links for student streaming.
               </p>
             </div>
             <button type="button" className="btn btn-secondary btn-sm" onClick={handleAddLesson}>
@@ -877,7 +877,7 @@ export function CreateCourse() {
                   <input
                     type="text"
                     className="input"
-                    placeholder="YouTube URL, MP4 or Cloudflare R2 Link"
+                    placeholder="Video Stream URL, MP4 or Cloudflare Link"
                     value={les.video_url || ''}
                     onChange={(e) => handleUpdateLesson(idx, { video_url: e.target.value })}
                   />
