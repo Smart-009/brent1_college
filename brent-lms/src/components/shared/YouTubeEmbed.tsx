@@ -910,71 +910,104 @@ export function YouTubeEmbed({
             )}
           </div>
 
-          {/* FLOATING PLAYER NOTIFICATIONS & FULLSCREEN EXIT */}
+          {/* FLOATING PLAYER NOTIFICATIONS & PROMINENT QUICK ACTIONS (Always Accessible) */}
           <div
             style={{
               position: 'absolute',
-              top: '8px',
-              left: '10px',
-              right: '10px',
+              top: '10px',
+              left: '12px',
+              right: '12px',
               display: 'flex',
               justifyContent: 'space-between',
               alignItems: 'center',
               pointerEvents: 'none',
-              zIndex: 15,
-              opacity: showControls || !isPlaying ? 1 : 0,
+              zIndex: 35,
+              opacity: showControls || !isPlaying ? 1 : 0.85,
               transition: 'opacity 0.25s ease',
             }}
           >
             <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-              {(isFullscreen || screenSize === 'full' || isRotatedLandscape) && (
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', pointerEvents: 'auto' }}>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setIsFullscreen(false)
-                      setIsRotatedLandscape(false)
-                      setPlayerScreenSize('medium')
-                    }}
-                    style={{
-                      background: 'rgba(239, 68, 68, 0.9)',
-                      color: '#ffffff',
-                      border: 'none',
-                      borderRadius: '8px',
-                      padding: '6px 12px',
-                      fontSize: '0.76rem',
-                      fontWeight: 800,
-                      cursor: 'pointer',
-                      boxShadow: '0 4px 12px rgba(239, 68, 68, 0.5)',
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '4px',
-                    }}
-                  >
-                    <span>⤦</span> Exit Full Screen
-                  </button>
-                  <button
-                    type="button"
-                    onClick={(e) => handleToggleRotation(e)}
-                    style={{
-                      background: 'rgba(37, 99, 235, 0.9)',
-                      color: '#ffffff',
-                      border: 'none',
-                      borderRadius: '8px',
-                      padding: '6px 12px',
-                      fontSize: '0.76rem',
-                      fontWeight: 800,
-                      cursor: 'pointer',
-                      boxShadow: '0 4px 12px rgba(37, 99, 235, 0.5)',
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '4px',
-                    }}
-                  >
-                    <span>🔄</span> {isRotatedLandscape ? 'Portrait' : 'Rotate'}
-                  </button>
-                </div>
+              {(isFullscreen || screenSize === 'full' || isRotatedLandscape) ? (
+                <button
+                  type="button"
+                  onClick={() => {
+                    setIsFullscreen(false)
+                    setIsRotatedLandscape(false)
+                    setPlayerScreenSize('medium')
+                  }}
+                  style={{
+                    background: '#ef4444',
+                    color: '#ffffff',
+                    border: 'none',
+                    borderRadius: '8px',
+                    padding: '6px 12px',
+                    fontSize: '0.78rem',
+                    fontWeight: 800,
+                    cursor: 'pointer',
+                    pointerEvents: 'auto',
+                    boxShadow: '0 4px 14px rgba(239, 68, 68, 0.5)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '4px',
+                  }}
+                >
+                  <span>⤦</span> Exit Full Screen
+                </button>
+              ) : (
+                <span style={{ fontSize: '0.72rem', color: '#ffffff', background: 'rgba(0,0,0,0.6)', padding: '4px 8px', borderRadius: '6px', fontWeight: 700 }}>
+                  🎥 HD Lecture
+                </span>
               )}
+            </div>
+
+            {/* Top-Right Quick Action Buttons: ROTATE & FULL SCREEN */}
+            <div style={{ display: 'flex', alignItems: 'center', gap: '6px', pointerEvents: 'auto' }}>
+              <button
+                type="button"
+                onClick={(e) => handleToggleRotation(e)}
+                style={{
+                  background: isRotatedLandscape ? 'rgba(37, 99, 235, 0.95)' : 'rgba(15, 23, 42, 0.85)',
+                  backdropFilter: 'blur(8px)',
+                  color: '#ffffff',
+                  border: '1.5px solid rgba(255, 255, 255, 0.25)',
+                  borderRadius: '8px',
+                  padding: '5px 10px',
+                  fontSize: '0.76rem',
+                  fontWeight: 800,
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '4px',
+                  boxShadow: '0 4px 12px rgba(0,0,0,0.4)',
+                }}
+                title="Rotate Screen (Landscape / Portrait)"
+              >
+                <span>🔄</span>
+                <span>{isRotatedLandscape ? 'Portrait' : 'Rotate'}</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={(e) => toggleFullscreen(e)}
+                style={{
+                  background: '#2563eb',
+                  color: '#ffffff',
+                  border: 'none',
+                  borderRadius: '8px',
+                  padding: '5px 11px',
+                  fontSize: '0.76rem',
+                  fontWeight: 800,
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '4px',
+                  boxShadow: '0 4px 14px rgba(37, 99, 235, 0.5)',
+                }}
+                title={isFullscreen ? 'Exit Fullscreen' : 'Full Screen'}
+              >
+                <span>{isFullscreen ? '⤦' : '⛶'}</span>
+                <span>{isFullscreen ? 'Exit' : 'Full Screen'}</span>
+              </button>
             </div>
 
             {resumedNotice && (
