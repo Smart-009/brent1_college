@@ -417,8 +417,11 @@ export function YouTubeEmbed({
     if (e) e.stopPropagation()
     const nextRotated = !isRotatedLandscape
     setIsRotatedLandscape(nextRotated)
+    if (nextRotated) {
+      setIsFullscreen(true)
+    }
 
-    // 1. Hardware Screen Orientation Lock
+    // Hardware Screen Orientation Lock (when supported)
     try {
       const orientation = (screen as any).orientation || (screen as any).mozOrientation || (screen as any).msOrientation
       if (orientation && orientation.lock) {
@@ -430,7 +433,7 @@ export function YouTubeEmbed({
       }
     } catch {}
 
-    triggerRipple('🔄', nextRotated ? 'Landscape 90°' : 'Portrait 0°')
+    triggerRipple('🔄', nextRotated ? 'Landscape Full Screen' : 'Portrait Half Screen')
   }
 
   // Speed
@@ -451,6 +454,9 @@ export function YouTubeEmbed({
     setScreenSize(mode)
     if (mode === 'full') {
       setIsFullscreen(true)
+      if (isMobile) {
+        setIsRotatedLandscape(true)
+      }
       if (containerRef.current && !document.fullscreenElement) {
         try {
           if (containerRef.current.requestFullscreen) {
@@ -460,16 +466,12 @@ export function YouTubeEmbed({
           }
         } catch {}
       }
-      // Auto rotate to landscape in fullscreen on mobile devices
-      if (isMobile) {
-        try {
-          const orientation = (screen as any).orientation
-          if (orientation && orientation.lock) {
-            await orientation.lock('landscape').catch(() => {})
-            setIsRotatedLandscape(true)
-          }
-        } catch {}
-      }
+      try {
+        const orientation = (screen as any).orientation
+        if (orientation && orientation.lock) {
+          await orientation.lock('landscape').catch(() => {})
+        }
+      } catch {}
       triggerRipple('⛶', 'Full Screen')
     } else {
       setIsFullscreen(false)
@@ -484,7 +486,7 @@ export function YouTubeEmbed({
         const orientation = (screen as any).orientation
         if (orientation && orientation.unlock) orientation.unlock()
       } catch {}
-      triggerRipple(mode === 'small' ? '📱' : '💻', mode === 'small' ? 'Small View' : 'Medium View')
+      triggerRipple(mode === 'small' ? '📱' : '💻', mode === 'small' ? 'Small View' : 'Half Screen View')
     }
   }
 
@@ -749,27 +751,33 @@ export function YouTubeEmbed({
           transition: 'all 0.3s ease',
         }}
       >
-        {/* 1. Large Cinema Video Frame PINNED AT THE TOP */}
+        {/* 1. Half-Screen / Fullscreen Landscape Video Frame PINNED AT THE TOP */}
         <div
           ref={containerRef}
           onMouseMove={handleMouseMove}
           onMouseLeave={() => isPlaying && !showSettings && setShowControls(false)}
           style={{
-            position: isFullscreen || screenSize === 'full' ? 'fixed' : 'relative',
-            top: isFullscreen || screenSize === 'full' ? 0 : 'auto',
-            left: isFullscreen || screenSize === 'full' ? 0 : 'auto',
-            right: isFullscreen || screenSize === 'full' ? 0 : 'auto',
-            bottom: isFullscreen || screenSize === 'full' ? 0 : 'auto',
-            width: isFullscreen || screenSize === 'full' ? '100vw' : '100%',
-            height: isFullscreen || screenSize === 'full' ? '100vh' : 'auto',
-            aspectRatio: isFullscreen || screenSize === 'full' ? 'auto' : '16 / 9',
-            minHeight: isFullscreen || screenSize === 'full' ? '100vh' : 'unset',
-            maxHeight: isFullscreen || screenSize === 'full' ? '100vh' : 'none',
-            zIndex: isFullscreen || screenSize === 'full' ? 999999 : 1,
+            position: isFullscreen || screenSize === 'full' || isRotatedLandscape ? 'fixed' : 'relative',
+            top: isFullscreen || screenSize === 'full' || isRotatedLandscape ? 0 : 'auto',
+            left: isFullscreen || screenSize === 'full' || isRotatedLandscape ? 0 : 'auto',
+            right: (isFullscreen || screenSize === 'full') && !isRotatedLandscape ? 0 : 'auto',
+            bottom: (isFullscreen || screenSize === 'full') && !isRotatedLandscape ? 0 : 'auto',
+            width: isRotatedLandscape ? '100vh' : (isFullscreen || screenSize === 'full' ? '100vw' : '100%'),
+            height: isRotatedLandscape
+              ? '100vw'
+              : (isFullscreen || screenSize === 'full'
+                ? '100vh'
+                : (isMobile ? 'clamp(300px, 48vh, 460px)' : (isTheater ? 'calc(80vh)' : 'calc(58vh)'))),
+            aspectRatio: (!isFullscreen && screenSize !== 'full' && !isRotatedLandscape && !isMobile && !isTheater) ? '16 / 9' : 'auto',
+            minHeight: isFullscreen || screenSize === 'full' || isRotatedLandscape ? '100vh' : (isMobile ? '300px' : '400px'),
+            maxHeight: isFullscreen || screenSize === 'full' || isRotatedLandscape ? '100vh' : 'none',
+            transform: isRotatedLandscape ? 'rotate(90deg) translateY(-100%)' : 'none',
+            transformOrigin: 'top left',
+            zIndex: isFullscreen || screenSize === 'full' || isRotatedLandscape ? 99999999 : 1,
             background: '#000000',
-            borderRadius: isFullscreen || screenSize === 'full' ? '0' : (isMobile ? '10px' : '14px'),
+            borderRadius: isFullscreen || screenSize === 'full' || isRotatedLandscape ? '0' : (isMobile ? '0' : '14px'),
             overflow: 'hidden',
-            boxShadow: isFullscreen || screenSize === 'full' ? 'none' : '0 8px 30px rgba(0, 0, 0, 0.5)',
+            boxShadow: isFullscreen || screenSize === 'full' || isRotatedLandscape ? 'none' : '0 8px 30px rgba(0, 0, 0, 0.5)',
             userSelect: 'none',
           }}
         >
@@ -919,28 +927,53 @@ export function YouTubeEmbed({
             }}
           >
             <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-              {(isFullscreen || screenSize === 'full') && (
-                <button
-                  type="button"
-                  onClick={() => setPlayerScreenSize('medium')}
-                  style={{
-                    background: 'rgba(239, 68, 68, 0.85)',
-                    color: '#ffffff',
-                    border: 'none',
-                    borderRadius: '8px',
-                    padding: '6px 12px',
-                    fontSize: '0.74rem',
-                    fontWeight: 800,
-                    cursor: 'pointer',
-                    pointerEvents: 'auto',
-                    boxShadow: '0 4px 12px rgba(239, 68, 68, 0.4)',
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '4px',
-                  }}
-                >
-                  <span>⤦</span> Exit Full Screen
-                </button>
+              {(isFullscreen || screenSize === 'full' || isRotatedLandscape) && (
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', pointerEvents: 'auto' }}>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setIsFullscreen(false)
+                      setIsRotatedLandscape(false)
+                      setPlayerScreenSize('medium')
+                    }}
+                    style={{
+                      background: 'rgba(239, 68, 68, 0.9)',
+                      color: '#ffffff',
+                      border: 'none',
+                      borderRadius: '8px',
+                      padding: '6px 12px',
+                      fontSize: '0.76rem',
+                      fontWeight: 800,
+                      cursor: 'pointer',
+                      boxShadow: '0 4px 12px rgba(239, 68, 68, 0.5)',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '4px',
+                    }}
+                  >
+                    <span>⤦</span> Exit Full Screen
+                  </button>
+                  <button
+                    type="button"
+                    onClick={(e) => handleToggleRotation(e)}
+                    style={{
+                      background: 'rgba(37, 99, 235, 0.9)',
+                      color: '#ffffff',
+                      border: 'none',
+                      borderRadius: '8px',
+                      padding: '6px 12px',
+                      fontSize: '0.76rem',
+                      fontWeight: 800,
+                      cursor: 'pointer',
+                      boxShadow: '0 4px 12px rgba(37, 99, 235, 0.5)',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '4px',
+                    }}
+                  >
+                    <span>🔄</span> {isRotatedLandscape ? 'Portrait' : 'Rotate'}
+                  </button>
+                </div>
               )}
             </div>
 
