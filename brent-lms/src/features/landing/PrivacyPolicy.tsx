@@ -95,7 +95,7 @@ export function PrivacyPolicy() {
         <section style={{ background: 'rgba(15, 23, 42, 0.6)', border: '1px solid rgba(255, 255, 255, 0.08)', borderRadius: '16px', padding: '2rem', marginBottom: '2rem' }}>
           <h2 style={{ fontSize: '1.25rem', color: '#60a5fa', fontWeight: 800, marginTop: 0 }}>5. Student Rights & Contact</h2>
           <p style={{ color: '#cbd5e1' }}>
-            Enrolled students may request access to their academic records, correction of profile details, or account deactivation by contacting the Office of the Academic Registrar or emailing <strong>support@eclat.institute</strong>.
+            Enrolled students may request access to their academic records, correction of profile details, or account deactivation by contacting the Office of the Academic Registrar or emailing <strong>{INSTITUTION_CONFIG.contact.email}</strong>.
           </p>
         </section>
       </main>

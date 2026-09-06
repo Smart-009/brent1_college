@@ -4,6 +4,7 @@
 // ============================================================
 
 import { supabase } from './supabase'
+import { INSTITUTION_CONFIG } from '@/config/institution'
 import type { IntakeSchedule } from '@/types/intake'
 
 const INTAKE_STORAGE_KEY = 'eclat_intake_schedules_store'
@@ -37,8 +38,8 @@ export const INITIAL_INTAKE_SCHEDULES: IntakeSchedule[] = [
       'Evening Classes (Live Interactive)',
       'Weekend Executive Cohort',
     ],
-    contact_phone: '+254 700 000 000',
-    contact_email: 'admissions@eclatinstitute.ac.ke',
+    contact_phone: INSTITUTION_CONFIG.contact.phone,
+    contact_email: INSTITUTION_CONFIG.contact.admissionsEmail,
     registration_fee: 'Free ($0 USD Application Fee)',
     is_published: true,
     featured: true,
@@ -73,8 +74,8 @@ export const INITIAL_INTAKE_SCHEDULES: IntakeSchedule[] = [
       'Evening Classes (Live Interactive)',
       'Self-Paced Masterclass & 1-on-1 Labs',
     ],
-    contact_phone: '+254 700 000 000',
-    contact_email: 'admissions@eclatinstitute.ac.ke',
+    contact_phone: INSTITUTION_CONFIG.contact.phone,
+    contact_email: INSTITUTION_CONFIG.contact.admissionsEmail,
     registration_fee: 'Free ($0 USD Application Fee)',
     is_published: true,
     featured: false,

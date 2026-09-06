@@ -3954,7 +3954,7 @@ export function Landing() {
             position: 'relative',
             transition: 'transform 0.2s',
           }}
-          title="Live Admissions & WhatsApp Support (+254 740 027 346)"
+          title={`Live Admissions & WhatsApp Support (${INSTITUTION_CONFIG.contact.phone})`}
         >
           {supportModalOpen ? (
             <span style={{ fontSize: '1.4rem', fontWeight: 900 }}>✕</span>

@@ -3,6 +3,7 @@ import { PageWrapper } from '@/components/layout/PageWrapper'
 import { Button } from '@/components/ui/Button'
 import { intakeStore } from '@/lib/intakeStore'
 import { OFFICIAL_COURSES } from '@/config/officialCourses'
+import { INSTITUTION_CONFIG } from '@/config/institution'
 import { extractYouTubeId, formatDate } from '@/lib/utils'
 import { YouTubeEmbed } from '@/components/shared/YouTubeEmbed'
 import { useAuth } from '@/hooks/useAuth'
@@ -55,8 +56,8 @@ export function IntakeScheduler() {
     '100% Online (Live & Recorded)',
     'Evening Classes (Live Interactive)',
   ])
-  const [formPhone, setFormPhone] = useState('+254 700 000 000')
-  const [formEmail, setFormEmail] = useState('admissions@eclatinstitute.ac.ke')
+  const [formPhone, setFormPhone] = useState(INSTITUTION_CONFIG.contact.phone)
+  const [formEmail, setFormEmail] = useState(INSTITUTION_CONFIG.contact.admissionsEmail)
   const [formRegistrationFee, setFormRegistrationFee] = useState('Free ($0 USD Application Fee)')
   const [formIsPublished, setFormIsPublished] = useState(true)
   const [formFeatured, setFormFeatured] = useState(false)
@@ -123,8 +124,8 @@ export function IntakeScheduler() {
       '100% Online (Live & Recorded)',
       'Evening Classes (Live Interactive)',
     ])
-    setFormPhone('+254 700 000 000')
-    setFormEmail('admissions@eclatinstitute.ac.ke')
+    setFormPhone(INSTITUTION_CONFIG.contact.phone)
+    setFormEmail(INSTITUTION_CONFIG.contact.admissionsEmail)
     setFormRegistrationFee('Free ($0 USD Application Fee)')
     setFormIsPublished(true)
     setFormFeatured(false)
