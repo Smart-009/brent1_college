@@ -902,7 +902,7 @@ export function YouTubeEmbed({
             )}
           </div>
 
-          {/* TOP BRAND WATERMARK & NOTIFICATIONS (Fades with controls to keep video unobstructed) */}
+          {/* FLOATING PLAYER NOTIFICATIONS & FULLSCREEN EXIT */}
           <div
             style={{
               position: 'absolute',
@@ -919,25 +919,6 @@ export function YouTubeEmbed({
             }}
           >
             <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-              <div
-                style={{
-                  background: 'rgba(9, 13, 22, 0.75)',
-                  backdropFilter: 'blur(8px)',
-                  color: '#f8fafc',
-                  padding: '3px 8px',
-                  borderRadius: '6px',
-                  fontSize: '0.66rem',
-                  fontWeight: 800,
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '5px',
-                  border: '1px solid rgba(255, 255, 255, 0.12)',
-                }}
-              >
-                <span>🎓</span>
-                <span>Éclat Lecture Stream</span>
-              </div>
-
               {(isFullscreen || screenSize === 'full') && (
                 <button
                   type="button"
@@ -1515,14 +1496,6 @@ export function YouTubeEmbed({
               </div>
             </div>
           </div>
-        </div>
-
-        {/* Streaming Status Bar */}
-        <div style={{ marginTop: '0.6rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '0.5rem', padding: '0 0.25rem' }}>
-          <span style={{ fontSize: '0.78rem', color: 'var(--color-text-secondary)', display: 'inline-flex', alignItems: 'center', gap: '0.35rem' }}>
-            <span>🔒</span>
-            <span>Éclat Secure Cinema Player • Shortcuts: Space (Play/Pause), F (Fullscreen), M (Mute), J/L (±10s)</span>
-          </span>
         </div>
       </div>
     )
