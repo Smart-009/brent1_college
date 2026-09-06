@@ -638,20 +638,18 @@ export function LessonPlayer() {
                     </div>
                   )}
 
-                  {/* WPS Office-Style Interactive Document Viewer Suite */}
+                  {/* WPS Office-Style Interactive Full-Screen Document Viewer Suite */}
                   {!isHtml && activeDocUrl === res.file_url && (
-                    <div className="mt-3 pt-3" style={{ borderTop: '1px solid var(--color-border-light)' }}>
-                      <WpsDocumentViewer
-                        title={res.file_name}
-                        fileUrl={res.file_url}
-                        subject={course?.title || 'Lesson Resource'}
-                        category="Lesson Attachment"
-                        studentName={profile?.full_name}
-                        studentId={profile?.id}
-                        onClose={() => setActiveDocUrl(null)}
-                        isModal={false}
-                      />
-                    </div>
+                    <WpsDocumentViewer
+                      title={res.file_name}
+                      fileUrl={res.file_url}
+                      subject={course?.title || 'Lesson Resource'}
+                      category="Lesson Attachment"
+                      studentName={profile?.full_name}
+                      studentId={profile?.id}
+                      onClose={() => setActiveDocUrl(null)}
+                      isModal={true}
+                    />
                   )}
                 </div>
               )

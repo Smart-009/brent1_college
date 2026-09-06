@@ -147,6 +147,14 @@ export function ResourceLibrary() {
   const [penColor, setPenColor] = useState<string>('#ef4444')
   const [stickyNotes, setStickyNotes] = useState<StickyNote[]>([])
   const [isFullscreen, setIsFullscreen] = useState<boolean>(false)
+  const [isHandbookFullWidth, setIsHandbookFullWidth] = useState<boolean>(true)
+
+  // Sync fullscreen state with browser API
+  useEffect(() => {
+    const handleFsChange = () => setIsFullscreen(!!document.fullscreenElement)
+    document.addEventListener('fullscreenchange', handleFsChange)
+    return () => document.removeEventListener('fullscreenchange', handleFsChange)
+  }, [])
 
   // Load saved annotations for current resource
   useEffect(() => {
@@ -1739,8 +1747,28 @@ export function ResourceLibrary() {
                   </span>
                 </div>
 
-                {/* Prev / Next Chapter Buttons */}
+                {/* Width Mode & Prev / Next Chapter Buttons */}
                 <div style={{ display: 'flex', alignItems: 'center', gap: '4px', flexShrink: 0 }}>
+                  <button
+                    type="button"
+                    onClick={() => setIsHandbookFullWidth((prev) => !prev)}
+                    style={{
+                      background: isHandbookFullWidth ? '#2563eb' : (readerTheme === 'dark' ? '#1e293b' : '#ffffff'),
+                      color: isHandbookFullWidth ? '#ffffff' : 'inherit',
+                      border: `1px solid ${readerTheme === 'dark' ? '#334155' : '#cbd5e1'}`,
+                      padding: isMobile ? '5px 8px' : '5px 12px',
+                      borderRadius: '8px',
+                      cursor: 'pointer',
+                      fontWeight: 700,
+                      fontSize: isMobile ? '0.75rem' : '0.8rem',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '4px',
+                    }}
+                    title={isHandbookFullWidth ? 'Switch to Book Page Width' : 'Switch to 100% Whole Screen Width'}
+                  >
+                    <span>{isHandbookFullWidth ? '⛶ 100% Screen' : '📖 Page Mode'}</span>
+                  </button>
                   <button
                     type="button"
                     disabled={activeChapterIndex === 0}
@@ -2457,9 +2485,9 @@ export function ResourceLibrary() {
                   <div
                     style={{
                       flex: 1,
-                      padding: isMobile ? '1.25rem 1rem 4rem' : '2.5rem 3.5rem',
-                      maxWidth: '900px',
-                      margin: '0 auto',
+                      padding: isMobile ? '1rem 0.75rem 4rem' : isHandbookFullWidth ? '2rem 3rem 4rem' : '2.5rem 3.5rem',
+                      maxWidth: isHandbookFullWidth ? '100%' : '900px',
+                      margin: isHandbookFullWidth ? '0' : '0 auto',
                       width: '100%',
                       boxSizing: 'border-box',
                       fontSize: `${readerZoom}%`,
@@ -2845,13 +2873,13 @@ export function ResourceLibrary() {
                     flexDirection: 'column',
                     flex: 1,
                     width: '100%',
-                    height: isMobile ? 'calc(100dvh - 54px)' : 'calc(100vh - 54px)',
-                    minHeight: isMobile ? 'calc(100dvh - 54px)' : 'calc(100vh - 54px)',
+                    height: '100%',
+                    minHeight: 0,
                     padding: 0,
                     margin: 0,
                     boxSizing: 'border-box',
-                    overflow: 'auto',
-                    background: readerTheme === 'dark' ? '#090d16' : readerTheme === 'sepia' ? '#241a10' : '#334155',
+                    overflow: 'hidden',
+                    background: readerTheme === 'dark' ? '#090d16' : readerTheme === 'sepia' ? '#241a10' : '#1e293b',
                     position: 'relative',
                     alignItems: 'center',
                   }}
@@ -3111,12 +3139,13 @@ export function ResourceLibrary() {
                         style={{
                           width: '100%',
                           height: '100%',
-                          minHeight: isMobile ? 'calc(100dvh - 54px)' : 'calc(100vh - 54px)',
+                          minHeight: '100%',
                           flex: 1,
                           border: 'none',
                           background: '#000000',
                           filter: isBlurred ? 'blur(20px) brightness(0.1)' : 'none',
                           transition: 'filter 0.15s ease',
+                          display: 'block',
                         }}
                         allow="autoplay; encrypted-media; fullscreen"
                       />

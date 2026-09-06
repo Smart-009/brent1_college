@@ -270,9 +270,9 @@ export function WpsDocumentViewer({
         position: isModal ? 'fixed' : 'relative',
         inset: isModal ? 0 : 'auto',
         zIndex: isModal ? 99999 : 1,
-        width: '100%',
+        width: isModal ? '100vw' : '100%',
         height: isModal ? '100vh' : '100%',
-        minHeight: isMobile ? 'calc(100dvh - 54px)' : '720px',
+        minHeight: isModal ? '100vh' : isMobile ? 'calc(100dvh - 54px)' : '720px',
         display: 'flex',
         flexDirection: 'column',
         background: themeStyles.bg,
@@ -831,7 +831,8 @@ export function WpsDocumentViewer({
               width: zoom <= 100 ? '100%' : `${zoom}%`,
               minWidth: '100%',
               height: '100%',
-              minHeight: isMobile ? 'calc(100dvh - 90px)' : 'calc(100vh - 100px)',
+              minHeight: '100%',
+              flex: 1,
               position: 'relative',
               display: 'flex',
               flexDirection: 'column',
@@ -958,10 +959,11 @@ export function WpsDocumentViewer({
               style={{
                 width: '100%',
                 height: '100%',
-                minHeight: isMobile ? 'calc(100dvh - 90px)' : 'calc(100vh - 100px)',
+                minHeight: '100%',
                 flex: 1,
                 border: 'none',
                 background: '#000000',
+                display: 'block',
               }}
               allow="autoplay; encrypted-media; fullscreen"
             />
