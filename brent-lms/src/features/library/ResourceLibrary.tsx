@@ -1192,6 +1192,11 @@ export function ResourceLibrary() {
 
       {/* Interactive Fullscreen Protected Document Viewer */}
       {readingResource && (
+        <>
+          <style>{`
+            ::selection { background: #fef08a !important; color: #0f172a !important; }
+            ::-moz-selection { background: #fef08a !important; color: #0f172a !important; }
+          `}</style>
         <div
           style={{
             position: 'fixed',
@@ -1204,8 +1209,8 @@ export function ResourceLibrary() {
             display: 'flex',
             flexDirection: 'column',
             overflow: 'hidden',
-            userSelect: 'none',
-            WebkitUserSelect: 'none',
+            userSelect: 'text',
+            WebkitUserSelect: 'text',
           }}
           onContextMenu={(e) => {
             e.preventDefault()
@@ -2926,45 +2931,24 @@ export function ResourceLibrary() {
                       flexDirection: 'column',
                     }}
                   >
-                    {/* Top-Right DRM Solid Mask: Completely covers, hides, and blocks Google Drive's "Pop-out / Open Outside" Button */}
+                    {/* Invisible Corner Shield to Prevent Accidental Pop-out */}
                     <div
                       style={{
                         position: 'absolute',
                         top: 0,
                         right: 0,
-                        width: '92px',
-                        height: '62px',
+                        width: '42px',
+                        height: '42px',
                         zIndex: 48,
                         cursor: 'default',
                         pointerEvents: 'auto',
-                        background: '#000000',
-                        borderBottomLeftRadius: '10px',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        userSelect: 'none',
-                        boxShadow: '0 2px 10px rgba(0,0,0,0.8)',
+                        background: 'transparent',
                       }}
                       onClick={(e) => {
                         e.stopPropagation()
                         e.preventDefault()
                       }}
-                      onMouseDown={(e) => {
-                        e.stopPropagation()
-                        e.preventDefault()
-                      }}
-                      onTouchStart={(e) => {
-                        e.stopPropagation()
-                        e.preventDefault()
-                      }}
-                      onPointerDown={(e) => {
-                        e.stopPropagation()
-                        e.preventDefault()
-                      }}
-                      title="🔒 Protected In-App Document Reader"
-                    >
-                      <span style={{ fontSize: '0.74rem', color: '#94a3b8', fontWeight: 800 }}>🔒 DRM</span>
-                    </div>
+                    />
 
                     {/* Interactive Annotation Canvas Overlay (Draw, Highlight, Erase) */}
                     <canvas
@@ -3187,6 +3171,7 @@ export function ResourceLibrary() {
             </div>
           </div>
         </div>
+        </>
       )}
 
       {/* Upload Modal (Faculty Only) */}

@@ -841,32 +841,23 @@ export function WpsDocumentViewer({
               background: '#000000',
             }}
           >
-            {/* Top-Right Mask */}
+            {/* Invisible Corner Shield */}
             <div
               style={{
                 position: 'absolute',
                 top: 0,
                 right: 0,
-                width: '85px',
-                height: '55px',
+                width: '42px',
+                height: '42px',
                 zIndex: 45,
-                background: '#090d16',
-                borderBottomLeftRadius: '10px',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                userSelect: 'none',
-                boxShadow: '0 2px 10px rgba(0,0,0,0.8)',
+                background: 'transparent',
                 cursor: 'default',
               }}
               onClick={(e) => {
                 e.stopPropagation()
                 e.preventDefault()
               }}
-              title="🔒 Protected In-App Document Reader"
-            >
-              <span style={{ fontSize: '0.72rem', color: '#94a3b8', fontWeight: 800 }}>🔒 DRM</span>
-            </div>
+            />
 
             {/* Canvas Overlay */}
             <canvas

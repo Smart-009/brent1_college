@@ -139,6 +139,23 @@ export function YouTubeEmbed({
   const [showControls, setShowControls] = useState(true)
   const [isBuffering, setIsBuffering] = useState(false)
   const [showSettings, setShowSettings] = useState(false)
+  const [selectedQuality, setSelectedQuality] = useState<'hd1080' | 'hd720' | 'large' | 'auto'>('hd1080')
+
+  const handleQualityChange = (q: 'hd1080' | 'hd720' | 'large' | 'auto') => {
+    setSelectedQuality(q)
+    if (videoId) {
+      if (q === 'auto') {
+        postToYouTube('setPlaybackQuality', ['default'])
+        postToYouTube('setPlaybackQualityRange', ['default', 'highres'])
+        triggerRipple('📺', 'Auto Quality')
+      } else {
+        postToYouTube('setPlaybackQuality', [q])
+        postToYouTube('setPlaybackQualityRange', [q, 'highres'])
+        postToYouTube('setSuggestedQuality', [q])
+        triggerRipple('🌟', q === 'hd1080' ? '1080p Full HD' : q === 'hd720' ? '720p HD' : '480p SD')
+      }
+    }
+  }
   const [showZoomMenu, setShowZoomMenu] = useState(false)
   const [zoomLevel, setZoomLevel] = useState<number | 'fill'>(1)
   const [rippleAction, setRippleAction] = useState<{ icon: string; text: string } | null>(null)
@@ -285,11 +302,15 @@ export function YouTubeEmbed({
   const handleIframeLoad = () => {
     if (iframeRef.current?.contentWindow) {
       iframeRef.current.contentWindow.postMessage('{"event":"listening"}', '*')
+      postToYouTube('setPlaybackQuality', ['hd1080'])
+      postToYouTube('setPlaybackQualityRange', ['hd1080', 'highres'])
+      postToYouTube('setSuggestedQuality', ['hd1080'])
       if (initialStartTime > 0) {
         postToYouTube('seekTo', [initialStartTime, true])
       }
       if (autoPlay) {
         postToYouTube('playVideo')
+        postToYouTube('setPlaybackQuality', ['hd1080'])
         setIsPlaying(true)
       }
     }
@@ -314,6 +335,7 @@ export function YouTubeEmbed({
         triggerRipple('⏸', 'Pause')
       } else {
         postToYouTube('playVideo')
+        postToYouTube('setPlaybackQuality', ['hd1080'])
         setIsPlaying(true)
         triggerRipple('▶', 'Play')
       }
@@ -646,6 +668,8 @@ export function YouTubeEmbed({
       enablejsapi: '1',
       origin,
       widget_referrer: origin,
+      vq: 'hd1080',
+      hd: '1',
     })
 
     if (initialStartTime > 0) {
@@ -823,10 +847,10 @@ export function YouTubeEmbed({
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                 style={{
                   position: 'absolute',
-                  top: '-7%',
-                  left: '-3.5%',
-                  width: '107%',
-                  height: '115%',
+                  top: 0,
+                  left: 0,
+                  width: '100%',
+                  height: '100%',
                   border: 0,
                   pointerEvents: 'none',
                 }}
@@ -1078,7 +1102,43 @@ export function YouTubeEmbed({
                 color: '#ffffff',
               }}
             >
-              <div style={{ fontSize: '0.72rem', fontWeight: 800, textTransform: 'uppercase', color: '#94a3b8', padding: '4px 8px', borderBottom: '1px solid rgba(255,255,255,0.1)' }}>
+              {/* Video Stream Quality Selector */}
+              <div style={{ fontSize: '0.72rem', fontWeight: 800, textTransform: 'uppercase', color: '#60a5fa', padding: '4px 8px', borderBottom: '1px solid rgba(255,255,255,0.1)', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                <span>🌟</span> Video Quality
+              </div>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '2px', margin: '4px 0 8px' }}>
+                {[
+                  { id: 'hd1080', label: '1080p Full HD 🌟' },
+                  { id: 'hd720', label: '720p HD' },
+                  { id: 'large', label: '480p SD' },
+                  { id: 'auto', label: 'Auto (High Bitrate)' },
+                ].map((item) => (
+                  <button
+                    key={item.id}
+                    type="button"
+                    onClick={() => handleQualityChange(item.id as any)}
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'space-between',
+                      background: selectedQuality === item.id ? 'rgba(37, 99, 235, 0.35)' : 'transparent',
+                      color: selectedQuality === item.id ? '#60a5fa' : '#ffffff',
+                      border: 'none',
+                      borderRadius: '6px',
+                      padding: '5px 10px',
+                      fontSize: '0.75rem',
+                      fontWeight: selectedQuality === item.id ? 800 : 500,
+                      cursor: 'pointer',
+                      textAlign: 'left',
+                    }}
+                  >
+                    <span>{item.label}</span>
+                    {selectedQuality === item.id && <span>✓</span>}
+                  </button>
+                ))}
+              </div>
+
+              <div style={{ fontSize: '0.72rem', fontWeight: 800, textTransform: 'uppercase', color: '#94a3b8', padding: '4px 8px', borderBottom: '1px solid rgba(255,255,255,0.1)', borderTop: '1px solid rgba(255,255,255,0.1)' }}>
                 ⚙️ Playback Speed
               </div>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '2px', marginTop: '4px' }}>
