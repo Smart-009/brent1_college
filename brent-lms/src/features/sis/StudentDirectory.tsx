@@ -12,7 +12,7 @@ export function StudentDirectory() {
   const [departments] = useState(() => schoolStore.getDepartments())
   const [subjects] = useState(() => schoolStore.getSubjects())
 
-  // Dynamic program options derived from active course units, departments, subjects, and official accredited registry
+  // Dynamic program options derived from active course units, departments, subjects, and official certified registry
   const programOptions = useMemo(() => {
     const fromOfficial = OFFICIAL_COURSES.map((c) => c.title)
     const fromUnits = schoolStore.getCourseUnits().map((u) => u.title)

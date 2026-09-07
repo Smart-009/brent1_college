@@ -86,7 +86,7 @@ export function FeeManagement() {
     total_amount: 60,
     due_date: '',
     term: 'Semester 1',
-    description: 'Accredited Course Tuition Fee',
+    description: 'Certified Course Tuition Fee',
     update_notes: '',
   })
 
@@ -804,7 +804,7 @@ export function FeeManagement() {
             <div style={{ padding: '3.5rem 1.5rem', textAlign: 'center', color: 'var(--color-text-secondary)' }}>
               <div style={{ fontSize: '2.5rem', marginBottom: '0.5rem' }}>📄</div>
               <h4 style={{ margin: '0 0 0.4rem', fontWeight: 700 }}>No Fee Invoices Generated Yet</h4>
-              <p style={{ fontSize: '0.85rem', margin: 0 }}>Invoices will automatically generate when students register for accredited programs.</p>
+              <p style={{ fontSize: '0.85rem', margin: 0 }}>Invoices will automatically generate when students register for certified programs.</p>
             </div>
           ) : (
             <div className="table-responsive">

@@ -3358,7 +3358,7 @@ class SchoolDataStore {
           const newSub: CollegeSubject = {
             id,
             code: updated.code || id.toUpperCase(),
-            name: updated.name || 'Accredited Course',
+            name: updated.name || 'Certified Course',
             department_id: updated.department_id || 'dept-general',
             department_name: updated.department_name || 'Academic Faculty',
             fee: updated.fee || 60,

@@ -322,7 +322,7 @@ export function DesktopAppHome({ courses: _courses, onSelectCourse: _onSelectCou
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.25rem' }}>
             <div>
               <h2 style={{ fontSize: '1.25rem', fontWeight: 900, color: '#ffffff', margin: 0, fontFamily: 'var(--font-heading)' }}>
-                Accredited Course Units & Practical LMS
+                Certified Course Units & Practical LMS
               </h2>
               <p style={{ fontSize: '0.8rem', color: '#94a3b8', margin: '0.2rem 0 0' }}>
                 Access comprehensive vocational modules, interactive lecture players, and digital lab assignments.

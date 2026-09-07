@@ -214,7 +214,7 @@ export function CourseCatalogPage() {
           📚 2026 Academic Catalog
         </span>
         <h1 style={{ fontSize: 'clamp(1.5rem, 3.5vw, 2.2rem)', fontWeight: 900, color: '#ffffff', margin: '0.75rem 0 0.4rem', fontFamily: 'var(--font-heading)' }}>
-          Explore Accredited Career Masterclasses
+          Explore Certified Career Masterclasses
         </h1>
         <p style={{ fontSize: '0.9rem', color: '#94a3b8', margin: 0, lineHeight: 1.5 }}>
           100% online evening live classes, verifiable global certificates, real-world practical projects, and flexible 2-month installment fee plans.

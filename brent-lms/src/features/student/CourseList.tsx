@@ -105,7 +105,7 @@ export function CourseList() {
 
   return (
     <PageWrapper
-      title="My Accredited Course Units & LMS"
+      title="My Certified Course Units & LMS"
       subtitle="Access your enrolled training course, lecture materials, and live interactive video sessions."
     >
       {/* Unit Registration Clearance Banner */}
@@ -381,7 +381,7 @@ export function CourseList() {
                 <span className="badge badge-primary">{enrollUnit.code}</span>
                 <h3 className="modal-title" style={{ marginTop: '0.25rem' }}>Enroll in {enrollUnit.title}</h3>
                 <p style={{ margin: 0, fontSize: '0.8rem', color: 'var(--color-text-secondary)' }}>
-                  Accredited Short Course • {enrollUnit.credit_hours} Credits • {enrollUnit.course_duration || '3 Months'}
+                  Certified Short Course • {enrollUnit.credit_hours} Credits • {enrollUnit.course_duration || '3 Months'}
                 </p>
               </div>
               <button type="button" className="modal-close" onClick={() => setEnrollUnit(null)}>✕</button>

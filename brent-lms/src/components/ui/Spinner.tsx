@@ -226,7 +226,7 @@ export function AppOpeningSplashScreen({ onFinished }: { onFinished?: () => void
 
   let stageCaption = 'Initializing secure learning environment…'
   if (progress > 40 && progress <= 75) {
-    stageCaption = 'Loading accredited curriculum & classrooms…'
+    stageCaption = 'Loading certified curriculum & classrooms…'
   } else if (progress > 75 && progress < 100) {
     stageCaption = 'Finalizing institutional session…'
   } else if (progress >= 100) {

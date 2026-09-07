@@ -426,7 +426,7 @@ export function AboutPage() {
             }}
           >
             <span>🏛️</span>
-            <span>Accredited 100% Online Global Academy</span>
+            <span>Certified 100% Online Global Academy</span>
           </div>
 
           <h1

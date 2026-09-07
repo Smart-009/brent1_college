@@ -114,7 +114,7 @@ export function BursarDesk() {
     total_amount: 60,
     due_date: '',
     term: 'Semester 1',
-    description: 'Accredited Course Tuition Fee',
+    description: 'Certified Course Tuition Fee',
     update_notes: '',
   })
 
@@ -1854,7 +1854,7 @@ export function BursarDesk() {
                 </div>
 
                 <div>
-                  <label className="label">Quick Select Accredited Program (Auto-fills Tuition & Duration)</label>
+                  <label className="label">Quick Select Certified Program (Auto-fills Tuition & Duration)</label>
                   <select
                     className="input"
                     onChange={(e) => {
@@ -1871,7 +1871,7 @@ export function BursarDesk() {
                       }
                     }}
                   >
-                    <option value="">-- Choose from Accredited 2026 Programs or Type Custom Below --</option>
+                    <option value="">-- Choose from Certified 2026 Programs or Type Custom Below --</option>
                     {getDynamicCoursesList(schoolStore.getSubjects(), schoolStore.getCourseUnits()).map((c) => (
                       <option key={c.id} value={c.id}>
                         {c.icon} {c.shortTitle} — ${c.feeUsd} (KES {c.feeKes.toLocaleString()}) • {c.duration}

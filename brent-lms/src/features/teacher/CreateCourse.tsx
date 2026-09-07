@@ -286,7 +286,7 @@ export function CreateCourse() {
         id: `sub-${Date.now()}`,
         code: cleanCode,
         name: title.trim(),
-        description: description.trim() || `Accredited ${courseDuration} course program.`,
+        description: description.trim() || `Certified ${courseDuration} course program.`,
         department_id: finalDeptId,
         department_name: deptNameFinal,
         fee: Number(feeUsd) || 75,
@@ -348,7 +348,7 @@ export function CreateCourse() {
   return (
     <PageWrapper
       title="Create & Introduce New Course"
-      subtitle="Introduce brand-new accredited short courses, define tuition fees, build syllabus modules, and publish video lectures."
+      subtitle="Introduce brand-new certified short courses, define tuition fees, build syllabus modules, and publish video lectures."
     >
       <Link to="/teacher/courses" className="lesson-back-link mb-4">
         ← Back to Course Catalog
@@ -536,7 +536,7 @@ export function CreateCourse() {
               {/* Program Track Input / Dropdown */}
               <div>
                 <label className="label" style={{ fontSize: '0.78rem' }}>
-                  {isCustomProgram ? 'New Accredited Program / Track Name *' : 'Select Program / Track'}
+                  {isCustomProgram ? 'New Certified Program / Track Name *' : 'Select Program / Track'}
                 </label>
                 {isCustomProgram ? (
                   <input
@@ -600,7 +600,7 @@ export function CreateCourse() {
               </div>
             ) : (
               <div>
-                <label className="label" style={{ fontSize: '0.78rem' }}>Select Accredited Faculty Member</label>
+                <label className="label" style={{ fontSize: '0.78rem' }}>Select Verified Faculty Member</label>
                 <select
                   className="input"
                   value={selectedTeacherId}

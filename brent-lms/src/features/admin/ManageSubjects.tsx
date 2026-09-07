@@ -245,7 +245,7 @@ export function ManageSubjects() {
   return (
     <PageWrapper
       title="Academic Departments & Subject Disciplines"
-      subtitle="Establish institutional academic departments, accredited programs, and subject disciplines that teachers use to build course units."
+      subtitle="Establish institutional academic departments, certified programs, and subject disciplines that teachers use to build course units."
     >
       {/* Tab Switcher */}
       <div className="card mb-6" style={{ padding: '0.5rem' }}>
@@ -274,7 +274,7 @@ export function ManageSubjects() {
             <div>
               <h3 style={{ fontSize: '1.2rem', fontWeight: 700, margin: 0 }}>College Academic Departments</h3>
               <p style={{ fontSize: '0.85rem', color: 'var(--color-text-secondary)', margin: '0.2rem 0 0' }}>
-                Departments house accredited programs and course units created by faculty.
+                Departments house certified programs and course units created by faculty.
               </p>
             </div>
             <button
@@ -335,7 +335,7 @@ export function ManageSubjects() {
 
                   <div style={{ background: 'var(--color-bg-secondary)', padding: '0.75rem', borderRadius: '6px' }}>
                     <div style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--color-primary)', textTransform: 'uppercase', marginBottom: '0.35rem' }}>
-                      Accredited Programs ({dept.programs?.length || 0})
+                      Certified Programs ({dept.programs?.length || 0})
                     </div>
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem', fontSize: '0.8rem' }}>
                       {dept.programs?.map((prog, idx) => (
@@ -496,7 +496,7 @@ export function ManageSubjects() {
                 </div>
 
                 <div>
-                  <label className="label">Accredited Programs (Comma-separated)</label>
+                  <label className="label">Certified Programs (Comma-separated)</label>
                   <textarea rows={2} className="input" placeholder="e.g. Computer Packages, Full-Stack Web, Python Analytics" value={programsInput} onChange={(e) => setProgramsInput(e.target.value)} />
                 </div>
               </div>

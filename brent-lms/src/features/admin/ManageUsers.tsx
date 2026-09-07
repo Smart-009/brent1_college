@@ -621,7 +621,7 @@ export function ManageUsers() {
                 {managingStudent.full_name} ({managingStudent.admission_number})
               </h3>
               <div style={{ fontSize: '0.8rem', color: '#cbd5e1' }}>
-                Admins can directly assign accredited short courses, practical modules, and certification units to this student program.
+                Admins can directly assign certified short courses, practical modules, and certification units to this student program.
               </div>
             </div>
 

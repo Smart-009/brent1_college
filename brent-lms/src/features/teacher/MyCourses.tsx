@@ -53,7 +53,7 @@ export function MyCourses() {
   return (
     <PageWrapper
       title={isAdmin ? "Curriculum & Course Units Management" : "Faculty Course Units Directory"}
-      subtitle={isAdmin ? "Administrator Console: Build, publish, and manage accredited vocational short courses, modules, and lessons." : "Explore accredited college course units, syllabus breakdowns, contact hours, and instructional modules."}
+      subtitle={isAdmin ? "Administrator Console: Build, publish, and manage certified vocational short courses, modules, and lessons." : "Explore certified college course units, syllabus breakdowns, contact hours, and instructional modules."}
       action={
         isAdmin ? (
           <Button variant="primary" onClick={() => navigate('/teacher/courses/new')}>
@@ -68,7 +68,7 @@ export function MyCourses() {
           <h3 style={{ fontSize: '1.25rem', fontWeight: 700, margin: '0 0 0.5rem' }}>No Course Units Created Yet</h3>
           <p style={{ color: 'var(--color-text-secondary)', fontSize: '0.9rem', lineHeight: '1.6', margin: '0 0 1.5rem' }}>
             {isAdmin
-              ? "Get started by creating your department's accredited course units with modular syllabus breakdowns, contact hours, and video lectures."
+              ? "Get started by creating your department's certified course units with modular syllabus breakdowns, contact hours, and video lectures."
               : "No curriculum course units have been published yet by the administration."}
           </p>
           {isAdmin && (

@@ -117,7 +117,7 @@ export function IntakeAdvertsSection() {
               letterSpacing: '-0.02em',
             }}
           >
-            Join Our Next <span style={{ color: '#d4af37' }}>Accredited Cohort</span>
+            Join Our Next <span style={{ color: '#d4af37' }}>Certified Cohort</span>
           </h2>
 
           <p
@@ -296,7 +296,7 @@ export function IntakeAdvertsSection() {
                     {/* Target Programs Tag Pill List */}
                     <div style={{ marginBottom: '1rem' }}>
                       <div style={{ fontSize: '0.72rem', fontWeight: 800, color: '#64748b', textTransform: 'uppercase', marginBottom: '0.4rem' }}>
-                        Accredited Programs Enrolling:
+                        Certified Programs Enrolling:
                       </div>
                       <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px' }}>
                         {intake.target_courses.slice(0, 4).map((c, idx) => (

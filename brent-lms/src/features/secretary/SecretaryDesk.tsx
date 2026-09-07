@@ -168,7 +168,7 @@ export function SecretaryDesk() {
         </div>
 
         <div className="card" style={{ padding: '1.25rem', borderLeft: '4px solid #ea580c' }}>
-          <div style={{ fontSize: '0.8rem', color: 'var(--color-text-secondary)', fontWeight: 600 }}>Accredited Units in Catalog</div>
+          <div style={{ fontSize: '0.8rem', color: 'var(--color-text-secondary)', fontWeight: 600 }}>Certified Units in Catalog</div>
           <div style={{ fontSize: '1.75rem', fontWeight: 800, color: '#ea580c', marginTop: '0.25rem' }}>
             {courseUnits.length}
           </div>

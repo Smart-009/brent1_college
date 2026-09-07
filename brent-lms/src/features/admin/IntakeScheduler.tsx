@@ -124,7 +124,7 @@ export function IntakeScheduler() {
     setFormSession('Term 1 / First Quarter')
     setFormHeadline('Admissions Open — 100% Online & Flexible Evening Classes')
     setFormDescription(
-      'Enroll in accredited career-ready programs with live mentor code reviews, practical projects, and verifiable certifications.'
+      'Enroll in certified career-ready programs with live mentor code reviews, practical projects, and verifiable certifications.'
     )
     setFormPosterUrl('')
     setFormVideoUrl('')
@@ -226,7 +226,7 @@ export function IntakeScheduler() {
         orientation_date: formOrientationDate || undefined,
         commencement_date: formCommenceDate,
         status: formStatus,
-        target_courses: formSelectedCourses.length > 0 ? formSelectedCourses : ['All Accredited Programs'],
+        target_courses: formSelectedCourses.length > 0 ? formSelectedCourses : ['All Certified Programs'],
         early_bird_discount: formEarlyBird.trim() || undefined,
         installment_plan: formInstallment.trim() || undefined,
         study_modes: formStudyModes.length > 0 ? formStudyModes : ['100% Online (Live & Recorded)'],

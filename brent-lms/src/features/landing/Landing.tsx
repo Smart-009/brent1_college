@@ -642,7 +642,7 @@ export function Landing() {
         courseTitle,
         completionDate,
         certNumber: q,
-        status: isCleared ? 'Officially Verified & Accredited' : 'Verified (Academic Registry Clear)',
+        status: isCleared ? 'Officially Verified & Certified' : 'Verified (Academic Registry Clear)',
       })
       showToast(`✓ Credential record verified for ${studentName}!`)
     } else {
@@ -1686,7 +1686,7 @@ export function Landing() {
             Empowering Modern Learners Worldwide
           </h2>
           <p style={{ fontSize: isMobile ? '0.94rem' : '1.05rem', color: '#334155', maxWidth: '740px', margin: '0 auto', fontWeight: 500, lineHeight: 1.65 }}>
-            Éclat Institute is an accredited 100% Online Global Academy. We deliver live virtual lectures, hands-on project labs, and direct mentor code reviews to help students and working professionals excel across 5 key disciplines.
+            Éclat Institute is a premier 100% Online Global Academy. We deliver live virtual lectures, hands-on project labs, and direct mentor code reviews to help students and working professionals excel across 5 key disciplines.
           </p>
         </div>
 
@@ -2539,7 +2539,7 @@ export function Landing() {
               <div style={{ fontSize: '0.85rem', fontWeight: 800, color: '#fbbf24', textTransform: 'uppercase' }}>Step 3</div>
               <h3 style={{ fontSize: '1.25rem', fontWeight: 800, margin: '0.35rem 0 0.5rem', color: '#ffffff' }}>Certification & Job Search</h3>
               <p style={{ fontSize: '0.9rem', color: '#cbd5e1', lineHeight: 1.6, margin: 0 }}>
-                Receive your accredited certificate, get your CV polished by our career team, and connect directly with hiring companies.
+                Receive your verified certificate, get your CV polished by our career team, and connect directly with hiring companies.
               </p>
             </div>
           </div>

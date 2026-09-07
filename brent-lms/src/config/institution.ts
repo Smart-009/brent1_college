@@ -47,7 +47,7 @@ export const INSTITUTION_CONFIG: InstitutionConfig = {
   tagline: (import.meta.env.VITE_INSTITUTION_TAGLINE as string) || '100% Online Global Academy',
   description:
     (import.meta.env.VITE_INSTITUTION_DESC as string) ||
-    'Accredited 100% Online Global Academy for Technology, Software Engineering, Data Science, and Modern Languages.',
+    'Certified 100% Online Global Academy for Technology, Software Engineering, Data Science, and Modern Languages.',
   websiteUrl: (import.meta.env.VITE_WEBSITE_URL as string) || 'https://eclat.institute',
   portalUrl: (import.meta.env.VITE_PORTAL_URL as string) || 'https://eclat.institute/login',
   domain: (import.meta.env.VITE_INSTITUTION_DOMAIN as string) || 'eclat.institute',

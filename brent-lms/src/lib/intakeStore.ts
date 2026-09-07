@@ -17,7 +17,7 @@ export const INITIAL_INTAKE_SCHEDULES: IntakeSchedule[] = [
     term_session: 'Term 1 / First Quarter 2027',
     headline: 'Admissions Open — 100% Online Live Classes & Modular Certificate Programs',
     description:
-      'Enroll in accredited career-ready programs across Full-Stack Web Engineering (React 19 & Node.js), Python Data Science, IELTS Band 8.5 Preparation, Cybersecurity SOC Operations, and Computerized Accounting. Evening and weekend cohorts available with live mentor code reviews.',
+      'Enroll in certified career-ready programs across Full-Stack Web Engineering (React 19 & Node.js), Python Data Science, IELTS Band 8.5 Preparation, Cybersecurity SOC Operations, and Computerized Accounting. Evening and weekend cohorts available with live mentor code reviews.',
     poster_image_url:
       'https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&w=1200&q=80',
     application_deadline: '2027-01-15',
@@ -95,7 +95,7 @@ export const INITIAL_INTAKE_SCHEDULES: IntakeSchedule[] = [
     application_deadline: '2026-05-15',
     commencement_date: '2026-05-20',
     status: 'Closed',
-    target_courses: ['All Accredited Programs'],
+    target_courses: ['All Certified Programs'],
     study_modes: ['100% Online (Live & Recorded)', 'Weekend Executive Cohort'],
     is_published: false,
     featured: false,
@@ -182,7 +182,7 @@ class IntakeStore {
           orientation_date: d.orientation_date || undefined,
           commencement_date: d.commencement_date,
           status: d.status || 'Open',
-          target_courses: Array.isArray(d.target_courses) ? d.target_courses : ['All Accredited Programs'],
+          target_courses: Array.isArray(d.target_courses) ? d.target_courses : ['All Certified Programs'],
           early_bird_discount: d.early_bird_discount || undefined,
           installment_plan: d.installment_plan || undefined,
           study_modes: Array.isArray(d.study_modes) ? d.study_modes : ['100% Online (Live & Recorded)'],
