@@ -179,6 +179,23 @@ interface PromoSlide {
 
 const HERO_PROMO_SLIDES: PromoSlide[] = [
   {
+    id: 'cambridge-igcse',
+    badge: '🇬🇧 BRITISH CURRICULUM & CAMBRIDGE IGCSE (CENTER KE042)',
+    badgeBg: 'rgba(2, 132, 199, 0.25)',
+    badgeColor: '#38bdf8',
+    headline: 'Cambridge IGCSE & A-Levels 100% Online',
+    highlight: 'Accredited Exam Venue (KE042) • CAIE & Pearson Edexcel',
+    description: 'Master Cambridge IGCSE Mathematics (0580), Physics (0625), Chemistry (0620), Computer Science (0478), English (0500), and Business Studies (0450). Live international exam prep, dual 9-1 & A*-G grading, and Cambridge ICE Diploma.',
+    gradient: 'radial-gradient(ellipse at 80% 20%, rgba(2, 132, 199, 0.35) 0%, rgba(15, 23, 42, 0.95) 70%), linear-gradient(135deg, #022c22 0%, #0369a1 50%, #0f172a 100%)',
+    accentColor: '#38bdf8',
+    icon: '🇬🇧',
+    metricNumber: 'KE042',
+    metricLabel: 'Cambridge Accredited Centre',
+    category: 'British Curriculum (IGCSE & A-Levels)',
+    primaryCtaText: 'Explore Cambridge IGCSE Courses',
+    features: ['Dual 9-1 & A*-G Scale', 'Cambridge ICE Group Diploma', 'Weekly Past Paper Labs', 'Center KE042 Statements'],
+  },
+  {
     id: 'data-research',
     badge: '📊 DATA SCIENCE & STATISTICAL RESEARCH',
     badgeBg: 'rgba(2, 132, 199, 0.2)',
