@@ -61,6 +61,7 @@ const buildCatalogCourses = (): CourseItem[] => {
 
 const CATEGORIES = [
   'All',
+  'British Curriculum (IGCSE & A-Levels)',
   'Tech & Programming',
   'Data Science & Research',
   'Computer & Digital Skills',

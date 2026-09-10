@@ -1,10 +1,11 @@
 import { useState } from 'react'
 import { useAuth } from '@/hooks/useAuth'
 import { schoolStore } from '@/lib/schoolData'
-import type { ReportCard, ExamSession } from '@/types/school'
+import type { ReportCard, ExamSession, IGCSEStatementOfResults } from '@/types/school'
 import { ReportCardGenerator } from './ReportCardGenerator'
 import { CertificateGenerator } from '@/components/shared/CertificateGenerator'
 import type { CertificateData } from '@/components/shared/CertificateGenerator'
+import { IGCSEStatementOfResultsModal } from './IGCSEStatementOfResults'
 import { Link } from 'react-router-dom'
 
 export function ExamManagement() {
@@ -13,9 +14,11 @@ export function ExamManagement() {
 
   const [exams] = useState<ExamSession[]>(() => schoolStore.getExams())
   const [reportCards] = useState<ReportCard[]>(() => schoolStore.getReportCards())
+  const [igcseStatements] = useState<IGCSEStatementOfResults[]>(() => schoolStore.getIGCSEStatements())
   const [selectedReportCard, setSelectedReportCard] = useState<ReportCard | null>(null)
+  const [selectedIGCSEStatement, setSelectedIGCSEStatement] = useState<IGCSEStatementOfResults | null>(null)
   const [selectedCert, setSelectedCert] = useState<CertificateData | null>(null)
-  const [activeTab, setActiveTab] = useState<'sessions' | 'reportcards' | 'ranking'>('reportcards')
+  const [activeTab, setActiveTab] = useState<'sessions' | 'reportcards' | 'ranking' | 'igcse'>('reportcards')
 
   const allStudents = schoolStore.getStudents()
   const currentStudent =
@@ -59,6 +62,24 @@ export function ExamManagement() {
                 style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', fontWeight: 700 }}
               >
                 📄 View Official Transcript PDF
+              </button>
+            )}
+            {igcseStatements.length > 0 && (
+              <button
+                type="button"
+                className="btn"
+                onClick={() => setSelectedIGCSEStatement(igcseStatements[0])}
+                style={{
+                  background: '#0284c7',
+                  color: '#ffffff',
+                  fontWeight: 700,
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '0.4rem',
+                  border: 'none',
+                }}
+              >
+                🇬🇧 Cambridge IGCSE Statement (9-1)
               </button>
             )}
             {currentStudent?.certificate_granted ? (
@@ -298,6 +319,14 @@ export function ExamManagement() {
           >
             🏆 Merit Ranking Broadsheet
           </button>
+          <button
+            type="button"
+            className={`btn btn-sm ${activeTab === 'igcse' ? 'btn-primary' : 'btn-ghost'}`}
+            onClick={() => setActiveTab('igcse')}
+            style={{ whiteSpace: 'nowrap', display: 'flex', alignItems: 'center', gap: '0.4rem' }}
+          >
+            🇬🇧 Cambridge IGCSE Results (9-1)
+          </button>
         </div>
       </div>
 
@@ -478,6 +507,88 @@ export function ExamManagement() {
         )
       })()}
 
+      {/* Tab 4: Cambridge IGCSE International Examination Results */}
+      {activeTab === 'igcse' && (
+        <div className="card" style={{ padding: '1.5rem' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.25rem', flexWrap: 'wrap', gap: '0.75rem' }}>
+            <div>
+              <h2 style={{ fontSize: '1.25rem', fontWeight: 700, margin: 0 }}>
+                🇬🇧 Cambridge Assessment International Education (CAIE) & Pearson Edexcel
+              </h2>
+              <p style={{ margin: '0.25rem 0 0', fontSize: '0.82rem', color: 'var(--color-text-secondary)' }}>
+                Center No: <strong>KE042</strong> • Official 9-1 & A*-G Statement of Results & ICE Diploma Qualification Registry
+              </p>
+            </div>
+            <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
+              <span className="badge" style={{ background: '#eff6ff', color: '#1d4ed8', fontWeight: 700 }}>
+                May/June 2026 Series
+              </span>
+            </div>
+          </div>
+
+          <div style={{ overflowX: 'auto' }}>
+            <table className="table" style={{ width: '100%', fontSize: '0.85rem' }}>
+              <thead>
+                <tr>
+                  <th>Candidate No</th>
+                  <th>Candidate Full Name</th>
+                  <th>Unique ID</th>
+                  <th>Series</th>
+                  <th>Subjects</th>
+                  <th>Mean Points</th>
+                  <th>Cambridge ICE Award</th>
+                  <th style={{ textAlign: 'right' }}>Official Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {igcseStatements.map((stmt) => (
+                  <tr key={stmt.id}>
+                    <td style={{ fontWeight: 700, fontFamily: 'monospace', color: 'var(--color-primary)' }}>
+                      {stmt.candidate_number}
+                    </td>
+                    <td style={{ fontWeight: 600 }}>{stmt.candidate_name}</td>
+                    <td style={{ fontFamily: 'monospace', fontSize: '0.8rem', color: 'var(--color-text-secondary)' }}>
+                      {stmt.candidate_unique_id}
+                    </td>
+                    <td>{stmt.examination_series}</td>
+                    <td>
+                      <span className="badge" style={{ background: '#f1f5f9', color: '#0f172a', fontWeight: 600 }}>
+                        {stmt.total_subjects} Papers Passed
+                      </span>
+                    </td>
+                    <td style={{ fontWeight: 700, color: '#0284c7' }}>
+                      {stmt.mean_points.toFixed(2)} / 9.00
+                    </td>
+                    <td>
+                      <span
+                        className="badge"
+                        style={{
+                          background: stmt.ice_award === 'Distinction' ? '#dcfce7' : '#e0f2fe',
+                          color: stmt.ice_award === 'Distinction' ? '#15803d' : '#0369a1',
+                          fontWeight: 700,
+                        }}
+                      >
+                        🎖️ {stmt.ice_award}
+                      </span>
+                    </td>
+                    <td style={{ textAlign: 'right' }}>
+                      <button
+                        type="button"
+                        className="btn btn-sm"
+                        style={{ background: '#0284c7', color: '#ffffff', fontWeight: 700 }}
+                        onClick={() => setSelectedIGCSEStatement(stmt)}
+                      >
+                        📄 View Official Statement
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )}
+
       {/* Official Report Card Printable Modal */}
       {selectedReportCard && (
         <ReportCardGenerator
@@ -491,6 +602,14 @@ export function ExamManagement() {
         <CertificateGenerator
           cert={selectedCert}
           onClose={() => setSelectedCert(null)}
+        />
+      )}
+
+      {/* Official Cambridge IGCSE Statement of Results Modal */}
+      {selectedIGCSEStatement && (
+        <IGCSEStatementOfResultsModal
+          statement={selectedIGCSEStatement}
+          onClose={() => setSelectedIGCSEStatement(null)}
         />
       )}
     </div>

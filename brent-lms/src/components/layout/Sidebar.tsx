@@ -8,7 +8,7 @@ export function Sidebar({ isOpen, onClose }: { isOpen: boolean; onClose: () => v
   // Streamlined Role-Specific Navigation Definitions
   const guestNav = [
     { to: '/', label: 'Home & Overview', icon: '🏠' },
-    { to: '/courses', label: 'Vocational Courses', icon: '📚' },
+    { to: '/courses', label: 'Vocational & IGCSE Courses', icon: '📚' },
     { to: '/library', label: 'E-Library & Past Papers', icon: '📖' },
     { to: '/login', label: 'Student / Faculty Login', icon: '🔐' },
   ]
@@ -16,9 +16,9 @@ export function Sidebar({ isOpen, onClose }: { isOpen: boolean; onClose: () => v
   const studentNav = [
     { to: '/student', label: 'My Student Dashboard', icon: '🏠' },
     { to: '/student/courses', label: 'My Enrolled Lessons & LMS', icon: '📚' },
-    { to: '/library', label: 'E-Library & Past Papers', icon: '📖' },
+    { to: '/library', label: 'E-Library & IGCSE Past Papers', icon: '📖' },
     { to: '/fees', label: 'My Fee Statement & Paybill', icon: '💳' },
-    { to: '/exams', label: 'Official Transcript & Certificate', icon: '📜' },
+    { to: '/exams', label: 'IGCSE Results & Transcripts', icon: '📜' },
     { to: '/noticeboard', label: 'Student Noticeboard', icon: '📢' },
   ]
 

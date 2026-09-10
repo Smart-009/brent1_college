@@ -33,6 +33,7 @@ export const DEFAULT_CATEGORIES = [
   'Textbooks',
   'Revision Notes',
   'Lab Manuals & Code',
+  '🇬🇧 IGCSE Past Papers & Specimen Papers',
   'Past Papers',
   'Syllabus',
   'Marking Schemes',

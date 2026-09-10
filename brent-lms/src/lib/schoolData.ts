@@ -21,6 +21,16 @@ import type {
   BiometricFeeClearancePass,
   FacultyTeacher,
   DeviceSession,
+  IGCSEKeyStage,
+  IGCSESubjectGroup,
+  IGCSEGrade9to1,
+  IGCSEGradeAtoG,
+  IGCSETier,
+  IGCSEExamSeries,
+  IGCSEPaperComponent,
+  IGCSESubjectResult,
+  CambridgeICEAward,
+  IGCSEStatementOfResults,
 } from '@/types/school'
 import { txEngine, IntegrityError } from './transactionManager'
 import { schoolEventBus } from './eventBus'
@@ -64,6 +74,145 @@ export const INITIAL_STUDENTS: StudentRecord[] = [
 export const INITIAL_TIMETABLE: TimetablePeriod[] = []
 export const INITIAL_EXAMS: ExamSession[] = []
 export const INITIAL_REPORT_CARDS: ReportCard[] = []
+
+export const INITIAL_IGCSE_STATEMENTS: IGCSEStatementOfResults[] = [
+  {
+    id: 'igcse-stmt-001',
+    center_number: INSTITUTION_CONFIG.igcse.centerNumber,
+    center_name: INSTITUTION_CONFIG.igcse.centerName,
+    candidate_number: '0014',
+    candidate_name: 'Mustafa Hassan',
+    date_of_birth: '2005-01-01',
+    gender: 'Male',
+    examination_series: 'May/June 2026',
+    examination_board: 'Cambridge Assessment International Education (CAIE)',
+    candidate_unique_id: 'KE042/0014/2026',
+    issued_at: new Date().toISOString(),
+    is_verified: true,
+    verification_code: 'ECLAT-CAMBRIDGE-984210',
+    total_subjects: 7,
+    mean_points: 8.14,
+    ice_award: 'Distinction',
+    results: [
+      {
+        syllabus_code: '0580',
+        subject_name: 'Mathematics (Without Coursework)',
+        subject_group: 'Group 4: Mathematics',
+        tier: 'Extended',
+        components: [
+          { paper_number: 'Paper 2 (Extended)', raw_mark: 68, max_mark: 70, weight_percentage: 35 },
+          { paper_number: 'Paper 4 (Extended)', raw_mark: 122, max_mark: 130, weight_percentage: 65 },
+        ],
+        weighted_percentage: 94,
+        grade_9to1: '9',
+        grade_AtoG: 'A*',
+        points: 9,
+        status: 'Pass',
+        examiner_feedback: 'Exceptional geometric proof, vector operations, and advanced calculus readiness.',
+      },
+      {
+        syllabus_code: '0625',
+        subject_name: 'Physics',
+        subject_group: 'Group 3: Sciences',
+        tier: 'Extended',
+        components: [
+          { paper_number: 'Paper 2 (MCQ)', raw_mark: 38, max_mark: 40, weight_percentage: 30 },
+          { paper_number: 'Paper 4 (Theory)', raw_mark: 72, max_mark: 80, weight_percentage: 50 },
+          { paper_number: 'Paper 6 (ATP)', raw_mark: 37, max_mark: 40, weight_percentage: 20 },
+        ],
+        weighted_percentage: 92,
+        grade_9to1: '9',
+        grade_AtoG: 'A*',
+        points: 9,
+        status: 'Pass',
+        examiner_feedback: 'Outstanding experimental method and precision in ray optic and circuit questions.',
+      },
+      {
+        syllabus_code: '0620',
+        subject_name: 'Chemistry',
+        subject_group: 'Group 3: Sciences',
+        tier: 'Extended',
+        components: [
+          { paper_number: 'Paper 2 (MCQ)', raw_mark: 36, max_mark: 40, weight_percentage: 30 },
+          { paper_number: 'Paper 4 (Theory)', raw_mark: 69, max_mark: 80, weight_percentage: 50 },
+          { paper_number: 'Paper 6 (ATP)', raw_mark: 35, max_mark: 40, weight_percentage: 20 },
+        ],
+        weighted_percentage: 88,
+        grade_9to1: '8',
+        grade_AtoG: 'A*',
+        points: 8,
+        status: 'Pass',
+        examiner_feedback: 'Strong stoichiometry calculations and high precision in organic reactions.',
+      },
+      {
+        syllabus_code: '0478',
+        subject_name: 'Computer Science',
+        subject_group: 'Group 5: Creative & Professional / Vocational',
+        tier: 'Extended',
+        components: [
+          { paper_number: 'Paper 1 (Computer Systems)', raw_mark: 71, max_mark: 75, weight_percentage: 50 },
+          { paper_number: 'Paper 2 (Algorithms & Programming)', raw_mark: 70, max_mark: 75, weight_percentage: 50 },
+        ],
+        weighted_percentage: 94,
+        grade_9to1: '9',
+        grade_AtoG: 'A*',
+        points: 9,
+        status: 'Pass',
+        examiner_feedback: 'Mastery of logic gates, cybersecurity concepts, and elegant Python algorithm implementation.',
+      },
+      {
+        syllabus_code: '0500',
+        subject_name: 'First Language English',
+        subject_group: 'Group 1: Languages',
+        tier: 'Extended',
+        components: [
+          { paper_number: 'Paper 1 (Reading)', raw_mark: 68, max_mark: 80, weight_percentage: 50 },
+          { paper_number: 'Paper 2 (Directed Writing)', raw_mark: 67, max_mark: 80, weight_percentage: 50 },
+        ],
+        weighted_percentage: 84,
+        grade_9to1: '8',
+        grade_AtoG: 'A*',
+        points: 8,
+        status: 'Pass',
+        examiner_feedback: 'Sophisticated register, lucid analysis of figurative language, and persuasive argument structure.',
+      },
+      {
+        syllabus_code: '0520',
+        subject_name: 'French (Foreign Language)',
+        subject_group: 'Group 1: Languages',
+        tier: 'Extended',
+        components: [
+          { paper_number: 'Paper 1 (Listening)', raw_mark: 38, max_mark: 45, weight_percentage: 25 },
+          { paper_number: 'Paper 2 (Reading)', raw_mark: 40, max_mark: 45, weight_percentage: 25 },
+          { paper_number: 'Paper 3 (Speaking)', raw_mark: 37, max_mark: 40, weight_percentage: 25 },
+          { paper_number: 'Paper 4 (Writing)', raw_mark: 39, max_mark: 45, weight_percentage: 25 },
+        ],
+        weighted_percentage: 86,
+        grade_9to1: '8',
+        grade_AtoG: 'A*',
+        points: 8,
+        status: 'Pass',
+        examiner_feedback: 'High accuracy in verb tenses, fluent oral conversation, and coherent paragraph structure.',
+      },
+      {
+        syllabus_code: '0450',
+        subject_name: 'Business Studies',
+        subject_group: 'Group 2: Humanities & Social Sciences',
+        tier: 'Extended',
+        components: [
+          { paper_number: 'Paper 1 (Short Answer/Data)', raw_mark: 64, max_mark: 80, weight_percentage: 50 },
+          { paper_number: 'Paper 2 (Case Study)', raw_mark: 66, max_mark: 80, weight_percentage: 50 },
+        ],
+        weighted_percentage: 81,
+        grade_9to1: '7',
+        grade_AtoG: 'A',
+        points: 7,
+        status: 'Pass',
+        examiner_feedback: 'Thorough evaluation in 12-mark recommendation questions and sound financial ratio analysis.',
+      },
+    ],
+  },
+]
 
 export const INITIAL_FACULTY_TEACHERS: FacultyTeacher[] = []
 export const INITIAL_DEPARTMENTS: CollegeDepartment[] = [
@@ -145,6 +294,23 @@ export const INITIAL_DEPARTMENTS: CollegeDepartment[] = [
     hod_name: 'Mwalimu Amina Yusuf',
     hod_email: `a.yusuf@${INSTITUTION_CONFIG.domain}`,
     programs: ['Kiswahili Sanifu for Beginners & Expatriates', 'Advanced Swahili Translation & Discourse'],
+    created_at: new Date().toISOString(),
+  },
+  {
+    id: 'dept-igcse',
+    name: 'Faculty of British Curriculum & International Examinations (IGCSE & A-Levels)',
+    code: 'DEPT-IGCSE',
+    description: 'Accredited Cambridge CAIE & Pearson Edexcel IGCSE curriculum with 9-1 and A*-G grading, past paper labs, and international mock series.',
+    hod_name: 'Dr. Michael Davies',
+    hod_email: `m.davies@${INSTITUTION_CONFIG.domain}`,
+    programs: [
+      'Cambridge IGCSE Mathematics 0580',
+      'Cambridge IGCSE Physics 0625',
+      'Cambridge IGCSE Chemistry 0620',
+      'Cambridge IGCSE Computer Science 0478',
+      'Cambridge IGCSE First Language English 0500',
+      'Cambridge IGCSE Business Studies 0450',
+    ],
     created_at: new Date().toISOString(),
   },
 ]
@@ -356,6 +522,102 @@ export const INITIAL_SUBJECTS: CollegeSubject[] = [
     category: 'Languages & Communication',
     careers: ['German University Candidate', 'Healthcare & Nurse Relocation in Germany'],
     color_hex: '#f59e0b',
+    created_at: new Date().toISOString(),
+  },
+  {
+    id: 'sub-igcse-math',
+    name: 'Cambridge IGCSE Mathematics (Syllabus 0580)',
+    code: 'IGCSE-MATH-0580',
+    department_id: 'dept-igcse',
+    department_name: 'Faculty of British Curriculum & International Examinations (IGCSE & A-Levels)',
+    description: 'Cambridge IGCSE Mathematics 0580 (Core & Extended). Number, algebra, geometry, trigonometry, vectors, probability & stats.',
+    fee: 85,
+    duration: '12 Weeks (Series Prep)',
+    icon: '📐',
+    badge: 'Cambridge 0580',
+    category: 'British Curriculum (IGCSE & A-Levels)',
+    careers: ['Cambridge ICE Diploma', 'A-Level Mathematics', 'Engineering & Technology Degrees'],
+    color_hex: '#0284c7',
+    created_at: new Date().toISOString(),
+  },
+  {
+    id: 'sub-igcse-physics',
+    name: 'Cambridge IGCSE Physics (Syllabus 0625)',
+    code: 'IGCSE-PHYS-0625',
+    department_id: 'dept-igcse',
+    department_name: 'Faculty of British Curriculum & International Examinations (IGCSE & A-Levels)',
+    description: 'Cambridge IGCSE Physics 0625. Forces, thermal, waves, electricity, magnetism, nuclear & space physics with Paper 6 ATP.',
+    fee: 85,
+    duration: '12 Weeks (Series Prep)',
+    icon: '⚛️',
+    badge: 'Cambridge 0625',
+    category: 'British Curriculum (IGCSE & A-Levels)',
+    careers: ['Cambridge ICE Diploma', 'A-Level Physics', 'Aviation, Engineering & Robotics'],
+    color_hex: '#6366f1',
+    created_at: new Date().toISOString(),
+  },
+  {
+    id: 'sub-igcse-chem',
+    name: 'Cambridge IGCSE Chemistry (Syllabus 0620)',
+    code: 'IGCSE-CHEM-0620',
+    department_id: 'dept-igcse',
+    department_name: 'Faculty of British Curriculum & International Examinations (IGCSE & A-Levels)',
+    description: 'Cambridge IGCSE Chemistry 0620. Atoms, stoichiometry, electrolysis, acids/bases, organic chemistry & qualitative analysis.',
+    fee: 85,
+    duration: '12 Weeks (Series Prep)',
+    icon: '🧪',
+    badge: 'Cambridge 0620',
+    category: 'British Curriculum (IGCSE & A-Levels)',
+    careers: ['Cambridge ICE Diploma', 'A-Level Chemistry', 'Medicine, Pharmacy & Biochemistry'],
+    color_hex: '#10b981',
+    created_at: new Date().toISOString(),
+  },
+  {
+    id: 'sub-igcse-cs',
+    name: 'Cambridge IGCSE Computer Science (Syllabus 0478)',
+    code: 'IGCSE-CS-0478',
+    department_id: 'dept-igcse',
+    department_name: 'Faculty of British Curriculum & International Examinations (IGCSE & A-Levels)',
+    description: 'Cambridge IGCSE Computer Science 0478. Architecture, networks, logic gates, cybersecurity, algorithms & Python programming.',
+    fee: 85,
+    duration: '12 Weeks (Series Prep)',
+    icon: '💻',
+    badge: 'Cambridge 0478',
+    category: 'British Curriculum (IGCSE & A-Levels)',
+    careers: ['Cambridge ICE Diploma', 'A-Level Computer Science', 'Software Engineering & AI Careers'],
+    color_hex: '#8b5cf6',
+    created_at: new Date().toISOString(),
+  },
+  {
+    id: 'sub-igcse-eng',
+    name: 'Cambridge IGCSE First Language English (Syllabus 0500)',
+    code: 'IGCSE-ENG-0500',
+    department_id: 'dept-igcse',
+    department_name: 'Faculty of British Curriculum & International Examinations (IGCSE & A-Levels)',
+    description: 'Cambridge IGCSE English 0500. Reading comprehension, summary writing, writer’s effect, directed writing & creative composition.',
+    fee: 80,
+    duration: '10 Weeks (Series Prep)',
+    icon: '📖',
+    badge: 'Cambridge 0500',
+    category: 'British Curriculum (IGCSE & A-Levels)',
+    careers: ['Cambridge ICE Diploma', 'Global University Matriculation', 'Law, Media & Journalism'],
+    color_hex: '#f59e0b',
+    created_at: new Date().toISOString(),
+  },
+  {
+    id: 'sub-igcse-bus',
+    name: 'Cambridge IGCSE Business Studies (Syllabus 0450)',
+    code: 'IGCSE-BUS-0450',
+    department_id: 'dept-igcse',
+    department_name: 'Faculty of British Curriculum & International Examinations (IGCSE & A-Levels)',
+    description: 'Cambridge IGCSE Business Studies 0450. Business classification, HR motivation, marketing 4Ps, operations, finance & case studies.',
+    fee: 80,
+    duration: '10 Weeks (Series Prep)',
+    icon: '💼',
+    badge: 'Cambridge 0450',
+    category: 'British Curriculum (IGCSE & A-Levels)',
+    careers: ['Cambridge ICE Diploma', 'Economics & Business Administration', 'Entrepreneurship'],
+    color_hex: '#059669',
     created_at: new Date().toISOString(),
   },
 ]
@@ -757,6 +1019,62 @@ export const INITIAL_RECEIPTS: FeePaymentReceipt[] = [
 
 export const INITIAL_RESOURCES: AcademicResource[] = []
 export const FALLBACK_SAMPLE_RESOURCES: AcademicResource[] = [
+  {
+    id: 'res-igcse-math-papers',
+    title: 'Cambridge IGCSE Mathematics 0580 Specimen Examination Paper 2 & 4 with Mark Schemes',
+    category: 'Past Papers',
+    subject: 'British Curriculum (IGCSE & A-Levels)',
+    class_level: 'IGCSE (Years 10 & 11)',
+    file_url: 'academic://res-igcse-math-papers',
+    file_size: '5.4 MB',
+    file_type: 'PDF',
+    downloads_count: 382,
+    year: 2026,
+    uploaded_by: 'Cambridge Examination Board Specialist',
+    created_at: new Date().toISOString(),
+  },
+  {
+    id: 'res-igcse-physics-atp',
+    title: 'Cambridge IGCSE Physics 0625 Alternative to Practical (Paper 6) Complete Lab Revision Guide',
+    category: 'Lab Manuals',
+    subject: 'British Curriculum (IGCSE & A-Levels)',
+    class_level: 'IGCSE (Years 10 & 11)',
+    file_url: 'academic://res-igcse-physics-atp',
+    file_size: '4.2 MB',
+    file_type: 'PDF',
+    downloads_count: 295,
+    year: 2026,
+    uploaded_by: 'Cambridge Physics Faculty',
+    created_at: new Date().toISOString(),
+  },
+  {
+    id: 'res-igcse-cs-algorithms',
+    title: 'Cambridge IGCSE Computer Science 0478 Python Programming & Logic Gates Master Workbook',
+    category: 'Revision Notes',
+    subject: 'British Curriculum (IGCSE & A-Levels)',
+    class_level: 'IGCSE (Years 10 & 11)',
+    file_url: 'academic://res-igcse-cs-algorithms',
+    file_size: '6.1 MB',
+    file_type: 'PDF',
+    downloads_count: 410,
+    year: 2026,
+    uploaded_by: 'Department of Computing',
+    created_at: new Date().toISOString(),
+  },
+  {
+    id: 'res-igcse-chem-notes',
+    title: 'Cambridge IGCSE Chemistry 0620 Stoichiometry, Mole Calculations & Qualitative Analysis',
+    category: 'Revision Notes',
+    subject: 'British Curriculum (IGCSE & A-Levels)',
+    class_level: 'IGCSE (Years 10 & 11)',
+    file_url: 'academic://res-igcse-chem-notes',
+    file_size: '3.9 MB',
+    file_type: 'PDF',
+    downloads_count: 240,
+    year: 2026,
+    uploaded_by: 'Cambridge Chemistry Faculty',
+    created_at: new Date().toISOString(),
+  },
   {
     id: 'res-fullstack-guide',
     title: 'Full-Stack Web Development & Modern React 19 Mastery Handbook',
@@ -2524,6 +2842,41 @@ class SchoolDataStore {
     await this.pushCollectionToCloud('report_cards', this.getReportCards())
   }
 
+  getIGCSEStatements(): IGCSEStatementOfResults[] {
+    return this.get<IGCSEStatementOfResults[]>('igcse_statements', INITIAL_IGCSE_STATEMENTS)
+  }
+
+  async saveIGCSEStatement(stmt: IGCSEStatementOfResults): Promise<void> {
+    await txEngine.executeAtomic(
+      `SAVE_IGCSE_STMT_${stmt.id}`,
+      ['eclat_school_igcse_statements'],
+      () => {
+        const list = this.getIGCSEStatements()
+        const idx = list.findIndex(s => s.id === stmt.id || s.candidate_unique_id === stmt.candidate_unique_id)
+        if (idx !== -1) {
+          list[idx] = stmt
+        } else {
+          list.unshift(stmt)
+        }
+        this.set('igcse_statements', list)
+      }
+    )
+    this.broadcastChange('IGCSE_STATEMENT_SAVED', stmt)
+    await this.pushCollectionToCloud('igcse_statements', this.getIGCSEStatements())
+  }
+
+  async deleteIGCSEStatement(id: string): Promise<void> {
+    await txEngine.executeAtomic(
+      `DELETE_IGCSE_STMT_${id}`,
+      ['eclat_school_igcse_statements'],
+      () => {
+        const list = this.getIGCSEStatements().filter(s => s.id !== id)
+        this.set('igcse_statements', list)
+      }
+    )
+    this.broadcastChange('IGCSE_STATEMENT_DELETED', { id })
+  }
+
   getResources(): AcademicResource[] {
     return this.get<AcademicResource[]>('resources', INITIAL_RESOURCES)
   }
@@ -3696,4 +4049,73 @@ class SchoolDataStore {
 }
 
 export const schoolStore = new SchoolDataStore()
+
+/**
+ * Calculates official Cambridge 9-1 and A*-G grades based on percentage and tier
+ */
+export function calculateIGCSEGrade(
+  percentage: number,
+  tier: IGCSETier = 'Extended'
+): { grade_9to1: IGCSEGrade9to1; grade_AtoG: IGCSEGradeAtoG; points: number; status: 'Pass' | 'Fail' | 'Ungraded' } {
+  const score = Math.round(percentage)
+  if (tier === 'Core') {
+    // Core Tier: max grade 5 / C
+    if (score >= 70) return { grade_9to1: '5', grade_AtoG: 'C', points: 5, status: 'Pass' }
+    if (score >= 60) return { grade_9to1: '4', grade_AtoG: 'D', points: 4, status: 'Pass' }
+    if (score >= 50) return { grade_9to1: '3', grade_AtoG: 'E', points: 3, status: 'Pass' }
+    if (score >= 40) return { grade_9to1: '2', grade_AtoG: 'F', points: 2, status: 'Pass' }
+    if (score >= 30) return { grade_9to1: '1', grade_AtoG: 'G', points: 1, status: 'Pass' }
+    return { grade_9to1: 'U', grade_AtoG: 'U', points: 0, status: 'Ungraded' }
+  }
+
+  // Extended Tier: Grade 9 to 1 / A* to G
+  if (score >= 90) return { grade_9to1: '9', grade_AtoG: 'A*', points: 9, status: 'Pass' }
+  if (score >= 80) return { grade_9to1: '8', grade_AtoG: 'A*', points: 8, status: 'Pass' }
+  if (score >= 70) return { grade_9to1: '7', grade_AtoG: 'A', points: 7, status: 'Pass' }
+  if (score >= 60) return { grade_9to1: '6', grade_AtoG: 'B', points: 6, status: 'Pass' }
+  if (score >= 50) return { grade_9to1: '5', grade_AtoG: 'B', points: 5, status: 'Pass' }
+  if (score >= 40) return { grade_9to1: '4', grade_AtoG: 'C', points: 4, status: 'Pass' }
+  if (score >= 30) return { grade_9to1: '3', grade_AtoG: 'D', points: 3, status: 'Pass' }
+  if (score >= 20) return { grade_9to1: '2', grade_AtoG: 'E', points: 2, status: 'Pass' }
+  if (score >= 10) return { grade_9to1: '1', grade_AtoG: 'F', points: 1, status: 'Pass' }
+  return { grade_9to1: 'U', grade_AtoG: 'U', points: 0, status: 'Ungraded' }
+}
+
+/**
+ * Calculates Cambridge ICE (International Certificate of Education) qualification
+ * Candidate must pass at least 7 subjects from 5 curriculum groups:
+ * Group 1 (Languages, at least 2 subjects)
+ * Group 2 (Humanities & Social Sciences, at least 1)
+ * Group 3 (Sciences, at least 1)
+ * Group 4 (Mathematics, at least 1)
+ * Group 5 (Creative & Professional, at least 1)
+ */
+export function calculateCambridgeICE(results: IGCSESubjectResult[]): CambridgeICEAward {
+  if (results.length < 7) return 'Not Eligible'
+
+  const groupCounts: Record<string, number> = {}
+  results.forEach((r) => {
+    groupCounts[r.subject_group] = (groupCounts[r.subject_group] || 0) + 1
+  })
+
+  const hasGroup1 = (groupCounts['Group 1: Languages'] || 0) >= 2
+  const hasGroup2 = (groupCounts['Group 2: Humanities & Social Sciences'] || 0) >= 1
+  const hasGroup3 = (groupCounts['Group 3: Sciences'] || 0) >= 1
+  const hasGroup4 = (groupCounts['Group 4: Mathematics'] || 0) >= 1
+  const hasGroup5 = (groupCounts['Group 5: Creative & Professional / Vocational'] || 0) >= 1
+
+  if (!hasGroup1 || !hasGroup2 || !hasGroup3 || !hasGroup4 || !hasGroup5) {
+    return 'Not Eligible'
+  }
+
+  const grades7Plus = results.filter((r) => Number(r.grade_9to1) >= 7 || ['A*', 'A'].includes(r.grade_AtoG)).length
+  const grades4Plus = results.filter((r) => Number(r.grade_9to1) >= 4 || ['A*', 'A', 'B', 'C'].includes(r.grade_AtoG)).length
+
+  if (grades7Plus >= 5 && grades4Plus >= 7) return 'Distinction'
+  if (grades4Plus >= 5) return 'Merit'
+  const passingGrades = results.filter((r) => r.status === 'Pass' && r.grade_9to1 !== 'U').length
+  if (passingGrades >= 7) return 'Pass'
+
+  return 'Not Eligible'
+}
 

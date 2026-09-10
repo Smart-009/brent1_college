@@ -412,3 +412,64 @@ export interface DeviceSession {
   created_at: string
 }
 
+// ============================================================
+// IGCSE & British International Curriculum Type Definitions
+// ============================================================
+
+export type IGCSEKeyStage = 'Lower Secondary (Year 7-9)' | 'IGCSE (Year 10-11)' | 'Sixth Form (AS & A-Levels)'
+
+export type IGCSESubjectGroup =
+  | 'Group 1: Languages'
+  | 'Group 2: Humanities & Social Sciences'
+  | 'Group 3: Sciences'
+  | 'Group 4: Mathematics'
+  | 'Group 5: Creative & Professional / Vocational'
+
+export type IGCSEGrade9to1 = '9' | '8' | '7' | '6' | '5' | '4' | '3' | '2' | '1' | 'U'
+export type IGCSEGradeAtoG = 'A*' | 'A' | 'B' | 'C' | 'D' | 'E' | 'F' | 'G' | 'U'
+export type IGCSETier = 'Core' | 'Extended'
+export type IGCSEExamSeries = 'May/June 2025' | 'Oct/Nov 2025' | 'May/June 2026' | 'Oct/Nov 2026' | 'Feb/March 2026'
+
+export interface IGCSEPaperComponent {
+  paper_number: string // e.g. "Paper 1 (MCQ)", "Paper 2 (Extended)", "Paper 4 (Alternative to Practical)"
+  raw_mark: number
+  max_mark: number
+  weight_percentage: number // e.g. 30%, 50%, 20%
+}
+
+export interface IGCSESubjectResult {
+  syllabus_code: string // e.g. "0580"
+  subject_name: string // e.g. "Mathematics (Without Coursework)"
+  subject_group: IGCSESubjectGroup
+  tier: IGCSETier
+  components: IGCSEPaperComponent[]
+  weighted_percentage: number
+  grade_9to1: IGCSEGrade9to1
+  grade_AtoG: IGCSEGradeAtoG
+  points: number // 9-1 points scale
+  status: 'Pass' | 'Fail' | 'Ungraded'
+  examiner_feedback?: string
+}
+
+export type CambridgeICEAward = 'Distinction' | 'Merit' | 'Pass' | 'Not Eligible'
+
+export interface IGCSEStatementOfResults {
+  id: string
+  center_number: string // e.g. "KE042"
+  center_name: string // e.g. "Éclat Institute International Examination Centre"
+  candidate_number: string // e.g. "0014"
+  candidate_name: string
+  date_of_birth: string
+  gender: 'Male' | 'Female'
+  examination_series: IGCSEExamSeries
+  examination_board: 'Cambridge Assessment International Education (CAIE)' | 'Pearson Edexcel International GCSE'
+  candidate_unique_id: string
+  results: IGCSESubjectResult[]
+  total_subjects: number
+  mean_points: number
+  ice_award: CambridgeICEAward
+  issued_at: string
+  is_verified: boolean
+  verification_code: string
+}
+

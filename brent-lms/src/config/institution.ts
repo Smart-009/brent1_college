@@ -39,6 +39,14 @@ export interface InstitutionConfig {
     adminDefaultPassword?: string
     internalEmailDomain: string
   }
+
+  igcse: {
+    centerNumber: string
+    centerName: string
+    accreditedBoards: string[]
+    currentSeries: string
+    qualificationsOffered: string[]
+  }
 }
 
 export const INSTITUTION_CONFIG: InstitutionConfig = {
@@ -78,6 +86,19 @@ export const INSTITUTION_CONFIG: InstitutionConfig = {
   auth: {
     adminDefaultPassword: (import.meta.env.VITE_ADMIN_PASSWORD as string) || (import.meta.env.ADMIN_PASSWORD as string) || 'Eclat@2026#!',
     internalEmailDomain: (import.meta.env.VITE_INTERNAL_EMAIL_DOMAIN as string) || 'eclatinstitute.internal',
+  },
+
+  igcse: {
+    centerNumber: (import.meta.env.VITE_IGCSE_CENTER_NUMBER as string) || 'KE042',
+    centerName: 'Éclat Institute International Examination Centre',
+    accreditedBoards: ['Cambridge Assessment International Education (CAIE)', 'Pearson Edexcel International'],
+    currentSeries: 'May/June 2026 Examination Series',
+    qualificationsOffered: [
+      'Cambridge Lower Secondary (Checkpoint Years 7-9)',
+      'Cambridge IGCSE (Years 10-11)',
+      'Cambridge International AS & A-Levels (Years 12-13)',
+      'Cambridge ICE (International Certificate of Education)',
+    ],
   },
 }
 

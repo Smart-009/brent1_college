@@ -783,6 +783,7 @@ export function Landing() {
                 >
                   {[
                     { id: 'All', icon: '🔥', label: 'All Online Programs' },
+                    { id: 'British Curriculum (IGCSE & A-Levels)', icon: '🇬🇧', label: 'British Curriculum (IGCSE & A-Levels)' },
                     { id: 'Data Science & Research', icon: '📊', label: 'Data Science, R, SPSS & Stata' },
                     { id: 'Tech & Programming', icon: '💻', label: 'Tech & Software Engineering' },
                     { id: 'Creative Arts & Design', icon: '🎨', label: 'Creative Arts & UI/UX Design' },
@@ -1884,6 +1885,7 @@ export function Landing() {
             <div style={{ display: 'flex', gap: '0.6rem', flexWrap: 'wrap' }}>
               {[
                 { id: 'All', label: '🔥 All Programs', count: coursesList.length },
+                { id: 'British Curriculum (IGCSE & A-Levels)', label: '🇬🇧 IGCSE & A-Levels', count: coursesList.filter((c) => c.category === 'British Curriculum (IGCSE & A-Levels)').length },
                 { id: 'Data Science & Research', label: '📊 Data, R & SPSS', count: coursesList.filter((c) => c.category === 'Data Science & Research').length },
                 { id: 'Tech & Programming', label: '💻 Tech & Software', count: coursesList.filter((c) => c.category === 'Tech & Programming').length },
                 { id: 'Creative Arts & Design', label: '🎨 Creative Arts & Design', count: coursesList.filter((c) => c.category === 'Creative Arts & Design').length },
