@@ -53,15 +53,24 @@ export function ExamManagement() {
               Official modular evaluation results, continuous assessments (CAT), and academic completion transcripts.
             </p>
           </div>
-          <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap' }}>
+          <div style={{ display: 'flex', gap: '0.6rem', flexWrap: 'wrap', alignItems: 'center' }}>
             {myReportCard && (
               <button
                 type="button"
                 className="btn btn-primary"
                 onClick={() => setSelectedReportCard(myReportCard)}
-                style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', fontWeight: 700 }}
+                style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '0.45rem',
+                  fontWeight: 700,
+                  fontSize: '0.84rem',
+                  minHeight: '40px',
+                  padding: '0.5rem 1rem',
+                  borderRadius: '8px',
+                }}
               >
-                📄 View Official Transcript PDF
+                📄 View Modular Transcript
               </button>
             )}
             {igcseStatements.length > 0 && (
@@ -73,10 +82,15 @@ export function ExamManagement() {
                   background: '#0284c7',
                   color: '#ffffff',
                   fontWeight: 700,
-                  display: 'flex',
+                  fontSize: '0.84rem',
+                  minHeight: '40px',
+                  padding: '0.5rem 1rem',
+                  borderRadius: '8px',
+                  display: 'inline-flex',
                   alignItems: 'center',
-                  gap: '0.4rem',
+                  gap: '0.45rem',
                   border: 'none',
+                  boxShadow: '0 2px 6px rgba(2, 132, 199, 0.3)',
                 }}
               >
                 🇬🇧 Cambridge IGCSE Statement (9-1)
@@ -86,7 +100,19 @@ export function ExamManagement() {
               <button
                 type="button"
                 className="btn"
-                style={{ background: '#f59e0b', color: '#0f172a', fontWeight: 800, border: 'none' }}
+                style={{
+                  background: '#f59e0b',
+                  color: '#0f172a',
+                  fontWeight: 800,
+                  fontSize: '0.84rem',
+                  minHeight: '40px',
+                  padding: '0.5rem 1rem',
+                  borderRadius: '8px',
+                  border: 'none',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '0.45rem',
+                }}
                 onClick={() =>
                   setSelectedCert({
                     student_name: currentStudent.full_name,
@@ -294,12 +320,22 @@ export function ExamManagement() {
 
       {/* Responsive Tabs */}
       <div className="card mb-6" style={{ padding: '0.5rem' }}>
-        <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', borderBottom: '1px solid var(--color-border)', paddingBottom: '0.5rem' }}>
+        <div
+          style={{
+            display: 'flex',
+            gap: '0.5rem',
+            overflowX: 'auto',
+            scrollbarWidth: 'none',
+            WebkitOverflowScrolling: 'touch',
+            borderBottom: '1px solid var(--color-border)',
+            paddingBottom: '0.5rem',
+          }}
+        >
           <button
             type="button"
             className={`btn btn-sm ${activeTab === 'reportcards' ? 'btn-primary' : 'btn-ghost'}`}
             onClick={() => setActiveTab('reportcards')}
-            style={{ whiteSpace: 'nowrap' }}
+            style={{ whiteSpace: 'nowrap', flexShrink: 0, fontWeight: 700, minHeight: '36px' }}
           >
             📋 Official College Transcripts
           </button>
@@ -307,7 +343,7 @@ export function ExamManagement() {
             type="button"
             className={`btn btn-sm ${activeTab === 'sessions' ? 'btn-primary' : 'btn-ghost'}`}
             onClick={() => setActiveTab('sessions')}
-            style={{ whiteSpace: 'nowrap' }}
+            style={{ whiteSpace: 'nowrap', flexShrink: 0, fontWeight: 700, minHeight: '36px' }}
           >
             📅 Assessment Sessions
           </button>
@@ -315,7 +351,7 @@ export function ExamManagement() {
             type="button"
             className={`btn btn-sm ${activeTab === 'ranking' ? 'btn-primary' : 'btn-ghost'}`}
             onClick={() => setActiveTab('ranking')}
-            style={{ whiteSpace: 'nowrap' }}
+            style={{ whiteSpace: 'nowrap', flexShrink: 0, fontWeight: 700, minHeight: '36px' }}
           >
             🏆 Merit Ranking Broadsheet
           </button>
@@ -323,7 +359,7 @@ export function ExamManagement() {
             type="button"
             className={`btn btn-sm ${activeTab === 'igcse' ? 'btn-primary' : 'btn-ghost'}`}
             onClick={() => setActiveTab('igcse')}
-            style={{ whiteSpace: 'nowrap', display: 'flex', alignItems: 'center', gap: '0.4rem' }}
+            style={{ whiteSpace: 'nowrap', flexShrink: 0, display: 'flex', alignItems: 'center', gap: '0.4rem', fontWeight: 700, minHeight: '36px' }}
           >
             🇬🇧 Cambridge IGCSE Results (9-1)
           </button>

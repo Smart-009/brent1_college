@@ -51,11 +51,21 @@ export const IGCSEStatementOfResultsModal: FC<IGCSEStatementOfResultsProps> = ({
               </span>
             </div>
           </div>
-          <div style={{ display: 'flex', gap: '0.75rem' }}>
-            <button type="button" className="btn btn-primary" onClick={handlePrint}>
-              🖨️ Print / Save Official PDF
+          <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
+            <button
+              type="button"
+              className="btn btn-primary btn-sm"
+              onClick={handlePrint}
+              style={{ fontWeight: 700, minHeight: '38px', padding: '0.45rem 0.9rem' }}
+            >
+              🖨️ Print / Save PDF
             </button>
-            <button type="button" className="btn btn-secondary" onClick={onClose}>
+            <button
+              type="button"
+              className="btn btn-secondary btn-sm"
+              onClick={onClose}
+              style={{ fontWeight: 700, minHeight: '38px', padding: '0.45rem 0.9rem' }}
+            >
               Close
             </button>
           </div>
@@ -65,7 +75,7 @@ export const IGCSEStatementOfResultsModal: FC<IGCSEStatementOfResultsProps> = ({
         <div
           id="igcse-statement-sheet"
           style={{
-            padding: '2.5rem 3rem',
+            padding: 'clamp(1.25rem, 3.5vw, 2.5rem)',
             background: '#ffffff',
             color: '#0f172a',
             fontFamily: 'Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
@@ -199,10 +209,11 @@ export const IGCSEStatementOfResultsModal: FC<IGCSEStatementOfResultsProps> = ({
           )}
 
           {/* Subject Results Table */}
-          <div style={{ marginBottom: '1.5rem' }}>
+          <div style={{ marginBottom: '1.5rem', overflowX: 'auto', WebkitOverflowScrolling: 'touch' }}>
             <table
               style={{
                 width: '100%',
+                minWidth: '640px',
                 borderCollapse: 'collapse',
                 textAlign: 'left',
                 fontSize: '0.85rem',
@@ -304,8 +315,10 @@ export const IGCSEStatementOfResultsModal: FC<IGCSEStatementOfResultsProps> = ({
           <div
             style={{
               display: 'flex',
-              justifyContent: 'space-between',
-              alignItems: 'flex-end',
+              justifyContent: 'space-around',
+              alignItems: 'center',
+              flexWrap: 'wrap',
+              gap: '1.5rem',
               marginTop: '2rem',
               paddingTop: '1.5rem',
               borderTop: '1px solid #e2e8f0',

@@ -318,28 +318,37 @@ export function CourseCatalogPage() {
               scrollbarWidth: 'none',
             }}
           >
-            {CATEGORIES.map((cat) => (
-              <button
-                key={cat}
-                type="button"
-                onClick={() => setSelectedCat(cat)}
-                style={{
-                  flexShrink: 0,
-                  background: selectedCat === cat ? '#2563eb' : '#131b2e',
-                  color: selectedCat === cat ? '#ffffff' : '#94a3b8',
-                  border: selectedCat === cat ? '1px solid #3b82f6' : '1px solid #24304d',
-                  borderRadius: '999px',
-                  padding: '0.5rem 1rem',
-                  fontSize: '0.8rem',
-                  fontWeight: 700,
-                  cursor: 'pointer',
-                  whiteSpace: 'nowrap',
-                  transition: 'all 0.15s ease',
-                }}
-              >
-                {cat === 'All' ? '🔥 All Programs' : cat}
-              </button>
-            ))}
+            {CATEGORIES.map((cat) => {
+              const label =
+                cat === 'All'
+                  ? '🔥 All Programs'
+                  : cat === 'British Curriculum (IGCSE & A-Levels)'
+                  ? '🇬🇧 Cambridge IGCSE'
+                  : cat
+              return (
+                <button
+                  key={cat}
+                  type="button"
+                  onClick={() => setSelectedCat(cat)}
+                  style={{
+                    flexShrink: 0,
+                    background: selectedCat === cat ? '#2563eb' : '#131b2e',
+                    color: selectedCat === cat ? '#ffffff' : '#94a3b8',
+                    border: selectedCat === cat ? '1px solid #3b82f6' : '1px solid #24304d',
+                    borderRadius: '999px',
+                    padding: '0.45rem 0.95rem',
+                    fontSize: '0.82rem',
+                    fontWeight: 700,
+                    cursor: 'pointer',
+                    whiteSpace: 'nowrap',
+                    transition: 'all 0.15s ease',
+                    minHeight: '38px',
+                  }}
+                >
+                  {label}
+                </button>
+              )
+            })}
           </div>
         </div>
       </div>

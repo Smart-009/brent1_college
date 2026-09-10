@@ -31,7 +31,8 @@ interface MobileLandingProps {
 }
 
 const CATEGORIES = [
-  { id: 'All', label: '🔥 All Online Programs', icon: '🔥' },
+  { id: 'All', label: '🔥 All Programs', icon: '🔥' },
+  { id: 'British Curriculum (IGCSE & A-Levels)', label: '🇬🇧 Cambridge IGCSE', icon: '🇬🇧' },
   { id: 'Tech & Programming', label: '💻 Software & Python', icon: '💻' },
   { id: 'Creative Design & Arts', label: '🎨 Design & Animation', icon: '🎨' },
   { id: 'Languages & Communication', label: '🗣️ Languages & IELTS', icon: '🗣️' },
