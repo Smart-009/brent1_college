@@ -890,6 +890,10 @@ export function Landing() {
                     <span>🗓️</span>
                     <span>Intakes</span>
                   </a>
+                  <Link to="/courses" style={{ color: '#0284c7', fontWeight: 800, textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                    <span>🇬🇧</span>
+                    <span>Cambridge IGCSE</span>
+                  </Link>
                   <Link to="/library" style={{ color: '#2563eb', fontWeight: 800, textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '4px' }}>
                     <span>📖</span>
                     <span>E-Library</span>
@@ -1015,6 +1019,15 @@ export function Landing() {
                 <span style={{ fontSize: '1.1rem' }}>🗓️</span>
                 <span>Upcoming Intakes & Admissions</span>
               </a>
+
+              <Link
+                to="/courses"
+                onClick={() => setMobileNavOpen(false)}
+                style={{ color: '#0284c7', fontWeight: 850, textDecoration: 'none', padding: '0.65rem 0.75rem', borderRadius: '8px', display: 'flex', alignItems: 'center', gap: '10px', background: '#f0f9ff', border: '1px solid #bae6fd' }}
+              >
+                <span style={{ fontSize: '1.1rem' }}>🇬🇧</span>
+                <span>Cambridge IGCSE & A-Levels (KE042)</span>
+              </Link>
 
               <a
                 href="#about"
@@ -1224,7 +1237,7 @@ export function Landing() {
             }}
           >
             <span>🌐</span>
-            <span>ÉCLAT INSTITUTE • 100% ONLINE GLOBAL ACADEMY</span>
+            <span>ÉCLAT INSTITUTE • 100% ONLINE GLOBAL ACADEMY & CAMBRIDGE IGCSE CENTRE (KE042)</span>
           </div>
 
           {/* Master Academy Headline */}
@@ -1255,7 +1268,7 @@ export function Landing() {
           {/* Subtitle establishing all 5 faculties */}
           <p
             style={{
-              maxWidth: '820px',
+              maxWidth: '860px',
               margin: '0 auto 2.25rem',
               fontSize: isMobile ? '1.02rem' : '1.18rem',
               color: '#e2e8f0',
@@ -1263,7 +1276,7 @@ export function Landing() {
               fontWeight: 400,
             }}
           >
-            Master in-demand <strong style={{ color: '#ffffff', fontWeight: 800 }}>Tech & Software</strong> (React, Node, Python, Cyber), <strong style={{ color: '#ffffff', fontWeight: 800 }}>Data Science & Research</strong> (R, SPSS, Stata), <strong style={{ color: '#ffffff', fontWeight: 800 }}>Creative Arts & Design</strong> (UI/UX, Figma, Graphics), <strong style={{ color: '#ffffff', fontWeight: 800 }}>World Languages</strong> (IELTS, German, Arabic, French), and <strong style={{ color: '#ffffff', fontWeight: 800 }}>Accounting</strong> with live interactive evening classes, expert mentorship, and flexible installment plans.
+            Master <strong style={{ color: '#38bdf8', fontWeight: 800 }}>Cambridge IGCSE & A-Levels (Center KE042)</strong>, in-demand <strong style={{ color: '#ffffff', fontWeight: 800 }}>Tech & Software</strong> (React, Node, Python, Cyber), <strong style={{ color: '#ffffff', fontWeight: 800 }}>Data Science & Research</strong> (R, SPSS, Stata), <strong style={{ color: '#ffffff', fontWeight: 800 }}>Creative Arts & Design</strong> (UI/UX, Figma), <strong style={{ color: '#ffffff', fontWeight: 800 }}>World Languages</strong> (IELTS, German, Arabic, French), and <strong style={{ color: '#ffffff', fontWeight: 800 }}>Accounting</strong> with live interactive classes, expert mentorship, and flexible installment plans.
           </p>
 
           {/* Primary Academy CTAs */}
