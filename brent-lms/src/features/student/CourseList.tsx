@@ -4,7 +4,7 @@ import { useAuth } from '@/hooks/useAuth'
 import { PageWrapper } from '@/components/layout/PageWrapper'
 import { schoolStore, schoolEventBus } from '@/lib/schoolData'
 import { UnitRegistrationSlip } from '@/components/shared/UnitRegistrationSlip'
-import { INSTITUTION_CONFIG } from '@/config/institution'
+import { INSTITUTION_CONFIG, getWhatsAppInquiryUrl } from '@/config/institution'
 import type { CourseUnit } from '@/types/school'
 
 export function CourseList() {
@@ -214,9 +214,15 @@ export function CourseList() {
                         ✓ Enrolled
                       </span>
                     ) : (
-                      <span className="badge" style={{ background: '#fef3c7', color: '#92400e', fontWeight: 800 }}>
-                        Fee: {feeDisplay}
-                      </span>
+                      <a
+                        href={getWhatsAppInquiryUrl(`Hello Brent College Accounts, I would like to make a Fees Inquiry for the unit: ${unit.title} (${unit.code}).`)}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="badge"
+                        style={{ background: '#eff6ff', color: '#2563eb', fontWeight: 800, textDecoration: 'none' }}
+                      >
+                        💬 Fee Inquiry
+                      </a>
                     )}
                   </div>
 
@@ -269,7 +275,7 @@ export function CourseList() {
                       style={{ background: '#16a34a', color: '#ffffff', fontWeight: 800 }}
                       onClick={() => setEnrollUnit(unit)}
                     >
-                      💳 Enroll & Pay ({feeDisplay})
+                      💳 Enroll in Unit
                     </button>
                   )}
                 </div>

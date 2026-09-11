@@ -413,9 +413,26 @@ export function CourseCatalogPage() {
                     >
                       {course.tag}
                     </span>
-                    <div style={{ fontSize: '0.95rem', fontWeight: 900, color: '#4ade80' }}>
-                      {course.fee}
-                    </div>
+                    <a
+                      href={getWhatsAppInquiryUrl(`Hello Brent College Admissions! I would like to make a Fees Inquiry for ${course.title}.`)}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      style={{
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: '4px',
+                        background: 'rgba(37, 99, 235, 0.2)',
+                        color: '#60a5fa',
+                        border: '1px solid rgba(96, 165, 250, 0.4)',
+                        padding: '3px 9px',
+                        borderRadius: '6px',
+                        fontSize: '0.72rem',
+                        fontWeight: 800,
+                        textDecoration: 'none',
+                      }}
+                    >
+                      💬 Fees Inquiry
+                    </a>
                   </div>
                 </div>
 
@@ -552,9 +569,28 @@ export function CourseCatalogPage() {
               </button>
             </div>
 
-            <div style={{ marginBottom: '1rem', display: 'flex', gap: '1rem', background: '#0a0e17', padding: '0.75rem', borderRadius: '12px', fontSize: '0.8rem' }}>
+            <div style={{ marginBottom: '1rem', display: 'flex', gap: '1rem', alignItems: 'center', justifyContent: 'space-between', background: '#0a0e17', padding: '0.75rem 1rem', borderRadius: '12px', fontSize: '0.8rem', flexWrap: 'wrap' }}>
               <div>⏱️ <strong>Duration:</strong> {selectedCourse.duration}</div>
-              <div>💳 <strong>Fee:</strong> {selectedCourse.fee}</div>
+              <a
+                href={getWhatsAppInquiryUrl(`Hello Brent College Admissions! I would like to make a Fees Inquiry for the course: ${selectedCourse.title}.`)}
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '5px',
+                  background: 'rgba(37, 99, 235, 0.25)',
+                  color: '#93c5fd',
+                  border: '1px solid rgba(96, 165, 250, 0.4)',
+                  padding: '5px 12px',
+                  borderRadius: '8px',
+                  fontWeight: 700,
+                  fontSize: '0.78rem',
+                  textDecoration: 'none',
+                }}
+              >
+                💬 Fees Inquiry
+              </a>
             </div>
 
             <h4 style={{ fontSize: '0.9rem', fontWeight: 800, color: '#93c5fd', margin: '0 0 0.75rem', textTransform: 'uppercase', letterSpacing: '0.04em' }}>

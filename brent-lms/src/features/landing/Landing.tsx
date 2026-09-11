@@ -898,7 +898,7 @@ export function Landing() {
                     <span>📖</span>
                     <span>E-Library</span>
                   </Link>
-                  <a href="#calculator" style={{ color: '#334155', textDecoration: 'none' }}>Tuition Plans</a>
+                  <a href="#calculator" style={{ color: '#334155', textDecoration: 'none' }}>Fees Inquiry</a>
                   <a href="#about" style={{ color: '#334155', textDecoration: 'none' }}>About Us</a>
                 </nav>
 
@@ -1105,7 +1105,7 @@ export function Landing() {
                 style={{ color: '#0f172a', textDecoration: 'none', padding: '0.6rem 0.75rem', borderRadius: '8px', display: 'flex', alignItems: 'center', gap: '10px' }}
               >
                 <span style={{ fontSize: '1.1rem' }}>💳</span>
-                <span>Tuition & Installment Calculator</span>
+                <span>Tuition & Fees Inquiry</span>
               </a>
 
               <Link
@@ -2192,19 +2192,30 @@ export function Landing() {
                     </div>
                   )}
 
-                  {/* Udemy-Style Pricing & Direct Enrollment CTA */}
-                  <div style={{ borderTop: '1px solid #f1f5f9', paddingTop: '1rem', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end' }}>
-                    <div>
-                      <div style={{ display: 'flex', alignItems: 'baseline', gap: '6px', flexWrap: 'wrap' }}>
-                        <span style={{ fontSize: '1.4rem', fontWeight: 900, color: '#0f172a' }}>{course.fee}</span>
-                        <span style={{ fontSize: '0.85rem', color: '#64748b', fontWeight: 600 }}>/ KES {((course.feeUsd || Number(course.fee?.replace(/[^0-9]/g, '')) || 60) * 130).toLocaleString()}</span>
-                        <span style={{ fontSize: '0.9rem', color: '#94a3b8', textDecoration: 'line-through' }}>{course.originalFee || `$${(course.feeUsd || 60) * 2}`}</span>
-                        <span style={{ fontSize: '0.75rem', color: '#16a34a', fontWeight: 800 }}>{course.discountBadge || '50% OFF'}</span>
-                      </div>
-                      <div style={{ fontSize: '0.72rem', color: '#64748b', fontWeight: 600 }}>
-                        {course.installment}
-                      </div>
-                    </div>
+                  {/* Fees Inquiry & Direct Enrollment CTA */}
+                  <div style={{ borderTop: '1px solid #f1f5f9', paddingTop: '1rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
+                    <a
+                      href={getWhatsAppInquiryUrl(`Hello Brent College Admissions, I would like to make a Fees Inquiry for the course "${course.title}".`)}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="btn"
+                      style={{
+                        background: '#eff6ff',
+                        color: '#2563eb',
+                        border: '1.5px solid #bfdbfe',
+                        borderRadius: '8px',
+                        padding: '0.55rem 0.95rem',
+                        fontSize: '0.82rem',
+                        fontWeight: 700,
+                        textDecoration: 'none',
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: '6px',
+                        transition: 'all 0.2s ease',
+                      }}
+                    >
+                      💬 Fees Inquiry
+                    </a>
 
                     <div style={{ display: 'flex', gap: '6px' }}>
                       <button
@@ -2213,9 +2224,9 @@ export function Landing() {
                         style={{
                           fontWeight: 800,
                           borderRadius: '8px',
-                          padding: '0.6rem 1.15rem',
+                          padding: '0.55rem 1.1rem',
                           fontSize: '0.85rem',
-                          boxShadow: '0 4px 12px rgba(37, 99, 235, 0.3)',
+                          boxShadow: '0 4px 12px rgba(37, 99, 235, 0.25)',
                         }}
                         onClick={() => handleOpenCourseApplication(course)}
                       >
@@ -2230,18 +2241,18 @@ export function Landing() {
         </div>
       </section>
 
-      {/* Interactive M-Pesa Fee Calculator & Admission Estimator */}
+      {/* Tuition & Fees Inquiry Hub */}
       <section id="calculator" style={{ background: '#f1f5f9', padding: '4.5rem 1.5rem', borderBottom: '1px solid #e2e8f0' }}>
         <div style={{ maxWidth: '1000px', margin: '0 auto' }}>
           <div style={{ textAlign: 'center', marginBottom: '2.5rem' }}>
             <span style={{ fontSize: '0.82rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.08em', color: '#2563eb' }}>
-              TRANSPARENT TUITION CALCULATOR
+              TUITION & FEES INQUIRY
             </span>
             <h2 style={{ fontSize: '2.1rem', fontWeight: 900, color: '#0f172a', margin: '0.35rem 0 0.5rem' }}>
-              Instant Tuition & Installment Estimator
+              Course Fees Inquiry & Payment Consultation
             </h2>
             <p style={{ fontSize: '0.95rem', color: '#475569', maxWidth: '600px', margin: '0 auto' }}>
-              Choose your course and installment structure to view your exact payment breakdown before registration.
+              Select your desired program to inquire about official tuition schedules, installment plans, and scholarship opportunities directly with our admissions office.
             </p>
           </div>
 
@@ -2272,13 +2283,13 @@ export function Landing() {
                   >
                     {coursesList.map((c) => (
                       <option key={c.id} value={c.id} style={{ color: '#0f172a', background: '#ffffff', padding: '8px' }}>
-                        {c.icon} {c.title} — ({c.fee})
+                        {c.icon} {c.title}
                       </option>
                     ))}
                   </select>
                 </div>
 
-                <label className="label">2. Select Payment Schedule</label>
+                <label className="label">2. Select Preferred Payment Structure</label>
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem', marginBottom: '1.25rem' }}>
                   <button
                     type="button"
@@ -2295,7 +2306,7 @@ export function Landing() {
                     }}
                     onClick={() => setCalcPlan('full')}
                   >
-                    ✓ 1 Full Payment
+                    ✓ Full Payment
                     <div style={{ fontSize: '0.72rem', color: '#16a34a', marginTop: '2px' }}>Instant Clearance</div>
                   </button>
 
@@ -2315,7 +2326,7 @@ export function Landing() {
                     onClick={() => setCalcPlan('installments')}
                   >
                     💳 2 Installments
-                    <div style={{ fontSize: '0.72rem', color: '#2563eb', marginTop: '2px' }}>50% on Intake Day</div>
+                    <div style={{ fontSize: '0.72rem', color: '#2563eb', marginTop: '2px' }}>50% Intake / 50% Midterm</div>
                   </button>
                 </div>
 
@@ -2326,53 +2337,74 @@ export function Landing() {
                 </div>
               </div>
 
-              {/* Live Fee Calculation Output Card */}
+              {/* Live Fee Inquiry Output Card */}
               <div style={{ background: '#0f172a', color: '#ffffff', borderRadius: '16px', padding: '1.75rem', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
                 <div>
-                  <div style={{ fontSize: '0.78rem', color: '#93c5fd', textTransform: 'uppercase', fontWeight: 800 }}>Payment Summary</div>
+                  <div style={{ fontSize: '0.78rem', color: '#93c5fd', textTransform: 'uppercase', fontWeight: 800 }}>Program Summary</div>
                   <div style={{ fontSize: '1.15rem', fontWeight: 900, color: '#ffffff', margin: '0.25rem 0 1rem' }}>
                     {selectedCalcCourse.title}
                   </div>
 
                   <div style={{ borderTop: '1px solid rgba(255,255,255,0.15)', paddingTop: '0.85rem', marginBottom: '0.85rem' }}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.4rem', fontSize: '0.88rem', color: '#cbd5e1' }}>
-                      <span>Total Course Fee:</span>
-                      <strong style={{ color: '#4ade80' }}>{selectedCalcCourse.fee}</strong>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.6rem', fontSize: '0.88rem', color: '#cbd5e1' }}>
+                      <span>Tuition Schedule:</span>
+                      <span style={{ background: 'rgba(37, 99, 235, 0.25)', color: '#93c5fd', padding: '3px 8px', borderRadius: '6px', fontWeight: 700, fontSize: '0.8rem' }}>
+                        Custom Quote on Inquiry
+                      </span>
                     </div>
 
-                    {calcPlan === 'full' ? (
-                      <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.88rem', color: '#cbd5e1' }}>
-                        <span>Amount Due at Registration:</span>
-                        <strong style={{ color: '#ffffff' }}>{selectedCalcCourse.fee}</strong>
-                      </div>
-                    ) : (
-                      <>
-                        <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.84rem', color: '#cbd5e1', marginBottom: '0.3rem' }}>
-                          <span>1st Installment (Admission):</span>
-                          <strong style={{ color: '#ffffff' }}>{selectedCalcCourse.installment.split('of')[1] || selectedCalcCourse.installment}</strong>
-                        </div>
-                        <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.84rem', color: '#94a3b8' }}>
-                          <span>2nd Installment (Mid-Course):</span>
-                          <strong style={{ color: '#cbd5e1' }}>{selectedCalcCourse.installment.split('of')[1] || selectedCalcCourse.installment}</strong>
-                        </div>
-                      </>
-                    )}
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.6rem', fontSize: '0.85rem', color: '#cbd5e1' }}>
+                      <span>Payment Plan:</span>
+                      <strong style={{ color: '#ffffff' }}>{calcPlan === 'full' ? 'Single Full Payment' : '2 Equal Installments'}</strong>
+                    </div>
                   </div>
 
                   <div style={{ background: 'rgba(255,255,255,0.08)', borderRadius: '8px', padding: '0.75rem', fontSize: '0.8rem', color: '#e2e8f0', lineHeight: 1.5 }}>
-                    <div>🔒 <strong>Flexible Payment:</strong> Visa, Mastercard, Bank Wire, Mobile Money</div>
-                    <div style={{ color: '#93c5fd', marginTop: '3px' }}>⚡ Official invoice & payment details are presented at checkout when enrolling.</div>
+                    <div>🔒 <strong>Accepted Modes:</strong> Visa, Mastercard, M-Pesa, Bank Wire</div>
+                    <div style={{ color: '#93c5fd', marginTop: '3px' }}>⚡ Inquire now to receive official fee details and instant admission guidance.</div>
                   </div>
                 </div>
 
-                <button
-                  type="button"
-                  className="btn btn-primary btn-full mt-4"
-                  style={{ fontWeight: 800, padding: '0.75rem', borderRadius: '10px' }}
-                  onClick={() => handleOpenCourseApplication(selectedCalcCourse)}
-                >
-                  🚀 Apply for {selectedCalcCourse.title.split('&')[0]} →
-                </button>
+                <div style={{ marginTop: '1.5rem', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                  <a
+                    href={getWhatsAppInquiryUrl(`Hello Brent College Admissions! I would like to make a Fees Inquiry for ${selectedCalcCourse.title} (${calcPlan === 'full' ? 'Full Payment' : 'Installment Plan'}).`)}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="btn"
+                    style={{
+                      background: '#22c55e',
+                      color: '#ffffff',
+                      fontWeight: 800,
+                      fontSize: '0.88rem',
+                      padding: '0.75rem 1rem',
+                      textDecoration: 'none',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      gap: '8px',
+                      borderRadius: '8px',
+                      boxShadow: '0 4px 12px rgba(34, 197, 94, 0.3)',
+                    }}
+                  >
+                    💬 Fees Inquiry on WhatsApp →
+                  </a>
+
+                  <button
+                    type="button"
+                    className="btn btn-outline"
+                    style={{
+                      fontWeight: 700,
+                      padding: '0.6rem',
+                      borderRadius: '8px',
+                      borderColor: 'rgba(255,255,255,0.25)',
+                      color: '#ffffff',
+                      fontSize: '0.82rem',
+                    }}
+                    onClick={() => handleOpenCourseApplication(selectedCalcCourse)}
+                  >
+                    🚀 Proceed to Online Application
+                  </button>
+                </div>
               </div>
             </div>
           </div>
@@ -2915,7 +2947,7 @@ export function Landing() {
                     >
                       {coursesList.map((c) => (
                         <option key={c.id} value={c.title}>
-                          {c.title} ({c.duration} — {c.fee})
+                          {c.title} ({c.duration})
                         </option>
                       ))}
                     </select>
@@ -3677,9 +3709,29 @@ export function Landing() {
                 <div style={{ fontSize: '0.75rem', color: '#475569' }}>{selectedCourseForModal.schedule}</div>
               </div>
               <div>
-                <div style={{ fontSize: '0.72rem', color: '#64748b', fontWeight: 700, textTransform: 'uppercase' }}>Total Tuition Fee</div>
-                <div style={{ fontWeight: 900, color: '#16a34a', marginTop: '2px', fontSize: '1.15rem' }}>{selectedCourseForModal.fee}</div>
-                <div style={{ fontSize: '0.75rem', color: '#059669', fontWeight: 600 }}>{selectedCourseForModal.installment}</div>
+                <div style={{ fontSize: '0.72rem', color: '#64748b', fontWeight: 700, textTransform: 'uppercase' }}>Tuition & Fees</div>
+                <div style={{ marginTop: '4px' }}>
+                  <a
+                    href={getWhatsAppInquiryUrl(`Hello Brent College Admissions! I would like to make a Fees Inquiry for ${selectedCourseForModal.title}.`)}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    style={{
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: '4px',
+                      background: '#eff6ff',
+                      color: '#2563eb',
+                      border: '1px solid #bfdbfe',
+                      padding: '4px 10px',
+                      borderRadius: '6px',
+                      fontSize: '0.78rem',
+                      fontWeight: 700,
+                      textDecoration: 'none',
+                    }}
+                  >
+                    💬 Fees Inquiry
+                  </a>
+                </div>
               </div>
               <div>
                 <div style={{ fontSize: '0.72rem', color: '#64748b', fontWeight: 700, textTransform: 'uppercase' }}>Learning Format</div>

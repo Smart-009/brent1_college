@@ -537,18 +537,27 @@ export function MobileLandingView({
                   >
                     {course.tag}
                   </span>
-                  <span
+                  <a
+                    href={getWhatsAppInquiryUrl(`Hello Brent College Admissions, I would like to make a Fees Inquiry for ${course.title}.`)}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    onClick={(e) => e.stopPropagation()}
                     style={{
-                      background: 'rgba(34, 197, 94, 0.15)',
-                      color: '#4ade80',
-                      padding: '2px 6px',
+                      background: 'rgba(37, 99, 235, 0.18)',
+                      color: '#60a5fa',
+                      border: '1px solid rgba(96, 165, 250, 0.35)',
+                      padding: '2px 7px',
                       borderRadius: '6px',
                       fontSize: '0.68rem',
                       fontWeight: 800,
+                      textDecoration: 'none',
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: '3px',
                     }}
                   >
-                    {course.fee}
-                  </span>
+                    💬 Fees Inquiry
+                  </a>
                 </div>
                 <h4 style={{ fontSize: '0.95rem', fontWeight: 800, color: '#f8fafc', margin: '2px 0 0', lineHeight: 1.3 }}>
                   {course.title}
