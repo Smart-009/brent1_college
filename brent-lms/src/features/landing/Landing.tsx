@@ -2165,33 +2165,6 @@ export function Landing() {
                     </div>
                   </div>
 
-                  {/* Practical Syllabus Button */}
-                  {course.syllabus && course.syllabus.length > 0 && (
-                    <div style={{ marginBottom: '1rem' }}>
-                      <button
-                        type="button"
-                        style={{
-                          background: '#f8fafc',
-                          border: '1px dashed #94a3b8',
-                          borderRadius: '8px',
-                          padding: '0.45rem 0.75rem',
-                          fontSize: '0.78rem',
-                          fontWeight: 700,
-                          color: '#2563eb',
-                          cursor: 'pointer',
-                          width: '100%',
-                          display: 'flex',
-                          justifyContent: 'space-between',
-                          alignItems: 'center',
-                        }}
-                        onClick={() => setSelectedCourseForModal(course)}
-                      >
-                        <span>📖 View Full Syllabus & Labs</span>
-                        <span>→</span>
-                      </button>
-                    </div>
-                  )}
-
                   {/* Fees Inquiry & Direct Enrollment CTA */}
                   <div style={{ borderTop: '1px solid #f1f5f9', paddingTop: '1rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
                     <a

@@ -491,41 +491,27 @@ export function NativeAppHome({ courses, onSelectCourse }: { courses: CourseItem
               </div>
             </div>
 
-            <div style={{ display: 'flex', gap: '0.5rem', marginTop: '0.25rem' }}>
-              <button
-                type="button"
-                onClick={() => onSelectCourse?.(course)}
-                style={{
-                  flex: 1,
-                  background: '#1e293b',
-                  color: '#cbd5e1',
-                  border: '1px solid #334155',
-                  borderRadius: '8px',
-                  padding: '0.45rem',
-                  fontSize: '0.75rem',
-                  fontWeight: 700,
-                  cursor: 'pointer',
-                }}
-              >
-                📖 Syllabus
-              </button>
-
+            <div style={{ marginTop: '0.25rem' }}>
               <button
                 type="button"
                 onClick={handlePortalClick}
                 style={{
-                  flex: 1,
+                  width: '100%',
                   background: '#2563eb',
                   color: '#ffffff',
                   border: 'none',
                   borderRadius: '8px',
-                  padding: '0.45rem',
-                  fontSize: '0.75rem',
+                  padding: '0.55rem',
+                  fontSize: '0.78rem',
                   fontWeight: 800,
                   cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '6px',
                 }}
               >
-                Start Learning →
+                🚀 Access Student Portal
               </button>
             </div>
           </div>

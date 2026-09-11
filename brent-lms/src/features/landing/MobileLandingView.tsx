@@ -596,41 +596,27 @@ export function MobileLandingView({
             </div>
 
             {/* Action Buttons */}
-            <div style={{ display: 'flex', gap: '0.5rem', marginTop: '0.25rem' }}>
-              <button
-                type="button"
-                onClick={() => onSelectCourse(course)}
-                style={{
-                  flex: 1,
-                  background: '#1e293b',
-                  color: '#cbd5e1',
-                  border: '1px solid #334155',
-                  borderRadius: '8px',
-                  padding: '0.5rem',
-                  fontSize: '0.78rem',
-                  fontWeight: 700,
-                  cursor: 'pointer',
-                }}
-              >
-                📖 View Syllabus
-              </button>
-
+            <div style={{ marginTop: '0.25rem' }}>
               <button
                 type="button"
                 onClick={() => onOpenInquiry(course.title)}
                 style={{
-                  flex: 1,
+                  width: '100%',
                   background: '#2563eb',
                   color: '#ffffff',
                   border: 'none',
                   borderRadius: '8px',
-                  padding: '0.5rem',
-                  fontSize: '0.78rem',
-                  fontWeight: 700,
+                  padding: '0.6rem',
+                  fontSize: '0.82rem',
+                  fontWeight: 800,
                   cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '6px',
                 }}
               >
-                Enroll Now →
+                ⚡ Enroll Now →
               </button>
             </div>
           </div>

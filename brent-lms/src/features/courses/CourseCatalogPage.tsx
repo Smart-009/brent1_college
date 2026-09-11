@@ -472,42 +472,24 @@ export function CourseCatalogPage() {
               </div>
 
               {/* Action Buttons */}
-              <div style={{ display: 'flex', gap: '0.5rem', paddingTop: '0.5rem', borderTop: '1px solid rgba(255,255,255,0.06)' }}>
-                <button
-                  type="button"
-                  onClick={() => setSelectedCourse(course)}
-                  style={{
-                    flex: 1,
-                    background: '#1e293b',
-                    color: '#cbd5e1',
-                    border: '1px solid #334155',
-                    borderRadius: '10px',
-                    padding: '0.65rem 0.5rem',
-                    fontSize: '0.8rem',
-                    fontWeight: 700,
-                    cursor: 'pointer',
-                  }}
-                >
-                  📖 View Syllabus
-                </button>
-
+              <div style={{ paddingTop: '0.5rem', borderTop: '1px solid rgba(255,255,255,0.06)' }}>
                 <a
                   href={getWhatsAppInquiryUrl(`Hello Admissions! I would like to enroll in ${course.title}. Please provide registration steps.`)}
                   target="_blank"
                   rel="noopener noreferrer"
                   style={{
-                    flex: 1,
+                    width: '100%',
                     background: '#2563eb',
                     color: '#ffffff',
                     borderRadius: '10px',
-                    padding: '0.65rem 0.5rem',
-                    fontSize: '0.8rem',
+                    padding: '0.65rem 0.75rem',
+                    fontSize: '0.85rem',
                     fontWeight: 800,
                     textDecoration: 'none',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
-                    gap: '4px',
+                    gap: '6px',
                     boxShadow: '0 4px 12px rgba(37, 99, 235, 0.3)',
                   }}
                 >
