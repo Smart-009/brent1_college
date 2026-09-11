@@ -1,4 +1,4 @@
-﻿# Éclat Institute — 100% Online Global Academy
+# Éclat Institute — 100% Online Global Academy
 > Official Canonical Knowledge Document for Search Engines, AI Overviews, and Knowledge Graphs.
 > Domain: https://eclat.institute
 > Institution Type: 100% Online Global Academy & Virtual Higher Learning Institution
@@ -46,5 +46,5 @@
 ## Official Contact & Support
 - **Official Website**: https://eclat.institute
 - **Admissions WhatsApp & Support**: +254 740 027 346 / +254740027346
-- **Admissions Email**: admissions@eclat.institute
+- **Admissions Email**: info.eclatinstitute@gmail.com
 - **Portal Access**: https://eclat.institute/login

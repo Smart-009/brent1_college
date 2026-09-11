@@ -65,8 +65,8 @@ export const INSTITUTION_CONFIG: InstitutionConfig = {
     phoneRaw: (import.meta.env.VITE_INSTITUTION_PHONE_RAW as string) || '254740027346',
     phoneFormatted: (import.meta.env.VITE_INSTITUTION_PHONE as string) || '+254 740 027 346',
     whatsappNumber: (import.meta.env.VITE_WHATSAPP_NUMBER as string) || '254740027346',
-    email: (import.meta.env.VITE_INSTITUTION_EMAIL as string) || 'admissions@eclat.institute',
-    admissionsEmail: (import.meta.env.VITE_ADMISSIONS_EMAIL as string) || 'admissions@eclat.institute',
+    email: (import.meta.env.VITE_INSTITUTION_EMAIL as string) || 'info.eclatinstitute@gmail.com',
+    admissionsEmail: (import.meta.env.VITE_ADMISSIONS_EMAIL as string) || 'info.eclatinstitute@gmail.com',
   },
 
   bank: {
