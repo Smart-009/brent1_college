@@ -43,7 +43,7 @@ export const SAMPLE_CERTIFICATES: Record<string, CertificateData> = {
     hash: '8f92a10b74c2e6d58114fa39bc7168de24a9cf018265ddb2591746a8b792e41c',
   },
   data_science: {
-    student_name: 'Mustafa Hassan Ibrahim',
+    student_name: 'David Kimani Mwangi',
     admission_number: 'EI-2026-DAT019',
     course_title: 'Advanced Econometrics, R Programming & Data Science',
     faculty_name: 'School of Data Science & Quantitative Research',
@@ -1049,7 +1049,18 @@ export function CertificateGenerator({
         {/* Global Print Stylesheet for High-DPI Output */}
         <style>
           {`
+            @page {
+              size: A4 landscape;
+              margin: 8mm;
+            }
             @media print {
+              html, body {
+                width: 100% !important;
+                height: 100% !important;
+                margin: 0 !important;
+                padding: 0 !important;
+                background: #ffffff !important;
+              }
               body * {
                 visibility: hidden !important;
               }
@@ -1076,22 +1087,20 @@ export function CertificateGenerator({
                 visibility: visible !important;
               }
               #official-certificate-document {
-                position: fixed !important;
-                left: 0 !important;
-                top: 0 !important;
-                width: 100vw !important;
-                height: 100vh !important;
-                max-width: none !important;
-                margin: 0 !important;
-                padding: 24px !important;
+                position: relative !important;
+                width: 277mm !important;
+                max-width: 277mm !important;
+                height: 190mm !important;
+                max-height: 190mm !important;
+                margin: 0 auto !important;
+                padding: 16px 20px !important;
                 box-shadow: none !important;
+                box-sizing: border-box !important;
                 page-break-inside: avoid !important;
+                page-break-after: avoid !important;
+                break-inside: avoid !important;
                 -webkit-print-color-adjust: exact !important;
                 print-color-adjust: exact !important;
-              }
-              @page {
-                size: landscape A4;
-                margin: 0;
               }
             }
           `}
