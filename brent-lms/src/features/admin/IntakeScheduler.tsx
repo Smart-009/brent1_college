@@ -18,9 +18,16 @@ const STATUS_COLORS: Record<IntakeStatus, { bg: string; text: string; border: st
 
 const ALL_STUDY_MODES: StudyMode[] = [
   '100% Online (Live & Recorded)',
-  'Evening Classes (Live Interactive)',
+  'All Shifts (Early Morning to Night)',
+  'Early Morning Batch (6:00 AM - 8:00 AM)',
+  'Late Morning Batch (9:00 AM - 11:30 AM)',
+  'Midday Batch (11:30 AM - 1:30 PM)',
+  'Afternoon Batch (2:00 PM - 4:30 PM)',
+  'Evening Batch (5:30 PM - 7:30 PM)',
+  'Night Batch (8:00 PM - 10:00 PM)',
   'Weekend Executive Cohort',
   'Self-Paced Masterclass & 1-on-1 Labs',
+  'Cambridge IGCSE Complete Structure',
 ]
 
 export function IntakeScheduler() {
@@ -52,7 +59,7 @@ export function IntakeScheduler() {
   const [formInstallment, setFormInstallment] = useState('Flexible 2-3 Monthly Installments')
   const [formStudyModes, setFormStudyModes] = useState<StudyMode[]>([
     '100% Online (Live & Recorded)',
-    'Evening Classes (Live Interactive)',
+    'All Shifts (Early Morning to Night)',
   ])
   const [formPhone, setFormPhone] = useState(INSTITUTION_CONFIG.contact.phone)
   const [formEmail, setFormEmail] = useState(INSTITUTION_CONFIG.contact.admissionsEmail)
@@ -122,7 +129,7 @@ export function IntakeScheduler() {
     setFormTitle('')
     setFormYear(new Date().getFullYear().toString())
     setFormSession('Term 1 / First Quarter')
-    setFormHeadline('Admissions Open — 100% Online & Flexible Evening Classes')
+    setFormHeadline('Admissions Open — 100% Online Classes Across Flexible Daily Shifts')
     setFormDescription(
       'Enroll in certified career-ready programs with live mentor code reviews, practical projects, and verifiable certifications.'
     )
@@ -137,7 +144,7 @@ export function IntakeScheduler() {
     setFormInstallment('Flexible 2 to 3 Monthly Installments ($ USD & KES Paybill)')
     setFormStudyModes([
       '100% Online (Live & Recorded)',
-      'Evening Classes (Live Interactive)',
+      'All Shifts (Early Morning to Night)',
     ])
     setFormPhone(INSTITUTION_CONFIG.contact.phone)
     setFormEmail(INSTITUTION_CONFIG.contact.admissionsEmail)
@@ -851,7 +858,7 @@ export function IntakeScheduler() {
                     type="text"
                     required
                     className="input"
-                    placeholder="e.g. Admissions Open — 100% Online & Flexible Evening Classes"
+                    placeholder="e.g. Admissions Open — 100% Online Classes Across Flexible Daily Shifts"
                     value={formHeadline}
                     onChange={(e) => setFormHeadline(e.target.value)}
                   />

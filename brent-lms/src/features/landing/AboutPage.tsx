@@ -119,7 +119,7 @@ export function AboutPage() {
     {
       title: 'Global Inclusivity & Flexible Access',
       icon: '🌍',
-      desc: 'Evening and weekend shifts accommodate working professionals across multiple international time zones with 24/7 cloud recording replays.',
+      desc: 'Early Morning, Late Morning, Midday, Afternoon, Evening, and Night shifts accommodate working professionals and students across multiple international time zones with 24/7 cloud recording replays.',
     },
     {
       title: 'Cryptographic Credential Security',
@@ -191,7 +191,7 @@ export function AboutPage() {
       >
         <span>🌟</span>
         <span>
-          <strong>2026/2027 Academic Admissions:</strong> Live Online Evening & Weekend Batches are currently enrolling!
+          <strong>2026/2027 Academic Admissions:</strong> Live Online Batches across all 6 daily shifts (Early Morning to Night) are currently enrolling!
         </span>
         <a
           href={getWhatsAppInquiryUrl('Hello Admissions, I would like to inquire about enrolling in upcoming intakes.')}

@@ -218,7 +218,7 @@ export function CourseCatalogPage() {
           Explore Certified Career Masterclasses
         </h1>
         <p style={{ fontSize: '0.9rem', color: '#94a3b8', margin: 0, lineHeight: 1.5 }}>
-          100% online evening live classes, verifiable global certificates, real-world practical projects, and flexible 2-month installment fee plans.
+          100% online live classes across flexible shifts (Early Morning, Late Morning, Midday, Afternoon, Evening & Night), verifiable global certificates, real-world practical projects, and flexible 2-month installment fee plans.
         </p>
 
         {/* Matched Intake Cohort Highlight Banner */}

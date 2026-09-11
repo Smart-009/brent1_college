@@ -131,7 +131,7 @@ export function IntakeAdvertsSection() {
               lineHeight: 1.6,
             }}
           >
-            100% Online live interactive classes, flexible evening labs, and weekend executive masterclasses. Secure your admission and scholarship offer today!
+            100% Online live interactive classes across 6 flexible daily shifts (Early Morning, Late Morning, Midday, Afternoon, Evening & Night). Secure your admission and scholarship offer today!
           </p>
         </div>
 

@@ -17,7 +17,7 @@ export const INITIAL_INTAKE_SCHEDULES: IntakeSchedule[] = [
     term_session: 'Term 1 / First Quarter 2027',
     headline: 'Admissions Open — 100% Online Live Classes & Modular Certificate Programs',
     description:
-      'Enroll in certified career-ready programs across Full-Stack Web Engineering (React 19 & Node.js), Python Data Science, IELTS Band 8.5 Preparation, Cybersecurity SOC Operations, and Computerized Accounting. Evening and weekend cohorts available with live mentor code reviews.',
+      'Enroll in certified career-ready programs across Full-Stack Web Engineering (React 19 & Node.js), Python Data Science, IELTS Band 8.5 Preparation, Cybersecurity SOC Operations, and Computerized Accounting. Live cohorts available across all 6 shifts (Early Morning to Night) with interactive mentor code reviews.',
     poster_image_url:
       'https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&w=1200&q=80',
     application_deadline: '2027-01-15',
@@ -35,7 +35,7 @@ export const INITIAL_INTAKE_SCHEDULES: IntakeSchedule[] = [
     installment_plan: 'Flexible 2 to 3 Monthly Installments ($ USD & KES Paybill)',
     study_modes: [
       '100% Online (Live & Recorded)',
-      'Evening Classes (Live Interactive)',
+      'All Shifts (Early Morning to Night)',
       'Weekend Executive Cohort',
     ],
     contact_phone: INSTITUTION_CONFIG.contact.phone,
@@ -51,7 +51,7 @@ export const INITIAL_INTAKE_SCHEDULES: IntakeSchedule[] = [
     title: 'September 2026 Fast-Track Short Course Cohort',
     academic_year: '2026',
     term_session: 'Term 3 / Autumn Cohort',
-    headline: 'Accelerated 4-8 Week Career Certifications — Evening & Weekend Labs',
+    headline: 'Accelerated 4-8 Week Career Certifications — Flexible Shifts (Early Morning to Night)',
     description:
       'Designed for working professionals, university researchers, and international visa applicants. Hands-on training in RStudio biostatistics, SPSS survey econometric modeling, French & German language certifications, and Canva Pro digital graphics.',
     poster_image_url:
@@ -71,7 +71,7 @@ export const INITIAL_INTAKE_SCHEDULES: IntakeSchedule[] = [
     installment_plan: 'Pay in 2 Easy Monthly Installments',
     study_modes: [
       '100% Online (Live & Recorded)',
-      'Evening Classes (Live Interactive)',
+      'All Shifts (Early Morning to Night)',
       'Self-Paced Masterclass & 1-on-1 Labs',
     ],
     contact_phone: INSTITUTION_CONFIG.contact.phone,

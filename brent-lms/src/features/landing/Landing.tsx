@@ -88,7 +88,7 @@ const TESTIMONIALS = [
     course: 'Full-Stack Web Dev (React 19 & Node.js)',
     avatar: '💻',
     quote:
-      'Enrolling in Éclat’s React 19 and Node.js course from Germany was the best career decision I made. The live evening coding labs, GitHub pull request reviews, and API deployments prepared me to land my software developer role.',
+      'Enrolling in Éclat’s React 19 and Node.js course from Germany was the best career decision I made. The live interactive coding labs, GitHub pull request reviews, and API deployments prepared me to land my software developer role.',
     rating: 5,
   },
   {
@@ -447,7 +447,7 @@ export function Landing() {
     phone: '',
     email: '',
     course: 'Comprehensive Computer Packages & Digital Skills',
-    preferredShift: 'Evening (5:30 PM - 7:30 PM)',
+    preferredShift: 'Early Morning Batch (6:00 AM - 8:00 AM EAT)',
     notes: '',
   })
 
@@ -1397,7 +1397,7 @@ export function Landing() {
               <span style={{ color: '#22c55e' }}>✓</span> ⭐️ 4.9/5 Student Satisfaction
             </span>
             <span style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
-              <span style={{ color: '#22c55e' }}>✓</span> 100% Virtual Evening & Weekend Cohorts
+              <span style={{ color: '#22c55e' }}>✓</span> 6 Daily Shifts: Early Morning to Night
             </span>
             <span style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
               <span style={{ color: '#22c55e' }}>✓</span> Verified Digital Certificates
@@ -1670,7 +1670,7 @@ export function Landing() {
                 ⚡ 100% ONLINE INTAKE REGISTRATION OPEN
               </div>
               <div style={{ fontSize: isMobile ? '0.94rem' : '1.05rem', fontWeight: 800, color: '#ffffff', marginTop: '2px' }}>
-                Live Virtual Cohorts — Evening & Weekend Interactive Batches
+                Live Virtual Cohorts — Early Morning, Late Morning, Midday, Afternoon, Evening & Night Batches
               </div>
               <div style={{ fontSize: '0.76rem', color: '#cbd5e1', marginTop: '2px' }}>
                 🌐 Study from anywhere in Kenya, Africa & Worldwide • 24/7 LMS Access
@@ -1808,10 +1808,10 @@ export function Landing() {
               ⏰
             </div>
             <h3 style={{ fontSize: '1.15rem', fontWeight: 800, color: '#0f172a', margin: '0 0 0.4rem' }}>
-              Flexible Evening & Weekend Batches
+              Flexible Shifts: Early Morning to Night
             </h3>
             <p style={{ fontSize: '0.88rem', color: '#334155', lineHeight: 1.6, margin: 0 }}>
-              Attend live online evening sessions (6:00 PM – 9:30 PM) or weekend masterclasses. Missed a class? Watch HD video replays anytime on the portal.
+              Attend live online sessions across 6 flexible daily shifts (Early Morning, Late Morning, Midday, Afternoon, Evening, or Night). Missed a class? Watch HD video replays anytime on the portal.
             </p>
           </div>
 
@@ -2704,7 +2704,7 @@ export function Landing() {
             </div>
             <div style={{ fontSize: '0.92rem', color: '#475569', lineHeight: 1.7, marginTop: '1.25rem' }}>
               <div>💻 <strong>Delivery Mode:</strong> 100% Online (Live Interactive Video + LMS Modules)</div>
-              <div>🕒 <strong>Live Class Shifts:</strong> Morning (9:00 AM) | Evening (6:00 PM - 9:30 PM) | Weekends</div>
+              <div>🕒 <strong>Live Class Shifts:</strong> Early Morning, Late Morning, Midday, Afternoon, Evening & Night Batches</div>
               <div>📞 <strong>Admissions Hotline:</strong> {INSTITUTION_CONFIG.contact.phone}</div>
               <div>✉️ <strong>Direct Inquiries:</strong> {INSTITUTION_CONFIG.contact.email}</div>
             </div>
@@ -2855,7 +2855,7 @@ export function Landing() {
               <div style={{ marginTop: '0.75rem', padding: '0.7rem 0.9rem', background: '#131b2e', border: '1px solid #2e3d61', borderRadius: '8px', fontSize: '0.82rem' }}>
                 <div style={{ color: '#fcd34d', fontWeight: 700, marginBottom: '0.25rem' }}>🕒 Online Learning & Support:</div>
                 <div style={{ color: '#e2e8f0' }}>• Cloud LMS Portal: <strong>24/7 Unlimited Access</strong></div>
-                <div style={{ color: '#e2e8f0' }}>• Live Batches: <strong>Morning, Evening & Weekends</strong></div>
+                <div style={{ color: '#e2e8f0' }}>• Live Batches: <strong>Early Morning to Night (6 Daily Shifts)</strong></div>
                 <div style={{ color: '#86efac' }}>• Student Support: <strong>Daily Virtual Desk</strong></div>
               </div>
             </div>
@@ -2992,10 +2992,14 @@ export function Landing() {
                       value={inquiryForm.preferredShift}
                       onChange={(e) => setInquiryForm({ ...inquiryForm, preferredShift: e.target.value })}
                     >
-                      <option value="Morning Batch (8:30 AM - 11:30 AM)">Morning Batch (8:30 AM - 11:30 AM)</option>
-                      <option value="Afternoon Batch (2:00 PM - 5:00 PM)">Afternoon Batch (2:00 PM - 5:00 PM)</option>
-                      <option value="Evening Executive Batch (5:30 PM - 7:30 PM)">Evening Executive Batch (5:30 PM - 7:30 PM)</option>
-                      <option value="Saturday Intensive Masterclass (8:30 AM - 4:30 PM)">Saturday Intensive Masterclass (8:30 AM - 4:30 PM)</option>
+                      <option value="Early Morning Batch (6:00 AM - 8:00 AM EAT)">Early Morning Batch (6:00 AM - 8:00 AM EAT)</option>
+                      <option value="Late Morning Batch (9:00 AM - 11:30 AM EAT)">Late Morning Batch (9:00 AM - 11:30 AM EAT)</option>
+                      <option value="Midday Batch (11:30 AM - 1:30 PM EAT)">Midday Batch (11:30 AM - 1:30 PM EAT)</option>
+                      <option value="Afternoon Batch (2:00 PM - 4:30 PM EAT)">Afternoon Batch (2:00 PM - 4:30 PM EAT)</option>
+                      <option value="Evening Batch (5:30 PM - 7:30 PM EAT)">Evening Batch (5:30 PM - 7:30 PM EAT)</option>
+                      <option value="Night Batch (8:00 PM - 10:00 PM EAT)">Night Batch (8:00 PM - 10:00 PM EAT)</option>
+                      <option value="Weekend Intensive Masterclass (Saturday & Sunday)">Weekend Intensive Masterclass (Saturday & Sunday)</option>
+                      <option value="Cambridge IGCSE Complete Structure Cohort">Cambridge IGCSE Complete Structure Cohort</option>
                     </select>
                   </div>
                 </div>
