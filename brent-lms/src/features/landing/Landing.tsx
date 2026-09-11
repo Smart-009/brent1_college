@@ -968,19 +968,20 @@ export function Landing() {
 
             {/* Mobile-Only Actions */}
             {isMobile && (
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem' }}>
                 <button
                   type="button"
                   className="btn btn-sm btn-primary"
                   style={{
                     fontWeight: 800,
-                    padding: '0.45rem 0.65rem',
+                    padding: '0.42rem 0.65rem',
                     borderRadius: '8px',
                     fontSize: '0.78rem',
                     whiteSpace: 'nowrap',
                     display: 'inline-flex',
                     alignItems: 'center',
                     gap: '4px',
+                    boxShadow: '0 2px 8px rgba(37, 99, 235, 0.35)',
                   }}
                   onClick={() => setShowPortalDesksModal(true)}
                 >
@@ -990,172 +991,302 @@ export function Landing() {
 
                 <button
                   type="button"
-                  className="btn btn-sm landing-mobile-menu-toggle"
                   style={{
-                    background: mobileNavOpen ? '#0f172a' : '#2563eb',
+                    background: mobileNavOpen ? '#0f172a' : '#1e293b',
                     color: '#ffffff',
-                    border: 'none',
-                    fontWeight: 800,
-                    fontSize: '0.85rem',
-                    padding: '0.45rem 0.75rem',
+                    border: '1px solid rgba(255, 255, 255, 0.15)',
+                    width: '38px',
+                    height: '38px',
                     borderRadius: '8px',
                     cursor: 'pointer',
                     display: 'inline-flex',
                     alignItems: 'center',
-                    gap: '4px',
-                    boxShadow: '0 2px 10px rgba(37, 99, 235, 0.4)',
+                    justifyContent: 'center',
+                    fontSize: '1.25rem',
+                    lineHeight: 1,
+                    transition: 'all 0.2s ease',
+                    boxShadow: '0 2px 8px rgba(0,0,0,0.15)',
                     flexShrink: 0,
                   }}
                   onClick={() => setMobileNavOpen(!mobileNavOpen)}
-                  aria-label="Toggle Navigation Menu"
+                  aria-label={mobileNavOpen ? 'Close Navigation Menu' : 'Open Navigation Menu'}
                 >
-                  <span style={{ fontSize: '1.1rem', lineHeight: 1 }}>{mobileNavOpen ? '✕' : '☰'}</span>
-                  <span>{mobileNavOpen ? 'Close' : 'Menu'}</span>
+                  {mobileNavOpen ? '✕' : '☰'}
                 </button>
               </div>
             )}
           </div>
         </div>
 
-        {/* Mobile Slide-Down Navigation Menu */}
+        {/* Mobile Slide-Over Navigation Drawer Backdrop */}
+        {mobileNavOpen && (
+          <div
+            onClick={() => setMobileNavOpen(false)}
+            style={{
+              position: 'fixed',
+              top: 0,
+              left: 0,
+              right: 0,
+              bottom: 0,
+              background: 'rgba(5, 8, 15, 0.72)',
+              backdropFilter: 'blur(6px)',
+              WebkitBackdropFilter: 'blur(6px)',
+              zIndex: 9998,
+              animation: 'fadeIn 0.2s ease',
+            }}
+          />
+        )}
+
+        {/* Mobile Slide-Over Navigation Drawer Panel */}
         {mobileNavOpen && (
           <div
             style={{
-              background: '#ffffff',
-              borderTop: '2px solid #3b82f6',
-              padding: '1.25rem 1rem',
-              boxShadow: '0 15px 30px rgba(0,0,0,0.15)',
-              animation: 'fadeIn 0.2s ease',
-              maxHeight: '82vh',
-              overflowY: 'auto',
-              WebkitOverflowScrolling: 'touch',
+              position: 'fixed',
+              top: 0,
+              right: 0,
+              bottom: 0,
+              width: 'min(330px, 86vw)',
+              background: '#090d16',
+              borderLeft: '1px solid rgba(212, 175, 55, 0.25)',
+              boxShadow: '-10px 0 40px rgba(0, 0, 0, 0.7)',
+              zIndex: 9999,
+              display: 'flex',
+              flexDirection: 'column',
+              animation: 'slideInRight 0.25s cubic-bezier(0.16, 1, 0.3, 1)',
             }}
           >
-            <nav style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem', fontSize: '0.94rem', fontWeight: 600 }}>
-              <a
-                href="#intakes-section"
+            {/* Drawer Header */}
+            <div
+              style={{
+                padding: '1.1rem 1.25rem',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                borderBottom: '1px solid rgba(255, 255, 255, 0.08)',
+                background: 'rgba(15, 23, 42, 0.8)',
+              }}
+            >
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem' }}>
+                <img
+                  src="/logo.png"
+                  alt="Éclat Institute Logo"
+                  style={{ width: '32px', height: '32px', borderRadius: '50%', border: '1.5px solid #d4af37' }}
+                />
+                <div>
+                  <div style={{ fontSize: '0.95rem', fontWeight: 900, color: '#d4af37', fontFamily: 'var(--font-heading)', lineHeight: 1.1 }}>
+                    ÉCLAT INSTITUTE
+                  </div>
+                  <div style={{ fontSize: '0.62rem', color: '#94a3b8', fontWeight: 600 }}>
+                    100% Online Global Academy
+                  </div>
+                </div>
+              </div>
+
+              <button
+                type="button"
                 onClick={() => setMobileNavOpen(false)}
-                style={{ color: '#d97706', fontWeight: 850, textDecoration: 'none', padding: '0.65rem 0.75rem', borderRadius: '8px', display: 'flex', alignItems: 'center', gap: '10px', background: '#fffbeb', border: '1px solid #fde68a' }}
+                style={{
+                  background: 'rgba(255, 255, 255, 0.08)',
+                  border: '1px solid rgba(255, 255, 255, 0.12)',
+                  color: '#ffffff',
+                  width: '32px',
+                  height: '32px',
+                  borderRadius: '8px',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  fontSize: '1rem',
+                  fontWeight: 900,
+                }}
+                aria-label="Close menu"
               >
-                <span style={{ fontSize: '1.1rem' }}>🗓️</span>
-                <span>Upcoming Intakes & Admissions</span>
-              </a>
+                ✕
+              </button>
+            </div>
+
+            {/* Drawer Scrollable Body */}
+            <div
+              style={{
+                flex: 1,
+                overflowY: 'auto',
+                WebkitOverflowScrolling: 'touch',
+                padding: '1rem 1.1rem',
+                display: 'flex',
+                flexDirection: 'column',
+                gap: '0.35rem',
+              }}
+            >
+              <div style={{ fontSize: '0.68rem', fontWeight: 800, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.08em', margin: '0.35rem 0 0.25rem 0.35rem' }}>
+                Academic Directory
+              </div>
+
+              <Link
+                to="/"
+                onClick={() => {
+                  setMobileNavOpen(false)
+                  window.scrollTo({ top: 0, behavior: 'smooth' })
+                }}
+                style={{
+                  color: '#f8fafc',
+                  textDecoration: 'none',
+                  padding: '0.65rem 0.8rem',
+                  borderRadius: '10px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '10px',
+                  fontSize: '0.9rem',
+                  fontWeight: 700,
+                  background: 'rgba(255, 255, 255, 0.04)',
+                }}
+              >
+                <span>🏠</span>
+                <span>Home</span>
+              </Link>
 
               <Link
                 to="/courses"
                 onClick={() => setMobileNavOpen(false)}
-                style={{ color: '#0284c7', fontWeight: 850, textDecoration: 'none', padding: '0.65rem 0.75rem', borderRadius: '8px', display: 'flex', alignItems: 'center', gap: '10px', background: '#f0f9ff', border: '1px solid #bae6fd' }}
+                style={{
+                  color: '#38bdf8',
+                  textDecoration: 'none',
+                  padding: '0.65rem 0.8rem',
+                  borderRadius: '10px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '10px',
+                  fontSize: '0.9rem',
+                  fontWeight: 800,
+                  background: 'rgba(56, 189, 248, 0.1)',
+                  border: '1px solid rgba(56, 189, 248, 0.25)',
+                }}
               >
-                <span style={{ fontSize: '1.1rem' }}>🇬🇧</span>
+                <span>📚</span>
+                <span>Course Catalog & Programs</span>
+              </Link>
+
+              <Link
+                to="/courses?cat=British+Curriculum"
+                onClick={() => setMobileNavOpen(false)}
+                style={{
+                  color: '#d4af37',
+                  textDecoration: 'none',
+                  padding: '0.65rem 0.8rem',
+                  borderRadius: '10px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '10px',
+                  fontSize: '0.88rem',
+                  fontWeight: 800,
+                  background: 'rgba(212, 175, 55, 0.1)',
+                  border: '1px solid rgba(212, 175, 55, 0.25)',
+                }}
+              >
+                <span>🇬🇧</span>
                 <span>Cambridge IGCSE & A-Levels (KE042)</span>
               </Link>
 
               <a
-                href="#about"
+                href="#intakes-section"
                 onClick={() => setMobileNavOpen(false)}
-                style={{ color: '#0f172a', textDecoration: 'none', padding: '0.6rem 0.75rem', borderRadius: '8px', display: 'flex', alignItems: 'center', gap: '10px', background: '#f8fafc' }}
+                style={{
+                  color: '#fbbf24',
+                  textDecoration: 'none',
+                  padding: '0.65rem 0.8rem',
+                  borderRadius: '10px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '10px',
+                  fontSize: '0.88rem',
+                  fontWeight: 700,
+                  background: 'rgba(251, 191, 36, 0.08)',
+                }}
               >
-                <span style={{ fontSize: '1.1rem' }}>🏛️</span>
-                <span>About Éclat Institute</span>
-              </a>
-
-              <a
-                href="#courses"
-                onClick={() => setMobileNavOpen(false)}
-                style={{ color: '#0f172a', textDecoration: 'none', padding: '0.6rem 0.75rem', borderRadius: '8px', display: 'flex', alignItems: 'center', gap: '10px' }}
-              >
-                <span style={{ fontSize: '1.1rem' }}>📚</span>
-                <span>Courses & Academic Programs</span>
-              </a>
-
-              {/* Category Quick Jumps */}
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.4rem', margin: '0.2rem 0 0.5rem', padding: '0.25rem' }}>
-                <button
-                  type="button"
-                  onClick={() => {
-                    setActiveCategory('Data Science & Research')
-                    setMobileNavOpen(false)
-                    const el = document.getElementById('courses')
-                    if (el) el.scrollIntoView({ behavior: 'smooth' })
-                  }}
-                  style={{ textAlign: 'left', background: '#f0f9ff', color: '#0369a1', border: '1px solid #bae6fd', borderRadius: '6px', padding: '6px 8px', fontSize: '0.78rem', fontWeight: 700, cursor: 'pointer' }}
-                >
-                  📊 Data Science & R
-                </button>
-                <button
-                  type="button"
-                  onClick={() => {
-                    setActiveCategory('Tech & Programming')
-                    setMobileNavOpen(false)
-                    const el = document.getElementById('courses')
-                    if (el) el.scrollIntoView({ behavior: 'smooth' })
-                  }}
-                  style={{ textAlign: 'left', background: '#eef2ff', color: '#4338ca', border: '1px solid #c7d2fe', borderRadius: '6px', padding: '6px 8px', fontSize: '0.78rem', fontWeight: 700, cursor: 'pointer' }}
-                >
-                  💻 Tech & Coding
-                </button>
-                <button
-                  type="button"
-                  onClick={() => {
-                    setActiveCategory('Creative Arts & Design')
-                    setMobileNavOpen(false)
-                    const el = document.getElementById('courses')
-                    if (el) el.scrollIntoView({ behavior: 'smooth' })
-                  }}
-                  style={{ textAlign: 'left', background: '#faf5ff', color: '#7e22ce', border: '1px solid #e9d5ff', borderRadius: '6px', padding: '6px 8px', fontSize: '0.78rem', fontWeight: 700, cursor: 'pointer' }}
-                >
-                  🎨 UI/UX & Design
-                </button>
-                <button
-                  type="button"
-                  onClick={() => {
-                    setActiveCategory('Languages & Communication')
-                    setMobileNavOpen(false)
-                    const el = document.getElementById('courses')
-                    if (el) el.scrollIntoView({ behavior: 'smooth' })
-                  }}
-                  style={{ textAlign: 'left', background: '#f0fdf4', color: '#15803d', border: '1px solid #bbf7d0', borderRadius: '6px', padding: '6px 8px', fontSize: '0.78rem', fontWeight: 700, cursor: 'pointer' }}
-                >
-                  🗣️ Languages & IELTS
-                </button>
-              </div>
-
-              <a
-                href="#calculator"
-                onClick={() => setMobileNavOpen(false)}
-                style={{ color: '#0f172a', textDecoration: 'none', padding: '0.6rem 0.75rem', borderRadius: '8px', display: 'flex', alignItems: 'center', gap: '10px' }}
-              >
-                <span style={{ fontSize: '1.1rem' }}>💳</span>
-                <span>Tuition & Fees Inquiry</span>
+                <span>🗓️</span>
+                <span>Upcoming Intakes & Admissions</span>
               </a>
 
               <Link
                 to="/library"
                 onClick={() => setMobileNavOpen(false)}
-                style={{ color: '#2563eb', fontWeight: 800, textDecoration: 'none', padding: '0.6rem 0.75rem', borderRadius: '8px', display: 'flex', alignItems: 'center', gap: '10px', background: '#eff6ff' }}
+                style={{
+                  color: '#f8fafc',
+                  textDecoration: 'none',
+                  padding: '0.65rem 0.8rem',
+                  borderRadius: '10px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '10px',
+                  fontSize: '0.88rem',
+                  fontWeight: 700,
+                  background: 'rgba(255, 255, 255, 0.04)',
+                }}
               >
-                <span style={{ fontSize: '1.1rem' }}>📖</span>
+                <span>📖</span>
                 <span>Free E-Library & Past Papers</span>
               </Link>
+
+              <a
+                href="#calculator"
+                onClick={() => setMobileNavOpen(false)}
+                style={{
+                  color: '#f8fafc',
+                  textDecoration: 'none',
+                  padding: '0.65rem 0.8rem',
+                  borderRadius: '10px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '10px',
+                  fontSize: '0.88rem',
+                  fontWeight: 700,
+                  background: 'rgba(255, 255, 255, 0.04)',
+                }}
+              >
+                <span>💳</span>
+                <span>Tuition Fees Inquiry</span>
+              </a>
 
               <Link
                 to="/timetable"
                 onClick={() => setMobileNavOpen(false)}
-                style={{ color: '#0f172a', textDecoration: 'none', padding: '0.6rem 0.75rem', borderRadius: '8px', display: 'flex', alignItems: 'center', gap: '10px' }}
+                style={{
+                  color: '#f8fafc',
+                  textDecoration: 'none',
+                  padding: '0.65rem 0.8rem',
+                  borderRadius: '10px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '10px',
+                  fontSize: '0.88rem',
+                  fontWeight: 700,
+                  background: 'rgba(255, 255, 255, 0.04)',
+                }}
               >
-                <span style={{ fontSize: '1.1rem' }}>📅</span>
+                <span>📅</span>
                 <span>Virtual Class Timetable</span>
               </Link>
 
-              <a
-                href="#testimonials"
+              <Link
+                to="/about"
                 onClick={() => setMobileNavOpen(false)}
-                style={{ color: '#0f172a', textDecoration: 'none', padding: '0.6rem 0.75rem', borderRadius: '8px', display: 'flex', alignItems: 'center', gap: '10px' }}
+                style={{
+                  color: '#f8fafc',
+                  textDecoration: 'none',
+                  padding: '0.65rem 0.8rem',
+                  borderRadius: '10px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '10px',
+                  fontSize: '0.88rem',
+                  fontWeight: 700,
+                  background: 'rgba(255, 255, 255, 0.04)',
+                }}
               >
-                <span style={{ fontSize: '1.1rem' }}>⭐</span>
-                <span>Student Reviews & Outcomes</span>
-              </a>
+                <span>🏛️</span>
+                <span>About Éclat Institute</span>
+              </Link>
 
+              {/* Native Apps Download */}
               <button
                 type="button"
                 onClick={() => {
@@ -1163,49 +1294,113 @@ export function Landing() {
                   setAppModalOpen(true)
                   setMobileNavOpen(false)
                 }}
-                style={{ width: '100%', textAlign: 'left', background: '#f0fdf4', color: '#15803d', border: '1px solid #bbf7d0', padding: '0.65rem 0.75rem', borderRadius: '8px', display: 'flex', alignItems: 'center', gap: '10px', fontWeight: 800, cursor: 'pointer', fontSize: '0.92rem' }}
+                style={{
+                  width: '100%',
+                  textAlign: 'left',
+                  background: 'rgba(34, 197, 94, 0.1)',
+                  color: '#4ade80',
+                  border: '1px solid rgba(34, 197, 94, 0.25)',
+                  padding: '0.65rem 0.8rem',
+                  borderRadius: '10px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '10px',
+                  fontWeight: 700,
+                  cursor: 'pointer',
+                  fontSize: '0.88rem',
+                  marginTop: '0.25rem',
+                }}
               >
-                <span style={{ fontSize: '1.1rem' }}>📲</span>
-                <span>Install & Download Native Apps</span>
+                <span>📲</span>
+                <span>Download Native App (APK)</span>
+              </button>
+            </div>
+
+            {/* Drawer Footer Actions */}
+            <div
+              style={{
+                padding: '1rem 1.1rem',
+                borderTop: '1px solid rgba(255, 255, 255, 0.08)',
+                background: 'rgba(15, 23, 42, 0.95)',
+                display: 'flex',
+                flexDirection: 'column',
+                gap: '0.6rem',
+              }}
+            >
+              <button
+                type="button"
+                onClick={() => {
+                  setMobileNavOpen(false)
+                  setInquiryModalOpen(true)
+                }}
+                className="btn btn-sm"
+                style={{
+                  background: '#d4af37',
+                  color: '#0c0e12',
+                  fontWeight: 900,
+                  textAlign: 'center',
+                  padding: '0.7rem',
+                  borderRadius: '10px',
+                  border: 'none',
+                  cursor: 'pointer',
+                  fontSize: '0.88rem',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '6px',
+                  boxShadow: '0 2px 10px rgba(212, 175, 55, 0.35)',
+                }}
+              >
+                <span>⚡</span>
+                <span>Apply & Enroll in Intake</span>
               </button>
 
-              <div style={{ paddingTop: '0.75rem', display: 'flex', flexDirection: 'column', gap: '0.65rem' }}>
-                <a
-                  href={getWhatsAppInquiryUrl('Hello Eclat Admissions! I need assistance with course enrollment.')}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="btn btn-sm"
-                  style={{ background: '#22c55e', color: '#ffffff', fontWeight: 800, textAlign: 'center', padding: '0.75rem', borderRadius: '10px', textDecoration: 'none', display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '8px' }}
-                >
-                  <span>💬</span>
-                  <span>WhatsApp Admissions Desk</span>
-                </a>
+              <button
+                type="button"
+                onClick={() => {
+                  setMobileNavOpen(false)
+                  setShowPortalDesksModal(true)
+                }}
+                className="btn btn-sm btn-primary"
+                style={{
+                  fontWeight: 800,
+                  textAlign: 'center',
+                  padding: '0.7rem',
+                  borderRadius: '10px',
+                  fontSize: '0.88rem',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '6px',
+                }}
+              >
+                <span>🔐</span>
+                <span>Student & Staff Portals</span>
+              </button>
 
-                <button
-                  type="button"
-                  onClick={() => {
-                    setMobileNavOpen(false)
-                    setInquiryModalOpen(true)
-                  }}
-                  className="btn btn-sm"
-                  style={{ background: '#d4af37', color: '#0c0e12', fontWeight: 900, textAlign: 'center', padding: '0.75rem', borderRadius: '10px', border: 'none', cursor: 'pointer' }}
-                >
-                  🚀 Apply & Enroll in Intake
-                </button>
-
-                <button
-                  type="button"
-                  onClick={() => {
-                    setMobileNavOpen(false)
-                    setShowPortalDesksModal(true)
-                  }}
-                  className="btn btn-sm btn-primary"
-                  style={{ fontWeight: 800, textAlign: 'center', padding: '0.75rem', borderRadius: '10px' }}
-                >
-                  🔐 Student & Staff Portals
-                </button>
-              </div>
-            </nav>
+              <a
+                href={getWhatsAppInquiryUrl('Hello Eclat Admissions! I need assistance with course enrollment.')}
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{
+                  background: '#22c55e',
+                  color: '#ffffff',
+                  fontWeight: 800,
+                  textAlign: 'center',
+                  padding: '0.65rem',
+                  borderRadius: '10px',
+                  textDecoration: 'none',
+                  display: 'flex',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  gap: '6px',
+                  fontSize: '0.84rem',
+                }}
+              >
+                <span>💬</span>
+                <span>WhatsApp Admissions Desk</span>
+              </a>
+            </div>
           </div>
         )}
       </header>
@@ -3912,7 +4107,7 @@ export function Landing() {
       )}
 
       {/* Sleek Modern Floating Support Desk (WhatsApp / Admissions Live Desk) */}
-      <div style={{ position: 'fixed', bottom: isMobile ? '76px' : '24px', right: isMobile ? '16px' : '24px', zIndex: 9990, display: 'flex', flexDirection: 'column', alignItems: 'flex-end' }}>
+      <div style={{ position: 'fixed', bottom: '24px', right: isMobile ? '16px' : '24px', zIndex: 9990, display: 'flex', flexDirection: 'column', alignItems: 'flex-end' }}>
         {supportModalOpen && (
           <div
             style={{
@@ -4114,7 +4309,7 @@ export function Landing() {
           aria-label="Scroll to top"
           style={{
             position: 'fixed',
-            bottom: isMobile ? '142px' : '96px',
+            bottom: isMobile ? '88px' : '96px',
             right: isMobile ? '16px' : '24px',
             width: '44px',
             height: '44px',
@@ -4135,98 +4330,6 @@ export function Landing() {
         >
           ↑
         </button>
-      )}
-
-      {/* Mobile-Only Persistent Sticky Bottom Action Dock */}
-      {isMobile && (
-        <div
-          style={{
-            position: 'fixed',
-            bottom: 0,
-            left: 0,
-            right: 0,
-            zIndex: 9980,
-            background: 'rgba(15, 23, 42, 0.97)',
-            backdropFilter: 'blur(16px)',
-            borderTop: '1px solid rgba(255, 255, 255, 0.15)',
-            padding: '0.55rem 0.75rem',
-            display: 'grid',
-            gridTemplateColumns: '1fr 1.2fr 1fr',
-            gap: '0.45rem',
-            boxShadow: '0 -4px 20px rgba(0, 0, 0, 0.35)',
-          }}
-        >
-          <a
-            href={getWhatsAppInquiryUrl('Hello Eclat Admissions! I need information on your programs.')}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="btn"
-            style={{
-              background: '#22c55e',
-              color: '#ffffff',
-              fontSize: '0.74rem',
-              fontWeight: 800,
-              padding: '0.55rem 0.25rem',
-              borderRadius: '8px',
-              textDecoration: 'none',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              gap: '4px',
-              whiteSpace: 'nowrap',
-            }}
-          >
-            <span>💬</span>
-            <span>WhatsApp</span>
-          </a>
-
-          <button
-            type="button"
-            className="btn btn-primary"
-            style={{
-              background: '#d4af37',
-              color: '#0c0e12',
-              fontSize: '0.78rem',
-              fontWeight: 900,
-              padding: '0.55rem 0.25rem',
-              borderRadius: '8px',
-              border: 'none',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              gap: '4px',
-              whiteSpace: 'nowrap',
-              boxShadow: '0 2px 8px rgba(212, 175, 55, 0.4)',
-            }}
-            onClick={() => setInquiryModalOpen(true)}
-          >
-            <span>⚡</span>
-            <span>Enroll Now</span>
-          </button>
-
-          <button
-            type="button"
-            className="btn btn-secondary"
-            style={{
-              background: '#1e293b',
-              color: '#ffffff',
-              border: '1px solid #3b82f6',
-              fontSize: '0.74rem',
-              fontWeight: 800,
-              padding: '0.55rem 0.25rem',
-              borderRadius: '8px',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              gap: '4px',
-              whiteSpace: 'nowrap',
-            }}
-            onClick={() => setShowPortalDesksModal(true)}
-          >
-            <span>🔐</span>
-            <span>Portals</span>
-          </button>
-        </div>
       )}
     </div>
   )

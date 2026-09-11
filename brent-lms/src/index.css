@@ -135,3 +135,25 @@ code {
   user-select: none !important;
   -webkit-touch-callout: none !important;
 }
+
+/* Mobile Navigation Drawer Animations */
+@keyframes slideInRight {
+  from {
+    transform: translateX(100%);
+    opacity: 0.7;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+

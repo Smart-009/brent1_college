@@ -329,70 +329,349 @@ export function AboutPage() {
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
               className="md:hidden"
               style={{
-                background: 'rgba(255, 255, 255, 0.08)',
-                border: '1px solid rgba(255, 255, 255, 0.2)',
+                background: mobileMenuOpen ? '#0f172a' : '#1e293b',
+                border: '1px solid rgba(255, 255, 255, 0.15)',
                 color: '#ffffff',
-                padding: '0.45rem 0.75rem',
+                width: '38px',
+                height: '38px',
                 borderRadius: '8px',
-                fontSize: '1.1rem',
+                fontSize: '1.25rem',
                 cursor: 'pointer',
+                display: 'inline-flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                lineHeight: 1,
+                flexShrink: 0,
               }}
-              aria-label="Toggle navigation menu"
+              aria-label={mobileMenuOpen ? 'Close Navigation Menu' : 'Open Navigation Menu'}
             >
               {mobileMenuOpen ? '✕' : '☰'}
             </button>
           </div>
         </div>
 
-        {/* Mobile Slide-Down Menu */}
+        {/* Mobile Slide-Over Navigation Drawer Backdrop */}
+        {mobileMenuOpen && (
+          <div
+            onClick={() => setMobileMenuOpen(false)}
+            style={{
+              position: 'fixed',
+              top: 0,
+              left: 0,
+              right: 0,
+              bottom: 0,
+              background: 'rgba(5, 8, 15, 0.72)',
+              backdropFilter: 'blur(6px)',
+              WebkitBackdropFilter: 'blur(6px)',
+              zIndex: 9998,
+              animation: 'fadeIn 0.2s ease',
+            }}
+          />
+        )}
+
+        {/* Mobile Slide-Over Navigation Drawer Panel */}
         {mobileMenuOpen && (
           <div
             style={{
-              background: '#0d1322',
-              borderTop: '1px solid rgba(59, 130, 246, 0.3)',
-              marginTop: '0.85rem',
-              padding: '1rem',
-              borderRadius: '12px',
+              position: 'fixed',
+              top: 0,
+              right: 0,
+              bottom: 0,
+              width: 'min(330px, 86vw)',
+              background: '#090d16',
+              borderLeft: '1px solid rgba(212, 175, 55, 0.25)',
+              boxShadow: '-10px 0 40px rgba(0, 0, 0, 0.7)',
+              zIndex: 9999,
               display: 'flex',
               flexDirection: 'column',
-              gap: '0.75rem',
+              animation: 'slideInRight 0.25s cubic-bezier(0.16, 1, 0.3, 1)',
             }}
           >
-            <Link
-              to="/"
-              onClick={() => setMobileMenuOpen(false)}
-              style={{ color: '#f8fafc', textDecoration: 'none', padding: '0.5rem', fontWeight: 700 }}
+            {/* Drawer Header */}
+            <div
+              style={{
+                padding: '1.1rem 1.25rem',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                borderBottom: '1px solid rgba(255, 255, 255, 0.08)',
+                background: 'rgba(15, 23, 42, 0.8)',
+              }}
             >
-              🏠 Home
-            </Link>
-            <Link
-              to="/courses"
-              onClick={() => setMobileMenuOpen(false)}
-              style={{ color: '#f8fafc', textDecoration: 'none', padding: '0.5rem', fontWeight: 700 }}
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem' }}>
+                <img
+                  src="/logo.png"
+                  alt="Éclat Institute Logo"
+                  style={{ width: '32px', height: '32px', borderRadius: '50%', border: '1.5px solid #d4af37' }}
+                />
+                <div>
+                  <div style={{ fontSize: '0.95rem', fontWeight: 900, color: '#d4af37', fontFamily: 'var(--font-heading)', lineHeight: 1.1 }}>
+                    {INSTITUTION_CONFIG.name}
+                  </div>
+                  <div style={{ fontSize: '0.62rem', color: '#94a3b8', fontWeight: 600 }}>
+                    100% Online Global Academy
+                  </div>
+                </div>
+              </div>
+
+              <button
+                type="button"
+                onClick={() => setMobileMenuOpen(false)}
+                style={{
+                  background: 'rgba(255, 255, 255, 0.08)',
+                  border: '1px solid rgba(255, 255, 255, 0.12)',
+                  color: '#ffffff',
+                  width: '32px',
+                  height: '32px',
+                  borderRadius: '8px',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  fontSize: '1rem',
+                  fontWeight: 900,
+                }}
+                aria-label="Close menu"
+              >
+                ✕
+              </button>
+            </div>
+
+            {/* Drawer Scrollable Body */}
+            <div
+              style={{
+                flex: 1,
+                overflowY: 'auto',
+                WebkitOverflowScrolling: 'touch',
+                padding: '1rem 1.1rem',
+                display: 'flex',
+                flexDirection: 'column',
+                gap: '0.35rem',
+              }}
             >
-              📚 Courses & Academic Programs
-            </Link>
-            <Link
-              to="/#intakes-section"
-              onClick={() => setMobileMenuOpen(false)}
-              style={{ color: '#f59e0b', textDecoration: 'none', padding: '0.5rem', fontWeight: 700 }}
+              <div style={{ fontSize: '0.68rem', fontWeight: 800, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.08em', margin: '0.35rem 0 0.25rem 0.35rem' }}>
+                Academic Directory
+              </div>
+
+              <Link
+                to="/"
+                onClick={() => setMobileMenuOpen(false)}
+                style={{
+                  color: '#f8fafc',
+                  textDecoration: 'none',
+                  padding: '0.65rem 0.8rem',
+                  borderRadius: '10px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '10px',
+                  fontSize: '0.9rem',
+                  fontWeight: 700,
+                  background: 'rgba(255, 255, 255, 0.04)',
+                }}
+              >
+                <span>🏠</span>
+                <span>Home</span>
+              </Link>
+
+              <Link
+                to="/courses"
+                onClick={() => setMobileMenuOpen(false)}
+                style={{
+                  color: '#38bdf8',
+                  textDecoration: 'none',
+                  padding: '0.65rem 0.8rem',
+                  borderRadius: '10px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '10px',
+                  fontSize: '0.9rem',
+                  fontWeight: 800,
+                  background: 'rgba(56, 189, 248, 0.1)',
+                  border: '1px solid rgba(56, 189, 248, 0.25)',
+                }}
+              >
+                <span>📚</span>
+                <span>Course Catalog & Programs</span>
+              </Link>
+
+              <Link
+                to="/courses?cat=British+Curriculum"
+                onClick={() => setMobileMenuOpen(false)}
+                style={{
+                  color: '#d4af37',
+                  textDecoration: 'none',
+                  padding: '0.65rem 0.8rem',
+                  borderRadius: '10px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '10px',
+                  fontSize: '0.88rem',
+                  fontWeight: 800,
+                  background: 'rgba(212, 175, 55, 0.1)',
+                  border: '1px solid rgba(212, 175, 55, 0.25)',
+                }}
+              >
+                <span>🇬🇧</span>
+                <span>Cambridge IGCSE & A-Levels</span>
+              </Link>
+
+              <Link
+                to="/#intakes-section"
+                onClick={() => setMobileMenuOpen(false)}
+                style={{
+                  color: '#fbbf24',
+                  textDecoration: 'none',
+                  padding: '0.65rem 0.8rem',
+                  borderRadius: '10px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '10px',
+                  fontSize: '0.88rem',
+                  fontWeight: 700,
+                  background: 'rgba(251, 191, 36, 0.08)',
+                }}
+              >
+                <span>🗓️</span>
+                <span>Upcoming Intakes & Admissions</span>
+              </Link>
+
+              <Link
+                to="/about"
+                onClick={() => setMobileMenuOpen(false)}
+                style={{
+                  color: '#38bdf8',
+                  textDecoration: 'none',
+                  padding: '0.65rem 0.8rem',
+                  borderRadius: '10px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '10px',
+                  fontSize: '0.88rem',
+                  fontWeight: 800,
+                  background: 'rgba(56, 189, 248, 0.1)',
+                  border: '1px solid rgba(56, 189, 248, 0.25)',
+                }}
+              >
+                <span>🏛️</span>
+                <span>About Éclat Institute</span>
+              </Link>
+
+              <Link
+                to="/library"
+                onClick={() => setMobileMenuOpen(false)}
+                style={{
+                  color: '#f8fafc',
+                  textDecoration: 'none',
+                  padding: '0.65rem 0.8rem',
+                  borderRadius: '10px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '10px',
+                  fontSize: '0.88rem',
+                  fontWeight: 700,
+                  background: 'rgba(255, 255, 255, 0.04)',
+                }}
+              >
+                <span>📖</span>
+                <span>Free E-Library & Handbooks</span>
+              </Link>
+
+              <Link
+                to="/timetable"
+                onClick={() => setMobileMenuOpen(false)}
+                style={{
+                  color: '#f8fafc',
+                  textDecoration: 'none',
+                  padding: '0.65rem 0.8rem',
+                  borderRadius: '10px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '10px',
+                  fontSize: '0.88rem',
+                  fontWeight: 700,
+                  background: 'rgba(255, 255, 255, 0.04)',
+                }}
+              >
+                <span>📅</span>
+                <span>Virtual Class Timetable</span>
+              </Link>
+
+              <Link
+                to="/#calculator"
+                onClick={() => setMobileMenuOpen(false)}
+                style={{
+                  color: '#f8fafc',
+                  textDecoration: 'none',
+                  padding: '0.65rem 0.8rem',
+                  borderRadius: '10px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '10px',
+                  fontSize: '0.88rem',
+                  fontWeight: 700,
+                  background: 'rgba(255, 255, 255, 0.04)',
+                }}
+              >
+                <span>💳</span>
+                <span>Tuition Fees Inquiry</span>
+              </Link>
+            </div>
+
+            {/* Drawer Footer Actions */}
+            <div
+              style={{
+                padding: '1rem 1.1rem',
+                borderTop: '1px solid rgba(255, 255, 255, 0.08)',
+                background: 'rgba(15, 23, 42, 0.95)',
+                display: 'flex',
+                flexDirection: 'column',
+                gap: '0.6rem',
+              }}
             >
-              🗓️ Upcoming Academic Intakes
-            </Link>
-            <Link
-              to="/about"
-              onClick={() => setMobileMenuOpen(false)}
-              style={{ color: '#38bdf8', textDecoration: 'none', padding: '0.5rem', fontWeight: 800, background: 'rgba(56, 189, 248, 0.1)', borderRadius: '6px' }}
-            >
-              🏛️ About Éclat Institute
-            </Link>
-            <Link
-              to="/library"
-              onClick={() => setMobileMenuOpen(false)}
-              style={{ color: '#f8fafc', textDecoration: 'none', padding: '0.5rem', fontWeight: 700 }}
-            >
-              📖 E-Library & Handbooks
-            </Link>
+              <Link
+                to="/login"
+                onClick={() => setMobileMenuOpen(false)}
+                className="btn btn-sm btn-primary"
+                style={{
+                  fontWeight: 800,
+                  textAlign: 'center',
+                  padding: '0.7rem',
+                  borderRadius: '10px',
+                  fontSize: '0.88rem',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '6px',
+                  textDecoration: 'none',
+                }}
+              >
+                <span>🔐</span>
+                <span>Student & Staff Portals</span>
+              </Link>
+
+              <a
+                href={getWhatsAppInquiryUrl('Hello Admissions Desk, I want to learn more about Éclat Institute programs and admissions.')}
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{
+                  background: '#22c55e',
+                  color: '#ffffff',
+                  fontWeight: 800,
+                  textAlign: 'center',
+                  padding: '0.65rem',
+                  borderRadius: '10px',
+                  textDecoration: 'none',
+                  display: 'flex',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  gap: '6px',
+                  fontSize: '0.84rem',
+                }}
+              >
+                <span>💬</span>
+                <span>WhatsApp Admissions Desk</span>
+              </a>
+            </div>
           </div>
         )}
       </header>
