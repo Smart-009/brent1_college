@@ -55,6 +55,7 @@ export function isIOSDevice(): boolean {
 }
 
 export const OFFICIAL_APK_URL = 'https://github.com/Smart-009/brent1_college/releases/latest/download/eclat-institute.apk'
+export const OFFICIAL_APKPURE_URL = 'https://apkpure.com/p/com.eclatinstitute.lms'
 export const LOCAL_APK_URL = '/downloads/eclat-institute.apk'
 export const OFFICIAL_DESKTOP_URL = '/downloads/eclat-institute-setup.exe'
 export const LOCAL_DESKTOP_URL = '/eclat-institute-setup.exe'

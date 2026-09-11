@@ -4,7 +4,7 @@ import { useIsMobile } from '@/hooks/useMediaQuery'
 import { schoolStore, schoolEventBus } from '@/lib/schoolData'
 import { supabase } from '@/lib/supabase'
 import { getEmbeddableDocumentUrl, getGoogleDrivePreviewUrl } from '@/lib/utils'
-import { OFFICIAL_APK_URL, LOCAL_DESKTOP_URL } from '@/utils/platform'
+import { OFFICIAL_APKPURE_URL, OFFICIAL_APK_URL, LOCAL_DESKTOP_URL } from '@/utils/platform'
 import { ACADEMIC_HANDBOOKS, COMIC_BOOKS_DATA, AcademicHandbook, ComicBook } from './academicHandbookData'
 import type { AcademicResource } from '@/types/school'
 
@@ -3840,6 +3840,29 @@ export function ResourceLibrary() {
 
             <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', marginBottom: '1.25rem' }}>
               <a
+                href={OFFICIAL_APKPURE_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '10px',
+                  padding: '0.85rem 1.25rem',
+                  borderRadius: '14px',
+                  background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
+                  color: '#ffffff',
+                  fontWeight: 800,
+                  fontSize: '0.92rem',
+                  textDecoration: 'none',
+                  boxShadow: '0 6px 18px rgba(16, 185, 129, 0.35)',
+                }}
+              >
+                <span>⚡</span>
+                <span>Install via APKPure Store (Official)</span>
+              </a>
+
+              <a
                 href={OFFICIAL_APK_URL}
                 download="eclat-institute.apk"
                 style={{
@@ -3849,16 +3872,16 @@ export function ResourceLibrary() {
                   gap: '10px',
                   padding: '0.85rem 1.25rem',
                   borderRadius: '14px',
-                  background: 'linear-gradient(135deg, #16a34a, #15803d)',
+                  background: 'rgba(255, 255, 255, 0.08)',
+                  border: '1px solid rgba(255, 255, 255, 0.2)',
                   color: '#ffffff',
-                  fontWeight: 800,
-                  fontSize: '0.92rem',
+                  fontWeight: 700,
+                  fontSize: '0.88rem',
                   textDecoration: 'none',
-                  boxShadow: '0 6px 18px rgba(22, 163, 74, 0.35)',
                 }}
               >
                 <span>🤖</span>
-                <span>Download Official Android App (.APK)</span>
+                <span>Direct Android Download (.APK)</span>
               </a>
 
               <a

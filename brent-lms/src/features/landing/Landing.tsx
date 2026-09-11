@@ -3,7 +3,7 @@ import { Link, useNavigate, useLocation } from 'react-router-dom'
 import { useIsMobile } from '@/hooks/useMediaQuery'
 import { NativeAppHome } from './NativeAppHome'
 import { DesktopAppHome } from './DesktopAppHome'
-import { isElectronApp, isCapacitorApp } from '@/utils/platform'
+import { isElectronApp, isCapacitorApp, OFFICIAL_APKPURE_URL, OFFICIAL_APK_URL } from '@/utils/platform'
 import { DesktopCommandPalette } from '@/components/shared/DesktopCommandPalette'
 import { supabase } from '@/lib/supabase'
 import { schoolStore } from '@/lib/schoolData'
@@ -2655,35 +2655,82 @@ export function Landing() {
             {/* Android Mobile App Card */}
             <div style={{ background: 'rgba(30, 41, 59, 0.5)', border: '1px solid #334155', borderRadius: '20px', padding: isMobile ? '1.5rem 1.25rem' : '2.5rem', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
               <div>
-                <div style={{ width: '56px', height: '56px', borderRadius: '14px', background: 'rgba(34, 197, 94, 0.15)', border: '1px solid rgba(34, 197, 94, 0.3)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.8rem', marginBottom: '1.5rem' }}>
-                  🤖
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1.25rem' }}>
+                  <div style={{ width: '56px', height: '56px', borderRadius: '14px', background: 'rgba(34, 197, 94, 0.15)', border: '1px solid rgba(34, 197, 94, 0.3)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.8rem' }}>
+                    🤖
+                  </div>
+                  <span style={{ display: 'inline-flex', alignItems: 'center', gap: '5px', background: 'rgba(16, 185, 129, 0.15)', border: '1px solid rgba(16, 185, 129, 0.4)', borderRadius: '999px', padding: '0.3rem 0.75rem', fontSize: '0.74rem', fontWeight: 800, color: '#34d399' }}>
+                    <span>🟢</span> Published on APKPure
+                  </span>
                 </div>
                 <h3 style={{ fontSize: isMobile ? '1.15rem' : '1.35rem', fontWeight: 800, color: '#ffffff', margin: '0 0 0.5rem' }}>
-                  Android Mobile App (.APK)
+                  Android Mobile App
                 </h3>
                 <p style={{ fontSize: '0.92rem', color: '#cbd5e1', lineHeight: 1.6, marginBottom: '1.5rem' }}>
-                  Take your entire college in your pocket. Live video classes, swipe-to-refresh cloud sync, and instant timetable push alerts.
+                  Take your entire college in your pocket. Live video classes, swipe-to-refresh cloud sync, and instant timetable push alerts. Verified and available on APKPure.
                 </p>
                 <ul style={{ listStyle: 'none', padding: 0, margin: '0 0 2rem', fontSize: '0.85rem', color: '#94a3b8', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                  <li>✓ Official APKPure Store Verified Package</li>
                   <li>✓ Offline E-Library & Study Materials</li>
                   <li>✓ Swipe Down Pull-to-Refresh Gesture</li>
-                  <li>✓ Pinch-to-Zoom Textbook Reader</li>
-                  <li>✓ Instant Cloud Attendance & Grades</li>
+                  <li>✓ Instant Cloud Attendance & Exam Grades</li>
                 </ul>
               </div>
 
-              <button
-                type="button"
-                onClick={() => {
-                  setAppModalTab('android')
-                  setAppModalOpen(true)
-                }}
-                className="btn"
-                style={{ background: '#16a34a', color: '#ffffff', fontWeight: 800, padding: '0.85rem', borderRadius: '12px', textAlign: 'center', cursor: 'pointer', display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '8px', boxShadow: '0 4px 14px rgba(22, 163, 74, 0.4)' }}
-              >
-                <span>🤖</span>
-                <span>Download Android App (.APK)</span>
-              </button>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.65rem' }}>
+                <a
+                  href={OFFICIAL_APKPURE_URL}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="btn"
+                  style={{
+                    background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
+                    color: '#ffffff',
+                    fontWeight: 800,
+                    padding: '0.85rem',
+                    borderRadius: '12px',
+                    textAlign: 'center',
+                    cursor: 'pointer',
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    gap: '8px',
+                    boxShadow: '0 4px 14px rgba(16, 185, 129, 0.4)',
+                    textDecoration: 'none',
+                    fontSize: '0.94rem',
+                  }}
+                >
+                  <span style={{ fontSize: '1.2rem' }}>⚡</span>
+                  <span>Install via APKPure Store</span>
+                </a>
+
+                <button
+                  type="button"
+                  onClick={() => {
+                    setAppModalTab('android')
+                    setAppModalOpen(true)
+                  }}
+                  className="btn"
+                  style={{
+                    background: 'rgba(255, 255, 255, 0.08)',
+                    color: '#ffffff',
+                    border: '1px solid rgba(255, 255, 255, 0.2)',
+                    fontWeight: 700,
+                    padding: '0.75rem',
+                    borderRadius: '12px',
+                    textAlign: 'center',
+                    cursor: 'pointer',
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    gap: '8px',
+                    fontSize: '0.86rem',
+                  }}
+                >
+                  <span>📥</span>
+                  <span>Direct Download (.APK)</span>
+                </button>
+              </div>
             </div>
 
             {/* Windows Desktop App Card */}
@@ -3650,60 +3697,84 @@ export function Landing() {
             {appModalTab === 'android' && (
               <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
                 <div style={{ background: '#f0fdf4', border: '1px solid #bbf7d0', borderRadius: '18px', padding: '1.35rem' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.5rem', flexWrap: 'wrap', gap: '6px' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                       <span style={{ fontSize: '1.4rem' }}>🤖</span>
                       <strong style={{ fontSize: '1.05rem', color: '#166534' }}>Official Android Learning App</strong>
                     </div>
-                    <span style={{ fontSize: '0.72rem', fontWeight: 800, color: '#15803d', background: '#dcfce7', padding: '0.2rem 0.55rem', borderRadius: '20px', border: '1px solid #86efac' }}>
-                      v1.0.0 • 31 MB
+                    <span style={{ fontSize: '0.72rem', fontWeight: 800, color: '#047857', background: '#d1fae5', padding: '0.2rem 0.55rem', borderRadius: '20px', border: '1px solid #6ee7b7', display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+                      <span>🟢</span> Published on APKPure
                     </span>
                   </div>
-                  <p style={{ fontSize: '0.86rem', color: '#15803d', lineHeight: 1.55, margin: '0 0 1rem', fontWeight: 500 }}>
+                  <p style={{ fontSize: '0.86rem', color: '#15803d', lineHeight: 1.55, margin: '0 0 0.85rem', fontWeight: 500 }}>
                     Access your enrolled courses, watch interactive video lectures, download lecture notes, and take exams directly on your phone.
                   </p>
 
-                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.5rem', marginBottom: '1.15rem' }}>
-                    <div style={{ background: '#ffffff', padding: '0.6rem 0.75rem', borderRadius: '10px', border: '1px solid #dcfce7', fontSize: '0.78rem', color: '#166534', display: 'flex', alignItems: 'center', gap: '6px', fontWeight: 600 }}>
-                      <span>📚</span>
-                      <span>Offline Study & Notes</span>
-                    </div>
-                    <div style={{ background: '#ffffff', padding: '0.6rem 0.75rem', borderRadius: '10px', border: '1px solid #dcfce7', fontSize: '0.78rem', color: '#166534', display: 'flex', alignItems: 'center', gap: '6px', fontWeight: 600 }}>
-                      <span>⚡</span>
-                      <span>Fast Cloud Auto-Sync</span>
-                    </div>
+                  <div style={{ background: 'rgba(255, 255, 255, 0.7)', border: '1px solid #dcfce7', borderRadius: '10px', padding: '0.5rem 0.75rem', marginBottom: '1rem', fontSize: '0.76rem', color: '#166534', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '4px' }}>
+                    <span><strong>Package:</strong> <code>com.eclatinstitute.lms</code></span>
+                    <span><strong>Version:</strong> v1.0.0 (31 MB)</span>
                   </div>
 
-                  <a
-                    href="https://github.com/Smart-009/brent1_college/releases/latest/download/eclat-institute.apk"
-                    download="eclat-institute.apk"
-                    style={{
-                      width: '100%',
-                      background: 'linear-gradient(135deg, #15803d 0%, #16a34a 100%)',
-                      color: '#ffffff',
-                      fontWeight: 800,
-                      padding: '0.85rem',
-                      borderRadius: '12px',
-                      fontSize: '0.94rem',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      gap: '8px',
-                      textDecoration: 'none',
-                      boxShadow: '0 4px 14px rgba(22, 163, 74, 0.35)',
-                      cursor: 'pointer',
-                      border: 'none',
-                      transition: 'all 0.15s ease',
-                    }}
-                  >
-                    <span style={{ fontSize: '1.1rem' }}>📥</span>
-                    <span>Download Android App (.APK)</span>
-                  </a>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '0.65rem' }}>
+                    {/* Primary Option: APKPure Store */}
+                    <a
+                      href={OFFICIAL_APKPURE_URL}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      style={{
+                        width: '100%',
+                        background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
+                        color: '#ffffff',
+                        fontWeight: 800,
+                        padding: '0.85rem',
+                        borderRadius: '12px',
+                        fontSize: '0.94rem',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        gap: '8px',
+                        textDecoration: 'none',
+                        boxShadow: '0 4px 14px rgba(16, 185, 129, 0.35)',
+                        cursor: 'pointer',
+                        border: 'none',
+                        transition: 'all 0.15s ease',
+                      }}
+                    >
+                      <span style={{ fontSize: '1.2rem' }}>⚡</span>
+                      <span>Install via APKPure Store (Official)</span>
+                    </a>
+
+                    {/* Secondary Option: Direct APK Download */}
+                    <a
+                      href={OFFICIAL_APK_URL}
+                      download="eclat-institute.apk"
+                      style={{
+                        width: '100%',
+                        background: '#ffffff',
+                        color: '#166534',
+                        fontWeight: 700,
+                        padding: '0.75rem',
+                        borderRadius: '12px',
+                        fontSize: '0.86rem',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        gap: '8px',
+                        textDecoration: 'none',
+                        border: '1.5px solid #86efac',
+                        cursor: 'pointer',
+                        transition: 'all 0.15s ease',
+                      }}
+                    >
+                      <span style={{ fontSize: '1.1rem' }}>📥</span>
+                      <span>Direct Standalone .APK Download</span>
+                    </a>
+                  </div>
                 </div>
 
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px', fontSize: '0.75rem', color: '#64748b' }}>
                   <span>🛡️</span>
-                  <span>100% Virus-Free & Verified Official Package</span>
+                  <span>100% Virus-Free & Verified Official Google Play Compatible APK</span>
                 </div>
               </div>
             )}

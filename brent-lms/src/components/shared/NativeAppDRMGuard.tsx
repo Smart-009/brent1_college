@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom'
-import { OFFICIAL_APK_URL, LOCAL_DESKTOP_URL } from '@/utils/platform'
+import { OFFICIAL_APK_URL, OFFICIAL_APKPURE_URL, LOCAL_DESKTOP_URL } from '@/utils/platform'
 
 interface NativeAppDRMGuardProps {
   title?: string
@@ -162,7 +162,32 @@ export function NativeAppDRMGuard({
 
         {/* App Action Buttons (Android & Desktop Laptop) */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
-          {/* Android App Button */}
+          {/* APKPure Store Verified Install Button */}
+          <a
+            href={OFFICIAL_APKPURE_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: '10px',
+              padding: '0.9rem 1.4rem',
+              borderRadius: '14px',
+              background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
+              color: '#ffffff',
+              fontWeight: 800,
+              fontSize: '0.96rem',
+              textDecoration: 'none',
+              boxShadow: '0 6px 20px rgba(16, 185, 129, 0.35)',
+              transition: 'all 0.2s',
+            }}
+          >
+            <span style={{ fontSize: '1.25rem' }}>⚡</span>
+            <span>Install via APKPure Store (Official)</span>
+          </a>
+
+          {/* Android Direct APK Button */}
           <a
             href={OFFICIAL_APK_URL}
             download="eclat-institute.apk"
@@ -171,19 +196,19 @@ export function NativeAppDRMGuard({
               alignItems: 'center',
               justifyContent: 'center',
               gap: '10px',
-              padding: '0.9rem 1.4rem',
+              padding: '0.75rem 1.4rem',
               borderRadius: '14px',
-              background: 'linear-gradient(135deg, #16a34a 0%, #15803d 100%)',
+              background: 'rgba(255, 255, 255, 0.08)',
+              border: '1px solid rgba(255, 255, 255, 0.2)',
               color: '#ffffff',
-              fontWeight: 800,
-              fontSize: '0.96rem',
+              fontWeight: 700,
+              fontSize: '0.88rem',
               textDecoration: 'none',
-              boxShadow: '0 6px 20px rgba(22, 163, 74, 0.35)',
               transition: 'all 0.2s',
             }}
           >
-            <span style={{ fontSize: '1.25rem' }}>🤖</span>
-            <span>Download Official Android App (.APK)</span>
+            <span style={{ fontSize: '1.1rem' }}>🤖</span>
+            <span>Direct Standalone .APK Download</span>
           </a>
 
           {/* Laptop / Desktop App Button */}
