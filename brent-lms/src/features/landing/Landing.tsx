@@ -10,6 +10,7 @@ import { schoolStore } from '@/lib/schoolData'
 import { INSTITUTION_CONFIG, getWhatsAppInquiryUrl } from '@/config/institution'
 import { OFFICIAL_COURSES, getDynamicCoursesList } from '@/config/officialCourses'
 import { IntakeAdvertsSection } from './IntakeAdvertsSection'
+import { CertificateGenerator, CertificateData, SAMPLE_CERTIFICATES } from '@/components/shared/CertificateGenerator'
 import type { Role } from '@/lib/database.types'
 
 interface CourseItem {
@@ -441,6 +442,16 @@ export function Landing() {
     certNumber?: string
     status?: string
   } | null>(null)
+  const [previewCert, setPreviewCert] = useState<CertificateData | null>(null)
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const params = new URLSearchParams(window.location.search)
+      if (params.get('view') === 'certificate' || window.location.hash === '#certificate' || window.location.hash === '#certificate-preview') {
+        setPreviewCert(SAMPLE_CERTIFICATES.software_engineering)
+      }
+    }
+  }, [])
 
   const [inquiryForm, setInquiryForm] = useState({
     name: '',
@@ -2020,6 +2031,27 @@ export function Landing() {
             <p style={{ fontSize: '0.88rem', color: '#334155', lineHeight: 1.6, margin: 0 }}>
               Receive cryptographically signed digital certificates with instant QR verification for LinkedIn, remote jobs, and international applications.
             </p>
+            <button
+              type="button"
+              onClick={() => setPreviewCert(SAMPLE_CERTIFICATES.software_engineering)}
+              style={{
+                marginTop: '0.85rem',
+                background: 'none',
+                border: 'none',
+                color: '#2563eb',
+                fontWeight: 700,
+                fontSize: '0.82rem',
+                padding: 0,
+                cursor: 'pointer',
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '4px',
+                textDecoration: 'underline',
+              }}
+            >
+              <span>👁️ Preview Official Sample Diploma</span>
+              <span>→</span>
+            </button>
           </div>
 
           <div style={{ background: '#ffffff', border: '1px solid #cbd5e1', borderRadius: '16px', padding: isMobile ? '1.25rem' : '2rem', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.04)' }}>
@@ -2975,7 +3007,7 @@ export function Landing() {
             Employers, embassies, and academic institutions in Kenya, the Middle East, and worldwide can instantly verify authentic Eclat Institute credentials.
           </p>
 
-          <form onSubmit={handleVerifyCert} style={{ display: 'flex', gap: '0.75rem', justifyContent: 'center', flexWrap: 'wrap', marginBottom: '2rem', width: '100%' }}>
+          <form onSubmit={handleVerifyCert} style={{ display: 'flex', gap: '0.75rem', justifyContent: 'center', flexWrap: 'wrap', marginBottom: '1rem', width: '100%' }}>
             <input
               type="text"
               className="input"
@@ -2992,6 +3024,33 @@ export function Landing() {
               🔍 Verify Certificate
             </button>
           </form>
+
+          {/* Quick Preview Sample Diploma Button */}
+          <div style={{ marginBottom: '2rem' }}>
+            <button
+              type="button"
+              onClick={() => setPreviewCert(SAMPLE_CERTIFICATES.software_engineering)}
+              style={{
+                background: 'rgba(212, 175, 55, 0.12)',
+                border: '1px solid rgba(212, 175, 55, 0.4)',
+                color: '#fef08a',
+                fontSize: '0.85rem',
+                fontWeight: 800,
+                padding: '0.55rem 1.35rem',
+                borderRadius: '25px',
+                cursor: 'pointer',
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '8px',
+                boxShadow: '0 4px 12px rgba(212, 175, 55, 0.2)',
+                transition: 'all 0.15s ease',
+              }}
+            >
+              <span>🎓</span>
+              <span>View Official Sample Conferred Diploma (Preview)</span>
+              <span style={{ fontSize: '0.75rem', opacity: 0.85 }}>→</span>
+            </button>
+          </div>
 
           {certResult && (
             <div style={{ maxWidth: '600px', margin: '0 auto', textAlign: 'left' }}>
@@ -3011,6 +3070,45 @@ export function Landing() {
                     <div>🔢 <strong>Certificate Reference:</strong> <span style={{ color: '#fde047', fontWeight: 800 }}>{certResult.certNumber}</span></div>
                     <div>🌐 <strong>Delivery Format:</strong> 100% Online (Verified Digital Credential)</div>
                   </div>
+
+                  <button
+                    type="button"
+                    onClick={() =>
+                      setPreviewCert({
+                        student_name: certResult.studentName || 'Verified Graduate',
+                        admission_number: certResult.certNumber || 'EI-2026-001',
+                        course_title: certResult.courseTitle || 'Executive Professional Diploma',
+                        grade: 'Distinction (Grade A+)',
+                        percentage: 95.5,
+                        issue_date: certResult.completionDate || new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' }),
+                        certificate_no: certResult.certNumber || 'EI-CERT-2026-001',
+                        duration: '12 Weeks Practical Intensive (120 CPD Hours)',
+                        trainer_name: 'Eng. Beatrice Ochieng, M.Sc.',
+                        skills_acquired: ['Hands-on Laboratory Mastery', 'Technical Workflow & Architecture', 'Verified Competencies'],
+                        honors: 'Conferred with Highest Institutional Distinction',
+                      })
+                    }
+                    style={{
+                      marginTop: '1.25rem',
+                      width: '100%',
+                      background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
+                      color: '#ffffff',
+                      border: 'none',
+                      fontWeight: 800,
+                      fontSize: '0.92rem',
+                      padding: '0.8rem',
+                      borderRadius: '10px',
+                      cursor: 'pointer',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      gap: '8px',
+                      boxShadow: '0 4px 14px rgba(16, 185, 129, 0.35)',
+                    }}
+                  >
+                    <span>📜</span>
+                    <span>View Official Conferred Certificate Document</span>
+                  </button>
                 </div>
               ) : (
                 <div style={{ background: '#450a0a', border: '1.5px solid #ef4444', borderRadius: '14px', padding: '1.25rem', color: '#fef2f2', textAlign: 'center' }}>
@@ -4401,6 +4499,13 @@ export function Landing() {
         >
           ↑
         </button>
+      )}
+      {/* World-Class Conferred Institutional Certificate Modal */}
+      {previewCert && (
+        <CertificateGenerator
+          cert={previewCert}
+          onClose={() => setPreviewCert(null)}
+        />
       )}
     </div>
   )
