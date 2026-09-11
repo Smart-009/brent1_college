@@ -55,7 +55,7 @@ export function CertificateGenerator({
             <span style={{ fontSize: '1.4rem' }}>🎓</span>
             <div>
               <strong style={{ fontSize: '1rem', color: '#ffffff' }}>Official Professional Certificate of Completion</strong>
-              <div style={{ fontSize: '0.78rem', color: '#93c5fd' }}>Verified Institutional Credential • 100% Online Global Academy</div>
+              <div style={{ fontSize: '0.78rem', color: '#93c5fd' }}>Verified Institutional Credential • 100% Online Virtual Campus</div>
             </div>
           </div>
           <div style={{ display: 'flex', gap: '0.75rem' }}>

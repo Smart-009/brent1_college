@@ -52,10 +52,10 @@ export interface InstitutionConfig {
 export const INSTITUTION_CONFIG: InstitutionConfig = {
   name: (import.meta.env.VITE_INSTITUTION_NAME as string) || 'Éclat Institute',
   shortName: (import.meta.env.VITE_INSTITUTION_SHORT_NAME as string) || 'Éclat Institute',
-  tagline: (import.meta.env.VITE_INSTITUTION_TAGLINE as string) || '100% Online Global Academy',
+  tagline: (import.meta.env.VITE_INSTITUTION_TAGLINE as string) || '100% Online Virtual Campus',
   description:
     (import.meta.env.VITE_INSTITUTION_DESC as string) ||
-    'Certified 100% Online Global Academy for Technology, Software Engineering, Data Science, and Modern Languages.',
+    'Certified 100% Online Virtual Campus for Technology, Software Engineering, Data Science, and Modern Languages.',
   websiteUrl: (import.meta.env.VITE_WEBSITE_URL as string) || 'https://eclat.institute',
   portalUrl: (import.meta.env.VITE_PORTAL_URL as string) || 'https://eclat.institute/login',
   domain: (import.meta.env.VITE_INSTITUTION_DOMAIN as string) || 'eclat.institute',

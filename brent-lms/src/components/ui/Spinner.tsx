@@ -128,7 +128,7 @@ export function LoadingScreen({ message = 'Loading Éclat Portal…' }: { messag
             backdropFilter: 'blur(6px)',
           }}
         >
-          🎓 100% Online Global Academy
+          🎓 100% Online Virtual Campus
         </div>
 
         {/* Animated Shimmer Loading Bar */}
@@ -360,7 +360,7 @@ export function AppOpeningSplashScreen({ onFinished }: { onFinished?: () => void
           }}
         >
           <span>🎓</span>
-          <span>100% Online Global Academy</span>
+          <span>100% Online Virtual Campus</span>
         </div>
 
         {/* Dynamic Progress Bar */}

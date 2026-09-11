@@ -255,7 +255,7 @@ export function AboutPage() {
                 {INSTITUTION_CONFIG.name}
               </div>
               <div style={{ fontSize: '0.7rem', color: '#94a3b8', fontWeight: 600 }}>
-                100% Online Global Academy
+                100% Online Virtual Campus
               </div>
             </div>
           </div>
@@ -409,7 +409,7 @@ export function AboutPage() {
                     {INSTITUTION_CONFIG.name}
                   </div>
                   <div style={{ fontSize: '0.62rem', color: '#94a3b8', fontWeight: 600 }}>
-                    100% Online Global Academy
+                    100% Online Virtual Campus
                   </div>
                 </div>
               </div>
@@ -705,7 +705,7 @@ export function AboutPage() {
             }}
           >
             <span>🏛️</span>
-            <span>Certified 100% Online Global Academy</span>
+            <span>Certified 100% Online Virtual Campus</span>
           </div>
 
           <h1
@@ -941,7 +941,7 @@ export function AboutPage() {
                   Our Global Vision
                 </h3>
                 <p style={{ color: '#cbd5e1', lineHeight: 1.7, fontSize: '0.96rem', margin: 0 }}>
-                  To become the world's most trusted online academy for applied skills, recognized by multinational employers, academic institutions, and remote global organizations for unparalleled graduate readiness and ethical rigor.
+                  To become the world's most trusted online virtual campus for applied skills, recognized by multinational employers, academic institutions, and remote global organizations for unparalleled graduate readiness and ethical rigor.
                 </p>
               </div>
             </div>
@@ -1407,7 +1407,7 @@ export function AboutPage() {
             <img src="/logo.png" alt="Éclat" style={{ width: '32px', height: '32px', borderRadius: '50%', border: '1px solid #d4af37' }} />
             <div>
               <div style={{ color: '#ffffff', fontWeight: 800 }}>{INSTITUTION_CONFIG.name}</div>
-              <div style={{ fontSize: '0.72rem' }}>100% Online Global Academy</div>
+              <div style={{ fontSize: '0.72rem' }}>100% Online Virtual Campus</div>
             </div>
           </div>
 

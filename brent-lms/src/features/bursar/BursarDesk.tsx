@@ -2138,7 +2138,7 @@ export function BursarDesk() {
               {/* Official Digital Stamp */}
               <div style={{ background: '#f8fafc', border: '1px dashed #94a3b8', borderRadius: '8px', padding: '0.75rem', textAlign: 'center', fontSize: '0.75rem', color: '#475569' }}>
                 <div>🛡️ <strong>OFFICIAL DIGITAL STAMP & VERIFICATION</strong></div>
-                <div>Éclat Institute Directorate of Finance • 100% Online Global Academy</div>
+                <div>Éclat Institute Directorate of Finance • 100% Online Virtual Campus</div>
                 <div style={{ color: '#16a34a', fontWeight: 800, marginTop: '2px' }}>STATUS: TRANSACTION VERIFIED & ACCOUNT CREDITED</div>
               </div>
 

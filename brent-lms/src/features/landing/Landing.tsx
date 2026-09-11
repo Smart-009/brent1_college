@@ -752,7 +752,7 @@ export function Landing() {
                   ÉCLAT INSTITUTE
                 </div>
                 <div className="hidden sm:block" style={{ fontSize: '0.68rem', color: '#8c6e28', fontWeight: 700, letterSpacing: '0.06em', textTransform: 'uppercase', whiteSpace: 'nowrap' }}>
-                  100% Online Global Academy
+                  100% Online Virtual Campus
                 </div>
               </div>
             </Link>
@@ -1077,7 +1077,7 @@ export function Landing() {
                     ÉCLAT INSTITUTE
                   </div>
                   <div style={{ fontSize: '0.62rem', color: '#94a3b8', fontWeight: 600 }}>
-                    100% Online Global Academy
+                    100% Online Virtual Campus
                   </div>
                 </div>
               </div>
@@ -1456,7 +1456,7 @@ export function Landing() {
             }}
           >
             <span>🌐</span>
-            <span>ÉCLAT INSTITUTE • 100% ONLINE GLOBAL ACADEMY & CAMBRIDGE IGCSE CENTRE (KE042)</span>
+            <span>ÉCLAT INSTITUTE • 100% ONLINE VIRTUAL CAMPUS & CAMBRIDGE IGCSE CENTRE (KE042)</span>
           </div>
 
           {/* Master Academy Headline */}
@@ -1944,7 +1944,7 @@ export function Landing() {
             Empowering Modern Learners Worldwide
           </h2>
           <p style={{ fontSize: isMobile ? '0.94rem' : '1.05rem', color: '#334155', maxWidth: '740px', margin: '0 auto', fontWeight: 500, lineHeight: 1.65 }}>
-            Éclat Institute is a premier 100% Online Global Academy. We deliver live virtual lectures, hands-on project labs, and direct mentor code reviews to help students and working professionals excel across 5 key disciplines.
+            Éclat Institute is a premier 100% Online Virtual Campus. We deliver live virtual lectures, hands-on project labs, and direct mentor code reviews to help students and working professionals excel across 5 key disciplines.
           </p>
         </div>
 

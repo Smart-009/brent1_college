@@ -141,7 +141,7 @@ export function MobileLandingView({
               ÉCLAT INSTITUTE
             </div>
             <div style={{ fontSize: '0.65rem', color: '#94a3b8', fontWeight: 600 }}>
-              100% Online Global Academy
+              100% Online Virtual Campus
             </div>
           </div>
         </div>

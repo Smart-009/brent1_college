@@ -97,7 +97,7 @@ export function CourseDetail() {
         created_at: new Date().toISOString(),
         updated_at: new Date().toISOString(),
         teacher: { full_name: 'Faculty Instructor' },
-        subject: { name: 'Eclat Global Academy', color_hex: '#1e3a8a' },
+        subject: { name: 'Eclat Virtual Campus', color_hex: '#1e3a8a' },
       } as unknown as Course
     },
     enabled: !!courseId,

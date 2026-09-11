@@ -914,7 +914,7 @@ export function CreateCourse() {
             disabled={isSubmitting}
             style={{ padding: '0.75rem 2rem', fontWeight: 800, fontSize: '1rem', boxShadow: '0 4px 14px rgba(37, 99, 235, 0.35)' }}
           >
-            {isSubmitting ? 'Publishing Course...' : '🚀 Publish Course to Academy & Student Portal'}
+            {isSubmitting ? 'Publishing Course...' : '🚀 Publish Course to Campus & Student Portal'}
           </button>
         </div>
       </form>

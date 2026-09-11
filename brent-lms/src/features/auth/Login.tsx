@@ -203,7 +203,7 @@ export function Login() {
                   ÉCLAT INSTITUTE
                 </div>
                 <div style={{ fontSize: '0.72rem', color: '#c5a059', fontWeight: 800, letterSpacing: '0.04em' }}>
-                  100% ONLINE LEARNING ACADEMY
+                  100% ONLINE VIRTUAL CAMPUS
                 </div>
               </div>
             </div>
