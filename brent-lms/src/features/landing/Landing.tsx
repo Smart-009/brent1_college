@@ -966,32 +966,53 @@ export function Landing() {
               </>
             )}
 
-            {/* Mobile-Only Hamburger Toggle Button - ALWAYS rendered on mobile */}
+            {/* Mobile-Only Actions */}
             {isMobile && (
-              <button
-                type="button"
-                className="btn btn-sm landing-mobile-menu-toggle"
-                style={{
-                  background: mobileNavOpen ? '#0f172a' : '#2563eb',
-                  color: '#ffffff',
-                  border: 'none',
-                  fontWeight: 800,
-                  fontSize: '0.9rem',
-                  padding: '0.5rem 0.95rem',
-                  borderRadius: '8px',
-                  cursor: 'pointer',
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  gap: '6px',
-                  boxShadow: '0 2px 10px rgba(37, 99, 235, 0.4)',
-                  flexShrink: 0,
-                }}
-                onClick={() => setMobileNavOpen(!mobileNavOpen)}
-                aria-label="Toggle Navigation Menu"
-              >
-                <span style={{ fontSize: '1.15rem', lineHeight: 1 }}>{mobileNavOpen ? '✕' : '☰'}</span>
-                <span>{mobileNavOpen ? 'Close' : 'Menu'}</span>
-              </button>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                <button
+                  type="button"
+                  className="btn btn-sm btn-primary"
+                  style={{
+                    fontWeight: 800,
+                    padding: '0.45rem 0.65rem',
+                    borderRadius: '8px',
+                    fontSize: '0.78rem',
+                    whiteSpace: 'nowrap',
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '4px',
+                  }}
+                  onClick={() => setShowPortalDesksModal(true)}
+                >
+                  <span>🔐</span>
+                  <span>Portals</span>
+                </button>
+
+                <button
+                  type="button"
+                  className="btn btn-sm landing-mobile-menu-toggle"
+                  style={{
+                    background: mobileNavOpen ? '#0f172a' : '#2563eb',
+                    color: '#ffffff',
+                    border: 'none',
+                    fontWeight: 800,
+                    fontSize: '0.85rem',
+                    padding: '0.45rem 0.75rem',
+                    borderRadius: '8px',
+                    cursor: 'pointer',
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '4px',
+                    boxShadow: '0 2px 10px rgba(37, 99, 235, 0.4)',
+                    flexShrink: 0,
+                  }}
+                  onClick={() => setMobileNavOpen(!mobileNavOpen)}
+                  aria-label="Toggle Navigation Menu"
+                >
+                  <span style={{ fontSize: '1.1rem', lineHeight: 1 }}>{mobileNavOpen ? '✕' : '☰'}</span>
+                  <span>{mobileNavOpen ? 'Close' : 'Menu'}</span>
+                </button>
+              </div>
             )}
           </div>
         </div>
@@ -1222,18 +1243,21 @@ export function Landing() {
             style={{
               display: 'inline-flex',
               alignItems: 'center',
-              gap: '0.65rem',
+              gap: '0.5rem',
               background: 'rgba(255, 255, 255, 0.08)',
               backdropFilter: 'blur(10px)',
               border: '1px solid rgba(212, 175, 55, 0.35)',
-              borderRadius: '999px',
-              padding: '0.45rem 1.35rem',
-              fontSize: '0.85rem',
+              borderRadius: isMobile ? '12px' : '999px',
+              padding: isMobile ? '0.4rem 0.75rem' : '0.45rem 1.35rem',
+              fontSize: isMobile ? '0.74rem' : '0.85rem',
               fontWeight: 800,
               color: '#d4af37',
               letterSpacing: '0.04em',
-              marginBottom: '1.75rem',
+              marginBottom: '1.5rem',
               boxShadow: '0 4px 16px rgba(0,0,0,0.2)',
+              maxWidth: '100%',
+              lineHeight: 1.35,
+              wordBreak: 'break-word',
             }}
           >
             <span>🌐</span>
@@ -1270,9 +1294,9 @@ export function Landing() {
             style={{
               maxWidth: '860px',
               margin: '0 auto 2.25rem',
-              fontSize: isMobile ? '1.02rem' : '1.18rem',
+              fontSize: isMobile ? '0.96rem' : '1.18rem',
               color: '#e2e8f0',
-              lineHeight: 1.65,
+              lineHeight: 1.6,
               fontWeight: 400,
             }}
           >
@@ -1280,7 +1304,7 @@ export function Landing() {
           </p>
 
           {/* Primary Academy CTAs */}
-          <div style={{ display: 'flex', justifyContent: 'center', gap: '1rem', flexWrap: 'wrap', marginBottom: '2.5rem' }}>
+          <div style={{ display: 'flex', flexDirection: isMobile ? 'column' : 'row', justifyContent: 'center', gap: '0.75rem', width: '100%', maxWidth: isMobile ? '380px' : 'none', margin: '0 auto 2.25rem' }}>
             <a
               href="#courses"
               className="btn btn-lg"
@@ -1288,15 +1312,17 @@ export function Landing() {
                 background: '#d4af37',
                 color: '#0c0e12',
                 fontWeight: 900,
-                padding: '0.9rem 2.25rem',
-                fontSize: '1.02rem',
+                padding: '0.85rem 1.75rem',
+                fontSize: '1rem',
                 borderRadius: '10px',
                 boxShadow: '0 10px 24px rgba(212, 175, 55, 0.35)',
                 border: 'none',
                 textDecoration: 'none',
                 display: 'inline-flex',
                 alignItems: 'center',
+                justifyContent: 'center',
                 gap: '8px',
+                width: isMobile ? '100%' : 'auto',
               }}
             >
               <span>🚀 Explore All Programs</span>
@@ -1310,12 +1336,16 @@ export function Landing() {
                 background: '#2563eb',
                 color: '#ffffff',
                 fontWeight: 800,
-                padding: '0.9rem 2rem',
-                fontSize: '1.02rem',
+                padding: '0.85rem 1.75rem',
+                fontSize: '1rem',
                 borderRadius: '10px',
                 boxShadow: '0 8px 20px rgba(37, 99, 235, 0.3)',
                 border: 'none',
                 cursor: 'pointer',
+                display: 'inline-flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                width: isMobile ? '100%' : 'auto',
               }}
               onClick={() => setInquiryModalOpen(true)}
             >
@@ -1331,14 +1361,16 @@ export function Landing() {
                 background: 'rgba(34, 197, 94, 0.15)',
                 color: '#4ade80',
                 fontWeight: 700,
-                padding: '0.9rem 1.5rem',
-                fontSize: '1rem',
+                padding: '0.85rem 1.5rem',
+                fontSize: '0.96rem',
                 borderRadius: '10px',
                 border: '1px solid rgba(34, 197, 94, 0.3)',
                 textDecoration: 'none',
                 display: 'inline-flex',
                 alignItems: 'center',
+                justifyContent: 'center',
                 gap: '8px',
+                width: isMobile ? '100%' : 'auto',
               }}
             >
               <span>💬</span>
@@ -1623,47 +1655,47 @@ export function Landing() {
               backdropFilter: 'blur(12px)',
               border: '1px solid rgba(212, 175, 55, 0.35)',
               borderRadius: '16px',
-              padding: '1.25rem 1.5rem',
+              padding: isMobile ? '1rem 0.85rem' : '1.25rem 1.5rem',
               maxWidth: '820px',
               margin: '0 auto 2.5rem',
               display: 'flex',
-              justifyContent: 'space-between',
+              justifyContent: isMobile ? 'center' : 'space-between',
               alignItems: 'center',
               flexWrap: 'wrap',
-              gap: '1rem',
+              gap: isMobile ? '0.75rem' : '1rem',
             }}
           >
-            <div style={{ textAlign: 'left' }}>
+            <div style={{ textAlign: isMobile ? 'center' : 'left', width: isMobile ? '100%' : 'auto' }}>
               <div style={{ fontSize: '0.8rem', color: '#f5df88', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.05em' }}>
                 ⚡ 100% ONLINE INTAKE REGISTRATION OPEN
               </div>
-              <div style={{ fontSize: '1.05rem', fontWeight: 800, color: '#ffffff', marginTop: '2px' }}>
+              <div style={{ fontSize: isMobile ? '0.94rem' : '1.05rem', fontWeight: 800, color: '#ffffff', marginTop: '2px' }}>
                 Live Virtual Cohorts — Evening & Weekend Interactive Batches
               </div>
-              <div style={{ fontSize: '0.78rem', color: '#cbd5e1', marginTop: '2px' }}>
+              <div style={{ fontSize: '0.76rem', color: '#cbd5e1', marginTop: '2px' }}>
                 🌐 Study from anywhere in Kenya, Africa & Worldwide • 24/7 LMS Access
               </div>
             </div>
 
-            <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
-              <div style={{ background: '#090d16', border: '1px solid #d4af37', padding: '0.4rem 0.65rem', borderRadius: '8px', textAlign: 'center', minWidth: '48px' }}>
-                <div style={{ fontSize: '1.2rem', fontWeight: 900, color: '#d4af37' }}>{String(timeLeft.days).padStart(2, '0')}</div>
-                <div style={{ fontSize: '0.65rem', color: '#94a3b8', textTransform: 'uppercase' }}>Days</div>
+            <div style={{ display: 'flex', gap: '0.4rem', alignItems: 'center', justifyContent: 'center', width: isMobile ? '100%' : 'auto' }}>
+              <div style={{ background: '#090d16', border: '1px solid #d4af37', padding: '0.35rem 0.55rem', borderRadius: '8px', textAlign: 'center', minWidth: '44px' }}>
+                <div style={{ fontSize: '1.15rem', fontWeight: 900, color: '#d4af37' }}>{String(timeLeft.days).padStart(2, '0')}</div>
+                <div style={{ fontSize: '0.62rem', color: '#94a3b8', textTransform: 'uppercase' }}>Days</div>
               </div>
               <span style={{ fontWeight: 900, color: '#d4af37' }}>:</span>
-              <div style={{ background: '#090d16', border: '1px solid #d4af37', padding: '0.4rem 0.65rem', borderRadius: '8px', textAlign: 'center', minWidth: '48px' }}>
-                <div style={{ fontSize: '1.2rem', fontWeight: 900, color: '#d4af37' }}>{String(timeLeft.hours).padStart(2, '0')}</div>
-                <div style={{ fontSize: '0.65rem', color: '#94a3b8', textTransform: 'uppercase' }}>Hours</div>
+              <div style={{ background: '#090d16', border: '1px solid #d4af37', padding: '0.35rem 0.55rem', borderRadius: '8px', textAlign: 'center', minWidth: '44px' }}>
+                <div style={{ fontSize: '1.15rem', fontWeight: 900, color: '#d4af37' }}>{String(timeLeft.hours).padStart(2, '0')}</div>
+                <div style={{ fontSize: '0.62rem', color: '#94a3b8', textTransform: 'uppercase' }}>Hours</div>
               </div>
               <span style={{ fontWeight: 900, color: '#d4af37' }}>:</span>
-              <div style={{ background: '#090d16', border: '1px solid #d4af37', padding: '0.4rem 0.65rem', borderRadius: '8px', textAlign: 'center', minWidth: '48px' }}>
-                <div style={{ fontSize: '1.2rem', fontWeight: 900, color: '#d4af37' }}>{String(timeLeft.minutes).padStart(2, '0')}</div>
-                <div style={{ fontSize: '0.65rem', color: '#94a3b8', textTransform: 'uppercase' }}>Mins</div>
+              <div style={{ background: '#090d16', border: '1px solid #d4af37', padding: '0.35rem 0.55rem', borderRadius: '8px', textAlign: 'center', minWidth: '44px' }}>
+                <div style={{ fontSize: '1.15rem', fontWeight: 900, color: '#d4af37' }}>{String(timeLeft.minutes).padStart(2, '0')}</div>
+                <div style={{ fontSize: '0.62rem', color: '#94a3b8', textTransform: 'uppercase' }}>Mins</div>
               </div>
               <span style={{ fontWeight: 900, color: '#d4af37' }}>:</span>
-              <div style={{ background: '#090d16', border: '1px solid #d4af37', padding: '0.4rem 0.65rem', borderRadius: '8px', textAlign: 'center', minWidth: '48px' }}>
-                <div style={{ fontSize: '1.2rem', fontWeight: 900, color: '#22c55e' }}>{String(timeLeft.seconds).padStart(2, '0')}</div>
-                <div style={{ fontSize: '0.65rem', color: '#94a3b8', textTransform: 'uppercase' }}>Secs</div>
+              <div style={{ background: '#090d16', border: '1px solid #d4af37', padding: '0.35rem 0.55rem', borderRadius: '8px', textAlign: 'center', minWidth: '44px' }}>
+                <div style={{ fontSize: '1.15rem', fontWeight: 900, color: '#22c55e' }}>{String(timeLeft.seconds).padStart(2, '0')}</div>
+                <div style={{ fontSize: '0.62rem', color: '#94a3b8', textTransform: 'uppercase' }}>Secs</div>
               </div>
             </div>
           </div>
@@ -1672,36 +1704,36 @@ export function Landing() {
           <div
             style={{
               display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
-              gap: '1.5rem',
+              gridTemplateColumns: isMobile ? 'repeat(2, 1fr)' : 'repeat(auto-fit, minmax(200px, 1fr))',
+              gap: isMobile ? '1rem 0.75rem' : '1.5rem',
               background: 'rgba(15, 23, 42, 0.75)',
               backdropFilter: 'blur(16px)',
               border: '1px solid rgba(255, 255, 255, 0.15)',
-              borderRadius: '20px',
-              padding: '1.75rem 2rem',
+              borderRadius: isMobile ? '16px' : '20px',
+              padding: isMobile ? '1.25rem 1rem' : '1.75rem 2rem',
               maxWidth: '1000px',
               margin: '0 auto',
             }}
           >
             <div>
-              <div style={{ fontSize: '2.4rem', fontWeight: 900, color: '#d4af37', lineHeight: 1 }}>100%</div>
-              <div style={{ fontSize: '0.9rem', color: '#e2e8f0', fontWeight: 700, marginTop: '0.35rem' }}>Virtual & Online</div>
-              <div style={{ fontSize: '0.75rem', color: '#94a3b8' }}>Learn from anywhere, any device</div>
+              <div style={{ fontSize: isMobile ? '1.8rem' : '2.4rem', fontWeight: 900, color: '#d4af37', lineHeight: 1 }}>100%</div>
+              <div style={{ fontSize: isMobile ? '0.82rem' : '0.9rem', color: '#e2e8f0', fontWeight: 700, marginTop: '0.35rem' }}>Virtual & Online</div>
+              <div style={{ fontSize: isMobile ? '0.7rem' : '0.75rem', color: '#94a3b8' }}>Learn from anywhere, any device</div>
             </div>
             <div>
-              <div style={{ fontSize: '2.4rem', fontWeight: 900, color: '#34d399', lineHeight: 1 }}>Live</div>
-              <div style={{ fontSize: '0.9rem', color: '#e2e8f0', fontWeight: 700, marginTop: '0.35rem' }}>Interactive Coaching</div>
-              <div style={{ fontSize: '0.75rem', color: '#94a3b8' }}>Real-time code labs & speaking mocks</div>
+              <div style={{ fontSize: isMobile ? '1.8rem' : '2.4rem', fontWeight: 900, color: '#34d399', lineHeight: 1 }}>Live</div>
+              <div style={{ fontSize: isMobile ? '0.82rem' : '0.9rem', color: '#e2e8f0', fontWeight: 700, marginTop: '0.35rem' }}>Interactive Coaching</div>
+              <div style={{ fontSize: isMobile ? '0.7rem' : '0.75rem', color: '#94a3b8' }}>Real-time code labs & speaking mocks</div>
             </div>
             <div>
-              <div style={{ fontSize: '2.4rem', fontWeight: 900, color: '#38bdf8', lineHeight: 1 }}>24/7</div>
-              <div style={{ fontSize: '0.9rem', color: '#e2e8f0', fontWeight: 700, marginTop: '0.35rem' }}>LMS Portal Access</div>
-              <div style={{ fontSize: '0.75rem', color: '#94a3b8' }}>Class recordings, notes & quizzes</div>
+              <div style={{ fontSize: isMobile ? '1.8rem' : '2.4rem', fontWeight: 900, color: '#38bdf8', lineHeight: 1 }}>24/7</div>
+              <div style={{ fontSize: isMobile ? '0.82rem' : '0.9rem', color: '#e2e8f0', fontWeight: 700, marginTop: '0.35rem' }}>LMS Portal Access</div>
+              <div style={{ fontSize: isMobile ? '0.7rem' : '0.75rem', color: '#94a3b8' }}>Class recordings, notes & quizzes</div>
             </div>
             <div>
-              <div style={{ fontSize: '2.4rem', fontWeight: 900, color: '#f5df88', lineHeight: 1 }}>Verified</div>
-              <div style={{ fontSize: '0.9rem', color: '#e2e8f0', fontWeight: 700, marginTop: '0.35rem' }}>Global E-Certificates</div>
-              <div style={{ fontSize: '0.75rem', color: '#94a3b8' }}>QR verifiable & LinkedIn ready</div>
+              <div style={{ fontSize: isMobile ? '1.8rem' : '2.4rem', fontWeight: 900, color: '#f5df88', lineHeight: 1 }}>Verified</div>
+              <div style={{ fontSize: isMobile ? '0.82rem' : '0.9rem', color: '#e2e8f0', fontWeight: 700, marginTop: '0.35rem' }}>Global E-Certificates</div>
+              <div style={{ fontSize: isMobile ? '0.7rem' : '0.75rem', color: '#94a3b8' }}>QR verifiable & LinkedIn ready</div>
             </div>
           </div>
         </div>
@@ -1911,8 +1943,17 @@ export function Landing() {
           </div>
 
           {/* Category Filter Pills & Result Counter */}
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem', marginBottom: '2.5rem' }}>
-            <div style={{ display: 'flex', gap: '0.6rem', flexWrap: 'wrap' }}>
+          <div style={{ display: 'flex', flexDirection: isMobile ? 'column' : 'row', justifyContent: 'space-between', alignItems: isMobile ? 'flex-start' : 'center', gap: '1rem', marginBottom: isMobile ? '1.5rem' : '2.5rem' }}>
+            <div style={{
+              display: 'flex',
+              gap: '0.5rem',
+              flexWrap: isMobile ? 'nowrap' : 'wrap',
+              overflowX: isMobile ? 'auto' : 'visible',
+              width: isMobile ? '100%' : 'auto',
+              paddingBottom: isMobile ? '0.5rem' : 0,
+              WebkitOverflowScrolling: 'touch',
+              scrollbarWidth: 'none',
+            }}>
               {[
                 { id: 'All', label: '🔥 All Programs', count: coursesList.length },
                 { id: 'British Curriculum (IGCSE & A-Levels)', label: '🇬🇧 IGCSE & A-Levels', count: coursesList.filter((c) => c.category === 'British Curriculum (IGCSE & A-Levels)').length },
@@ -1931,14 +1972,16 @@ export function Landing() {
                     color: activeCategory === cat.id ? '#ffffff' : '#334155',
                     border: `1.5px solid ${activeCategory === cat.id ? '#0f172a' : '#cbd5e1'}`,
                     borderRadius: '999px',
-                    padding: '0.55rem 1.15rem',
-                    fontSize: '0.86rem',
+                    padding: isMobile ? '0.45rem 0.95rem' : '0.55rem 1.15rem',
+                    fontSize: isMobile ? '0.8rem' : '0.86rem',
                     fontWeight: 700,
                     cursor: 'pointer',
                     boxShadow: activeCategory === cat.id ? '0 4px 12px rgba(15, 23, 42, 0.2)' : '0 1px 3px rgba(0,0,0,0.05)',
                     display: 'inline-flex',
                     alignItems: 'center',
                     gap: '6px',
+                    whiteSpace: 'nowrap',
+                    flexShrink: 0,
                     transition: 'all 0.2s ease',
                   }}
                   onClick={() => setActiveCategory(cat.id)}
@@ -1960,7 +2003,7 @@ export function Landing() {
               ))}
             </div>
 
-            <div style={{ fontSize: '0.88rem', color: '#64748b', fontWeight: 600 }}>
+            <div style={{ fontSize: '0.85rem', color: '#64748b', fontWeight: 600 }}>
               Showing <strong style={{ color: '#0f172a' }}>{filteredCourses.length}</strong> program{filteredCourses.length === 1 ? '' : 's'}
             </div>
           </div>
@@ -1984,7 +2027,7 @@ export function Landing() {
           )}
 
           {/* Courses Grid */}
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(340px, 1fr))', gap: '2rem' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : 'repeat(auto-fit, minmax(320px, 1fr))', gap: isMobile ? '1.25rem' : '2rem' }}>
             {filteredCourses.map((course) => (
               <div
                 key={course.id}
@@ -2014,7 +2057,7 @@ export function Landing() {
                   style={{
                     background: `linear-gradient(135deg, ${(course.tagColor || '#2563eb')}15 0%, #ffffff 100%)`,
                     borderBottom: '1px solid #f1f5f9',
-                    padding: '1.25rem 1.5rem',
+                    padding: isMobile ? '1rem 1.15rem' : '1.25rem 1.5rem',
                     display: 'flex',
                     justifyContent: 'space-between',
                     alignItems: 'center',
@@ -2023,15 +2066,15 @@ export function Landing() {
                   <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
                     <div
                       style={{
-                        width: '48px',
-                        height: '48px',
+                        width: isMobile ? '42px' : '48px',
+                        height: isMobile ? '42px' : '48px',
                         borderRadius: '12px',
                         background: '#ffffff',
                         border: '1px solid #e2e8f0',
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
-                        fontSize: '1.8rem',
+                        fontSize: isMobile ? '1.5rem' : '1.8rem',
                         boxShadow: '0 2px 8px rgba(0,0,0,0.06)',
                       }}
                     >
@@ -2092,12 +2135,12 @@ export function Landing() {
                 </div>
 
                 {/* Main Card Body */}
-                <div style={{ padding: '1.25rem 1.5rem', flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+                <div style={{ padding: isMobile ? '1rem 1.15rem' : '1.25rem 1.5rem', flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
                   <div>
                     {/* Course Title */}
                     <h3
                       style={{
-                        fontSize: '1.15rem',
+                        fontSize: isMobile ? '1.05rem' : '1.15rem',
                         fontWeight: 900,
                         color: '#0f172a',
                         margin: '0 0 0.35rem',
@@ -2114,7 +2157,7 @@ export function Landing() {
                     </div>
 
                     {/* Udemy-Style Rating & Student Count */}
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '1rem', flexWrap: 'wrap' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '0.85rem', flexWrap: 'wrap' }}>
                       <strong style={{ color: '#b45309', fontSize: '0.92rem', fontWeight: 900 }}>{(course.rating || 4.9).toFixed(1)}</strong>
                       <span style={{ color: '#f59e0b', fontSize: '0.85rem' }}>★★★★★</span>
                       <span style={{ color: '#64748b', fontSize: '0.78rem' }}>({(course.ratingCount || 1240).toLocaleString()})</span>
@@ -2166,7 +2209,13 @@ export function Landing() {
                   </div>
 
                   {/* Fees Inquiry & Direct Enrollment CTA */}
-                  <div style={{ borderTop: '1px solid #f1f5f9', paddingTop: '1rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
+                  <div style={{
+                    borderTop: '1px solid #f1f5f9',
+                    paddingTop: '0.85rem',
+                    display: 'grid',
+                    gridTemplateColumns: '1fr 1fr',
+                    gap: '0.5rem',
+                  }}>
                     <a
                       href={getWhatsAppInquiryUrl(`Hello Brent College Admissions, I would like to make a Fees Inquiry for the course "${course.title}".`)}
                       target="_blank"
@@ -2177,35 +2226,43 @@ export function Landing() {
                         color: '#2563eb',
                         border: '1.5px solid #bfdbfe',
                         borderRadius: '8px',
-                        padding: '0.55rem 0.95rem',
-                        fontSize: '0.82rem',
+                        padding: '0.6rem 0.5rem',
+                        fontSize: isMobile ? '0.76rem' : '0.82rem',
                         fontWeight: 700,
                         textDecoration: 'none',
                         display: 'inline-flex',
                         alignItems: 'center',
-                        gap: '6px',
+                        justifyContent: 'center',
+                        gap: '4px',
+                        whiteSpace: 'nowrap',
+                        textAlign: 'center',
                         transition: 'all 0.2s ease',
                       }}
                     >
                       💬 Fees Inquiry
                     </a>
 
-                    <div style={{ display: 'flex', gap: '6px' }}>
-                      <button
-                        type="button"
-                        className="btn btn-primary"
-                        style={{
-                          fontWeight: 800,
-                          borderRadius: '8px',
-                          padding: '0.55rem 1.1rem',
-                          fontSize: '0.85rem',
-                          boxShadow: '0 4px 12px rgba(37, 99, 235, 0.25)',
-                        }}
-                        onClick={() => handleOpenCourseApplication(course)}
-                      >
-                        ⚡ Enroll Now
-                      </button>
-                    </div>
+                    <button
+                      type="button"
+                      className="btn btn-primary"
+                      style={{
+                        fontWeight: 800,
+                        borderRadius: '8px',
+                        padding: '0.6rem 0.5rem',
+                        fontSize: isMobile ? '0.78rem' : '0.85rem',
+                        boxShadow: '0 4px 12px rgba(37, 99, 235, 0.25)',
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        gap: '4px',
+                        whiteSpace: 'nowrap',
+                        textAlign: 'center',
+                        width: '100%',
+                      }}
+                      onClick={() => handleOpenCourseApplication(course)}
+                    >
+                      ⚡ Enroll Now
+                    </button>
                   </div>
                 </div>
               </div>
@@ -2215,22 +2272,22 @@ export function Landing() {
       </section>
 
       {/* Tuition & Fees Inquiry Hub */}
-      <section id="calculator" style={{ background: '#f1f5f9', padding: '4.5rem 1.5rem', borderBottom: '1px solid #e2e8f0' }}>
+      <section id="calculator" style={{ background: '#f1f5f9', padding: isMobile ? '3rem 1rem' : '4.5rem 1.5rem', borderBottom: '1px solid #e2e8f0' }}>
         <div style={{ maxWidth: '1000px', margin: '0 auto' }}>
-          <div style={{ textAlign: 'center', marginBottom: '2.5rem' }}>
+          <div style={{ textAlign: 'center', marginBottom: isMobile ? '1.75rem' : '2.5rem' }}>
             <span style={{ fontSize: '0.82rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.08em', color: '#2563eb' }}>
               TUITION & FEES INQUIRY
             </span>
-            <h2 style={{ fontSize: '2.1rem', fontWeight: 900, color: '#0f172a', margin: '0.35rem 0 0.5rem' }}>
+            <h2 style={{ fontSize: isMobile ? '1.45rem' : '2.1rem', fontWeight: 900, color: '#0f172a', margin: '0.35rem 0 0.5rem', lineHeight: 1.25 }}>
               Course Fees Inquiry & Payment Consultation
             </h2>
-            <p style={{ fontSize: '0.95rem', color: '#475569', maxWidth: '600px', margin: '0 auto' }}>
+            <p style={{ fontSize: isMobile ? '0.88rem' : '0.95rem', color: '#475569', maxWidth: '600px', margin: '0 auto' }}>
               Select your desired program to inquire about official tuition schedules, installment plans, and scholarship opportunities directly with our admissions office.
             </p>
           </div>
 
-          <div style={{ background: '#ffffff', border: '1px solid #cbd5e1', borderRadius: '20px', padding: '2.5rem', boxShadow: '0 8px 20px rgba(0,0,0,0.06)' }}>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '2rem' }}>
+          <div style={{ background: '#ffffff', border: '1px solid #cbd5e1', borderRadius: isMobile ? '16px' : '20px', padding: isMobile ? '1.25rem 1rem' : '2.5rem', boxShadow: '0 8px 20px rgba(0,0,0,0.06)' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : 'repeat(auto-fit, minmax(280px, 1fr))', gap: isMobile ? '1.5rem' : '2rem' }}>
               <div>
                 <label className="label" style={{ fontWeight: 800, color: '#0f172a', marginBottom: '0.45rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                   <span>1. Select Program or Course</span>
@@ -2311,7 +2368,7 @@ export function Landing() {
               </div>
 
               {/* Live Fee Inquiry Output Card */}
-              <div style={{ background: '#0f172a', color: '#ffffff', borderRadius: '16px', padding: '1.75rem', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+              <div style={{ background: '#0f172a', color: '#ffffff', borderRadius: '16px', padding: isMobile ? '1.25rem 1rem' : '1.75rem', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
                 <div>
                   <div style={{ fontSize: '0.78rem', color: '#93c5fd', textTransform: 'uppercase', fontWeight: 800 }}>Program Summary</div>
                   <div style={{ fontSize: '1.15rem', fontWeight: 900, color: '#ffffff', margin: '0.25rem 0 1rem' }}>
@@ -2385,28 +2442,28 @@ export function Landing() {
       </section>
 
       {/* Official Multi-Platform Learning Apps Showcase Section */}
-      <section id="app-download" style={{ background: '#0a0f1d', color: '#ffffff', padding: '5rem 1.5rem', borderBottom: '1px solid #1e293b' }}>
+      <section id="app-download" style={{ background: '#0a0f1d', color: '#ffffff', padding: isMobile ? '3rem 1rem' : '5rem 1.5rem', borderBottom: '1px solid #1e293b' }}>
         <div style={{ maxWidth: '1240px', margin: '0 auto' }}>
-          <div style={{ textAlign: 'center', marginBottom: '3.5rem' }}>
+          <div style={{ textAlign: 'center', marginBottom: isMobile ? '2rem' : '3.5rem' }}>
             <span style={{ fontSize: '0.82rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.08em', color: '#38bdf8' }}>
               OFFICIAL LEARNING APPLICATIONS
             </span>
-            <h2 style={{ fontSize: '2.3rem', fontWeight: 900, color: '#ffffff', margin: '0.35rem 0 0.75rem', fontFamily: 'var(--font-heading)' }}>
+            <h2 style={{ fontSize: isMobile ? '1.45rem' : '2.3rem', fontWeight: 900, color: '#ffffff', margin: '0.35rem 0 0.75rem', fontFamily: 'var(--font-heading)', lineHeight: 1.25 }}>
               Study Anywhere on Dedicated Desktop & Mobile Apps
             </h2>
-            <p style={{ fontSize: '1.05rem', color: '#94a3b8', maxWidth: '750px', margin: '0 auto', fontWeight: 500 }}>
+            <p style={{ fontSize: isMobile ? '0.9rem' : '1.05rem', color: '#94a3b8', maxWidth: '750px', margin: '0 auto', fontWeight: 500 }}>
               Download our dedicated mobile and desktop applications to study offline, attend live lectures, and track your coursework anywhere.
             </p>
           </div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '2rem' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : 'repeat(auto-fit, minmax(320px, 1fr))', gap: isMobile ? '1.25rem' : '2rem' }}>
             {/* Android Mobile App Card */}
-            <div style={{ background: 'rgba(30, 41, 59, 0.5)', border: '1px solid #334155', borderRadius: '20px', padding: '2.5rem', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+            <div style={{ background: 'rgba(30, 41, 59, 0.5)', border: '1px solid #334155', borderRadius: '20px', padding: isMobile ? '1.5rem 1.25rem' : '2.5rem', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
               <div>
                 <div style={{ width: '56px', height: '56px', borderRadius: '14px', background: 'rgba(34, 197, 94, 0.15)', border: '1px solid rgba(34, 197, 94, 0.3)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.8rem', marginBottom: '1.5rem' }}>
                   🤖
                 </div>
-                <h3 style={{ fontSize: '1.35rem', fontWeight: 800, color: '#ffffff', margin: '0 0 0.5rem' }}>
+                <h3 style={{ fontSize: isMobile ? '1.15rem' : '1.35rem', fontWeight: 800, color: '#ffffff', margin: '0 0 0.5rem' }}>
                   Android Mobile App (.APK)
                 </h3>
                 <p style={{ fontSize: '0.92rem', color: '#cbd5e1', lineHeight: 1.6, marginBottom: '1.5rem' }}>
@@ -2435,12 +2492,12 @@ export function Landing() {
             </div>
 
             {/* Windows Desktop App Card */}
-            <div style={{ background: 'rgba(30, 41, 59, 0.5)', border: '1px solid #334155', borderRadius: '20px', padding: '2.5rem', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+            <div style={{ background: 'rgba(30, 41, 59, 0.5)', border: '1px solid #334155', borderRadius: '20px', padding: isMobile ? '1.5rem 1.25rem' : '2.5rem', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
               <div>
                 <div style={{ width: '56px', height: '56px', borderRadius: '14px', background: 'rgba(59, 130, 246, 0.15)', border: '1px solid rgba(59, 130, 246, 0.3)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.8rem', marginBottom: '1.5rem' }}>
                   💻
                 </div>
-                <h3 style={{ fontSize: '1.35rem', fontWeight: 800, color: '#ffffff', margin: '0 0 0.5rem' }}>
+                <h3 style={{ fontSize: isMobile ? '1.15rem' : '1.35rem', fontWeight: 800, color: '#ffffff', margin: '0 0 0.5rem' }}>
                   Windows Desktop App (.EXE)
                 </h3>
                 <p style={{ fontSize: '0.92rem', color: '#cbd5e1', lineHeight: 1.6, marginBottom: '1.5rem' }}>
@@ -2472,20 +2529,20 @@ export function Landing() {
       </section>
 
       {/* Graduate Success Stories & Reviews */}
-      <section id="testimonials" style={{ padding: '5rem 1.5rem', maxWidth: '1240px', margin: '0 auto' }}>
-        <div style={{ textAlign: 'center', marginBottom: '3.5rem' }}>
+      <section id="testimonials" style={{ padding: isMobile ? '3rem 1rem' : '5rem 1.5rem', maxWidth: '1240px', margin: '0 auto' }}>
+        <div style={{ textAlign: 'center', marginBottom: isMobile ? '2rem' : '3.5rem' }}>
           <span style={{ fontSize: '0.82rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.08em', color: '#2563eb' }}>
             STUDENT REVIEWS
           </span>
-          <h2 style={{ fontSize: '2.3rem', fontWeight: 900, color: '#0f172a', margin: '0.35rem 0 0.75rem' }}>
+          <h2 style={{ fontSize: isMobile ? '1.45rem' : '2.3rem', fontWeight: 900, color: '#0f172a', margin: '0.35rem 0 0.75rem', lineHeight: 1.25 }}>
             Real Alumni. Real Career Transformations.
           </h2>
-          <p style={{ fontSize: '1.05rem', color: '#334155', maxWidth: '650px', margin: '0 auto', fontWeight: 500 }}>
+          <p style={{ fontSize: isMobile ? '0.9rem' : '1.05rem', color: '#334155', maxWidth: '650px', margin: '0 auto', fontWeight: 500 }}>
             Hear how our practical live online classes and mentor reviews helped students land rewarding jobs and scale their skills.
           </p>
         </div>
 
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '2rem' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : 'repeat(auto-fit, minmax(320px, 1fr))', gap: isMobile ? '1.25rem' : '2rem' }}>
           {TESTIMONIALS.map((t, idx) => (
             <div
               key={idx}
@@ -2493,7 +2550,7 @@ export function Landing() {
                 background: '#ffffff',
                 border: '1px solid #cbd5e1',
                 borderRadius: '18px',
-                padding: '2rem',
+                padding: isMobile ? '1.25rem 1rem' : '2rem',
                 display: 'flex',
                 flexDirection: 'column',
                 justifyContent: 'space-between',
@@ -2522,7 +2579,7 @@ export function Landing() {
                     </span>
                   )}
                 </div>
-                <p style={{ fontSize: '0.98rem', color: '#0f172a', lineHeight: 1.7, fontStyle: 'italic', marginBottom: '1.5rem', fontWeight: 500 }}>
+                <p style={{ fontSize: isMobile ? '0.9rem' : '0.98rem', color: '#0f172a', lineHeight: 1.7, fontStyle: 'italic', marginBottom: '1.5rem', fontWeight: 500 }}>
                   "{t.quote}"
                 </p>
               </div>
@@ -2543,17 +2600,17 @@ export function Landing() {
       </section>
 
       {/* How It Works: 3 Steps to Certification */}
-      <section style={{ background: '#0f172a', color: '#ffffff', padding: '5rem 1.5rem' }}>
+      <section style={{ background: '#0f172a', color: '#ffffff', padding: isMobile ? '3rem 1rem' : '5rem 1.5rem' }}>
         <div style={{ maxWidth: '1100px', margin: '0 auto', textAlign: 'center' }}>
           <span style={{ fontSize: '0.82rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.08em', color: '#60a5fa' }}>
             SIMPLE & TRANSPARENT PROCESS
           </span>
-          <h2 style={{ fontSize: '2.2rem', fontWeight: 900, color: '#ffffff', margin: '0.35rem 0 3rem' }}>
+          <h2 style={{ fontSize: isMobile ? '1.45rem' : '2.2rem', fontWeight: 900, color: '#ffffff', margin: '0.35rem 0 2rem', lineHeight: 1.25 }}>
             Your 3-Step Journey to Professional Success
           </h2>
 
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '2.5rem' }}>
-            <div style={{ background: 'rgba(255, 255, 255, 0.07)', border: '1px solid rgba(255, 255, 255, 0.15)', borderRadius: '16px', padding: '2rem' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : 'repeat(auto-fit, minmax(280px, 1fr))', gap: isMobile ? '1.25rem' : '2.5rem' }}>
+            <div style={{ background: 'rgba(255, 255, 255, 0.07)', border: '1px solid rgba(255, 255, 255, 0.15)', borderRadius: '16px', padding: isMobile ? '1.5rem 1.25rem' : '2rem' }}>
               <div style={{ fontSize: '2.5rem', marginBottom: '1rem' }}>📝</div>
               <div style={{ fontSize: '0.85rem', fontWeight: 800, color: '#60a5fa', textTransform: 'uppercase' }}>Step 1</div>
               <h3 style={{ fontSize: '1.25rem', fontWeight: 800, margin: '0.35rem 0 0.5rem', color: '#ffffff' }}>Apply Online in 60s</h3>
@@ -2562,7 +2619,7 @@ export function Landing() {
               </p>
             </div>
 
-            <div style={{ background: 'rgba(255, 255, 255, 0.07)', border: '1px solid rgba(255, 255, 255, 0.15)', borderRadius: '16px', padding: '2rem' }}>
+            <div style={{ background: 'rgba(255, 255, 255, 0.07)', border: '1px solid rgba(255, 255, 255, 0.15)', borderRadius: '16px', padding: isMobile ? '1.5rem 1.25rem' : '2rem' }}>
               <div style={{ fontSize: '2.5rem', marginBottom: '1rem' }}>💻</div>
               <div style={{ fontSize: '0.85rem', fontWeight: 800, color: '#34d399', textTransform: 'uppercase' }}>Step 2</div>
               <h3 style={{ fontSize: '1.25rem', fontWeight: 800, margin: '0.35rem 0 0.5rem', color: '#ffffff' }}>Intensive Practical Training</h3>
@@ -2571,7 +2628,7 @@ export function Landing() {
               </p>
             </div>
 
-            <div style={{ background: 'rgba(255, 255, 255, 0.07)', border: '1px solid rgba(255, 255, 255, 0.15)', borderRadius: '16px', padding: '2rem' }}>
+            <div style={{ background: 'rgba(255, 255, 255, 0.07)', border: '1px solid rgba(255, 255, 255, 0.15)', borderRadius: '16px', padding: isMobile ? '1.5rem 1.25rem' : '2rem' }}>
               <div style={{ fontSize: '2.5rem', marginBottom: '1rem' }}>🎓</div>
               <div style={{ fontSize: '0.85rem', fontWeight: 800, color: '#fbbf24', textTransform: 'uppercase' }}>Step 3</div>
               <h3 style={{ fontSize: '1.25rem', fontWeight: 800, margin: '0.35rem 0 0.5rem', color: '#ffffff' }}>Certification & Job Search</h3>
@@ -2581,7 +2638,7 @@ export function Landing() {
             </div>
           </div>
 
-          <div style={{ marginTop: '3.5rem' }}>
+          <div style={{ marginTop: isMobile ? '2rem' : '3.5rem' }}>
             <button
               type="button"
               className="btn btn-lg"
@@ -2589,11 +2646,13 @@ export function Landing() {
                 background: '#2563eb',
                 color: '#ffffff',
                 fontWeight: 800,
-                padding: '1rem 2.5rem',
-                fontSize: '1.1rem',
+                padding: '0.9rem 2rem',
+                fontSize: isMobile ? '1rem' : '1.1rem',
                 borderRadius: '12px',
                 boxShadow: '0 10px 25px rgba(37, 99, 235, 0.4)',
                 border: 'none',
+                width: isMobile ? '100%' : 'auto',
+                maxWidth: isMobile ? '360px' : 'none',
               }}
               onClick={() => setInquiryModalOpen(true)}
             >
@@ -2662,23 +2721,23 @@ export function Landing() {
       </section>
 
       {/* Online Certificate Verification Tool */}
-      <section style={{ background: '#090d16', color: '#f8fafc', padding: '4.5rem 1.5rem', borderTop: '1px solid #1e293b' }}>
+      <section style={{ background: '#090d16', color: '#f8fafc', padding: isMobile ? '3rem 1rem' : '4.5rem 1.5rem', borderTop: '1px solid #1e293b' }}>
         <div style={{ maxWidth: '850px', margin: '0 auto', textAlign: 'center' }}>
           <span style={{ fontSize: '0.82rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.08em', color: '#38bdf8' }}>
             OFFICIAL CREDENTIALS
           </span>
-          <h2 style={{ fontSize: '2rem', fontWeight: 900, color: '#ffffff', margin: '0.35rem 0 0.5rem' }}>
+          <h2 style={{ fontSize: isMobile ? '1.45rem' : '2rem', fontWeight: 900, color: '#ffffff', margin: '0.35rem 0 0.5rem', lineHeight: 1.25 }}>
             Instant Graduate Certificate Verification
           </h2>
-          <p style={{ fontSize: '0.92rem', color: '#cbd5e1', maxWidth: '600px', margin: '0 auto 2rem' }}>
+          <p style={{ fontSize: isMobile ? '0.88rem' : '0.92rem', color: '#cbd5e1', maxWidth: '600px', margin: '0 auto 1.75rem' }}>
             Employers, embassies, and academic institutions in Kenya, the Middle East, and worldwide can instantly verify authentic Eclat Institute credentials.
           </p>
 
-          <form onSubmit={handleVerifyCert} style={{ display: 'flex', gap: '0.75rem', justifyContent: 'center', flexWrap: 'wrap', marginBottom: '2rem' }}>
+          <form onSubmit={handleVerifyCert} style={{ display: 'flex', gap: '0.75rem', justifyContent: 'center', flexWrap: 'wrap', marginBottom: '2rem', width: '100%' }}>
             <input
               type="text"
               className="input"
-              style={{ maxWidth: '400px', background: '#0f172a', border: '1.5px solid #334155', color: '#ffffff', fontSize: '0.95rem' }}
+              style={{ width: isMobile ? '100%' : 'auto', maxWidth: '400px', background: '#0f172a', border: '1.5px solid #334155', color: '#ffffff', fontSize: '0.95rem' }}
               placeholder="Enter Certificate Serial (e.g. EI-2026-089)"
               value={certQuery}
               onChange={(e) => setCertQuery(e.target.value)}
@@ -2686,7 +2745,7 @@ export function Landing() {
             <button
               type="submit"
               className="btn btn-primary"
-              style={{ fontWeight: 800, padding: '0.75rem 1.5rem', borderRadius: '10px' }}
+              style={{ width: isMobile ? '100%' : 'auto', maxWidth: isMobile ? '400px' : 'none', fontWeight: 800, padding: '0.75rem 1.5rem', borderRadius: '10px' }}
             >
               🔍 Verify Certificate
             </button>
@@ -2695,7 +2754,7 @@ export function Landing() {
           {certResult && (
             <div style={{ maxWidth: '600px', margin: '0 auto', textAlign: 'left' }}>
               {certResult.found ? (
-                <div style={{ background: '#0f291e', border: '1.5px solid #22c55e', borderRadius: '14px', padding: '1.5rem', color: '#f0fdf4' }}>
+                <div style={{ background: '#0f291e', border: '1.5px solid #22c55e', borderRadius: '14px', padding: isMobile ? '1.25rem 1rem' : '1.5rem', color: '#f0fdf4' }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '0.85rem' }}>
                     <span style={{ fontSize: '1.75rem' }}>🛡️</span>
                     <div>
@@ -2725,9 +2784,9 @@ export function Landing() {
         </div>
       </section>
 
-      {/* Desktop Footer */}
-      <footer style={{ background: '#090d16', color: '#cbd5e1', padding: '4rem 1.5rem 2.5rem', borderTop: '1px solid #1e293b' }}>
-        <div style={{ maxWidth: '1280px', margin: '0 auto', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '2.5rem', marginBottom: '3rem' }}>
+      {/* Desktop & Mobile Footer */}
+      <footer style={{ background: '#090d16', color: '#cbd5e1', padding: isMobile ? '3rem 1rem 6rem' : '4rem 1.5rem 2.5rem', borderTop: '1px solid #1e293b' }}>
+        <div style={{ maxWidth: '1280px', margin: '0 auto', display: 'grid', gridTemplateColumns: isMobile ? '1fr' : 'repeat(auto-fit, minmax(250px, 1fr))', gap: isMobile ? '2rem' : '2.5rem', marginBottom: isMobile ? '2rem' : '3rem' }}>
           {/* Brand & Overview */}
           <div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.85rem', marginBottom: '1.25rem' }}>
@@ -2804,11 +2863,11 @@ export function Landing() {
         </div>
 
         {/* Bottom Bar */}
-        <div style={{ borderTop: '1px solid #1e293b', paddingTop: '1.75rem', textAlign: 'center', fontSize: '0.85rem', color: '#94a3b8', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem', maxWidth: '1280px', margin: '0 auto' }}>
+        <div style={{ borderTop: '1px solid #1e293b', paddingTop: '1.75rem', textAlign: 'center', fontSize: '0.85rem', color: '#94a3b8', display: 'flex', flexDirection: isMobile ? 'column' : 'row', justifyContent: 'space-between', alignItems: 'center', gap: '1rem', maxWidth: '1280px', margin: '0 auto' }}>
           <div>
             © {new Date().getFullYear()} <strong style={{ color: '#e2e8f0' }}>Éclat Institute</strong>. All Rights Reserved.
           </div>
-          <div style={{ display: 'flex', gap: '1.25rem', alignItems: 'center', flexWrap: 'wrap' }}>
+          <div style={{ display: 'flex', gap: isMobile ? '0.75rem' : '1.25rem', alignItems: 'center', flexWrap: 'wrap', justifyContent: 'center' }}>
             <Link to="/about" style={{ color: '#38bdf8', textDecoration: 'none', fontWeight: 700 }}>🏛️ About Us</Link>
             <Link to="/courses" style={{ color: '#cbd5e1', textDecoration: 'none' }}>Courses</Link>
             <Link to="/library" style={{ color: '#cbd5e1', textDecoration: 'none' }}>E-Library</Link>
@@ -3849,7 +3908,7 @@ export function Landing() {
       )}
 
       {/* Sleek Modern Floating Support Desk (WhatsApp / Admissions Live Desk) */}
-      <div style={{ position: 'fixed', bottom: '24px', right: '24px', zIndex: 9990, display: 'flex', flexDirection: 'column', alignItems: 'flex-end' }}>
+      <div style={{ position: 'fixed', bottom: isMobile ? '76px' : '24px', right: isMobile ? '16px' : '24px', zIndex: 9990, display: 'flex', flexDirection: 'column', alignItems: 'flex-end' }}>
         {supportModalOpen && (
           <div
             style={{
@@ -3858,7 +3917,8 @@ export function Landing() {
               padding: '1.4rem',
               boxShadow: '0 20px 48px rgba(15, 23, 42, 0.25)',
               border: '1px solid #e2e8f0',
-              width: '320px',
+              width: isMobile ? 'calc(100vw - 32px)' : '320px',
+              maxWidth: '360px',
               animation: 'fadeIn 0.2s ease',
               marginBottom: '12px',
               textAlign: 'left',
@@ -4050,8 +4110,8 @@ export function Landing() {
           aria-label="Scroll to top"
           style={{
             position: 'fixed',
-            bottom: isMobile ? '86px' : '96px',
-            right: '24px',
+            bottom: isMobile ? '142px' : '96px',
+            right: isMobile ? '16px' : '24px',
             width: '44px',
             height: '44px',
             borderRadius: '50%',
@@ -4071,6 +4131,98 @@ export function Landing() {
         >
           ↑
         </button>
+      )}
+
+      {/* Mobile-Only Persistent Sticky Bottom Action Dock */}
+      {isMobile && (
+        <div
+          style={{
+            position: 'fixed',
+            bottom: 0,
+            left: 0,
+            right: 0,
+            zIndex: 9980,
+            background: 'rgba(15, 23, 42, 0.97)',
+            backdropFilter: 'blur(16px)',
+            borderTop: '1px solid rgba(255, 255, 255, 0.15)',
+            padding: '0.55rem 0.75rem',
+            display: 'grid',
+            gridTemplateColumns: '1fr 1.2fr 1fr',
+            gap: '0.45rem',
+            boxShadow: '0 -4px 20px rgba(0, 0, 0, 0.35)',
+          }}
+        >
+          <a
+            href={getWhatsAppInquiryUrl('Hello Eclat Admissions! I need information on your programs.')}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="btn"
+            style={{
+              background: '#22c55e',
+              color: '#ffffff',
+              fontSize: '0.74rem',
+              fontWeight: 800,
+              padding: '0.55rem 0.25rem',
+              borderRadius: '8px',
+              textDecoration: 'none',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: '4px',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <span>💬</span>
+            <span>WhatsApp</span>
+          </a>
+
+          <button
+            type="button"
+            className="btn btn-primary"
+            style={{
+              background: '#d4af37',
+              color: '#0c0e12',
+              fontSize: '0.78rem',
+              fontWeight: 900,
+              padding: '0.55rem 0.25rem',
+              borderRadius: '8px',
+              border: 'none',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: '4px',
+              whiteSpace: 'nowrap',
+              boxShadow: '0 2px 8px rgba(212, 175, 55, 0.4)',
+            }}
+            onClick={() => setInquiryModalOpen(true)}
+          >
+            <span>⚡</span>
+            <span>Enroll Now</span>
+          </button>
+
+          <button
+            type="button"
+            className="btn btn-secondary"
+            style={{
+              background: '#1e293b',
+              color: '#ffffff',
+              border: '1px solid #3b82f6',
+              fontSize: '0.74rem',
+              fontWeight: 800,
+              padding: '0.55rem 0.25rem',
+              borderRadius: '8px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: '4px',
+              whiteSpace: 'nowrap',
+            }}
+            onClick={() => setShowPortalDesksModal(true)}
+          >
+            <span>🔐</span>
+            <span>Portals</span>
+          </button>
+        </div>
       )}
     </div>
   )

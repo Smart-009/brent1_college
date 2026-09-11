@@ -3,9 +3,11 @@ import { Link } from 'react-router-dom'
 import { intakeStore } from '@/lib/intakeStore'
 import { formatDate } from '@/lib/utils'
 import { getWhatsAppInquiryUrl } from '@/config/institution'
+import { useIsMobile } from '@/hooks/useMediaQuery'
 import type { IntakeSchedule } from '@/types/intake'
 
 export function IntakeAdvertsSection() {
+  const isMobile = useIsMobile(768)
   const [intakes, setIntakes] = useState<IntakeSchedule[]>(() => intakeStore.getPublishedIntakes())
   const [activePosterUrl, setActivePosterUrl] = useState<string | null>(null)
 
@@ -50,7 +52,7 @@ export function IntakeAdvertsSection() {
     <section
       id="intakes-section"
       style={{
-        padding: '4.5rem 1.5rem',
+        padding: isMobile ? '3rem 1rem' : '4.5rem 1.5rem',
         background: 'linear-gradient(180deg, #070b18 0%, #0c142b 50%, #070b18 100%)',
         color: '#ffffff',
         position: 'relative',
@@ -85,7 +87,7 @@ export function IntakeAdvertsSection() {
 
       <div style={{ maxWidth: '1280px', margin: '0 auto', position: 'relative', zIndex: 10 }}>
         {/* Section Header */}
-        <div style={{ textAlign: 'center', marginBottom: '3.5rem' }}>
+        <div style={{ textAlign: 'center', marginBottom: isMobile ? '2rem' : '3.5rem' }}>
           <div
             style={{
               display: 'inline-flex',
@@ -96,7 +98,7 @@ export function IntakeAdvertsSection() {
               color: '#93c5fd',
               padding: '6px 16px',
               borderRadius: '999px',
-              fontSize: '0.82rem',
+              fontSize: isMobile ? '0.75rem' : '0.82rem',
               fontWeight: 800,
               letterSpacing: '0.06em',
               textTransform: 'uppercase',
@@ -109,7 +111,7 @@ export function IntakeAdvertsSection() {
 
           <h2
             style={{
-              fontSize: 'clamp(1.8rem, 4vw, 2.75rem)',
+              fontSize: isMobile ? '1.75rem' : 'clamp(1.8rem, 4vw, 2.75rem)',
               fontWeight: 900,
               color: '#ffffff',
               margin: '0 0 1rem',
@@ -122,7 +124,7 @@ export function IntakeAdvertsSection() {
 
           <p
             style={{
-              fontSize: '1rem',
+              fontSize: isMobile ? '0.9rem' : '1rem',
               color: '#94a3b8',
               maxWidth: '680px',
               margin: '0 auto',
@@ -134,7 +136,7 @@ export function IntakeAdvertsSection() {
         </div>
 
         {/* Intakes Cards Grid */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(340px, 1fr))', gap: '2rem' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : 'repeat(auto-fit, minmax(320px, 1fr))', gap: isMobile ? '1.25rem' : '2rem' }}>
           {intakes.map((intake) => {
             const isFillingFast = intake.status === 'Filling Fast'
 
