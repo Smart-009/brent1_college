@@ -413,7 +413,7 @@ export function CertificateGenerator({
               }}
             >
               <img
-                src="/logo.png"
+                src="/logo-emblem-transparent.png"
                 alt="Watermark Crest"
                 style={{ width: '100%', height: '100%', objectFit: 'contain', filter: 'grayscale(100%)' }}
               />
@@ -543,15 +543,16 @@ export function CertificateGenerator({
             >
               {/* TOP HEADER: Crest & Institutional Authority */}
               <div>
-                <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '14px', marginBottom: '6px' }}>
+                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginBottom: '6px' }}>
                   <img
-                    src="/logo.png"
-                    alt="Éclat Crest"
+                    src="/logo-emblem-transparent.png"
+                    alt="Éclat Institute Official Crest"
                     style={{
-                      width: '64px',
-                      height: '64px',
+                      width: '84px',
+                      height: '76px',
                       objectFit: 'contain',
-                      filter: 'drop-shadow(0 4px 8px rgba(212, 175, 55, 0.45))',
+                      filter: 'drop-shadow(0 4px 10px rgba(212, 175, 55, 0.45))',
+                      marginBottom: '4px',
                     }}
                   />
                   <div style={{ textAlign: 'center' }}>
@@ -594,16 +595,6 @@ export function CertificateGenerator({
                       Accredited British Curriculum Centre (KE042) • {INSTITUTION_CONFIG.tagline}
                     </div>
                   </div>
-                  <img
-                    src="/logo.png"
-                    alt="Éclat Crest"
-                    style={{
-                      width: '64px',
-                      height: '64px',
-                      objectFit: 'contain',
-                      filter: 'drop-shadow(0 4px 8px rgba(212, 175, 55, 0.45))',
-                    }}
-                  />
                 </div>
 
                 {/* Classical Roman Ornamental Gold Divider */}
