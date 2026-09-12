@@ -806,7 +806,7 @@ export function CourseCatalogPage() {
                   style={{
                     flexShrink: 0,
                     background: selectedCat === cat ? '#2563eb' : '#131b2e',
-                    color: selectedCat === cat ? '#ffffff' : '#94a3b8',
+                    color: selectedCat === cat ? '#ffffff' : '#cbd5e1',
                     border: selectedCat === cat ? '1px solid #3b82f6' : '1px solid #24304d',
                     borderRadius: '999px',
                     padding: '0.45rem 0.95rem',
@@ -837,7 +837,7 @@ export function CourseCatalogPage() {
               border: '1px solid rgba(255, 255, 255, 0.06)',
             }}
           >
-            <span style={{ fontSize: '0.72rem', color: '#94a3b8', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.04em', whiteSpace: 'nowrap', paddingLeft: '4px' }}>
+            <span style={{ fontSize: '0.72rem', color: '#cbd5e1', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.04em', whiteSpace: 'nowrap', paddingLeft: '4px' }}>
               🎓 Year Level:
             </span>
             {YEAR_LEVELS.map((lvl) => (
@@ -847,9 +847,9 @@ export function CourseCatalogPage() {
                 onClick={() => setSelectedYear(lvl)}
                 style={{
                   flexShrink: 0,
-                  background: selectedYear === lvl ? '#38bdf8' : 'rgba(255, 255, 255, 0.05)',
-                  color: selectedYear === lvl ? '#090d16' : '#cbd5e1',
-                  border: selectedYear === lvl ? '1px solid #7dd3fc' : '1px solid rgba(255, 255, 255, 0.1)',
+                  background: selectedYear === lvl ? '#2563eb' : 'rgba(255, 255, 255, 0.05)',
+                  color: selectedYear === lvl ? '#ffffff' : '#cbd5e1',
+                  border: selectedYear === lvl ? '1px solid #3b82f6' : '1px solid rgba(255, 255, 255, 0.1)',
                   borderRadius: '8px',
                   padding: '0.3rem 0.75rem',
                   fontSize: '0.76rem',
@@ -872,7 +872,7 @@ export function CourseCatalogPage() {
                 onClick={() => setViewMode('courses')}
                 style={{
                   background: viewMode === 'courses' ? '#2563eb' : 'transparent',
-                  color: viewMode === 'courses' ? '#ffffff' : '#94a3b8',
+                  color: viewMode === 'courses' ? '#ffffff' : '#cbd5e1',
                   border: 'none',
                   borderRadius: '8px',
                   padding: '0.35rem 0.85rem',
@@ -892,7 +892,7 @@ export function CourseCatalogPage() {
                 onClick={() => setViewMode('schools')}
                 style={{
                   background: viewMode === 'schools' ? '#2563eb' : 'transparent',
-                  color: viewMode === 'schools' ? '#ffffff' : '#94a3b8',
+                  color: viewMode === 'schools' ? '#ffffff' : '#cbd5e1',
                   border: 'none',
                   borderRadius: '8px',
                   padding: '0.35rem 0.85rem',
@@ -909,7 +909,7 @@ export function CourseCatalogPage() {
               </button>
             </div>
 
-            <div style={{ fontSize: '0.76rem', color: '#64748b', fontWeight: 600 }}>
+            <div style={{ fontSize: '0.78rem', color: '#cbd5e1', fontWeight: 600 }}>
               Centres: <strong style={{ color: '#38bdf8' }}>CAIE KE042</strong> &bull; <strong style={{ color: '#f87171' }}>Edexcel EDX-98421</strong>
             </div>
           </div>
@@ -1176,18 +1176,18 @@ export function CourseCatalogPage() {
                     )}
                   </div>
 
-                  <h3 style={{ fontSize: '1.05rem', fontWeight: 800, color: '#ffffff', margin: '0 0 0.4rem', lineHeight: 1.35 }}>
+                  <h3 style={{ fontSize: '1.05rem', fontWeight: 800, color: '#ffffff', margin: '0 0 0.4rem', lineHeight: 1.35, fontFamily: 'Inter, system-ui, -apple-system, sans-serif' }}>
                     {course.title}
                   </h3>
 
-                  <p style={{ fontSize: '0.78rem', color: '#94a3b8', margin: '0 0 0.75rem', lineHeight: 1.4 }}>
-                    💼 Career Outcome: <strong style={{ color: '#cbd5e1' }}>{course.careerOutcome}</strong>
+                  <p style={{ fontSize: '0.78rem', color: '#cbd5e1', margin: '0 0 0.75rem', lineHeight: 1.4 }}>
+                    💼 Career Outcome: <strong style={{ color: '#ffffff' }}>{course.careerOutcome}</strong>
                   </p>
 
                 {/* Duration & Schedule Badges */}
-                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.4rem', marginBottom: '0.85rem', fontSize: '0.72rem', color: '#94a3b8' }}>
-                  <span style={{ background: '#182238', padding: '3px 8px', borderRadius: '6px', border: '1px solid #2e3d61' }}>⏱️ {course.duration}</span>
-                  <span style={{ background: '#182238', padding: '3px 8px', borderRadius: '6px', border: '1px solid #2e3d61' }}>🏛️ {course.schedule.split('(')[0]}</span>
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.4rem', marginBottom: '0.85rem', fontSize: '0.74rem', color: '#cbd5e1' }}>
+                  <span style={{ background: '#182238', padding: '3px 8px', borderRadius: '6px', border: '1px solid #2e3d61', color: '#cbd5e1' }}>⏱️ {course.duration}</span>
+                  <span style={{ background: '#182238', padding: '3px 8px', borderRadius: '6px', border: '1px solid #2e3d61', color: '#cbd5e1' }}>🏛️ {course.schedule.split('(')[0]}</span>
                 </div>
 
                 {/* Skills Learned */}
@@ -1325,7 +1325,7 @@ export function CourseCatalogPage() {
                 <div key={idx} style={{ background: '#182238', borderRadius: '10px', padding: '0.75rem', border: '1px solid #2e3d61' }}>
                   <div style={{ fontSize: '0.75rem', color: '#60a5fa', fontWeight: 800 }}>{s.week}</div>
                   <div style={{ fontSize: '0.86rem', color: '#ffffff', fontWeight: 700, margin: '2px 0' }}>{s.topic}</div>
-                  <div style={{ fontSize: '0.78rem', color: '#94a3b8' }}>🧪 Lab: {s.practicalLab}</div>
+                  <div style={{ fontSize: '0.78rem', color: '#cbd5e1' }}>🧪 Lab: {s.practicalLab}</div>
                 </div>
               ))}
             </div>

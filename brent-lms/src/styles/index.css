@@ -9,31 +9,31 @@
 /* ---- Design Tokens ---- */
 :root {
   /* Brand Colours — Éclat Noir & Imperial Gold */
-  --color-primary:        #0f172a;
-  --color-primary-dark:   #090d16;
-  --color-primary-light:  #1e293b;
-  --color-secondary:      #1e293b;
-  --color-accent:         #c5a059;
-  --color-accent-hover:   #b38f2d;
+  --color-primary:        #ffffff;
+  --color-primary-dark:   #f8fafc;
+  --color-primary-light:  #38bdf8;
+  --color-secondary:      #93c5fd;
+  --color-accent:         #d4af37;
+  --color-accent-hover:   #f5df88;
   --color-accent-light:   #fef3c7;
   --color-gold:           #d4af37;
   --color-gold-light:     #f5df88;
 
-  /* Neutrals */
-  --color-bg:             #f8fafc;
-  --color-bg-alt:         #f1f5f9;
-  --color-bg-secondary:   #f1f5f9;
-  --color-surface:        #ffffff;
-  --color-surface-raised: #ffffff;
-  --color-border:         #cbd5e1;
-  --color-border-light:   #e2e8f0;
+  /* Neutrals - High Contrast Dark Luxury Canvas */
+  --color-bg:             #090d16;
+  --color-bg-alt:         #131b2e;
+  --color-bg-secondary:   #131b2e;
+  --color-surface:        #182238;
+  --color-surface-raised: #1f2c48;
+  --color-border:         #2e3d61;
+  --color-border-light:   #24304d;
 
-  /* Text - High Contrast & Crystal Clear */
-  --color-text:           #090d16;
-  --color-text-primary:   #090d16;
-  --color-text-secondary: #1e293b;
-  --color-muted:          #475569;
-  --color-on-primary:     #ffffff;
+  /* Text - High Contrast & Crystal Clear (Never Black on Dark) */
+  --color-text:           #f8fafc;
+  --color-text-primary:   #f8fafc;
+  --color-text-secondary: #cbd5e1;
+  --color-muted:          #94a3b8;
+  --color-on-primary:     #090d16;
 
   /* Feedback */
   --color-success:        #16a34a;
@@ -220,8 +220,7 @@ p:last-child { margin-bottom: 0; }
 a { color: var(--color-secondary); text-decoration: none; transition: color var(--transition-fast); }
 a:hover { color: var(--color-primary); text-decoration: underline; }
 
-strong { font-weight: 700; color: var(--color-text); }
-[data-theme="dark"] strong { color: #f8fafc !important; }
+strong { font-weight: 700; color: inherit; }
 small  { font-size: var(--text-sm); color: var(--color-muted); }
 code   { font-family: var(--font-mono); background: var(--color-bg-alt); padding: 2px 6px; border-radius: var(--radius-sm); font-size: 0.875em; color: var(--color-text); }
 
@@ -236,8 +235,8 @@ li { margin-bottom: var(--space-1); }
 .input, input, textarea, select {
   font-family: var(--font-body);
   font-size: var(--text-base);
-  color: var(--color-text) !important;
-  background-color: var(--color-surface) !important;
+  color: var(--color-text);
+  background-color: var(--color-surface);
   border: 1.5px solid var(--color-border);
   border-radius: var(--radius-md);
   padding: var(--space-3) var(--space-4);
@@ -248,17 +247,17 @@ li { margin-bottom: var(--space-1); }
 
 .input:focus, input:focus, textarea:focus, select:focus {
   border-color: var(--color-secondary);
-  box-shadow: 0 0 0 3px rgba(29, 78, 216, 0.15);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.25);
 }
 
 .input::placeholder, input::placeholder, textarea::placeholder {
-  color: var(--color-muted) !important;
+  color: var(--color-muted);
   opacity: 0.85;
 }
 
 .input:disabled, input:disabled, textarea:disabled, select:disabled {
-  background-color: var(--color-bg-alt) !important;
-  color: var(--color-muted) !important;
+  background-color: var(--color-bg-alt);
+  color: var(--color-muted);
   cursor: not-allowed;
   opacity: 0.75;
 }
