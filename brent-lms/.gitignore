@@ -29,3 +29,6 @@ __pycache__/
 *.py[cod]
 *$py.class
 
+# Proprietary Trading Bot (Local execution only - do not push to GitHub)
+trading_bot/
+
