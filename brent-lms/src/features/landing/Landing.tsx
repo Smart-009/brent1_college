@@ -3973,9 +3973,9 @@ export function Landing() {
       {/* 1. Interactive Course Admission & Payment Checkout Desk Modal */}
       {inquiryModalOpen && (
         <div className="modal-overlay" onClick={() => setInquiryModalOpen(false)}>
-          <div className="modal-content modal-lg" onClick={(e) => e.stopPropagation()} style={{ padding: '1.75rem', borderRadius: '16px', maxHeight: '90vh', overflowY: 'auto' }}>
+          <div className="modal-content modal-lg" onClick={(e) => e.stopPropagation()} style={{ background: '#ffffff', color: '#0f172a', padding: '1.75rem', borderRadius: '16px', maxHeight: '90vh', overflowY: 'auto', border: '1px solid #cbd5e1', boxShadow: '0 25px 60px rgba(15, 23, 42, 0.25)' }}>
             {/* Modal Header & Step Indicator */}
-            <div className="modal-header" style={{ padding: 0, paddingBottom: '1rem', marginBottom: '1.25rem', borderBottom: '1px solid #e2e8f0' }}>
+            <div className="modal-header" style={{ padding: 0, paddingBottom: '1rem', marginBottom: '1.25rem', borderBottom: '1px solid #e2e8f0', background: '#ffffff', color: '#0f172a' }}>
               <div>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.25rem' }}>
                   <GraduationCapIcon size={22} color="#1e3a8a" />
@@ -4692,10 +4692,10 @@ export function Landing() {
       {/* 3. College Portals & Management Desks Modal */}
       {showPortalDesksModal && (
         <div className="modal-overlay" onClick={() => setShowPortalDesksModal(false)}>
-          <div className="modal-content modal-md" onClick={(e) => e.stopPropagation()} style={{ padding: '1.75rem', borderRadius: '16px' }}>
-            <div className="modal-header" style={{ padding: 0, paddingBottom: '1rem', marginBottom: '1.25rem', borderBottom: '1px solid #cbd5e1' }}>
+          <div className="modal-content modal-md" onClick={(e) => e.stopPropagation()} style={{ background: '#ffffff', color: '#0f172a', padding: '1.75rem', borderRadius: '16px', border: '1px solid #cbd5e1', boxShadow: '0 25px 60px rgba(15, 23, 42, 0.25)' }}>
+            <div className="modal-header" style={{ padding: 0, paddingBottom: '1rem', marginBottom: '1.25rem', borderBottom: '1px solid #cbd5e1', background: '#ffffff', color: '#0f172a' }}>
               <div>
-                <h3 className="modal-title" style={{ fontSize: '1.25rem', fontWeight: 900, color: '#1e3a8a' }}>
+                <h3 className="modal-title" style={{ fontSize: '1.25rem', fontWeight: 900, color: '#0f172a' }}>
                   <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}><LockIcon size={20} color="#1e3a8a" /> College Portals & Management Workstations</span>
                 </h3>
                 <p style={{ fontSize: '0.82rem', color: '#334155', margin: '0.25rem 0 0', fontWeight: 500 }}>
@@ -4786,6 +4786,8 @@ export function Landing() {
             className="modal-content modal-lg"
             onClick={(e) => e.stopPropagation()}
             style={{
+              background: '#ffffff',
+              color: '#0f172a',
               padding: '1.75rem',
               borderRadius: '18px',
               maxHeight: '90vh',
@@ -4793,33 +4795,33 @@ export function Landing() {
               WebkitOverflowScrolling: 'touch',
               display: 'flex',
               flexDirection: 'column',
-              boxShadow: '0 25px 60px rgba(0,0,0,0.3)',
+              boxShadow: '0 25px 60px rgba(15, 23, 42, 0.25)',
+              border: '1px solid #cbd5e1',
             }}
           >
             {/* Modal Header */}
-            <div className="modal-header" style={{ padding: 0, paddingBottom: '1rem', marginBottom: '1.25rem', borderBottom: '1px solid #e2e8f0', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '1rem' }}>
+            <div className="modal-header" style={{ padding: 0, paddingBottom: '1rem', marginBottom: '1.25rem', borderBottom: '1px solid #e2e8f0', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '1rem', background: '#ffffff', color: '#0f172a' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '0.85rem', flex: 1, minWidth: 0 }}>
                 <div
                   style={{
                     width: '46px',
                     height: '46px',
                     borderRadius: '12px',
-                    background: '#f1f5f9',
+                    background: '#f8fafc',
                     border: '1px solid #cbd5e1',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
-                    fontSize: '1.5rem',
                     flexShrink: 0,
                   }}
                 >
-                  {selectedCourseForModal.icon}
+                  <CourseIcon courseId={selectedCourseForModal.id} iconKey={selectedCourseForModal.icon} size={26} />
                 </div>
                 <div style={{ minWidth: 0 }}>
-                  <div style={{ fontSize: '0.75rem', fontWeight: 800, color: selectedCourseForModal.tagColor, textTransform: 'uppercase', letterSpacing: '0.04em' }}>
+                  <div style={{ fontSize: '0.75rem', fontWeight: 800, color: selectedCourseForModal.tagColor || '#2563eb', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
                     {selectedCourseForModal.tag}
                   </div>
-                  <h3 className="modal-title" style={{ fontSize: '1.25rem', fontWeight: 900, color: '#1e3a8a', margin: '2px 0 0', lineHeight: 1.25 }}>
+                  <h3 className="modal-title" style={{ fontSize: '1.25rem', fontWeight: 900, color: '#0f172a', margin: '2px 0 0', lineHeight: 1.25 }}>
                     {selectedCourseForModal.title}
                   </h3>
                 </div>
@@ -4830,7 +4832,7 @@ export function Landing() {
                 onClick={() => setSelectedCourseForModal(null)}
                 style={{
                   background: '#f1f5f9',
-                  border: 'none',
+                  border: '1px solid #cbd5e1',
                   borderRadius: '50%',
                   width: '34px',
                   height: '34px',
@@ -4852,7 +4854,9 @@ export function Landing() {
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '0.75rem', marginBottom: '1.25rem', background: '#f8fafc', padding: '1rem', borderRadius: '12px', border: '1px solid #e2e8f0' }}>
               <div>
                 <div style={{ fontSize: '0.72rem', color: '#64748b', fontWeight: 700, textTransform: 'uppercase' }}>Duration & Shift</div>
-                <div style={{ fontWeight: 800, color: '#0f172a', marginTop: '2px', fontSize: '0.9rem', display: 'flex', alignItems: 'center', gap: '4px' }}><ClockIcon size={14} color="#64748b" /> {selectedCourseForModal.duration}</div>
+                <div style={{ fontWeight: 800, color: '#0f172a', marginTop: '2px', fontSize: '0.9rem', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                  <ClockIcon size={14} color="#64748b" /> {selectedCourseForModal.duration ? selectedCourseForModal.duration.replace(/4\s*Weeks?(\s*\(1\s*Month\))?|1\s*Month|6\s*Weeks?/gi, '8 Weeks (2 Months)') : '8 Weeks (2 Months)'}
+                </div>
                 <div style={{ fontSize: '0.75rem', color: '#475569' }}>{selectedCourseForModal.schedule}</div>
               </div>
               <div>

@@ -4156,16 +4156,23 @@ class SchoolDataStore {
   // --- Course Units & Curriculum Builder (ACID Protected) ---
   getCourseUnits(): CourseUnit[] {
     const raw = this.get<CourseUnit[]>('course_units', INITIAL_COURSE_UNITS)
-    return raw.filter((u) => (
-      u &&
-      typeof u.id === 'string' &&
-      !u.id.startsWith('aaaaaaaa-') &&
-      !u.id.startsWith('__ECLAT_') &&
-      !u.title?.startsWith('__ECLAT_') &&
-      !u.title?.includes('SYNC') &&
-      !u.description?.startsWith('{"key":') &&
-      !u.description?.startsWith('{"')
-    ))
+    return raw
+      .filter((u) => (
+        u &&
+        typeof u.id === 'string' &&
+        !u.id.startsWith('aaaaaaaa-') &&
+        !u.id.startsWith('__ECLAT_') &&
+        !u.title?.startsWith('__ECLAT_') &&
+        !u.title?.includes('SYNC') &&
+        !u.description?.startsWith('{"key":') &&
+        !u.description?.startsWith('{"')
+      ))
+      .map((u) => {
+        if (u.course_duration && (/1\s*Month|4\s*Weeks?|6\s*Weeks?/i.test(u.course_duration))) {
+          return { ...u, course_duration: '8 Weeks (2 Months)' }
+        }
+        return u
+      })
   }
 
   async addCourseUnit(unit: CourseUnit): Promise<void> {
@@ -4830,16 +4837,23 @@ class SchoolDataStore {
   // --- Admin Subjects / Disciplines Management (ACID Protected) ---
   getSubjects(): CollegeSubject[] {
     const raw = this.get<CollegeSubject[]>('subjects', INITIAL_SUBJECTS)
-    return raw.filter((s) => (
-      s &&
-      typeof s.id === 'string' &&
-      !s.id.startsWith('aaaaaaaa-') &&
-      !s.id.startsWith('__ECLAT_') &&
-      !s.name?.startsWith('__ECLAT_') &&
-      !s.name?.includes('SYNC') &&
-      !s.description?.startsWith('{"key":') &&
-      !s.description?.startsWith('{"')
-    ))
+    return raw
+      .filter((s) => (
+        s &&
+        typeof s.id === 'string' &&
+        !s.id.startsWith('aaaaaaaa-') &&
+        !s.id.startsWith('__ECLAT_') &&
+        !s.name?.startsWith('__ECLAT_') &&
+        !s.name?.includes('SYNC') &&
+        !s.description?.startsWith('{"key":') &&
+        !s.description?.startsWith('{"')
+      ))
+      .map((s) => {
+        if (s.duration && (/1\s*Month|4\s*Weeks?|6\s*Weeks?/i.test(s.duration))) {
+          return { ...s, duration: '8 Weeks (2 Months)' }
+        }
+        return s
+      })
   }
 
   async addSubject(sub: CollegeSubject): Promise<void> {

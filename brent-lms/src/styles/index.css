@@ -205,13 +205,31 @@ h1, h2, h3, h4, h5, h6 {
   letter-spacing: -0.02em;
 }
 
+/* Headings in dark mode - Default only, NEVER override inline styles or light surfaces */
 [data-theme="dark"] h1,
 [data-theme="dark"] h2,
 [data-theme="dark"] h3,
 [data-theme="dark"] h4,
 [data-theme="dark"] h5,
 [data-theme="dark"] h6 {
-  color: #f8fafc !important;
+  color: #f8fafc;
+}
+
+/* High-Contrast Visibility Safeguard: Any heading inside a light surface, card, modal, or white section is ALWAYS crisp dark */
+#courses h1, #courses h2, #courses h3, #courses h4, #courses h5, #courses h6,
+.card h1, .card h2, .card h3, .card h4, .card h5, .card h6,
+.course-card h1, .course-card h2, .course-card h3,
+.modal-content h1, .modal-content h2, .modal-content h3, .modal-content h4,
+.modal-box h1, .modal-box h2, .modal-box h3, .modal-box h4,
+form h1, form h2, form h3, form h4,
+.form h1, .form h2, .form h3, .form h4,
+.light-surface h1, .light-surface h2, .light-surface h3,
+section[style*="background: #ffffff"] h1, section[style*="background: #ffffff"] h2, section[style*="background: #ffffff"] h3,
+section[style*="background:#ffffff"] h1, section[style*="background:#ffffff"] h2, section[style*="background:#ffffff"] h3,
+div[style*="background: #ffffff"] h1, div[style*="background: #ffffff"] h2, div[style*="background: #ffffff"] h3,
+div[style*="background:#ffffff"] h1, div[style*="background:#ffffff"] h2, div[style*="background:#ffffff"] h3,
+div[style*="background: #f8fafc"] h1, div[style*="background: #f8fafc"] h2, div[style*="background: #f8fafc"] h3 {
+  color: #0f172a !important;
 }
 
 p { margin-bottom: var(--space-4); color: var(--color-text-secondary); }
@@ -231,13 +249,55 @@ img { display: block; max-width: 100%; height: auto; }
 ul, ol { padding-left: var(--space-5); }
 li { margin-bottom: var(--space-1); }
 
-/* ---- Inputs & Forms High Contrast Guardrails ---- */
+/* ---- Forms & Modals Light Theme Enforcement (User Mandate: Forms should NOT be dark themed) ---- */
+form,
+.form {
+  color: #0f172a !important;
+}
+
+.modal-content,
+.modal-box,
+.modal-body,
+.modal-footer {
+  background: #ffffff !important;
+  color: #0f172a !important;
+  border: 1px solid #cbd5e1 !important;
+}
+
+.modal-content,
+.modal-box {
+  box-shadow: 0 25px 50px -12px rgba(15, 23, 42, 0.25), 0 0 0 1px #e2e8f0 !important;
+}
+
+.modal-header {
+  background: #ffffff !important;
+  color: #0f172a !important;
+  border-bottom: 1px solid #e2e8f0 !important;
+}
+
+.modal-title {
+  color: #0f172a !important;
+  font-weight: 800 !important;
+}
+
+.modal-close {
+  background: #f1f5f9 !important;
+  color: #475569 !important;
+  border: 1px solid #e2e8f0 !important;
+}
+
+.modal-close:hover {
+  background: #e2e8f0 !important;
+  color: #0f172a !important;
+}
+
+/* Inputs & Form Controls - Always High Contrast Light Theme */
 .input, input, textarea, select {
   font-family: var(--font-body);
   font-size: var(--text-base);
-  color: var(--color-text);
-  background-color: var(--color-surface);
-  border: 1.5px solid var(--color-border);
+  color: #0f172a !important;
+  background-color: #ffffff !important;
+  border: 1.5px solid #cbd5e1 !important;
   border-radius: var(--radius-md);
   padding: var(--space-3) var(--space-4);
   width: 100%;
@@ -246,20 +306,22 @@ li { margin-bottom: var(--space-1); }
 }
 
 .input:focus, input:focus, textarea:focus, select:focus {
-  border-color: var(--color-secondary);
-  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.25);
+  border-color: #2563eb !important;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.2) !important;
+  background-color: #ffffff !important;
+  color: #0f172a !important;
 }
 
 .input::placeholder, input::placeholder, textarea::placeholder {
-  color: var(--color-muted);
-  opacity: 0.85;
+  color: #94a3b8 !important;
+  opacity: 1 !important;
 }
 
 .input:disabled, input:disabled, textarea:disabled, select:disabled {
-  background-color: var(--color-bg-alt);
-  color: var(--color-muted);
+  background-color: #f1f5f9 !important;
+  color: #94a3b8 !important;
   cursor: not-allowed;
-  opacity: 0.75;
+  opacity: 0.85;
 }
 
 select {
@@ -274,25 +336,21 @@ select {
   cursor: pointer;
 }
 
-/* Option high-contrast styling across all browsers and devices */
+/* Option styling across all browsers and devices */
 select option,
-datalist option {
-  background-color: #ffffff !important;
-  color: #090d16 !important;
-  padding: 6px 10px;
-}
-
+datalist option,
 [data-theme="dark"] select option,
 [data-theme="dark"] datalist option {
-  background-color: #182238 !important;
-  color: #f8fafc !important;
+  background-color: #ffffff !important;
+  color: #0f172a !important;
+  padding: 6px 10px;
 }
 
 .label, label, .form-label {
   display: inline-block;
   font-size: var(--text-sm);
-  font-weight: 600;
-  color: var(--color-text) !important;
+  font-weight: 700;
+  color: #1e293b !important;
   margin-bottom: var(--space-1);
 }
 
