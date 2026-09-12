@@ -73,29 +73,36 @@ export function ExamManagement() {
                 📄 View Modular Transcript
               </button>
             )}
-            {igcseStatements.length > 0 && (
-              <button
-                type="button"
-                className="btn"
-                onClick={() => setSelectedIGCSEStatement(igcseStatements[0])}
-                style={{
-                  background: '#0284c7',
-                  color: '#ffffff',
-                  fontWeight: 700,
-                  fontSize: '0.84rem',
-                  minHeight: '40px',
-                  padding: '0.5rem 1rem',
-                  borderRadius: '8px',
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  gap: '0.45rem',
-                  border: 'none',
-                  boxShadow: '0 2px 6px rgba(2, 132, 199, 0.3)',
-                }}
-              >
-                🇬🇧 Cambridge IGCSE Statement (9-1)
-              </button>
-            )}
+            {igcseStatements.map((stmt) => {
+              const isEdx =
+                stmt.examination_board?.toLowerCase().includes('edexcel') ||
+                stmt.center_number?.toUpperCase().includes('EDX')
+              return (
+                <button
+                  key={stmt.id}
+                  type="button"
+                  className="btn"
+                  onClick={() => setSelectedIGCSEStatement(stmt)}
+                  style={{
+                    background: isEdx ? '#dc2626' : '#0284c7',
+                    color: '#ffffff',
+                    fontWeight: 700,
+                    fontSize: '0.84rem',
+                    minHeight: '40px',
+                    padding: '0.5rem 1rem',
+                    borderRadius: '8px',
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '0.45rem',
+                    border: 'none',
+                    boxShadow: isEdx ? '0 2px 6px rgba(220, 38, 38, 0.3)' : '0 2px 6px rgba(2, 132, 199, 0.3)',
+                  }}
+                >
+                  <span>🇬🇧</span>
+                  <span>{isEdx ? 'Pearson Edexcel Statement (9-1)' : 'Cambridge IGCSE Statement (9-1 / A*-G)'}</span>
+                </button>
+              )
+            })}
             {currentStudent?.certificate_granted ? (
               <button
                 type="button"
@@ -245,6 +252,12 @@ export function ExamManagement() {
           <CertificateGenerator
             cert={selectedCert}
             onClose={() => setSelectedCert(null)}
+          />
+        )}
+        {selectedIGCSEStatement && (
+          <IGCSEStatementOfResultsModal
+            statement={selectedIGCSEStatement}
+            onClose={() => setSelectedIGCSEStatement(null)}
           />
         )}
       </div>
@@ -549,10 +562,10 @@ export function ExamManagement() {
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.25rem', flexWrap: 'wrap', gap: '0.75rem' }}>
             <div>
               <h2 style={{ fontSize: '1.25rem', fontWeight: 700, margin: 0 }}>
-                🇬🇧 Cambridge Assessment International Education (CAIE) & Pearson Edexcel
+                🇬🇧 British International Curriculum Registry (Cambridge & Pearson Edexcel)
               </h2>
               <p style={{ margin: '0.25rem 0 0', fontSize: '0.82rem', color: 'var(--color-text-secondary)' }}>
-                Center No: <strong>KE042</strong> • Official 9-1 & A*-G Statement of Results & ICE Diploma Qualification Registry
+                Center No: <strong>KE042 (Cambridge CAIE) & EDX-98421 (Pearson Edexcel)</strong> • Official 9-1 & A*-G Statement of Results & International Qualifications Registry
               </p>
             </div>
             <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
@@ -568,57 +581,73 @@ export function ExamManagement() {
                 <tr>
                   <th>Candidate No</th>
                   <th>Candidate Full Name</th>
-                  <th>Unique ID</th>
+                  <th>Exam Board</th>
                   <th>Series</th>
                   <th>Subjects</th>
                   <th>Mean Points</th>
-                  <th>Cambridge ICE Award</th>
+                  <th>Award / Classification</th>
                   <th style={{ textAlign: 'right' }}>Official Actions</th>
                 </tr>
               </thead>
               <tbody>
-                {igcseStatements.map((stmt) => (
-                  <tr key={stmt.id}>
-                    <td style={{ fontWeight: 700, fontFamily: 'monospace', color: 'var(--color-primary)' }}>
-                      {stmt.candidate_number}
-                    </td>
-                    <td style={{ fontWeight: 600 }}>{stmt.candidate_name}</td>
-                    <td style={{ fontFamily: 'monospace', fontSize: '0.8rem', color: 'var(--color-text-secondary)' }}>
-                      {stmt.candidate_unique_id}
-                    </td>
-                    <td>{stmt.examination_series}</td>
-                    <td>
-                      <span className="badge" style={{ background: '#f1f5f9', color: '#0f172a', fontWeight: 600 }}>
-                        {stmt.total_subjects} Papers Passed
-                      </span>
-                    </td>
-                    <td style={{ fontWeight: 700, color: '#0284c7' }}>
-                      {stmt.mean_points.toFixed(2)} / 9.00
-                    </td>
-                    <td>
-                      <span
-                        className="badge"
-                        style={{
-                          background: stmt.ice_award === 'Distinction' ? '#dcfce7' : '#e0f2fe',
-                          color: stmt.ice_award === 'Distinction' ? '#15803d' : '#0369a1',
-                          fontWeight: 700,
-                        }}
-                      >
-                        🎖️ {stmt.ice_award}
-                      </span>
-                    </td>
-                    <td style={{ textAlign: 'right' }}>
-                      <button
-                        type="button"
-                        className="btn btn-sm"
-                        style={{ background: '#0284c7', color: '#ffffff', fontWeight: 700 }}
-                        onClick={() => setSelectedIGCSEStatement(stmt)}
-                      >
-                        📄 View Official Statement
-                      </button>
-                    </td>
-                  </tr>
-                ))}
+                {igcseStatements.map((stmt) => {
+                  const isEdx =
+                    stmt.examination_board?.toLowerCase().includes('edexcel') ||
+                    stmt.center_number?.toUpperCase().includes('EDX')
+                  return (
+                    <tr key={stmt.id}>
+                      <td style={{ fontWeight: 700, fontFamily: 'monospace', color: 'var(--color-primary)' }}>
+                        {stmt.candidate_number}
+                      </td>
+                      <td style={{ fontWeight: 600 }}>{stmt.candidate_name}</td>
+                      <td>
+                        <span
+                          className="badge"
+                          style={{
+                            background: isEdx ? 'rgba(220, 38, 38, 0.12)' : 'rgba(2, 132, 199, 0.12)',
+                            color: isEdx ? '#dc2626' : '#0284c7',
+                            border: `1px solid ${isEdx ? '#fca5a5' : '#bae6fd'}`,
+                            fontWeight: 700,
+                            fontSize: '0.74rem',
+                          }}
+                        >
+                          {isEdx ? '🇬🇧 Pearson Edexcel (EDX-98421)' : '🇬🇧 Cambridge CAIE (KE042)'}
+                        </span>
+                      </td>
+                      <td>{stmt.examination_series}</td>
+                      <td>
+                        <span className="badge" style={{ background: '#f1f5f9', color: '#0f172a', fontWeight: 600 }}>
+                          {stmt.total_subjects} Papers Passed
+                        </span>
+                      </td>
+                      <td style={{ fontWeight: 700, color: isEdx ? '#dc2626' : '#0284c7' }}>
+                        {stmt.mean_points.toFixed(2)} / 9.00
+                      </td>
+                      <td>
+                        <span
+                          className="badge"
+                          style={{
+                            background: stmt.ice_award === 'Distinction' ? '#dcfce7' : '#e0f2fe',
+                            color: stmt.ice_award === 'Distinction' ? '#15803d' : '#0369a1',
+                            fontWeight: 700,
+                          }}
+                        >
+                          🎖️ {stmt.ice_award}
+                        </span>
+                      </td>
+                      <td style={{ textAlign: 'right' }}>
+                        <button
+                          type="button"
+                          className="btn btn-sm"
+                          style={{ background: isEdx ? '#dc2626' : '#0284c7', color: '#ffffff', fontWeight: 700 }}
+                          onClick={() => setSelectedIGCSEStatement(stmt)}
+                        >
+                          📄 View Official Statement
+                        </button>
+                      </td>
+                    </tr>
+                  )
+                })}
               </tbody>
             </table>
           </div>

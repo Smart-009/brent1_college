@@ -456,7 +456,7 @@ export type IGCSESubjectGroup =
 
 export type IGCSEGrade9to1 = '9' | '8' | '7' | '6' | '5' | '4' | '3' | '2' | '1' | 'U'
 export type IGCSEGradeAtoG = 'A*' | 'A' | 'B' | 'C' | 'D' | 'E' | 'F' | 'G' | 'U'
-export type IGCSETier = 'Core' | 'Extended'
+export type IGCSETier = 'Core' | 'Extended' | 'Higher Tier (9-1)' | 'Foundation Tier' | 'Single Tier (9-1)' | 'Untiered'
 export type IGCSEExamSeries = 'May/June 2025' | 'Oct/Nov 2025' | 'May/June 2026' | 'Oct/Nov 2026' | 'Feb/March 2026'
 
 export interface IGCSEPaperComponent {
@@ -491,7 +491,7 @@ export interface IGCSEStatementOfResults {
   date_of_birth: string
   gender: 'Male' | 'Female'
   examination_series: IGCSEExamSeries
-  examination_board: 'Cambridge Assessment International Education (CAIE)' | 'Pearson Edexcel International GCSE'
+  examination_board: 'Cambridge Assessment International Education (CAIE)' | 'Pearson Edexcel International GCSE' | 'Pearson Edexcel International'
   candidate_unique_id: string
   results: IGCSESubjectResult[]
   total_subjects: number

@@ -4,6 +4,8 @@
 
 import test from 'node:test'
 import assert from 'node:assert/strict'
+import fs from 'node:fs'
+import path from 'node:path'
 
 // 1. UTILITY FUNCTIONS IMPLEMENTATION FOR TESTS
 function extractYouTubeId(url) {
@@ -762,4 +764,78 @@ test('Intake Adverts: British Curriculum Cambridge KE042 & Pearson Edexcel Suppo
   assert.ok(britishIntake.target_courses.some((c) => c.includes('Cambridge')))
   assert.ok(britishIntake.target_courses.some((c) => c.includes('Pearson Edexcel')))
 })
+
+test('IGCSE Curriculum: Cambridge CAIE (KE042) Subject Coverage across Years 9, 10, 11', () => {
+  const content = fs.readFileSync(path.join(process.cwd(), 'src/config/officialCourses.ts'), 'utf-8')
+
+  // Year 9 Cambridge
+  assert.ok(content.includes('c-caie-y9-math'))
+  assert.ok(content.includes('c-caie-y9-science'))
+  assert.ok(content.includes('c-caie-y9-english'))
+
+  // Year 10 Cambridge
+  assert.ok(content.includes('c-igcse-math'))
+  assert.ok(content.includes('c-igcse-physics'))
+  assert.ok(content.includes('c-igcse-chemistry'))
+  assert.ok(content.includes('c-caie-y10-bio'))
+  assert.ok(content.includes('c-igcse-cs'))
+  assert.ok(content.includes('c-igcse-english'))
+  assert.ok(content.includes('c-igcse-business'))
+  assert.ok(content.includes('c-caie-y10-addmath'))
+  assert.ok(content.includes('c-caie-y10-econ'))
+
+  // Year 11 Cambridge
+  assert.ok(content.includes('c-caie-y11-math'))
+  assert.ok(content.includes('c-caie-y11-physics'))
+  assert.ok(content.includes('c-caie-y11-chem'))
+  assert.ok(content.includes('c-caie-y11-bio'))
+  assert.ok(content.includes('c-caie-y11-eng'))
+  assert.ok(content.includes('c-caie-y11-bus'))
+})
+
+test('IGCSE Curriculum: Pearson Edexcel (EDX-98421) Subject Coverage across Years 9, 10, 11', () => {
+  const content = fs.readFileSync(path.join(process.cwd(), 'src/config/officialCourses.ts'), 'utf-8')
+
+  // Year 9 Edexcel
+  assert.ok(content.includes('c-edx-y9-math'))
+  assert.ok(content.includes('c-edx-y9-science'))
+  assert.ok(content.includes('c-edx-y9-english'))
+  assert.ok(content.includes('c-edx-y9-cs'))
+
+  // Year 10 Edexcel
+  assert.ok(content.includes('c-edx-y10-math'))
+  assert.ok(content.includes('c-edx-y10-physics'))
+  assert.ok(content.includes('c-edx-y10-chem'))
+  assert.ok(content.includes('c-edx-y10-bio'))
+  assert.ok(content.includes('c-edx-y10-cs'))
+  assert.ok(content.includes('c-edx-y10-eng'))
+  assert.ok(content.includes('c-edx-y10-business'))
+  assert.ok(content.includes('c-edx-y10-econ'))
+
+  // Year 11 Edexcel
+  assert.ok(content.includes('c-edx-y11-math'))
+  assert.ok(content.includes('c-edx-y11-physics'))
+  assert.ok(content.includes('c-edx-y11-chem'))
+  assert.ok(content.includes('c-edx-y11-bio'))
+  assert.ok(content.includes('c-edx-y11-cs'))
+  assert.ok(content.includes('c-edx-y11-eng'))
+  assert.ok(content.includes('c-edx-y11-bus'))
+})
+
+test('IGCSE Curriculum: School Data & Broadsheet Multi-Board Center Mapping', () => {
+  const schoolDataContent = fs.readFileSync(path.join(process.cwd(), 'src/lib/schoolData.ts'), 'utf-8')
+
+  // Verify both Exam Center statements exist
+  assert.ok(schoolDataContent.includes('igcse-stmt-001')) // Cambridge
+  assert.ok(schoolDataContent.includes('KE042/0014/2026'))
+  assert.ok(schoolDataContent.includes('igcse-stmt-002')) // Edexcel
+  assert.ok(schoolDataContent.includes('EDX-98421/0042/2026'))
+
+  // Verify School separation
+  assert.ok(schoolDataContent.includes('school-cambridge'))
+  assert.ok(schoolDataContent.includes('school-edexcel'))
+  assert.ok(schoolDataContent.includes('dept-caie-sciences'))
+  assert.ok(schoolDataContent.includes('dept-edx-stem'))
+})
+
 
