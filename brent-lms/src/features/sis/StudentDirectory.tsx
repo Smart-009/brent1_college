@@ -103,7 +103,7 @@ export function StudentDirectory() {
     full_name: '',
     admission_number: `EI-${new Date().getFullYear()}-${String(students.length + 1).padStart(3, '0')}`,
     gender: 'Male',
-    grade_level: '4 to 12 Weeks (Short Course Certificate)',
+    grade_level: '8 to 12 Weeks (Short Course Certificate)',
     stream: 'Practical Lab Trainee',
     class_name: programOptions[0] || 'Comprehensive Computer Packages & Digital Skills',
     dob: '2005-01-01',
@@ -1458,12 +1458,11 @@ export function StudentDirectory() {
                       value={newStudent.grade_level}
                       onChange={(e) => setNewStudent({ ...newStudent, grade_level: e.target.value })}
                     >
-                      <option value="1 Month (Intensive Bootcamp)">1 Month (Intensive Bootcamp)</option>
                       <option value="2 Months (Fast-Track Skills)">2 Months (Fast-Track Skills)</option>
                       <option value="3 Months (Certificate Program)">3 Months (Certificate Program)</option>
                       <option value="4 Months (Professional Course)">4 Months (Professional Course)</option>
                       <option value="6 Months (Modular Diploma)">6 Months (Modular Diploma)</option>
-                      <option value="2 Weeks (Executive Masterclass)">2 Weeks (Executive Masterclass)</option>
+                      <option value="Executive Masterclass">Executive Masterclass</option>
                     </select>
                   </div>
                 </div>

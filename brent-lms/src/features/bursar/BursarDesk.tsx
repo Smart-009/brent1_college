@@ -1714,12 +1714,11 @@ export function BursarDesk() {
                   <div>
                     <label className="label">Course Duration / Period</label>
                     <select className="input" value={regCourseDuration} onChange={(e) => setRegCourseDuration(e.target.value)}>
-                      <option value="1 Month (Intensive Bootcamp)">1 Month (Intensive Bootcamp)</option>
                       <option value="2 Months (Fast-Track Skills)">2 Months (Fast-Track Skills)</option>
                       <option value="3 Months (Certificate Program)">3 Months (Certificate Program)</option>
                       <option value="4 Months (Professional Course)">4 Months (Professional Course)</option>
                       <option value="6 Months (Modular Diploma)">6 Months (Modular Diploma)</option>
-                      <option value="2 Weeks (Executive Masterclass)">2 Weeks (Executive Masterclass)</option>
+                      <option value="Executive Masterclass">Executive Masterclass</option>
                     </select>
                   </div>
                   <div>
@@ -1899,12 +1898,11 @@ export function BursarDesk() {
                       value={newInvoice.term}
                       onChange={(e) => setNewInvoice({ ...newInvoice, term: e.target.value })}
                     >
-                      <option value="4 Weeks (1 Month)">4 Weeks (1 Month)</option>
-                      <option value="4-6 Weeks">4-6 Weeks</option>
-                      <option value="6 Weeks">6 Weeks</option>
-                      <option value="6-8 Weeks">6-8 Weeks</option>
                       <option value="8 Weeks (2 Months)">8 Weeks (2 Months)</option>
+                      <option value="10 Weeks">10 Weeks</option>
                       <option value="12 Weeks (3 Months)">12 Weeks (3 Months)</option>
+                      <option value="16 Weeks (4 Months)">16 Weeks (4 Months)</option>
+                      <option value="24 Weeks (6 Months)">24 Weeks (6 Months)</option>
                       <option value="Executive Masterclass">Executive Masterclass</option>
                     </select>
                   </div>

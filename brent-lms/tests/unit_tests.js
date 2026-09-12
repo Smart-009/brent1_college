@@ -177,7 +177,7 @@ test('Curriculum: Course Item Dynamic Transformation', () => {
     title: 'Advanced Barista & Latte Art Masterclass',
     department: 'Department of Hospitality & Barista Training',
     program: 'Barista Training Certification',
-    course_duration: '4-6 Weeks',
+    course_duration: '8 Weeks (2 Months)',
     credit_hours: 40,
     teacher_name: 'Chef Anthony Kilonzo',
     description: 'Espresso extraction, milk steaming, and cafe management.',

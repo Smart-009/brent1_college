@@ -170,7 +170,7 @@ const TESTIMONIALS = [
     course: 'Full-Stack JavaScript & React 19',
     avatar: 'AH',
     quote:
-      'The 100% online React 19 and Node.js course at Éclat was phenomenal. The live coding labs and mentor code reviews prepared me to build scalable full-stack applications. Within 1 month, I landed a remote developer role!',
+      'The 100% online React 19 and Node.js course at Éclat was phenomenal. The live coding labs and mentor code reviews prepared me to build scalable full-stack applications. Right after graduating, I landed a remote developer role!',
     rating: 5,
   },
   {

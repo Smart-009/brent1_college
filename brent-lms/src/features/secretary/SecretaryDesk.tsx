@@ -452,12 +452,11 @@ export function SecretaryDesk() {
                   <div>
                     <label className="label">Course Duration / Period</label>
                     <select className="input" value={regCourseDuration} onChange={(e) => setRegCourseDuration(e.target.value)}>
-                      <option value="1 Month (Intensive Bootcamp)">1 Month (Intensive Bootcamp)</option>
                       <option value="2 Months (Fast-Track Skills)">2 Months (Fast-Track Skills)</option>
                       <option value="3 Months (Certificate Program)">3 Months (Certificate Program)</option>
                       <option value="4 Months (Professional Course)">4 Months (Professional Course)</option>
                       <option value="6 Months (Modular Diploma)">6 Months (Modular Diploma)</option>
-                      <option value="2 Weeks (Executive Masterclass)">2 Weeks (Executive Masterclass)</option>
+                      <option value="Executive Masterclass">Executive Masterclass</option>
                     </select>
                   </div>
                   <div>

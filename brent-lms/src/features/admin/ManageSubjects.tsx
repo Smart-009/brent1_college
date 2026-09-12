@@ -156,7 +156,7 @@ export function ManageSubjects() {
   const [subName, setSubName] = useState('')
   const [subDeptId, setSubDeptId] = useState('')
   const [subFee, setSubFee] = useState<number>(60)
-  const [subDuration, setSubDuration] = useState('4 Weeks (1 Month)')
+  const [subDuration, setSubDuration] = useState('8 Weeks (2 Months)')
   const [subBadge, setSubBadge] = useState('Certified')
   const [subDescription, setSubDescription] = useState('')
   const subColor = '#2563eb'
@@ -181,7 +181,7 @@ export function ManageSubjects() {
         department_id: parentDept?.id || 'dept-general',
         department_name: parentDept?.name || 'General Studies',
         fee: Number(subFee) || 60,
-        duration: subDuration || '4 Weeks (1 Month)',
+        duration: subDuration || '8 Weeks (2 Months)',
         badge: subBadge || 'Certified',
         description: subDescription,
         color_hex: subColor,
@@ -204,7 +204,7 @@ export function ManageSubjects() {
     setEditingSub(sub)
     setEditName(sub.name)
     setEditFee(sub.fee || 60)
-    setEditDuration(sub.duration || '4 Weeks (1 Month)')
+    setEditDuration(sub.duration || '8 Weeks (2 Months)')
     setEditDescription(sub.description || '')
     setEditBadge(sub.badge || 'Certified')
     setEditDeptId(sub.department_id)
@@ -430,7 +430,7 @@ export function ManageSubjects() {
                         </td>
                         <td>
                           <span style={{ fontSize: '0.82rem', color: '#475569', fontWeight: 600 }}>
-                            {sub.duration || '4 Weeks (1 Month)'}
+                            {sub.duration || '8 Weeks (2 Months)'}
                           </span>
                         </td>
                         <td>
@@ -639,7 +639,7 @@ export function ManageSubjects() {
                     <input
                       type="text"
                       className="input"
-                      placeholder="e.g. 4 Weeks (1 Month)"
+                      placeholder="e.g. 8 Weeks (2 Months)"
                       value={editDuration}
                       onChange={(e) => setEditDuration(e.target.value)}
                     />

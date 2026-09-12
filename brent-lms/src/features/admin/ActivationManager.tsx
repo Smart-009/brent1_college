@@ -258,7 +258,7 @@ export function ActivationManager() {
                   value={durationDays}
                   onChange={(e) => setDurationDays(Number(e.target.value))}
                 >
-                  <option value={30}>30 Days (Standard 1 Month)</option>
+                  <option value={30}>30 Days (Standard Term Access)</option>
                   <option value={60}>60 Days (2 Months)</option>
                   <option value={90}>90 Days (Full Term / 3 Months)</option>
                   <option value={365}>365 Days (Full Year Access)</option>

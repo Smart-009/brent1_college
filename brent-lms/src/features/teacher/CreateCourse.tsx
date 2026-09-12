@@ -431,9 +431,8 @@ export function CreateCourse() {
             <div>
               <label className="label">Course Duration / Period *</label>
               <select className="input" value={courseDuration} onChange={(e) => setCourseDuration(e.target.value)}>
-                <option value="1 Month (Intensive Bootcamp)">1 Month (Intensive Bootcamp)</option>
-                <option value="6 Weeks (Fast-Track Skills)">6 Weeks (Fast-Track Skills)</option>
                 <option value="2 Months (8 Weeks Comprehensive)">2 Months (8 Weeks Comprehensive)</option>
+                <option value="6 Weeks (Fast-Track Skills)">6 Weeks (Fast-Track Skills)</option>
                 <option value="3 Months (Certificate Course)">3 Months (Certificate Course)</option>
                 <option value="4 Months (Professional Short Course)">4 Months (Professional Short Course)</option>
                 <option value="6 Months (Modular Diploma)">6 Months (Modular Diploma)</option>

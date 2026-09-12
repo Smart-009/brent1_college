@@ -298,7 +298,7 @@ export interface CourseUnit {
   title: string // e.g. "Advanced Web & React Development"
   department: string // e.g. "Computer Science & ICT"
   program: string // e.g. "Certificate in Web & Cloud Systems"
-  course_duration: string // e.g. "3 Months (Intensive)", "1 Month Bootcamp", "6 Months Modular"
+  course_duration: string // e.g. "3 Months (Intensive)", "2 Months (Fast-Track)", "6 Months Modular"
   semester?: string // Fallback
   credit_hours: number // e.g. 40 Training Hours
   teacher_id: string
@@ -411,7 +411,7 @@ export interface CollegeSubject {
   school_name?: string
   year_level?: 'Year 9' | 'Year 10' | 'Year 11' | 'Tertiary'
   fee?: number // e.g. 4500 (Reduced, admin-editable)
-  duration?: string // e.g. "4 Weeks (1 Month)"
+  duration?: string // e.g. "8 Weeks (2 Months)"
   icon?: string // e.g. "💻", "☕"
   badge?: string // e.g. "Popular", "Fast-Track"
   category?: string // e.g. "ICT", "Hospitality", "Languages"
