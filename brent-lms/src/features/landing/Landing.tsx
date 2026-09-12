@@ -1,5 +1,6 @@
-import { useState, useMemo, useEffect } from 'react'
+import { useState, useMemo, useEffect, useRef } from 'react'
 import { Link, useNavigate, useLocation } from 'react-router-dom'
+import { YouTubeEmbed } from '@/components/shared/YouTubeEmbed'
 import { useIsMobile } from '@/hooks/useMediaQuery'
 import { NativeAppHome } from './NativeAppHome'
 import { DesktopAppHome } from './DesktopAppHome'
@@ -346,6 +347,94 @@ const HERO_PROMO_SLIDES: PromoSlide[] = [
   },
 ]
 
+export interface LecturePreviewTrack {
+  id: string
+  badge: string
+  faculty: string
+  title: string
+  instructor: string
+  duration: string
+  resolution: string
+  videoUrl: string
+  description: string
+  keyPoints: string[]
+  courseTitle: string
+  accentColor: string
+}
+
+const SAMPLE_LECTURE_TRACKS: LecturePreviewTrack[] = [
+  {
+    id: 'cambridge-igcse-math',
+    badge: 'CAMBRIDGE IGCSE CENTRE KE042',
+    faculty: 'Cambridge International',
+    title: 'Cambridge IGCSE 0580: Quadratic Functions & Graphic Analysis',
+    instructor: 'Dr. Kevin Kipruto • Lead Cambridge Examiner',
+    duration: '14:20 mins',
+    resolution: '1080p HD',
+    videoUrl: 'https://www.youtube.com/watch?v=302J530O_9E',
+    description: 'Live interactive derivation of quadratic roots, vertex form transformations, and past paper examination technique for Higher Tier Papers 2H & 4H.',
+    keyPoints: ['Quadratic Graphs & Vertex Coordinates', 'Higher Tier Past Paper Solving', 'Cambridge ICE Group Grading Strategy'],
+    courseTitle: 'Cambridge IGCSE Mathematics (0580) Extended',
+    accentColor: '#38bdf8',
+  },
+  {
+    id: 'tech-react-python',
+    badge: 'TECH & SOFTWARE ENGINEERING',
+    faculty: 'School of IT & Software',
+    title: 'Full-Stack Web Dev: React 19 Server Components & Python API',
+    instructor: 'Eng. Alex Vance • Senior Cloud Solutions Architect',
+    duration: '16:45 mins',
+    resolution: '1080p 60fps',
+    videoUrl: 'https://www.youtube.com/watch?v=8pDqJVdNa44',
+    description: 'Practical live terminal session building a full-stack dashboard with React 19 hooks, FastAPI REST endpoints, and PostgreSQL database queries.',
+    keyPoints: ['React 19 Server Actions & Hooks', 'Python FastAPI REST Architecture', 'GitHub Pull Requests & CI/CD'],
+    courseTitle: 'Full-Stack Web Dev (React 19 & Node.js)',
+    accentColor: '#818cf8',
+  },
+  {
+    id: 'world-languages-ielts',
+    badge: 'WORLD LANGUAGES & RELOCATION',
+    faculty: 'School of Language',
+    title: 'IELTS Academic Speaking Mock: Band 8.5+ Lexical Strategy',
+    instructor: 'Sarah Jenkins • Certified Cambridge Assessor',
+    duration: '12:10 mins',
+    resolution: '1080p HD',
+    videoUrl: 'https://www.youtube.com/watch?v=sRFEVPrKzJ4',
+    description: 'One-on-one live Zoom speaking simulation demonstrating Part 2 cue card structure, fluency markers, and complex idiomatic vocabulary.',
+    keyPoints: ['Part 2 2-Minute Monologue Strategy', 'Band 9.0 Lexical Resource & Collocations', 'Eliminating Hesitation Fillers'],
+    courseTitle: 'IELTS Academic & General Training',
+    accentColor: '#f43f5e',
+  },
+  {
+    id: 'data-science-spss',
+    badge: 'DATA SCIENCE & RESEARCH',
+    faculty: 'School of Data Analytics',
+    title: 'Survey Data Analytics: Multivariate Regression & ANOVA in SPSS',
+    instructor: 'Dr. Marcus Vance • Senior Quantitative Methodologist',
+    duration: '15:30 mins',
+    resolution: '1080p HD',
+    videoUrl: 'https://www.youtube.com/watch?v=qAtrCof10hM',
+    description: 'Step-by-step thesis survey cleaning, demographic cross-tabulations, Cronbach Alpha reliability analysis, and regression modeling.',
+    keyPoints: ['Survey Cleaning & Missing Values', 'Cronbach Alpha Scale Reliability', 'Multivariate Regression Diagnostics'],
+    courseTitle: 'IBM SPSS & Stata Econometric Modeling',
+    accentColor: '#34d399',
+  },
+  {
+    id: 'business-pmp-agile',
+    badge: 'SCHOOL OF BUSINESS & MANAGEMENT',
+    faculty: 'Commerce & Management',
+    title: 'Executive Project Management: PMP® Agile Sprints & Earned Value',
+    instructor: 'David Omondi, PMP® • Global Corporate Consultant',
+    duration: '13:50 mins',
+    resolution: '1080p HD',
+    videoUrl: 'https://www.youtube.com/watch?v=2n4c_w6zV4w',
+    description: 'Executive case study examining Earned Value Management (EVM), critical path calculations, and hybrid Scrum project governance.',
+    keyPoints: ['Earned Value Cost Performance Index (CPI)', 'Sprint Backlog & Velocity Tracking', 'PMP® 2026 Examination Scenarios'],
+    courseTitle: 'Project Management Professional (PMP®)',
+    accentColor: '#fbbf24',
+  },
+]
+
 export function Landing() {
   const isMobile = useIsMobile(768)
   const location = useLocation()
@@ -364,6 +453,128 @@ export function Landing() {
   const [supportModalOpen, setSupportModalOpen] = useState(false)
   const [showScrollTop, setShowScrollTop] = useState(false)
   const [toastMessage, setToastMessage] = useState<string | null>(null)
+
+  // Sample Lecture Video Showcase Modal State
+  const [showVideoShowcaseModal, setShowVideoShowcaseModal] = useState<boolean>(false)
+  const [activeVideoTrackIndex, setActiveVideoTrackIndex] = useState<number>(0)
+  const heroCanvasRef = useRef<HTMLCanvasElement | null>(null)
+
+  // Ambient Interactive Digital Classroom Waveform & Starfield in Hero
+  useEffect(() => {
+    const canvas = heroCanvasRef.current
+    if (!canvas) return
+    const ctx = canvas.getContext('2d')
+    if (!ctx) return
+
+    let animationFrameId: number
+    let width = (canvas.width = canvas.parentElement?.clientWidth || window.innerWidth)
+    let height = (canvas.height = canvas.parentElement?.clientHeight || 650)
+
+    const handleResize = () => {
+      if (!canvas) return
+      width = canvas.width = canvas.parentElement?.clientWidth || window.innerWidth
+      height = canvas.height = canvas.parentElement?.clientHeight || 650
+    }
+    window.addEventListener('resize', handleResize)
+
+    // Particle nodes for ambient connecting mesh
+    const particles = Array.from({ length: 42 }, () => ({
+      x: Math.random() * width,
+      y: Math.random() * height,
+      vx: (Math.random() - 0.5) * 0.4,
+      vy: (Math.random() - 0.5) * 0.4,
+      radius: Math.random() * 2 + 1,
+      color: Math.random() > 0.5 ? 'rgba(212, 175, 55, ' : 'rgba(56, 189, 248, ',
+    }))
+
+    // Ambient floating academic glyphs (Cambridge, Tech, Data, Languages, Business)
+    const academicGlyphs = [
+      { text: '0580', x: width * 0.12, y: height * 0.35, vy: 0.16, alpha: 0.22 },
+      { text: '<React/>', x: width * 0.85, y: height * 0.25, vy: -0.14, alpha: 0.22 },
+      { text: 'ANOVA F-Test', x: width * 0.78, y: height * 0.72, vy: 0.12, alpha: 0.18 },
+      { text: 'IELTS 8.5', x: width * 0.16, y: height * 0.78, vy: -0.15, alpha: 0.22 },
+      { text: 'PMP® Sprint', x: width * 0.52, y: height * 0.15, vy: 0.14, alpha: 0.18 },
+      { text: 'f(x)=ax²+bx+c', x: width * 0.35, y: height * 0.85, vy: -0.12, alpha: 0.18 },
+    ]
+
+    let tick = 0
+    const render = () => {
+      tick += 0.015
+      ctx.clearRect(0, 0, width, height)
+
+      // 1. Draw subtle ambient sine wave streams
+      ctx.save()
+      ctx.lineWidth = 1.4
+      for (let w = 0; w < 3; w++) {
+        ctx.beginPath()
+        const grad = ctx.createLinearGradient(0, 0, width, 0)
+        grad.addColorStop(0, 'rgba(56, 189, 248, 0)')
+        grad.addColorStop(0.5, w === 1 ? 'rgba(212, 175, 55, 0.12)' : 'rgba(56, 189, 248, 0.14)')
+        grad.addColorStop(1, 'rgba(56, 189, 248, 0)')
+        ctx.strokeStyle = grad
+
+        const offset = w * 1.8
+        const baseHeight = height * (0.42 + w * 0.15)
+        for (let x = 0; x <= width; x += 12) {
+          const y = baseHeight + Math.sin(x * 0.006 + tick + offset) * (18 + w * 8)
+          if (x === 0) ctx.moveTo(x, y)
+          else ctx.lineTo(x, y)
+        }
+        ctx.stroke()
+      }
+      ctx.restore()
+
+      // 2. Draw connected particle nodes
+      particles.forEach((p, idx) => {
+        p.x += p.vx
+        p.y += p.vy
+        if (p.x < 0) p.x = width
+        if (p.x > width) p.x = 0
+        if (p.y < 0) p.y = height
+        if (p.y > height) p.y = 0
+
+        ctx.beginPath()
+        ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2)
+        ctx.fillStyle = `${p.color}0.4)`
+        ctx.fill()
+
+        // Connect nearby points
+        for (let j = idx + 1; j < particles.length; j++) {
+          const p2 = particles[j]
+          const dx = p.x - p2.x
+          const dy = p.y - p2.y
+          const dist = Math.sqrt(dx * dx + dy * dy)
+          if (dist < 110) {
+            ctx.beginPath()
+            ctx.moveTo(p.x, p.y)
+            ctx.lineTo(p2.x, p2.y)
+            ctx.strokeStyle = `rgba(56, 189, 248, ${0.11 * (1 - dist / 110)})`
+            ctx.lineWidth = 0.75
+            ctx.stroke()
+          }
+        }
+      })
+
+      // 3. Render subtle floating academic text glyphs
+      ctx.font = '600 13px system-ui, -apple-system, sans-serif'
+      academicGlyphs.forEach((g) => {
+        g.y += g.vy
+        if (g.y < -20) g.y = height + 10
+        if (g.y > height + 20) g.y = -10
+        ctx.fillStyle = `rgba(226, 232, 240, ${g.alpha})`
+        ctx.fillText(g.text, g.x, g.y)
+      })
+
+      animationFrameId = requestAnimationFrame(render)
+    }
+
+    render()
+
+    return () => {
+      window.removeEventListener('resize', handleResize)
+      cancelAnimationFrame(animationFrameId)
+    }
+  }, [])
 
   // Hero Animated Promotional Carousel State
   const [currentHeroSlide, setCurrentHeroSlide] = useState(0)
@@ -1592,6 +1803,21 @@ export function Landing() {
           }}
         />
 
+        {/* Creative Ambient Animated Classroom Visualizer Waveform & Node Mesh */}
+        <canvas
+          ref={heroCanvasRef}
+          style={{
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            width: '100%',
+            height: '100%',
+            pointerEvents: 'none',
+            zIndex: 1,
+            opacity: 0.7,
+          }}
+        />
+
         <div style={{ maxWidth: '1200px', margin: '0 auto', textAlign: 'center', position: 'relative', zIndex: 2 }}>
           {/* Academy Global Badge */}
           <div
@@ -1659,7 +1885,7 @@ export function Landing() {
           </p>
 
           {/* Primary Academy CTAs */}
-          <div style={{ display: 'flex', flexDirection: isMobile ? 'column' : 'row', justifyContent: 'center', gap: '0.75rem', width: '100%', maxWidth: isMobile ? '380px' : 'none', margin: '0 auto 2.25rem' }}>
+          <div style={{ display: 'flex', flexDirection: isMobile ? 'column' : 'row', justifyContent: 'center', alignItems: 'center', gap: '0.75rem', width: '100%', maxWidth: isMobile ? '380px' : 'none', margin: '0 auto 2.25rem', flexWrap: 'wrap' }}>
             <a
               href="#courses"
               className="btn btn-lg"
@@ -1683,6 +1909,64 @@ export function Landing() {
               <SparklesIcon size={18} color="#0c0e12" /><span>Explore All Programs</span>
               <span>↓</span>
             </a>
+
+            {/* Interactive Watch Video Preview Button */}
+            <button
+              type="button"
+              className="btn btn-lg"
+              style={{
+                background: 'linear-gradient(135deg, rgba(30, 41, 59, 0.95) 0%, rgba(15, 23, 42, 0.95) 100%)',
+                color: '#ffffff',
+                fontWeight: 800,
+                padding: '0.85rem 1.65rem',
+                fontSize: '0.98rem',
+                borderRadius: '10px',
+                border: '1.5px solid rgba(212, 175, 55, 0.55)',
+                boxShadow: '0 8px 24px rgba(0, 0, 0, 0.4), inset 0 0 16px rgba(212, 175, 55, 0.08)',
+                cursor: 'pointer',
+                display: 'inline-flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '10px',
+                width: isMobile ? '100%' : 'auto',
+                transition: 'all 0.2s ease',
+              }}
+              onClick={() => {
+                setActiveVideoTrackIndex(0)
+                setShowVideoShowcaseModal(true)
+              }}
+              title="Watch real sample online class lectures and virtual classroom previews"
+            >
+              <span
+                style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  width: '24px',
+                  height: '24px',
+                  borderRadius: '50%',
+                  background: 'linear-gradient(135deg, #d4af37 0%, #f59e0b 100%)',
+                  boxShadow: '0 0 10px rgba(212, 175, 55, 0.5)',
+                }}
+              >
+                <VideoIcon size={13} color="#0c0e12" />
+              </span>
+              <span>Watch Video Preview</span>
+              <span
+                style={{
+                  background: 'rgba(212, 175, 55, 0.22)',
+                  color: '#fef08a',
+                  border: '1px solid rgba(212, 175, 55, 0.4)',
+                  fontSize: '0.72rem',
+                  fontWeight: 900,
+                  padding: '2px 8px',
+                  borderRadius: '999px',
+                  letterSpacing: '0.03em',
+                }}
+              >
+                5 Demos
+              </span>
+            </button>
 
             <button
               type="button"
@@ -4787,6 +5071,481 @@ export function Landing() {
           cert={previewCert}
           onClose={() => setPreviewCert(null)}
         />
+      )}
+
+      {/* Interactive Video Showcase / Watch Campus Tour & Class Previews Modal */}
+      {showVideoShowcaseModal && (
+        <div
+          className="modal-overlay"
+          onClick={() => setShowVideoShowcaseModal(false)}
+          style={{
+            position: 'fixed',
+            inset: 0,
+            zIndex: 9999,
+            background: 'rgba(6, 10, 18, 0.92)',
+            backdropFilter: 'blur(14px)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            padding: isMobile ? '0.75rem' : '1.5rem',
+            overflowY: 'auto',
+          }}
+        >
+          <div
+            onClick={(e) => e.stopPropagation()}
+            style={{
+              width: '100%',
+              maxWidth: '1060px',
+              background: 'linear-gradient(180deg, #0f172a 0%, #090d16 100%)',
+              border: '1.5px solid rgba(212, 175, 55, 0.35)',
+              borderRadius: '16px',
+              boxShadow: '0 25px 65px rgba(0, 0, 0, 0.75), 0 0 30px rgba(212, 175, 55, 0.12)',
+              overflow: 'hidden',
+              display: 'flex',
+              flexDirection: 'column',
+              maxHeight: '92vh',
+            }}
+          >
+            {/* Modal Header */}
+            <div
+              style={{
+                padding: isMobile ? '1rem 1.25rem' : '1.25rem 1.75rem',
+                borderBottom: '1px solid rgba(255, 255, 255, 0.08)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                background: 'rgba(15, 23, 42, 0.8)',
+                gap: '1rem',
+              }}
+            >
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.85rem' }}>
+                <span
+                  style={{
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    width: '34px',
+                    height: '34px',
+                    borderRadius: '8px',
+                    background: 'linear-gradient(135deg, #d4af37 0%, #f59e0b 100%)',
+                    boxShadow: '0 0 14px rgba(212, 175, 55, 0.45)',
+                  }}
+                >
+                  <VideoIcon size={18} color="#0c0e12" />
+                </span>
+                <div>
+                  <h3
+                    style={{
+                      margin: 0,
+                      fontSize: isMobile ? '1.05rem' : '1.25rem',
+                      fontWeight: 800,
+                      color: '#ffffff',
+                      letterSpacing: '-0.01em',
+                    }}
+                  >
+                    Watch Campus Tour & Class Previews
+                  </h3>
+                  <p
+                    style={{
+                      margin: '2px 0 0',
+                      fontSize: '0.8rem',
+                      color: '#94a3b8',
+                      fontWeight: 500,
+                    }}
+                  >
+                    100% Online Virtual Campus • Cambridge Centre KE042 Verified • 5 Sample Lectures
+                  </p>
+                </div>
+              </div>
+
+              <button
+                type="button"
+                onClick={() => setShowVideoShowcaseModal(false)}
+                aria-label="Close lecture showcase modal"
+                style={{
+                  background: 'rgba(255, 255, 255, 0.08)',
+                  border: '1px solid rgba(255, 255, 255, 0.15)',
+                  color: '#cbd5e1',
+                  width: '36px',
+                  height: '36px',
+                  borderRadius: '8px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  cursor: 'pointer',
+                  transition: 'all 0.2s',
+                  flexShrink: 0,
+                }}
+              >
+                <XIcon size={18} color="#cbd5e1" />
+              </button>
+            </div>
+
+            {/* Scrollable Modal Body */}
+            <div
+              style={{
+                padding: isMobile ? '1rem' : '1.5rem',
+                overflowY: 'auto',
+                display: 'flex',
+                flexDirection: 'column',
+                gap: '1.25rem',
+              }}
+            >
+              {/* Lecture Track Selector Tabs */}
+              <div
+                style={{
+                  display: 'flex',
+                  gap: '0.6rem',
+                  overflowX: 'auto',
+                  paddingBottom: '4px',
+                  scrollbarWidth: 'thin',
+                }}
+              >
+                {SAMPLE_LECTURE_TRACKS.map((track, idx) => {
+                  const isActive = activeVideoTrackIndex === idx
+                  return (
+                    <button
+                      key={track.id}
+                      type="button"
+                      onClick={() => setActiveVideoTrackIndex(idx)}
+                      style={{
+                        padding: '0.6rem 1rem',
+                        borderRadius: '999px',
+                        border: isActive
+                          ? `1.5px solid ${track.accentColor}`
+                          : '1px solid rgba(255, 255, 255, 0.12)',
+                        background: isActive
+                          ? `${track.accentColor}22`
+                          : 'rgba(255, 255, 255, 0.04)',
+                        color: isActive ? '#ffffff' : '#94a3b8',
+                        cursor: 'pointer',
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: '8px',
+                        whiteSpace: 'nowrap',
+                        fontSize: '0.84rem',
+                        fontWeight: isActive ? 700 : 500,
+                        transition: 'all 0.2s ease',
+                      }}
+                    >
+                      <span
+                        style={{
+                          width: '8px',
+                          height: '8px',
+                          borderRadius: '50%',
+                          background: track.accentColor,
+                          boxShadow: isActive ? `0 0 8px ${track.accentColor}` : 'none',
+                        }}
+                      />
+                      <span>{track.faculty}</span>
+                      <span
+                        style={{
+                          fontSize: '0.72rem',
+                          background: 'rgba(255, 255, 255, 0.08)',
+                          padding: '1px 6px',
+                          borderRadius: '4px',
+                          color: '#cbd5e1',
+                        }}
+                      >
+                        {track.duration}
+                      </span>
+                    </button>
+                  )
+                })}
+              </div>
+
+              {/* YouTube Video Player Embed */}
+              <div
+                style={{
+                  borderRadius: '12px',
+                  overflow: 'hidden',
+                  background: '#000000',
+                  border: '1px solid rgba(255, 255, 255, 0.1)',
+                  boxShadow: '0 12px 32px rgba(0, 0, 0, 0.5)',
+                }}
+              >
+                <YouTubeEmbed
+                  url={SAMPLE_LECTURE_TRACKS[activeVideoTrackIndex].videoUrl}
+                  title={SAMPLE_LECTURE_TRACKS[activeVideoTrackIndex].title}
+                  autoPlay={true}
+                />
+              </div>
+
+              {/* Active Lecture Details Panel */}
+              {(() => {
+                const currentTrack = SAMPLE_LECTURE_TRACKS[activeVideoTrackIndex]
+                return (
+                  <div
+                    style={{
+                      background: 'rgba(255, 255, 255, 0.03)',
+                      border: '1px solid rgba(255, 255, 255, 0.08)',
+                      borderRadius: '12px',
+                      padding: isMobile ? '1rem' : '1.25rem',
+                      display: 'flex',
+                      flexDirection: isMobile ? 'column' : 'row',
+                      justifyContent: 'space-between',
+                      alignItems: isMobile ? 'flex-start' : 'center',
+                      gap: '1.25rem',
+                    }}
+                  >
+                    <div style={{ flex: 1 }}>
+                      {/* Badge & Meta Pills */}
+                      <div
+                        style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '0.5rem',
+                          flexWrap: 'wrap',
+                          marginBottom: '0.5rem',
+                        }}
+                      >
+                        <span
+                          style={{
+                            background: `${currentTrack.accentColor}25`,
+                            color: currentTrack.accentColor,
+                            border: `1px solid ${currentTrack.accentColor}50`,
+                            fontSize: '0.72rem',
+                            fontWeight: 800,
+                            padding: '2px 8px',
+                            borderRadius: '6px',
+                            letterSpacing: '0.04em',
+                          }}
+                        >
+                          {currentTrack.badge}
+                        </span>
+                        <span
+                          style={{
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            gap: '4px',
+                            fontSize: '0.75rem',
+                            color: '#cbd5e1',
+                            background: 'rgba(255, 255, 255, 0.06)',
+                            padding: '2px 8px',
+                            borderRadius: '6px',
+                          }}
+                        >
+                          <ClockIcon size={12} color="#94a3b8" />
+                          <span>{currentTrack.duration}</span>
+                        </span>
+                        <span
+                          style={{
+                            fontSize: '0.72rem',
+                            fontWeight: 700,
+                            color: '#38bdf8',
+                            background: 'rgba(56, 189, 248, 0.1)',
+                            border: '1px solid rgba(56, 189, 248, 0.25)',
+                            padding: '2px 6px',
+                            borderRadius: '6px',
+                          }}
+                        >
+                          {currentTrack.resolution}
+                        </span>
+                      </div>
+
+                      {/* Title */}
+                      <h4
+                        style={{
+                          margin: '0 0 0.4rem',
+                          fontSize: isMobile ? '1.05rem' : '1.2rem',
+                          fontWeight: 800,
+                          color: '#ffffff',
+                          lineHeight: 1.35,
+                        }}
+                      >
+                        {currentTrack.title}
+                      </h4>
+
+                      {/* Instructor */}
+                      <p
+                        style={{
+                          margin: '0 0 0.6rem',
+                          fontSize: '0.85rem',
+                          color: '#d4af37',
+                          fontWeight: 600,
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '6px',
+                        }}
+                      >
+                        <UserIcon size={14} color="#d4af37" />
+                        <span>{currentTrack.instructor}</span>
+                      </p>
+
+                      {/* Description */}
+                      <p
+                        style={{
+                          margin: '0 0 0.85rem',
+                          fontSize: '0.88rem',
+                          color: '#94a3b8',
+                          lineHeight: 1.5,
+                        }}
+                      >
+                        {currentTrack.description}
+                      </p>
+
+                      {/* Key Concepts Chips */}
+                      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
+                        {currentTrack.keyPoints.map((point, kIdx) => (
+                          <span
+                            key={kIdx}
+                            style={{
+                              display: 'inline-flex',
+                              alignItems: 'center',
+                              gap: '5px',
+                              background: 'rgba(255, 255, 255, 0.05)',
+                              border: '1px solid rgba(255, 255, 255, 0.1)',
+                              color: '#e2e8f0',
+                              fontSize: '0.78rem',
+                              fontWeight: 500,
+                              padding: '3px 9px',
+                              borderRadius: '6px',
+                            }}
+                          >
+                            <CheckCircleIcon size={12} color="#34d399" />
+                            <span>{point}</span>
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Action Buttons Column */}
+                    <div
+                      style={{
+                        display: 'flex',
+                        flexDirection: isMobile ? 'row' : 'column',
+                        gap: '0.65rem',
+                        width: isMobile ? '100%' : '240px',
+                        flexShrink: 0,
+                      }}
+                    >
+                      <button
+                        type="button"
+                        onClick={() => {
+                          const matchedCourse =
+                            coursesList.find(
+                              (c) =>
+                                c.title.toLowerCase().includes(currentTrack.courseTitle.toLowerCase()) ||
+                                c.id === currentTrack.id
+                            ) || coursesList[0]
+                          setShowVideoShowcaseModal(false)
+                          handleOpenCourseApplication(matchedCourse)
+                        }}
+                        style={{
+                          background: 'linear-gradient(135deg, #d4af37 0%, #f59e0b 100%)',
+                          color: '#0c0e12',
+                          fontWeight: 900,
+                          fontSize: '0.9rem',
+                          padding: '0.75rem 1.25rem',
+                          borderRadius: '8px',
+                          border: 'none',
+                          cursor: 'pointer',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          gap: '6px',
+                          boxShadow: '0 4px 14px rgba(212, 175, 55, 0.35)',
+                          flex: 1,
+                        }}
+                      >
+                        <SparklesIcon size={16} color="#0c0e12" />
+                        <span>Enroll in This Course</span>
+                      </button>
+
+                      <a
+                        href={getWhatsAppInquiryUrl(
+                          `Hello Éclat Admissions! I just watched the sample lecture for ${currentTrack.courseTitle} and would like to join the next intake.`
+                        )}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        style={{
+                          background: 'rgba(34, 197, 94, 0.15)',
+                          color: '#4ade80',
+                          border: '1px solid rgba(34, 197, 94, 0.35)',
+                          fontWeight: 700,
+                          fontSize: '0.85rem',
+                          padding: '0.65rem 1.15rem',
+                          borderRadius: '8px',
+                          textDecoration: 'none',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          gap: '6px',
+                          flex: 1,
+                        }}
+                      >
+                        <MessageCircleIcon size={16} color="#4ade80" />
+                        <span>WhatsApp Tutor</span>
+                      </a>
+                    </div>
+                  </div>
+                )
+              })()}
+
+              {/* Navigation Arrows Row */}
+              <div
+                style={{
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                  paddingTop: '0.25rem',
+                }}
+              >
+                <button
+                  type="button"
+                  onClick={() =>
+                    setActiveVideoTrackIndex((prev) =>
+                      prev === 0 ? SAMPLE_LECTURE_TRACKS.length - 1 : prev - 1
+                    )
+                  }
+                  style={{
+                    background: 'rgba(255, 255, 255, 0.05)',
+                    border: '1px solid rgba(255, 255, 255, 0.12)',
+                    color: '#e2e8f0',
+                    fontSize: '0.82rem',
+                    fontWeight: 600,
+                    padding: '0.5rem 1rem',
+                    borderRadius: '8px',
+                    cursor: 'pointer',
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '6px',
+                  }}
+                >
+                  <ChevronLeftIcon size={16} color="#cbd5e1" />
+                  <span>Previous Lecture</span>
+                </button>
+
+                <span style={{ fontSize: '0.8rem', color: '#64748b', fontWeight: 600 }}>
+                  Lecture {activeVideoTrackIndex + 1} of {SAMPLE_LECTURE_TRACKS.length}
+                </span>
+
+                <button
+                  type="button"
+                  onClick={() =>
+                    setActiveVideoTrackIndex((prev) => (prev + 1) % SAMPLE_LECTURE_TRACKS.length)
+                  }
+                  style={{
+                    background: 'rgba(255, 255, 255, 0.05)',
+                    border: '1px solid rgba(255, 255, 255, 0.12)',
+                    color: '#e2e8f0',
+                    fontSize: '0.82rem',
+                    fontWeight: 600,
+                    padding: '0.5rem 1rem',
+                    borderRadius: '8px',
+                    cursor: 'pointer',
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '6px',
+                  }}
+                >
+                  <span>Next Lecture</span>
+                  <ChevronRightIcon size={16} color="#cbd5e1" />
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   )
