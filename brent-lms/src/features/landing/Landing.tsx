@@ -346,94 +346,6 @@ const HERO_PROMO_SLIDES: PromoSlide[] = [
   },
 ]
 
-export interface LecturePreviewTrack {
-  id: string
-  badge: string
-  faculty: string
-  title: string
-  instructor: string
-  duration: string
-  resolution: string
-  videoUrl: string
-  description: string
-  keyPoints: string[]
-  courseTitle: string
-  accentColor: string
-}
-
-const SAMPLE_LECTURE_TRACKS: LecturePreviewTrack[] = [
-  {
-    id: 'cambridge-igcse-math',
-    badge: 'CAMBRIDGE IGCSE CENTRE KE042',
-    faculty: 'Cambridge International',
-    title: 'Cambridge IGCSE 0580: Quadratic Sequences & Algebraic Modeling',
-    instructor: 'Dr. Kevin Kipruto • Lead Cambridge Examiner',
-    duration: '1:00 min',
-    resolution: '1080p HD',
-    videoUrl: '/videos/eclat-classroom-preview.mp4',
-    description: 'Live interactive derivation of quadratic roots, vertex form transformations, and past paper examination technique for Higher Tier Papers 2H & 4H.',
-    keyPoints: ['Quadratic Graphs & Vertex Coordinates', 'Higher Tier Past Paper Solving', 'Cambridge ICE Group Grading Strategy'],
-    courseTitle: 'Cambridge IGCSE Mathematics (0580) Extended',
-    accentColor: '#38bdf8',
-  },
-  {
-    id: 'tech-react-python',
-    badge: 'TECH & SOFTWARE ENGINEERING',
-    faculty: 'School of IT & Software',
-    title: 'Full-Stack Web Dev: React 19 Components & Python API Architecture',
-    instructor: 'Eng. Alex Vance • Senior Cloud Solutions Architect',
-    duration: '1:00 min',
-    resolution: '1080p 60fps',
-    videoUrl: '/videos/eclat-classroom-preview.mp4',
-    description: 'Practical live terminal session building a full-stack dashboard with React 19 hooks, FastAPI REST endpoints, and PostgreSQL database queries.',
-    keyPoints: ['React 19 Server Actions & Hooks', 'Python FastAPI REST Architecture', 'GitHub Pull Requests & CI/CD'],
-    courseTitle: 'Full-Stack Web Dev (React 19 & Node.js)',
-    accentColor: '#818cf8',
-  },
-  {
-    id: 'world-languages-ielts',
-    badge: 'WORLD LANGUAGES & RELOCATION',
-    faculty: 'School of Language',
-    title: 'IELTS Academic Speaking Mock: Band 8.5+ Lexical Resource & Fluency',
-    instructor: 'Sarah Jenkins • Certified Cambridge Assessor',
-    duration: '1:00 min',
-    resolution: '1080p HD',
-    videoUrl: '/videos/eclat-classroom-preview.mp4',
-    description: 'One-on-one live Zoom speaking simulation demonstrating Part 2 cue card structure, fluency markers, and complex idiomatic vocabulary.',
-    keyPoints: ['Part 2 2-Minute Monologue Strategy', 'Band 9.0 Lexical Resource & Collocations', 'Eliminating Hesitation Fillers'],
-    courseTitle: 'IELTS Academic & General Training',
-    accentColor: '#f43f5e',
-  },
-  {
-    id: 'data-science-spss',
-    badge: 'DATA SCIENCE & RESEARCH',
-    faculty: 'School of Data Analytics',
-    title: 'Data Science Masterclass: Multivariate Statistical Modeling & Python',
-    instructor: 'Dr. Marcus Vance • Senior Quantitative Methodologist',
-    duration: '1:00 min',
-    resolution: '1080p HD',
-    videoUrl: '/videos/eclat-classroom-preview.mp4',
-    description: 'Step-by-step thesis survey cleaning, demographic cross-tabulations, Cronbach Alpha reliability analysis, and regression modeling.',
-    keyPoints: ['Survey Cleaning & Missing Values', 'Cronbach Alpha Scale Reliability', 'Multivariate Regression Diagnostics'],
-    courseTitle: 'IBM SPSS & Stata Econometric Modeling',
-    accentColor: '#34d399',
-  },
-  {
-    id: 'business-pmp-agile',
-    badge: 'SCHOOL OF BUSINESS & MANAGEMENT',
-    faculty: 'Commerce & Management',
-    title: 'Executive Project Management: PMP® Agile Sprints & Earned Value',
-    instructor: 'David Omondi, PMP® • Global Corporate Consultant',
-    duration: '1:00 min',
-    resolution: '1080p HD',
-    videoUrl: '/videos/eclat-classroom-preview.mp4',
-    description: 'Executive case study examining Earned Value Management (EVM), critical path calculations, and hybrid Scrum project governance.',
-    keyPoints: ['Earned Value Cost Performance Index (CPI)', 'Sprint Backlog & Velocity Tracking', 'PMP® 2026 Examination Scenarios'],
-    courseTitle: 'Project Management Professional (PMP®)',
-    accentColor: '#fbbf24',
-  },
-]
-
 export function Landing() {
   const isMobile = useIsMobile(768)
   const location = useLocation()
@@ -453,10 +365,7 @@ export function Landing() {
   const [showScrollTop, setShowScrollTop] = useState(false)
   const [toastMessage, setToastMessage] = useState<string | null>(null)
 
-  // Sample Lecture Video Showcase Modal State & Hero Background Video Player
-  const [showVideoShowcaseModal, setShowVideoShowcaseModal] = useState<boolean>(false)
-  const [activeVideoTrackIndex, setActiveVideoTrackIndex] = useState<number>(0)
-  const [activeBgVideoTrackIndex, setActiveBgVideoTrackIndex] = useState<number>(0)
+  // Hero Background Video Player & Visualizer Canvas
   const [bgVideoPlaying, setBgVideoPlaying] = useState<boolean>(true)
   const heroCanvasRef = useRef<HTMLCanvasElement | null>(null)
 
@@ -1782,7 +1691,7 @@ export function Landing() {
         style={{
           background: 'linear-gradient(135deg, #090d16 0%, #0f172a 50%, #1e293b 100%)',
           color: '#ffffff',
-          padding: isMobile ? '3.5rem 1.25rem 3rem' : '5rem 2rem 4rem',
+          padding: isMobile ? '2.5rem 1rem 2rem' : '5rem 2rem 4rem',
           position: 'relative',
           overflow: 'hidden',
           borderBottom: '1px solid #1e293b',
@@ -1804,7 +1713,7 @@ export function Landing() {
           }}
         />
 
-        {/* Real Visible Background Video Player (Active Sample Lecture or Campus Tour Stream) */}
+        {/* Real Visible Background Video Player (Campus & Virtual Classroom Stream) */}
         {bgVideoPlaying && (
           <div
             style={{
@@ -1882,12 +1791,12 @@ export function Landing() {
               backdropFilter: 'blur(10px)',
               border: '1px solid rgba(212, 175, 55, 0.35)',
               borderRadius: isMobile ? '12px' : '999px',
-              padding: isMobile ? '0.4rem 0.75rem' : '0.45rem 1.35rem',
-              fontSize: isMobile ? '0.74rem' : '0.85rem',
+              padding: isMobile ? '0.35rem 0.65rem' : '0.45rem 1.35rem',
+              fontSize: isMobile ? '0.72rem' : '0.85rem',
               fontWeight: 800,
               color: '#d4af37',
               letterSpacing: '0.04em',
-              marginBottom: '1.5rem',
+              marginBottom: isMobile ? '1rem' : '1.5rem',
               boxShadow: '0 4px 16px rgba(0,0,0,0.2)',
               maxWidth: '100%',
               lineHeight: 1.35,
@@ -1901,11 +1810,11 @@ export function Landing() {
           {/* Master Academy Headline */}
           <h1
             style={{
-              fontSize: isMobile ? 'clamp(1.4rem, 6vw, 1.85rem)' : 'clamp(2.5rem, 4.8vw, 3.8rem)',
+              fontSize: isMobile ? 'clamp(1.35rem, 5.6vw, 1.8rem)' : 'clamp(2.5rem, 4.8vw, 3.8rem)',
               fontWeight: 900,
               letterSpacing: '-0.02em',
-              lineHeight: isMobile ? 1.25 : 1.15,
-              margin: '0 auto 1.25rem',
+              lineHeight: isMobile ? 1.22 : 1.15,
+              margin: isMobile ? '0 auto 1rem' : '0 auto 1.25rem',
               maxWidth: '960px',
               color: '#ffffff',
               fontFamily: 'var(--font-heading)',
@@ -1927,105 +1836,18 @@ export function Landing() {
           <p
             style={{
               maxWidth: '860px',
-              margin: '0 auto 2.25rem',
-              fontSize: isMobile ? '0.96rem' : '1.18rem',
+              margin: isMobile ? '0 auto 1.5rem' : '0 auto 2.25rem',
+              fontSize: isMobile ? '0.88rem' : '1.18rem',
               color: '#e2e8f0',
-              lineHeight: 1.6,
+              lineHeight: isMobile ? 1.52 : 1.6,
               fontWeight: 400,
             }}
           >
             Master <strong style={{ color: '#38bdf8', fontWeight: 800 }}>Cambridge IGCSE & A-Levels (Center KE042)</strong>, in-demand <strong style={{ color: '#ffffff', fontWeight: 800 }}>Tech & Software</strong> (React, Node, Python, Cyber), <strong style={{ color: '#ffffff', fontWeight: 800 }}>Data Science & Research</strong> (R, SPSS, Stata), <strong style={{ color: '#ffffff', fontWeight: 800 }}>Creative Arts & Design</strong> (UI/UX, Figma), <strong style={{ color: '#ffffff', fontWeight: 800 }}>World Languages</strong> (IELTS, German, Arabic, French), and <strong style={{ color: '#ffffff', fontWeight: 800 }}>Accounting</strong> with live interactive classes, expert mentorship, and flexible installment plans.
           </p>
 
-          {/* Interactive Live Background Video Controller Bar */}
-          <div
-            style={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: '0.65rem',
-              background: 'rgba(15, 23, 42, 0.88)',
-              backdropFilter: 'blur(12px)',
-              border: '1.5px solid rgba(212, 175, 55, 0.45)',
-              borderRadius: '999px',
-              padding: '0.35rem 0.95rem',
-              margin: '0 auto 1.85rem',
-              boxShadow: '0 10px 28px rgba(0, 0, 0, 0.5), 0 0 16px rgba(212, 175, 55, 0.12)',
-              fontSize: isMobile ? '0.74rem' : '0.82rem',
-              color: '#e2e8f0',
-              flexWrap: 'wrap',
-              justifyContent: 'center',
-              maxWidth: '100%',
-              lineHeight: 1.4,
-            }}
-          >
-            <span style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', fontWeight: 800, color: '#f87171', letterSpacing: '0.04em' }}>
-              <span
-                style={{
-                  width: '8px',
-                  height: '8px',
-                  borderRadius: '50%',
-                  background: '#ef4444',
-                  boxShadow: '0 0 8px #ef4444',
-                }}
-              />
-              <span>CAMPUS PREVIEW:</span>
-            </span>
-            <span style={{ fontWeight: 700, color: '#fef08a' }}>
-              {SAMPLE_LECTURE_TRACKS[activeBgVideoTrackIndex].title}
-            </span>
-            <div style={{ display: 'inline-flex', alignItems: 'center', gap: '5px' }}>
-              <button
-                type="button"
-                onClick={() => {
-                  setActiveBgVideoTrackIndex((prev) => (prev + 1) % SAMPLE_LECTURE_TRACKS.length)
-                }}
-                style={{
-                  background: 'rgba(212, 175, 55, 0.2)',
-                  border: '1px solid rgba(212, 175, 55, 0.45)',
-                  color: '#ffffff',
-                  borderRadius: '999px',
-                  padding: '2px 9px',
-                  fontSize: '0.72rem',
-                  fontWeight: 700,
-                  cursor: 'pointer',
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  gap: '4px',
-                }}
-                title="Switch which lecture is playing in the background"
-              >
-                <RefreshCwIcon size={11} color="#fef08a" />
-                <span>Next Class ({activeBgVideoTrackIndex + 1}/5)</span>
-              </button>
-              <button
-                type="button"
-                onClick={() => {
-                  setActiveVideoTrackIndex(activeBgVideoTrackIndex)
-                  setShowVideoShowcaseModal(true)
-                }}
-                style={{
-                  background: '#2563eb',
-                  border: 'none',
-                  color: '#ffffff',
-                  borderRadius: '999px',
-                  padding: '3px 12px',
-                  fontSize: '0.72rem',
-                  fontWeight: 700,
-                  cursor: 'pointer',
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  gap: '5px',
-                }}
-                title="Open video in full player modal with audio and details"
-              >
-                <VideoIcon size={12} color="#ffffff" />
-                <span>Watch 1-Minute Preview</span>
-              </button>
-            </div>
-          </div>
-
           {/* Primary Academy CTAs */}
-          <div style={{ display: 'flex', flexDirection: isMobile ? 'column' : 'row', justifyContent: 'center', alignItems: 'center', gap: '0.75rem', width: '100%', maxWidth: isMobile ? '380px' : 'none', margin: '0 auto 2.25rem', flexWrap: 'wrap' }}>
+          <div style={{ display: 'flex', flexDirection: isMobile ? 'column' : 'row', justifyContent: 'center', alignItems: 'center', gap: isMobile ? '0.65rem' : '0.75rem', width: '100%', maxWidth: isMobile ? '340px' : 'none', margin: isMobile ? '0 auto 1.5rem' : '0 auto 2.25rem', flexWrap: 'wrap' }}>
             <a
               href="#courses"
               className="btn btn-lg"
@@ -2033,8 +1855,8 @@ export function Landing() {
                 background: '#d4af37',
                 color: '#0c0e12',
                 fontWeight: 900,
-                padding: '0.85rem 1.75rem',
-                fontSize: '1rem',
+                padding: isMobile ? '0.75rem 1.25rem' : '0.85rem 1.75rem',
+                fontSize: isMobile ? '0.92rem' : '1rem',
                 borderRadius: '10px',
                 boxShadow: '0 10px 24px rgba(212, 175, 55, 0.35)',
                 border: 'none',
@@ -2050,64 +1872,6 @@ export function Landing() {
               <span>↓</span>
             </a>
 
-            {/* Interactive Watch Video Preview Button */}
-            <button
-              type="button"
-              className="btn btn-lg"
-              style={{
-                background: 'linear-gradient(135deg, rgba(30, 41, 59, 0.95) 0%, rgba(15, 23, 42, 0.95) 100%)',
-                color: '#ffffff',
-                fontWeight: 800,
-                padding: '0.85rem 1.65rem',
-                fontSize: '0.98rem',
-                borderRadius: '10px',
-                border: '1.5px solid rgba(212, 175, 55, 0.55)',
-                boxShadow: '0 8px 24px rgba(0, 0, 0, 0.4), inset 0 0 16px rgba(212, 175, 55, 0.08)',
-                cursor: 'pointer',
-                display: 'inline-flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                gap: '10px',
-                width: isMobile ? '100%' : 'auto',
-                transition: 'all 0.2s ease',
-              }}
-              onClick={() => {
-                setActiveVideoTrackIndex(0)
-                setShowVideoShowcaseModal(true)
-              }}
-              title="Watch real sample online class lectures and virtual classroom previews"
-            >
-              <span
-                style={{
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  width: '24px',
-                  height: '24px',
-                  borderRadius: '50%',
-                  background: 'linear-gradient(135deg, #d4af37 0%, #f59e0b 100%)',
-                  boxShadow: '0 0 10px rgba(212, 175, 55, 0.5)',
-                }}
-              >
-                <VideoIcon size={13} color="#0c0e12" />
-              </span>
-              <span>Watch Video Preview</span>
-              <span
-                style={{
-                  background: 'rgba(212, 175, 55, 0.22)',
-                  color: '#fef08a',
-                  border: '1px solid rgba(212, 175, 55, 0.4)',
-                  fontSize: '0.72rem',
-                  fontWeight: 900,
-                  padding: '2px 8px',
-                  borderRadius: '999px',
-                  letterSpacing: '0.03em',
-                }}
-              >
-                5 Demos
-              </span>
-            </button>
-
             <button
               type="button"
               className="btn btn-lg"
@@ -2115,8 +1879,8 @@ export function Landing() {
                 background: '#2563eb',
                 color: '#ffffff',
                 fontWeight: 800,
-                padding: '0.85rem 1.75rem',
-                fontSize: '1rem',
+                padding: isMobile ? '0.75rem 1.25rem' : '0.85rem 1.75rem',
+                fontSize: isMobile ? '0.92rem' : '1rem',
                 borderRadius: '10px',
                 boxShadow: '0 8px 20px rgba(37, 99, 235, 0.3)',
                 border: 'none',
@@ -2140,8 +1904,8 @@ export function Landing() {
                 background: 'rgba(34, 197, 94, 0.15)',
                 color: '#4ade80',
                 fontWeight: 700,
-                padding: '0.85rem 1.5rem',
-                fontSize: '0.96rem',
+                padding: isMobile ? '0.75rem 1.25rem' : '0.85rem 1.5rem',
+                fontSize: isMobile ? '0.9rem' : '0.96rem',
                 borderRadius: '10px',
                 border: '1px solid rgba(34, 197, 94, 0.3)',
                 textDecoration: 'none',
@@ -2163,12 +1927,12 @@ export function Landing() {
               display: 'flex',
               justifyContent: 'center',
               alignItems: 'center',
-              gap: '1.75rem',
+              gap: isMobile ? '0.45rem 0.85rem' : '1.75rem',
               flexWrap: 'wrap',
-              fontSize: '0.88rem',
+              fontSize: isMobile ? '0.76rem' : '0.88rem',
               color: '#cbd5e1',
               fontWeight: 600,
-              paddingTop: '1rem',
+              paddingTop: isMobile ? '0.85rem' : '1rem',
               borderTop: '1px solid rgba(255, 255, 255, 0.1)',
             }}
           >
@@ -2687,14 +2451,14 @@ export function Landing() {
       </section>
 
       {/* Featured Short Courses Showcase */}
-      <section id="courses" style={{ background: '#ffffff', padding: '5rem 1.5rem', borderTop: '1px solid #e2e8f0', borderBottom: '1px solid #e2e8f0' }}>
+      <section id="courses" style={{ background: '#ffffff', padding: isMobile ? '2.5rem 1rem' : '5rem 1.5rem', borderTop: '1px solid #e2e8f0', borderBottom: '1px solid #e2e8f0' }}>
         <div style={{ maxWidth: '1240px', margin: '0 auto' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', flexWrap: 'wrap', gap: '1.5rem', marginBottom: '2rem' }}>
             <div>
               <span style={{ fontSize: '0.82rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.08em', color: '#b45309' }}>
                 ONLINE PROGRAMS DIRECTORY
               </span>
-              <h2 style={{ fontSize: '2.2rem', fontWeight: 900, color: '#0f172a', margin: '0.35rem 0 0', fontFamily: 'var(--font-heading)' }}>
+              <h2 style={{ fontSize: isMobile ? '1.6rem' : '2.2rem', fontWeight: 900, color: '#0f172a', margin: '0.35rem 0 0', fontFamily: 'var(--font-heading)' }}>
                 Tech & Language Online Programs
               </h2>
               <p style={{ fontSize: '1rem', color: '#64748b', margin: '0.35rem 0 0' }}>
@@ -3548,18 +3312,18 @@ export function Landing() {
       </section>
 
       {/* Intakes, Global Payment & Admissions Section */}
-      <section id="intakes" style={{ padding: '5rem 1.5rem', maxWidth: '1240px', margin: '0 auto' }}>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '2.5rem' }}>
+      <section id="intakes" style={{ padding: isMobile ? '2.5rem 1rem' : '5rem 1.5rem', maxWidth: '1240px', margin: '0 auto' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : 'repeat(auto-fit, minmax(320px, 1fr))', gap: isMobile ? '1.5rem' : '2.5rem' }}>
           {/* Global Payment Card */}
-          <div style={{ background: 'linear-gradient(135deg, #065f46 0%, #047857 100%)', color: '#ffffff', borderRadius: '20px', padding: '2.5rem', boxShadow: '0 10px 25px rgba(5, 150, 105, 0.2)' }}>
+          <div style={{ background: 'linear-gradient(135deg, #065f46 0%, #047857 100%)', color: '#ffffff', borderRadius: '20px', padding: isMobile ? '1.35rem 1rem' : '2.5rem', boxShadow: '0 10px 25px rgba(5, 150, 105, 0.2)' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '1rem' }}>
               <CreditCardIcon size={28} color="#ffffff" />
               <div>
-                <h3 style={{ fontSize: '1.3rem', fontWeight: 900, color: '#ffffff', margin: 0 }}>International Tuition Payment Guide</h3>
+                <h3 style={{ fontSize: isMobile ? '1.15rem' : '1.3rem', fontWeight: 900, color: '#ffffff', margin: 0 }}>International Tuition Payment Guide</h3>
                 <div style={{ fontSize: '0.8rem', color: '#a7f3d0' }}>Instant automated digital invoices & receipts</div>
               </div>
             </div>
-            <div style={{ background: 'rgba(255, 255, 255, 0.12)', borderRadius: '12px', padding: '1.25rem', marginTop: '1.5rem', lineHeight: 1.8 }}>
+            <div style={{ background: 'rgba(255, 255, 255, 0.12)', borderRadius: '12px', padding: isMobile ? '1rem 0.85rem' : '1.25rem', marginTop: '1.5rem', lineHeight: 1.8 }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '7px' }}>
                 <GlobeIcon size={14} color="#a7f3d0" />
                 <span><strong>Currency:</strong> <span style={{ fontSize: '1.15rem', fontWeight: 900, color: '#ffffff' }}>USD ($)</span> (or local equivalent)</span>
@@ -3585,7 +3349,7 @@ export function Landing() {
               <button
                 type="button"
                 className="btn btn-sm"
-                style={{ background: '#ffffff', color: '#065f46', fontWeight: 800, padding: '0.6rem 1.25rem', borderRadius: '8px', border: 'none', cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: '6px' }}
+                style={{ background: '#ffffff', color: '#065f46', fontWeight: 800, padding: '0.6rem 1.25rem', borderRadius: '8px', border: 'none', cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: '6px', width: isMobile ? '100%' : 'auto', justifyContent: 'center' }}
                 onClick={() => setInquiryModalOpen(true)}
               >
                 <CreditCardIcon size={15} color="#065f46" />
@@ -3595,11 +3359,11 @@ export function Landing() {
           </div>
 
           {/* Virtual Admissions & Support Desk Card */}
-          <div style={{ background: '#ffffff', border: '1px solid #e2e8f0', borderRadius: '20px', padding: '2.5rem', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.05)' }}>
+          <div style={{ background: '#ffffff', border: '1px solid #e2e8f0', borderRadius: '20px', padding: isMobile ? '1.35rem 1rem' : '2.5rem', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.05)' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '1rem' }}>
               <GlobeIcon size={28} color="#2563eb" />
               <div>
-                <h3 style={{ fontSize: '1.3rem', fontWeight: 900, color: '#0f172a', margin: 0 }}>Online Admissions & Virtual Support</h3>
+                <h3 style={{ fontSize: isMobile ? '1.15rem' : '1.3rem', fontWeight: 900, color: '#0f172a', margin: 0 }}>Online Admissions & Virtual Support</h3>
                 <div style={{ fontSize: '0.8rem', color: '#64748b' }}>Live Zoom Classes • 24/7 Digital Learning Portal</div>
               </div>
             </div>
@@ -3930,13 +3694,13 @@ export function Landing() {
       {/* 1. Interactive Course Admission & Payment Checkout Desk Modal */}
       {inquiryModalOpen && (
         <div className="modal-overlay" onClick={() => setInquiryModalOpen(false)}>
-          <div className="modal-content modal-lg" onClick={(e) => e.stopPropagation()} style={{ background: '#ffffff', color: '#0f172a', padding: '1.75rem', borderRadius: '16px', maxHeight: '90vh', overflowY: 'auto', border: '1px solid #cbd5e1', boxShadow: '0 25px 60px rgba(15, 23, 42, 0.25)' }}>
+          <div className="modal-content modal-lg" onClick={(e) => e.stopPropagation()} style={{ background: '#ffffff', color: '#0f172a', padding: isMobile ? '1.1rem 0.85rem' : '1.75rem', borderRadius: '16px', maxHeight: '90vh', overflowY: 'auto', border: '1px solid #cbd5e1', boxShadow: '0 25px 60px rgba(15, 23, 42, 0.25)' }}>
             {/* Modal Header & Step Indicator */}
             <div className="modal-header" style={{ padding: 0, paddingBottom: '1rem', marginBottom: '1.25rem', borderBottom: '1px solid #e2e8f0', background: '#ffffff', color: '#0f172a' }}>
               <div>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.25rem' }}>
                   <GraduationCapIcon size={22} color="#1e3a8a" />
-                  <h3 className="modal-title" style={{ fontSize: '1.25rem', fontWeight: 900, color: '#1e3a8a', margin: 0 }}>
+                  <h3 className="modal-title" style={{ fontSize: isMobile ? '1.1rem' : '1.25rem', fontWeight: 900, color: '#1e3a8a', margin: 0 }}>
                     {checkoutStep === 'details' && 'Step 1: Student Admission Details'}
                     {checkoutStep === 'payment' && 'Step 2: Select Mode of Payment & Settle Tuition'}
                     {checkoutStep === 'receipt' && 'Step 3: Official Stamped Tuition Receipt & Clearance Pass'}
@@ -3954,7 +3718,7 @@ export function Landing() {
             </div>
 
             {/* Step Progress Tracker */}
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1.5rem', background: '#f8fafc', padding: '0.6rem 1rem', borderRadius: '10px', border: '1px solid #e2e8f0', fontSize: '0.78rem' }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1.5rem', background: '#f8fafc', padding: isMobile ? '0.45rem 0.6rem' : '0.6rem 1rem', borderRadius: '10px', border: '1px solid #e2e8f0', fontSize: isMobile ? '0.7rem' : '0.78rem' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontWeight: checkoutStep === 'details' ? 800 : 600, color: checkoutStep === 'details' ? '#2563eb' : '#64748b' }}>
                 <span style={{ width: '20px', height: '20px', borderRadius: '50%', background: checkoutStep === 'details' ? '#2563eb' : '#cbd5e1', color: '#fff', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.72rem' }}>1</span>
                 <span>Trainee Details</span>
@@ -3994,62 +3758,79 @@ export function Landing() {
                         type="tel"
                         required
                         className="input"
-                        placeholder="07XX XXX XXX / +1..."
+                        placeholder="e.g. +254 712 345 678"
                         value={inquiryForm.phone}
                         onChange={(e) => setInquiryForm({ ...inquiryForm, phone: e.target.value })}
                       />
                     </div>
                     <div>
-                      <label className="label" style={{ fontSize: '0.82rem' }}>Email Address (For Zoom Class Links)</label>
+                      <label className="label" style={{ fontSize: '0.82rem' }}>Email Address *</label>
                       <input
                         type="email"
+                        required
                         className="input"
-                        placeholder="yourname@email.com"
+                        placeholder="e.g. student@gmail.com"
                         value={inquiryForm.email}
                         onChange={(e) => setInquiryForm({ ...inquiryForm, email: e.target.value })}
                       />
                     </div>
                   </div>
 
-                  <div>
-                    <label className="label" style={{ fontSize: '0.82rem' }}>Selected Short Course *</label>
-                    <select
-                      className="input"
-                      value={inquiryForm.course}
-                      onChange={(e) => setInquiryForm({ ...inquiryForm, course: e.target.value })}
-                    >
-                      {coursesList.map((c) => (
-                        <option key={c.id} value={c.title}>
-                          {c.title} ({c.duration})
-                        </option>
-                      ))}
-                    </select>
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '0.75rem' }}>
+                    <div>
+                      <label className="label" style={{ fontSize: '0.82rem' }}>Program of Interest *</label>
+                      <select
+                        className="select"
+                        value={inquiryForm.course}
+                        onChange={(e) => setInquiryForm({ ...inquiryForm, course: e.target.value })}
+                        style={{ width: '100%' }}
+                      >
+                        {coursesList.map((c) => (
+                          <option key={c.id} value={c.title}>
+                            {c.title} ({c.duration})
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+
+                    <div>
+                      <label className="label" style={{ fontSize: '0.82rem' }}>Preferred Live Class Shift *</label>
+                      <select
+                        className="select"
+                        value={inquiryForm.preferredShift}
+                        onChange={(e) => setInquiryForm({ ...inquiryForm, preferredShift: e.target.value })}
+                        style={{ width: '100%' }}
+                      >
+                        <option value="Early Morning (6:30 AM - 8:30 AM EAT)">Early Morning (6:30 AM - 8:30 AM EAT)</option>
+                        <option value="Late Morning (9:00 AM - 11:00 AM EAT)">Late Morning (9:00 AM - 11:00 AM EAT)</option>
+                        <option value="Midday (11:30 AM - 1:30 PM EAT)">Midday (11:30 AM - 1:30 PM EAT)</option>
+                        <option value="Afternoon (2:00 PM - 4:00 PM EAT)">Afternoon (2:00 PM - 4:00 PM EAT)</option>
+                        <option value="Evening (5:00 PM - 7:00 PM EAT)">Evening (5:00 PM - 7:00 PM EAT)</option>
+                        <option value="Night Batch (8:00 PM - 10:00 PM EAT)">Night Batch (8:00 PM - 10:00 PM EAT)</option>
+                        <option value="Weekend Intensive (Saturdays 9 AM - 4 PM)">Weekend Intensive (Saturdays 9 AM - 4 PM)</option>
+                      </select>
+                    </div>
                   </div>
 
                   <div>
-                    <label className="label" style={{ fontSize: '0.82rem' }}>Preferred Live Class Timetable Shift</label>
-                    <select
+                    <label className="label" style={{ fontSize: '0.82rem' }}>Additional Notes or Inquiries (Optional)</label>
+                    <textarea
                       className="input"
-                      value={inquiryForm.preferredShift}
-                      onChange={(e) => setInquiryForm({ ...inquiryForm, preferredShift: e.target.value })}
-                    >
-                      <option value="Early Morning Batch (6:00 AM - 8:00 AM EAT)">Early Morning Batch (6:00 AM - 8:00 AM EAT)</option>
-                      <option value="Late Morning Batch (9:00 AM - 11:30 AM EAT)">Late Morning Batch (9:00 AM - 11:30 AM EAT)</option>
-                      <option value="Midday Batch (11:30 AM - 1:30 PM EAT)">Midday Batch (11:30 AM - 1:30 PM EAT)</option>
-                      <option value="Afternoon Batch (2:00 PM - 4:30 PM EAT)">Afternoon Batch (2:00 PM - 4:30 PM EAT)</option>
-                      <option value="Evening Batch (5:30 PM - 7:30 PM EAT)">Evening Batch (5:30 PM - 7:30 PM EAT)</option>
-                      <option value="Night Batch (8:00 PM - 10:00 PM EAT)">Night Batch (8:00 PM - 10:00 PM EAT)</option>
-                      <option value="Weekend Intensive Masterclass (Saturday & Sunday)">Weekend Intensive Masterclass (Saturday & Sunday)</option>
-                      <option value="Cambridge IGCSE Complete Structure Cohort">Cambridge IGCSE Complete Structure Cohort</option>
-                    </select>
+                      rows={2}
+                      placeholder="Mention country of residence, specific goals, or prior background..."
+                      value={inquiryForm.notes}
+                      onChange={(e) => setInquiryForm({ ...inquiryForm, notes: e.target.value })}
+                    />
                   </div>
-                </div>
 
-                <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.75rem', marginTop: '1.5rem', borderTop: '1px solid #e2e8f0', paddingTop: '1rem' }}>
-                  <button type="button" className="btn btn-secondary" onClick={() => setInquiryModalOpen(false)}>Cancel</button>
-                  <button type="submit" className="btn btn-primary" style={{ fontWeight: 800 }}>
-                    Continue to Mode of Payment →
-                  </button>
+                  <div style={{ marginTop: '0.5rem', display: 'flex', justifyContent: 'flex-end', gap: '0.75rem' }}>
+                    <button type="button" className="btn btn-secondary" onClick={() => setInquiryModalOpen(false)}>
+                      Cancel
+                    </button>
+                    <button type="submit" className="btn btn-primary" style={{ fontWeight: 800, padding: '0.75rem 1.5rem', display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
+                      <span>Proceed to Payment Step →</span>
+                    </button>
+                  </div>
                 </div>
               </form>
             )}
@@ -4070,7 +3851,7 @@ export function Landing() {
                       {/* Plan Selection Cards */}
                       <div style={{ marginBottom: '1.25rem' }}>
                         <label className="label" style={{ fontSize: '0.82rem', marginBottom: '0.5rem' }}>Select Tuition Payment Structure:</label>
-                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem' }}>
+                        <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: '0.75rem' }}>
                           <div
                             onClick={() => setCheckoutPaymentPlan('full')}
                             style={{
@@ -4121,7 +3902,7 @@ export function Landing() {
                       {/* Mode of Payment Selector */}
                       <div style={{ marginBottom: '1.25rem' }}>
                         <label className="label" style={{ fontSize: '0.82rem', marginBottom: '0.5rem' }}>Choose Mode of Payment:</label>
-                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '0.5rem' }}>
+                        <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : 'repeat(3, 1fr)', gap: '0.5rem' }}>
                           <button
                             type="button"
                             onClick={() => setCheckoutPaymentMode('card')}
@@ -5215,487 +4996,6 @@ export function Landing() {
           cert={previewCert}
           onClose={() => setPreviewCert(null)}
         />
-      )}
-
-      {/* Interactive Video Showcase / Watch Campus Tour & Class Previews Modal */}
-      {showVideoShowcaseModal && (
-        <div
-          className="modal-overlay"
-          onClick={() => setShowVideoShowcaseModal(false)}
-          style={{
-            position: 'fixed',
-            inset: 0,
-            zIndex: 9999,
-            background: 'rgba(6, 10, 18, 0.92)',
-            backdropFilter: 'blur(14px)',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            padding: isMobile ? '0.75rem' : '1.5rem',
-            overflowY: 'auto',
-          }}
-        >
-          <div
-            onClick={(e) => e.stopPropagation()}
-            style={{
-              width: '100%',
-              maxWidth: '1060px',
-              background: 'linear-gradient(180deg, #0f172a 0%, #090d16 100%)',
-              border: '1.5px solid rgba(212, 175, 55, 0.35)',
-              borderRadius: '16px',
-              boxShadow: '0 25px 65px rgba(0, 0, 0, 0.75), 0 0 30px rgba(212, 175, 55, 0.12)',
-              overflow: 'hidden',
-              display: 'flex',
-              flexDirection: 'column',
-              maxHeight: '92vh',
-            }}
-          >
-            {/* Modal Header */}
-            <div
-              style={{
-                padding: isMobile ? '1rem 1.25rem' : '1.25rem 1.75rem',
-                borderBottom: '1px solid rgba(255, 255, 255, 0.08)',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-                background: 'rgba(15, 23, 42, 0.8)',
-                gap: '1rem',
-              }}
-            >
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.85rem' }}>
-                <span
-                  style={{
-                    display: 'inline-flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    width: '34px',
-                    height: '34px',
-                    borderRadius: '8px',
-                    background: 'linear-gradient(135deg, #d4af37 0%, #f59e0b 100%)',
-                    boxShadow: '0 0 14px rgba(212, 175, 55, 0.45)',
-                  }}
-                >
-                  <VideoIcon size={18} color="#0c0e12" />
-                </span>
-                <div>
-                  <h3
-                    style={{
-                      margin: 0,
-                      fontSize: isMobile ? '1.05rem' : '1.25rem',
-                      fontWeight: 800,
-                      color: '#ffffff',
-                      letterSpacing: '-0.01em',
-                    }}
-                  >
-                    Watch Campus Tour & Class Previews
-                  </h3>
-                  <p
-                    style={{
-                      margin: '2px 0 0',
-                      fontSize: '0.8rem',
-                      color: '#94a3b8',
-                      fontWeight: 500,
-                    }}
-                  >
-                    100% Online Virtual Campus • Cambridge Centre KE042 Verified • 5 Sample Lectures
-                  </p>
-                </div>
-              </div>
-
-              <button
-                type="button"
-                onClick={() => setShowVideoShowcaseModal(false)}
-                aria-label="Close lecture showcase modal"
-                style={{
-                  background: 'rgba(255, 255, 255, 0.08)',
-                  border: '1px solid rgba(255, 255, 255, 0.15)',
-                  color: '#cbd5e1',
-                  width: '36px',
-                  height: '36px',
-                  borderRadius: '8px',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  cursor: 'pointer',
-                  transition: 'all 0.2s',
-                  flexShrink: 0,
-                }}
-              >
-                <XIcon size={18} color="#cbd5e1" />
-              </button>
-            </div>
-
-            {/* Scrollable Modal Body */}
-            <div
-              style={{
-                padding: isMobile ? '1rem' : '1.5rem',
-                overflowY: 'auto',
-                display: 'flex',
-                flexDirection: 'column',
-                gap: '1.25rem',
-              }}
-            >
-              {/* Lecture Track Selector Tabs */}
-              <div
-                style={{
-                  display: 'flex',
-                  gap: '0.6rem',
-                  overflowX: 'auto',
-                  paddingBottom: '4px',
-                  scrollbarWidth: 'thin',
-                }}
-              >
-                {SAMPLE_LECTURE_TRACKS.map((track, idx) => {
-                  const isActive = activeVideoTrackIndex === idx
-                  return (
-                    <button
-                      key={track.id}
-                      type="button"
-                      onClick={() => setActiveVideoTrackIndex(idx)}
-                      style={{
-                        padding: '0.6rem 1rem',
-                        borderRadius: '999px',
-                        border: isActive
-                          ? `1.5px solid ${track.accentColor}`
-                          : '1px solid rgba(255, 255, 255, 0.12)',
-                        background: isActive
-                          ? `${track.accentColor}22`
-                          : 'rgba(255, 255, 255, 0.04)',
-                        color: isActive ? '#ffffff' : '#94a3b8',
-                        cursor: 'pointer',
-                        display: 'inline-flex',
-                        alignItems: 'center',
-                        gap: '8px',
-                        whiteSpace: 'nowrap',
-                        fontSize: '0.84rem',
-                        fontWeight: isActive ? 700 : 500,
-                        transition: 'all 0.2s ease',
-                      }}
-                    >
-                      <span
-                        style={{
-                          width: '8px',
-                          height: '8px',
-                          borderRadius: '50%',
-                          background: track.accentColor,
-                          boxShadow: isActive ? `0 0 8px ${track.accentColor}` : 'none',
-                        }}
-                      />
-                      <span>{track.faculty}</span>
-                      <span
-                        style={{
-                          fontSize: '0.72rem',
-                          background: 'rgba(255, 255, 255, 0.08)',
-                          padding: '1px 6px',
-                          borderRadius: '4px',
-                          color: '#cbd5e1',
-                        }}
-                      >
-                        {track.duration}
-                      </span>
-                    </button>
-                  )
-                })}
-              </div>
-
-              {/* 1-Minute Class Preview Video Player (Local HTML5, Zero External Branding) */}
-              <div
-                style={{
-                  borderRadius: '12px',
-                  overflow: 'hidden',
-                  background: '#000000',
-                  border: '1px solid rgba(255, 255, 255, 0.1)',
-                  boxShadow: '0 12px 32px rgba(0, 0, 0, 0.5)',
-                  position: 'relative',
-                  aspectRatio: '16/9',
-                }}
-              >
-                <video
-                  key={SAMPLE_LECTURE_TRACKS[activeVideoTrackIndex].id}
-                  controls
-                  autoPlay
-                  playsInline
-                  style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-                >
-                  <source src={SAMPLE_LECTURE_TRACKS[activeVideoTrackIndex].videoUrl} type="video/mp4" />
-                </video>
-              </div>
-
-              {/* Active Lecture Details Panel */}
-              {(() => {
-                const currentTrack = SAMPLE_LECTURE_TRACKS[activeVideoTrackIndex]
-                return (
-                  <div
-                    style={{
-                      background: 'rgba(255, 255, 255, 0.03)',
-                      border: '1px solid rgba(255, 255, 255, 0.08)',
-                      borderRadius: '12px',
-                      padding: isMobile ? '1rem' : '1.25rem',
-                      display: 'flex',
-                      flexDirection: isMobile ? 'column' : 'row',
-                      justifyContent: 'space-between',
-                      alignItems: isMobile ? 'flex-start' : 'center',
-                      gap: '1.25rem',
-                    }}
-                  >
-                    <div style={{ flex: 1 }}>
-                      {/* Badge & Meta Pills */}
-                      <div
-                        style={{
-                          display: 'flex',
-                          alignItems: 'center',
-                          gap: '0.5rem',
-                          flexWrap: 'wrap',
-                          marginBottom: '0.5rem',
-                        }}
-                      >
-                        <span
-                          style={{
-                            background: `${currentTrack.accentColor}25`,
-                            color: currentTrack.accentColor,
-                            border: `1px solid ${currentTrack.accentColor}50`,
-                            fontSize: '0.72rem',
-                            fontWeight: 800,
-                            padding: '2px 8px',
-                            borderRadius: '6px',
-                            letterSpacing: '0.04em',
-                          }}
-                        >
-                          {currentTrack.badge}
-                        </span>
-                        <span
-                          style={{
-                            display: 'inline-flex',
-                            alignItems: 'center',
-                            gap: '4px',
-                            fontSize: '0.75rem',
-                            color: '#cbd5e1',
-                            background: 'rgba(255, 255, 255, 0.06)',
-                            padding: '2px 8px',
-                            borderRadius: '6px',
-                          }}
-                        >
-                          <ClockIcon size={12} color="#94a3b8" />
-                          <span>{currentTrack.duration}</span>
-                        </span>
-                        <span
-                          style={{
-                            fontSize: '0.72rem',
-                            fontWeight: 700,
-                            color: '#38bdf8',
-                            background: 'rgba(56, 189, 248, 0.1)',
-                            border: '1px solid rgba(56, 189, 248, 0.25)',
-                            padding: '2px 6px',
-                            borderRadius: '6px',
-                          }}
-                        >
-                          {currentTrack.resolution}
-                        </span>
-                      </div>
-
-                      {/* Title */}
-                      <h4
-                        style={{
-                          margin: '0 0 0.4rem',
-                          fontSize: isMobile ? '1.05rem' : '1.2rem',
-                          fontWeight: 800,
-                          color: '#ffffff',
-                          lineHeight: 1.35,
-                        }}
-                      >
-                        {currentTrack.title}
-                      </h4>
-
-                      {/* Instructor */}
-                      <p
-                        style={{
-                          margin: '0 0 0.6rem',
-                          fontSize: '0.85rem',
-                          color: '#d4af37',
-                          fontWeight: 600,
-                          display: 'flex',
-                          alignItems: 'center',
-                          gap: '6px',
-                        }}
-                      >
-                        <UserIcon size={14} color="#d4af37" />
-                        <span>{currentTrack.instructor}</span>
-                      </p>
-
-                      {/* Description */}
-                      <p
-                        style={{
-                          margin: '0 0 0.85rem',
-                          fontSize: '0.88rem',
-                          color: '#94a3b8',
-                          lineHeight: 1.5,
-                        }}
-                      >
-                        {currentTrack.description}
-                      </p>
-
-                      {/* Key Concepts Chips */}
-                      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
-                        {currentTrack.keyPoints.map((point, kIdx) => (
-                          <span
-                            key={kIdx}
-                            style={{
-                              display: 'inline-flex',
-                              alignItems: 'center',
-                              gap: '5px',
-                              background: 'rgba(255, 255, 255, 0.05)',
-                              border: '1px solid rgba(255, 255, 255, 0.1)',
-                              color: '#e2e8f0',
-                              fontSize: '0.78rem',
-                              fontWeight: 500,
-                              padding: '3px 9px',
-                              borderRadius: '6px',
-                            }}
-                          >
-                            <CheckCircleIcon size={12} color="#34d399" />
-                            <span>{point}</span>
-                          </span>
-                        ))}
-                      </div>
-                    </div>
-
-                    {/* Action Buttons Column */}
-                    <div
-                      style={{
-                        display: 'flex',
-                        flexDirection: isMobile ? 'row' : 'column',
-                        gap: '0.65rem',
-                        width: isMobile ? '100%' : '240px',
-                        flexShrink: 0,
-                      }}
-                    >
-                      <button
-                        type="button"
-                        onClick={() => {
-                          const matchedCourse =
-                            coursesList.find(
-                              (c) =>
-                                c.title.toLowerCase().includes(currentTrack.courseTitle.toLowerCase()) ||
-                                c.id === currentTrack.id
-                            ) || coursesList[0]
-                          setShowVideoShowcaseModal(false)
-                          handleOpenCourseApplication(matchedCourse)
-                        }}
-                        style={{
-                          background: 'linear-gradient(135deg, #d4af37 0%, #f59e0b 100%)',
-                          color: '#0c0e12',
-                          fontWeight: 900,
-                          fontSize: '0.9rem',
-                          padding: '0.75rem 1.25rem',
-                          borderRadius: '8px',
-                          border: 'none',
-                          cursor: 'pointer',
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          gap: '6px',
-                          boxShadow: '0 4px 14px rgba(212, 175, 55, 0.35)',
-                          flex: 1,
-                        }}
-                      >
-                        <SparklesIcon size={16} color="#0c0e12" />
-                        <span>Enroll in This Course</span>
-                      </button>
-
-                      <a
-                        href={getWhatsAppInquiryUrl(
-                          `Hello Éclat Admissions! I just watched the sample lecture for ${currentTrack.courseTitle} and would like to join the next intake.`
-                        )}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        style={{
-                          background: 'rgba(34, 197, 94, 0.15)',
-                          color: '#4ade80',
-                          border: '1px solid rgba(34, 197, 94, 0.35)',
-                          fontWeight: 700,
-                          fontSize: '0.85rem',
-                          padding: '0.65rem 1.15rem',
-                          borderRadius: '8px',
-                          textDecoration: 'none',
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          gap: '6px',
-                          flex: 1,
-                        }}
-                      >
-                        <MessageCircleIcon size={16} color="#4ade80" />
-                        <span>WhatsApp Tutor</span>
-                      </a>
-                    </div>
-                  </div>
-                )
-              })()}
-
-              {/* Navigation Arrows Row */}
-              <div
-                style={{
-                  display: 'flex',
-                  justifyContent: 'space-between',
-                  alignItems: 'center',
-                  paddingTop: '0.25rem',
-                }}
-              >
-                <button
-                  type="button"
-                  onClick={() =>
-                    setActiveVideoTrackIndex((prev) =>
-                      prev === 0 ? SAMPLE_LECTURE_TRACKS.length - 1 : prev - 1
-                    )
-                  }
-                  style={{
-                    background: 'rgba(255, 255, 255, 0.05)',
-                    border: '1px solid rgba(255, 255, 255, 0.12)',
-                    color: '#e2e8f0',
-                    fontSize: '0.82rem',
-                    fontWeight: 600,
-                    padding: '0.5rem 1rem',
-                    borderRadius: '8px',
-                    cursor: 'pointer',
-                    display: 'inline-flex',
-                    alignItems: 'center',
-                    gap: '6px',
-                  }}
-                >
-                  <ChevronLeftIcon size={16} color="#cbd5e1" />
-                  <span>Previous Lecture</span>
-                </button>
-
-                <span style={{ fontSize: '0.8rem', color: '#64748b', fontWeight: 600 }}>
-                  Lecture {activeVideoTrackIndex + 1} of {SAMPLE_LECTURE_TRACKS.length}
-                </span>
-
-                <button
-                  type="button"
-                  onClick={() =>
-                    setActiveVideoTrackIndex((prev) => (prev + 1) % SAMPLE_LECTURE_TRACKS.length)
-                  }
-                  style={{
-                    background: 'rgba(255, 255, 255, 0.05)',
-                    border: '1px solid rgba(255, 255, 255, 0.12)',
-                    color: '#e2e8f0',
-                    fontSize: '0.82rem',
-                    fontWeight: 600,
-                    padding: '0.5rem 1rem',
-                    borderRadius: '8px',
-                    cursor: 'pointer',
-                    display: 'inline-flex',
-                    alignItems: 'center',
-                    gap: '6px',
-                  }}
-                >
-                  <span>Next Lecture</span>
-                  <ChevronRightIcon size={16} color="#cbd5e1" />
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
       )}
     </div>
   )

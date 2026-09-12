@@ -44,7 +44,7 @@ function IntakeCountdown({ deadline }: { deadline: string }) {
   if (timeLeft.isExpired) {
     return (
       <div style={{ fontSize: '0.72rem', fontWeight: 800, color: '#f87171' }}>
-        ⚠️ Late Registrations Open
+        Late Registrations Open
       </div>
     )
   }
