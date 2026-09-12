@@ -7,31 +7,108 @@ import { supabase } from './supabase'
 import { INSTITUTION_CONFIG } from '@/config/institution'
 import type { IntakeSchedule } from '@/types/intake'
 
-const INTAKE_STORAGE_KEY = 'eclat_intake_schedules_store'
+const INTAKE_STORAGE_KEY = 'eclat_intake_schedules_store_v2'
 
 export const INITIAL_INTAKE_SCHEDULES: IntakeSchedule[] = [
   {
+    id: 'intake-2026-10',
+    title: 'October 2026 Career & Executive Fast-Track Intake',
+    academic_year: '2026',
+    term_session: 'Term 4 / Autumn Fast-Track',
+    headline: 'Accelerated 4–8 Week Modular Certifications & Night/Weekend Cohorts',
+    description:
+      'Specialized practical industry certifications in Full-Stack Web Development (React 19 & Node.js), Python Data Analytics, IBM SPSS Research Econometrics, Digital Accounting (QuickBooks & iTax), and IELTS Academic Band 8.5. 100% online live interactive classes across 6 flexible daily shifts (Early Morning to Night).',
+    poster_image_url:
+      'https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=1200&q=80',
+    application_deadline: '2026-10-10',
+    orientation_date: '2026-10-13',
+    commencement_date: '2026-10-15',
+    status: 'Filling Fast',
+    target_courses: [
+      'Full-Stack Web Development (React & Node.js)',
+      'Python for Beginners & Data Analytics',
+      'IBM SPSS Statistics & Econometric Survey Analysis',
+      'IELTS Academic / General Training Exam Prep',
+      'Computerized Accounting (QuickBooks & iTax)',
+      'Graphic Design, Video Editing & Digital Media',
+    ],
+    early_bird_discount: '⚡ 15% Early Registration Tuition Discount (Limited Seats)',
+    installment_plan: 'Flexible 2 to 3 Monthly Installments ($ USD & KES Paybill)',
+    study_modes: [
+      '100% Online (Live & Recorded)',
+      'All Shifts (Early Morning to Night)',
+      'Weekend Executive Cohort',
+    ],
+    contact_phone: INSTITUTION_CONFIG.contact.phone,
+    contact_email: INSTITUTION_CONFIG.contact.admissionsEmail,
+    registration_fee: 'Free ($0 USD Application Fee)',
+    is_published: true,
+    featured: true,
+    created_at: '2026-09-08T08:00:00.000Z',
+    updated_at: '2026-09-12T09:00:00.000Z',
+  },
+  {
+    id: 'intake-2026-11-igcse',
+    title: 'November 2026 British International Curriculum Intake',
+    academic_year: '2026/2027',
+    term_session: 'November 2026 & May/June 2027 Series',
+    headline: 'Cambridge Centre KE042 & Pearson Edexcel EDX-98421 — Years 9, 10 & 11 Admissions',
+    description:
+      'Accredited British curriculum admissions across Year 9 Foundation (Lower Secondary), Year 10 IGCSE, and Year 11 Exam Intensive. Rigorous dual 9-1 & A*-G mastery with live interactive classrooms, weekly past paper clinics, and official center candidate registration.',
+    poster_image_url:
+      'https://images.unsplash.com/photo-1427504494785-3a9ca7044f45?auto=format&fit=crop&w=1200&q=80',
+    application_deadline: '2026-10-28',
+    orientation_date: '2026-10-31',
+    commencement_date: '2026-11-02',
+    status: 'Open',
+    target_courses: [
+      'Cambridge IGCSE Mathematics (0580)',
+      'Pearson Edexcel Mathematics A (4MA1)',
+      'Cambridge IGCSE Physics (0625) & Chemistry (0620)',
+      'Pearson Edexcel Computer Science (4CP0)',
+      'British Lower Secondary Foundation (Year 9)',
+      'Cambridge ICE Group Award & Past Paper Clinic',
+    ],
+    early_bird_discount: '🇬🇧 Free Official Syllabus Packs & Complete Past-Paper Topical Kits',
+    installment_plan: 'Flexible Termly & Monthly Installments ($ USD & KES Paybill)',
+    study_modes: [
+      '100% Online (Live & Recorded)',
+      'Cambridge IGCSE Complete Structure',
+      'Cambridge Centre KE042 Exam Support',
+      'Pearson Edexcel Centre EDX-98421 Support',
+      'Weekend Executive Cohort',
+    ],
+    contact_phone: INSTITUTION_CONFIG.contact.phone,
+    contact_email: INSTITUTION_CONFIG.contact.admissionsEmail,
+    registration_fee: 'Free ($0 USD Application Fee)',
+    is_published: true,
+    featured: true,
+    created_at: '2026-09-10T10:00:00.000Z',
+    updated_at: '2026-09-12T09:00:00.000Z',
+  },
+  {
     id: 'intake-2027-01',
-    title: 'January 2027 Global Professional Intake',
+    title: 'January 2027 Global Professional & Academic New Year Intake',
     academic_year: '2027',
     term_session: 'Term 1 / First Quarter 2027',
-    headline: 'Admissions Open — 100% Online Live Classes & Modular Certificate Programs',
+    headline: 'Flagship New Year Admissions — Modular Diplomas, Tech Cohorts & Language Immersions',
     description:
-      'Enroll in certified career-ready programs across Full-Stack Web Engineering (React 19 & Node.js), Python Data Science, IELTS Band 8.5 Preparation, Cybersecurity SOC Operations, and Computerized Accounting. Live cohorts available across all 6 shifts (Early Morning to Night) with interactive mentor code reviews.',
+      'Our comprehensive annual intake enrolling students worldwide across 7 specialized schools: Tech & Engineering, Data Science & Research, Cambridge International (KE042), Pearson Edexcel (EDX-98421), Business & Accounting, Languages & Communication, and Creative Arts. 100% online live interactive classes with mentor reviews.',
     poster_image_url:
-      'https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&w=1200&q=80',
+      'https://images.unsplash.com/photo-1523240795612-9a054b0db644?auto=format&fit=crop&w=1200&q=80',
     application_deadline: '2027-01-15',
     orientation_date: '2027-01-18',
     commencement_date: '2027-01-20',
     status: 'Open',
     target_courses: [
       'Full-Stack Web Development (React & Node.js)',
-      'Python for Beginners & Data Analytics',
-      'IELTS Academic / General Training Exam Prep',
-      'Cybersecurity Fundamentals & Threat Defense',
-      'Computerized Accounting (QuickBooks & iTax)',
+      'Python Data Science, Machine Learning & SQL',
+      'RStudio Biostatistics & Stata Econometrics',
+      'Cambridge IGCSE & Pearson Edexcel GCSE (Years 9-11)',
+      'IELTS Band 8.5 Academic & Corporate Languages',
+      'Cybersecurity SOC Operations & Ethical Hacking',
     ],
-    early_bird_discount: '⭐ 15% Early Registration Scholarship (First 30 Students)',
+    early_bird_discount: '⭐ 20% Early Bird Scholarship for Early Applicants (First 50 Students)',
     installment_plan: 'Flexible 2 to 3 Monthly Installments ($ USD & KES Paybill)',
     study_modes: [
       '100% Online (Live & Recorded)',
@@ -44,19 +121,19 @@ export const INITIAL_INTAKE_SCHEDULES: IntakeSchedule[] = [
     is_published: true,
     featured: true,
     created_at: '2026-09-01T08:00:00.000Z',
-    updated_at: '2026-09-04T12:00:00.000Z',
+    updated_at: '2026-09-12T09:00:00.000Z',
   },
   {
     id: 'intake-2026-09',
-    title: 'September 2026 Fast-Track Short Course Cohort',
+    title: 'September 2026 Fast-Track Late Enrollment Cohort',
     academic_year: '2026',
     term_session: 'Term 3 / Autumn Cohort',
-    headline: 'Accelerated 4-8 Week Career Certifications — Flexible Shifts (Early Morning to Night)',
+    headline: 'Late Admissions Closing Soon — Final Seats in Live Short Courses',
     description:
-      'Designed for working professionals, university researchers, and international visa applicants. Hands-on training in RStudio biostatistics, SPSS survey econometric modeling, French & German language certifications, and Canva Pro digital graphics.',
+      'Final opportunity to join ongoing September accelerated certification tracks with access to session recordings, tutor mentorship, and live weekend catch-up labs. Practical hands-on training in RStudio, SPSS, foreign languages, and digital media.',
     poster_image_url:
       'https://images.unsplash.com/photo-1531482615713-2afd69097998?auto=format&fit=crop&w=1200&q=80',
-    application_deadline: '2026-09-10',
+    application_deadline: '2026-09-18',
     orientation_date: '2026-09-12',
     commencement_date: '2026-09-14',
     status: 'Filling Fast',
@@ -80,7 +157,7 @@ export const INITIAL_INTAKE_SCHEDULES: IntakeSchedule[] = [
     is_published: true,
     featured: false,
     created_at: '2026-08-15T10:00:00.000Z',
-    updated_at: '2026-09-04T12:00:00.000Z',
+    updated_at: '2026-09-12T09:00:00.000Z',
   },
   {
     id: 'intake-2026-05',
@@ -113,14 +190,28 @@ class IntakeStore {
 
   private loadFromStorage() {
     try {
-      const stored = localStorage.getItem(INTAKE_STORAGE_KEY)
+      // Check both current v2 key and legacy key
+      const stored = localStorage.getItem(INTAKE_STORAGE_KEY) || localStorage.getItem('eclat_intake_schedules_store')
       if (stored) {
         const parsed = JSON.parse(stored)
         if (Array.isArray(parsed) && parsed.length > 0) {
-          this.intakes = parsed.map((i: any) => ({
-            ...i,
-            promo_video_url: i.promo_video_url && i.promo_video_url.trim() !== '' ? i.promo_video_url : undefined,
-          }))
+          const map = new Map<string, IntakeSchedule>()
+          // 1. Prepopulate with initial intakes
+          for (const item of INITIAL_INTAKE_SCHEDULES) {
+            map.set(item.id, item)
+          }
+          // 2. Merge stored intakes preserving custom updates
+          for (const item of parsed) {
+            if (item && item.id) {
+              map.set(item.id, {
+                ...map.get(item.id),
+                ...item,
+                promo_video_url: item.promo_video_url && item.promo_video_url.trim() !== '' ? item.promo_video_url : undefined,
+              })
+            }
+          }
+          this.intakes = Array.from(map.values())
+          this.saveToStorage()
           this.initialized = true
           return
         }
@@ -215,7 +306,18 @@ class IntakeStore {
   }
 
   public getPublishedIntakes(): IntakeSchedule[] {
-    return this.getIntakes().filter((i) => i.is_published)
+    const list = this.getIntakes().filter((i) => i.is_published)
+    return list.sort((a, b) => {
+      const aClosed = a.status === 'Closed' || a.status === 'Archived'
+      const bClosed = b.status === 'Closed' || b.status === 'Archived'
+      if (aClosed && !bClosed) return 1
+      if (!aClosed && bClosed) return -1
+
+      // Earliest upcoming commencement date first
+      const dateA = new Date(a.commencement_date || 0).getTime()
+      const dateB = new Date(b.commencement_date || 0).getTime()
+      return dateA - dateB
+    })
   }
 
   public async addIntake(intake: IntakeSchedule): Promise<void> {

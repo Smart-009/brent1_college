@@ -17,6 +17,9 @@ export type StudyMode =
   | 'Weekend Executive Cohort'
   | 'Self-Paced Masterclass & 1-on-1 Labs'
   | 'Cambridge IGCSE Complete Structure'
+  | 'Cambridge Centre KE042 Exam Support'
+  | 'Pearson Edexcel Centre EDX-98421 Support'
+  | (string & {})
 
 export interface IntakeSchedule {
   id: string

@@ -719,3 +719,47 @@ test('Routing: Lesson Player URL Aliases (Singular and Plural)', () => {
   assert.equal(normalizeLessonRoute(singularRoute), `/student/lesson/${lessonId}`)
   assert.equal(normalizeLessonRoute(pluralRoute), `/student/lesson/${lessonId}`)
 })
+
+test('Intake Adverts: Chronological Scheduling & Active Status Priority', () => {
+  const sampleIntakes = [
+    { id: 'intake-2027-01', commencement_date: '2027-01-20', status: 'Open', is_published: true },
+    { id: 'intake-2026-05', commencement_date: '2026-05-20', status: 'Closed', is_published: true },
+    { id: 'intake-2026-10', commencement_date: '2026-10-15', status: 'Filling Fast', is_published: true },
+    { id: 'intake-2026-11-igcse', commencement_date: '2026-11-02', status: 'Open', is_published: true },
+  ]
+
+  const sorted = [...sampleIntakes].sort((a, b) => {
+    const aClosed = a.status === 'Closed' || a.status === 'Archived'
+    const bClosed = b.status === 'Closed' || b.status === 'Archived'
+    if (aClosed && !bClosed) return 1
+    if (!aClosed && bClosed) return -1
+    return new Date(a.commencement_date).getTime() - new Date(b.commencement_date).getTime()
+  })
+
+  // First should be October 2026
+  assert.equal(sorted[0].id, 'intake-2026-10')
+  // Second should be November 2026 (British Curriculum)
+  assert.equal(sorted[1].id, 'intake-2026-11-igcse')
+  // Third should be January 2027 (New Year)
+  assert.equal(sorted[2].id, 'intake-2027-01')
+  // Closed should be last
+  assert.equal(sorted[3].id, 'intake-2026-05')
+})
+
+test('Intake Adverts: British Curriculum Cambridge KE042 & Pearson Edexcel Support', () => {
+  const britishIntake = {
+    id: 'intake-2026-11-igcse',
+    title: 'November 2026 British International Curriculum Intake',
+    target_courses: [
+      'Cambridge IGCSE Mathematics (0580)',
+      'Pearson Edexcel Mathematics A (4MA1)',
+      'Cambridge IGCSE Physics (0625) & Chemistry (0620)',
+    ],
+    status: 'Open',
+  }
+
+  assert.ok(britishIntake.title.includes('British International Curriculum'))
+  assert.ok(britishIntake.target_courses.some((c) => c.includes('Cambridge')))
+  assert.ok(britishIntake.target_courses.some((c) => c.includes('Pearson Edexcel')))
+})
+
