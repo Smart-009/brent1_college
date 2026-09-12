@@ -12,6 +12,14 @@ export const IGCSEStatementOfResultsModal: FC<IGCSEStatementOfResultsProps> = ({
     window.print()
   }
 
+  const isEdexcel =
+    statement.examination_board?.toLowerCase().includes('edexcel') ||
+    statement.center_number?.toUpperCase().includes('EDX')
+  const boardBadge = isEdexcel
+    ? 'Pearson Edexcel International GCSE'
+    : 'Cambridge Assessment International Education (CAIE)'
+  const boardColor = isEdexcel ? '#dc2626' : '#0284c7'
+
   const iceColor =
     statement.ice_award === 'Distinction'
       ? '#059669'
@@ -45,7 +53,7 @@ export const IGCSEStatementOfResultsModal: FC<IGCSEStatementOfResultsProps> = ({
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
             <span style={{ fontSize: '1.4rem' }}>🇬🇧</span>
             <div>
-              <strong style={{ fontSize: '1rem', display: 'block' }}>Official Cambridge IGCSE Statement of Results</strong>
+              <strong style={{ fontSize: '1rem', display: 'block' }}>Official {boardBadge} Statement of Results</strong>
               <span style={{ fontSize: '0.78rem', color: 'var(--color-text-secondary)' }}>
                 Center No: {statement.center_number} • Candidate: {statement.candidate_number} • {statement.examination_series}
               </span>
@@ -119,12 +127,16 @@ export const IGCSEStatementOfResultsModal: FC<IGCSEStatementOfResultsProps> = ({
                     {statement.center_name}
                   </h1>
                   <p style={{ margin: 0, fontSize: '0.8rem', color: '#475569', fontWeight: 600 }}>
-                    BRITISH CURRICULUM & INTERNATIONAL EXAMINATIONS CENTRE
+                    {isEdexcel
+                      ? 'PEARSON EDEXCEL INTERNATIONAL GCSE EXAMINATIONS CENTRE'
+                      : 'CAMBRIDGE ASSESSMENT INTERNATIONAL EDUCATION CENTRE'}
                   </p>
                 </div>
               </div>
               <p style={{ margin: '0.25rem 0 0', fontSize: '0.78rem', color: '#64748b' }}>
-                Accredited Exam Venue for Cambridge Assessment International Education (CAIE) & Pearson Edexcel
+                {isEdexcel
+                  ? 'Official Pearson Edexcel Examination Venue (Centre EDX-98421)'
+                  : 'Official Cambridge International Examination Venue (Centre KE042)'}
               </p>
             </div>
 
@@ -132,8 +144,8 @@ export const IGCSEStatementOfResultsModal: FC<IGCSEStatementOfResultsProps> = ({
               <div style={{ fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.05em', color: '#64748b', fontWeight: 700 }}>
                 Statement Document
               </div>
-              <div style={{ fontSize: '1.1rem', fontWeight: 800, color: '#0284c7' }}>
-                IGCSE RESULTS
+              <div style={{ fontSize: '1.1rem', fontWeight: 800, color: boardColor }}>
+                {isEdexcel ? 'EDEXCEL (9-1) RESULTS' : 'CAMBRIDGE IGCSE RESULTS'}
               </div>
               <div style={{ fontSize: '0.78rem', color: '#475569', marginTop: '0.2rem' }}>
                 Series: <strong>{statement.examination_series}</strong>
@@ -175,8 +187,8 @@ export const IGCSEStatementOfResultsModal: FC<IGCSEStatementOfResultsProps> = ({
             </div>
           </div>
 
-          {/* Cambridge ICE Diploma Banner (If Eligible) */}
-          {statement.ice_award !== 'Not Eligible' && (
+          {/* Cambridge ICE Diploma Banner OR Pearson Edexcel Achievement Banner */}
+          {!isEdexcel && statement.ice_award !== 'Not Eligible' && (
             <div
               style={{
                 marginBottom: '1.5rem',
@@ -204,6 +216,38 @@ export const IGCSEStatementOfResultsModal: FC<IGCSEStatementOfResultsProps> = ({
               </div>
               <div style={{ fontSize: '0.82rem', fontWeight: 700, color: iceColor }}>
                 Overall Mean Points: {statement.mean_points.toFixed(2)} / 9.00
+              </div>
+            </div>
+          )}
+
+          {isEdexcel && (
+            <div
+              style={{
+                marginBottom: '1.5rem',
+                padding: '0.85rem 1.25rem',
+                borderRadius: '8px',
+                background: '#fef2f2',
+                border: '1.5px solid #dc2626',
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                flexWrap: 'wrap',
+                gap: '0.5rem',
+              }}
+            >
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem' }}>
+                <span style={{ fontSize: '1.5rem' }}>🇬🇧</span>
+                <div>
+                  <strong style={{ color: '#dc2626', fontSize: '0.95rem' }}>
+                    PEARSON EDEXCEL INTERNATIONAL GCSE (9-1) COHORT SERIES
+                  </strong>
+                  <div style={{ fontSize: '0.78rem', color: '#991b1b' }}>
+                    Candidate completed linear numerical 9-1 qualification examinations under Pearson Edexcel Center EDX-98421.
+                  </div>
+                </div>
+              </div>
+              <div style={{ fontSize: '0.82rem', fontWeight: 700, color: '#dc2626' }}>
+                Overall Grade Point Average: {statement.mean_points.toFixed(2)} / 9.00
               </div>
             </div>
           )}

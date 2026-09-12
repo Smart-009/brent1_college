@@ -32,12 +32,14 @@ interface MobileLandingProps {
 
 const CATEGORIES = [
   { id: 'All', label: '🔥 All Programs', icon: '🔥' },
-  { id: 'British Curriculum (IGCSE & A-Levels)', label: '🇬🇧 Cambridge IGCSE', icon: '🇬🇧' },
-  { id: 'Tech & Programming', label: '💻 Software & Python', icon: '💻' },
+  { id: 'Cambridge International (Years 9-11)', label: '🇬🇧 Cambridge (Y9-11)', icon: '🇬🇧' },
+  { id: 'Pearson Edexcel International (Years 9-11)', label: '🇬🇧 Pearson Edexcel (Y9-11)', icon: '🇬🇧' },
+  { id: 'Tech & Programming', label: '💻 Software & Web', icon: '💻' },
+  { id: 'Data Science & Research', label: '📊 Data Science & AI', icon: '📊' },
   { id: 'Creative Design & Arts', label: '🎨 Design & Animation', icon: '🎨' },
   { id: 'Languages & Communication', label: '🗣️ Languages & IELTS', icon: '🗣️' },
   { id: 'Computer & Digital Skills', label: '⚡ Computer Packages', icon: '⚡' },
-  { id: 'Business Tech & Accounting', label: '📊 Accounting & Tax', icon: '📊' },
+  { id: 'Business Tech & Accounting', label: '🧾 Accounting & Tax', icon: '🧾' },
 ]
 
 export function MobileLandingView({

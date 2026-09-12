@@ -365,14 +365,38 @@ export interface UnitRegistrationReceipt {
   exam_card_issued?: boolean
 }
 
+export interface InstitutionalSchool {
+  id: string
+  code: string
+  name: string
+  shortName: string
+  category: string
+  description: string
+  icon: string
+  color: string
+  dean_name: string
+  dean_email: string
+  departments: {
+    id: string
+    name: string
+    code: string
+    description?: string
+    hod_name?: string
+    programs: string[]
+  }[]
+}
+
 export interface CollegeDepartment {
   id: string
   code: string // e.g. "ICT", "BUS", "ENG"
   name: string // e.g. "Department of Computer Science & ICT"
+  school_id?: string // e.g. "school-cambridge", "school-edexcel"
+  school_name?: string // e.g. "School of Cambridge International Curriculum"
   description?: string
   hod_name: string // e.g. "Mr. James Mwangi"
   hod_email?: string
   programs: string[] // e.g. ["Diploma in Computer Science & ICT", "Certificate in Web Systems"]
+  year_levels?: string[] // e.g. ["Year 9", "Year 10", "Year 11"]
   created_at: string
 }
 
@@ -383,6 +407,9 @@ export interface CollegeSubject {
   description?: string
   department_id: string
   department_name: string
+  school_id?: string
+  school_name?: string
+  year_level?: 'Year 9' | 'Year 10' | 'Year 11' | 'Tertiary'
   fee?: number // e.g. 4500 (Reduced, admin-editable)
   duration?: string // e.g. "4 Weeks (1 Month)"
   icon?: string // e.g. "💻", "☕"
@@ -417,6 +444,8 @@ export interface DeviceSession {
 // ============================================================
 
 export type IGCSEKeyStage = 'Lower Secondary (Year 7-9)' | 'IGCSE (Year 10-11)' | 'Sixth Form (AS & A-Levels)'
+export type IGCSEYearLevel = 'Year 9 (Foundation)' | 'Year 10 (IGCSE Year 1)' | 'Year 11 (Exam Series)' | 'All Years'
+export type BritishExamBoard = 'Cambridge Assessment International Education (CAIE)' | 'Pearson Edexcel International GCSE'
 
 export type IGCSESubjectGroup =
   | 'Group 1: Languages'

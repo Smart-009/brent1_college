@@ -3,7 +3,7 @@ import { Link, useSearchParams } from 'react-router-dom'
 import { useAuthContext } from '@/features/auth/AuthContext'
 import { MobileAppBottomNav } from '@/components/layout/MobileAppBottomNav'
 import { DesktopCommandPalette } from '@/components/shared/DesktopCommandPalette'
-import { getWhatsAppInquiryUrl } from '@/config/institution'
+import { getWhatsAppInquiryUrl, INSTITUTION_CONFIG, INSTITUTIONAL_SCHOOLS } from '@/config/institution'
 import { getDynamicCoursesList } from '@/config/officialCourses'
 import { schoolStore } from '@/lib/schoolData'
 import { intakeStore } from '@/lib/intakeStore'
@@ -25,6 +25,11 @@ export interface CourseItem {
   icon: string
   popular?: boolean
   syllabus?: { week: string; topic: string; practicalLab: string }[]
+  schoolId?: string
+  schoolName?: string
+  yearLevel?: string
+  examBoard?: string
+  syllabusCode?: string
 }
 
 const buildCatalogCourses = (): CourseItem[] => {
@@ -56,12 +61,18 @@ const buildCatalogCourses = (): CourseItem[] => {
       icon: c.icon,
       popular: c.popular || c.bestseller,
       syllabus: c.syllabus,
+      schoolId: c.schoolId,
+      schoolName: c.schoolName,
+      yearLevel: c.yearLevel,
+      examBoard: c.examBoard,
+      syllabusCode: c.syllabusCode,
     }))
 }
 
 const CATEGORIES = [
   'All',
-  'British Curriculum (IGCSE & A-Levels)',
+  'Cambridge International (Years 9-11)',
+  'Pearson Edexcel International (Years 9-11)',
   'Tech & Programming',
   'Data Science & Research',
   'Computer & Digital Skills',
@@ -69,17 +80,43 @@ const CATEGORIES = [
   'Languages & Communication',
 ]
 
+const YEAR_LEVELS = [
+  'All Years',
+  'Year 9 (Foundation)',
+  'Year 10 (IGCSE Year 1)',
+  'Year 11 (Exam Series)',
+]
+
 export function CourseCatalogPage() {
   const { profile } = useAuthContext()
   const [searchParams] = useSearchParams()
   const intakeParam = searchParams.get('intake')
+  const catParam = searchParams.get('cat')
 
   const [selectedCat, setSelectedCat] = useState('All')
+  const [selectedYear, setSelectedYear] = useState('All Years')
+  const [viewMode, setViewMode] = useState<'courses' | 'schools'>('courses')
   const [search, setSearch] = useState('')
   const [selectedCourse, setSelectedCourse] = useState<CourseItem | null>(null)
   const [courses, setCourses] = useState<CourseItem[]>(() => buildCatalogCourses())
   const [intakes, setIntakes] = useState<IntakeSchedule[]>(() => intakeStore.getPublishedIntakes())
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+
+  useEffect(() => {
+    if (catParam) {
+      const lower = catParam.toLowerCase()
+      if (lower.includes('cambridge')) {
+        setSelectedCat('Cambridge International (Years 9-11)')
+      } else if (lower.includes('edexcel')) {
+        setSelectedCat('Pearson Edexcel International (Years 9-11)')
+      } else if (lower.includes('british') || lower.includes('igcse')) {
+        setSelectedCat('Cambridge International (Years 9-11)')
+      } else {
+        const found = CATEGORIES.find((c) => c.toLowerCase().includes(lower))
+        if (found) setSelectedCat(found)
+      }
+    }
+  }, [catParam])
 
   useEffect(() => {
     intakeStore.fetchCloudIntakes().then((list) => {
@@ -113,10 +150,23 @@ export function CourseCatalogPage() {
         !search ||
         c.title.toLowerCase().includes(search.toLowerCase()) ||
         c.skills.some((s) => s.toLowerCase().includes(search.toLowerCase())) ||
-        c.careerOutcome.toLowerCase().includes(search.toLowerCase())
-      return matchCat && matchSearch
+        c.careerOutcome.toLowerCase().includes(search.toLowerCase()) ||
+        c.schoolName?.toLowerCase().includes(search.toLowerCase()) ||
+        c.syllabusCode?.toLowerCase().includes(search.toLowerCase()) ||
+        c.examBoard?.toLowerCase().includes(search.toLowerCase())
+      
+      const matchYear =
+        selectedYear === 'All Years' ||
+        !c.yearLevel ||
+        c.yearLevel === 'All Years' ||
+        c.yearLevel === selectedYear ||
+        (selectedYear === 'Year 9 (Foundation)' && c.yearLevel.includes('9')) ||
+        (selectedYear === 'Year 10 (IGCSE Year 1)' && c.yearLevel.includes('10')) ||
+        (selectedYear === 'Year 11 (Exam Series)' && c.yearLevel.includes('11'))
+
+      return matchCat && matchSearch && matchYear
     })
-  }, [courses, selectedCat, search])
+  }, [courses, selectedCat, search, selectedYear])
 
   return (
     <div
@@ -382,13 +432,13 @@ export function CourseCatalogPage() {
               </Link>
 
               <Link
-                to="/courses?cat=British+Curriculum"
+                to="/courses?cat=Cambridge"
                 onClick={() => {
-                  setSelectedCat('British Curriculum (IGCSE & A-Levels)')
+                  setSelectedCat('Cambridge International (Years 9-11)')
                   setMobileMenuOpen(false)
                 }}
                 style={{
-                  color: '#d4af37',
+                  color: '#38bdf8',
                   textDecoration: 'none',
                   padding: '0.65rem 0.8rem',
                   borderRadius: '10px',
@@ -397,12 +447,36 @@ export function CourseCatalogPage() {
                   gap: '10px',
                   fontSize: '0.88rem',
                   fontWeight: 800,
-                  background: 'rgba(212, 175, 55, 0.1)',
-                  border: '1px solid rgba(212, 175, 55, 0.25)',
+                  background: 'rgba(56, 189, 248, 0.1)',
+                  border: '1px solid rgba(56, 189, 248, 0.25)',
                 }}
               >
                 <span>🇬🇧</span>
-                <span>Cambridge IGCSE & A-Levels</span>
+                <span>Cambridge Assessment (Years 9-11)</span>
+              </Link>
+
+              <Link
+                to="/courses?cat=Edexcel"
+                onClick={() => {
+                  setSelectedCat('Pearson Edexcel International (Years 9-11)')
+                  setMobileMenuOpen(false)
+                }}
+                style={{
+                  color: '#f87171',
+                  textDecoration: 'none',
+                  padding: '0.65rem 0.8rem',
+                  borderRadius: '10px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '10px',
+                  fontSize: '0.88rem',
+                  fontWeight: 800,
+                  background: 'rgba(239, 68, 68, 0.1)',
+                  border: '1px solid rgba(239, 68, 68, 0.25)',
+                }}
+              >
+                <span>🇬🇧</span>
+                <span>Pearson Edexcel International (Years 9-11)</span>
               </Link>
 
               <Link
@@ -678,8 +752,20 @@ export function CourseCatalogPage() {
               const label =
                 cat === 'All'
                   ? '🔥 All Programs'
-                  : cat === 'British Curriculum (IGCSE & A-Levels)'
-                  ? '🇬🇧 Cambridge IGCSE'
+                  : cat === 'Cambridge International (Years 9-11)'
+                  ? '🇬🇧 Cambridge International (Years 9-11)'
+                  : cat === 'Pearson Edexcel International (Years 9-11)'
+                  ? '🇬🇧 Pearson Edexcel (Years 9-11)'
+                  : cat === 'Tech & Programming'
+                  ? '💻 Software & Web'
+                  : cat === 'Data Science & Research'
+                  ? '📊 Data Science & AI'
+                  : cat === 'Computer & Digital Skills'
+                  ? '⚡ Computer Packages & Design'
+                  : cat === 'Business Tech & Accounting'
+                  ? '🧾 Accounting & Business'
+                  : cat === 'Languages & Communication'
+                  ? '🗣️ Languages & IELTS'
                   : cat
               return (
                 <button
@@ -706,99 +792,359 @@ export function CourseCatalogPage() {
               )
             })}
           </div>
+
+          {/* Year Level Filter Strip */}
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '0.5rem',
+              overflowX: 'auto',
+              padding: '0.4rem 0.6rem',
+              background: 'rgba(15, 23, 42, 0.6)',
+              borderRadius: '12px',
+              border: '1px solid rgba(255, 255, 255, 0.06)',
+            }}
+          >
+            <span style={{ fontSize: '0.72rem', color: '#94a3b8', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.04em', whiteSpace: 'nowrap', paddingLeft: '4px' }}>
+              🎓 Year Level:
+            </span>
+            {YEAR_LEVELS.map((lvl) => (
+              <button
+                key={lvl}
+                type="button"
+                onClick={() => setSelectedYear(lvl)}
+                style={{
+                  flexShrink: 0,
+                  background: selectedYear === lvl ? '#38bdf8' : 'rgba(255, 255, 255, 0.05)',
+                  color: selectedYear === lvl ? '#090d16' : '#cbd5e1',
+                  border: selectedYear === lvl ? '1px solid #7dd3fc' : '1px solid rgba(255, 255, 255, 0.1)',
+                  borderRadius: '8px',
+                  padding: '0.3rem 0.75rem',
+                  fontSize: '0.76rem',
+                  fontWeight: selectedYear === lvl ? 800 : 600,
+                  cursor: 'pointer',
+                  whiteSpace: 'nowrap',
+                  transition: 'all 0.15s ease',
+                }}
+              >
+                {lvl}
+              </button>
+            ))}
+          </div>
+
+          {/* View Mode Toggle: All Courses vs Browse by School & Department */}
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '0.75rem', marginTop: '0.35rem' }}>
+            <div style={{ display: 'flex', gap: '6px', background: '#0d1322', padding: '4px', borderRadius: '10px', border: '1px solid #24304d' }}>
+              <button
+                type="button"
+                onClick={() => setViewMode('courses')}
+                style={{
+                  background: viewMode === 'courses' ? '#2563eb' : 'transparent',
+                  color: viewMode === 'courses' ? '#ffffff' : '#94a3b8',
+                  border: 'none',
+                  borderRadius: '8px',
+                  padding: '0.35rem 0.85rem',
+                  fontSize: '0.78rem',
+                  fontWeight: 800,
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '6px',
+                }}
+              >
+                <span>📚</span>
+                <span>Courses & Syllabi ({filteredCourses.length})</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => setViewMode('schools')}
+                style={{
+                  background: viewMode === 'schools' ? '#2563eb' : 'transparent',
+                  color: viewMode === 'schools' ? '#ffffff' : '#94a3b8',
+                  border: 'none',
+                  borderRadius: '8px',
+                  padding: '0.35rem 0.85rem',
+                  fontSize: '0.78rem',
+                  fontWeight: 800,
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '6px',
+                }}
+              >
+                <span>🏛️</span>
+                <span>Browse Schools & Departments ({INSTITUTIONAL_SCHOOLS.length})</span>
+              </button>
+            </div>
+
+            <div style={{ fontSize: '0.76rem', color: '#64748b', fontWeight: 600 }}>
+              Centres: <strong style={{ color: '#38bdf8' }}>CAIE KE042</strong> &bull; <strong style={{ color: '#f87171' }}>Edexcel EDX-98421</strong>
+            </div>
+          </div>
         </div>
       </div>
 
-      {/* Programs Grid */}
-      <div style={{ maxWidth: '1100px', margin: '0 auto', padding: '0 1.25rem 2rem' }}>
-        <div style={{ fontSize: '0.85rem', color: '#94a3b8', marginBottom: '1rem', fontWeight: 600 }}>
-          Showing <strong style={{ color: '#ffffff' }}>{filteredCourses.length}</strong> program{filteredCourses.length === 1 ? '' : 's'}
-        </div>
+      {/* Main Content Area: Schools Directory OR Programs Grid */}
+      {viewMode === 'schools' ? (
+        <div style={{ maxWidth: '1100px', margin: '0 auto', padding: '0 1.25rem 2rem' }}>
+          <div style={{ marginBottom: '1.25rem' }}>
+            <h2 style={{ fontSize: '1.35rem', fontWeight: 900, color: '#ffffff', margin: 0, fontFamily: 'var(--font-heading)' }}>
+              🏛️ Academic Faculties & Specialized Departments
+            </h2>
+            <p style={{ fontSize: '0.85rem', color: '#94a3b8', margin: '4px 0 0' }}>
+              Explore our 7 distinct academic schools. Cambridge and Pearson Edexcel curricula operate with dedicated faculty, syllabus codes, and independent exam series.
+            </p>
+          </div>
 
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: '1.25rem' }}>
-          {filteredCourses.map((course) => (
-            <div
-              key={course.id}
-              style={{
-                background: '#131b2e',
-                borderRadius: '18px',
-                border: '1px solid #24304d',
-                padding: '1.25rem',
-                display: 'flex',
-                flexDirection: 'column',
-                justifyContent: 'space-between',
-                gap: '1rem',
-                boxShadow: '0 6px 20px rgba(0,0,0,0.25)',
-                transition: 'transform 0.2s ease, border-color 0.2s ease',
-              }}
-            >
-              <div>
-                {/* Header */}
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '0.75rem', marginBottom: '0.85rem' }}>
-                  <div
-                    style={{
-                      width: '46px',
-                      height: '46px',
-                      borderRadius: '12px',
-                      background: '#1e293b',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      fontSize: '1.6rem',
-                      border: '1px solid #334155',
-                      flexShrink: 0,
-                    }}
-                  >
-                    {course.icon}
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(340px, 1fr))', gap: '1.5rem' }}>
+            {INSTITUTIONAL_SCHOOLS.map((school) => (
+              <div
+                key={school.id}
+                style={{
+                  background: '#131b2e',
+                  borderRadius: '18px',
+                  border: `1.5px solid ${school.color}44`,
+                  padding: '1.35rem',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  justifyContent: 'space-between',
+                  gap: '1.2rem',
+                  boxShadow: '0 8px 24px rgba(0,0,0,0.3)',
+                  position: 'relative',
+                  overflow: 'hidden',
+                }}
+              >
+                <div style={{ position: 'absolute', top: 0, right: 0, width: '90px', height: '90px', background: `${school.color}11`, borderRadius: '0 0 0 100%' }} />
+
+                <div>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.75rem' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem' }}>
+                      <span style={{ fontSize: '1.8rem' }}>{school.icon}</span>
+                      <div>
+                        <span style={{ background: `${school.color}22`, color: school.color, padding: '2px 8px', borderRadius: '6px', fontSize: '0.68rem', fontWeight: 900, textTransform: 'uppercase' }}>
+                          {school.code}
+                        </span>
+                        <h3 style={{ fontSize: '1.05rem', fontWeight: 800, color: '#ffffff', margin: '4px 0 0' }}>
+                          {school.name}
+                        </h3>
+                      </div>
+                    </div>
                   </div>
 
-                  <div style={{ textAlign: 'right' }}>
-                    <span
-                      style={{
-                        background: `${course.tagColor}22`,
-                        color: course.tagColor,
-                        padding: '3px 8px',
-                        borderRadius: '6px',
-                        fontSize: '0.68rem',
-                        fontWeight: 800,
-                        textTransform: 'uppercase',
-                        letterSpacing: '0.03em',
-                        display: 'inline-block',
-                        marginBottom: '4px',
-                      }}
-                    >
-                      {course.tag}
-                    </span>
-                    <a
-                      href={getWhatsAppInquiryUrl(`Hello Brent College Admissions! I would like to make a Fees Inquiry for ${course.title}.`)}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      style={{
-                        display: 'inline-flex',
-                        alignItems: 'center',
-                        gap: '4px',
-                        background: 'rgba(37, 99, 235, 0.2)',
-                        color: '#60a5fa',
-                        border: '1px solid rgba(96, 165, 250, 0.4)',
-                        padding: '3px 9px',
-                        borderRadius: '6px',
-                        fontSize: '0.72rem',
-                        fontWeight: 800,
-                        textDecoration: 'none',
-                      }}
-                    >
-                      💬 Fees Inquiry
-                    </a>
+                  <p style={{ fontSize: '0.82rem', color: '#94a3b8', margin: '0 0 1rem', lineHeight: 1.45 }}>
+                    {school.description}
+                  </p>
+
+                  <div style={{ background: 'rgba(15, 23, 42, 0.7)', borderRadius: '10px', padding: '0.65rem 0.85rem', marginBottom: '1rem', border: '1px solid rgba(255, 255, 255, 0.05)' }}>
+                    <div style={{ fontSize: '0.72rem', color: '#64748b', fontWeight: 700, textTransform: 'uppercase' }}>Dean of Faculty</div>
+                    <div style={{ fontSize: '0.82rem', color: '#e2e8f0', fontWeight: 700 }}>{school.dean_name}</div>
+                    <div style={{ fontSize: '0.74rem', color: '#38bdf8' }}>{school.dean_email}</div>
+                  </div>
+
+                  <div style={{ fontSize: '0.76rem', color: '#d4af37', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.04em', marginBottom: '0.5rem' }}>
+                    Departments ({school.departments.length})
+                  </div>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                    {school.departments.map((dept) => (
+                      <div
+                        key={dept.id}
+                        style={{
+                          background: '#182238',
+                          padding: '0.6rem 0.75rem',
+                          borderRadius: '8px',
+                          border: '1px solid rgba(255, 255, 255, 0.05)',
+                        }}
+                      >
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                          <span style={{ fontSize: '0.82rem', fontWeight: 700, color: '#f8fafc' }}>
+                            {dept.name}
+                          </span>
+                          <span style={{ fontSize: '0.65rem', color: '#94a3b8', fontFamily: 'monospace' }}>
+                            {dept.code}
+                          </span>
+                        </div>
+                        {dept.programs && (
+                          <div style={{ fontSize: '0.72rem', color: '#94a3b8', marginTop: '3px' }}>
+                            {dept.programs.slice(0, 2).join(' • ')}
+                          </div>
+                        )}
+                      </div>
+                    ))}
                   </div>
                 </div>
 
-                <h3 style={{ fontSize: '1.05rem', fontWeight: 800, color: '#ffffff', margin: '0 0 0.4rem', lineHeight: 1.35 }}>
-                  {course.title}
-                </h3>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setSelectedCat(school.category)
+                    setViewMode('courses')
+                  }}
+                  style={{
+                    background: school.color,
+                    color: '#ffffff',
+                    border: 'none',
+                    borderRadius: '10px',
+                    padding: '0.65rem',
+                    fontWeight: 800,
+                    fontSize: '0.82rem',
+                    cursor: 'pointer',
+                    width: '100%',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: '6px',
+                    boxShadow: `0 4px 14px ${school.color}44`,
+                  }}
+                >
+                  <span>Explore {school.shortName} Courses</span>
+                  <span>→</span>
+                </button>
+              </div>
+            ))}
+          </div>
+        </div>
+      ) : (
+        /* Programs Grid */
+        <div style={{ maxWidth: '1100px', margin: '0 auto', padding: '0 1.25rem 2rem' }}>
+          <div style={{ fontSize: '0.85rem', color: '#94a3b8', marginBottom: '1rem', fontWeight: 600 }}>
+            Showing <strong style={{ color: '#ffffff' }}>{filteredCourses.length}</strong> program{filteredCourses.length === 1 ? '' : 's'}
+          </div>
 
-                <p style={{ fontSize: '0.78rem', color: '#94a3b8', margin: '0 0 0.75rem', lineHeight: 1.4 }}>
-                  💼 Career Outcome: <strong style={{ color: '#cbd5e1' }}>{course.careerOutcome}</strong>
-                </p>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: '1.25rem' }}>
+            {filteredCourses.map((course) => (
+              <div
+                key={course.id}
+                style={{
+                  background: '#131b2e',
+                  borderRadius: '18px',
+                  border: '1px solid #24304d',
+                  padding: '1.25rem',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  justifyContent: 'space-between',
+                  gap: '1rem',
+                  boxShadow: '0 6px 20px rgba(0,0,0,0.25)',
+                  transition: 'transform 0.2s ease, border-color 0.2s ease',
+                }}
+              >
+                <div>
+                  {/* Header */}
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '0.75rem', marginBottom: '0.85rem' }}>
+                    <div
+                      style={{
+                        width: '46px',
+                        height: '46px',
+                        borderRadius: '12px',
+                        background: '#1e293b',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        fontSize: '1.6rem',
+                        border: '1px solid #334155',
+                        flexShrink: 0,
+                      }}
+                    >
+                      {course.icon}
+                    </div>
+
+                    <div style={{ textAlign: 'right' }}>
+                      <span
+                        style={{
+                          background: `${course.tagColor}22`,
+                          color: course.tagColor,
+                          padding: '3px 8px',
+                          borderRadius: '6px',
+                          fontSize: '0.68rem',
+                          fontWeight: 800,
+                          textTransform: 'uppercase',
+                          letterSpacing: '0.03em',
+                          display: 'inline-block',
+                          marginBottom: '4px',
+                        }}
+                      >
+                        {course.tag}
+                      </span>
+                      <a
+                        href={getWhatsAppInquiryUrl(`Hello ${INSTITUTION_CONFIG.name} Admissions! I would like to make a Fees Inquiry for ${course.title}.`)}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        style={{
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          gap: '4px',
+                          background: 'rgba(37, 99, 235, 0.2)',
+                          color: '#60a5fa',
+                          border: '1px solid rgba(96, 165, 250, 0.4)',
+                          padding: '3px 9px',
+                          borderRadius: '6px',
+                          fontSize: '0.72rem',
+                          fontWeight: 800,
+                          textDecoration: 'none',
+                        }}
+                      >
+                        💬 Fees Inquiry
+                      </a>
+                    </div>
+                  </div>
+
+                  {/* Board & Year Badges */}
+                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.35rem', marginBottom: '0.6rem' }}>
+                    {course.examBoard && (
+                      <span
+                        style={{
+                          background: course.examBoard.includes('Cambridge') ? 'rgba(56, 189, 248, 0.15)' : 'rgba(239, 68, 68, 0.15)',
+                          color: course.examBoard.includes('Cambridge') ? '#38bdf8' : '#f87171',
+                          border: `1px solid ${course.examBoard.includes('Cambridge') ? 'rgba(56, 189, 248, 0.3)' : 'rgba(239, 68, 68, 0.3)'}`,
+                          padding: '2px 7px',
+                          borderRadius: '6px',
+                          fontSize: '0.68rem',
+                          fontWeight: 800,
+                        }}
+                      >
+                        🇬🇧 {course.examBoard}
+                      </span>
+                    )}
+                    {course.yearLevel && (
+                      <span
+                        style={{
+                          background: 'rgba(212, 175, 55, 0.15)',
+                          color: '#d4af37',
+                          border: '1px solid rgba(212, 175, 55, 0.3)',
+                          padding: '2px 7px',
+                          borderRadius: '6px',
+                          fontSize: '0.68rem',
+                          fontWeight: 800,
+                        }}
+                      >
+                        🎓 {course.yearLevel}
+                      </span>
+                    )}
+                    {course.syllabusCode && (
+                      <span
+                        style={{
+                          background: 'rgba(148, 163, 184, 0.15)',
+                          color: '#cbd5e1',
+                          border: '1px solid rgba(148, 163, 184, 0.25)',
+                          padding: '2px 7px',
+                          borderRadius: '6px',
+                          fontSize: '0.68rem',
+                          fontWeight: 800,
+                          fontFamily: 'monospace',
+                        }}
+                      >
+                        Code: {course.syllabusCode}
+                      </span>
+                    )}
+                  </div>
+
+                  <h3 style={{ fontSize: '1.05rem', fontWeight: 800, color: '#ffffff', margin: '0 0 0.4rem', lineHeight: 1.35 }}>
+                    {course.title}
+                  </h3>
+
+                  <p style={{ fontSize: '0.78rem', color: '#94a3b8', margin: '0 0 0.75rem', lineHeight: 1.4 }}>
+                    💼 Career Outcome: <strong style={{ color: '#cbd5e1' }}>{course.careerOutcome}</strong>
+                  </p>
 
                 {/* Duration & Schedule Badges */}
                 <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.4rem', marginBottom: '0.85rem', fontSize: '0.72rem', color: '#94a3b8' }}>
@@ -856,6 +1202,7 @@ export function CourseCatalogPage() {
           ))}
         </div>
       </div>
+      )}
 
       {/* Syllabus Modal */}
       {selectedCourse && (
@@ -910,7 +1257,7 @@ export function CourseCatalogPage() {
             <div style={{ marginBottom: '1rem', display: 'flex', gap: '1rem', alignItems: 'center', justifyContent: 'space-between', background: '#0a0e17', padding: '0.75rem 1rem', borderRadius: '12px', fontSize: '0.8rem', flexWrap: 'wrap' }}>
               <div>⏱️ <strong>Duration:</strong> {selectedCourse.duration}</div>
               <a
-                href={getWhatsAppInquiryUrl(`Hello Brent College Admissions! I would like to make a Fees Inquiry for the course: ${selectedCourse.title}.`)}
+                href={getWhatsAppInquiryUrl(`Hello ${INSTITUTION_CONFIG.name} Admissions! I would like to make a Fees Inquiry for the course: ${selectedCourse.title}.`)}
                 target="_blank"
                 rel="noopener noreferrer"
                 style={{
