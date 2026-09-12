@@ -985,7 +985,7 @@ export const INITIAL_SUBJECTS: CollegeSubject[] = [
     description: '100% Online: Conversational Arabic, phonetics, business vocabulary, reading, and Gulf region cultural fluency.',
     fee: 75,
     duration: '8 Weeks (2 Months)',
-    icon: '🌴',
+    icon: '🌐',
     badge: 'Gulf & Middle East Demand',
     category: 'Languages & Communication',
     careers: ['Bilingual Support Specialist', 'Middle East Corporate Liaison', 'Flight Attendant'],

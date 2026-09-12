@@ -1076,7 +1076,14 @@ export function CourseCatalogPage() {
                         flexShrink: 0,
                       }}
                     >
-                      {course.icon}
+                      {course.id === 'c-python' || course.title?.toLowerCase().includes('python') ? (
+                        <svg width="28" height="28" viewBox="0 0 110 110" fill="none" aria-label="Python Logo">
+                          <path d="M54.5 5C26.5 5 28.2 17.2 28.2 17.2l.03 12.6h26.7v3.8H17.7S1.2 31.6 1.2 59.7c0 28 14.3 27 14.3 27h8.6V74.7s-.4-14.3 14-14.3h24.1s13.5.2 13.5-13.1V29s.9-24-21.2-24zm-12.5 8.6a4.2 4.2 0 1 1 0 8.4 4.2 4.2 0 0 1 0-8.4z" fill="#387eb8"/>
+                          <path d="M55.5 105c28 0 26.3-12.2 26.3-12.2l-.03-12.6H55.1v-3.8h37.2s16.5 2 16.5-26.1c0-28-14.3-27-14.3-27h-8.6v12s.4 14.3-14 14.3H47.8s-13.5-.2-13.5 13.1V81s-.9 24 21.2 24zm12.5-8.6a4.2 4.2 0 1 1 0-8.4 4.2 4.2 0 0 1 0 8.4z" fill="#ffe052"/>
+                        </svg>
+                      ) : (
+                        course.icon
+                      )}
                     </div>
 
                     <div style={{ textAlign: 'right' }}>
