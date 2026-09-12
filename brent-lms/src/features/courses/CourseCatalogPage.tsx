@@ -128,7 +128,7 @@ export function CourseCatalogPage() {
   useEffect(() => {
     if (catParam) {
       const lower = catParam.toLowerCase()
-      if (lower.includes('business') || lower.includes('commerce') || lower.includes('accounting')) {
+      if (lower.includes('business') || lower.includes('commerce') || lower.includes('accounting') || lower.includes('forex') || lower.includes('trading')) {
         setSelectedCat('School of Business')
       } else if (lower.includes('it') || lower.includes('data') || lower.includes('tech') || lower.includes('software') || lower.includes('programming') || lower.includes('design')) {
         setSelectedCat('School of IT and Data Science')
@@ -815,7 +815,7 @@ export function CourseCatalogPage() {
             </div>
             <input
               type="text"
-              placeholder="Search programs by skill, title, or exam board (e.g. Python, IELTS, SPSS, React, Accounting, German)..."
+              placeholder="Search programs by skill, title, or exam board (e.g. Forex, Python, IELTS, SPSS, React, Accounting, German)..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               style={{

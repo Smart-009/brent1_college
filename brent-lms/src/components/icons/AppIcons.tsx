@@ -560,6 +560,9 @@ export function CourseIcon({ courseId, iconKey, size = 24, color = '#60a5fa' }: 
   if (key.includes('fmva') || key.includes('cma') || key.includes('quickbooks') || key.includes('finance') || key.includes('accounting')) {
     return <CalculatorIcon size={size} color="#10b981" />
   }
+  if (key.includes('forex') || key.includes('trading') || key.includes('fx') || key.includes('currency')) {
+    return <ChartBarIcon size={size} color="#059669" />
+  }
   if (key.includes('six-sigma') || key.includes('cscp') || key.includes('supply') || key.includes('logistics')) {
     return <BoxIcon size={size} color="#06b6d4" />
   }

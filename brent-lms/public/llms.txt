@@ -10,6 +10,8 @@
 
 ## Academic Faculties & Curriculum
 1. **School of Business**:
+   - Professional Forex Trading, Currency Markets & Technical Analysis (FX Mastery)
+   - Algorithmic Forex Trading & Quantitative Bot Strategies (Python & MT5)
    - Executive Project Management Professional (PMP®) & Agile Leadership (PMBOK 7 & Scrum)
    - Financial Modeling & Valuation Analyst (FMVA®) & Investment Banking (DCF & LBO)
    - Strategic Corporate FP&A & Management Accounting (CMA® Track)

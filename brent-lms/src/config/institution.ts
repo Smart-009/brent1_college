@@ -178,6 +178,8 @@ export const INSTITUTIONAL_SCHOOLS = [
         description: 'Computerized accounting, QuickBooks Online & Desktop, KRA iTax VAT & PAYE statutory filing, dynamic 3-statement financial modeling, valuation, and corporate FP&A.',
         hod_name: 'Mrs. Grace Wanjiku, CPA(K)',
         programs: [
+          'Professional Forex Trading, Currency Markets & Technical Analysis (FX Mastery)',
+          'Algorithmic Forex Trading & Quantitative Bot Strategies (Python & MT5)',
           'Computerized Accounting (QuickBooks & iTax)',
           'Financial Modeling & Valuation Analyst (FMVA®)',
           'Strategic Corporate FP&A & Management Accounting (CMA® Track)',

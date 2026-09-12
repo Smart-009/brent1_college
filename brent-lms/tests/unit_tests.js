@@ -894,7 +894,7 @@ test('SEO Metadata: 4 Canonical Faculties, Meta Tags, Schema.org JSON-LD, and ll
 test('Top-Paying Business Certificate Courses: School of Business Credentials & Metadata', () => {
   const officialCoursesContent = fs.readFileSync(path.join(process.cwd(), 'src/config/officialCourses.ts'), 'utf-8')
   
-  // Verify all 8 new top-paying courses + accounting exist
+  // Verify all top-paying business & finance courses exist
   const businessCourseIds = [
     'c-accounting',
     'c-pmp',
@@ -905,6 +905,8 @@ test('Top-Paying Business Certificate Courses: School of Business Credentials & 
     'c-cscp',
     'c-shrm',
     'c-growth-mkt',
+    'c-forex-trading',
+    'c-algo-forex',
   ]
 
   for (const id of businessCourseIds) {
@@ -920,6 +922,8 @@ test('Top-Paying Business Certificate Courses: School of Business Credentials & 
   assert.ok(officialCoursesContent.includes('Global Supply Chain Strategy, Logistics & Procurement (CSCP® & APICS)'))
   assert.ok(officialCoursesContent.includes('Strategic HR Leadership, Talent Acquisition & People Analytics (SHRM-CP®)'))
   assert.ok(officialCoursesContent.includes('Digital Marketing Strategy, Performance Growth & MarTech Leadership'))
+  assert.ok(officialCoursesContent.includes('Professional Forex Trading, Currency Markets & Technical Analysis (FX Mastery)'))
+  assert.ok(officialCoursesContent.includes('Algorithmic Forex Trading & Quantitative Bot Strategies (Python & MT5)'))
 
   // Verify schoolData.ts initial subjects & departments
   const schoolDataContent = fs.readFileSync(path.join(process.cwd(), 'src/lib/schoolData.ts'), 'utf-8')
@@ -931,6 +935,8 @@ test('Top-Paying Business Certificate Courses: School of Business Credentials & 
   assert.ok(schoolDataContent.includes('sub-cscp'))
   assert.ok(schoolDataContent.includes('sub-shrm'))
   assert.ok(schoolDataContent.includes('sub-growth-mkt'))
+  assert.ok(schoolDataContent.includes('sub-forex'))
+  assert.ok(schoolDataContent.includes('sub-algo-forex'))
   assert.ok(schoolDataContent.includes('dept-commerce-mgmt'))
   assert.ok(schoolDataContent.includes('dept-biztech'))
 
@@ -938,5 +944,6 @@ test('Top-Paying Business Certificate Courses: School of Business Credentials & 
   const indexHtml = fs.readFileSync(path.join(process.cwd(), 'index.html'), 'utf-8')
   assert.ok(indexHtml.includes('Project Management Professional (PMP®)'))
   assert.ok(indexHtml.includes('Financial Modeling & Valuation Analyst (FMVA®)'))
+  assert.ok(indexHtml.includes('Professional Forex Trading, Currency Markets & Technical Analysis (FX Mastery)'))
 })
 

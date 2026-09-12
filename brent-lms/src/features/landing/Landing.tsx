@@ -1048,7 +1048,7 @@ export function Landing() {
             <div style={{ position: 'relative', width: '100%' }}>
               <input
                 type="text"
-                placeholder="Search for courses, skills (e.g. Python, IELTS, React, Excel)..."
+                placeholder="Search for courses, skills (e.g. Forex, Python, IELTS, React, Excel)..."
                 value={searchQuery}
                 onChange={(e) => {
                   setSearchQuery(e.target.value)
@@ -2481,7 +2481,7 @@ export function Landing() {
               <input
                 type="text"
                 className="input"
-                placeholder="Search courses, faculties, or codes (e.g. Python, IELTS, React, Excel)..."
+                placeholder="Search courses, faculties, or codes (e.g. Forex, Python, IELTS, React, Excel)..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 style={{

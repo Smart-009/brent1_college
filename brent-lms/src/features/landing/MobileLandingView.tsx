@@ -445,7 +445,7 @@ export function MobileLandingView({
         <div style={{ position: 'relative', marginBottom: '0.75rem' }}>
           <input
             type="text"
-            placeholder="🔍 Search course, e.g. Python, IELTS, React, Excel, Arabic..."
+            placeholder="Search courses, e.g. Forex, Python, IELTS, React, Excel..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             style={{
