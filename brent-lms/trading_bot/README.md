@@ -41,12 +41,18 @@ cp .env.example .env
 ```
 Edit `.env` with your MetaTrader 5 demo/live account number, broker server, and desired risk settings.
 
-### Step 3: Run the Strategy Backtester
+### Step 3: Test Live Market & Broker Connectivity
+Run the diagnostic test tool to verify real-time price feeds, server ping latency, and broker authorization:
+```bash
+python test_live_connection.py
+```
+
+### Step 4: Run the Strategy Backtester
 ```bash
 python backtester.py
 ```
 
-### Step 4: Run Live / Demo Automated Bot
+### Step 5: Run Live / Demo Automated Bot
 ```bash
 python main.py
 ```

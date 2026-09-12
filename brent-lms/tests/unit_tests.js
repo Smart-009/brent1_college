@@ -986,3 +986,30 @@ test('Quantitative Trading Bot Studio & Python MT5 Package: Architecture & Formu
   assert.ok(riskManagerContent.includes('EMERGENCY KILL SWITCH TRIGGERED'))
 })
 
+test('Live Market Connectivity: TradingView Charts, WebSockets & Broker Diagnostics', () => {
+  // 1. Verify in-app TradingBotStudio has TradingView chart and live feed integration
+  const studioContent = fs.readFileSync(path.join(process.cwd(), 'src/features/trading/TradingBotStudio.tsx'), 'utf-8')
+  assert.ok(studioContent.includes('Live Institutional TradingView Terminal'))
+  assert.ok(studioContent.includes('stream.binance.com'))
+  assert.ok(studioContent.includes('open.er-api.com'))
+  assert.ok(studioContent.includes('tradingview.com/widgetembed'))
+  assert.ok(studioContent.includes('tvSymbol'))
+
+  // 2. Verify Python live market connectivity files
+  const botDir = path.join(process.cwd(), 'trading_bot')
+  assert.ok(fs.existsSync(path.join(botDir, 'test_live_connection.py')), 'Missing test_live_connection.py')
+  assert.ok(fs.existsSync(path.join(botDir, 'live_market_feed.py')), 'Missing live_market_feed.py')
+
+  // 3. Verify test_live_connection logic
+  const testConnContent = fs.readFileSync(path.join(botDir, 'test_live_connection.py'), 'utf-8')
+  assert.ok(testConnContent.includes('test_public_market_api'))
+  assert.ok(testConnContent.includes('test_mt5_broker_connection'))
+  assert.ok(testConnContent.includes('test_live_symbol_streaming'))
+
+  // 4. Verify live_market_feed universal fallback
+  const liveFeedContent = fs.readFileSync(path.join(botDir, 'live_market_feed.py'), 'utf-8')
+  assert.ok(liveFeedContent.includes('UniversalLiveFeed'))
+  assert.ok(liveFeedContent.includes('get_latest_price'))
+  assert.ok(liveFeedContent.includes('check_mt5_availability'))
+})
+

@@ -14,6 +14,7 @@ from config import (
 from mt5_interface import MT5Interface
 from risk_manager import RiskManager
 from notifier import TelegramNotifier
+from live_market_feed import UniversalLiveFeed
 from strategies.ema_crossover import EMACrossoverStrategy
 from strategies.rsi_mean_reversion import RSIMeanReversionStrategy
 
@@ -26,6 +27,11 @@ def main():
     print("Éclat Institute - ALGO-101 Autonomous Trading Bot Engine")
     print(f"Symbol: {BOT_SYMBOL} | Timeframe: {BOT_TIMEFRAME} | Strategy: {BOT_STRATEGY}")
     print("=" * 70)
+
+    # Initialize Live Market Feed
+    live_feed = UniversalLiveFeed(symbol=BOT_SYMBOL, timeframe=BOT_TIMEFRAME)
+    latest_quote = live_feed.get_latest_price()
+    logger.info(f"Live Market Connected! Source: {latest_quote['source']} | Bid: {latest_quote['bid']} | Ask: {latest_quote['ask']} | Spread: {latest_quote['spread_pips']} pips")
 
     # Initialize Modules
     client = MT5Interface(login=MT5_LOGIN, password=MT5_PASSWORD, server=MT5_SERVER, path=MT5_PATH)
