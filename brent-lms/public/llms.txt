@@ -10,10 +10,15 @@
 
 ## Academic Faculties & Curriculum
 1. **School of Business**:
-   - Computerized Accounting with QuickBooks Pro & Tally ERP
-   - International VAT, Tax Compliance & Corporate Bookkeeping
-   - Executive Financial Modeling, Valuation & Business Analytics
-   - Business Administration, Corporate Strategy & Entrepreneurship
+   - Executive Project Management Professional (PMP®) & Agile Leadership (PMBOK 7 & Scrum)
+   - Financial Modeling & Valuation Analyst (FMVA®) & Investment Banking (DCF & LBO)
+   - Strategic Corporate FP&A & Management Accounting (CMA® Track)
+   - Lean Six Sigma Green Belt (LSSGB®) & Process Optimization (DMAIC & SPC)
+   - Enterprise Business Analysis & Digital Transformation (CBAP® & PMI-PBA®)
+   - Global Supply Chain Strategy, Logistics & Procurement (CSCP® & APICS)
+   - Strategic HR Leadership, Talent Acquisition & People Analytics (SHRM-CP®)
+   - Digital Marketing Strategy, Performance Growth & MarTech Leadership
+   - Computerized Accounting with QuickBooks Pro, Payroll & International Tax / iTax
 
 2. **School of IT and Data Science**:
    - Full-Stack Web Engineering (React 19, TypeScript, Next.js, Node.js Express APIs, PostgreSQL)

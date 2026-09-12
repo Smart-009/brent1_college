@@ -891,3 +891,52 @@ test('SEO Metadata: 4 Canonical Faculties, Meta Tags, Schema.org JSON-LD, and ll
   assert.ok(llmsContent.includes('Pearson Edexcel (Center EDX-98421)'))
 })
 
+test('Top-Paying Business Certificate Courses: School of Business Credentials & Metadata', () => {
+  const officialCoursesContent = fs.readFileSync(path.join(process.cwd(), 'src/config/officialCourses.ts'), 'utf-8')
+  
+  // Verify all 8 new top-paying courses + accounting exist
+  const businessCourseIds = [
+    'c-accounting',
+    'c-pmp',
+    'c-fmva',
+    'c-cma',
+    'c-sixsigma',
+    'c-cbap',
+    'c-cscp',
+    'c-shrm',
+    'c-growth-mkt',
+  ]
+
+  for (const id of businessCourseIds) {
+    assert.ok(officialCoursesContent.includes(`id: '${id}'`), `Missing course ID ${id} in officialCourses.ts`)
+  }
+
+  // Verify certifications and salary tags
+  assert.ok(officialCoursesContent.includes('Project Management Professional (PMP®)'))
+  assert.ok(officialCoursesContent.includes('Financial Modeling & Valuation Analyst (FMVA®)'))
+  assert.ok(officialCoursesContent.includes('Strategic Corporate FP&A & Management Accounting (CMA® Track)'))
+  assert.ok(officialCoursesContent.includes('Lean Six Sigma Green Belt (LSSGB®)'))
+  assert.ok(officialCoursesContent.includes('Enterprise Business Analysis & Digital Transformation (CBAP® & PMI-PBA®)'))
+  assert.ok(officialCoursesContent.includes('Global Supply Chain Strategy, Logistics & Procurement (CSCP® & APICS)'))
+  assert.ok(officialCoursesContent.includes('Strategic HR Leadership, Talent Acquisition & People Analytics (SHRM-CP®)'))
+  assert.ok(officialCoursesContent.includes('Digital Marketing Strategy, Performance Growth & MarTech Leadership'))
+
+  // Verify schoolData.ts initial subjects & departments
+  const schoolDataContent = fs.readFileSync(path.join(process.cwd(), 'src/lib/schoolData.ts'), 'utf-8')
+  assert.ok(schoolDataContent.includes('sub-pmp'))
+  assert.ok(schoolDataContent.includes('sub-fmva'))
+  assert.ok(schoolDataContent.includes('sub-cma'))
+  assert.ok(schoolDataContent.includes('sub-sixsigma'))
+  assert.ok(schoolDataContent.includes('sub-cbap'))
+  assert.ok(schoolDataContent.includes('sub-cscp'))
+  assert.ok(schoolDataContent.includes('sub-shrm'))
+  assert.ok(schoolDataContent.includes('sub-growth-mkt'))
+  assert.ok(schoolDataContent.includes('dept-commerce-mgmt'))
+  assert.ok(schoolDataContent.includes('dept-biztech'))
+
+  // Verify index.html Schema.org JSON-LD has business course snippets
+  const indexHtml = fs.readFileSync(path.join(process.cwd(), 'index.html'), 'utf-8')
+  assert.ok(indexHtml.includes('Project Management Professional (PMP®)'))
+  assert.ok(indexHtml.includes('Financial Modeling & Valuation Analyst (FMVA®)'))
+})
+
