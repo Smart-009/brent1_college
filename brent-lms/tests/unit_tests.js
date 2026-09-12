@@ -862,3 +862,32 @@ test('Institutional Architecture: 4 Canonical Faculties (Business, IT & Data Sci
   const advertsContent = fs.readFileSync(path.join(process.cwd(), 'src/features/landing/IntakeAdvertsSection.tsx'), 'utf-8')
   assert.ok(!advertsContent.includes('View Poster'))
 })
+
+test('SEO Metadata: 4 Canonical Faculties, Meta Tags, Schema.org JSON-LD, and llms.txt alignment', () => {
+  const htmlContent = fs.readFileSync(path.join(process.cwd(), 'index.html'), 'utf-8')
+  
+  // Title & Meta tags
+  assert.ok(htmlContent.includes('<title>Éclat Institute — 100% Online Virtual Campus | Business, IT & Data Science, Language, IGCSE</title>'))
+  assert.ok(htmlContent.includes('name="description"'))
+  assert.ok(htmlContent.includes('School of Business, School of IT & Data Science, School of Language, and IGCSE'))
+  assert.ok(htmlContent.includes('Cambridge CAIE Center KE042 & Pearson Edexcel Center EDX-98421'))
+
+  // Open Graph & Twitter
+  assert.ok(htmlContent.includes('property="og:title"'))
+  assert.ok(htmlContent.includes('name="twitter:card" content="summary_large_image"'))
+
+  // Schema.org JSON-LD
+  assert.ok(htmlContent.includes('"name": "Cambridge Assessment International Education IGCSE (Center KE042)"'))
+  assert.ok(htmlContent.includes('"name": "Pearson Edexcel International Curriculum (Center EDX-98421)"'))
+  assert.ok(htmlContent.includes('"text": "Éclat Institute consists of 4 canonical faculties'))
+
+  // llms.txt AI Knowledge Grounding
+  const llmsContent = fs.readFileSync(path.join(process.cwd(), 'public/llms.txt'), 'utf-8')
+  assert.ok(llmsContent.includes('1. **School of Business**:'))
+  assert.ok(llmsContent.includes('2. **School of IT and Data Science**:'))
+  assert.ok(llmsContent.includes('3. **School of Language**:'))
+  assert.ok(llmsContent.includes('4. **IGCSE (British International Curriculum)**:'))
+  assert.ok(llmsContent.includes('Cambridge Assessment International Education (CAIE Center KE042)'))
+  assert.ok(llmsContent.includes('Pearson Edexcel (Center EDX-98421)'))
+})
+

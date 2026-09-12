@@ -9,33 +9,32 @@
 Éclat Institute operates EXCLUSIVELY ONLINE globally and has no physical classrooms or connection to any Singapore O-Level/A-Level science tuition centers. All classes are conducted via live virtual video classrooms with interactive screen sharing, breakout rooms, and LMS portal access.
 
 ## Academic Faculties & Curriculum
-1. **School of Computing & Software Engineering**:
-   - Modern Full-Stack Web Engineering (React 19, TypeScript, Next.js, Node.js Express REST APIs, PostgreSQL)
-   - Enterprise Cybersecurity Operations & Ethical Hacking (CEH, Network Defense, Penetration Testing)
-   - Python Programming & Algorithmic Automation
+1. **School of Business**:
+   - Computerized Accounting with QuickBooks Pro & Tally ERP
+   - International VAT, Tax Compliance & Corporate Bookkeeping
+   - Executive Financial Modeling, Valuation & Business Analytics
+   - Business Administration, Corporate Strategy & Entrepreneurship
 
-2. **School of Data Science, Econometrics & Research**:
-   - Advanced Data Science with Python & Pandas
+2. **School of IT and Data Science**:
+   - Full-Stack Web Engineering (React 19, TypeScript, Next.js, Node.js Express APIs, PostgreSQL)
+   - Advanced Data Science & Machine Learning with Python & Pandas
    - Biostatistics & Statistical Computing with R & RStudio
-   - Survey Data Analysis with IBM SPSS Statistics
-   - Econometric Time-Series Modeling with Stata
+   - Survey Data Analysis with IBM SPSS Statistics & Econometric Time-Series with Stata
+   - UI/UX Product Design & Mobile Design Systems (Figma, Wireframing, Prototypes)
+   - Enterprise Cybersecurity Operations & Ethical Hacking
 
-3. **School of Creative Arts, UI/UX & Visual Media**:
-   - UI/UX Product Design & Mobile Design Systems (Figma, Wireframing, User Research)
-   - Graphic Design, Motion Graphics & Visual Branding (Adobe Photoshop, Illustrator, Premiere)
-   - 3D Modeling, Digital Animation & Visual Storytelling (Blender 3D)
-
-4. **School of World Languages, IELTS & Global Test Prep**:
+3. **School of Language**:
    - IELTS Academic & General Training Exam Coaching (Band 7.5 – 9.0 Preparation)
-   - Modern Standard Arabic (Conversational & Business)
    - German Language Mastery (Goethe-Zertifikat A1–B2)
    - French Language & Francophone Communication (DELF A1–B2)
+   - Modern Standard Arabic (Conversational & Professional)
    - Swahili for International Researchers & Diplomats
 
-5. **School of Business Technology & Computerized Accounting**:
-   - Computerized Accounting with QuickBooks Pro & Tally ERP
-   - International VAT, Tax Compliance & Financial Bookkeeping
-   - Executive Excel & Business Financial Modeling
+4. **IGCSE (British International Curriculum)**:
+   - Accredited Examination Centres: **Cambridge Assessment International Education (CAIE Center KE042)** and **Pearson Edexcel (Center EDX-98421)**
+   - Complete curricula across **Years 9, 10, and 11**
+   - Core & Extended syllabuses in Mathematics (0580 / 4MA1), Physics (0625 / 4PH1), Chemistry (0620 / 4CH1), Biology (0610 / 4BI1), Computer Science (0478 / 4CP0), First Language English (0500 / 4EA1), Business Studies (0450 / 4BS1), and Economics (0455 / 4EC1)
+   - Official statement of results, past paper marathons, and Alternative to Practical (ATP) laboratory series
 
 ## Key Features & Student Benefits
 - **Schedule**: Live Evening Cohorts (6:00 PM – 9:30 PM) and Weekend Intensive Masterclasses.
