@@ -3,6 +3,7 @@ import { useNavigate, useSearchParams, Link } from 'react-router-dom'
 import { useAuthContext } from '@/features/auth/AuthContext'
 import { MobileAppBottomNav } from '@/components/layout/MobileAppBottomNav'
 import { isNativeApp } from '@/utils/platform'
+import { sanitizeInput } from '@/lib/utils'
 import type { Role } from '@/lib/database.types'
 import {
   GraduationCapIcon,
@@ -117,7 +118,7 @@ export function Login() {
     setError(null)
     setLoading(true)
 
-    const cleanAdmission = admissionNumber.trim().replace(/[<>]/g, '')
+    const cleanAdmission = sanitizeInput(admissionNumber)
     const res = await signIn(cleanAdmission, password)
     setLoading(false)
 
@@ -126,7 +127,7 @@ export function Login() {
       setFailedAttempts(nextFailed)
       if (nextFailed >= 5) {
         setLockoutSeconds(60)
-        setError('🛡️ Security Lockout: 5 consecutive failed attempts. System locked for 60 seconds.')
+        setError('Security Lockout: 5 consecutive failed attempts. System locked for 60 seconds.')
       } else {
         setError(`${res.error} (${5 - nextFailed} attempts remaining before temporary security lock)`)
       }

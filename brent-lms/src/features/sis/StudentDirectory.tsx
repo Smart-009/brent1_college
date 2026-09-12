@@ -4,6 +4,9 @@ import { supabase } from '@/lib/supabase'
 import type { StudentRecord, PaymentReminder } from '@/types/school'
 import { BiometricEnrollModal } from '@/components/biometrics/BiometricEnrollModal'
 import { BiometricScannerModal } from '@/components/biometrics/BiometricScannerModal'
+import { EyeIcon, KeyIcon } from '@/components/icons/AppIcons'
+import { hashPassword } from '@/lib/crypto'
+import { sanitizeInput } from '@/lib/utils'
 import { INSTITUTION_CONFIG } from '@/config/institution'
 import { OFFICIAL_COURSES } from '@/config/officialCourses'
 
@@ -52,13 +55,15 @@ export function StudentDirectory() {
 
   // Helper to persist student login credentials
   const saveStudentCredentials = async (adm: string, fullName: string, password: string) => {
-    const cleanAdm = adm.trim().toLowerCase().replace(/[^a-z0-9]/g, '')
+    const cleanAdm = sanitizeInput(adm).toLowerCase().replace(/[^a-z0-9]/g, '')
+    const cleanFullName = sanitizeInput(fullName)
+    const cleanPassword = sanitizeInput(password)
     const renewed = new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString()
     const profileObj = {
       id: `usr-${cleanAdm}`,
-      full_name: fullName,
-      admission_number: adm,
-      role: 'student',
+      full_name: cleanFullName,
+      admission_number: sanitizeInput(adm),
+      role: 'student' as const,
       first_login_at: new Date().toISOString(),
       access_expires_at: renewed,
       is_active: true,
@@ -68,8 +73,10 @@ export function StudentDirectory() {
     try {
       const raw = localStorage.getItem('eclat_local_credentials') || '{}'
       const creds = JSON.parse(raw)
+      const passHash = await hashPassword(cleanPassword)
       creds[cleanAdm] = {
-        password: password.trim(),
+        password: cleanPassword,
+        passwordHash: passHash,
         profile: profileObj,
       }
       localStorage.setItem('eclat_local_credentials', JSON.stringify(creds))
@@ -696,8 +703,10 @@ export function StudentDirectory() {
                           className="btn btn-secondary btn-sm"
                           onClick={() => setSelectedStudent(std)}
                           title="View Profile Dossier"
+                          style={{ display: 'inline-flex', alignItems: 'center', gap: '0.35rem' }}
                         >
-                          👁️ Dossier
+                          <EyeIcon size={14} />
+                          <span>Dossier</span>
                         </button>
                         <button
                           type="button"
@@ -1037,7 +1046,7 @@ export function StudentDirectory() {
                 <button
                   type="button"
                   className="btn"
-                  style={{ background: '#f0fdf4', color: '#166534', border: '1px solid #bbf7d0', fontWeight: 700 }}
+                  style={{ background: '#f0fdf4', color: '#166534', border: '1px solid #bbf7d0', fontWeight: 700, display: 'inline-flex', alignItems: 'center', gap: '0.35rem' }}
                   onClick={() => {
                     const cleanAdm = selectedStudent.admission_number.trim().toLowerCase().replace(/[^a-z0-9]/g, '')
                     let currentPass = 'Student@2026'
@@ -1060,7 +1069,8 @@ export function StudentDirectory() {
                     })
                   }}
                 >
-                  🔑 View Login Pass
+                  <KeyIcon size={14} />
+                  <span>View Login Pass</span>
                 </button>
                 <button
                   type="button"

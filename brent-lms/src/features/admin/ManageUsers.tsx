@@ -7,7 +7,8 @@ import { Button } from '@/components/ui/Button'
 import { Modal } from '@/components/ui/Modal'
 import { Spinner } from '@/components/ui/Spinner'
 import { RoleBadge } from '@/components/ui/Badge'
-import { isAccessExpired, formatDate, daysUntil } from '@/lib/utils'
+import { isAccessExpired, formatDate, daysUntil, sanitizeInput } from '@/lib/utils'
+import { hashPassword } from '@/lib/crypto'
 import type { Profile, Role, Class } from '@/lib/database.types'
 
 export function ManageUsers() {
@@ -179,11 +180,14 @@ export function ManageUsers() {
       try {
         const stored = localStorage.getItem('eclat_local_credentials')
         const parsed = stored ? JSON.parse(stored) : {}
+        const cleanPass = sanitizeInput(password)
+        const passHash = await hashPassword(cleanPass)
         parsed[cleanKey] = {
           id: registeredUserId,
-          admission_number: cleanAdm,
-          full_name: fullName.trim(),
-          password: password.trim(),
+          admission_number: sanitizeInput(cleanAdm),
+          full_name: sanitizeInput(fullName),
+          password: cleanPass,
+          passwordHash: passHash,
           role,
           class_ids: selectedClassIds,
           created_at: new Date().toISOString(),

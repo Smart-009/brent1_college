@@ -3,6 +3,8 @@ import { useNavigate } from 'react-router-dom'
 import { supabase } from '@/lib/supabase'
 import { useAuth } from '@/hooks/useAuth'
 import { Button } from '@/components/ui/Button'
+import { hashPassword } from '@/lib/crypto'
+import { sanitizeInput } from '@/lib/utils'
 
 export function ChangePassword() {
   const { profile, refreshProfile } = useAuth()
@@ -47,11 +49,14 @@ export function ChangePassword() {
 
       // Persist in local credentials store
       try {
-        const cleanAdm = (profile.admission_number || '').trim().toLowerCase().replace(/[^a-z0-9]/g, '')
+        const cleanAdm = sanitizeInput(profile.admission_number || '').toLowerCase().replace(/[^a-z0-9]/g, '')
+        const cleanPass = sanitizeInput(newPassword)
+        const passHash = await hashPassword(cleanPass)
         const raw = localStorage.getItem('eclat_local_credentials') || '{}'
         const creds = JSON.parse(raw)
         creds[cleanAdm] = {
-          password: newPassword.trim(),
+          password: cleanPass,
+          passwordHash: passHash,
           profile: updatedProfile,
         }
         localStorage.setItem('eclat_local_credentials', JSON.stringify(creds))

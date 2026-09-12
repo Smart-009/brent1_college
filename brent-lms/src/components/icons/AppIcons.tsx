@@ -504,6 +504,37 @@ export function LogOutIcon({ size = 20, color = 'currentColor', strokeWidth = 2,
   )
 }
 
+// 👁️ Eye / View Icon
+export function EyeIcon({ size = 20, color = 'currentColor', strokeWidth = 2, ...props }: IconProps) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" {...props}>
+      <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+      <circle cx="12" cy="12" r="3" />
+    </svg>
+  )
+}
+
+// 🔑 Key / Credentials Icon
+export function KeyIcon({ size = 20, color = 'currentColor', strokeWidth = 2, ...props }: IconProps) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" {...props}>
+      <path d="M21 2l-2 2m-1.5 1.5L14 9l-1.5-1.5-3 3L8 9l-4 4a5 5 0 1 0 7 7l4-4-1.5-1.5 1.5-1.5 3.5 3.5L21 2z" />
+      <circle cx="7.5" cy="16.5" r="1.5" />
+    </svg>
+  )
+}
+
+
+// 🛡️ Shield Security Icon
+export function ShieldIcon({ size = 20, color = 'currentColor', strokeWidth = 2, ...props }: IconProps) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" {...props}>
+      <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+    </svg>
+  )
+}
+
+
 /**
  * Intelligent Course Icon Component:
  * Inspects course ID, title, or icon identifier and renders the crisp vector icon.

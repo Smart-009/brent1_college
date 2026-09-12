@@ -40,6 +40,7 @@ import { generateBiometricTemplate } from './biometricEngine'
 import { supabase } from './supabase'
 import { INSTITUTION_CONFIG, INSTITUTIONAL_SCHOOLS } from '@/config/institution'
 import { OFFICIAL_COURSES, type CourseProgram } from '@/config/officialCourses'
+import { sanitizeInput } from './utils'
 
 function isValidUuid(id?: string): boolean {
   if (!id) return false
@@ -3124,6 +3125,10 @@ class SchoolDataStore {
         const billed = Number(student.term_fee_total) || 75
         const newRecord: StudentRecord = {
           ...student,
+          admission_number: sanitizeInput(student.admission_number),
+          full_name: sanitizeInput(student.full_name),
+          class_name: sanitizeInput(student.class_name || ''),
+          portal_password: student.portal_password ? sanitizeInput(student.portal_password) : undefined,
           term_fee_total: billed,
           fee_balance: student.fee_balance !== undefined ? Number(student.fee_balance) : billed,
           fee_cleared: student.fee_balance === 0,
@@ -3212,9 +3217,16 @@ class SchoolDataStore {
 
         const isCleared = updated.fee_cleared === true || updated.fee_balance === 0
         const finalBalance = isCleared ? 0 : (updated.fee_balance !== undefined ? updated.fee_balance : list[idx].fee_balance)
+        const sanitizedUpdated: Partial<StudentRecord> = {
+          ...updated,
+          ...(updated.admission_number ? { admission_number: sanitizeInput(updated.admission_number) } : {}),
+          ...(updated.full_name ? { full_name: sanitizeInput(updated.full_name) } : {}),
+          ...(updated.class_name ? { class_name: sanitizeInput(updated.class_name) } : {}),
+          ...(updated.portal_password ? { portal_password: sanitizeInput(updated.portal_password) } : {}),
+        }
         const merged: StudentRecord = {
           ...list[idx],
-          ...updated,
+          ...sanitizedUpdated,
           fee_balance: finalBalance,
           fee_cleared: isCleared || list[idx].fee_cleared,
         }

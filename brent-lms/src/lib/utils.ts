@@ -147,14 +147,33 @@ export function deepClone<T>(obj: T): T {
   return JSON.parse(JSON.stringify(obj))
 }
 
-/** Sanitize input strings to prevent XSS and injection attacks */
+/** Sanitize input strings to prevent XSS, HTML injection, and script execution */
 export function sanitizeInput(str: string): string {
-  if (!str) return ''
+  if (!str || typeof str !== 'string') return ''
   return str
+    .replace(/\0/g, '')
     .replace(/[<>]/g, '')
     .replace(/javascript:/gi, '')
-    .replace(/on\w+=/gi, '')
+    .replace(/vbscript:/gi, '')
+    .replace(/data:\s*text\/html/gi, '')
+    .replace(/on\w+\s*=/gi, '')
     .trim()
+}
+
+/** Recursively sanitize all string properties on objects or arrays */
+export function sanitizeObject<T>(obj: T): T {
+  if (!obj || typeof obj !== 'object') {
+    if (typeof obj === 'string') return sanitizeInput(obj) as unknown as T
+    return obj
+  }
+  if (Array.isArray(obj)) {
+    return obj.map((item) => sanitizeObject(item)) as unknown as T
+  }
+  const result: Record<string, any> = {}
+  for (const [key, value] of Object.entries(obj)) {
+    result[key] = typeof value === 'string' ? sanitizeInput(value) : sanitizeObject(value)
+  }
+  return result as T
 }
 
 /** Validate safe URLs (http, https, blob, or relative paths) */
