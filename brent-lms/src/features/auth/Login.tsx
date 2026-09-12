@@ -4,6 +4,16 @@ import { useAuthContext } from '@/features/auth/AuthContext'
 import { MobileAppBottomNav } from '@/components/layout/MobileAppBottomNav'
 import { isNativeApp } from '@/utils/platform'
 import type { Role } from '@/lib/database.types'
+import {
+  GraduationCapIcon,
+  BookOpenIcon,
+  UsersIcon,
+  BuildingIcon,
+  CreditCardIcon,
+  LockIcon,
+  AlertTriangleIcon,
+  CheckIcon,
+} from '@/components/icons/AppIcons'
 
 export function Login() {
   const { signIn } = useAuthContext()
@@ -47,21 +57,21 @@ export function Login() {
     {
       role: 'student' as Role,
       label: 'Student / Trainee Portal',
-      icon: '🎓',
+      renderIcon: () => <GraduationCapIcon size={22} color="#1d4ed8" />,
       route: '/student',
       desc: 'Access your registered short course units, video lessons, and transcripts.',
     },
     {
       role: 'teacher' as Role,
       label: 'Faculty & Lecturer Portal',
-      icon: '👩‍🏫',
+      renderIcon: () => <BookOpenIcon size={22} color="#059669" />,
       route: '/teacher',
       desc: 'Upload practical lessons, mark attendance, and manage student gradebooks.',
     },
     {
       role: 'parent' as Role,
       label: 'Parent & Sponsor Portal',
-      icon: '👨‍👩‍👧',
+      renderIcon: () => <UsersIcon size={22} color="#7c3aed" />,
       route: '/parent',
       desc: 'Track student attendance, fee clearance, and academic reports.',
     },
@@ -72,14 +82,14 @@ export function Login() {
     {
       role: 'admin' as Role,
       label: 'Principal & Directorate Terminal',
-      icon: '🏛️',
+      renderIcon: () => <BuildingIcon size={22} color="#d97706" />,
       route: '/admin',
       desc: 'Institutional administration, student directories, user provisioning, and pricing.',
     },
     {
       role: 'bursar' as Role,
       label: 'Finance & Admissions Registry',
-      icon: '💼',
+      renderIcon: () => <CreditCardIcon size={22} color="#0284c7" />,
       route: '/bursar',
       desc: 'Verify tuition payments, card settlements, M-Pesa receipts, and fee ledgers.',
     },
@@ -95,7 +105,7 @@ export function Login() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     if (lockoutSeconds > 0) {
-      setError(`🔒 Security Lockout Active: Please wait ${lockoutSeconds}s before retrying.`)
+      setError(`Security Lockout Active: Please wait ${lockoutSeconds}s before retrying.`)
       return
     }
 
@@ -145,7 +155,7 @@ export function Login() {
     <div
       style={{
         minHeight: '100vh',
-        background: 'linear-gradient(135deg, #090d16 0%, #0f172a 50%, #1e293b 100%)',
+        background: 'linear-gradient(135deg, #f8fafc 0%, #eff6ff 50%, #f1f5f9 100%)',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
@@ -159,7 +169,8 @@ export function Login() {
           width: '100%',
           background: '#ffffff',
           borderRadius: '20px',
-          boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.5)',
+          border: '1px solid #e2e8f0',
+          boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.06), 0 8px 10px -6px rgba(0, 0, 0, 0.04)',
           overflow: 'hidden',
           display: 'grid',
           gridTemplateColumns: 'repeat(auto-fit, minmax(290px, 1fr))',
@@ -185,8 +196,8 @@ export function Login() {
                   width: '52px',
                   height: '52px',
                   borderRadius: '50%',
-                  border: '2px solid #d4af37',
-                  boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
+                  border: '2px solid #1e3a8a',
+                  boxShadow: '0 2px 8px rgba(30, 58, 138, 0.15)',
                 }}
               />
               <div>
@@ -202,7 +213,7 @@ export function Login() {
                 >
                   ÉCLAT INSTITUTE
                 </div>
-                <div style={{ fontSize: '0.72rem', color: '#c5a059', fontWeight: 800, letterSpacing: '0.04em' }}>
+                <div style={{ fontSize: '0.72rem', color: '#1d4ed8', fontWeight: 800, letterSpacing: '0.04em' }}>
                   100% ONLINE VIRTUAL CAMPUS
                 </div>
               </div>
@@ -254,7 +265,9 @@ export function Login() {
                   }}
                 >
                   <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                    <span style={{ fontSize: '1.4rem' }}>{cfg.icon}</span>
+                    <span style={{ width: '38px', height: '38px', borderRadius: '10px', background: selectedRole === cfg.role ? '#dbeafe' : '#f1f5f9', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                      {cfg.renderIcon()}
+                    </span>
                     <div>
                       <div
                         style={{
@@ -271,8 +284,8 @@ export function Login() {
                     </div>
                   </div>
                   {selectedRole === cfg.role && (
-                    <span style={{ color: '#2563eb', fontWeight: 900, fontSize: '1.1rem', marginLeft: '6px' }}>
-                      ✓
+                    <span style={{ color: '#2563eb', marginLeft: '6px' }}>
+                      <CheckIcon size={18} color="#2563eb" />
                     </span>
                   )}
                 </button>
@@ -313,9 +326,22 @@ export function Login() {
                 cursor: 'pointer',
                 fontWeight: 600,
                 textDecoration: 'underline',
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '4px',
               }}
             >
-              {isStaffMode ? '🎓 Trainee & Student Portal' : '🔐 Staff Access'}
+              {isStaffMode ? (
+                <>
+                  <GraduationCapIcon size={14} color="#64748b" />
+                  <span>Trainee & Student Portal</span>
+                </>
+              ) : (
+                <>
+                  <LockIcon size={14} color="#64748b" />
+                  <span>Staff Access</span>
+                </>
+              )}
             </button>
           </div>
         </div>
@@ -365,7 +391,7 @@ export function Login() {
                   alignItems: 'center',
                 }}
               >
-                <span>⚠️</span>
+                <AlertTriangleIcon size={18} color="#991b1b" />
                 <div>{error}</div>
               </div>
             )}
@@ -441,8 +467,9 @@ export function Login() {
               </form>
           </div>
 
-          <div style={{ fontSize: '0.75rem', color: '#64748b', textAlign: 'center', marginTop: '1.25rem' }}>
-            🔒 256-Bit SSL Encrypted • Éclat Institute Global Portal
+          <div style={{ fontSize: '0.75rem', color: '#64748b', textAlign: 'center', marginTop: '1.25rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}>
+            <LockIcon size={14} color="#64748b" />
+            <span>256-Bit SSL Encrypted • Éclat Institute Global Portal</span>
           </div>
         </div>
       </div>

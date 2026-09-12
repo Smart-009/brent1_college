@@ -83,15 +83,15 @@ export function MobileAppBottomNav() {
         right: 0,
         height: 'calc(64px + env(safe-area-inset-bottom, 0px))',
         paddingBottom: 'env(safe-area-inset-bottom, 0px)',
-        background: 'rgba(15, 23, 42, 0.96)',
+        background: 'rgba(255, 255, 255, 0.98)',
         backdropFilter: 'blur(16px)',
         WebkitBackdropFilter: 'blur(16px)',
-        borderTop: '1px solid rgba(255, 255, 255, 0.1)',
+        borderTop: '1px solid #e2e8f0',
         display: 'flex',
         justifyContent: 'space-around',
         alignItems: 'center',
         zIndex: 9999,
-        boxShadow: '0 -4px 20px rgba(0, 0, 0, 0.4)',
+        boxShadow: '0 -4px 16px rgba(0, 0, 0, 0.06)',
       }}
     >
       {/* Home Tab */}
@@ -111,19 +111,19 @@ export function MobileAppBottomNav() {
           flex: 1,
           height: '100%',
           textDecoration: 'none',
-          color: isHomeActive ? '#60a5fa' : '#94a3b8',
+          color: isHomeActive ? '#1d4ed8' : '#64748b',
           transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
           fontSize: '0.7rem',
-          fontWeight: isHomeActive ? 800 : 500,
+          fontWeight: isHomeActive ? 800 : 600,
           gap: '3px',
           userSelect: 'none',
           transform: isHomeActive ? 'scale(1.05)' : 'scale(1)',
         }}
       >
-        <HomeIcon size={20} color={isHomeActive ? '#60a5fa' : '#94a3b8'} strokeWidth={isHomeActive ? 2.5 : 2} />
+        <HomeIcon size={20} color={isHomeActive ? '#1d4ed8' : '#64748b'} strokeWidth={isHomeActive ? 2.5 : 2} />
         <span>{profile ? 'Dashboard' : 'Home'}</span>
         {isHomeActive && (
-          <span style={{ width: '4px', height: '4px', borderRadius: '50%', background: '#60a5fa', boxShadow: '0 0 8px #60a5fa' }} />
+          <span style={{ width: '4px', height: '4px', borderRadius: '50%', background: '#1d4ed8', boxShadow: '0 0 6px rgba(29, 78, 216, 0.4)' }} />
         )}
       </Link>
 
@@ -144,19 +144,19 @@ export function MobileAppBottomNav() {
           flex: 1,
           height: '100%',
           textDecoration: 'none',
-          color: isCoursesActive ? '#60a5fa' : '#94a3b8',
+          color: isCoursesActive ? '#1d4ed8' : '#64748b',
           transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
           fontSize: '0.7rem',
-          fontWeight: isCoursesActive ? 800 : 500,
+          fontWeight: isCoursesActive ? 800 : 600,
           gap: '3px',
           userSelect: 'none',
           transform: isCoursesActive ? 'scale(1.05)' : 'scale(1)',
         }}
       >
-        <BookOpenIcon size={20} color={isCoursesActive ? '#60a5fa' : '#94a3b8'} strokeWidth={isCoursesActive ? 2.5 : 2} />
+        <BookOpenIcon size={20} color={isCoursesActive ? '#1d4ed8' : '#64748b'} strokeWidth={isCoursesActive ? 2.5 : 2} />
         <span>{profile?.role === 'student' ? 'My Units' : 'Courses'}</span>
         {isCoursesActive && (
-          <span style={{ width: '4px', height: '4px', borderRadius: '50%', background: '#60a5fa', boxShadow: '0 0 8px #60a5fa' }} />
+          <span style={{ width: '4px', height: '4px', borderRadius: '50%', background: '#1d4ed8', boxShadow: '0 0 6px rgba(29, 78, 216, 0.4)' }} />
         )}
       </Link>
 
@@ -172,19 +172,19 @@ export function MobileAppBottomNav() {
           flex: 1,
           height: '100%',
           textDecoration: 'none',
-          color: currentPath === '/library' ? '#60a5fa' : '#94a3b8',
+          color: currentPath === '/library' ? '#1d4ed8' : '#64748b',
           transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
           fontSize: '0.7rem',
-          fontWeight: currentPath === '/library' ? 800 : 500,
+          fontWeight: currentPath === '/library' ? 800 : 600,
           gap: '3px',
           userSelect: 'none',
           transform: currentPath === '/library' ? 'scale(1.05)' : 'scale(1)',
         }}
       >
-        <LibraryIcon size={20} color={currentPath === '/library' ? '#60a5fa' : '#94a3b8'} strokeWidth={currentPath === '/library' ? 2.5 : 2} />
+        <LibraryIcon size={20} color={currentPath === '/library' ? '#1d4ed8' : '#64748b'} strokeWidth={currentPath === '/library' ? 2.5 : 2} />
         <span>E-Library</span>
         {currentPath === '/library' && (
-          <span style={{ width: '4px', height: '4px', borderRadius: '50%', background: '#60a5fa', boxShadow: '0 0 8px #60a5fa' }} />
+          <span style={{ width: '4px', height: '4px', borderRadius: '50%', background: '#1d4ed8', boxShadow: '0 0 6px rgba(29, 78, 216, 0.4)' }} />
         )}
       </Link>
 
@@ -202,7 +202,7 @@ export function MobileAppBottomNav() {
           height: '100%',
           background: 'none',
           border: 'none',
-          color: isSyncing ? '#38bdf8' : '#94a3b8',
+          color: isSyncing ? '#0284c7' : '#64748b',
           transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
           fontSize: '0.7rem',
           fontWeight: 600,
@@ -213,7 +213,7 @@ export function MobileAppBottomNav() {
         title="Sync Cloud Data & Live Updates"
       >
         <span style={{ display: 'inline-block', animation: isSyncing ? 'spin 0.8s linear infinite' : 'none' }}>
-          <RefreshCwIcon size={20} color={isSyncing ? '#38bdf8' : '#94a3b8'} />
+          <RefreshCwIcon size={20} color={isSyncing ? '#0284c7' : '#64748b'} />
         </span>
         <span>{isSyncing ? 'Syncing...' : 'Live Sync'}</span>
       </button>
@@ -230,23 +230,23 @@ export function MobileAppBottomNav() {
           flex: 1,
           height: '100%',
           textDecoration: 'none',
-          color: isPortalActive ? '#60a5fa' : '#94a3b8',
+          color: isPortalActive ? '#1d4ed8' : '#64748b',
           transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
           fontSize: '0.7rem',
-          fontWeight: isPortalActive ? 800 : 500,
+          fontWeight: isPortalActive ? 800 : 600,
           gap: '3px',
           userSelect: 'none',
           transform: isPortalActive ? 'scale(1.05)' : 'scale(1)',
         }}
       >
         {profile ? (
-          <GraduationCapIcon size={20} color={isPortalActive ? '#60a5fa' : '#94a3b8'} strokeWidth={isPortalActive ? 2.5 : 2} />
+          <GraduationCapIcon size={20} color={isPortalActive ? '#1d4ed8' : '#64748b'} strokeWidth={isPortalActive ? 2.5 : 2} />
         ) : (
-          <LockIcon size={20} color={isPortalActive ? '#60a5fa' : '#94a3b8'} strokeWidth={isPortalActive ? 2.5 : 2} />
+          <LockIcon size={20} color={isPortalActive ? '#1d4ed8' : '#64748b'} strokeWidth={isPortalActive ? 2.5 : 2} />
         )}
         <span>{portalLabel}</span>
         {isPortalActive && (
-          <span style={{ width: '4px', height: '4px', borderRadius: '50%', background: '#60a5fa', boxShadow: '0 0 8px #60a5fa' }} />
+          <span style={{ width: '4px', height: '4px', borderRadius: '50%', background: '#1d4ed8', boxShadow: '0 0 6px rgba(29, 78, 216, 0.4)' }} />
         )}
       </Link>
     </nav>
