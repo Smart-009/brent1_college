@@ -947,69 +947,22 @@ test('Top-Paying Business Certificate Courses: School of Business Credentials & 
   assert.ok(indexHtml.includes('Professional Forex Trading, Currency Markets & Technical Analysis (FX Mastery)'))
 })
 
-test('Quantitative Trading Bot Studio & Python MT5 Package: Architecture & Formulas', () => {
-  // 1. Verify in-app TradingBotStudio component exists and has core strategies
-  const studioContent = fs.readFileSync(path.join(process.cwd(), 'src/features/trading/TradingBotStudio.tsx'), 'utf-8')
-  assert.ok(studioContent.includes('TradingBotStudio'))
-  assert.ok(studioContent.includes('EMA Trend-Following Crossover'))
-  assert.ok(studioContent.includes('RSI Dynamic Mean-Reversion'))
-  assert.ok(studioContent.includes('Institutional ICT Smart Money Order Blocks'))
-  assert.ok(studioContent.includes('Simulated Account Equity Trajectory'))
-  assert.ok(studioContent.includes('Start Live Paper Bot Simulation'))
-  assert.ok(studioContent.includes('calculate_position_size'))
+test('Architectural Separation: Bot Is Completely Decoupled from School LMS Systems', () => {
+  // 1. Verify trading_bot is completely removed from school LMS repo
+  assert.strictEqual(fs.existsSync(path.join(process.cwd(), 'trading_bot')), false, 'trading_bot must NOT exist in school LMS')
+  assert.strictEqual(fs.existsSync(path.join(process.cwd(), 'src/features/trading')), false, 'trading features must NOT exist in school LMS')
 
-  // 2. Verify App.tsx routing
+  // 2. Verify school LMS routes are pure academic & student management
   const appContent = fs.readFileSync(path.join(process.cwd(), 'src/App.tsx'), 'utf-8')
-  assert.ok(appContent.includes('/trading-bot'))
-  assert.ok(appContent.includes('/student/trading-bot'))
+  assert.ok(!appContent.includes('/trading-bot'), 'App.tsx must not contain bot route')
+  assert.ok(!appContent.includes('TradingBotStudio'), 'App.tsx must not import TradingBotStudio')
 
-  // 3. Verify Sidebar.tsx navigation links
-  const sidebarContent = fs.readFileSync(path.join(process.cwd(), 'src/components/layout/Sidebar.tsx'), 'utf-8')
-  assert.ok(sidebarContent.includes('Quant Trading Bot Studio'))
-
-  // 4. Verify Python MT5 package files
-  const botDir = path.join(process.cwd(), 'trading_bot')
-  assert.ok(fs.existsSync(path.join(botDir, 'requirements.txt')), 'Missing trading_bot/requirements.txt')
-  assert.ok(fs.existsSync(path.join(botDir, 'config.py')), 'Missing trading_bot/config.py')
-  assert.ok(fs.existsSync(path.join(botDir, 'mt5_interface.py')), 'Missing trading_bot/mt5_interface.py')
-  assert.ok(fs.existsSync(path.join(botDir, 'risk_manager.py')), 'Missing trading_bot/risk_manager.py')
-  assert.ok(fs.existsSync(path.join(botDir, 'strategies', 'ema_crossover.py')), 'Missing ema_crossover.py')
-  assert.ok(fs.existsSync(path.join(botDir, 'strategies', 'rsi_mean_reversion.py')), 'Missing rsi_mean_reversion.py')
-  assert.ok(fs.existsSync(path.join(botDir, 'backtester.py')), 'Missing trading_bot/backtester.py')
-  assert.ok(fs.existsSync(path.join(botDir, 'main.py')), 'Missing trading_bot/main.py')
-  assert.ok(fs.existsSync(path.join(botDir, 'README.md')), 'Missing trading_bot/README.md')
-
-  // 5. Verify institutional risk rules in risk_manager.py
-  const riskManagerContent = fs.readFileSync(path.join(botDir, 'risk_manager.py'), 'utf-8')
-  assert.ok(riskManagerContent.includes('calculate_lot_size'))
-  assert.ok(riskManagerContent.includes('max_daily_drawdown_pct'))
-  assert.ok(riskManagerContent.includes('EMERGENCY KILL SWITCH TRIGGERED'))
-})
-
-test('Live Market Connectivity: TradingView Charts, WebSockets & Broker Diagnostics', () => {
-  // 1. Verify in-app TradingBotStudio has TradingView chart and live feed integration
-  const studioContent = fs.readFileSync(path.join(process.cwd(), 'src/features/trading/TradingBotStudio.tsx'), 'utf-8')
-  assert.ok(studioContent.includes('Live Institutional TradingView Terminal'))
-  assert.ok(studioContent.includes('stream.binance.com'))
-  assert.ok(studioContent.includes('open.er-api.com'))
-  assert.ok(studioContent.includes('tradingview.com/widgetembed'))
-  assert.ok(studioContent.includes('tvSymbol'))
-
-  // 2. Verify Python live market connectivity files
-  const botDir = path.join(process.cwd(), 'trading_bot')
-  assert.ok(fs.existsSync(path.join(botDir, 'test_live_connection.py')), 'Missing test_live_connection.py')
-  assert.ok(fs.existsSync(path.join(botDir, 'live_market_feed.py')), 'Missing live_market_feed.py')
-
-  // 3. Verify test_live_connection logic
-  const testConnContent = fs.readFileSync(path.join(botDir, 'test_live_connection.py'), 'utf-8')
-  assert.ok(testConnContent.includes('test_public_market_api'))
-  assert.ok(testConnContent.includes('test_mt5_broker_connection'))
-  assert.ok(testConnContent.includes('test_live_symbol_streaming'))
-
-  // 4. Verify live_market_feed universal fallback
-  const liveFeedContent = fs.readFileSync(path.join(botDir, 'live_market_feed.py'), 'utf-8')
-  assert.ok(liveFeedContent.includes('UniversalLiveFeed'))
-  assert.ok(liveFeedContent.includes('get_latest_price'))
-  assert.ok(liveFeedContent.includes('check_mt5_availability'))
+  // 3. Verify standalone autonomous bot exists in its own isolated directory
+  const standaloneDir = 'c:/Users/egerton/Desktop/autonomous_trading_bot'
+  assert.ok(fs.existsSync(path.join(standaloneDir, 'main.py')), 'Missing standalone main.py')
+  assert.ok(fs.existsSync(path.join(standaloneDir, 'paper_broker.py')), 'Missing standalone paper_broker.py')
+  assert.ok(fs.existsSync(path.join(standaloneDir, 'live_market_feed.py')), 'Missing standalone live_market_feed.py')
+  assert.ok(fs.existsSync(path.join(standaloneDir, 'server.py')), 'Missing standalone server.py')
+  assert.ok(fs.existsSync(path.join(standaloneDir, 'risk_manager.py')), 'Missing standalone risk_manager.py')
 })
 

@@ -377,10 +377,6 @@ export function StudentDashboard() {
             <span>Student Quick Workstations</span>
           </h3>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-            <Link to="/student/trading-bot" className="btn btn-sm" style={{ justifyContent: 'flex-start', background: '#ecfdf5', color: '#065f46', border: '1.5px solid #a7f3d0', fontWeight: 700, gap: '0.5rem' }}>
-              <ChartBarIcon size={16} color="#059669" />
-              <span>Quant Trading Bot Studio & Simulator</span>
-            </Link>
             <Link to="/student/courses" className="btn btn-secondary btn-sm" style={{ justifyContent: 'flex-start', gap: '0.5rem' }}>
               <BookOpenIcon size={16} color="#475569" />
               <span>Online Lessons & LMS</span>

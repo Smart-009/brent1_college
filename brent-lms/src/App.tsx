@@ -55,7 +55,6 @@ const ResourceLibrary = lazy(() => import('@/features/library/ResourceLibrary').
 const DisciplineTracker = lazy(() => import('@/features/discipline/DisciplineTracker').then((m) => ({ default: m.DisciplineTracker })))
 const ParentDashboard = lazy(() => import('@/features/parent/ParentDashboard').then((m) => ({ default: m.ParentDashboard })))
 const SchoolNoticeboard = lazy(() => import('@/features/announcements/SchoolNoticeboard').then((m) => ({ default: m.SchoolNoticeboard })))
-const TradingBotStudio = lazy(() => import('@/features/trading/TradingBotStudio').then((m) => ({ default: m.TradingBotStudio })))
 import { BursarDesk } from '@/features/bursar/BursarDesk'
 import { isNativeApp } from '@/utils/platform'
 
@@ -141,7 +140,6 @@ export function App() {
         {/* Open Public Routes with App Layout */}
         <Route element={<LayoutShell />}>
           <Route path="/library" element={<ResourceLibrary />} />
-          <Route path="/trading-bot" element={<TradingBotStudio />} />
         </Route>
 
         {/* Authenticated Layout Routes */}
@@ -211,14 +209,6 @@ export function App() {
             element={
               <StudentNativeGuard>
                 <ProgressView />
-              </StudentNativeGuard>
-            }
-          />
-          <Route
-            path="/student/trading-bot"
-            element={
-              <StudentNativeGuard>
-                <TradingBotStudio />
               </StudentNativeGuard>
             }
           />

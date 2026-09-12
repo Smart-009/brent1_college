@@ -36,7 +36,6 @@ export function Sidebar({ isOpen, onClose }: { isOpen: boolean; onClose: () => v
   const guestNav: NavItem[] = [
     { to: '/', label: 'Home & Overview', icon: HomeIcon },
     { to: '/courses', label: 'Vocational & IGCSE Courses', icon: BookOpenIcon },
-    { to: '/trading-bot', label: 'Quant Trading Bot Studio', icon: ChartBarIcon },
     { to: '/library', label: 'E-Library & Past Papers', icon: LibraryIcon },
     { to: '/login', label: 'Student / Faculty Login', icon: LockIcon },
   ]
@@ -44,7 +43,6 @@ export function Sidebar({ isOpen, onClose }: { isOpen: boolean; onClose: () => v
   const studentNav: NavItem[] = [
     { to: '/student', label: 'My Student Dashboard', icon: HomeIcon },
     { to: '/student/courses', label: 'My Enrolled Lessons & LMS', icon: BookOpenIcon },
-    { to: '/student/trading-bot', label: 'Quant Trading Bot Studio', icon: ChartBarIcon },
     { to: '/library', label: 'E-Library & IGCSE Past Papers', icon: LibraryIcon },
     { to: '/fees', label: 'My Fee Statement & Paybill', icon: CreditCardIcon },
     { to: '/exams', label: 'IGCSE Results & Transcripts', icon: FileTextIcon },
@@ -78,7 +76,6 @@ export function Sidebar({ isOpen, onClose }: { isOpen: boolean; onClose: () => v
     { to: '/admin', label: 'Admin Dashboard', icon: SettingsIcon },
     { to: '/admin/intakes', label: 'Intake Scheduler & Adverts', icon: CalendarIcon },
     { to: '/admin/classes', label: 'Academic Programs & Courses', icon: BuildingIcon },
-    { to: '/trading-bot', label: 'Quant Trading Bot Studio', icon: ChartBarIcon },
     { to: '/students', label: 'Student Directory & Admissions', icon: GraduationCapIcon },
     { to: '/library', label: 'E-Library & Cloud Drive', icon: LibraryIcon },
     { to: '/fees', label: 'Tuition Fees & Bursar Desk', icon: CreditCardIcon },

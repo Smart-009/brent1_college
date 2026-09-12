@@ -24,11 +24,15 @@ function otaVersionPlugin(): Plugin {
       this.emitFile({
         type: 'asset',
         fileName: 'version.json',
-        source: JSON.stringify({
-          version: '1.0.0',
-          buildTime: currentBuildTimestamp,
-          builtAt: new Date(currentBuildTimestamp).toISOString(),
-        }, null, 2),
+        source: JSON.stringify(
+          {
+            version: '1.0.0',
+            buildTime: currentBuildTimestamp,
+            builtAt: new Date(currentBuildTimestamp).toISOString(),
+          },
+          null,
+          2
+        ),
       })
     },
   }
