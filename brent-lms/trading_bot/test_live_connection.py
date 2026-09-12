@@ -121,7 +121,7 @@ def main():
     print("=" * 70)
     print("Éclat Institute - ALGO-101 Live Market Connectivity Diagnostic")
     print("=" * 70)
-    print(f"Timestamp: {datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S UTC')}")
+    print(f"Timestamp: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
 
     test_public_market_api()
     test_mt5_broker_connection()

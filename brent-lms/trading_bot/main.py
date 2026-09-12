@@ -61,10 +61,9 @@ def main():
         while True:
             iteration += 1
             account = client.get_account_summary()
-            symbol_info = client.get_symbol_info(BOT_SYMBOL)
             open_positions = client.get_open_positions(magic=BOT_MAGIC_NUMBER)
-
-            spread_pips = (symbol_info['spread'] / symbol_info['point']) if symbol_info else 1.2
+            latest_quote = live_feed.get_latest_price()
+            spread_pips = latest_quote.get('spread_pips', 1.2)
             
             # 1. Pre-Trade Risk Gatekeeper
             is_risk_ok, risk_msg = risk.evaluate_pre_trade_risk(
@@ -85,8 +84,10 @@ def main():
             # 2. Fetch Market Candle Data
             df = client.fetch_ohlcv(symbol=BOT_SYMBOL, timeframe_str=BOT_TIMEFRAME, num_bars=100)
             if df.empty:
-                time.sleep(15)
-                continue
+                df = live_feed.fetch_recent_candles(count=100)
+
+            latest_quote = live_feed.get_latest_price()
+            logger.info(f"[CYCLE #{iteration}] Market: {BOT_SYMBOL} | Live Quote: {latest_quote['bid']} | Source: {latest_quote['source']} | Open Positions: {len(open_positions)} | Status: Active")
 
             # 3. Generate Quantitative Signal
             signal = strategy.generate_signal(df, current_spread_pips=spread_pips)

@@ -106,7 +106,7 @@ class MT5Interface:
 
     def get_symbol_info(self, symbol: str):
         if not self.is_connected:
-            return {"point": 0.00001, "digits": 5, "spread": 1.2, "ask": 1.08500, "bid": 1.08488}
+            return {"point": 0.00001, "digits": 5, "spread": 0.00012, "ask": 1.08500, "bid": 1.08488}
         info = mt5.symbol_info(symbol)
         if info is None:
             return None
