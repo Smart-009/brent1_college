@@ -719,7 +719,7 @@ export function Landing() {
   }
 
   return (
-    <div style={{ minHeight: '100vh', background: '#f8fafc', color: '#0f172a', fontFamily: 'Inter, system-ui, -apple-system, sans-serif' }}>
+    <div style={{ minHeight: '100vh', paddingBottom: isMobile ? '74px' : 0, background: '#f8fafc', color: '#0f172a', fontFamily: 'Inter, system-ui, -apple-system, sans-serif' }}>
       <DesktopCommandPalette />
 
       {/* Top Admissions & Quick Contacts Bar */}
@@ -1190,12 +1190,72 @@ export function Landing() {
                   border: '1px solid rgba(56, 189, 248, 0.25)',
                 }}
               >
-                <span>📚</span>
-                <span>Course Catalog & Programs</span>
+                <span>🏛️</span>
+                <span>All Academic Faculties</span>
               </Link>
 
               <Link
-                to="/courses?cat=British+Curriculum"
+                to="/courses?cat=School+of+Business"
+                onClick={() => setMobileNavOpen(false)}
+                style={{
+                  color: '#10b981',
+                  textDecoration: 'none',
+                  padding: '0.6rem 0.8rem',
+                  borderRadius: '10px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '10px',
+                  fontSize: '0.85rem',
+                  fontWeight: 700,
+                  background: 'rgba(16, 185, 129, 0.08)',
+                }}
+              >
+                <span>💼</span>
+                <span>School of Business</span>
+              </Link>
+
+              <Link
+                to="/courses?cat=School+of+IT+and+Data+Science"
+                onClick={() => setMobileNavOpen(false)}
+                style={{
+                  color: '#38bdf8',
+                  textDecoration: 'none',
+                  padding: '0.6rem 0.8rem',
+                  borderRadius: '10px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '10px',
+                  fontSize: '0.85rem',
+                  fontWeight: 700,
+                  background: 'rgba(56, 189, 248, 0.08)',
+                }}
+              >
+                <span>💻</span>
+                <span>School of IT and Data Science</span>
+              </Link>
+
+              <Link
+                to="/courses?cat=School+of+Language"
+                onClick={() => setMobileNavOpen(false)}
+                style={{
+                  color: '#f59e0b',
+                  textDecoration: 'none',
+                  padding: '0.6rem 0.8rem',
+                  borderRadius: '10px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '10px',
+                  fontSize: '0.85rem',
+                  fontWeight: 700,
+                  background: 'rgba(245, 158, 11, 0.08)',
+                }}
+              >
+                <span>🗣️</span>
+                <span>School of Language</span>
+              </Link>
+
+              <Link
+                to="/courses?cat=IGCSE"
                 onClick={() => setMobileNavOpen(false)}
                 style={{
                   color: '#d4af37',
@@ -1207,12 +1267,12 @@ export function Landing() {
                   gap: '10px',
                   fontSize: '0.88rem',
                   fontWeight: 800,
-                  background: 'rgba(212, 175, 55, 0.1)',
-                  border: '1px solid rgba(212, 175, 55, 0.25)',
+                  background: 'rgba(212, 175, 55, 0.12)',
+                  border: '1px solid rgba(212, 175, 55, 0.28)',
                 }}
               >
                 <span>🇬🇧</span>
-                <span>Cambridge IGCSE & A-Levels (KE042)</span>
+                <span>IGCSE (Cambridge KE042 & Edexcel)</span>
               </Link>
 
               <a
@@ -4295,7 +4355,7 @@ export function Landing() {
       )}
 
       {/* Sleek Modern Floating Support Desk (WhatsApp / Admissions Live Desk) */}
-      <div style={{ position: 'fixed', bottom: '24px', right: isMobile ? '16px' : '24px', zIndex: 9990, display: 'flex', flexDirection: 'column', alignItems: 'flex-end' }}>
+      <div style={{ position: 'fixed', bottom: isMobile ? '76px' : '24px', right: isMobile ? '16px' : '24px', zIndex: 9990, display: 'flex', flexDirection: 'column', alignItems: 'flex-end' }}>
         {supportModalOpen && (
           <div
             style={{
@@ -4441,27 +4501,27 @@ export function Landing() {
           type="button"
           onClick={() => setSupportModalOpen(!supportModalOpen)}
           style={{
-            width: '58px',
-            height: '58px',
+            width: isMobile ? '52px' : '58px',
+            height: isMobile ? '52px' : '58px',
             borderRadius: '50%',
             background: 'linear-gradient(135deg, #22c55e 0%, #15803d 100%)',
             color: '#ffffff',
-            border: '3px solid #ffffff',
+            border: '2.5px solid #ffffff',
             cursor: 'pointer',
             boxShadow: '0 8px 24px rgba(34, 197, 94, 0.45)',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            fontSize: '1.6rem',
+            fontSize: isMobile ? '1.4rem' : '1.6rem',
             position: 'relative',
             transition: 'transform 0.2s',
           }}
           title={`Live Admissions & WhatsApp Support (${INSTITUTION_CONFIG.contact.phone})`}
         >
           {supportModalOpen ? (
-            <span style={{ fontSize: '1.4rem', fontWeight: 900 }}>✕</span>
+            <span style={{ fontSize: '1.3rem', fontWeight: 900 }}>✕</span>
           ) : (
-            <svg width="28" height="28" viewBox="0 0 24 24" fill="#ffffff" style={{ filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.15))' }}>
+            <svg width={isMobile ? '24' : '28'} height={isMobile ? '24' : '28'} viewBox="0 0 24 24" fill="#ffffff" style={{ filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.15))' }}>
               <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z"/>
             </svg>
           )}
@@ -4489,16 +4549,16 @@ export function Landing() {
         </button>
       </div>
 
-      {/* Floating Scroll to Top Button */}
-      {showScrollTop && (
+      {/* Floating Scroll to Top Button (Desktop Only — on mobile, Bottom Nav Home button handles this without colliding) */}
+      {showScrollTop && !isMobile && (
         <button
           type="button"
           onClick={scrollToTop}
           aria-label="Scroll to top"
           style={{
             position: 'fixed',
-            bottom: isMobile ? '88px' : '96px',
-            right: isMobile ? '16px' : '24px',
+            bottom: '96px',
+            right: '24px',
             width: '44px',
             height: '44px',
             borderRadius: '50%',
@@ -4518,6 +4578,157 @@ export function Landing() {
         >
           ↑
         </button>
+      )}
+
+      {/* Sleek Mobile Bottom Navigation Bar (Persistent on Mobile Website) */}
+      {isMobile && (
+        <nav
+          aria-label="Mobile Bottom Navigation"
+          style={{
+            position: 'fixed',
+            bottom: 0,
+            left: 0,
+            right: 0,
+            height: '62px',
+            background: 'rgba(11, 16, 29, 0.96)',
+            backdropFilter: 'blur(16px)',
+            WebkitBackdropFilter: 'blur(16px)',
+            borderTop: '1px solid rgba(255, 255, 255, 0.12)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-around',
+            zIndex: 9995,
+            padding: '0 4px',
+            boxShadow: '0 -4px 24px rgba(0, 0, 0, 0.5)',
+          }}
+        >
+          <Link
+            to="/"
+            onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+            style={{
+              flex: 1,
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: '2px',
+              textDecoration: 'none',
+              color: location.pathname === '/' && !location.hash ? '#d4af37' : '#94a3b8',
+              fontSize: '0.68rem',
+              fontWeight: 700,
+            }}
+          >
+            <span style={{ fontSize: '1.25rem', lineHeight: 1 }}>🏠</span>
+            <span>Home</span>
+          </Link>
+
+          <Link
+            to="/courses"
+            style={{
+              flex: 1,
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: '2px',
+              textDecoration: 'none',
+              color: location.pathname.startsWith('/courses') ? '#38bdf8' : '#94a3b8',
+              fontSize: '0.68rem',
+              fontWeight: 700,
+            }}
+          >
+            <span style={{ fontSize: '1.25rem', lineHeight: 1 }}>🎓</span>
+            <span>Schools</span>
+          </Link>
+
+          <a
+            href="#intakes-section"
+            onClick={() => {
+              const el = document.getElementById('intakes-section')
+              if (el) el.scrollIntoView({ behavior: 'smooth' })
+            }}
+            style={{
+              flex: 1,
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: '2px',
+              textDecoration: 'none',
+              color: '#fbbf24',
+              fontSize: '0.68rem',
+              fontWeight: 700,
+            }}
+          >
+            <span style={{ fontSize: '1.25rem', lineHeight: 1 }}>🗓️</span>
+            <span>Intakes</span>
+          </a>
+
+          <Link
+            to="/library"
+            style={{
+              flex: 1,
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: '2px',
+              textDecoration: 'none',
+              color: location.pathname.startsWith('/library') ? '#60a5fa' : '#94a3b8',
+              fontSize: '0.68rem',
+              fontWeight: 700,
+            }}
+          >
+            <span style={{ fontSize: '1.25rem', lineHeight: 1 }}>📖</span>
+            <span>Library</span>
+          </Link>
+
+          <button
+            type="button"
+            onClick={() => setShowPortalDesksModal(true)}
+            style={{
+              flex: 1,
+              background: 'none',
+              border: 'none',
+              padding: 0,
+              cursor: 'pointer',
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: '2px',
+              color: '#38bdf8',
+              fontSize: '0.68rem',
+              fontWeight: 700,
+            }}
+          >
+            <span style={{ fontSize: '1.25rem', lineHeight: 1 }}>🔐</span>
+            <span>Portals</span>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => setMobileNavOpen(true)}
+            style={{
+              flex: 1,
+              background: 'none',
+              border: 'none',
+              padding: 0,
+              cursor: 'pointer',
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: '2px',
+              color: mobileNavOpen ? '#d4af37' : '#ffffff',
+              fontSize: '0.68rem',
+              fontWeight: 800,
+            }}
+          >
+            <span style={{ fontSize: '1.25rem', lineHeight: 1 }}>☰</span>
+            <span>Menu</span>
+          </button>
+        </nav>
       )}
       {/* World-Class Conferred Institutional Certificate Modal */}
       {previewCert && (

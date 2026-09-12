@@ -728,10 +728,10 @@ export function IntakeAdvertsSection() {
                   {/* Actions Row: WhatsApp Inquire & Online Apply */}
                   <div
                     style={{
-                      display: 'flex',
-                      gap: '0.65rem',
-                      flexWrap: 'wrap',
-                      paddingTop: '1rem',
+                      display: 'grid',
+                      gridTemplateColumns: 'repeat(2, minmax(0, 1fr))',
+                      gap: '0.5rem',
+                      paddingTop: '0.85rem',
                       borderTop: '1px solid rgba(255, 255, 255, 0.1)',
                     }}
                   >
@@ -743,45 +743,45 @@ export function IntakeAdvertsSection() {
                       rel="noopener noreferrer"
                       className="btn"
                       style={{
-                        flex: '1 1 140px',
                         background: 'linear-gradient(135deg, #16a34a, #15803d)',
                         color: '#ffffff',
                         fontWeight: 800,
-                        fontSize: '0.85rem',
-                        padding: '0.75rem 1rem',
-                        borderRadius: '12px',
+                        fontSize: '0.78rem',
+                        padding: '0.6rem 0.5rem',
+                        borderRadius: '10px',
                         textDecoration: 'none',
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
-                        gap: '6px',
-                        boxShadow: '0 4px 12px rgba(22, 163, 74, 0.3)',
+                        gap: '5px',
+                        boxShadow: '0 3px 10px rgba(22, 163, 74, 0.25)',
+                        whiteSpace: 'nowrap',
                       }}
                     >
-                      <span>💬</span>
-                      <span>Apply via WhatsApp</span>
+                      <span style={{ fontSize: '0.9rem' }}>💬</span>
+                      <span>Apply on WhatsApp</span>
                     </a>
 
                     <Link
                       to={`/courses?intake=${encodeURIComponent(intake.id)}`}
                       className="btn"
                       style={{
-                        flex: '1 1 130px',
                         background: 'linear-gradient(135deg, #2563eb, #1d4ed8)',
                         color: '#ffffff',
                         fontWeight: 800,
-                        fontSize: '0.85rem',
-                        padding: '0.75rem 1rem',
-                        borderRadius: '12px',
+                        fontSize: '0.78rem',
+                        padding: '0.6rem 0.5rem',
+                        borderRadius: '10px',
                         textDecoration: 'none',
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
-                        gap: '6px',
-                        boxShadow: '0 4px 12px rgba(37, 99, 235, 0.3)',
+                        gap: '5px',
+                        boxShadow: '0 3px 10px rgba(37, 99, 235, 0.25)',
+                        whiteSpace: 'nowrap',
                       }}
                     >
-                      <span>🎓</span>
+                      <span style={{ fontSize: '0.9rem' }}>🎓</span>
                       <span>View Programs</span>
                     </Link>
                   </div>
