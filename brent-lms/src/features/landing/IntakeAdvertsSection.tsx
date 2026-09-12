@@ -539,33 +539,6 @@ export function IntakeAdvertsSection() {
                       </span>
                     )}
                   </div>
-
-                  {/* Poster Enlarge Trigger */}
-                  {intake.poster_image_url && (
-                    <div style={{ position: 'absolute', bottom: '12px', right: '14px', display: 'flex', gap: '8px' }}>
-                      <button
-                        type="button"
-                        onClick={() => setActivePosterUrl(intake.poster_image_url || null)}
-                        style={{
-                          background: 'rgba(0, 0, 0, 0.75)',
-                          backdropFilter: 'blur(6px)',
-                          color: '#ffffff',
-                          border: '1px solid rgba(255,255,255,0.35)',
-                          borderRadius: '8px',
-                          padding: '5px 12px',
-                          fontSize: '0.74rem',
-                          fontWeight: 800,
-                          cursor: 'pointer',
-                          display: 'flex',
-                          alignItems: 'center',
-                          gap: '5px',
-                        }}
-                      >
-                        <span>🖼️</span>
-                        <span>View Poster</span>
-                      </button>
-                    </div>
-                  )}
                 </div>
 
                 {/* Card Body */}

@@ -838,4 +838,27 @@ test('IGCSE Curriculum: School Data & Broadsheet Multi-Board Center Mapping', ()
   assert.ok(schoolDataContent.includes('dept-edx-stem'))
 })
 
+test('Institutional Architecture: 4 Canonical Faculties (Business, IT & Data Science, Language, IGCSE)', () => {
+  const institutionContent = fs.readFileSync(path.join(process.cwd(), 'src/config/institution.ts'), 'utf-8')
+  
+  // Verify exactly 4 schools configured
+  assert.ok(institutionContent.includes(`id: 'school-business'`))
+  assert.ok(institutionContent.includes(`name: 'School of Business'`))
+  assert.ok(institutionContent.includes(`id: 'school-it-data'`))
+  assert.ok(institutionContent.includes(`name: 'School of IT and Data Science'`))
+  assert.ok(institutionContent.includes(`id: 'school-languages'`))
+  assert.ok(institutionContent.includes(`name: 'School of Language'`))
+  assert.ok(institutionContent.includes(`id: 'school-igcse'`))
+  assert.ok(institutionContent.includes(`name: 'IGCSE'`))
 
+  // Verify Course Catalog Categories reflect the 4 schools
+  const catalogContent = fs.readFileSync(path.join(process.cwd(), 'src/features/courses/CourseCatalogPage.tsx'), 'utf-8')
+  assert.ok(catalogContent.includes(`'School of Business'`))
+  assert.ok(catalogContent.includes(`'School of IT and Data Science'`))
+  assert.ok(catalogContent.includes(`'School of Language'`))
+  assert.ok(catalogContent.includes(`'IGCSE'`))
+
+  // Verify View Poster button removed from IntakeAdvertsSection
+  const advertsContent = fs.readFileSync(path.join(process.cwd(), 'src/features/landing/IntakeAdvertsSection.tsx'), 'utf-8')
+  assert.ok(!advertsContent.includes('View Poster'))
+})

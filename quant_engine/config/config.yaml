@@ -1,0 +1,222 @@
+alpha_engine:
+  feedback:
+    enabled: true
+    min_trades_for_feedback: 5
+    rolling_trades: 30
+  scanner:
+    enabled: true
+    lookback_bars: 20
+    top_n_candidates: 3
+  trailing_stop:
+    breakeven_atr_buffer: 0.2
+    enabled: true
+    scale_out_pct: 0.5
+    tp1_atr_mult: 2.0
+    trail_atr_mult: 2.5
+backtest:
+  commission_pct: 0.05
+  end_date: '2024-12-31'
+  initial_balance_usd: 100000.0
+  slippage_pct: 0.02
+  start_date: '2020-01-01'
+credentials:
+  alpaca:
+    api_key_env: ALPACA_API_KEY
+    api_secret_env: ALPACA_API_SECRET
+    paper: true
+  binance:
+    api_key_env: BINANCE_API_KEY
+    api_secret_env: BINANCE_API_SECRET
+    testnet: true
+  bybit:
+    api_key_env: BYBIT_API_KEY
+    api_secret_env: BYBIT_API_SECRET
+    testnet: true
+  ibkr:
+    client_id: 1
+    host: 127.0.0.1
+    port: 7497
+  mt5:
+    login_env: MT5_LOGIN
+    password_env: MT5_PASSWORD
+    server_env: MT5_SERVER
+  oanda:
+    account_id_env: OANDA_ACCOUNT_ID
+    api_key_env: OANDA_API_KEY
+    practice: true
+database:
+  path: db/trades.sqlite
+  wal_mode: true
+events:
+  post_event_cooloff_minutes: 10
+  pre_event_blackout_minutes: 15
+  spread_max_multiplier: 2.5
+leverage:
+  crypto: 3
+  enabled: true
+  forex: 2
+  futures_exchange: binance
+  liquidation_buffer_atr: 1.5
+  margin_health_min_pct: 20.0
+  max_crypto: 20
+  max_forex: 10
+  max_stocks: 4
+  stocks: 1
+markets:
+  crypto:
+    enabled: true
+    exchange: binance
+    htf_timeframe: 4h
+    primary_timeframe: 15m
+    symbols:
+    # ── Large Cap (High liquidity, core positions) ──────────────────────
+    - BTC/USDT
+    - ETH/USDT
+    - BNB/USDT
+    - XRP/USDT
+    # ── Layer 1 Competitors (uncorrelated to ETH ecosystem) ────────────
+    - SOL/USDT
+    - ADA/USDT
+    - AVAX/USDT
+    - DOT/USDT
+    - NEAR/USDT
+    - ATOM/USDT
+    # ── Layer 2 / DeFi (different market cycles to L1) ─────────────────
+    - MATIC/USDT
+    - ARB/USDT
+    - LINK/USDT
+    # ── Commodities / Store-of-Value Crypto ────────────────────────────
+    - LTC/USDT
+    - DOGE/USDT
+    # ── Emerging Sectors (AI, Gaming, Web3) ────────────────────────────
+    - FET/USDT
+    - INJ/USDT
+    - RUNE/USDT
+    - UNI/USDT
+    - OP/USDT
+    timeframes:
+    - 1m
+    - 5m
+    - 15m
+    - 1h
+    - 4h
+    - 1d
+  forex:
+    broker: mt5
+    enabled: true
+    htf_timeframe: 4h
+    primary_timeframe: 15m
+    symbols:
+    - EURUSD
+    - GBPUSD
+    - USDJPY
+    - AUDUSD
+    - USDCAD
+    - XAUUSD
+    - XAGUSD
+    timeframes:
+    - 1m
+    - 5m
+    - 15m
+    - 1h
+    - 4h
+    - 1d
+  stocks_global:
+    broker: ibkr
+    enabled: false
+    exchanges:
+    - LSE
+    - XETRA
+    - TSE
+    - HKEX
+    - ASX
+    - NSE
+    htf_timeframe: 1d
+    primary_timeframe: 15m
+    symbols: []
+  stocks_us:
+    broker: alpaca
+    enabled: true
+    htf_timeframe: 1d
+    primary_timeframe: 15m
+    symbols:
+    # ── Broad Market ETFs (market direction gauge) ──────────────────────
+    - SPY
+    - QQQ
+    - IWM
+    # ── Mega Cap Tech (highest volume, tightest spreads) ────────────────
+    - AAPL
+    - MSFT
+    - NVDA
+    - GOOGL
+    - META
+    - TSLA
+    - AMD
+    # ── Finance / Banks (different regime to tech) ──────────────────────
+    - JPM
+    - GS
+    # ── Energy (oil price driven — uncorrelated to tech) ────────────────
+    - XOM
+    - CVX
+    # ── Healthcare / Biotech (defensive, low correlation) ───────────────
+    - JNJ
+    - UNH
+    # ── Consumer / Retail ────────────────────────────────────────────────
+    - AMZN
+    - COST
+    # ── Commodities via ETF (Gold, Silver — inflation hedge) ────────────
+    - GLD
+    - SLV
+    timeframes:
+    - 1m
+    - 5m
+    - 15m
+    - 1h
+    - 1d
+news:
+  keyword_watchlist:
+  - circuit breaker
+  - trading halt
+  - sec charges
+  - exchange hack
+  - exploit
+  - emergency rate
+  - black swan
+  sentiment_check_interval_sec: 5
+  sentiment_negative_threshold: -0.4
+regime:
+  hmm_lookback: 500
+  hmm_states: 4
+  hurst_lookback: 100
+  hurst_reverting_threshold: 0.45
+  hurst_trending_threshold: 0.55
+  volatility_lookback: 20
+risk:
+  atr_multiplier_stop: 2.0
+  atr_multiplier_target: 4.0
+  kelly_fraction: 0.5
+  max_correlated_exposure_pct: 15.0
+  max_daily_loss_pct: 3.0
+  max_open_positions: 10
+  max_risk_per_trade_pct: 1.0
+  synthetic_stops: true
+  use_breakeven_on_half_target: true
+system:
+  base_currency: USD
+  log_level: INFO
+  timezone: UTC
+telegram:
+  alerts:
+    circuit_breaker: true
+    daily_pnl: true
+    news_panic: true
+    risk_breach: true
+    trade_close: true
+    trade_open: true
+  bot_token_env: TELEGRAM_BOT_TOKEN
+  chat_id_env: TELEGRAM_CHAT_ID
+  commands_enabled: true
+  enabled: true
+trading:
+  mode: paper
+  paper_balance_usd: 100000.0

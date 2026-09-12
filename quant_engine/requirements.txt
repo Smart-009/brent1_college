@@ -1,0 +1,73 @@
+# =============================================================================
+# QUANT ENGINE — PINNED DEPENDENCIES
+# ALL versions are pinned to avoid silent breaking changes in production.
+# Do NOT upgrade any library without re-running the full test suite.
+# =============================================================================
+
+# ── Core async event loop
+# uvloop is Linux/Mac only (faster C-based asyncio replacement).
+# On Windows (development), standard asyncio is used automatically.
+# On Linux production VPS: pip install uvloop==0.19.0
+# uvloop==0.19.0  <-- uncomment ONLY on Linux/Mac production server
+
+# ── Numerical & Data processing
+numpy==1.26.4
+pandas==2.2.2
+scipy==1.13.1
+
+# ── Technical indicators (ATR, Bollinger, Keltner, ADX, etc.)
+pandas-ta==0.3.14b0
+
+# ── Statistical modelling (HMM for regime classification)
+hmmlearn==0.3.2
+
+# ── HTTP client (async)
+aiohttp==3.9.5
+aiofiles==23.2.1
+
+# ── WebSocket client (persistent, async)
+websockets==12.0
+
+# ── Crypto exchange connectivity (100+ exchanges)
+ccxt==4.3.18
+
+# ── US Stock broker (Alpaca)
+alpaca-py==0.26.0
+
+# ── MetaTrader 5 (Forex — Windows only)
+# Note: MetaTrader5 only installs on Windows where MT5 terminal is installed.
+# On Linux/Mac VPS, use the OANDA adapter instead.
+MetaTrader5==5.0.45; sys_platform == "win32"
+
+# ── Interactive Brokers (Global Stocks — optional, for IBKR live trading)
+ib_insync==0.9.86
+
+# ── News & NLP Sentiment (fast local model — no external API call)
+transformers==4.41.2
+torch==2.3.1
+# Lightweight VADER sentiment (sub-millisecond — local keyword matching)
+vaderSentiment==3.3.2
+
+# ── Economic calendar & news RSS feeds
+feedparser==6.0.11
+requests==2.32.3
+
+# ── Database (async SQLite — zero-cost persistent trade logging)
+aiosqlite==0.20.0
+
+# ── Configuration parsing
+PyYAML==6.0.1
+python-dotenv==1.0.1
+
+# ── Scheduling (cron-style recurring tasks)
+APScheduler==3.10.4
+
+# ── Logging (structured, colored, async-safe)
+loguru==0.7.2
+
+# ── Telegram alerts (Bot API)
+python-telegram-bot==21.3
+
+# ── Testing framework
+pytest==8.2.2
+pytest-asyncio==0.23.7

@@ -27,6 +27,7 @@ export interface CourseItem {
   syllabus?: { week: string; topic: string; practicalLab: string }[]
   schoolId?: string
   schoolName?: string
+  departmentName?: string
   yearLevel?: string
   examBoard?: string
   syllabusCode?: string
@@ -71,13 +72,10 @@ const buildCatalogCourses = (): CourseItem[] => {
 
 const CATEGORIES = [
   'All',
-  'Cambridge International (Years 9-11)',
-  'Pearson Edexcel International (Years 9-11)',
-  'Tech & Programming',
-  'Data Science & Research',
-  'Computer & Digital Skills',
-  'Business Tech & Accounting',
-  'Languages & Communication',
+  'School of Business',
+  'School of IT and Data Science',
+  'School of Language',
+  'IGCSE',
 ]
 
 const YEAR_LEVELS = [
@@ -105,12 +103,14 @@ export function CourseCatalogPage() {
   useEffect(() => {
     if (catParam) {
       const lower = catParam.toLowerCase()
-      if (lower.includes('cambridge')) {
-        setSelectedCat('Cambridge International (Years 9-11)')
-      } else if (lower.includes('edexcel')) {
-        setSelectedCat('Pearson Edexcel International (Years 9-11)')
-      } else if (lower.includes('british') || lower.includes('igcse')) {
-        setSelectedCat('Cambridge International (Years 9-11)')
+      if (lower.includes('business') || lower.includes('commerce') || lower.includes('accounting')) {
+        setSelectedCat('School of Business')
+      } else if (lower.includes('it') || lower.includes('data') || lower.includes('tech') || lower.includes('software') || lower.includes('programming') || lower.includes('design')) {
+        setSelectedCat('School of IT and Data Science')
+      } else if (lower.includes('lang') || lower.includes('ielts') || lower.includes('english')) {
+        setSelectedCat('School of Language')
+      } else if (lower.includes('igcse') || lower.includes('cambridge') || lower.includes('edexcel') || lower.includes('british')) {
+        setSelectedCat('IGCSE')
       } else {
         const found = CATEGORIES.find((c) => c.toLowerCase().includes(lower))
         if (found) setSelectedCat(found)
@@ -145,7 +145,44 @@ export function CourseCatalogPage() {
 
   const filteredCourses = useMemo(() => {
     return courses.filter((c) => {
-      const matchCat = selectedCat === 'All' || c.category === selectedCat
+      let matchCat = selectedCat === 'All'
+      if (!matchCat) {
+        if (selectedCat === 'School of Business') {
+          matchCat =
+            c.schoolId === 'school-business' ||
+            c.category === 'School of Business' ||
+            c.category === 'Business Tech & Accounting' ||
+            c.category === 'Business & Finance' ||
+            (!c.yearLevel && (c.departmentName?.toLowerCase().includes('business') || c.tag?.toLowerCase().includes('business')))
+        } else if (selectedCat === 'School of IT and Data Science') {
+          matchCat =
+            c.schoolId === 'school-it-data' ||
+            c.schoolId === 'school-software' ||
+            c.schoolId === 'school-data' ||
+            c.schoolId === 'school-design' ||
+            c.category === 'School of IT and Data Science' ||
+            c.category === 'Tech & Programming' ||
+            c.category === 'Data Science & Research' ||
+            c.category === 'Computer & Digital Skills' ||
+            c.category === 'Creative Arts & Design'
+        } else if (selectedCat === 'School of Language') {
+          matchCat =
+            c.schoolId === 'school-languages' ||
+            c.category === 'School of Language' ||
+            c.category === 'Languages & Communication'
+        } else if (selectedCat === 'IGCSE') {
+          matchCat =
+            c.schoolId === 'school-igcse' ||
+            c.schoolId === 'school-cambridge' ||
+            c.schoolId === 'school-edexcel' ||
+            c.category === 'IGCSE' ||
+            c.category.includes('International (Years 9-11)') ||
+            Boolean(c.yearLevel)
+        } else {
+          matchCat = c.category === selectedCat
+        }
+      }
+
       const matchSearch =
         !search ||
         c.title.toLowerCase().includes(search.toLowerCase()) ||
@@ -751,21 +788,15 @@ export function CourseCatalogPage() {
             {CATEGORIES.map((cat) => {
               const label =
                 cat === 'All'
-                  ? '🔥 All Programs'
-                  : cat === 'Cambridge International (Years 9-11)'
-                  ? '🇬🇧 Cambridge International (Years 9-11)'
-                  : cat === 'Pearson Edexcel International (Years 9-11)'
-                  ? '🇬🇧 Pearson Edexcel (Years 9-11)'
-                  : cat === 'Tech & Programming'
-                  ? '💻 Software & Web'
-                  : cat === 'Data Science & Research'
-                  ? '📊 Data Science & AI'
-                  : cat === 'Computer & Digital Skills'
-                  ? '⚡ Computer Packages & Design'
-                  : cat === 'Business Tech & Accounting'
-                  ? '🧾 Accounting & Business'
-                  : cat === 'Languages & Communication'
-                  ? '🗣️ Languages & IELTS'
+                  ? '🔥 All Academic Programs'
+                  : cat === 'School of Business'
+                  ? '💼 School of Business'
+                  : cat === 'School of IT and Data Science'
+                  ? '💻 School of IT and Data Science'
+                  : cat === 'School of Language'
+                  ? '🗣️ School of Language'
+                  : cat === 'IGCSE'
+                  ? '🇬🇧 IGCSE (Cambridge & Edexcel)'
                   : cat
               return (
                 <button
@@ -893,7 +924,7 @@ export function CourseCatalogPage() {
               🏛️ Academic Faculties & Specialized Departments
             </h2>
             <p style={{ fontSize: '0.85rem', color: '#94a3b8', margin: '4px 0 0' }}>
-              Explore our 7 distinct academic schools. Cambridge and Pearson Edexcel curricula operate with dedicated faculty, syllabus codes, and independent exam series.
+              Explore our 4 academic faculties: School of Business, School of IT and Data Science, School of Language, and IGCSE (British International Curriculum).
             </p>
           </div>
 

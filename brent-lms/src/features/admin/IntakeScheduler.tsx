@@ -598,24 +598,6 @@ export function IntakeScheduler() {
                             alt={`${intake.title} Poster`}
                             style={{ width: '100%', height: '100%', objectFit: 'cover' }}
                           />
-                          <div
-                            style={{
-                              position: 'absolute',
-                              bottom: 0,
-                              insetInline: 0,
-                              background: 'linear-gradient(to top, rgba(0,0,0,0.8), transparent)',
-                              color: '#ffffff',
-                              padding: '4px 8px',
-                              fontSize: '0.72rem',
-                              fontWeight: 800,
-                              display: 'flex',
-                              alignItems: 'center',
-                              gap: '4px',
-                            }}
-                          >
-                            <span>🖼️</span>
-                            <span>View Poster</span>
-                          </div>
                         </div>
                       ) : (
                         <div

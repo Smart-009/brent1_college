@@ -1,0 +1,93 @@
+# =============================================================================
+# QUANT ENGINE — SYMBOL WATCHLISTS
+# Organized by asset class and exchange/region.
+# Add or remove symbols here — no code changes needed.
+# =============================================================================
+
+crypto:
+  binance:
+    - "BTC/USDT"
+    - "ETH/USDT"
+    - "SOL/USDT"
+    - "BNB/USDT"
+    - "XRP/USDT"
+    - "AVAX/USDT"
+    - "DOGE/USDT"
+    - "MATIC/USDT"
+    - "LINK/USDT"
+    - "DOT/USDT"
+
+stocks_us:
+  # S&P 500 / Nasdaq core
+  alpaca:
+    indices_etfs:
+      - "SPY"     # S&P 500 ETF
+      - "QQQ"     # Nasdaq 100 ETF
+      - "IWM"     # Russell 2000 ETF
+      - "DIA"     # Dow Jones ETF
+    mega_cap:
+      - "AAPL"
+      - "MSFT"
+      - "NVDA"
+      - "GOOGL"
+      - "AMZN"
+      - "META"
+      - "TSLA"
+      - "AMD"
+      - "NFLX"
+      - "CRM"
+    sector_etfs:
+      - "XLF"     # Financials
+      - "SOXX"    # Semiconductors
+      - "XLE"     # Energy
+      - "XLK"     # Technology
+
+stocks_global:
+  lse:                          # London Stock Exchange (FTSE 100)
+    - "SHEL"    # Shell
+    - "AZN"     # AstraZeneca
+    - "HSBA"    # HSBC
+    - "BP"      # BP
+    - "ULVR"    # Unilever
+  xetra:                        # Frankfurt / DAX 40
+    - "SAP"
+    - "SIE"     # Siemens
+    - "BMW"
+    - "BAS"     # BASF
+    - "BAYER"
+  hkex:                         # Hong Kong
+    - "0700"    # Tencent
+    - "9988"    # Alibaba HK
+    - "3690"    # Meituan
+  tse:                          # Tokyo Stock Exchange (Nikkei)
+    - "7203"    # Toyota
+    - "6758"    # Sony
+    - "9984"    # SoftBank
+  asx:                          # Australian Securities Exchange
+    - "BHP"
+    - "CBA"     # Commonwealth Bank
+  nse:                          # India NSE
+    - "RELIANCE"
+    - "TCS"
+    - "INFY"
+
+forex:
+  majors:
+    - "EURUSD"
+    - "GBPUSD"
+    - "USDJPY"
+    - "USDCHF"
+    - "AUDUSD"
+    - "USDCAD"
+    - "NZDUSD"
+  minors:
+    - "EURGBP"
+    - "EURJPY"
+    - "GBPJPY"
+    - "AUDJPY"
+  metals:
+    - "XAUUSD"  # Gold
+    - "XAGUSD"  # Silver
+  energies:
+    - "USOIL"   # WTI Crude Oil
+    - "UKOIL"   # Brent Crude Oil
