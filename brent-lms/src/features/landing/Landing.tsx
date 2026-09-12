@@ -1,7 +1,5 @@
 import { useState, useMemo, useEffect, useRef } from 'react'
 import { Link, useNavigate, useLocation } from 'react-router-dom'
-import { YouTubeEmbed } from '@/components/shared/YouTubeEmbed'
-import { extractYouTubeId } from '@/lib/utils'
 import { useIsMobile } from '@/hooks/useMediaQuery'
 import { NativeAppHome } from './NativeAppHome'
 import { DesktopAppHome } from './DesktopAppHome'
@@ -370,9 +368,9 @@ const SAMPLE_LECTURE_TRACKS: LecturePreviewTrack[] = [
     faculty: 'Cambridge International',
     title: 'Cambridge IGCSE 0580: Quadratic Sequences & Algebraic Modeling',
     instructor: 'Dr. Kevin Kipruto • Lead Cambridge Examiner',
-    duration: '14:20 mins',
+    duration: '1:00 min',
     resolution: '1080p HD',
-    videoUrl: 'https://www.youtube.com/watch?v=8O5reRAn3M4',
+    videoUrl: '/videos/eclat-classroom-preview.mp4',
     description: 'Live interactive derivation of quadratic roots, vertex form transformations, and past paper examination technique for Higher Tier Papers 2H & 4H.',
     keyPoints: ['Quadratic Graphs & Vertex Coordinates', 'Higher Tier Past Paper Solving', 'Cambridge ICE Group Grading Strategy'],
     courseTitle: 'Cambridge IGCSE Mathematics (0580) Extended',
@@ -384,9 +382,9 @@ const SAMPLE_LECTURE_TRACKS: LecturePreviewTrack[] = [
     faculty: 'School of IT & Software',
     title: 'Full-Stack Web Dev: React 19 Components & Python API Architecture',
     instructor: 'Eng. Alex Vance • Senior Cloud Solutions Architect',
-    duration: '16:45 mins',
+    duration: '1:00 min',
     resolution: '1080p 60fps',
-    videoUrl: 'https://www.youtube.com/watch?v=bMknfKXIFA8',
+    videoUrl: '/videos/eclat-classroom-preview.mp4',
     description: 'Practical live terminal session building a full-stack dashboard with React 19 hooks, FastAPI REST endpoints, and PostgreSQL database queries.',
     keyPoints: ['React 19 Server Actions & Hooks', 'Python FastAPI REST Architecture', 'GitHub Pull Requests & CI/CD'],
     courseTitle: 'Full-Stack Web Dev (React 19 & Node.js)',
@@ -398,9 +396,9 @@ const SAMPLE_LECTURE_TRACKS: LecturePreviewTrack[] = [
     faculty: 'School of Language',
     title: 'IELTS Academic Speaking Mock: Band 8.5+ Lexical Resource & Fluency',
     instructor: 'Sarah Jenkins • Certified Cambridge Assessor',
-    duration: '12:10 mins',
+    duration: '1:00 min',
     resolution: '1080p HD',
-    videoUrl: 'https://www.youtube.com/watch?v=plez24i0vKk',
+    videoUrl: '/videos/eclat-classroom-preview.mp4',
     description: 'One-on-one live Zoom speaking simulation demonstrating Part 2 cue card structure, fluency markers, and complex idiomatic vocabulary.',
     keyPoints: ['Part 2 2-Minute Monologue Strategy', 'Band 9.0 Lexical Resource & Collocations', 'Eliminating Hesitation Fillers'],
     courseTitle: 'IELTS Academic & General Training',
@@ -412,9 +410,9 @@ const SAMPLE_LECTURE_TRACKS: LecturePreviewTrack[] = [
     faculty: 'School of Data Analytics',
     title: 'Data Science Masterclass: Multivariate Statistical Modeling & Python',
     instructor: 'Dr. Marcus Vance • Senior Quantitative Methodologist',
-    duration: '15:30 mins',
+    duration: '1:00 min',
     resolution: '1080p HD',
-    videoUrl: 'https://www.youtube.com/watch?v=ua-CiDNNj30',
+    videoUrl: '/videos/eclat-classroom-preview.mp4',
     description: 'Step-by-step thesis survey cleaning, demographic cross-tabulations, Cronbach Alpha reliability analysis, and regression modeling.',
     keyPoints: ['Survey Cleaning & Missing Values', 'Cronbach Alpha Scale Reliability', 'Multivariate Regression Diagnostics'],
     courseTitle: 'IBM SPSS & Stata Econometric Modeling',
@@ -426,9 +424,9 @@ const SAMPLE_LECTURE_TRACKS: LecturePreviewTrack[] = [
     faculty: 'Commerce & Management',
     title: 'Executive Project Management: PMP® Agile Sprints & Earned Value',
     instructor: 'David Omondi, PMP® • Global Corporate Consultant',
-    duration: '13:50 mins',
+    duration: '1:00 min',
     resolution: '1080p HD',
-    videoUrl: 'https://www.youtube.com/watch?v=rkgHgVpQpsU',
+    videoUrl: '/videos/eclat-classroom-preview.mp4',
     description: 'Executive case study examining Earned Value Management (EVM), critical path calculations, and hybrid Scrum project governance.',
     keyPoints: ['Earned Value Cost Performance Index (CPI)', 'Sprint Backlog & Velocity Tracking', 'PMP® 2026 Examination Scenarios'],
     courseTitle: 'Project Management Professional (PMP®)',
@@ -460,7 +458,6 @@ export function Landing() {
   const [activeVideoTrackIndex, setActiveVideoTrackIndex] = useState<number>(0)
   const [activeBgVideoTrackIndex, setActiveBgVideoTrackIndex] = useState<number>(0)
   const [bgVideoPlaying, setBgVideoPlaying] = useState<boolean>(true)
-  const [bgVideoSource, setBgVideoSource] = useState<'youtube' | 'local'>('youtube')
   const heroCanvasRef = useRef<HTMLCanvasElement | null>(null)
 
   // Ambient Interactive Digital Classroom Waveform & Starfield in Hero
@@ -1818,47 +1815,24 @@ export function Landing() {
               pointerEvents: 'none',
             }}
           >
-            {bgVideoSource === 'youtube' && extractYouTubeId(SAMPLE_LECTURE_TRACKS[activeBgVideoTrackIndex].videoUrl) ? (
-              <iframe
-                key={SAMPLE_LECTURE_TRACKS[activeBgVideoTrackIndex].id}
-                src={`https://www.youtube-nocookie.com/embed/${extractYouTubeId(SAMPLE_LECTURE_TRACKS[activeBgVideoTrackIndex].videoUrl)}?autoplay=1&mute=1&controls=0&showinfo=0&rel=0&loop=1&playlist=${extractYouTubeId(SAMPLE_LECTURE_TRACKS[activeBgVideoTrackIndex].videoUrl)}&playsinline=1&modestbranding=1&iv_load_policy=3&disablekb=1&enablejsapi=1`}
-                style={{
-                  position: 'absolute',
-                  top: '50%',
-                  left: '50%',
-                  width: '100vw',
-                  height: '56.25vw',
-                  minHeight: '100vh',
-                  minWidth: '177.77vh',
-                  transform: 'translate(-50%, -50%) scale(1.18)',
-                  border: 'none',
-                  opacity: 0.58,
-                  filter: 'saturate(1.25) contrast(1.15)',
-                  pointerEvents: 'none',
-                }}
-                allow="autoplay; encrypted-media"
-                title="Background Class Preview Video"
-              />
-            ) : (
-              <video
-                autoPlay
-                loop
-                muted
-                playsInline
-                style={{
-                  position: 'absolute',
-                  top: 0,
-                  left: 0,
-                  width: '100%',
-                  height: '100%',
-                  objectFit: 'cover',
-                  opacity: 0.52,
-                  filter: 'saturate(1.2) contrast(1.1)',
-                }}
-              >
-                <source src="/videos/eclat-classroom-preview.mp4" type="video/mp4" />
-              </video>
-            )}
+            <video
+              autoPlay
+              loop
+              muted
+              playsInline
+              style={{
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                width: '100%',
+                height: '100%',
+                objectFit: 'cover',
+                opacity: 0.52,
+                filter: 'saturate(1.2) contrast(1.1)',
+              }}
+            >
+              <source src="/videos/eclat-classroom-preview.mp4" type="video/mp4" />
+            </video>
 
             {/* Cinema Dark Mask Overlay to ensure hero text is 100% readable while the video plays vividly */}
             <div
@@ -1994,7 +1968,7 @@ export function Landing() {
                   boxShadow: '0 0 8px #ef4444',
                 }}
               />
-              <span>PLAYING IN BACKGROUND:</span>
+              <span>CAMPUS PREVIEW:</span>
             </span>
             <span style={{ fontWeight: 700, color: '#fef08a' }}>
               {SAMPLE_LECTURE_TRACKS[activeBgVideoTrackIndex].title}
@@ -2025,23 +1999,6 @@ export function Landing() {
               </button>
               <button
                 type="button"
-                onClick={() => setBgVideoSource(bgVideoSource === 'youtube' ? 'local' : 'youtube')}
-                style={{
-                  background: 'rgba(255, 255, 255, 0.08)',
-                  border: '1px solid rgba(255, 255, 255, 0.18)',
-                  color: '#cbd5e1',
-                  borderRadius: '999px',
-                  padding: '2px 8px',
-                  fontSize: '0.7rem',
-                  fontWeight: 600,
-                  cursor: 'pointer',
-                }}
-                title="Toggle between YouTube Lecture Live Stream and Campus Tour MP4"
-              >
-                {bgVideoSource === 'youtube' ? 'YouTube Live' : 'Campus MP4'}
-              </button>
-              <button
-                type="button"
                 onClick={() => {
                   setActiveVideoTrackIndex(activeBgVideoTrackIndex)
                   setShowVideoShowcaseModal(true)
@@ -2051,18 +2008,18 @@ export function Landing() {
                   border: 'none',
                   color: '#ffffff',
                   borderRadius: '999px',
-                  padding: '2px 10px',
+                  padding: '3px 12px',
                   fontSize: '0.72rem',
                   fontWeight: 700,
                   cursor: 'pointer',
                   display: 'inline-flex',
                   alignItems: 'center',
-                  gap: '4px',
+                  gap: '5px',
                 }}
                 title="Open video in full player modal with audio and details"
               >
                 <VideoIcon size={12} color="#ffffff" />
-                <span>Watch Fullscreen & Audio</span>
+                <span>Watch 1-Minute Preview</span>
               </button>
             </div>
           </div>
@@ -5441,7 +5398,7 @@ export function Landing() {
                 })}
               </div>
 
-              {/* YouTube Video Player Embed */}
+              {/* 1-Minute Class Preview Video Player (Local HTML5, Zero External Branding) */}
               <div
                 style={{
                   borderRadius: '12px',
@@ -5449,13 +5406,19 @@ export function Landing() {
                   background: '#000000',
                   border: '1px solid rgba(255, 255, 255, 0.1)',
                   boxShadow: '0 12px 32px rgba(0, 0, 0, 0.5)',
+                  position: 'relative',
+                  aspectRatio: '16/9',
                 }}
               >
-                <YouTubeEmbed
-                  url={SAMPLE_LECTURE_TRACKS[activeVideoTrackIndex].videoUrl}
-                  title={SAMPLE_LECTURE_TRACKS[activeVideoTrackIndex].title}
-                  autoPlay={true}
-                />
+                <video
+                  key={SAMPLE_LECTURE_TRACKS[activeVideoTrackIndex].id}
+                  controls
+                  autoPlay
+                  playsInline
+                  style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                >
+                  <source src={SAMPLE_LECTURE_TRACKS[activeVideoTrackIndex].videoUrl} type="video/mp4" />
+                </video>
               </div>
 
               {/* Active Lecture Details Panel */}
