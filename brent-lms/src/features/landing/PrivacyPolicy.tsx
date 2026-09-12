@@ -5,13 +5,12 @@ export function PrivacyPolicy() {
   const navigate = useNavigate()
 
   return (
-    <div style={{ minHeight: '100vh', background: '#070a12', color: '#f8fafc', fontFamily: 'Inter, system-ui, -apple-system, sans-serif' }}>
-      {/* Header */}
+    <div style={{ minHeight: '100vh', background: '#f8fafc', color: '#0f172a', fontFamily: 'Inter, system-ui, -apple-system, sans-serif' }}>
+      {/* Institutional Header */}
       <header
         style={{
-          background: 'rgba(11, 15, 25, 0.95)',
-          backdropFilter: 'blur(20px)',
-          borderBottom: '1px solid rgba(255, 255, 255, 0.1)',
+          background: '#ffffff',
+          borderBottom: '1px solid #e2e8f0',
           padding: '1rem 2rem',
           display: 'flex',
           justifyContent: 'space-between',
@@ -19,13 +18,14 @@ export function PrivacyPolicy() {
           position: 'sticky',
           top: 0,
           zIndex: 50,
+          boxShadow: '0 1px 3px rgba(0,0,0,0.05)',
         }}
       >
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', cursor: 'pointer' }} onClick={() => navigate('/')}>
-          <img src="/logo.png" alt="Éclat" style={{ width: '36px', height: '36px', borderRadius: '50%', border: '2px solid #d4af37' }} />
+          <img src="/logo.png" alt={INSTITUTION_CONFIG.name} style={{ width: '40px', height: '40px', borderRadius: '50%', border: '2px solid #d4af37' }} />
           <div>
-            <div style={{ fontSize: '1.1rem', fontWeight: 900, color: '#d4af37' }}>{INSTITUTION_CONFIG.name}</div>
-            <div style={{ fontSize: '0.7rem', color: '#94a3b8' }}>Academic Learning & Management Portal</div>
+            <div style={{ fontSize: '1.15rem', fontWeight: 900, color: '#0f172a', letterSpacing: '0.02em' }}>{INSTITUTION_CONFIG.name}</div>
+            <div style={{ fontSize: '0.72rem', color: '#64748b', fontWeight: 600 }}>100% Online Virtual Campus • Directorate of Academic Affairs</div>
           </div>
         </div>
 
@@ -33,14 +33,15 @@ export function PrivacyPolicy() {
           type="button"
           onClick={() => navigate('/')}
           style={{
-            background: 'rgba(255, 255, 255, 0.08)',
-            border: '1px solid rgba(255, 255, 255, 0.2)',
-            color: '#f8fafc',
-            padding: '0.45rem 1rem',
+            background: '#0f172a',
+            border: 'none',
+            color: '#ffffff',
+            padding: '0.5rem 1.15rem',
             borderRadius: '8px',
             fontSize: '0.82rem',
             fontWeight: 700,
             cursor: 'pointer',
+            transition: 'background 0.15s ease',
           }}
         >
           ← Return to Home
@@ -48,61 +49,91 @@ export function PrivacyPolicy() {
       </header>
 
       {/* Main Content */}
-      <main style={{ maxWidth: '850px', margin: '0 auto', padding: '3rem 1.5rem', lineHeight: 1.75 }}>
-        <div style={{ marginBottom: '2rem' }}>
-          <span style={{ background: 'rgba(59, 130, 246, 0.2)', color: '#60a5fa', padding: '4px 10px', borderRadius: '20px', fontSize: '0.75rem', fontWeight: 800, textTransform: 'uppercase' }}>
-            Legal & Compliance
+      <main style={{ maxWidth: '860px', margin: '0 auto', padding: '3.5rem 1.5rem', lineHeight: 1.75 }}>
+        <div style={{ marginBottom: '2.5rem' }}>
+          <span style={{ background: '#eff6ff', color: '#1d4ed8', border: '1px solid #bfdbfe', padding: '4px 12px', borderRadius: '20px', fontSize: '0.75rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.04em' }}>
+            Institutional Governance & Compliance
           </span>
-          <h1 style={{ fontSize: '2.2rem', fontWeight: 900, color: '#ffffff', margin: '0.75rem 0 0.5rem' }}>
+          <h1 style={{ fontSize: '2.3rem', fontWeight: 900, color: '#0f172a', margin: '0.85rem 0 0.5rem', lineHeight: 1.2 }}>
             Privacy Policy & Student Data Protection
           </h1>
-          <p style={{ color: '#94a3b8', fontSize: '0.88rem' }}>
-            Last Updated: September 2026 • Applicable to Web, Android, iOS, and Microsoft Windows Applications.
+          <p style={{ color: '#64748b', fontSize: '0.9rem' }}>
+            Official Institutional Policy • Applicable to all {INSTITUTION_CONFIG.name} online learning portals, mobile applications, and academic services.
           </p>
         </div>
 
-        <section style={{ background: 'rgba(15, 23, 42, 0.6)', border: '1px solid rgba(255, 255, 255, 0.08)', borderRadius: '16px', padding: '2rem', marginBottom: '2rem' }}>
-          <h2 style={{ fontSize: '1.25rem', color: '#60a5fa', fontWeight: 800, marginTop: 0 }}>1. Institutional Commitment to Privacy</h2>
-          <p style={{ color: '#cbd5e1' }}>
-            {INSTITUTION_CONFIG.name} is dedicated to safeguarding the privacy and personal data of our trainees, faculty members, parents, and administrative staff. This policy outlines how educational records, account credentials, and learning progress data are processed across all official client applications.
+        {/* Section 1 */}
+        <section style={{ background: '#ffffff', border: '1px solid #e2e8f0', borderRadius: '16px', padding: '2rem', marginBottom: '1.75rem', boxShadow: '0 2px 8px rgba(0,0,0,0.03)' }}>
+          <h2 style={{ fontSize: '1.25rem', color: '#0f172a', fontWeight: 800, marginTop: 0, borderBottom: '1px solid #f1f5f9', paddingBottom: '0.65rem', marginBottom: '1rem' }}>
+            1. Institutional Commitment to Privacy
+          </h2>
+          <p style={{ color: '#334155' }}>
+            {INSTITUTION_CONFIG.name} is dedicated to protecting the confidentiality, integrity, and privacy of our students, applicants, faculty, and stakeholders. This policy sets forth our standards for collecting, maintaining, and protecting academic and personal records across all instructional and administrative portals.
           </p>
         </section>
 
-        <section style={{ background: 'rgba(15, 23, 42, 0.6)', border: '1px solid rgba(255, 255, 255, 0.08)', borderRadius: '16px', padding: '2rem', marginBottom: '2rem' }}>
-          <h2 style={{ fontSize: '1.25rem', color: '#60a5fa', fontWeight: 800, marginTop: 0 }}>2. Information Collected</h2>
-          <ul style={{ color: '#cbd5e1', paddingLeft: '1.25rem' }}>
-            <li><strong>Student Identity Data:</strong> Full name, admission number, program of study, and contact email.</li>
-            <li><strong>Academic Performance:</strong> Course unit registrations, exam results, lesson completion statistics, and attendance logs.</li>
-            <li><strong>Financial & Fee Records:</strong> Tuition fee invoices, transaction reference codes, and installment receipts.</li>
-            <li><strong>Device Security Signals:</strong> Anonymous client platform type (Windows, Android, iOS) used strictly for digital rights management (DRM) and session integrity.</li>
+        {/* Section 2 */}
+        <section style={{ background: '#ffffff', border: '1px solid #e2e8f0', borderRadius: '16px', padding: '2rem', marginBottom: '1.75rem', boxShadow: '0 2px 8px rgba(0,0,0,0.03)' }}>
+          <h2 style={{ fontSize: '1.25rem', color: '#0f172a', fontWeight: 800, marginTop: 0, borderBottom: '1px solid #f1f5f9', paddingBottom: '0.65rem', marginBottom: '1rem' }}>
+            2. Information Collected
+          </h2>
+          <ul style={{ color: '#334155', paddingLeft: '1.25rem', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+            <li><strong>Student Identification & Profile:</strong> Official full name, contact telephone, email address, national identification (where required for official accreditation), and assigned admission number.</li>
+            <li><strong>Academic Performance & Course Records:</strong> Course registrations, assignment submissions, examination grades, attendance logs, and verified certificate records.</li>
+            <li><strong>Tuition & Billing Data:</strong> Official payment receipts, transaction reference numbers, and installment schedules necessary for bursar clearance.</li>
+            <li><strong>Service Usage Information:</strong> Anonymous operational logs generated during normal platform usage to ensure reliable service delivery and account integrity.</li>
           </ul>
         </section>
 
-        <section style={{ background: 'rgba(15, 23, 42, 0.6)', border: '1px solid rgba(255, 255, 255, 0.08)', borderRadius: '16px', padding: '2rem', marginBottom: '2rem' }}>
-          <h2 style={{ fontSize: '1.25rem', color: '#60a5fa', fontWeight: 800, marginTop: 0 }}>3. Purpose of Processing</h2>
-          <p style={{ color: '#cbd5e1' }}>
-            Personal and academic information is collected solely for educational instruction, institutional administration, issuing academic transcripts, verifying tuition fee clearance, and delivering DRM-protected digital library resources. We do not sell, rent, or trade student data to commercial advertising brokers.
+        {/* Section 3 */}
+        <section style={{ background: '#ffffff', border: '1px solid #e2e8f0', borderRadius: '16px', padding: '2rem', marginBottom: '1.75rem', boxShadow: '0 2px 8px rgba(0,0,0,0.03)' }}>
+          <h2 style={{ fontSize: '1.25rem', color: '#0f172a', fontWeight: 800, marginTop: 0, borderBottom: '1px solid #f1f5f9', paddingBottom: '0.65rem', marginBottom: '1rem' }}>
+            3. Purpose of Processing
+          </h2>
+          <p style={{ color: '#334155', marginBottom: '0.75rem' }}>
+            Personal and academic data is collected solely for legitimate educational and institutional administration purposes, including:
+          </p>
+          <ul style={{ color: '#334155', paddingLeft: '1.25rem', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+            <li>Delivering online live lectures, course materials, and virtual lab sessions.</li>
+            <li>Verifying student eligibility, evaluating academic performance, and issuing accredited certificates and transcripts.</li>
+            <li>Facilitating official fee billing, tuition payment processing, and Bursar clearance passes.</li>
+            <li>Communicating urgent academic notices, cohort schedules, and institutional announcements.</li>
+          </ul>
+          <p style={{ color: '#334155', marginTop: '0.85rem' }}>
+            {INSTITUTION_CONFIG.name} does not sell, rent, or commercialize student personal information to any third parties or advertising brokers.
           </p>
         </section>
 
-        <section style={{ background: 'rgba(15, 23, 42, 0.6)', border: '1px solid rgba(255, 255, 255, 0.08)', borderRadius: '16px', padding: '2rem', marginBottom: '2rem' }}>
-          <h2 style={{ fontSize: '1.25rem', color: '#60a5fa', fontWeight: 800, marginTop: 0 }}>4. Data Security & Storage</h2>
-          <p style={{ color: '#cbd5e1' }}>
-            All transmissions between our client applications and database servers are protected with Transport Layer Security (TLS 1.3). Database access is strictly partitioned through Row-Level Security (RLS) policies guaranteeing multi-tenant isolation.
+        {/* Section 4 */}
+        <section style={{ background: '#ffffff', border: '1px solid #e2e8f0', borderRadius: '16px', padding: '2rem', marginBottom: '1.75rem', boxShadow: '0 2px 8px rgba(0,0,0,0.03)' }}>
+          <h2 style={{ fontSize: '1.25rem', color: '#0f172a', fontWeight: 800, marginTop: 0, borderBottom: '1px solid #f1f5f9', paddingBottom: '0.65rem', marginBottom: '1rem' }}>
+            4. Information Security & Protection
+          </h2>
+          <p style={{ color: '#334155', marginBottom: '0.75rem' }}>
+            We implement comprehensive organizational, technical, and administrative measures designed to safeguard student records and personal information against unauthorized access, loss, misuse, or alteration.
           </p>
+          <ul style={{ color: '#334155', paddingLeft: '1.25rem', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+            <li><strong>Encrypted Communications:</strong> All network traffic across our web and mobile services is protected with standard end-to-end cryptographic encryption.</li>
+            <li><strong>Controlled Access:</strong> Institutional systems enforce strict role-based access controls, ensuring only authorized personnel access records on a verified need-to-know basis.</li>
+            <li><strong>Account Integrity:</strong> Secure authentication mechanisms are enforced to protect student and staff accounts from unauthorized access.</li>
+            <li><strong>Continuous Safeguards:</strong> Regular security audits, software updates, and routine backups are conducted to maintain service resilience.</li>
+          </ul>
         </section>
 
-        <section style={{ background: 'rgba(15, 23, 42, 0.6)', border: '1px solid rgba(255, 255, 255, 0.08)', borderRadius: '16px', padding: '2rem', marginBottom: '2rem' }}>
-          <h2 style={{ fontSize: '1.25rem', color: '#60a5fa', fontWeight: 800, marginTop: 0 }}>5. Student Rights & Contact</h2>
-          <p style={{ color: '#cbd5e1' }}>
-            Enrolled students may request access to their academic records, correction of profile details, or account deactivation by contacting the Office of the Academic Registrar or emailing <strong>{INSTITUTION_CONFIG.contact.email}</strong>.
+        {/* Section 5 */}
+        <section style={{ background: '#ffffff', border: '1px solid #e2e8f0', borderRadius: '16px', padding: '2rem', marginBottom: '1.75rem', boxShadow: '0 2px 8px rgba(0,0,0,0.03)' }}>
+          <h2 style={{ fontSize: '1.25rem', color: '#0f172a', fontWeight: 800, marginTop: 0, borderBottom: '1px solid #f1f5f9', paddingBottom: '0.65rem', marginBottom: '1rem' }}>
+            5. Student Rights & Data Inquiries
+          </h2>
+          <p style={{ color: '#334155' }}>
+            Students maintain the right to review their official academic records, request profile corrections, or submit inquiries regarding institutional data practices. Inquiries may be directed to the Office of the Registrar at <strong>{INSTITUTION_CONFIG.contact.email}</strong> or via official student support desk hotlines.
           </p>
         </section>
       </main>
 
       {/* Footer */}
-      <footer style={{ borderTop: '1px solid rgba(255, 255, 255, 0.08)', padding: '1.5rem', textAlign: 'center', color: '#64748b', fontSize: '0.8rem' }}>
-        © 2026 {INSTITUTION_CONFIG.name} • All Rights Reserved.
+      <footer style={{ borderTop: '1px solid #e2e8f0', background: '#ffffff', padding: '2rem 1.5rem', textAlign: 'center', color: '#64748b', fontSize: '0.85rem' }}>
+        © {new Date().getFullYear()} {INSTITUTION_CONFIG.name} • Directorate of Academic Affairs & Compliance. All Rights Reserved.
       </footer>
     </div>
   )
