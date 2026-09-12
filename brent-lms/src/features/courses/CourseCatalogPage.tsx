@@ -234,8 +234,8 @@ export function CourseCatalogPage() {
     <div
       style={{
         minHeight: '100vh',
-        background: '#090d16',
-        color: '#f8fafc',
+        background: '#f8fafc',
+        color: '#0f172a',
         fontFamily: 'Inter, system-ui, -apple-system, sans-serif',
         paddingBottom: 'calc(80px + env(safe-area-inset-bottom, 0px))',
       }}
@@ -248,23 +248,24 @@ export function CourseCatalogPage() {
           position: 'sticky',
           top: 0,
           zIndex: 100,
-          background: 'rgba(9, 13, 22, 0.95)',
+          background: 'rgba(255, 255, 255, 0.96)',
           backdropFilter: 'blur(20px)',
-          borderBottom: '1px solid rgba(255, 255, 255, 0.08)',
+          borderBottom: '1px solid #e2e8f0',
           padding: '0.85rem 1.25rem',
           display: 'flex',
           justifyContent: 'space-between',
           alignItems: 'center',
+          boxShadow: '0 1px 3px rgba(0, 0, 0, 0.05)',
         }}
       >
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
           <Link to="/" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '0.65rem' }}>
-            <img src="/logo.png" alt="Éclat Emblem" style={{ width: '36px', height: '36px', borderRadius: '50%', border: '2px solid #d4af37' }} />
+            <img src="/logo.png" alt="Éclat Emblem" style={{ width: '36px', height: '36px', borderRadius: '50%', border: '2px solid #1d4ed8' }} />
             <div>
-              <div style={{ fontSize: '1.05rem', fontWeight: 900, color: '#d4af37', fontFamily: 'var(--font-heading)', lineHeight: 1.1 }}>
+              <div style={{ fontSize: '1.05rem', fontWeight: 900, color: '#1e3a8a', fontFamily: 'var(--font-heading)', lineHeight: 1.1 }}>
                 ÉCLAT INSTITUTE
               </div>
-              <div style={{ fontSize: '0.65rem', color: '#94a3b8', fontWeight: 600 }}>
+              <div style={{ fontSize: '0.65rem', color: '#64748b', fontWeight: 600 }}>
                 Academic Programs & Syllabus Directory
               </div>
             </div>
@@ -276,20 +277,20 @@ export function CourseCatalogPage() {
             to="/about"
             className="hidden md:inline-flex"
             style={{
-              background: 'rgba(56, 189, 248, 0.1)',
-              color: '#38bdf8',
+              background: '#eff6ff',
+              color: '#1d4ed8',
               padding: '0.45rem 0.8rem',
               borderRadius: '8px',
               fontSize: '0.78rem',
               fontWeight: 700,
               textDecoration: 'none',
-              border: '1px solid rgba(56, 189, 248, 0.25)',
+              border: '1px solid #bfdbfe',
               display: 'inline-flex',
               alignItems: 'center',
               gap: '6px',
             }}
           >
-            <BuildingIcon size={14} color="#38bdf8" />
+            <BuildingIcon size={14} color="#1d4ed8" />
             <span>About Us</span>
           </Link>
 
@@ -297,34 +298,34 @@ export function CourseCatalogPage() {
             to="/library"
             className="hidden md:inline-flex"
             style={{
-              background: 'rgba(255, 255, 255, 0.08)',
-              color: '#cbd5e1',
+              background: '#f8fafc',
+              color: '#334155',
               padding: '0.45rem 0.8rem',
               borderRadius: '8px',
               fontSize: '0.78rem',
               fontWeight: 700,
               textDecoration: 'none',
-              border: '1px solid rgba(255, 255, 255, 0.12)',
+              border: '1px solid #cbd5e1',
               display: 'inline-flex',
               alignItems: 'center',
               gap: '6px',
             }}
           >
-            <LibraryIcon size={14} color="#cbd5e1" />
+            <LibraryIcon size={14} color="#64748b" />
             <span>E-Library</span>
           </Link>
 
           <Link
             to={profile ? (profile.role === 'admin' ? '/admin' : profile.role === 'teacher' ? '/teacher' : '/student') : '/login'}
             style={{
-              background: '#2563eb',
+              background: '#1d4ed8',
               color: '#ffffff',
               padding: '0.45rem 0.85rem',
               borderRadius: '8px',
               fontSize: '0.78rem',
               fontWeight: 800,
               textDecoration: 'none',
-              boxShadow: '0 2px 10px rgba(37, 99, 235, 0.3)',
+              boxShadow: '0 2px 10px rgba(29, 78, 216, 0.25)',
               whiteSpace: 'nowrap',
               display: 'inline-flex',
               alignItems: 'center',
@@ -340,9 +341,9 @@ export function CourseCatalogPage() {
             type="button"
             className="md:hidden"
             style={{
-              background: mobileMenuOpen ? '#0f172a' : '#1e293b',
-              color: '#ffffff',
-              border: '1px solid rgba(255, 255, 255, 0.15)',
+              background: mobileMenuOpen ? '#eff6ff' : '#f1f5f9',
+              color: '#0f172a',
+              border: '1px solid #cbd5e1',
               width: '38px',
               height: '38px',
               borderRadius: '8px',
@@ -355,7 +356,7 @@ export function CourseCatalogPage() {
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             aria-label={mobileMenuOpen ? 'Close Navigation Menu' : 'Open Navigation Menu'}
           >
-            {mobileMenuOpen ? <XIcon size={18} color="#ffffff" /> : <MenuIcon size={18} color="#ffffff" />}
+            {mobileMenuOpen ? <XIcon size={18} color="#0f172a" /> : <MenuIcon size={18} color="#0f172a" />}
           </button>
         </div>
 
@@ -369,7 +370,7 @@ export function CourseCatalogPage() {
               left: 0,
               right: 0,
               bottom: 0,
-              background: 'rgba(5, 8, 15, 0.72)',
+              background: 'rgba(15, 23, 42, 0.5)',
               backdropFilter: 'blur(6px)',
               WebkitBackdropFilter: 'blur(6px)',
               zIndex: 9998,
@@ -387,9 +388,9 @@ export function CourseCatalogPage() {
               right: 0,
               bottom: 0,
               width: 'min(330px, 86vw)',
-              background: '#090d16',
-              borderLeft: '1px solid rgba(212, 175, 55, 0.25)',
-              boxShadow: '-10px 0 40px rgba(0, 0, 0, 0.7)',
+              background: '#ffffff',
+              borderLeft: '1px solid #e2e8f0',
+              boxShadow: '-10px 0 40px rgba(0, 0, 0, 0.15)',
               zIndex: 9999,
               display: 'flex',
               flexDirection: 'column',
@@ -403,21 +404,21 @@ export function CourseCatalogPage() {
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'space-between',
-                borderBottom: '1px solid rgba(255, 255, 255, 0.08)',
-                background: 'rgba(15, 23, 42, 0.8)',
+                borderBottom: '1px solid #e2e8f0',
+                background: '#f8fafc',
               }}
             >
               <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem' }}>
                 <img
                   src="/logo.png"
                   alt="Éclat Institute Logo"
-                  style={{ width: '32px', height: '32px', borderRadius: '50%', border: '1.5px solid #d4af37' }}
+                  style={{ width: '32px', height: '32px', borderRadius: '50%', border: '1.5px solid #1d4ed8' }}
                 />
                 <div>
-                  <div style={{ fontSize: '0.95rem', fontWeight: 900, color: '#d4af37', fontFamily: 'var(--font-heading)', lineHeight: 1.1 }}>
+                  <div style={{ fontSize: '0.95rem', fontWeight: 900, color: '#1e3a8a', fontFamily: 'var(--font-heading)', lineHeight: 1.1 }}>
                     ÉCLAT INSTITUTE
                   </div>
-                  <div style={{ fontSize: '0.62rem', color: '#94a3b8', fontWeight: 600 }}>
+                  <div style={{ fontSize: '0.62rem', color: '#64748b', fontWeight: 600 }}>
                     100% Online Virtual Campus
                   </div>
                 </div>
@@ -427,9 +428,9 @@ export function CourseCatalogPage() {
                 type="button"
                 onClick={() => setMobileMenuOpen(false)}
                 style={{
-                  background: 'rgba(255, 255, 255, 0.08)',
-                  border: '1px solid rgba(255, 255, 255, 0.12)',
-                  color: '#ffffff',
+                  background: '#f1f5f9',
+                  border: '1px solid #cbd5e1',
+                  color: '#0f172a',
                   width: '32px',
                   height: '32px',
                   borderRadius: '8px',
@@ -442,7 +443,7 @@ export function CourseCatalogPage() {
                 }}
                 aria-label="Close menu"
               >
-                <XIcon size={18} />
+                <XIcon size={18} color="#0f172a" />
               </button>
             </div>
 
@@ -456,9 +457,10 @@ export function CourseCatalogPage() {
                 display: 'flex',
                 flexDirection: 'column',
                 gap: '0.35rem',
+                background: '#ffffff',
               }}
             >
-              <div style={{ fontSize: '0.68rem', fontWeight: 800, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.08em', margin: '0.35rem 0 0.25rem 0.35rem' }}>
+              <div style={{ fontSize: '0.68rem', fontWeight: 800, color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.08em', margin: '0.35rem 0 0.25rem 0.35rem' }}>
                 Academic Directory
               </div>
 
@@ -466,7 +468,7 @@ export function CourseCatalogPage() {
                 to="/"
                 onClick={() => setMobileMenuOpen(false)}
                 style={{
-                  color: '#f8fafc',
+                  color: '#0f172a',
                   textDecoration: 'none',
                   padding: '0.65rem 0.8rem',
                   borderRadius: '10px',
@@ -475,10 +477,11 @@ export function CourseCatalogPage() {
                   gap: '10px',
                   fontSize: '0.9rem',
                   fontWeight: 700,
-                  background: 'rgba(255, 255, 255, 0.04)',
+                  background: '#f8fafc',
+                  border: '1px solid #e2e8f0',
                 }}
               >
-                <HomeIcon size={18} color="#cbd5e1" />
+                <HomeIcon size={18} color="#0f172a" />
                 <span>Home</span>
               </Link>
 
@@ -486,7 +489,7 @@ export function CourseCatalogPage() {
                 to="/courses"
                 onClick={() => setMobileMenuOpen(false)}
                 style={{
-                  color: '#38bdf8',
+                  color: '#1d4ed8',
                   textDecoration: 'none',
                   padding: '0.65rem 0.8rem',
                   borderRadius: '10px',
@@ -495,11 +498,11 @@ export function CourseCatalogPage() {
                   gap: '10px',
                   fontSize: '0.9rem',
                   fontWeight: 800,
-                  background: 'rgba(56, 189, 248, 0.1)',
-                  border: '1px solid rgba(56, 189, 248, 0.25)',
+                  background: '#eff6ff',
+                  border: '1px solid #bfdbfe',
                 }}
               >
-                <BookOpenIcon size={18} color="#38bdf8" />
+                <BookOpenIcon size={18} color="#1d4ed8" />
                 <span>Course Catalog & Programs</span>
               </Link>
 
@@ -510,7 +513,7 @@ export function CourseCatalogPage() {
                   setMobileMenuOpen(false)
                 }}
                 style={{
-                  color: '#38bdf8',
+                  color: '#0284c7',
                   textDecoration: 'none',
                   padding: '0.65rem 0.8rem',
                   borderRadius: '10px',
@@ -519,8 +522,8 @@ export function CourseCatalogPage() {
                   gap: '10px',
                   fontSize: '0.88rem',
                   fontWeight: 800,
-                  background: 'rgba(56, 189, 248, 0.1)',
-                  border: '1px solid rgba(56, 189, 248, 0.25)',
+                  background: '#f0f9ff',
+                  border: '1px solid #bae6fd',
                 }}
               >
                 <BritishShieldIcon size={18} />
@@ -534,7 +537,7 @@ export function CourseCatalogPage() {
                   setMobileMenuOpen(false)
                 }}
                 style={{
-                  color: '#f87171',
+                  color: '#dc2626',
                   textDecoration: 'none',
                   padding: '0.65rem 0.8rem',
                   borderRadius: '10px',
@@ -543,8 +546,8 @@ export function CourseCatalogPage() {
                   gap: '10px',
                   fontSize: '0.88rem',
                   fontWeight: 800,
-                  background: 'rgba(239, 68, 68, 0.1)',
-                  border: '1px solid rgba(239, 68, 68, 0.25)',
+                  background: '#fef2f2',
+                  border: '1px solid #fecaca',
                 }}
               >
                 <BritishShieldIcon size={18} />
@@ -555,7 +558,7 @@ export function CourseCatalogPage() {
                 to="/#intakes-section"
                 onClick={() => setMobileMenuOpen(false)}
                 style={{
-                  color: '#fbbf24',
+                  color: '#b45309',
                   textDecoration: 'none',
                   padding: '0.65rem 0.8rem',
                   borderRadius: '10px',
@@ -564,10 +567,11 @@ export function CourseCatalogPage() {
                   gap: '10px',
                   fontSize: '0.88rem',
                   fontWeight: 700,
-                  background: 'rgba(251, 191, 36, 0.08)',
+                  background: '#fefce8',
+                  border: '1px solid #fef08a',
                 }}
               >
-                <CalendarIcon size={18} color="#fbbf24" />
+                <CalendarIcon size={18} color="#b45309" />
                 <span>Upcoming Intakes & Admissions</span>
               </Link>
 
@@ -575,7 +579,7 @@ export function CourseCatalogPage() {
                 to="/library"
                 onClick={() => setMobileMenuOpen(false)}
                 style={{
-                  color: '#f8fafc',
+                  color: '#0f172a',
                   textDecoration: 'none',
                   padding: '0.65rem 0.8rem',
                   borderRadius: '10px',
@@ -584,10 +588,11 @@ export function CourseCatalogPage() {
                   gap: '10px',
                   fontSize: '0.88rem',
                   fontWeight: 700,
-                  background: 'rgba(255, 255, 255, 0.04)',
+                  background: '#f8fafc',
+                  border: '1px solid #e2e8f0',
                 }}
               >
-                <LibraryIcon size={18} color="#cbd5e1" />
+                <LibraryIcon size={18} color="#0f172a" />
                 <span>Free E-Library & Past Papers</span>
               </Link>
 
@@ -595,7 +600,7 @@ export function CourseCatalogPage() {
                 to="/#calculator"
                 onClick={() => setMobileMenuOpen(false)}
                 style={{
-                  color: '#f8fafc',
+                  color: '#0f172a',
                   textDecoration: 'none',
                   padding: '0.65rem 0.8rem',
                   borderRadius: '10px',
@@ -604,10 +609,11 @@ export function CourseCatalogPage() {
                   gap: '10px',
                   fontSize: '0.88rem',
                   fontWeight: 700,
-                  background: 'rgba(255, 255, 255, 0.04)',
+                  background: '#f8fafc',
+                  border: '1px solid #e2e8f0',
                 }}
               >
-                <CalculatorIcon size={18} color="#cbd5e1" />
+                <CalculatorIcon size={18} color="#0f172a" />
                 <span>Tuition Fees Inquiry</span>
               </Link>
 
@@ -615,7 +621,7 @@ export function CourseCatalogPage() {
                 to="/timetable"
                 onClick={() => setMobileMenuOpen(false)}
                 style={{
-                  color: '#f8fafc',
+                  color: '#0f172a',
                   textDecoration: 'none',
                   padding: '0.65rem 0.8rem',
                   borderRadius: '10px',
@@ -624,10 +630,11 @@ export function CourseCatalogPage() {
                   gap: '10px',
                   fontSize: '0.88rem',
                   fontWeight: 700,
-                  background: 'rgba(255, 255, 255, 0.04)',
+                  background: '#f8fafc',
+                  border: '1px solid #e2e8f0',
                 }}
               >
-                <ClockIcon size={18} color="#cbd5e1" />
+                <ClockIcon size={18} color="#0f172a" />
                 <span>Virtual Class Timetable</span>
               </Link>
 
@@ -635,7 +642,7 @@ export function CourseCatalogPage() {
                 to="/about"
                 onClick={() => setMobileMenuOpen(false)}
                 style={{
-                  color: '#f8fafc',
+                  color: '#0f172a',
                   textDecoration: 'none',
                   padding: '0.65rem 0.8rem',
                   borderRadius: '10px',
@@ -644,10 +651,11 @@ export function CourseCatalogPage() {
                   gap: '10px',
                   fontSize: '0.88rem',
                   fontWeight: 700,
-                  background: 'rgba(255, 255, 255, 0.04)',
+                  background: '#f8fafc',
+                  border: '1px solid #e2e8f0',
                 }}
               >
-                <BuildingIcon size={18} color="#cbd5e1" />
+                <BuildingIcon size={18} color="#0f172a" />
                 <span>About Éclat Institute</span>
               </Link>
             </div>
@@ -656,8 +664,8 @@ export function CourseCatalogPage() {
             <div
               style={{
                 padding: '1rem 1.1rem',
-                borderTop: '1px solid rgba(255, 255, 255, 0.08)',
-                background: 'rgba(15, 23, 42, 0.95)',
+                borderTop: '1px solid #e2e8f0',
+                background: '#f8fafc',
                 display: 'flex',
                 flexDirection: 'column',
                 gap: '0.6rem',
@@ -712,15 +720,15 @@ export function CourseCatalogPage() {
       </header>
 
       {/* Hero Header Strip */}
-      <div style={{ background: 'linear-gradient(180deg, rgba(30, 58, 138, 0.25) 0%, transparent 100%)', padding: '2rem 1.25rem 1.5rem', textAlign: 'center', maxWidth: '900px', margin: '0 auto' }}>
-        <span style={{ background: 'rgba(37, 99, 235, 0.2)', color: '#60a5fa', padding: '4px 14px', borderRadius: '999px', fontSize: '0.75rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.05em', border: '1px solid rgba(37, 99, 235, 0.3)', display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
-          <BookOpenIcon size={14} color="#60a5fa" />
+      <div style={{ background: '#f8fafc', padding: '2rem 1.25rem 1.5rem', textAlign: 'center', maxWidth: '900px', margin: '0 auto' }}>
+        <span style={{ background: '#eff6ff', color: '#1d4ed8', padding: '4px 14px', borderRadius: '999px', fontSize: '0.75rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.05em', border: '1px solid #bfdbfe', display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
+          <BookOpenIcon size={14} color="#1d4ed8" />
           <span>2026 Academic Catalog</span>
         </span>
-        <h1 style={{ fontSize: 'clamp(1.5rem, 3.5vw, 2.2rem)', fontWeight: 900, color: '#ffffff', margin: '0.75rem 0 0.4rem', fontFamily: 'var(--font-heading)' }}>
+        <h1 style={{ fontSize: 'clamp(1.5rem, 3.5vw, 2.2rem)', fontWeight: 900, color: '#0f172a', margin: '0.75rem 0 0.4rem', fontFamily: 'var(--font-heading)' }}>
           Explore Certified Career Masterclasses
         </h1>
-        <p style={{ fontSize: '0.9rem', color: '#94a3b8', margin: 0, lineHeight: 1.5 }}>
+        <p style={{ fontSize: '0.9rem', color: '#475569', margin: 0, lineHeight: 1.5 }}>
           100% online live classes across flexible shifts (Early Morning, Late Morning, Midday, Afternoon, Evening & Night), verifiable global certificates, real-world practical projects, and flexible 2-month installment fee plans.
         </p>
 
@@ -729,8 +737,8 @@ export function CourseCatalogPage() {
           <div
             style={{
               marginTop: '1.25rem',
-              background: 'linear-gradient(135deg, rgba(30, 58, 138, 0.6) 0%, rgba(15, 23, 42, 0.9) 100%)',
-              border: '1.5px solid rgba(212, 175, 55, 0.4)',
+              background: 'linear-gradient(135deg, #1e3a8a 0%, #1e40af 100%)',
+              border: '1.5px solid #d4af37',
               borderRadius: '16px',
               padding: '1rem 1.25rem',
               display: 'flex',
@@ -739,7 +747,7 @@ export function CourseCatalogPage() {
               flexWrap: 'wrap',
               gap: '0.75rem',
               textAlign: 'left',
-              boxShadow: '0 8px 24px rgba(0,0,0,0.3)',
+              boxShadow: '0 8px 24px rgba(30, 58, 138, 0.25)',
             }}
           >
             <div>
@@ -803,7 +811,7 @@ export function CourseCatalogPage() {
           {/* Search Box */}
           <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
             <div style={{ position: 'absolute', left: '1rem', pointerEvents: 'none', display: 'flex', alignItems: 'center' }}>
-              <SearchIcon size={18} color="#94a3b8" />
+              <SearchIcon size={18} color="#64748b" />
             </div>
             <input
               type="text"
@@ -814,12 +822,12 @@ export function CourseCatalogPage() {
                 width: '100%',
                 padding: '0.85rem 1.1rem 0.85rem 2.8rem',
                 borderRadius: '14px',
-                background: '#131b2e',
-                border: '1px solid #24304d',
-                color: '#ffffff',
+                background: '#ffffff',
+                border: '1.5px solid #cbd5e1',
+                color: '#0f172a',
                 fontSize: '0.9rem',
                 outline: 'none',
-                boxShadow: '0 4px 14px rgba(0,0,0,0.2)',
+                boxShadow: '0 2px 8px rgba(0,0,0,0.04)',
               }}
             />
           </div>
@@ -835,19 +843,20 @@ export function CourseCatalogPage() {
             }}
           >
             {CATEGORIES.map((cat) => {
+              const isSel = selectedCat === cat
               const icon =
                 cat === 'All' ? (
-                  <SparklesIcon size={14} color={selectedCat === cat ? '#ffffff' : '#cbd5e1'} />
+                  <SparklesIcon size={14} color={isSel ? '#ffffff' : '#475569'} />
                 ) : cat === 'School of Business' ? (
-                  <BriefcaseIcon size={14} color={selectedCat === cat ? '#ffffff' : '#cbd5e1'} />
+                  <BriefcaseIcon size={14} color={isSel ? '#ffffff' : '#475569'} />
                 ) : cat === 'School of IT and Data Science' ? (
-                  <CodeIcon size={14} color={selectedCat === cat ? '#ffffff' : '#cbd5e1'} />
+                  <CodeIcon size={14} color={isSel ? '#ffffff' : '#475569'} />
                 ) : cat === 'School of Language' ? (
-                  <GlobeIcon size={14} color={selectedCat === cat ? '#ffffff' : '#cbd5e1'} />
+                  <GlobeIcon size={14} color={isSel ? '#ffffff' : '#475569'} />
                 ) : cat === 'IGCSE' ? (
                   <BritishShieldIcon size={14} />
                 ) : (
-                  <GraduationCapIcon size={14} color={selectedCat === cat ? '#ffffff' : '#cbd5e1'} />
+                  <GraduationCapIcon size={14} color={isSel ? '#ffffff' : '#475569'} />
                 )
 
               const label =
@@ -870,9 +879,9 @@ export function CourseCatalogPage() {
                   onClick={() => setSelectedCat(cat)}
                   style={{
                     flexShrink: 0,
-                    background: selectedCat === cat ? '#2563eb' : '#131b2e',
-                    color: selectedCat === cat ? '#ffffff' : '#cbd5e1',
-                    border: selectedCat === cat ? '1px solid #3b82f6' : '1px solid #24304d',
+                    background: isSel ? '#1d4ed8' : '#ffffff',
+                    color: isSel ? '#ffffff' : '#334155',
+                    border: isSel ? '1.5px solid #1d4ed8' : '1.5px solid #cbd5e1',
                     borderRadius: '999px',
                     padding: '0.45rem 0.95rem',
                     fontSize: '0.82rem',
@@ -884,6 +893,7 @@ export function CourseCatalogPage() {
                     display: 'inline-flex',
                     alignItems: 'center',
                     gap: '6px',
+                    boxShadow: isSel ? '0 2px 8px rgba(29, 78, 216, 0.2)' : '0 1px 3px rgba(0,0,0,0.03)',
                   }}
                 >
                   {icon}
@@ -900,49 +910,53 @@ export function CourseCatalogPage() {
               alignItems: 'center',
               gap: '0.5rem',
               overflowX: 'auto',
-              padding: '0.4rem 0.6rem',
-              background: 'rgba(15, 23, 42, 0.6)',
+              padding: '0.45rem 0.75rem',
+              background: '#ffffff',
               borderRadius: '12px',
-              border: '1px solid rgba(255, 255, 255, 0.06)',
+              border: '1px solid #e2e8f0',
+              boxShadow: '0 1px 3px rgba(0,0,0,0.03)',
             }}
           >
-            <span style={{ fontSize: '0.72rem', color: '#cbd5e1', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.04em', whiteSpace: 'nowrap', paddingLeft: '4px', display: 'inline-flex', alignItems: 'center', gap: '5px' }}>
-              <GraduationCapIcon size={14} color="#38bdf8" />
+            <span style={{ fontSize: '0.72rem', color: '#475569', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.04em', whiteSpace: 'nowrap', paddingLeft: '4px', display: 'inline-flex', alignItems: 'center', gap: '5px' }}>
+              <GraduationCapIcon size={14} color="#1d4ed8" />
               <span>Year Level:</span>
             </span>
-            {YEAR_LEVELS.map((lvl) => (
-              <button
-                key={lvl}
-                type="button"
-                onClick={() => setSelectedYear(lvl)}
-                style={{
-                  flexShrink: 0,
-                  background: selectedYear === lvl ? '#2563eb' : 'rgba(255, 255, 255, 0.05)',
-                  color: selectedYear === lvl ? '#ffffff' : '#cbd5e1',
-                  border: selectedYear === lvl ? '1px solid #3b82f6' : '1px solid rgba(255, 255, 255, 0.1)',
-                  borderRadius: '8px',
-                  padding: '0.3rem 0.75rem',
-                  fontSize: '0.76rem',
-                  fontWeight: selectedYear === lvl ? 800 : 600,
-                  cursor: 'pointer',
-                  whiteSpace: 'nowrap',
-                  transition: 'all 0.15s ease',
-                }}
-              >
-                {lvl}
-              </button>
-            ))}
+            {YEAR_LEVELS.map((lvl) => {
+              const isSel = selectedYear === lvl
+              return (
+                <button
+                  key={lvl}
+                  type="button"
+                  onClick={() => setSelectedYear(lvl)}
+                  style={{
+                    flexShrink: 0,
+                    background: isSel ? '#1d4ed8' : '#f1f5f9',
+                    color: isSel ? '#ffffff' : '#334155',
+                    border: isSel ? '1px solid #1d4ed8' : '1px solid #e2e8f0',
+                    borderRadius: '8px',
+                    padding: '0.3rem 0.75rem',
+                    fontSize: '0.76rem',
+                    fontWeight: isSel ? 800 : 600,
+                    cursor: 'pointer',
+                    whiteSpace: 'nowrap',
+                    transition: 'all 0.15s ease',
+                  }}
+                >
+                  {lvl}
+                </button>
+              )
+            })}
           </div>
 
           {/* View Mode Toggle: All Courses vs Browse by School & Department */}
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '0.75rem', marginTop: '0.35rem' }}>
-            <div style={{ display: 'flex', gap: '6px', background: '#0d1322', padding: '4px', borderRadius: '10px', border: '1px solid #24304d' }}>
+            <div style={{ display: 'flex', gap: '6px', background: '#f1f5f9', padding: '4px', borderRadius: '10px', border: '1px solid #cbd5e1' }}>
               <button
                 type="button"
                 onClick={() => setViewMode('courses')}
                 style={{
-                  background: viewMode === 'courses' ? '#2563eb' : 'transparent',
-                  color: viewMode === 'courses' ? '#ffffff' : '#cbd5e1',
+                  background: viewMode === 'courses' ? '#1d4ed8' : 'transparent',
+                  color: viewMode === 'courses' ? '#ffffff' : '#475569',
                   border: 'none',
                   borderRadius: '8px',
                   padding: '0.35rem 0.85rem',
@@ -954,15 +968,15 @@ export function CourseCatalogPage() {
                   gap: '6px',
                 }}
               >
-                <BookOpenIcon size={14} color={viewMode === 'courses' ? '#ffffff' : '#cbd5e1'} />
+                <BookOpenIcon size={14} color={viewMode === 'courses' ? '#ffffff' : '#475569'} />
                 <span>Courses & Syllabi ({filteredCourses.length})</span>
               </button>
               <button
                 type="button"
                 onClick={() => setViewMode('schools')}
                 style={{
-                  background: viewMode === 'schools' ? '#2563eb' : 'transparent',
-                  color: viewMode === 'schools' ? '#ffffff' : '#cbd5e1',
+                  background: viewMode === 'schools' ? '#1d4ed8' : 'transparent',
+                  color: viewMode === 'schools' ? '#ffffff' : '#475569',
                   border: 'none',
                   borderRadius: '8px',
                   padding: '0.35rem 0.85rem',
@@ -974,14 +988,14 @@ export function CourseCatalogPage() {
                   gap: '6px',
                 }}
               >
-                <BuildingIcon size={14} color={viewMode === 'schools' ? '#ffffff' : '#cbd5e1'} />
+                <BuildingIcon size={14} color={viewMode === 'schools' ? '#ffffff' : '#475569'} />
                 <span>Browse Schools & Departments ({INSTITUTIONAL_SCHOOLS.length})</span>
               </button>
             </div>
 
-            <div style={{ fontSize: '0.78rem', color: '#cbd5e1', fontWeight: 600, display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
+            <div style={{ fontSize: '0.78rem', color: '#475569', fontWeight: 600, display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
               <BritishShieldIcon size={14} />
-              <span>Centres: <strong style={{ color: '#38bdf8' }}>CAIE KE042</strong> &bull; <strong style={{ color: '#f87171' }}>Edexcel EDX-98421</strong></span>
+              <span>Centres: <strong style={{ color: '#1e3a8a' }}>CAIE KE042</strong> &bull; <strong style={{ color: '#b91c1c' }}>Edexcel EDX-98421</strong></span>
             </div>
           </div>
         </div>
@@ -991,11 +1005,11 @@ export function CourseCatalogPage() {
       {viewMode === 'schools' ? (
         <div style={{ maxWidth: '1100px', margin: '0 auto', padding: '0 1.25rem 2rem' }}>
           <div style={{ marginBottom: '1.25rem' }}>
-            <h2 style={{ fontSize: '1.35rem', fontWeight: 900, color: '#ffffff', margin: 0, fontFamily: 'var(--font-heading)', display: 'inline-flex', alignItems: 'center', gap: '8px' }}>
-              <BuildingIcon size={22} color="#38bdf8" />
+            <h2 style={{ fontSize: '1.35rem', fontWeight: 900, color: '#0f172a', margin: 0, fontFamily: 'var(--font-heading)', display: 'inline-flex', alignItems: 'center', gap: '8px' }}>
+              <BuildingIcon size={22} color="#1d4ed8" />
               <span>Academic Faculties & Specialized Departments</span>
             </h2>
-            <p style={{ fontSize: '0.85rem', color: '#94a3b8', margin: '4px 0 0' }}>
+            <p style={{ fontSize: '0.85rem', color: '#475569', margin: '4px 0 0' }}>
               Explore our 4 academic faculties: School of Business, School of IT and Data Science, School of Language, and IGCSE (British International Curriculum).
             </p>
           </div>
@@ -1005,20 +1019,20 @@ export function CourseCatalogPage() {
               <div
                 key={school.id}
                 style={{
-                  background: '#131b2e',
+                  background: '#ffffff',
                   borderRadius: '18px',
-                  border: `1.5px solid ${school.color}44`,
+                  border: `1.5px solid ${school.color}33`,
                   padding: '1.35rem',
                   display: 'flex',
                   flexDirection: 'column',
                   justifyContent: 'space-between',
                   gap: '1.2rem',
-                  boxShadow: '0 8px 24px rgba(0,0,0,0.3)',
+                  boxShadow: '0 4px 16px rgba(0,0,0,0.06)',
                   position: 'relative',
                   overflow: 'hidden',
                 }}
               >
-                <div style={{ position: 'absolute', top: 0, right: 0, width: '90px', height: '90px', background: `${school.color}11`, borderRadius: '0 0 0 100%' }} />
+                <div style={{ position: 'absolute', top: 0, right: 0, width: '90px', height: '90px', background: `${school.color}0d`, borderRadius: '0 0 0 100%' }} />
 
                 <div>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.75rem' }}>
@@ -1028,38 +1042,38 @@ export function CourseCatalogPage() {
                           width: '44px',
                           height: '44px',
                           borderRadius: '12px',
-                          background: '#1e293b',
+                          background: `${school.color}11`,
                           display: 'flex',
                           alignItems: 'center',
                           justifyContent: 'center',
-                          border: `1px solid ${school.color}66`,
+                          border: `1px solid ${school.color}44`,
                           flexShrink: 0,
                         }}
                       >
                         <CourseIcon courseId={school.id} iconKey={school.icon} size={24} color={school.color} />
                       </div>
                       <div>
-                        <span style={{ background: `${school.color}22`, color: school.color, padding: '2px 8px', borderRadius: '6px', fontSize: '0.68rem', fontWeight: 900, textTransform: 'uppercase' }}>
+                        <span style={{ background: `${school.color}18`, color: school.color, padding: '2px 8px', borderRadius: '6px', fontSize: '0.68rem', fontWeight: 900, textTransform: 'uppercase' }}>
                           {school.code}
                         </span>
-                        <h3 style={{ fontSize: '1.05rem', fontWeight: 800, color: '#ffffff', margin: '4px 0 0' }}>
+                        <h3 style={{ fontSize: '1.05rem', fontWeight: 800, color: '#0f172a', margin: '4px 0 0' }}>
                           {school.name}
                         </h3>
                       </div>
                     </div>
                   </div>
 
-                  <p style={{ fontSize: '0.82rem', color: '#94a3b8', margin: '0 0 1rem', lineHeight: 1.45 }}>
+                  <p style={{ fontSize: '0.82rem', color: '#475569', margin: '0 0 1rem', lineHeight: 1.45 }}>
                     {school.description}
                   </p>
 
-                  <div style={{ background: 'rgba(15, 23, 42, 0.7)', borderRadius: '10px', padding: '0.65rem 0.85rem', marginBottom: '1rem', border: '1px solid rgba(255, 255, 255, 0.05)' }}>
+                  <div style={{ background: '#f8fafc', borderRadius: '10px', padding: '0.65rem 0.85rem', marginBottom: '1rem', border: '1px solid #e2e8f0' }}>
                     <div style={{ fontSize: '0.72rem', color: '#64748b', fontWeight: 700, textTransform: 'uppercase' }}>Dean of Faculty</div>
-                    <div style={{ fontSize: '0.82rem', color: '#e2e8f0', fontWeight: 700 }}>{school.dean_name}</div>
-                    <div style={{ fontSize: '0.74rem', color: '#38bdf8' }}>{school.dean_email}</div>
+                    <div style={{ fontSize: '0.82rem', color: '#0f172a', fontWeight: 700 }}>{school.dean_name}</div>
+                    <div style={{ fontSize: '0.74rem', color: '#1d4ed8' }}>{school.dean_email}</div>
                   </div>
 
-                  <div style={{ fontSize: '0.76rem', color: '#d4af37', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.04em', marginBottom: '0.5rem' }}>
+                  <div style={{ fontSize: '0.76rem', color: '#b45309', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.04em', marginBottom: '0.5rem' }}>
                     Departments ({school.departments.length})
                   </div>
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
@@ -1067,22 +1081,22 @@ export function CourseCatalogPage() {
                       <div
                         key={dept.id}
                         style={{
-                          background: '#182238',
+                          background: '#f8fafc',
                           padding: '0.6rem 0.75rem',
                           borderRadius: '8px',
-                          border: '1px solid rgba(255, 255, 255, 0.05)',
+                          border: '1px solid #e2e8f0',
                         }}
                       >
                         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                          <span style={{ fontSize: '0.82rem', fontWeight: 700, color: '#f8fafc' }}>
+                          <span style={{ fontSize: '0.82rem', fontWeight: 700, color: '#0f172a' }}>
                             {dept.name}
                           </span>
-                          <span style={{ fontSize: '0.65rem', color: '#94a3b8', fontFamily: 'monospace' }}>
+                          <span style={{ fontSize: '0.65rem', color: '#64748b', fontFamily: 'monospace' }}>
                             {dept.code}
                           </span>
                         </div>
                         {dept.programs && (
-                          <div style={{ fontSize: '0.72rem', color: '#94a3b8', marginTop: '3px' }}>
+                          <div style={{ fontSize: '0.72rem', color: '#64748b', marginTop: '3px' }}>
                             {dept.programs.slice(0, 2).join(' • ')}
                           </div>
                         )}
@@ -1111,7 +1125,7 @@ export function CourseCatalogPage() {
                     alignItems: 'center',
                     justifyContent: 'center',
                     gap: '6px',
-                    boxShadow: `0 4px 14px ${school.color}44`,
+                    boxShadow: `0 4px 14px ${school.color}33`,
                   }}
                 >
                   <span>Explore {school.shortName} Courses</span>
@@ -1124,8 +1138,8 @@ export function CourseCatalogPage() {
       ) : (
         /* Programs Grid */
         <div style={{ maxWidth: '1100px', margin: '0 auto', padding: '0 1.25rem 2rem' }}>
-          <div style={{ fontSize: '0.85rem', color: '#cbd5e1', marginBottom: '1rem', fontWeight: 600 }}>
-            Showing <strong style={{ color: '#ffffff' }}>{filteredCourses.length}</strong> program{filteredCourses.length === 1 ? '' : 's'}
+          <div style={{ fontSize: '0.85rem', color: '#475569', marginBottom: '1rem', fontWeight: 600 }}>
+            Showing <strong style={{ color: '#0f172a' }}>{filteredCourses.length}</strong> program{filteredCourses.length === 1 ? '' : 's'}
           </div>
 
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: '1.25rem' }}>
@@ -1133,15 +1147,15 @@ export function CourseCatalogPage() {
               <div
                 key={course.id}
                 style={{
-                  background: '#131b2e',
+                  background: '#ffffff',
                   borderRadius: '18px',
-                  border: '1px solid #24304d',
+                  border: '1.5px solid #e2e8f0',
                   padding: '1.25rem',
                   display: 'flex',
                   flexDirection: 'column',
                   justifyContent: 'space-between',
                   gap: '1rem',
-                  boxShadow: '0 6px 20px rgba(0,0,0,0.25)',
+                  boxShadow: '0 4px 16px rgba(0,0,0,0.05)',
                   transition: 'transform 0.2s ease, border-color 0.2s ease',
                 }}
               >
@@ -1153,21 +1167,21 @@ export function CourseCatalogPage() {
                         width: '46px',
                         height: '46px',
                         borderRadius: '12px',
-                        background: '#1e293b',
+                        background: '#eff6ff',
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
-                        border: '1px solid #334155',
+                        border: '1px solid #bfdbfe',
                         flexShrink: 0,
                       }}
                     >
-                      <CourseIcon courseId={course.id} iconKey={course.icon} size={26} color="#38bdf8" />
+                      <CourseIcon courseId={course.id} iconKey={course.icon} size={26} color="#1d4ed8" />
                     </div>
 
                     <div style={{ textAlign: 'right' }}>
                       <span
                         style={{
-                          background: `${course.tagColor}22`,
+                          background: `${course.tagColor}18`,
                           color: course.tagColor,
                           padding: '3px 8px',
                           borderRadius: '6px',
@@ -1189,9 +1203,9 @@ export function CourseCatalogPage() {
                           display: 'inline-flex',
                           alignItems: 'center',
                           gap: '6px',
-                          background: 'rgba(37, 99, 235, 0.2)',
-                          color: '#60a5fa',
-                          border: '1px solid rgba(96, 165, 250, 0.4)',
+                          background: '#eff6ff',
+                          color: '#1d4ed8',
+                          border: '1px solid #bfdbfe',
                           padding: '3px 9px',
                           borderRadius: '6px',
                           fontSize: '0.72rem',
@@ -1199,7 +1213,7 @@ export function CourseCatalogPage() {
                           textDecoration: 'none',
                         }}
                       >
-                        <MessageCircleIcon size={12} color="#60a5fa" />
+                        <MessageCircleIcon size={12} color="#1d4ed8" />
                         <span>Fees Inquiry</span>
                       </a>
                     </div>
@@ -1210,9 +1224,9 @@ export function CourseCatalogPage() {
                     {course.examBoard && (
                       <span
                         style={{
-                          background: course.examBoard.includes('Cambridge') ? 'rgba(56, 189, 248, 0.15)' : 'rgba(239, 68, 68, 0.15)',
-                          color: course.examBoard.includes('Cambridge') ? '#38bdf8' : '#f87171',
-                          border: `1px solid ${course.examBoard.includes('Cambridge') ? 'rgba(56, 189, 248, 0.3)' : 'rgba(239, 68, 68, 0.3)'}`,
+                          background: course.examBoard.includes('Cambridge') ? '#eff6ff' : '#fef2f2',
+                          color: course.examBoard.includes('Cambridge') ? '#1d4ed8' : '#b91c1c',
+                          border: `1px solid ${course.examBoard.includes('Cambridge') ? '#bfdbfe' : '#fecaca'}`,
                           padding: '2px 7px',
                           borderRadius: '6px',
                           fontSize: '0.68rem',
@@ -1229,9 +1243,9 @@ export function CourseCatalogPage() {
                     {course.yearLevel && (
                       <span
                         style={{
-                          background: 'rgba(212, 175, 55, 0.15)',
-                          color: '#d4af37',
-                          border: '1px solid rgba(212, 175, 55, 0.3)',
+                          background: '#fefce8',
+                          color: '#854d0e',
+                          border: '1px solid #fef08a',
                           padding: '2px 7px',
                           borderRadius: '6px',
                           fontSize: '0.68rem',
@@ -1241,16 +1255,16 @@ export function CourseCatalogPage() {
                           gap: '4px',
                         }}
                       >
-                        <GraduationCapIcon size={12} color="#d4af37" />
+                        <GraduationCapIcon size={12} color="#854d0e" />
                         <span>{course.yearLevel}</span>
                       </span>
                     )}
                     {course.syllabusCode && (
                       <span
                         style={{
-                          background: 'rgba(148, 163, 184, 0.15)',
-                          color: '#cbd5e1',
-                          border: '1px solid rgba(148, 163, 184, 0.25)',
+                          background: '#f1f5f9',
+                          color: '#475569',
+                          border: '1px solid #cbd5e1',
                           padding: '2px 7px',
                           borderRadius: '6px',
                           fontSize: '0.68rem',
@@ -1263,23 +1277,23 @@ export function CourseCatalogPage() {
                     )}
                   </div>
 
-                  <h3 style={{ fontSize: '1.05rem', fontWeight: 800, color: '#ffffff', margin: '0 0 0.4rem', lineHeight: 1.35, fontFamily: 'Inter, system-ui, -apple-system, sans-serif' }}>
+                  <h3 style={{ fontSize: '1.05rem', fontWeight: 800, color: '#0f172a', margin: '0 0 0.4rem', lineHeight: 1.35, fontFamily: 'Inter, system-ui, -apple-system, sans-serif' }}>
                     {course.title}
                   </h3>
 
-                  <p style={{ fontSize: '0.78rem', color: '#cbd5e1', margin: '0 0 0.75rem', lineHeight: 1.4, display: 'flex', alignItems: 'center', gap: '5px' }}>
-                    <BriefcaseIcon size={14} color="#60a5fa" />
-                    <span>Career Outcome: <strong style={{ color: '#ffffff' }}>{course.careerOutcome}</strong></span>
+                  <p style={{ fontSize: '0.78rem', color: '#475569', margin: '0 0 0.75rem', lineHeight: 1.4, display: 'flex', alignItems: 'center', gap: '5px' }}>
+                    <BriefcaseIcon size={14} color="#1d4ed8" />
+                    <span>Career Outcome: <strong style={{ color: '#0f172a' }}>{course.careerOutcome}</strong></span>
                   </p>
 
                 {/* Duration & Schedule Badges */}
-                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.4rem', marginBottom: '0.85rem', fontSize: '0.74rem', color: '#cbd5e1' }}>
-                  <span style={{ background: '#182238', padding: '3px 8px', borderRadius: '6px', border: '1px solid #2e3d61', color: '#cbd5e1', display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
-                    <ClockIcon size={13} color="#94a3b8" />
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.4rem', marginBottom: '0.85rem', fontSize: '0.74rem', color: '#475569' }}>
+                  <span style={{ background: '#f8fafc', padding: '3px 8px', borderRadius: '6px', border: '1px solid #e2e8f0', color: '#475569', display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+                    <ClockIcon size={13} color="#64748b" />
                     <span>{course.duration}</span>
                   </span>
-                  <span style={{ background: '#182238', padding: '3px 8px', borderRadius: '6px', border: '1px solid #2e3d61', color: '#cbd5e1', display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
-                    <BuildingIcon size={13} color="#94a3b8" />
+                  <span style={{ background: '#f8fafc', padding: '3px 8px', borderRadius: '6px', border: '1px solid #e2e8f0', color: '#475569', display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+                    <BuildingIcon size={13} color="#64748b" />
                     <span>{course.schedule.split('(')[0]}</span>
                   </span>
                 </div>
@@ -1290,30 +1304,30 @@ export function CourseCatalogPage() {
                     <span
                       key={idx}
                       style={{
-                        background: '#1e293b',
-                        color: '#cbd5e1',
+                        background: '#eff6ff',
+                        color: '#1e3a8a',
                         fontSize: '0.7rem',
                         padding: '2px 8px',
                         borderRadius: '6px',
                         fontWeight: 600,
-                        border: '1px solid rgba(255,255,255,0.05)',
+                        border: '1px solid #dbeafe',
                       }}
                     >
-                      <CheckIcon size={12} color="#60a5fa" style={{ marginRight: '4px', verticalAlign: 'middle' }} />{skill}
+                      <CheckIcon size={12} color="#1d4ed8" style={{ marginRight: '4px', verticalAlign: 'middle' }} />{skill}
                     </span>
                   ))}
                 </div>
               </div>
 
               {/* Action Buttons */}
-              <div style={{ paddingTop: '0.5rem', borderTop: '1px solid rgba(255,255,255,0.06)' }}>
+              <div style={{ paddingTop: '0.5rem', borderTop: '1px solid #e2e8f0' }}>
                 <a
                   href={getWhatsAppInquiryUrl(`Hello Admissions! I would like to enroll in ${course.title}. Please provide registration steps.`)}
                   target="_blank"
                   rel="noopener noreferrer"
                   style={{
                     width: '100%',
-                    background: '#2563eb',
+                    background: '#1d4ed8',
                     color: '#ffffff',
                     borderRadius: '10px',
                     padding: '0.65rem 0.75rem',
@@ -1324,7 +1338,7 @@ export function CourseCatalogPage() {
                     alignItems: 'center',
                     justifyContent: 'center',
                     gap: '6px',
-                    boxShadow: '0 4px 12px rgba(37, 99, 235, 0.3)',
+                    boxShadow: '0 4px 12px rgba(29, 78, 216, 0.25)',
                   }}
                 >
                   Enroll Now →
@@ -1344,7 +1358,7 @@ export function CourseCatalogPage() {
           style={{
             position: 'fixed',
             inset: 0,
-            background: 'rgba(0,0,0,0.7)',
+            background: 'rgba(15, 23, 42, 0.6)',
             backdropFilter: 'blur(8px)',
             zIndex: 1000,
             display: 'flex',
@@ -1356,40 +1370,40 @@ export function CourseCatalogPage() {
           <div
             onClick={(e) => e.stopPropagation()}
             style={{
-              background: '#131b2e',
-              border: '1px solid #24304d',
+              background: '#ffffff',
+              border: '1px solid #e2e8f0',
               borderRadius: '20px',
               maxWidth: '600px',
               width: '100%',
               maxHeight: '85vh',
               overflowY: 'auto',
               padding: '1.5rem',
-              color: '#f8fafc',
-              boxShadow: '0 25px 50px -12px rgba(0,0,0,0.5)',
+              color: '#0f172a',
+              boxShadow: '0 25px 50px -12px rgba(0,0,0,0.25)',
             }}
           >
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '1rem', paddingBottom: '0.75rem', borderBottom: '1px solid #24304d' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '1rem', paddingBottom: '0.75rem', borderBottom: '1px solid #e2e8f0' }}>
               <div>
-                <span style={{ fontSize: '0.7rem', color: '#60a5fa', fontWeight: 800, textTransform: 'uppercase' }}>
+                <span style={{ fontSize: '0.7rem', color: '#1d4ed8', fontWeight: 800, textTransform: 'uppercase' }}>
                   {selectedCourse.category}
                 </span>
-                <h3 style={{ fontSize: '1.2rem', fontWeight: 900, color: '#ffffff', margin: '2px 0 0' }}>
+                <h3 style={{ fontSize: '1.2rem', fontWeight: 900, color: '#0f172a', margin: '2px 0 0' }}>
                   {selectedCourse.title}
                 </h3>
               </div>
               <button
                 type="button"
                 onClick={() => setSelectedCourse(null)}
-                style={{ background: '#1e293b', border: 'none', color: '#94a3b8', width: '32px', height: '32px', borderRadius: '50%', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                style={{ background: '#f1f5f9', border: '1px solid #e2e8f0', color: '#64748b', width: '32px', height: '32px', borderRadius: '50%', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
                 aria-label="Close modal"
               >
-                <XIcon size={16} color="#cbd5e1" />
+                <XIcon size={16} color="#475569" />
               </button>
             </div>
 
-            <div style={{ marginBottom: '1rem', display: 'flex', gap: '1rem', alignItems: 'center', justifyContent: 'space-between', background: '#0a0e17', padding: '0.75rem 1rem', borderRadius: '12px', fontSize: '0.8rem', flexWrap: 'wrap' }}>
+            <div style={{ marginBottom: '1rem', display: 'flex', gap: '1rem', alignItems: 'center', justifyContent: 'space-between', background: '#f8fafc', border: '1px solid #e2e8f0', padding: '0.75rem 1rem', borderRadius: '12px', fontSize: '0.8rem', flexWrap: 'wrap' }}>
               <div style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
-                <ClockIcon size={14} color="#60a5fa" />
+                <ClockIcon size={14} color="#1d4ed8" />
                 <span><strong>Duration:</strong> {selectedCourse.duration}</span>
               </div>
               <a
@@ -1400,9 +1414,9 @@ export function CourseCatalogPage() {
                   display: 'inline-flex',
                   alignItems: 'center',
                   gap: '6px',
-                  background: 'rgba(37, 99, 235, 0.25)',
-                  color: '#93c5fd',
-                  border: '1px solid rgba(96, 165, 250, 0.4)',
+                  background: '#eff6ff',
+                  color: '#1d4ed8',
+                  border: '1px solid #bfdbfe',
                   padding: '5px 12px',
                   borderRadius: '8px',
                   fontWeight: 700,
@@ -1410,23 +1424,23 @@ export function CourseCatalogPage() {
                   textDecoration: 'none',
                 }}
               >
-                <MessageCircleIcon size={13} color="#93c5fd" />
+                <MessageCircleIcon size={13} color="#1d4ed8" />
                 <span>Fees Inquiry</span>
               </a>
             </div>
 
-            <h4 style={{ fontSize: '0.9rem', fontWeight: 800, color: '#93c5fd', margin: '0 0 0.75rem', textTransform: 'uppercase', letterSpacing: '0.04em', display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
-              <FlaskIcon size={14} color="#93c5fd" />
+            <h4 style={{ fontSize: '0.9rem', fontWeight: 800, color: '#1e3a8a', margin: '0 0 0.75rem', textTransform: 'uppercase', letterSpacing: '0.04em', display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
+              <FlaskIcon size={14} color="#1d4ed8" />
               <span>Weekly Syllabus & Practical Labs</span>
             </h4>
 
             <div style={{ display: 'flex', flexDirection: 'column', gap: '0.65rem', marginBottom: '1.25rem' }}>
               {selectedCourse.syllabus?.map((s, idx) => (
-                <div key={idx} style={{ background: '#182238', borderRadius: '10px', padding: '0.75rem', border: '1px solid #2e3d61' }}>
-                  <div style={{ fontSize: '0.75rem', color: '#60a5fa', fontWeight: 800 }}>{s.week}</div>
-                  <div style={{ fontSize: '0.86rem', color: '#ffffff', fontWeight: 700, margin: '2px 0' }}>{s.topic}</div>
-                  <div style={{ fontSize: '0.78rem', color: '#cbd5e1', display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
-                    <FlaskIcon size={12} color="#94a3b8" />
+                <div key={idx} style={{ background: '#f8fafc', borderRadius: '10px', padding: '0.75rem', border: '1px solid #e2e8f0' }}>
+                  <div style={{ fontSize: '0.75rem', color: '#1d4ed8', fontWeight: 800 }}>{s.week}</div>
+                  <div style={{ fontSize: '0.86rem', color: '#0f172a', fontWeight: 700, margin: '2px 0' }}>{s.topic}</div>
+                  <div style={{ fontSize: '0.78rem', color: '#475569', display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+                    <FlaskIcon size={12} color="#64748b" />
                     <span>Lab: {s.practicalLab}</span>
                   </div>
                 </div>
@@ -1439,7 +1453,7 @@ export function CourseCatalogPage() {
               rel="noopener noreferrer"
               style={{
                 width: '100%',
-                background: '#2563eb',
+                background: '#1d4ed8',
                 color: '#ffffff',
                 padding: '0.8rem',
                 borderRadius: '12px',
@@ -1450,7 +1464,7 @@ export function CourseCatalogPage() {
                 alignItems: 'center',
                 justifyContent: 'center',
                 gap: '8px',
-                boxShadow: '0 4px 14px rgba(37, 99, 235, 0.4)',
+                boxShadow: '0 4px 14px rgba(29, 78, 216, 0.3)',
               }}
             >
               <RocketIcon size={16} color="#ffffff" />

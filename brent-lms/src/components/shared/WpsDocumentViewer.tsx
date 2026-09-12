@@ -41,7 +41,7 @@ export function WpsDocumentViewer({
   studentName,
   studentId,
   onClose,
-  initialTheme = 'dark',
+  initialTheme = 'light',
   isModal = false,
 }: WpsDocumentViewerProps) {
   const [engine, setEngine] = useState<DocumentEngine>('cloud')
@@ -256,22 +256,22 @@ export function WpsDocumentViewer({
 
   const themeStyles = {
     dark: {
-      bg: '#090d16',
-      surface: '#0f172a',
-      toolbarBg: 'linear-gradient(180deg, #131b2e 0%, #0c1220 100%)',
-      border: '#1e293b',
-      text: '#f8fafc',
-      muted: '#94a3b8',
-      activeTab: '#2563eb',
+      bg: '#f8fafc',
+      surface: '#ffffff',
+      toolbarBg: 'linear-gradient(180deg, #1e3a8a 0%, #1e40af 100%)',
+      border: '#e2e8f0',
+      text: '#0f172a',
+      muted: '#64748b',
+      activeTab: '#1d4ed8',
     },
     light: {
-      bg: '#f1f5f9',
+      bg: '#f8fafc',
       surface: '#ffffff',
       toolbarBg: 'linear-gradient(180deg, #ffffff 0%, #f8fafc 100%)',
       border: '#cbd5e1',
-      text: '#090d16',
-      muted: '#64748b',
-      activeTab: '#1e3a8a',
+      text: '#0f172a',
+      muted: '#475569',
+      activeTab: '#1d4ed8',
     },
     sepia: {
       bg: '#231b14',
@@ -404,9 +404,9 @@ export function WpsDocumentViewer({
               }}
               title="Switch Rendering Engine"
             >
-              <option value="cloud" style={{ background: '#090d16', color: '#ffffff' }}>☁️ Google Cloud Engine</option>
-              <option value="office" style={{ background: '#090d16', color: '#ffffff' }}>📑 MS Office Engine</option>
-              <option value="direct" style={{ background: '#090d16', color: '#ffffff' }}>⚡ High-Res Direct Stream</option>
+              <option value="cloud">Google Cloud Engine</option>
+              <option value="office">MS Office Engine</option>
+              <option value="direct">High-Res Direct Stream</option>
             </select>
 
             {onClose && (
@@ -586,10 +586,9 @@ export function WpsDocumentViewer({
                     cursor: 'pointer',
                   }}
                 >
-                  <option value="dark" style={{ background: '#090d16', color: '#ffffff' }}>🌙 Dark Cinema</option>
-                  <option value="light" style={{ background: '#ffffff', color: '#090d16' }}>☀️ Clean White</option>
-                  <option value="sepia" style={{ background: '#231b14', color: '#f5ecd8' }}>📜 Eye-Care Sepia</option>
-                  <option value="cyber" style={{ background: '#040711', color: '#34d399' }}>⚡ Cyber Contrast</option>
+                  <option value="light">Clean Light (Institutional)</option>
+                  <option value="sepia">Eye-Care Sepia</option>
+                  <option value="dark">Slate Cinema</option>
                 </select>
               </>
             )}

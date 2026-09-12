@@ -43,7 +43,7 @@
       "publisherDisplayName": "Éclat Institute",
       "displayName": "Eclat Institute",
       "applicationId": "clatInstitute.EclatInstitute",
-      "backgroundColor": "#0c0e12"
+      "backgroundColor": "#f8fafc"
     },
     "nsis": {
       "oneClick": false,

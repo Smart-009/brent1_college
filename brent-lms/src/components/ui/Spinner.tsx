@@ -14,8 +14,8 @@ export function LoadingScreen({ message = 'Loading Éclat Portal…' }: { messag
         position: 'fixed',
         inset: 0,
         zIndex: 999999,
-        background: 'radial-gradient(circle at 50% 35%, #131d36 0%, #080d1a 50%, #03060c 100%)',
-        color: '#ffffff',
+        background: '#f8fafc',
+        color: '#0f172a',
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
@@ -37,7 +37,7 @@ export function LoadingScreen({ message = 'Loading Éclat Portal…' }: { messag
           height: '320px',
           borderRadius: '50%',
           background:
-            'radial-gradient(circle, rgba(212, 175, 55, 0.18) 0%, rgba(37, 99, 235, 0.12) 50%, transparent 70%)',
+            'radial-gradient(circle, rgba(37, 99, 235, 0.08) 0%, rgba(212, 175, 55, 0.05) 50%, transparent 70%)',
           filter: 'blur(40px)',
           pointerEvents: 'none',
         }}
@@ -62,7 +62,7 @@ export function LoadingScreen({ message = 'Loading Éclat Portal…' }: { messag
               inset: '-8px',
               borderRadius: '50%',
               background: 'linear-gradient(135deg, #d4af37, #3b82f6, #eab308)',
-              opacity: 0.7,
+              opacity: 0.35,
               filter: 'blur(10px)',
               animation: 'pulse 2.5s ease-in-out infinite',
             }}
@@ -76,9 +76,9 @@ export function LoadingScreen({ message = 'Loading Éclat Portal…' }: { messag
               height: '110px',
               borderRadius: '50%',
               border: '3px solid #d4af37',
-              boxShadow: '0 10px 30px rgba(0, 0, 0, 0.6), 0 0 25px rgba(212, 175, 55, 0.45)',
+              boxShadow: '0 8px 24px rgba(0, 0, 0, 0.1)',
               objectFit: 'cover',
-              background: '#090d16',
+              background: '#ffffff',
             }}
           />
         </div>
@@ -92,10 +92,7 @@ export function LoadingScreen({ message = 'Loading Éclat Portal…' }: { messag
               fontSize: '1.75rem',
               fontWeight: 900,
               letterSpacing: '0.12em',
-              background: 'linear-gradient(135deg, #fffbeb 0%, #fde047 30%, #d4af37 60%, #ca8a04 100%)',
-              WebkitBackgroundClip: 'text',
-              WebkitTextFillColor: 'transparent',
-              textShadow: '0 4px 15px rgba(212, 175, 55, 0.25)',
+              color: '#1e3a8a',
             }}
           >
             ÉCLAT INSTITUTE
@@ -104,7 +101,7 @@ export function LoadingScreen({ message = 'Loading Éclat Portal…' }: { messag
             style={{
               fontSize: '0.78rem',
               fontWeight: 700,
-              color: '#94a3b8',
+              color: '#64748b',
               letterSpacing: '0.18em',
               textTransform: 'uppercase',
             }}
@@ -116,19 +113,18 @@ export function LoadingScreen({ message = 'Loading Éclat Portal…' }: { messag
         {/* Badge */}
         <div
           style={{
-            background: 'rgba(255, 255, 255, 0.06)',
-            border: '1px solid rgba(212, 175, 55, 0.3)',
+            background: '#eff6ff',
+            border: '1px solid #bfdbfe',
             borderRadius: '999px',
             padding: '4px 14px',
             fontSize: '0.72rem',
             fontWeight: 800,
-            color: '#fbbf24',
+            color: '#1d4ed8',
             letterSpacing: '0.08em',
             textTransform: 'uppercase',
-            backdropFilter: 'blur(6px)',
           }}
         >
-          🎓 100% Online Virtual Campus
+          100% Online Virtual Campus
         </div>
 
         {/* Animated Shimmer Loading Bar */}
@@ -136,7 +132,7 @@ export function LoadingScreen({ message = 'Loading Éclat Portal…' }: { messag
           style={{
             width: '200px',
             height: '4px',
-            background: 'rgba(255, 255, 255, 0.1)',
+            background: '#e2e8f0',
             borderRadius: '999px',
             overflow: 'hidden',
             marginTop: '0.5rem',
@@ -150,7 +146,7 @@ export function LoadingScreen({ message = 'Loading Éclat Portal…' }: { messag
               left: 0,
               bottom: 0,
               width: '50%',
-              background: 'linear-gradient(90deg, transparent, #d4af37, #60a5fa, transparent)',
+              background: 'linear-gradient(90deg, transparent, #2563eb, #1d4ed8, transparent)',
               borderRadius: '999px',
               animation: 'shimmer 1.4s ease-in-out infinite',
             }}
@@ -163,7 +159,7 @@ export function LoadingScreen({ message = 'Loading Éclat Portal…' }: { messag
             margin: 0,
             fontSize: '0.8rem',
             fontWeight: 600,
-            color: '#cbd5e1',
+            color: '#475569',
             letterSpacing: '0.04em',
           }}
         >
@@ -239,8 +235,8 @@ export function AppOpeningSplashScreen({ onFinished }: { onFinished?: () => void
         position: 'fixed',
         inset: 0,
         zIndex: 9999999,
-        background: 'radial-gradient(circle at 50% 35%, #131d36 0%, #080d1a 50%, #03060c 100%)',
-        color: '#ffffff',
+        background: '#f8fafc',
+        color: '#0f172a',
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
@@ -265,7 +261,7 @@ export function AppOpeningSplashScreen({ onFinished }: { onFinished?: () => void
           height: '380px',
           borderRadius: '50%',
           background:
-            'radial-gradient(circle, rgba(212, 175, 55, 0.22) 0%, rgba(37, 99, 235, 0.15) 50%, transparent 70%)',
+            'radial-gradient(circle, rgba(37, 99, 235, 0.08) 0%, rgba(212, 175, 55, 0.05) 50%, transparent 70%)',
           filter: 'blur(50px)',
           pointerEvents: 'none',
         }}
@@ -290,7 +286,7 @@ export function AppOpeningSplashScreen({ onFinished }: { onFinished?: () => void
               inset: '-10px',
               borderRadius: '50%',
               background: 'linear-gradient(135deg, #d4af37, #3b82f6, #eab308)',
-              opacity: 0.75,
+              opacity: 0.35,
               filter: 'blur(12px)',
               animation: 'pulse 2.2s ease-in-out infinite',
             }}
@@ -304,9 +300,9 @@ export function AppOpeningSplashScreen({ onFinished }: { onFinished?: () => void
               height: '120px',
               borderRadius: '50%',
               border: '3px solid #d4af37',
-              boxShadow: '0 12px 35px rgba(0, 0, 0, 0.7), 0 0 30px rgba(212, 175, 55, 0.5)',
+              boxShadow: '0 8px 24px rgba(0, 0, 0, 0.1)',
               objectFit: 'cover',
-              background: '#090d16',
+              background: '#ffffff',
             }}
           />
         </div>
@@ -320,10 +316,7 @@ export function AppOpeningSplashScreen({ onFinished }: { onFinished?: () => void
               fontSize: '1.9rem',
               fontWeight: 900,
               letterSpacing: '0.12em',
-              background: 'linear-gradient(135deg, #fffbeb 0%, #fde047 30%, #d4af37 60%, #ca8a04 100%)',
-              WebkitBackgroundClip: 'text',
-              WebkitTextFillColor: 'transparent',
-              textShadow: '0 4px 18px rgba(212, 175, 55, 0.3)',
+              color: '#1e3a8a',
             }}
           >
             ÉCLAT INSTITUTE
@@ -332,7 +325,7 @@ export function AppOpeningSplashScreen({ onFinished }: { onFinished?: () => void
             style={{
               fontSize: '0.8rem',
               fontWeight: 700,
-              color: '#94a3b8',
+              color: '#64748b',
               letterSpacing: '0.18em',
               textTransform: 'uppercase',
             }}
@@ -347,19 +340,17 @@ export function AppOpeningSplashScreen({ onFinished }: { onFinished?: () => void
             display: 'flex',
             alignItems: 'center',
             gap: '0.5rem',
-            background: 'rgba(255, 255, 255, 0.06)',
-            border: '1px solid rgba(212, 175, 55, 0.35)',
+            background: '#eff6ff',
+            border: '1px solid #bfdbfe',
             borderRadius: '999px',
             padding: '5px 16px',
             fontSize: '0.74rem',
             fontWeight: 800,
-            color: '#fbbf24',
+            color: '#1d4ed8',
             letterSpacing: '0.08em',
             textTransform: 'uppercase',
-            backdropFilter: 'blur(8px)',
           }}
         >
-          <span>🎓</span>
           <span>100% Online Virtual Campus</span>
         </div>
 
@@ -369,7 +360,7 @@ export function AppOpeningSplashScreen({ onFinished }: { onFinished?: () => void
             style={{
               width: '100%',
               height: '5px',
-              background: 'rgba(255, 255, 255, 0.12)',
+              background: '#e2e8f0',
               borderRadius: '999px',
               overflow: 'hidden',
               position: 'relative',
@@ -379,10 +370,9 @@ export function AppOpeningSplashScreen({ onFinished }: { onFinished?: () => void
               style={{
                 width: `${progress}%`,
                 height: '100%',
-                background: 'linear-gradient(90deg, #d4af37 0%, #60a5fa 50%, #d4af37 100%)',
+                background: 'linear-gradient(90deg, #2563eb 0%, #1d4ed8 100%)',
                 borderRadius: '999px',
                 transition: 'width 0.2s ease-out',
-                boxShadow: '0 0 10px rgba(212, 175, 55, 0.5)',
               }}
             />
           </div>
@@ -394,11 +384,11 @@ export function AppOpeningSplashScreen({ onFinished }: { onFinished?: () => void
               alignItems: 'center',
               marginTop: '0.5rem',
               fontSize: '0.74rem',
-              color: '#cbd5e1',
+              color: '#64748b',
             }}
           >
             <span>{stageCaption}</span>
-            <span style={{ fontWeight: 800, color: '#fbbf24' }}>{progress}%</span>
+            <span style={{ fontWeight: 800, color: '#1d4ed8' }}>{progress}%</span>
           </div>
         </div>
       </div>

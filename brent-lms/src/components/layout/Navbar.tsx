@@ -62,8 +62,8 @@ export function Navbar({ onToggleSidebar }: { onToggleSidebar: () => void }) {
       <Link to="/" className="navbar-brand">
         <img src="/logo.png" alt="Éclat Institute" className="navbar-logo" style={{ border: '2px solid #d4af37', borderRadius: '50%' }} />
         <div>
-          <div className="navbar-school-name" style={{ fontFamily: 'var(--font-heading)', color: '#d4af37', letterSpacing: '0.04em', fontWeight: 800 }}>ÉCLAT INSTITUTE</div>
-          <span className="navbar-tagline" style={{ color: '#cbd5e1', letterSpacing: '0.08em', fontSize: '0.65rem' }}>Shaping Minds, Inspiring Success</span>
+          <div className="navbar-school-name" style={{ fontFamily: 'var(--font-heading)', color: '#1e3a8a', letterSpacing: '0.04em', fontWeight: 800 }}>ÉCLAT INSTITUTE</div>
+          <span className="navbar-tagline" style={{ color: '#64748b', letterSpacing: '0.08em', fontSize: '0.65rem', fontWeight: 600 }}>Shaping Minds, Inspiring Success</span>
         </div>
       </Link>
 
@@ -101,14 +101,14 @@ export function Navbar({ onToggleSidebar }: { onToggleSidebar: () => void }) {
             href="/#app-download"
             className="btn btn-sm hide-mobile"
             style={{
-              background: 'rgba(255, 255, 255, 0.15)',
-              color: '#ffffff',
-              border: '1px solid rgba(255, 255, 255, 0.3)',
+              background: '#f8fafc',
+              color: '#1e3a8a',
+              border: '1px solid #cbd5e1',
               display: 'inline-flex',
               alignItems: 'center',
               gap: '0.35rem',
               fontSize: '0.8rem',
-              fontWeight: 600,
+              fontWeight: 700,
               textDecoration: 'none',
             }}
             title="Download Official Native Desktop & Mobile Apps"
@@ -123,9 +123,9 @@ export function Navbar({ onToggleSidebar }: { onToggleSidebar: () => void }) {
           <div
             className="hide-mobile"
             style={{
-              background: 'rgba(16, 185, 129, 0.15)',
-              color: '#34d399',
-              border: '1px solid rgba(16, 185, 129, 0.35)',
+              background: '#ecfdf5',
+              color: '#065f46',
+              border: '1px solid #a7f3d0',
               padding: '4px 10px',
               borderRadius: '8px',
               fontSize: '0.74rem',
@@ -136,7 +136,7 @@ export function Navbar({ onToggleSidebar }: { onToggleSidebar: () => void }) {
             }}
             title="Hardware DRM Screenshot & Recording Protection Active"
           >
-            <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#34d399', boxShadow: '0 0 6px #34d399' }} />
+            <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#10b981', boxShadow: '0 0 6px #10b981' }} />
             <span>Desktop Workstation</span>
           </div>
         )}
@@ -147,9 +147,9 @@ export function Navbar({ onToggleSidebar }: { onToggleSidebar: () => void }) {
             to="/library"
             className="btn btn-sm hide-mobile"
             style={{
-              background: 'rgba(59, 130, 246, 0.18)',
-              color: '#93c5fd',
-              border: '1px solid rgba(59, 130, 246, 0.4)',
+              background: '#eff6ff',
+              color: '#1d4ed8',
+              border: '1px solid #bfdbfe',
               borderRadius: '8px',
               padding: '4px 12px',
               fontSize: '0.8rem',

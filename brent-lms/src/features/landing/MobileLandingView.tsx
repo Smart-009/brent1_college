@@ -88,8 +88,8 @@ export function MobileLandingView({
     <div
       style={{
         minHeight: '100vh',
-        background: '#090d16',
-        color: '#f8fafc',
+        background: '#f8fafc',
+        color: '#0f172a',
         fontFamily: 'Inter, system-ui, -apple-system, sans-serif',
         paddingBottom: 'calc(75px + env(safe-area-inset-bottom, 0px))',
         maxWidth: '100vw',
@@ -102,14 +102,15 @@ export function MobileLandingView({
           position: 'sticky',
           top: 0,
           zIndex: 1000,
-          background: 'rgba(15, 23, 42, 0.96)',
+          background: 'rgba(255, 255, 255, 0.96)',
           backdropFilter: 'blur(16px)',
           WebkitBackdropFilter: 'blur(16px)',
-          borderBottom: '1px solid rgba(255, 255, 255, 0.1)',
+          borderBottom: '1px solid #e2e8f0',
           padding: '0.65rem 1rem',
           display: 'flex',
           justifyContent: 'space-between',
           alignItems: 'center',
+          boxShadow: '0 1px 3px rgba(0, 0, 0, 0.05)',
         }}
       >
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem' }}>
@@ -122,7 +123,7 @@ export function MobileLandingView({
                 height: '36px',
                 borderRadius: '50%',
                 objectFit: 'cover',
-                border: '2px solid #d4af37',
+                border: '2px solid #1d4ed8',
               }}
             />
             <span
@@ -133,16 +134,16 @@ export function MobileLandingView({
                 width: '10px',
                 height: '10px',
                 borderRadius: '50%',
-                background: '#d4af37',
-                border: '2px solid #0f172a',
+                background: '#16a34a',
+                border: '2px solid #ffffff',
               }}
             />
           </div>
           <div>
-            <div style={{ fontSize: '1.05rem', fontWeight: 900, color: '#d4af37', fontFamily: 'var(--font-heading)', lineHeight: 1.1, letterSpacing: '0.03em' }}>
+            <div style={{ fontSize: '1.05rem', fontWeight: 900, color: '#1e3a8a', fontFamily: 'var(--font-heading)', lineHeight: 1.1, letterSpacing: '0.03em' }}>
               ÉCLAT INSTITUTE
             </div>
-            <div style={{ fontSize: '0.65rem', color: '#94a3b8', fontWeight: 600 }}>
+            <div style={{ fontSize: '0.65rem', color: '#64748b', fontWeight: 600 }}>
               100% Online Virtual Campus
             </div>
           </div>
@@ -174,9 +175,9 @@ export function MobileLandingView({
           <Link
             to="/library"
             style={{
-              background: 'rgba(59, 130, 246, 0.2)',
-              color: '#93c5fd',
-              border: '1px solid rgba(59, 130, 246, 0.4)',
+              background: '#eff6ff',
+              color: '#1d4ed8',
+              border: '1px solid #bfdbfe',
               padding: '0.4rem 0.65rem',
               borderRadius: '8px',
               fontSize: '0.75rem',
@@ -195,7 +196,7 @@ export function MobileLandingView({
             type="button"
             onClick={onOpenPortals}
             style={{
-              background: '#2563eb',
+              background: '#1d4ed8',
               color: '#ffffff',
               border: 'none',
               padding: '0.4rem 0.75rem',
@@ -214,11 +215,11 @@ export function MobileLandingView({
       <div style={{ padding: '0.85rem 1rem 0' }}>
         <div
           style={{
-            background: 'linear-gradient(135deg, #1e3a8a 0%, #1e1b4b 100%)',
+            background: 'linear-gradient(135deg, #1e3a8a 0%, #1e40af 100%)',
             borderRadius: '16px',
             padding: '1.1rem',
             border: '1px solid rgba(59, 130, 246, 0.3)',
-            boxShadow: '0 8px 24px rgba(0, 0, 0, 0.4)',
+            boxShadow: '0 8px 24px rgba(30, 58, 138, 0.25)',
             position: 'relative',
             overflow: 'hidden',
           }}
@@ -238,7 +239,7 @@ export function MobileLandingView({
             >
               ● 100% Online Intake
             </span>
-            <span style={{ fontSize: '0.75rem', color: '#93c5fd', fontWeight: 600 }}>
+            <span style={{ fontSize: '0.75rem', color: '#bfdbfe', fontWeight: 600 }}>
               Early Bird 15% Off
             </span>
           </div>
@@ -246,41 +247,41 @@ export function MobileLandingView({
           <h2 style={{ fontSize: '1.2rem', fontWeight: 800, color: '#ffffff', lineHeight: 1.25, marginBottom: '0.4rem' }}>
             Master Tech & Global Languages 100% Online
           </h2>
-          <p style={{ fontSize: '0.8rem', color: '#cbd5e1', lineHeight: 1.4, marginBottom: '0.85rem' }}>
+          <p style={{ fontSize: '0.8rem', color: '#e2e8f0', lineHeight: 1.4, marginBottom: '0.85rem' }}>
             Live interactive Zoom classes, 24/7 video LMS modules, virtual coding labs, and verified global e-certificates.
           </p>
 
           {/* Countdown timer strip */}
           <div
             style={{
-              background: 'rgba(0, 0, 0, 0.35)',
+              background: 'rgba(255, 255, 255, 0.15)',
               borderRadius: '10px',
               padding: '0.5rem 0.75rem',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'space-around',
               marginBottom: '0.85rem',
-              border: '1px solid rgba(255, 255, 255, 0.08)',
+              border: '1px solid rgba(255, 255, 255, 0.25)',
             }}
           >
             <div style={{ textAlign: 'center' }}>
-              <div style={{ fontSize: '1.1rem', fontWeight: 900, color: '#60a5fa' }}>{String(timeLeft.days).padStart(2, '0')}</div>
-              <div style={{ fontSize: '0.6rem', color: '#94a3b8', textTransform: 'uppercase' }}>Days</div>
+              <div style={{ fontSize: '1.1rem', fontWeight: 900, color: '#ffffff' }}>{String(timeLeft.days).padStart(2, '0')}</div>
+              <div style={{ fontSize: '0.6rem', color: '#e2e8f0', textTransform: 'uppercase' }}>Days</div>
             </div>
-            <span style={{ color: '#475569', fontWeight: 900 }}>:</span>
+            <span style={{ color: 'rgba(255, 255, 255, 0.6)', fontWeight: 900 }}>:</span>
             <div style={{ textAlign: 'center' }}>
-              <div style={{ fontSize: '1.1rem', fontWeight: 900, color: '#60a5fa' }}>{String(timeLeft.hours).padStart(2, '0')}</div>
-              <div style={{ fontSize: '0.6rem', color: '#94a3b8', textTransform: 'uppercase' }}>Hours</div>
+              <div style={{ fontSize: '1.1rem', fontWeight: 900, color: '#ffffff' }}>{String(timeLeft.hours).padStart(2, '0')}</div>
+              <div style={{ fontSize: '0.6rem', color: '#e2e8f0', textTransform: 'uppercase' }}>Hours</div>
             </div>
-            <span style={{ color: '#475569', fontWeight: 900 }}>:</span>
+            <span style={{ color: 'rgba(255, 255, 255, 0.6)', fontWeight: 900 }}>:</span>
             <div style={{ textAlign: 'center' }}>
-              <div style={{ fontSize: '1.1rem', fontWeight: 900, color: '#60a5fa' }}>{String(timeLeft.minutes).padStart(2, '0')}</div>
-              <div style={{ fontSize: '0.6rem', color: '#94a3b8', textTransform: 'uppercase' }}>Mins</div>
+              <div style={{ fontSize: '1.1rem', fontWeight: 900, color: '#ffffff' }}>{String(timeLeft.minutes).padStart(2, '0')}</div>
+              <div style={{ fontSize: '0.6rem', color: '#e2e8f0', textTransform: 'uppercase' }}>Mins</div>
             </div>
-            <span style={{ color: '#475569', fontWeight: 900 }}>:</span>
+            <span style={{ color: 'rgba(255, 255, 255, 0.6)', fontWeight: 900 }}>:</span>
             <div style={{ textAlign: 'center' }}>
-              <div style={{ fontSize: '1.1rem', fontWeight: 900, color: '#22c55e' }}>{String(timeLeft.seconds).padStart(2, '0')}</div>
-              <div style={{ fontSize: '0.6rem', color: '#94a3b8', textTransform: 'uppercase' }}>Secs</div>
+              <div style={{ fontSize: '1.1rem', fontWeight: 900, color: '#86efac' }}>{String(timeLeft.seconds).padStart(2, '0')}</div>
+              <div style={{ fontSize: '0.6rem', color: '#e2e8f0', textTransform: 'uppercase' }}>Secs</div>
             </div>
           </div>
 
@@ -290,12 +291,12 @@ export function MobileLandingView({
               onClick={() => onOpenInquiry()}
               style={{
                 flex: 1,
-                background: '#2563eb',
-                color: '#ffffff',
+                background: '#ffffff',
+                color: '#1e3a8a',
                 border: 'none',
                 padding: '0.65rem 1rem',
                 borderRadius: '10px',
-                fontWeight: 700,
+                fontWeight: 800,
                 fontSize: '0.85rem',
                 cursor: 'pointer',
               }}
@@ -341,21 +342,22 @@ export function MobileLandingView({
             type="button"
             onClick={() => onOpenInquiry()}
             style={{
-              background: '#131b2e',
-              border: '1px solid #1e293b',
+              background: '#ffffff',
+              border: '1px solid #e2e8f0',
               borderRadius: '12px',
               padding: '0.75rem 0.35rem',
               display: 'flex',
               flexDirection: 'column',
               alignItems: 'center',
               justifyContent: 'center',
-              color: '#f8fafc',
+              color: '#0f172a',
               cursor: 'pointer',
               gap: '4px',
+              boxShadow: '0 2px 6px rgba(0, 0, 0, 0.04)',
             }}
           >
             <span style={{ fontSize: '1.35rem' }}>⚡</span>
-            <span style={{ fontSize: '0.68rem', fontWeight: 700, textAlign: 'center' }}>Apply</span>
+            <span style={{ fontSize: '0.68rem', fontWeight: 800, textAlign: 'center', color: '#0f172a' }}>Apply</span>
           </button>
 
           {/* Tile 2: Paybill */}
@@ -363,42 +365,44 @@ export function MobileLandingView({
             type="button"
             onClick={copyPaybill}
             style={{
-              background: '#131b2e',
-              border: '1px solid #1e293b',
+              background: '#ffffff',
+              border: '1px solid #e2e8f0',
               borderRadius: '12px',
               padding: '0.75rem 0.35rem',
               display: 'flex',
               flexDirection: 'column',
               alignItems: 'center',
               justifyContent: 'center',
-              color: '#f8fafc',
+              color: '#0f172a',
               cursor: 'pointer',
               gap: '4px',
+              boxShadow: '0 2px 6px rgba(0, 0, 0, 0.04)',
             }}
           >
             <span style={{ fontSize: '1.35rem' }}>💳</span>
-            <span style={{ fontSize: '0.68rem', fontWeight: 700, textAlign: 'center' }}>KCB / Pay</span>
+            <span style={{ fontSize: '0.68rem', fontWeight: 800, textAlign: 'center', color: '#0f172a' }}>KCB / Pay</span>
           </button>
 
           {/* Tile 3: Timetable */}
           <Link
             to="/timetable"
             style={{
-              background: '#131b2e',
-              border: '1px solid #1e293b',
+              background: '#ffffff',
+              border: '1px solid #e2e8f0',
               borderRadius: '12px',
               padding: '0.75rem 0.35rem',
               display: 'flex',
               flexDirection: 'column',
               alignItems: 'center',
               justifyContent: 'center',
-              color: '#f8fafc',
+              color: '#0f172a',
               textDecoration: 'none',
               gap: '4px',
+              boxShadow: '0 2px 6px rgba(0, 0, 0, 0.04)',
             }}
           >
             <span style={{ fontSize: '1.35rem' }}>📅</span>
-            <span style={{ fontSize: '0.68rem', fontWeight: 700, textAlign: 'center' }}>Schedule</span>
+            <span style={{ fontSize: '0.68rem', fontWeight: 800, textAlign: 'center', color: '#0f172a' }}>Schedule</span>
           </Link>
 
           {/* Tile 4: Desks/Login */}
@@ -406,21 +410,22 @@ export function MobileLandingView({
             type="button"
             onClick={onOpenPortals}
             style={{
-              background: '#131b2e',
-              border: '1px solid #1e293b',
+              background: '#ffffff',
+              border: '1px solid #e2e8f0',
               borderRadius: '12px',
               padding: '0.75rem 0.35rem',
               display: 'flex',
               flexDirection: 'column',
               alignItems: 'center',
               justifyContent: 'center',
-              color: '#60a5fa',
+              color: '#1d4ed8',
               cursor: 'pointer',
               gap: '4px',
+              boxShadow: '0 2px 6px rgba(0, 0, 0, 0.04)',
             }}
           >
             <span style={{ fontSize: '1.35rem' }}>🎓</span>
-            <span style={{ fontSize: '0.68rem', fontWeight: 700, textAlign: 'center' }}>Portal</span>
+            <span style={{ fontSize: '0.68rem', fontWeight: 800, textAlign: 'center', color: '#1d4ed8' }}>Portal</span>
           </button>
         </div>
       </div>
@@ -428,10 +433,10 @@ export function MobileLandingView({
       {/* 4. Search & Filter Header */}
       <div id="courses" style={{ padding: '1.25rem 1rem 0.5rem', scrollMarginTop: '70px' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.65rem' }}>
-          <h3 style={{ fontSize: '1.1rem', fontWeight: 800, color: '#ffffff', margin: 0 }}>
+          <h3 style={{ fontSize: '1.1rem', fontWeight: 900, color: '#0f172a', margin: 0 }}>
             Online Programs ({filteredCourses.length})
           </h3>
-          <span style={{ fontSize: '0.72rem', color: '#94a3b8', fontWeight: 600 }}>
+          <span style={{ fontSize: '0.72rem', color: '#64748b', fontWeight: 600 }}>
             Virtual Campus
           </span>
         </div>
@@ -447,11 +452,12 @@ export function MobileLandingView({
               width: '100%',
               padding: '0.65rem 0.85rem',
               borderRadius: '10px',
-              background: '#182238',
-              border: '1px solid #2e3d61',
-              color: '#ffffff',
+              background: '#ffffff',
+              border: '1.5px solid #cbd5e1',
+              color: '#0f172a',
               fontSize: '0.85rem',
               outline: 'none',
+              boxShadow: '0 1px 3px rgba(0, 0, 0, 0.04)',
             }}
           />
         </div>
@@ -474,15 +480,16 @@ export function MobileLandingView({
               onClick={() => setSelectedCat(cat.id)}
               style={{
                 flexShrink: 0,
-                background: selectedCat === cat.id ? '#2563eb' : '#182238',
-                color: selectedCat === cat.id ? '#ffffff' : '#cbd5e1',
-                border: selectedCat === cat.id ? '1px solid #3b82f6' : '1px solid #2e3d61',
+                background: selectedCat === cat.id ? '#1d4ed8' : '#ffffff',
+                color: selectedCat === cat.id ? '#ffffff' : '#334155',
+                border: selectedCat === cat.id ? '1px solid #1d4ed8' : '1px solid #cbd5e1',
                 borderRadius: '999px',
                 padding: '0.4rem 0.75rem',
                 fontSize: '0.75rem',
                 fontWeight: 700,
                 cursor: 'pointer',
                 whiteSpace: 'nowrap',
+                boxShadow: selectedCat === cat.id ? '0 2px 6px rgba(29, 78, 216, 0.2)' : 'none',
               }}
             >
               {cat.label}
@@ -497,11 +504,11 @@ export function MobileLandingView({
           <div
             key={course.id}
             style={{
-              background: '#131b2e',
+              background: '#ffffff',
               borderRadius: '14px',
-              border: '1px solid #24304d',
+              border: '1px solid #e2e8f0',
               padding: '1rem',
-              boxShadow: '0 4px 14px rgba(0, 0, 0, 0.25)',
+              boxShadow: '0 4px 14px rgba(0, 0, 0, 0.05)',
               display: 'flex',
               flexDirection: 'column',
               gap: '0.65rem',
@@ -514,13 +521,13 @@ export function MobileLandingView({
                   width: '42px',
                   height: '42px',
                   borderRadius: '10px',
-                  background: '#1f2c48',
+                  background: '#f1f5f9',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
                   fontSize: '1.4rem',
                   flexShrink: 0,
-                  border: '1px solid #2e3d61',
+                  border: '1px solid #e2e8f0',
                 }}
               >
                 {course.icon}
@@ -532,7 +539,7 @@ export function MobileLandingView({
                     style={{
                       fontSize: '0.65rem',
                       fontWeight: 800,
-                      color: course.tagColor || '#60a5fa',
+                      color: course.tagColor || '#1d4ed8',
                       textTransform: 'uppercase',
                       letterSpacing: '0.04em',
                     }}
@@ -545,9 +552,9 @@ export function MobileLandingView({
                     rel="noopener noreferrer"
                     onClick={(e) => e.stopPropagation()}
                     style={{
-                      background: 'rgba(37, 99, 235, 0.18)',
-                      color: '#60a5fa',
-                      border: '1px solid rgba(96, 165, 250, 0.35)',
+                      background: '#eff6ff',
+                      color: '#1d4ed8',
+                      border: '1px solid #bfdbfe',
                       padding: '2px 7px',
                       borderRadius: '6px',
                       fontSize: '0.68rem',
@@ -561,16 +568,16 @@ export function MobileLandingView({
                     💬 Fees Inquiry
                   </a>
                 </div>
-                <h4 style={{ fontSize: '0.95rem', fontWeight: 800, color: '#f8fafc', margin: '2px 0 0', lineHeight: 1.3 }}>
+                <h4 style={{ fontSize: '0.95rem', fontWeight: 800, color: '#0f172a', margin: '2px 0 0', lineHeight: 1.3 }}>
                   {course.title}
                 </h4>
               </div>
             </div>
 
             {/* Meta Tags */}
-            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.4rem', fontSize: '0.72rem', color: '#94a3b8' }}>
-              <span style={{ background: '#182238', padding: '2px 6px', borderRadius: '4px' }}>⏱️ {course.duration}</span>
-              <span style={{ background: '#182238', padding: '2px 6px', borderRadius: '4px' }}>🏛️ {course.schedule.split('/')[0]}</span>
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.4rem', fontSize: '0.72rem', color: '#64748b' }}>
+              <span style={{ background: '#f1f5f9', border: '1px solid #e2e8f0', padding: '2px 6px', borderRadius: '4px' }}>⏱️ {course.duration}</span>
+              <span style={{ background: '#f1f5f9', border: '1px solid #e2e8f0', padding: '2px 6px', borderRadius: '4px' }}>🏛️ {course.schedule.split('/')[0]}</span>
             </div>
 
             {/* Skills Pills */}
@@ -579,19 +586,20 @@ export function MobileLandingView({
                 <span
                   key={idx}
                   style={{
-                    background: '#1f2c48',
-                    color: '#cbd5e1',
+                    background: '#eff6ff',
+                    color: '#1e40af',
                     fontSize: '0.68rem',
                     padding: '2px 6px',
                     borderRadius: '4px',
                     fontWeight: 600,
+                    border: '1px solid #dbeafe',
                   }}
                 >
                   ✓ {skill}
                 </span>
               ))}
               {course.skills.length > 3 && (
-                <span style={{ fontSize: '0.68rem', color: '#60a5fa', alignSelf: 'center', fontWeight: 700 }}>
+                <span style={{ fontSize: '0.68rem', color: '#1d4ed8', alignSelf: 'center', fontWeight: 700 }}>
                   +{course.skills.length - 3} more
                 </span>
               )}
@@ -604,7 +612,7 @@ export function MobileLandingView({
                 onClick={() => onOpenInquiry(course.title)}
                 style={{
                   width: '100%',
-                  background: '#2563eb',
+                  background: '#1d4ed8',
                   color: '#ffffff',
                   border: 'none',
                   borderRadius: '8px',
@@ -616,6 +624,7 @@ export function MobileLandingView({
                   alignItems: 'center',
                   justifyContent: 'center',
                   gap: '6px',
+                  boxShadow: '0 2px 6px rgba(29, 78, 216, 0.25)',
                 }}
               >
                 ⚡ Enroll Now →
@@ -629,26 +638,27 @@ export function MobileLandingView({
       <div style={{ padding: '0.5rem 1rem 1.5rem' }}>
         <div
           style={{
-            background: '#131b2e',
+            background: '#ffffff',
             borderRadius: '12px',
             padding: '0.85rem',
-            border: '1px solid #24304d',
+            border: '1px solid #e2e8f0',
             display: 'flex',
             flexDirection: 'column',
             gap: '0.5rem',
             fontSize: '0.78rem',
-            color: '#cbd5e1',
+            color: '#334155',
+            boxShadow: '0 2px 8px rgba(0, 0, 0, 0.04)',
           }}
         >
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <span>🏦 {INSTITUTION_CONFIG.bank.name} Acc: <strong style={{ color: '#67e8f9' }}>{INSTITUTION_CONFIG.bank.accountNumber}</strong></span>
+            <span>🏦 {INSTITUTION_CONFIG.bank.name} Acc: <strong style={{ color: '#1d4ed8' }}>{INSTITUTION_CONFIG.bank.accountNumber}</strong></span>
             <button
               type="button"
               onClick={copyAccount}
               style={{
-                background: '#1e293b',
-                color: '#93c5fd',
-                border: '1px solid #3b82f6',
+                background: '#f1f5f9',
+                color: '#1d4ed8',
+                border: '1px solid #cbd5e1',
                 borderRadius: '6px',
                 padding: '2px 8px',
                 fontSize: '0.7rem',
@@ -659,10 +669,10 @@ export function MobileLandingView({
               Copy
             </button>
           </div>
-          <div>📱 M-Pesa Paybill: <strong>{INSTITUTION_CONFIG.bank.paybillNumber}</strong> • Acc: <strong style={{ color: '#fde047' }}>{INSTITUTION_CONFIG.bank.accountNumber}</strong></div>
-          <div>💳 Card: <strong>Visa / Mastercard Accepted</strong> ($ USD)</div>
-          <div>📞 Virtual Desk: <a href={`tel:${INSTITUTION_CONFIG.contact.phoneRaw}`} style={{ color: '#60a5fa', textDecoration: 'none', fontWeight: 700 }}>{INSTITUTION_CONFIG.contact.phone}</a></div>
-          <div>🌐 Delivery: <strong style={{ color: '#ffffff' }}>100% Online Live Classes & LMS</strong></div>
+          <div>📱 M-Pesa Paybill: <strong style={{ color: '#b45309' }}>{INSTITUTION_CONFIG.bank.paybillNumber}</strong> • Acc: <strong style={{ color: '#1d4ed8' }}>{INSTITUTION_CONFIG.bank.accountNumber}</strong></div>
+          <div>💳 Card: <strong style={{ color: '#0f172a' }}>Visa / Mastercard Accepted</strong> ($ USD)</div>
+          <div>📞 Virtual Desk: <a href={`tel:${INSTITUTION_CONFIG.contact.phoneRaw}`} style={{ color: '#1d4ed8', textDecoration: 'none', fontWeight: 700 }}>{INSTITUTION_CONFIG.contact.phone}</a></div>
+          <div>🌐 Delivery: <strong style={{ color: '#0f172a' }}>100% Online Live Classes & LMS</strong></div>
         </div>
       </div>
 

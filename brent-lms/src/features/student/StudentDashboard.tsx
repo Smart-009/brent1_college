@@ -235,10 +235,10 @@ export function StudentDashboard() {
                 type="button"
                 className="btn btn-sm"
                 onClick={() => setShowCertModal(true)}
-                style={{ background: '#f59e0b', color: '#090d16', fontWeight: 800, border: 'none', display: 'flex', alignItems: 'center', gap: '0.35rem' }}
+                style={{ background: '#d97706', color: '#ffffff', fontWeight: 800, border: 'none', display: 'flex', alignItems: 'center', gap: '0.35rem' }}
                 title="Your Certificate has been officially granted and verified by the Academic Registrar."
               >
-                🎓 Certificate of Completion (Granted ✓)
+                <span>Certificate of Completion (Granted)</span>
               </button>
             ) : (
               <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
@@ -248,25 +248,25 @@ export function StudentDashboard() {
                   disabled
                   title="Certificate locked: Awaiting course evaluation and graduation clearance by the College Administrator."
                   style={{
-                    background: 'rgba(255, 255, 255, 0.12)',
-                    color: '#cbd5e1',
+                    background: '#f1f5f9',
+                    color: '#64748b',
                     fontWeight: 700,
-                    border: '1px solid rgba(255, 255, 255, 0.2)',
+                    border: '1px solid #cbd5e1',
                     cursor: 'not-allowed',
                     display: 'flex',
                     alignItems: 'center',
                     gap: '0.35rem',
                   }}
                 >
-                  🔒 Certificate (Pending Admin Clearance)
+                  <span>Certificate (Pending Clearance)</span>
                 </button>
               </div>
             )}
-            <Link to="/exams" className="btn btn-sm" style={{ background: '#ffffff', color: '#1e3a8a', fontWeight: 700 }}>
-              📜 View Official Transcript
+            <Link to="/exams" className="btn btn-sm" style={{ background: '#ffffff', color: '#1e3a8a', fontWeight: 700, border: '1px solid #cbd5e1' }}>
+              <span>View Official Transcript</span>
             </Link>
-            <Link to="/fees" className="btn btn-sm" style={{ background: '#22c55e', color: '#ffffff', fontWeight: 700 }}>
-              💳 Tuition Statement
+            <Link to="/fees" className="btn btn-sm" style={{ background: '#16a34a', color: '#ffffff', fontWeight: 700 }}>
+              <span>Tuition Statement</span>
             </Link>
           </div>
         </div>

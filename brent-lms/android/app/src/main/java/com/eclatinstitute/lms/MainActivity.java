@@ -10,8 +10,8 @@ public class MainActivity extends BridgeActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        // Set native decor view background color to eliminate white launch flash
-        getWindow().getDecorView().setBackgroundColor(android.graphics.Color.parseColor("#090d16"));
+        // Set native decor view background color to institutional light canvas
+        getWindow().getDecorView().setBackgroundColor(android.graphics.Color.parseColor("#f8fafc"));
         // Enforce OS-level screenshot & screen recording blocking across entire app
         getWindow().setFlags(
             WindowManager.LayoutParams.FLAG_SECURE,
@@ -25,7 +25,7 @@ public class MainActivity extends BridgeActivity {
         try {
             if (getBridge() != null && getBridge().getWebView() != null) {
                 WebView webView = getBridge().getWebView();
-                webView.setBackgroundColor(android.graphics.Color.parseColor("#090d16"));
+                webView.setBackgroundColor(android.graphics.Color.parseColor("#f8fafc"));
                 webView.getSettings().setDomStorageEnabled(true);
                 webView.getSettings().setDatabaseEnabled(true);
                 webView.addJavascriptInterface(new SecurityBridge(), "AndroidSecurity");

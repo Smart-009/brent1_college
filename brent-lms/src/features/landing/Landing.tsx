@@ -1267,9 +1267,9 @@ export function Landing() {
               right: 0,
               bottom: 0,
               width: 'min(330px, 86vw)',
-              background: '#090d16',
-              borderLeft: '1px solid rgba(212, 175, 55, 0.25)',
-              boxShadow: '-10px 0 40px rgba(0, 0, 0, 0.7)',
+              background: '#ffffff',
+              borderLeft: '1px solid #e2e8f0',
+              boxShadow: '-10px 0 40px rgba(0, 0, 0, 0.15)',
               zIndex: 9999,
               display: 'flex',
               flexDirection: 'column',
@@ -1283,21 +1283,21 @@ export function Landing() {
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'space-between',
-                borderBottom: '1px solid rgba(255, 255, 255, 0.08)',
-                background: 'rgba(15, 23, 42, 0.8)',
+                borderBottom: '1px solid #e2e8f0',
+                background: '#f8fafc',
               }}
             >
               <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem' }}>
                 <img
                   src="/logo.png"
                   alt="Éclat Institute Logo"
-                  style={{ width: '32px', height: '32px', borderRadius: '50%', border: '1.5px solid #d4af37' }}
+                  style={{ width: '32px', height: '32px', borderRadius: '50%', border: '1.5px solid #1d4ed8' }}
                 />
                 <div>
-                  <div style={{ fontSize: '0.95rem', fontWeight: 900, color: '#d4af37', fontFamily: 'var(--font-heading)', lineHeight: 1.1 }}>
+                  <div style={{ fontSize: '0.95rem', fontWeight: 900, color: '#1e3a8a', fontFamily: 'var(--font-heading)', lineHeight: 1.1 }}>
                     ÉCLAT INSTITUTE
                   </div>
-                  <div style={{ fontSize: '0.62rem', color: '#94a3b8', fontWeight: 600 }}>
+                  <div style={{ fontSize: '0.62rem', color: '#64748b', fontWeight: 600 }}>
                     100% Online Virtual Campus
                   </div>
                 </div>
@@ -1307,9 +1307,9 @@ export function Landing() {
                 type="button"
                 onClick={() => setMobileNavOpen(false)}
                 style={{
-                  background: 'rgba(255, 255, 255, 0.08)',
-                  border: '1px solid rgba(255, 255, 255, 0.12)',
-                  color: '#ffffff',
+                  background: '#f1f5f9',
+                  border: '1px solid #cbd5e1',
+                  color: '#0f172a',
                   width: '32px',
                   height: '32px',
                   borderRadius: '8px',
@@ -1322,7 +1322,7 @@ export function Landing() {
                 }}
                 aria-label="Close menu"
               >
-                <XIcon size={18} color="#ffffff" />
+                <XIcon size={18} color="#0f172a" />
               </button>
             </div>
 
@@ -1336,9 +1336,10 @@ export function Landing() {
                 display: 'flex',
                 flexDirection: 'column',
                 gap: '0.35rem',
+                background: '#ffffff',
               }}
             >
-              <div style={{ fontSize: '0.68rem', fontWeight: 800, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.08em', margin: '0.35rem 0 0.25rem 0.35rem' }}>
+              <div style={{ fontSize: '0.68rem', fontWeight: 800, color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.08em', margin: '0.35rem 0 0.25rem 0.35rem' }}>
                 Academic Directory
               </div>
 
@@ -1349,7 +1350,7 @@ export function Landing() {
                   window.scrollTo({ top: 0, behavior: 'smooth' })
                 }}
                 style={{
-                  color: '#f8fafc',
+                  color: '#0f172a',
                   textDecoration: 'none',
                   padding: '0.65rem 0.8rem',
                   borderRadius: '10px',
@@ -1358,10 +1359,11 @@ export function Landing() {
                   gap: '10px',
                   fontSize: '0.9rem',
                   fontWeight: 700,
-                  background: 'rgba(255, 255, 255, 0.04)',
+                  background: '#f8fafc',
+                  border: '1px solid #e2e8f0',
                 }}
               >
-                <HomeIcon size={18} color="#f8fafc" />
+                <HomeIcon size={18} color="#0f172a" />
                 <span>Home</span>
               </Link>
 
@@ -1369,7 +1371,7 @@ export function Landing() {
                 to="/courses"
                 onClick={() => setMobileNavOpen(false)}
                 style={{
-                  color: '#38bdf8',
+                  color: '#1d4ed8',
                   textDecoration: 'none',
                   padding: '0.65rem 0.8rem',
                   borderRadius: '10px',
@@ -1378,11 +1380,11 @@ export function Landing() {
                   gap: '10px',
                   fontSize: '0.9rem',
                   fontWeight: 800,
-                  background: 'rgba(56, 189, 248, 0.1)',
-                  border: '1px solid rgba(56, 189, 248, 0.25)',
+                  background: '#eff6ff',
+                  border: '1px solid #bfdbfe',
                 }}
               >
-                <BuildingIcon size={18} color="#38bdf8" />
+                <BuildingIcon size={18} color="#1d4ed8" />
                 <span>All Academic Faculties</span>
               </Link>
 
@@ -1390,7 +1392,7 @@ export function Landing() {
                 to="/courses?cat=School+of+Business"
                 onClick={() => setMobileNavOpen(false)}
                 style={{
-                  color: '#10b981',
+                  color: '#059669',
                   textDecoration: 'none',
                   padding: '0.6rem 0.8rem',
                   borderRadius: '10px',
@@ -1399,10 +1401,11 @@ export function Landing() {
                   gap: '10px',
                   fontSize: '0.85rem',
                   fontWeight: 700,
-                  background: 'rgba(16, 185, 129, 0.08)',
+                  background: '#ecfdf5',
+                  border: '1px solid #a7f3d0',
                 }}
               >
-                <BriefcaseIcon size={18} color="#10b981" />
+                <BriefcaseIcon size={18} color="#059669" />
                 <span>School of Business</span>
               </Link>
 
@@ -1410,7 +1413,7 @@ export function Landing() {
                 to="/courses?cat=School+of+IT+and+Data+Science"
                 onClick={() => setMobileNavOpen(false)}
                 style={{
-                  color: '#38bdf8',
+                  color: '#0284c7',
                   textDecoration: 'none',
                   padding: '0.6rem 0.8rem',
                   borderRadius: '10px',
@@ -1419,10 +1422,11 @@ export function Landing() {
                   gap: '10px',
                   fontSize: '0.85rem',
                   fontWeight: 700,
-                  background: 'rgba(56, 189, 248, 0.08)',
+                  background: '#f0f9ff',
+                  border: '1px solid #bae6fd',
                 }}
               >
-                <CodeIcon size={18} color="#38bdf8" />
+                <CodeIcon size={18} color="#0284c7" />
                 <span>School of IT and Data Science</span>
               </Link>
 
@@ -1430,7 +1434,7 @@ export function Landing() {
                 to="/courses?cat=School+of+Language"
                 onClick={() => setMobileNavOpen(false)}
                 style={{
-                  color: '#f59e0b',
+                  color: '#b45309',
                   textDecoration: 'none',
                   padding: '0.6rem 0.8rem',
                   borderRadius: '10px',
@@ -1439,10 +1443,11 @@ export function Landing() {
                   gap: '10px',
                   fontSize: '0.85rem',
                   fontWeight: 700,
-                  background: 'rgba(245, 158, 11, 0.08)',
+                  background: '#fffbeb',
+                  border: '1px solid #fde68a',
                 }}
               >
-                <GlobeIcon size={18} color="#f59e0b" />
+                <GlobeIcon size={18} color="#b45309" />
                 <span>School of Language</span>
               </Link>
 
@@ -1450,7 +1455,7 @@ export function Landing() {
                 to="/courses?cat=IGCSE"
                 onClick={() => setMobileNavOpen(false)}
                 style={{
-                  color: '#d4af37',
+                  color: '#b45309',
                   textDecoration: 'none',
                   padding: '0.65rem 0.8rem',
                   borderRadius: '10px',
@@ -1459,8 +1464,8 @@ export function Landing() {
                   gap: '10px',
                   fontSize: '0.88rem',
                   fontWeight: 800,
-                  background: 'rgba(212, 175, 55, 0.12)',
-                  border: '1px solid rgba(212, 175, 55, 0.28)',
+                  background: '#fefce8',
+                  border: '1px solid #fef08a',
                 }}
               >
                 <BritishShieldIcon size={18} />
@@ -1471,7 +1476,7 @@ export function Landing() {
                 href="#intakes-section"
                 onClick={() => setMobileNavOpen(false)}
                 style={{
-                  color: '#fbbf24',
+                  color: '#b45309',
                   textDecoration: 'none',
                   padding: '0.65rem 0.8rem',
                   borderRadius: '10px',
@@ -1480,10 +1485,11 @@ export function Landing() {
                   gap: '10px',
                   fontSize: '0.88rem',
                   fontWeight: 700,
-                  background: 'rgba(251, 191, 36, 0.08)',
+                  background: '#fefce8',
+                  border: '1px solid #fef08a',
                 }}
               >
-                <CalendarIcon size={18} color="#fbbf24" />
+                <CalendarIcon size={18} color="#b45309" />
                 <span>Upcoming Intakes & Admissions</span>
               </a>
 
@@ -1491,7 +1497,7 @@ export function Landing() {
                 to="/library"
                 onClick={() => setMobileNavOpen(false)}
                 style={{
-                  color: '#f8fafc',
+                  color: '#0f172a',
                   textDecoration: 'none',
                   padding: '0.65rem 0.8rem',
                   borderRadius: '10px',
@@ -1500,10 +1506,11 @@ export function Landing() {
                   gap: '10px',
                   fontSize: '0.88rem',
                   fontWeight: 700,
-                  background: 'rgba(255, 255, 255, 0.04)',
+                  background: '#f8fafc',
+                  border: '1px solid #e2e8f0',
                 }}
               >
-                <LibraryIcon size={18} color="#f8fafc" />
+                <LibraryIcon size={18} color="#0f172a" />
                 <span>Free E-Library & Past Papers</span>
               </Link>
 
@@ -1511,7 +1518,7 @@ export function Landing() {
                 href="#calculator"
                 onClick={() => setMobileNavOpen(false)}
                 style={{
-                  color: '#f8fafc',
+                  color: '#0f172a',
                   textDecoration: 'none',
                   padding: '0.65rem 0.8rem',
                   borderRadius: '10px',
@@ -1520,10 +1527,11 @@ export function Landing() {
                   gap: '10px',
                   fontSize: '0.88rem',
                   fontWeight: 700,
-                  background: 'rgba(255, 255, 255, 0.04)',
+                  background: '#f8fafc',
+                  border: '1px solid #e2e8f0',
                 }}
               >
-                <CreditCardIcon size={18} color="#f8fafc" />
+                <CreditCardIcon size={18} color="#0f172a" />
                 <span>Tuition Fees Inquiry</span>
               </a>
 
@@ -1531,7 +1539,7 @@ export function Landing() {
                 to="/timetable"
                 onClick={() => setMobileNavOpen(false)}
                 style={{
-                  color: '#f8fafc',
+                  color: '#0f172a',
                   textDecoration: 'none',
                   padding: '0.65rem 0.8rem',
                   borderRadius: '10px',
@@ -1540,10 +1548,11 @@ export function Landing() {
                   gap: '10px',
                   fontSize: '0.88rem',
                   fontWeight: 700,
-                  background: 'rgba(255, 255, 255, 0.04)',
+                  background: '#f8fafc',
+                  border: '1px solid #e2e8f0',
                 }}
               >
-                <ClockIcon size={18} color="#f8fafc" />
+                <ClockIcon size={18} color="#0f172a" />
                 <span>Virtual Class Timetable</span>
               </Link>
 
@@ -1551,7 +1560,7 @@ export function Landing() {
                 to="/about"
                 onClick={() => setMobileNavOpen(false)}
                 style={{
-                  color: '#f8fafc',
+                  color: '#0f172a',
                   textDecoration: 'none',
                   padding: '0.65rem 0.8rem',
                   borderRadius: '10px',
@@ -1560,10 +1569,11 @@ export function Landing() {
                   gap: '10px',
                   fontSize: '0.88rem',
                   fontWeight: 700,
-                  background: 'rgba(255, 255, 255, 0.04)',
+                  background: '#f8fafc',
+                  border: '1px solid #e2e8f0',
                 }}
               >
-                <BuildingIcon size={18} color="#f8fafc" />
+                <BuildingIcon size={18} color="#0f172a" />
                 <span>About Éclat Institute</span>
               </Link>
 
@@ -1578,9 +1588,9 @@ export function Landing() {
                 style={{
                   width: '100%',
                   textAlign: 'left',
-                  background: 'rgba(34, 197, 94, 0.1)',
-                  color: '#4ade80',
-                  border: '1px solid rgba(34, 197, 94, 0.25)',
+                  background: '#f0fdf4',
+                  color: '#15803d',
+                  border: '1px solid #bbf7d0',
                   padding: '0.65rem 0.8rem',
                   borderRadius: '10px',
                   display: 'flex',
@@ -1592,7 +1602,7 @@ export function Landing() {
                   marginTop: '0.25rem',
                 }}
               >
-                <SmartphoneIcon size={18} color="#4ade80" />
+                <SmartphoneIcon size={18} color="#15803d" />
                 <span>Download Native App (APK)</span>
               </button>
             </div>
@@ -1601,8 +1611,8 @@ export function Landing() {
             <div
               style={{
                 padding: '1rem 1.1rem',
-                borderTop: '1px solid rgba(255, 255, 255, 0.08)',
-                background: 'rgba(15, 23, 42, 0.95)',
+                borderTop: '1px solid #e2e8f0',
+                background: '#f8fafc',
                 display: 'flex',
                 flexDirection: 'column',
                 gap: '0.6rem',
@@ -1617,7 +1627,7 @@ export function Landing() {
                 className="btn btn-sm"
                 style={{
                   background: '#d4af37',
-                  color: '#0c0e12',
+                  color: '#0f172a',
                   fontWeight: 900,
                   textAlign: 'center',
                   padding: '0.7rem',
@@ -1632,7 +1642,7 @@ export function Landing() {
                   boxShadow: '0 2px 10px rgba(212, 175, 55, 0.35)',
                 }}
               >
-                <RocketIcon size={16} color="#0c0e12" />
+                <RocketIcon size={16} color="#0f172a" />
                 <span>Apply & Enroll in Intake</span>
               </button>
 
@@ -1689,12 +1699,12 @@ export function Landing() {
       {/* Hero Section: 100% Online Global Academy Billboard */}
       <section
         style={{
-          background: 'linear-gradient(135deg, #090d16 0%, #0f172a 50%, #1e293b 100%)',
+          background: 'linear-gradient(135deg, #1e3a8a 0%, #1e40af 50%, #2563eb 100%)',
           color: '#ffffff',
           padding: isMobile ? '2.5rem 1rem 2rem' : '5rem 2rem 4rem',
           position: 'relative',
           overflow: 'hidden',
-          borderBottom: '1px solid #1e293b',
+          borderBottom: '1px solid #1e3a8a',
         }}
       >
         {/* Ambient background glow */}
@@ -2188,15 +2198,14 @@ export function Landing() {
       </section>
 
       {/* Highlights & Value Metrics Section */}
-      <section style={{ background: '#090d16', padding: '2.5rem 1.5rem', borderBottom: '1px solid #1e293b' }}>
+      <section style={{ background: '#f8fafc', padding: '2.5rem 1.5rem', borderBottom: '1px solid #e2e8f0' }}>
         <div style={{ maxWidth: '1240px', margin: '0 auto' }}>
 
           {/* Live Intake Countdown Alert */}
           <div
             style={{
-              background: 'rgba(15, 23, 42, 0.75)',
-              backdropFilter: 'blur(12px)',
-              border: '1px solid rgba(212, 175, 55, 0.35)',
+              background: '#ffffff',
+              border: '1px solid #e2e8f0',
               borderRadius: '16px',
               padding: isMobile ? '1rem 0.85rem' : '1.25rem 1.5rem',
               maxWidth: '820px',
@@ -2206,39 +2215,40 @@ export function Landing() {
               alignItems: 'center',
               flexWrap: 'wrap',
               gap: isMobile ? '0.75rem' : '1rem',
+              boxShadow: '0 4px 20px rgba(0, 0, 0, 0.05)',
             }}
           >
             <div style={{ textAlign: isMobile ? 'center' : 'left', width: isMobile ? '100%' : 'auto' }}>
-              <div style={{ fontSize: '0.8rem', color: '#f5df88', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.05em' }}>
-                <SparklesIcon size={14} color="#f5df88" style={{ marginRight: '5px', verticalAlign: 'middle' }} />100% ONLINE INTAKE REGISTRATION OPEN
+              <div style={{ fontSize: '0.8rem', color: '#b45309', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                <SparklesIcon size={14} color="#b45309" style={{ marginRight: '5px', verticalAlign: 'middle' }} />100% ONLINE INTAKE REGISTRATION OPEN
               </div>
-              <div style={{ fontSize: isMobile ? '0.94rem' : '1.05rem', fontWeight: 800, color: '#ffffff', marginTop: '2px' }}>
+              <div style={{ fontSize: isMobile ? '0.94rem' : '1.05rem', fontWeight: 800, color: '#0f172a', marginTop: '2px' }}>
                 Live Virtual Cohorts — Early Morning, Late Morning, Midday, Afternoon, Evening & Night Batches
               </div>
-              <div style={{ fontSize: '0.76rem', color: '#cbd5e1', marginTop: '2px' }}>
-                <GlobeIcon size={14} color="#93c5fd" style={{ marginRight: '5px', verticalAlign: 'middle' }} />Study from anywhere in Kenya, Africa & Worldwide • 24/7 LMS Access
+              <div style={{ fontSize: '0.76rem', color: '#475569', marginTop: '2px' }}>
+                <GlobeIcon size={14} color="#1d4ed8" style={{ marginRight: '5px', verticalAlign: 'middle' }} />Study from anywhere in Kenya, Africa & Worldwide • 24/7 LMS Access
               </div>
             </div>
 
             <div style={{ display: 'flex', gap: '0.4rem', alignItems: 'center', justifyContent: 'center', width: isMobile ? '100%' : 'auto' }}>
-              <div style={{ background: '#090d16', border: '1px solid #d4af37', padding: '0.35rem 0.55rem', borderRadius: '8px', textAlign: 'center', minWidth: '44px' }}>
-                <div style={{ fontSize: '1.15rem', fontWeight: 900, color: '#d4af37' }}>{String(timeLeft.days).padStart(2, '0')}</div>
-                <div style={{ fontSize: '0.62rem', color: '#94a3b8', textTransform: 'uppercase' }}>Days</div>
+              <div style={{ background: '#f1f5f9', border: '1px solid #cbd5e1', padding: '0.35rem 0.55rem', borderRadius: '8px', textAlign: 'center', minWidth: '44px' }}>
+                <div style={{ fontSize: '1.15rem', fontWeight: 900, color: '#1e3a8a' }}>{String(timeLeft.days).padStart(2, '0')}</div>
+                <div style={{ fontSize: '0.62rem', color: '#64748b', textTransform: 'uppercase', fontWeight: 700 }}>Days</div>
               </div>
-              <span style={{ fontWeight: 900, color: '#d4af37' }}>:</span>
-              <div style={{ background: '#090d16', border: '1px solid #d4af37', padding: '0.35rem 0.55rem', borderRadius: '8px', textAlign: 'center', minWidth: '44px' }}>
-                <div style={{ fontSize: '1.15rem', fontWeight: 900, color: '#d4af37' }}>{String(timeLeft.hours).padStart(2, '0')}</div>
-                <div style={{ fontSize: '0.62rem', color: '#94a3b8', textTransform: 'uppercase' }}>Hours</div>
+              <span style={{ fontWeight: 900, color: '#94a3b8' }}>:</span>
+              <div style={{ background: '#f1f5f9', border: '1px solid #cbd5e1', padding: '0.35rem 0.55rem', borderRadius: '8px', textAlign: 'center', minWidth: '44px' }}>
+                <div style={{ fontSize: '1.15rem', fontWeight: 900, color: '#1e3a8a' }}>{String(timeLeft.hours).padStart(2, '0')}</div>
+                <div style={{ fontSize: '0.62rem', color: '#64748b', textTransform: 'uppercase', fontWeight: 700 }}>Hours</div>
               </div>
-              <span style={{ fontWeight: 900, color: '#d4af37' }}>:</span>
-              <div style={{ background: '#090d16', border: '1px solid #d4af37', padding: '0.35rem 0.55rem', borderRadius: '8px', textAlign: 'center', minWidth: '44px' }}>
-                <div style={{ fontSize: '1.15rem', fontWeight: 900, color: '#d4af37' }}>{String(timeLeft.minutes).padStart(2, '0')}</div>
-                <div style={{ fontSize: '0.62rem', color: '#94a3b8', textTransform: 'uppercase' }}>Mins</div>
+              <span style={{ fontWeight: 900, color: '#94a3b8' }}>:</span>
+              <div style={{ background: '#f1f5f9', border: '1px solid #cbd5e1', padding: '0.35rem 0.55rem', borderRadius: '8px', textAlign: 'center', minWidth: '44px' }}>
+                <div style={{ fontSize: '1.15rem', fontWeight: 900, color: '#1e3a8a' }}>{String(timeLeft.minutes).padStart(2, '0')}</div>
+                <div style={{ fontSize: '0.62rem', color: '#64748b', textTransform: 'uppercase', fontWeight: 700 }}>Mins</div>
               </div>
-              <span style={{ fontWeight: 900, color: '#d4af37' }}>:</span>
-              <div style={{ background: '#090d16', border: '1px solid #d4af37', padding: '0.35rem 0.55rem', borderRadius: '8px', textAlign: 'center', minWidth: '44px' }}>
-                <div style={{ fontSize: '1.15rem', fontWeight: 900, color: '#22c55e' }}>{String(timeLeft.seconds).padStart(2, '0')}</div>
-                <div style={{ fontSize: '0.62rem', color: '#94a3b8', textTransform: 'uppercase' }}>Secs</div>
+              <span style={{ fontWeight: 900, color: '#94a3b8' }}>:</span>
+              <div style={{ background: '#f1f5f9', border: '1px solid #cbd5e1', padding: '0.35rem 0.55rem', borderRadius: '8px', textAlign: 'center', minWidth: '44px' }}>
+                <div style={{ fontSize: '1.15rem', fontWeight: 900, color: '#16a34a' }}>{String(timeLeft.seconds).padStart(2, '0')}</div>
+                <div style={{ fontSize: '0.62rem', color: '#64748b', textTransform: 'uppercase', fontWeight: 700 }}>Secs</div>
               </div>
             </div>
           </div>
@@ -2249,34 +2259,34 @@ export function Landing() {
               display: 'grid',
               gridTemplateColumns: isMobile ? 'repeat(2, 1fr)' : 'repeat(auto-fit, minmax(200px, 1fr))',
               gap: isMobile ? '1rem 0.75rem' : '1.5rem',
-              background: 'rgba(15, 23, 42, 0.75)',
-              backdropFilter: 'blur(16px)',
-              border: '1px solid rgba(255, 255, 255, 0.15)',
+              background: '#ffffff',
+              border: '1px solid #e2e8f0',
               borderRadius: isMobile ? '16px' : '20px',
               padding: isMobile ? '1.25rem 1rem' : '1.75rem 2rem',
               maxWidth: '1000px',
               margin: '0 auto',
+              boxShadow: '0 4px 20px rgba(0, 0, 0, 0.05)',
             }}
           >
             <div>
-              <div style={{ fontSize: isMobile ? '1.8rem' : '2.4rem', fontWeight: 900, color: '#d4af37', lineHeight: 1 }}>100%</div>
-              <div style={{ fontSize: isMobile ? '0.82rem' : '0.9rem', color: '#e2e8f0', fontWeight: 700, marginTop: '0.35rem' }}>Virtual & Online</div>
-              <div style={{ fontSize: isMobile ? '0.7rem' : '0.75rem', color: '#94a3b8' }}>Learn from anywhere, any device</div>
+              <div style={{ fontSize: isMobile ? '1.8rem' : '2.4rem', fontWeight: 900, color: '#1e3a8a', lineHeight: 1 }}>100%</div>
+              <div style={{ fontSize: isMobile ? '0.82rem' : '0.9rem', color: '#0f172a', fontWeight: 800, marginTop: '0.35rem' }}>Virtual & Online</div>
+              <div style={{ fontSize: isMobile ? '0.7rem' : '0.75rem', color: '#64748b' }}>Learn from anywhere, any device</div>
             </div>
             <div>
-              <div style={{ fontSize: isMobile ? '1.8rem' : '2.4rem', fontWeight: 900, color: '#34d399', lineHeight: 1 }}>Live</div>
-              <div style={{ fontSize: isMobile ? '0.82rem' : '0.9rem', color: '#e2e8f0', fontWeight: 700, marginTop: '0.35rem' }}>Interactive Coaching</div>
-              <div style={{ fontSize: isMobile ? '0.7rem' : '0.75rem', color: '#94a3b8' }}>Real-time code labs & speaking mocks</div>
+              <div style={{ fontSize: isMobile ? '1.8rem' : '2.4rem', fontWeight: 900, color: '#059669', lineHeight: 1 }}>Live</div>
+              <div style={{ fontSize: isMobile ? '0.82rem' : '0.9rem', color: '#0f172a', fontWeight: 800, marginTop: '0.35rem' }}>Interactive Coaching</div>
+              <div style={{ fontSize: isMobile ? '0.7rem' : '0.75rem', color: '#64748b' }}>Real-time code labs & speaking mocks</div>
             </div>
             <div>
-              <div style={{ fontSize: isMobile ? '1.8rem' : '2.4rem', fontWeight: 900, color: '#38bdf8', lineHeight: 1 }}>24/7</div>
-              <div style={{ fontSize: isMobile ? '0.82rem' : '0.9rem', color: '#e2e8f0', fontWeight: 700, marginTop: '0.35rem' }}>LMS Portal Access</div>
-              <div style={{ fontSize: isMobile ? '0.7rem' : '0.75rem', color: '#94a3b8' }}>Class recordings, notes & quizzes</div>
+              <div style={{ fontSize: isMobile ? '1.8rem' : '2.4rem', fontWeight: 900, color: '#0284c7', lineHeight: 1 }}>24/7</div>
+              <div style={{ fontSize: isMobile ? '0.82rem' : '0.9rem', color: '#0f172a', fontWeight: 800, marginTop: '0.35rem' }}>LMS Portal Access</div>
+              <div style={{ fontSize: isMobile ? '0.7rem' : '0.75rem', color: '#64748b' }}>Class recordings, notes & quizzes</div>
             </div>
             <div>
-              <div style={{ fontSize: isMobile ? '1.8rem' : '2.4rem', fontWeight: 900, color: '#f5df88', lineHeight: 1 }}>Verified</div>
-              <div style={{ fontSize: isMobile ? '0.82rem' : '0.9rem', color: '#e2e8f0', fontWeight: 700, marginTop: '0.35rem' }}>Global E-Certificates</div>
-              <div style={{ fontSize: isMobile ? '0.7rem' : '0.75rem', color: '#94a3b8' }}>QR verifiable & LinkedIn ready</div>
+              <div style={{ fontSize: isMobile ? '1.8rem' : '2.4rem', fontWeight: 900, color: '#b45309', lineHeight: 1 }}>Verified</div>
+              <div style={{ fontSize: isMobile ? '0.82rem' : '0.9rem', color: '#0f172a', fontWeight: 800, marginTop: '0.35rem' }}>Global E-Certificates</div>
+              <div style={{ fontSize: isMobile ? '0.7rem' : '0.75rem', color: '#64748b' }}>QR verifiable & LinkedIn ready</div>
             </div>
           </div>
         </div>
@@ -3399,15 +3409,15 @@ export function Landing() {
       </section>
 
       {/* Online Certificate Verification Tool */}
-      <section style={{ background: '#090d16', color: '#f8fafc', padding: isMobile ? '3rem 1rem' : '4.5rem 1.5rem', borderTop: '1px solid #1e293b' }}>
+      <section style={{ background: '#f8fafc', color: '#0f172a', padding: isMobile ? '3rem 1rem' : '4.5rem 1.5rem', borderTop: '1px solid #e2e8f0' }}>
         <div style={{ maxWidth: '850px', margin: '0 auto', textAlign: 'center' }}>
-          <span style={{ fontSize: '0.82rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.08em', color: '#38bdf8' }}>
+          <span style={{ fontSize: '0.82rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.08em', color: '#1d4ed8' }}>
             OFFICIAL CREDENTIALS
           </span>
-          <h2 style={{ fontSize: isMobile ? '1.45rem' : '2rem', fontWeight: 900, color: '#ffffff', margin: '0.35rem 0 0.5rem', lineHeight: 1.25 }}>
+          <h2 style={{ fontSize: isMobile ? '1.45rem' : '2rem', fontWeight: 900, color: '#0f172a', margin: '0.35rem 0 0.5rem', lineHeight: 1.25 }}>
             Instant Graduate Certificate Verification
           </h2>
-          <p style={{ fontSize: isMobile ? '0.88rem' : '0.92rem', color: '#cbd5e1', maxWidth: '600px', margin: '0 auto 1.75rem' }}>
+          <p style={{ fontSize: isMobile ? '0.88rem' : '0.92rem', color: '#475569', maxWidth: '600px', margin: '0 auto 1.75rem' }}>
             Employers, embassies, and academic institutions in Kenya, the Middle East, and worldwide can instantly verify authentic Eclat Institute credentials.
           </p>
 
@@ -3415,7 +3425,7 @@ export function Landing() {
             <input
               type="text"
               className="input"
-              style={{ width: isMobile ? '100%' : 'auto', maxWidth: '400px', background: '#0f172a', border: '1.5px solid #334155', color: '#ffffff', fontSize: '0.95rem' }}
+              style={{ width: isMobile ? '100%' : 'auto', maxWidth: '400px', background: '#ffffff', border: '1.5px solid #cbd5e1', color: '#0f172a', fontSize: '0.95rem' }}
               placeholder="Enter Certificate Serial (e.g. EI-2026-089)"
               value={certQuery}
               onChange={(e) => setCertQuery(e.target.value)}
@@ -3436,9 +3446,9 @@ export function Landing() {
               type="button"
               onClick={() => setPreviewCert(SAMPLE_CERTIFICATES.software_engineering)}
               style={{
-                background: 'rgba(212, 175, 55, 0.12)',
-                border: '1px solid rgba(212, 175, 55, 0.4)',
-                color: '#fef08a',
+                background: '#eff6ff',
+                border: '1px solid #bfdbfe',
+                color: '#1d4ed8',
                 fontSize: '0.85rem',
                 fontWeight: 800,
                 padding: '0.55rem 1.35rem',
@@ -3447,11 +3457,11 @@ export function Landing() {
                 display: 'inline-flex',
                 alignItems: 'center',
                 gap: '8px',
-                boxShadow: '0 4px 12px rgba(212, 175, 55, 0.2)',
+                boxShadow: '0 2px 8px rgba(29, 78, 216, 0.1)',
                 transition: 'all 0.15s ease',
               }}
             >
-              <GraduationCapIcon size={16} color="#fef08a" />
+              <GraduationCapIcon size={16} color="#1d4ed8" />
               <span>View Official Sample Conferred Diploma (Preview)</span>
               <span style={{ fontSize: '0.75rem', opacity: 0.85 }}>→</span>
             </button>
@@ -3460,20 +3470,20 @@ export function Landing() {
           {certResult && (
             <div style={{ maxWidth: '600px', margin: '0 auto', textAlign: 'left' }}>
               {certResult.found ? (
-                <div style={{ background: '#0f291e', border: '1.5px solid #22c55e', borderRadius: '14px', padding: isMobile ? '1.25rem 1rem' : '1.5rem', color: '#f0fdf4' }}>
+                <div style={{ background: '#f0fdf4', border: '1.5px solid #22c55e', borderRadius: '14px', padding: isMobile ? '1.25rem 1rem' : '1.5rem', color: '#14532d' }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '0.85rem' }}>
-                    <ShieldCheckIcon size={28} color="#86efac" />
+                    <ShieldCheckIcon size={28} color="#16a34a" />
                     <div>
-                      <div style={{ fontSize: '0.75rem', color: '#86efac', textTransform: 'uppercase', fontWeight: 800 }}>Official Verification Confirmation</div>
-                      <div style={{ fontSize: '1.1rem', fontWeight: 900, color: '#ffffff' }}>Authentic Eclat Institute Credential</div>
+                      <div style={{ fontSize: '0.75rem', color: '#15803d', textTransform: 'uppercase', fontWeight: 800 }}>Official Verification Confirmation</div>
+                      <div style={{ fontSize: '1.1rem', fontWeight: 900, color: '#14532d' }}>Authentic Eclat Institute Credential</div>
                     </div>
                   </div>
-                  <div style={{ borderTop: '1px solid rgba(255,255,255,0.15)', paddingTop: '0.75rem', fontSize: '0.88rem', lineHeight: 1.7 }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '7px' }}><UserIcon size={14} color="#86efac" /> <span><strong>Graduate Name:</strong> {certResult.studentName}</span></div>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '7px' }}><AwardIcon size={14} color="#86efac" /> <span><strong>Awarded Qualification:</strong> {certResult.courseTitle}</span></div>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '7px' }}><CalendarIcon size={14} color="#86efac" /> <span><strong>Completion Date:</strong> {certResult.completionDate}</span></div>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '7px' }}><FileTextIcon size={14} color="#86efac" /> <span><strong>Certificate Reference:</strong> <span style={{ color: '#fde047', fontWeight: 800 }}>{certResult.certNumber}</span></span></div>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '7px' }}><GlobeIcon size={14} color="#86efac" /> <span><strong>Delivery Format:</strong> 100% Online (Verified Digital Credential)</span></div>
+                  <div style={{ borderTop: '1px solid #bbf7d0', paddingTop: '0.75rem', fontSize: '0.88rem', lineHeight: 1.7 }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '7px' }}><UserIcon size={14} color="#16a34a" /> <span><strong>Graduate Name:</strong> {certResult.studentName}</span></div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '7px' }}><AwardIcon size={14} color="#16a34a" /> <span><strong>Awarded Qualification:</strong> {certResult.courseTitle}</span></div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '7px' }}><CalendarIcon size={14} color="#16a34a" /> <span><strong>Completion Date:</strong> {certResult.completionDate}</span></div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '7px' }}><FileTextIcon size={14} color="#16a34a" /> <span><strong>Certificate Reference:</strong> <span style={{ color: '#15803d', fontWeight: 800 }}>{certResult.certNumber}</span></span></div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '7px' }}><GlobeIcon size={14} color="#16a34a" /> <span><strong>Delivery Format:</strong> 100% Online (Verified Digital Credential)</span></div>
                   </div>
 
                   <button
@@ -3516,13 +3526,13 @@ export function Landing() {
                   </button>
                 </div>
               ) : (
-                <div style={{ background: '#450a0a', border: '1.5px solid #ef4444', borderRadius: '14px', padding: '1.25rem', color: '#fef2f2', textAlign: 'center' }}>
+                <div style={{ background: '#fef2f2', border: '1.5px solid #ef4444', borderRadius: '14px', padding: '1.25rem', color: '#7f1d1d', textAlign: 'center' }}>
                   <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '0.35rem' }}>
                     <AlertTriangleIcon size={28} color="#ef4444" />
                   </div>
                   <div style={{ fontWeight: 800, fontSize: '1rem' }}>No Certificate Record Found</div>
-                  <div style={{ fontSize: '0.84rem', color: '#fca5a5', marginTop: '0.25rem' }}>
-                    Please check the certificate serial number or contact the Academic Registrar at <span style={{ color: '#ffffff' }}>{INSTITUTION_CONFIG.contact.admissionsEmail}</span>.
+                  <div style={{ fontSize: '0.84rem', color: '#991b1b', marginTop: '0.25rem' }}>
+                    Please check the certificate serial number or contact the Academic Registrar at <span style={{ color: '#0f172a', fontWeight: 700 }}>{INSTITUTION_CONFIG.contact.admissionsEmail}</span>.
                   </div>
                 </div>
               )}
@@ -3532,62 +3542,62 @@ export function Landing() {
       </section>
 
       {/* Desktop & Mobile Footer */}
-      <footer style={{ background: '#090d16', color: '#cbd5e1', padding: isMobile ? '3rem 1rem 6rem' : '4rem 1.5rem 2.5rem', borderTop: '1px solid #1e293b' }}>
+      <footer style={{ background: '#f8fafc', color: '#475569', padding: isMobile ? '3rem 1rem 6rem' : '4rem 1.5rem 2.5rem', borderTop: '1px solid #e2e8f0' }}>
         <div style={{ maxWidth: '1280px', margin: '0 auto', display: 'grid', gridTemplateColumns: isMobile ? '1fr' : 'repeat(auto-fit, minmax(250px, 1fr))', gap: isMobile ? '2rem' : '2.5rem', marginBottom: isMobile ? '2rem' : '3rem' }}>
           {/* Brand & Overview */}
           <div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.85rem', marginBottom: '1.25rem' }}>
-              <img src="/logo.png" alt="Éclat Institute Logo" style={{ width: '44px', height: '44px', borderRadius: '50%', border: '2px solid #d4af37' }} />
+              <img src="/logo.png" alt="Éclat Institute Logo" style={{ width: '44px', height: '44px', borderRadius: '50%', border: '2px solid #1d4ed8' }} />
               <div>
-                <span style={{ fontSize: '1.2rem', fontWeight: 900, color: '#f8fafc', fontFamily: 'var(--font-heading)', letterSpacing: '0.02em' }}>ÉCLAT INSTITUTE</span>
-                <div style={{ fontSize: '0.75rem', color: '#d4af37', fontWeight: 700 }}>100% ONLINE TECH & LANGUAGES</div>
+                <span style={{ fontSize: '1.2rem', fontWeight: 900, color: '#0f172a', fontFamily: 'var(--font-heading)', letterSpacing: '0.02em' }}>ÉCLAT INSTITUTE</span>
+                <div style={{ fontSize: '0.75rem', color: '#1d4ed8', fontWeight: 700 }}>100% ONLINE TECH & LANGUAGES</div>
               </div>
             </div>
-            <p style={{ fontSize: '0.9rem', lineHeight: 1.65, color: '#cbd5e1', marginBottom: '1.25rem' }}>
+            <p style={{ fontSize: '0.9rem', lineHeight: 1.65, color: '#475569', marginBottom: '1.25rem' }}>
               Kenya & East Africa’s premier virtual institute. Live online interactive coaching in Full-Stack Software Engineering, Python Data Analytics, Cybersecurity, Computer Packages, IELTS Exam Prep, English Fluency, Arabic, French, and German.
             </p>
-            <div style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', background: '#131b2e', border: '1px solid #2e3d61', padding: '0.45rem 0.85rem', borderRadius: '8px', fontSize: '0.82rem', color: '#cbd5e1', fontWeight: 600 }}>
-              <ShieldCheckIcon size={16} color="#38bdf8" />
+            <div style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', background: '#ffffff', border: '1px solid #e2e8f0', padding: '0.45rem 0.85rem', borderRadius: '8px', fontSize: '0.82rem', color: '#334155', fontWeight: 600, boxShadow: '0 1px 3px rgba(0,0,0,0.04)' }}>
+              <ShieldCheckIcon size={16} color="#1d4ed8" />
               <span>Verified Global Online Certifications</span>
             </div>
           </div>
 
           {/* Online Programs Directory */}
           <div>
-            <h4 style={{ color: '#f8fafc', fontSize: '1.05rem', fontWeight: 800, marginBottom: '1.25rem', borderBottom: '2px solid #d4af37', paddingBottom: '0.4rem', display: 'inline-block' }}>
+            <h4 style={{ color: '#0f172a', fontSize: '1.05rem', fontWeight: 800, marginBottom: '1.25rem', borderBottom: '2px solid #1d4ed8', paddingBottom: '0.4rem', display: 'inline-block' }}>
               Online Tech & Language Programs
             </h4>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '0.65rem', fontSize: '0.88rem' }}>
-              <a href="#courses" style={{ color: '#cbd5e1', textDecoration: 'none', transition: 'color 0.2s', display: 'inline-flex', alignItems: 'center', gap: '7px' }}>
-                <CodeIcon size={14} color="#94a3b8" />
+              <a href="#courses" style={{ color: '#475569', textDecoration: 'none', transition: 'color 0.2s', display: 'inline-flex', alignItems: 'center', gap: '7px' }}>
+                <CodeIcon size={14} color="#64748b" />
                 <span>Full-Stack Web Development (React 19 & Node.js)</span>
               </a>
-              <a href="#courses" style={{ color: '#cbd5e1', textDecoration: 'none', transition: 'color 0.2s', display: 'inline-flex', alignItems: 'center', gap: '7px' }}>
-                <DatabaseIcon size={14} color="#94a3b8" />
+              <a href="#courses" style={{ color: '#475569', textDecoration: 'none', transition: 'color 0.2s', display: 'inline-flex', alignItems: 'center', gap: '7px' }}>
+                <DatabaseIcon size={14} color="#64748b" />
                 <span>Python Programming & Data Analytics</span>
               </a>
-              <a href="#courses" style={{ color: '#cbd5e1', textDecoration: 'none', transition: 'color 0.2s', display: 'inline-flex', alignItems: 'center', gap: '7px' }}>
-                <LaptopIcon size={14} color="#94a3b8" />
+              <a href="#courses" style={{ color: '#475569', textDecoration: 'none', transition: 'color 0.2s', display: 'inline-flex', alignItems: 'center', gap: '7px' }}>
+                <LaptopIcon size={14} color="#64748b" />
                 <span>Comprehensive Computer Packages & Digital Literacy</span>
               </a>
-              <a href="#courses" style={{ color: '#cbd5e1', textDecoration: 'none', transition: 'color 0.2s', display: 'inline-flex', alignItems: 'center', gap: '7px' }}>
-                <ShieldCheckIcon size={14} color="#94a3b8" />
+              <a href="#courses" style={{ color: '#475569', textDecoration: 'none', transition: 'color 0.2s', display: 'inline-flex', alignItems: 'center', gap: '7px' }}>
+                <ShieldCheckIcon size={14} color="#64748b" />
                 <span>Cybersecurity Fundamentals & Network Defense</span>
               </a>
-              <a href="#courses" style={{ color: '#cbd5e1', textDecoration: 'none', transition: 'color 0.2s', display: 'inline-flex', alignItems: 'center', gap: '7px' }}>
-                <CalculatorIcon size={14} color="#94a3b8" />
+              <a href="#courses" style={{ color: '#475569', textDecoration: 'none', transition: 'color 0.2s', display: 'inline-flex', alignItems: 'center', gap: '7px' }}>
+                <CalculatorIcon size={14} color="#64748b" />
                 <span>Computerized Accounting (QuickBooks & iTax)</span>
               </a>
-              <a href="#courses" style={{ color: '#cbd5e1', textDecoration: 'none', transition: 'color 0.2s', display: 'inline-flex', alignItems: 'center', gap: '7px' }}>
-                <GraduationCapIcon size={14} color="#94a3b8" />
+              <a href="#courses" style={{ color: '#475569', textDecoration: 'none', transition: 'color 0.2s', display: 'inline-flex', alignItems: 'center', gap: '7px' }}>
+                <GraduationCapIcon size={14} color="#64748b" />
                 <span>IELTS Exam Preparation (Target Band 7.5 - 9.0)</span>
               </a>
-              <a href="#courses" style={{ color: '#cbd5e1', textDecoration: 'none', transition: 'color 0.2s', display: 'inline-flex', alignItems: 'center', gap: '7px' }}>
-                <GlobeIcon size={14} color="#94a3b8" />
+              <a href="#courses" style={{ color: '#475569', textDecoration: 'none', transition: 'color 0.2s', display: 'inline-flex', alignItems: 'center', gap: '7px' }}>
+                <GlobeIcon size={14} color="#64748b" />
                 <span>English Language Mastery & Public Speaking</span>
               </a>
-              <a href="#courses" style={{ color: '#cbd5e1', textDecoration: 'none', transition: 'color 0.2s', display: 'inline-flex', alignItems: 'center', gap: '7px' }}>
-                <GlobeIcon size={14} color="#94a3b8" />
+              <a href="#courses" style={{ color: '#475569', textDecoration: 'none', transition: 'color 0.2s', display: 'inline-flex', alignItems: 'center', gap: '7px' }}>
+                <GlobeIcon size={14} color="#64748b" />
                 <span>Arabic, French & German Languages</span>
               </a>
             </div>
@@ -3595,85 +3605,85 @@ export function Landing() {
 
           {/* Tuition Payment Details */}
           <div>
-            <h4 style={{ color: '#f8fafc', fontSize: '1.05rem', fontWeight: 800, marginBottom: '1.25rem', borderBottom: '2px solid #16a34a', paddingBottom: '0.4rem', display: 'inline-block' }}>
+            <h4 style={{ color: '#0f172a', fontSize: '1.05rem', fontWeight: 800, marginBottom: '1.25rem', borderBottom: '2px solid #16a34a', paddingBottom: '0.4rem', display: 'inline-block' }}>
               International Tuition & Payments
             </h4>
-            <div style={{ fontSize: '0.88rem', lineHeight: 1.75, color: '#cbd5e1' }}>
-              <div style={{ background: '#0f291e', border: '1px solid #16a34a', borderRadius: '8px', padding: '0.75rem 1rem', marginBottom: '0.9rem' }}>
-                <div style={{ fontSize: '0.75rem', color: '#86efac', textTransform: 'uppercase', fontWeight: 700 }}>Global Multi-Currency Billing</div>
-                <div style={{ fontSize: '1.25rem', fontWeight: 900, color: '#4ade80', letterSpacing: '0.03em', margin: '2px 0' }}>USD ($) Accepted</div>
-                <div style={{ fontSize: '0.82rem', color: '#e2e8f0' }}>
+            <div style={{ fontSize: '0.88rem', lineHeight: 1.75, color: '#475569' }}>
+              <div style={{ background: '#f0fdf4', border: '1px solid #86efac', borderRadius: '8px', padding: '0.75rem 1rem', marginBottom: '0.9rem' }}>
+                <div style={{ fontSize: '0.75rem', color: '#166534', textTransform: 'uppercase', fontWeight: 700 }}>Global Multi-Currency Billing</div>
+                <div style={{ fontSize: '1.25rem', fontWeight: 900, color: '#15803d', letterSpacing: '0.03em', margin: '2px 0' }}>USD ($) Accepted</div>
+                <div style={{ fontSize: '0.82rem', color: '#334155' }}>
                   Cards, PayPal, Bank Wire & Mobile Money
                 </div>
               </div>
               <div style={{ marginBottom: '0.35rem', display: 'flex', alignItems: 'center', gap: '7px' }}>
-                <CreditCardIcon size={14} color="#94a3b8" />
-                <span><span style={{ color: '#94a3b8' }}>Cards:</span> <strong style={{ color: '#f8fafc' }}>Visa & Mastercard</strong></span>
+                <CreditCardIcon size={14} color="#64748b" />
+                <span><span style={{ color: '#64748b' }}>Cards:</span> <strong style={{ color: '#0f172a' }}>Visa & Mastercard</strong></span>
               </div>
               <div style={{ marginBottom: '0.35rem', display: 'flex', alignItems: 'center', gap: '7px' }}>
-                <GlobeIcon size={14} color="#94a3b8" />
-                <span><span style={{ color: '#94a3b8' }}>Online:</span> <strong style={{ color: '#f8fafc' }}>PayPal, Stripe & Wire Transfer</strong></span>
+                <GlobeIcon size={14} color="#64748b" />
+                <span><span style={{ color: '#64748b' }}>Online:</span> <strong style={{ color: '#0f172a' }}>PayPal, Stripe & Wire Transfer</strong></span>
               </div>
               <div style={{ marginBottom: '0.35rem', display: 'flex', alignItems: 'center', gap: '7px' }}>
-                <CheckCircleIcon size={14} color="#94a3b8" />
-                <span><span style={{ color: '#94a3b8' }}>Installments:</span> <strong style={{ color: '#f8fafc' }}>2–3 flexible parts accepted</strong></span>
+                <CheckCircleIcon size={14} color="#64748b" />
+                <span><span style={{ color: '#64748b' }}>Installments:</span> <strong style={{ color: '#0f172a' }}>2–3 flexible parts accepted</strong></span>
               </div>
               <div style={{ display: 'flex', alignItems: 'center', gap: '7px' }}>
-                <FileTextIcon size={14} color="#94a3b8" />
-                <span><span style={{ color: '#94a3b8' }}>Receipts:</span> <strong style={{ color: '#f8fafc' }}>Official digital receipts with QR</strong></span>
+                <FileTextIcon size={14} color="#64748b" />
+                <span><span style={{ color: '#64748b' }}>Receipts:</span> <strong style={{ color: '#0f172a' }}>Official digital receipts with QR</strong></span>
               </div>
             </div>
           </div>
 
           {/* Virtual Admissions & Support */}
           <div>
-            <h4 style={{ color: '#f8fafc', fontSize: '1.05rem', fontWeight: 800, marginBottom: '1.25rem', borderBottom: '2px solid #ea580c', paddingBottom: '0.4rem', display: 'inline-block' }}>
+            <h4 style={{ color: '#0f172a', fontSize: '1.05rem', fontWeight: 800, marginBottom: '1.25rem', borderBottom: '2px solid #ea580c', paddingBottom: '0.4rem', display: 'inline-block' }}>
               Virtual Admissions & Support
             </h4>
-            <div style={{ fontSize: '0.88rem', lineHeight: 1.75, color: '#cbd5e1' }}>
+            <div style={{ fontSize: '0.88rem', lineHeight: 1.75, color: '#475569' }}>
               <div style={{ marginBottom: '0.35rem', display: 'flex', alignItems: 'center', gap: '7px' }}>
-                <GlobeIcon size={14} color="#94a3b8" />
-                <span><span style={{ color: '#94a3b8' }}>Delivery:</span> <strong style={{ color: '#f8fafc' }}>{INSTITUTION_CONFIG.tagline} (Worldwide)</strong></span>
+                <GlobeIcon size={14} color="#64748b" />
+                <span><span style={{ color: '#64748b' }}>Delivery:</span> <strong style={{ color: '#0f172a' }}>{INSTITUTION_CONFIG.tagline} (Worldwide)</strong></span>
               </div>
               <div style={{ marginBottom: '0.35rem', display: 'flex', alignItems: 'center', gap: '7px' }}>
-                <PhoneIcon size={14} color="#94a3b8" />
-                <span><span style={{ color: '#94a3b8' }}>Phone:</span> <strong style={{ color: '#f8fafc' }}>{INSTITUTION_CONFIG.contact.phone}</strong></span>
+                <PhoneIcon size={14} color="#64748b" />
+                <span><span style={{ color: '#64748b' }}>Phone:</span> <strong style={{ color: '#0f172a' }}>{INSTITUTION_CONFIG.contact.phone}</strong></span>
               </div>
               <div style={{ marginBottom: '0.35rem', display: 'flex', alignItems: 'center', gap: '7px' }}>
-                <MessageCircleIcon size={14} color="#94a3b8" />
-                <span><span style={{ color: '#94a3b8' }}>WhatsApp:</span> <strong style={{ color: '#f8fafc' }}>{INSTITUTION_CONFIG.contact.phone}</strong></span>
+                <MessageCircleIcon size={14} color="#64748b" />
+                <span><span style={{ color: '#64748b' }}>WhatsApp:</span> <strong style={{ color: '#0f172a' }}>{INSTITUTION_CONFIG.contact.phone}</strong></span>
               </div>
               <div style={{ marginBottom: '0.5rem', display: 'flex', alignItems: 'center', gap: '7px' }}>
-                <MailIcon size={14} color="#94a3b8" />
-                <span><span style={{ color: '#94a3b8' }}>Email:</span> <a href={`mailto:${INSTITUTION_CONFIG.contact.admissionsEmail}`} style={{ color: '#93c5fd', textDecoration: 'underline' }}>{INSTITUTION_CONFIG.contact.admissionsEmail}</a></span>
+                <MailIcon size={14} color="#64748b" />
+                <span><span style={{ color: '#64748b' }}>Email:</span> <a href={`mailto:${INSTITUTION_CONFIG.contact.admissionsEmail}`} style={{ color: '#1d4ed8', textDecoration: 'underline' }}>{INSTITUTION_CONFIG.contact.admissionsEmail}</a></span>
               </div>
               
-              <div style={{ marginTop: '0.75rem', padding: '0.7rem 0.9rem', background: '#131b2e', border: '1px solid #2e3d61', borderRadius: '8px', fontSize: '0.82rem' }}>
-                <div style={{ color: '#fcd34d', fontWeight: 700, marginBottom: '0.25rem', display: 'flex', alignItems: 'center', gap: '6px' }}>
-                  <ClockIcon size={14} color="#fcd34d" />
+              <div style={{ marginTop: '0.75rem', padding: '0.7rem 0.9rem', background: '#ffffff', border: '1px solid #e2e8f0', borderRadius: '8px', fontSize: '0.82rem', boxShadow: '0 1px 3px rgba(0,0,0,0.04)' }}>
+                <div style={{ color: '#b45309', fontWeight: 700, marginBottom: '0.25rem', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                  <ClockIcon size={14} color="#b45309" />
                   <span>Online Learning & Support:</span>
                 </div>
-                <div style={{ color: '#e2e8f0' }}>• Cloud LMS Portal: <strong>24/7 Unlimited Access</strong></div>
-                <div style={{ color: '#e2e8f0' }}>• Live Batches: <strong>Early Morning to Night (6 Daily Shifts)</strong></div>
-                <div style={{ color: '#86efac' }}>• Student Support: <strong>Daily Virtual Desk</strong></div>
+                <div style={{ color: '#334155' }}>• Cloud LMS Portal: <strong>24/7 Unlimited Access</strong></div>
+                <div style={{ color: '#334155' }}>• Live Batches: <strong>Early Morning to Night (6 Daily Shifts)</strong></div>
+                <div style={{ color: '#16a34a' }}>• Student Support: <strong>Daily Virtual Desk</strong></div>
               </div>
             </div>
           </div>
         </div>
 
         {/* Bottom Bar */}
-        <div style={{ borderTop: '1px solid #1e293b', paddingTop: '1.75rem', textAlign: 'center', fontSize: '0.85rem', color: '#94a3b8', display: 'flex', flexDirection: isMobile ? 'column' : 'row', justifyContent: 'space-between', alignItems: 'center', gap: '1rem', maxWidth: '1280px', margin: '0 auto' }}>
+        <div style={{ borderTop: '1px solid #e2e8f0', paddingTop: '1.75rem', textAlign: 'center', fontSize: '0.85rem', color: '#64748b', display: 'flex', flexDirection: isMobile ? 'column' : 'row', justifyContent: 'space-between', alignItems: 'center', gap: '1rem', maxWidth: '1280px', margin: '0 auto' }}>
           <div>
-            © {new Date().getFullYear()} <strong style={{ color: '#e2e8f0' }}>Éclat Institute</strong>. All Rights Reserved.
+            © {new Date().getFullYear()} <strong style={{ color: '#0f172a' }}>Éclat Institute</strong>. All Rights Reserved.
           </div>
           <div style={{ display: 'flex', gap: isMobile ? '0.75rem' : '1.25rem', alignItems: 'center', flexWrap: 'wrap', justifyContent: 'center' }}>
-            <Link to="/about" style={{ color: '#38bdf8', textDecoration: 'none', fontWeight: 700, display: 'inline-flex', alignItems: 'center', gap: '5px' }}>
-              <BuildingIcon size={14} color="#38bdf8" />
+            <Link to="/about" style={{ color: '#1d4ed8', textDecoration: 'none', fontWeight: 700, display: 'inline-flex', alignItems: 'center', gap: '5px' }}>
+              <BuildingIcon size={14} color="#1d4ed8" />
               <span>About Us</span>
             </Link>
-            <Link to="/courses" style={{ color: '#cbd5e1', textDecoration: 'none' }}>Courses</Link>
-            <Link to="/library" style={{ color: '#cbd5e1', textDecoration: 'none' }}>E-Library</Link>
-            <Link to="/privacy" style={{ color: '#94a3b8', textDecoration: 'none' }}>Privacy Policy</Link>
+            <Link to="/courses" style={{ color: '#475569', textDecoration: 'none' }}>Courses</Link>
+            <Link to="/library" style={{ color: '#475569', textDecoration: 'none' }}>E-Library</Link>
+            <Link to="/privacy" style={{ color: '#64748b', textDecoration: 'none' }}>Privacy Policy</Link>
             <button
               type="button"
               className="btn btn-primary btn-sm"
@@ -4738,9 +4748,9 @@ export function Landing() {
             bottom: '24px',
             left: '50%',
             transform: 'translateX(-50%)',
-            background: '#090d16',
+            background: '#1e3a8a',
             color: '#ffffff',
-            border: '1px solid #2563eb',
+            border: '1px solid #3b82f6',
             borderRadius: '12px',
             padding: '12px 24px',
             boxShadow: '0 12px 32px rgba(0, 0, 0, 0.35)',

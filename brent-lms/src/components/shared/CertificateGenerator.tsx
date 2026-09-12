@@ -1,5 +1,6 @@
 import { useState, useMemo } from 'react'
 import { INSTITUTION_CONFIG } from '@/config/institution'
+import { GraduationCapIcon, CheckIcon, CodeIcon, ChartBarIcon, BuildingIcon, SparklesIcon } from '@/components/icons/AppIcons'
 
 export interface CertificateData {
   student_name: string
@@ -155,10 +156,10 @@ export function CertificateGenerator({
           maxHeight: '96vh',
           overflowY: 'auto',
           padding: 0,
-          background: '#070b14',
+          background: '#f8fafc',
           borderRadius: '20px',
-          border: '1px solid rgba(212, 175, 55, 0.35)',
-          boxShadow: '0 25px 80px rgba(0, 0, 0, 0.75)',
+          border: '1px solid #cbd5e1',
+          boxShadow: '0 25px 80px rgba(0, 0, 0, 0.25)',
         }}
       >
         {/* Luxury Top Command Toolbar (Hidden in Print) */}
@@ -166,8 +167,8 @@ export function CertificateGenerator({
           className="no-print"
           style={{
             padding: '1rem 1.75rem',
-            background: 'linear-gradient(180deg, #0f172a 0%, #090d16 100%)',
-            borderBottom: '1px solid rgba(212, 175, 55, 0.25)',
+            background: 'linear-gradient(135deg, #1e3a8a 0%, #1e40af 100%)',
+            borderBottom: '1px solid rgba(255, 255, 255, 0.15)',
             display: 'flex',
             flexWrap: 'wrap',
             justifyContent: 'space-between',
@@ -181,15 +182,14 @@ export function CertificateGenerator({
                 width: '42px',
                 height: '42px',
                 borderRadius: '50%',
-                background: 'radial-gradient(circle, #fef08a 0%, #d4af37 60%, #854d0e 100%)',
+                background: '#ffffff',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                boxShadow: '0 0 16px rgba(212, 175, 55, 0.5)',
-                fontSize: '1.25rem',
+                boxShadow: '0 0 16px rgba(255, 255, 255, 0.3)',
               }}
             >
-              🎓
+              <GraduationCapIcon size={22} color="#1e3a8a" />
             </div>
             <div>
               <div
@@ -203,7 +203,7 @@ export function CertificateGenerator({
               >
                 World-Class Conferred Institutional Diploma
               </div>
-              <div style={{ fontSize: '0.76rem', color: '#93c5fd', fontWeight: 600 }}>
+              <div style={{ fontSize: '0.76rem', color: '#bfdbfe', fontWeight: 600 }}>
                 Verified Cryptographic Credential • {INSTITUTION_CONFIG.name} ({INSTITUTION_CONFIG.tagline})
               </div>
             </div>
@@ -218,19 +218,18 @@ export function CertificateGenerator({
                 display: 'flex',
                 alignItems: 'center',
                 gap: '8px',
-                background: 'linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%)',
-                color: '#ffffff',
+                background: '#ffffff',
+                color: '#1e3a8a',
                 border: 'none',
                 fontWeight: 800,
                 fontSize: '0.86rem',
                 padding: '0.6rem 1.25rem',
                 borderRadius: '10px',
                 cursor: 'pointer',
-                boxShadow: '0 4px 14px rgba(37, 99, 235, 0.35)',
+                boxShadow: '0 4px 14px rgba(0, 0, 0, 0.1)',
                 transition: 'all 0.15s ease',
               }}
             >
-              <span>🖨️</span>
               <span>Print / Save High-Res PDF</span>
             </button>
 
@@ -241,9 +240,9 @@ export function CertificateGenerator({
                 display: 'flex',
                 alignItems: 'center',
                 gap: '8px',
-                background: 'rgba(255, 255, 255, 0.08)',
-                color: '#f8fafc',
-                border: '1px solid rgba(255, 255, 255, 0.2)',
+                background: 'rgba(255, 255, 255, 0.15)',
+                color: '#ffffff',
+                border: '1px solid rgba(255, 255, 255, 0.3)',
                 fontWeight: 700,
                 fontSize: '0.86rem',
                 padding: '0.6rem 1rem',
@@ -252,7 +251,7 @@ export function CertificateGenerator({
                 transition: 'all 0.15s ease',
               }}
             >
-              <span>{copied ? '✓' : '📋'}</span>
+              {copied ? <CheckIcon size={14} color="#ffffff" /> : null}
               <span>{copied ? 'Link Copied!' : 'Copy Verification Link'}</span>
             </button>
 
@@ -260,9 +259,9 @@ export function CertificateGenerator({
               type="button"
               onClick={onClose}
               style={{
-                background: 'rgba(255, 255, 255, 0.06)',
-                color: '#94a3b8',
-                border: '1px solid rgba(255, 255, 255, 0.12)',
+                background: 'rgba(255, 255, 255, 0.15)',
+                color: '#ffffff',
+                border: '1px solid rgba(255, 255, 255, 0.25)',
                 fontWeight: 700,
                 fontSize: '0.86rem',
                 padding: '0.6rem 1rem',
@@ -280,82 +279,98 @@ export function CertificateGenerator({
           className="no-print"
           style={{
             padding: '0.65rem 1.75rem',
-            background: '#040711',
-            borderBottom: '1px solid rgba(255, 255, 255, 0.08)',
+            background: '#ffffff',
+            borderBottom: '1px solid #e2e8f0',
             display: 'flex',
             alignItems: 'center',
             gap: '0.75rem',
             overflowX: 'auto',
             fontSize: '0.78rem',
-            color: '#94a3b8',
+            color: '#475569',
           }}
         >
-          <span style={{ fontWeight: 800, color: '#d4af37', textTransform: 'uppercase', letterSpacing: '0.06em', whiteSpace: 'nowrap' }}>
+          <span style={{ fontWeight: 800, color: '#1e3a8a', textTransform: 'uppercase', letterSpacing: '0.06em', whiteSpace: 'nowrap' }}>
             Preview Sample Specializations:
           </span>
           <button
             type="button"
             onClick={() => setActiveCert(SAMPLE_CERTIFICATES.software_engineering)}
             style={{
-              background: activeCert.course_title.includes('Software') ? 'rgba(212, 175, 55, 0.2)' : 'rgba(255,255,255,0.05)',
-              color: activeCert.course_title.includes('Software') ? '#fbbf24' : '#cbd5e1',
-              border: activeCert.course_title.includes('Software') ? '1px solid #d4af37' : '1px solid rgba(255,255,255,0.1)',
+              background: activeCert.course_title.includes('Software') ? '#1d4ed8' : '#f1f5f9',
+              color: activeCert.course_title.includes('Software') ? '#ffffff' : '#334155',
+              border: activeCert.course_title.includes('Software') ? '1px solid #1d4ed8' : '1px solid #cbd5e1',
               borderRadius: '6px',
-              padding: '3px 10px',
+              padding: '4px 10px',
               cursor: 'pointer',
-              fontWeight: 600,
+              fontWeight: 700,
               whiteSpace: 'nowrap',
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '6px',
             }}
           >
-            💻 Software Engineering
+            <CodeIcon size={14} color={activeCert.course_title.includes('Software') ? '#ffffff' : '#475569'} />
+            <span>Software Engineering</span>
           </button>
           <button
             type="button"
             onClick={() => setActiveCert(SAMPLE_CERTIFICATES.data_science)}
             style={{
-              background: activeCert.course_title.includes('Econometrics') ? 'rgba(212, 175, 55, 0.2)' : 'rgba(255,255,255,0.05)',
-              color: activeCert.course_title.includes('Econometrics') ? '#fbbf24' : '#cbd5e1',
-              border: activeCert.course_title.includes('Econometrics') ? '1px solid #d4af37' : '1px solid rgba(255,255,255,0.1)',
+              background: activeCert.course_title.includes('Econometrics') ? '#1d4ed8' : '#f1f5f9',
+              color: activeCert.course_title.includes('Econometrics') ? '#ffffff' : '#334155',
+              border: activeCert.course_title.includes('Econometrics') ? '1px solid #1d4ed8' : '1px solid #cbd5e1',
               borderRadius: '6px',
-              padding: '3px 10px',
+              padding: '4px 10px',
               cursor: 'pointer',
-              fontWeight: 600,
+              fontWeight: 700,
               whiteSpace: 'nowrap',
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '6px',
             }}
           >
-            📊 Data Science & R
+            <ChartBarIcon size={14} color={activeCert.course_title.includes('Econometrics') ? '#ffffff' : '#475569'} />
+            <span>Data Science & R</span>
           </button>
           <button
             type="button"
             onClick={() => setActiveCert(SAMPLE_CERTIFICATES.creative_design)}
             style={{
-              background: activeCert.course_title.includes('UI/UX') ? 'rgba(212, 175, 55, 0.2)' : 'rgba(255,255,255,0.05)',
-              color: activeCert.course_title.includes('UI/UX') ? '#fbbf24' : '#cbd5e1',
-              border: activeCert.course_title.includes('UI/UX') ? '1px solid #d4af37' : '1px solid rgba(255,255,255,0.1)',
+              background: activeCert.course_title.includes('UI/UX') ? '#1d4ed8' : '#f1f5f9',
+              color: activeCert.course_title.includes('UI/UX') ? '#ffffff' : '#334155',
+              border: activeCert.course_title.includes('UI/UX') ? '1px solid #1d4ed8' : '1px solid #cbd5e1',
               borderRadius: '6px',
-              padding: '3px 10px',
+              padding: '4px 10px',
               cursor: 'pointer',
-              fontWeight: 600,
+              fontWeight: 700,
               whiteSpace: 'nowrap',
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '6px',
             }}
           >
-            🎨 UI/UX Design
+            <SparklesIcon size={14} color={activeCert.course_title.includes('UI/UX') ? '#ffffff' : '#475569'} />
+            <span>UI/UX Design</span>
           </button>
           <button
             type="button"
             onClick={() => setActiveCert(SAMPLE_CERTIFICATES.cambridge_igcse)}
             style={{
-              background: activeCert.course_title.includes('Cambridge') ? 'rgba(212, 175, 55, 0.2)' : 'rgba(255,255,255,0.05)',
-              color: activeCert.course_title.includes('Cambridge') ? '#fbbf24' : '#cbd5e1',
-              border: activeCert.course_title.includes('Cambridge') ? '1px solid #d4af37' : '1px solid rgba(255,255,255,0.1)',
+              background: activeCert.course_title.includes('Cambridge') ? '#1d4ed8' : '#f1f5f9',
+              color: activeCert.course_title.includes('Cambridge') ? '#ffffff' : '#334155',
+              border: activeCert.course_title.includes('Cambridge') ? '1px solid #1d4ed8' : '1px solid #cbd5e1',
               borderRadius: '6px',
-              padding: '3px 10px',
+              padding: '4px 10px',
               cursor: 'pointer',
-              fontWeight: 600,
+              fontWeight: 700,
               whiteSpace: 'nowrap',
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '6px',
             }}
           >
-            🏛️ Cambridge IGCSE (KE042)
+            <BuildingIcon size={14} color={activeCert.course_title.includes('Cambridge') ? '#ffffff' : '#475569'} />
+            <span>Cambridge IGCSE (KE042)</span>
           </button>
         </div>
 

@@ -398,7 +398,7 @@ export function ResourceLibrary() {
   const [activeIssueIndex, setActiveIssueIndex] = useState<number>(0)
   const [activePanelIndex, setActivePanelIndex] = useState<number>(0)
   const [comicViewLayout, setComicViewLayout] = useState<'webtoon' | 'panel'>('webtoon')
-  const [comicTheme, setComicTheme] = useState<'cyber' | 'noir' | 'sepia' | 'dark' | 'light'>('cyber')
+  const [comicTheme, setComicTheme] = useState<'cyber' | 'noir' | 'sepia' | 'dark' | 'light'>('light')
 
   // Dynamic Custom Categories State (Synced Across Devices)
   const [customCategories, setCustomCategories] = useState<string[]>(() => schoolStore.getCustomCategories())

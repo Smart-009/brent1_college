@@ -378,9 +378,9 @@ export function AboutPage() {
               right: 0,
               bottom: 0,
               width: 'min(330px, 86vw)',
-              background: '#090d16',
-              borderLeft: '1px solid rgba(212, 175, 55, 0.25)',
-              boxShadow: '-10px 0 40px rgba(0, 0, 0, 0.7)',
+              background: '#ffffff',
+              borderLeft: '1px solid #e2e8f0',
+              boxShadow: '-10px 0 40px rgba(0, 0, 0, 0.15)',
               zIndex: 9999,
               display: 'flex',
               flexDirection: 'column',
@@ -394,21 +394,21 @@ export function AboutPage() {
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'space-between',
-                borderBottom: '1px solid rgba(255, 255, 255, 0.08)',
-                background: 'rgba(15, 23, 42, 0.8)',
+                borderBottom: '1px solid #e2e8f0',
+                background: '#f8fafc',
               }}
             >
               <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem' }}>
                 <img
                   src="/logo.png"
                   alt="Éclat Institute Logo"
-                  style={{ width: '32px', height: '32px', borderRadius: '50%', border: '1.5px solid #d4af37' }}
+                  style={{ width: '32px', height: '32px', borderRadius: '50%', border: '1.5px solid #1d4ed8' }}
                 />
                 <div>
-                  <div style={{ fontSize: '0.95rem', fontWeight: 900, color: '#d4af37', fontFamily: 'var(--font-heading)', lineHeight: 1.1 }}>
+                  <div style={{ fontSize: '0.95rem', fontWeight: 900, color: '#1e3a8a', fontFamily: 'var(--font-heading)', lineHeight: 1.1 }}>
                     {INSTITUTION_CONFIG.name}
                   </div>
-                  <div style={{ fontSize: '0.62rem', color: '#94a3b8', fontWeight: 600 }}>
+                  <div style={{ fontSize: '0.62rem', color: '#64748b', fontWeight: 600 }}>
                     100% Online Virtual Campus
                   </div>
                 </div>
@@ -418,9 +418,9 @@ export function AboutPage() {
                 type="button"
                 onClick={() => setMobileMenuOpen(false)}
                 style={{
-                  background: 'rgba(255, 255, 255, 0.08)',
-                  border: '1px solid rgba(255, 255, 255, 0.12)',
-                  color: '#ffffff',
+                  background: '#f1f5f9',
+                  border: '1px solid #cbd5e1',
+                  color: '#0f172a',
                   width: '32px',
                   height: '32px',
                   borderRadius: '8px',
@@ -447,9 +447,10 @@ export function AboutPage() {
                 display: 'flex',
                 flexDirection: 'column',
                 gap: '0.35rem',
+                background: '#ffffff',
               }}
             >
-              <div style={{ fontSize: '0.68rem', fontWeight: 800, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.08em', margin: '0.35rem 0 0.25rem 0.35rem' }}>
+              <div style={{ fontSize: '0.68rem', fontWeight: 800, color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.08em', margin: '0.35rem 0 0.25rem 0.35rem' }}>
                 Academic Directory
               </div>
 
@@ -457,7 +458,7 @@ export function AboutPage() {
                 to="/"
                 onClick={() => setMobileMenuOpen(false)}
                 style={{
-                  color: '#f8fafc',
+                  color: '#0f172a',
                   textDecoration: 'none',
                   padding: '0.65rem 0.8rem',
                   borderRadius: '10px',
@@ -466,7 +467,8 @@ export function AboutPage() {
                   gap: '10px',
                   fontSize: '0.9rem',
                   fontWeight: 700,
-                  background: 'rgba(255, 255, 255, 0.04)',
+                  background: '#f8fafc',
+                  border: '1px solid #e2e8f0',
                 }}
               >
                 <span>🏠</span>
@@ -477,7 +479,7 @@ export function AboutPage() {
                 to="/courses"
                 onClick={() => setMobileMenuOpen(false)}
                 style={{
-                  color: '#38bdf8',
+                  color: '#1d4ed8',
                   textDecoration: 'none',
                   padding: '0.65rem 0.8rem',
                   borderRadius: '10px',
@@ -486,8 +488,8 @@ export function AboutPage() {
                   gap: '10px',
                   fontSize: '0.9rem',
                   fontWeight: 800,
-                  background: 'rgba(56, 189, 248, 0.1)',
-                  border: '1px solid rgba(56, 189, 248, 0.25)',
+                  background: '#eff6ff',
+                  border: '1px solid #bfdbfe',
                 }}
               >
                 <span>📚</span>
@@ -498,7 +500,7 @@ export function AboutPage() {
                 to="/courses?cat=British+Curriculum"
                 onClick={() => setMobileMenuOpen(false)}
                 style={{
-                  color: '#d4af37',
+                  color: '#b45309',
                   textDecoration: 'none',
                   padding: '0.65rem 0.8rem',
                   borderRadius: '10px',
@@ -507,8 +509,8 @@ export function AboutPage() {
                   gap: '10px',
                   fontSize: '0.88rem',
                   fontWeight: 800,
-                  background: 'rgba(212, 175, 55, 0.1)',
-                  border: '1px solid rgba(212, 175, 55, 0.25)',
+                  background: '#fefce8',
+                  border: '1px solid #fef08a',
                 }}
               >
                 <span>🇬🇧</span>
@@ -519,7 +521,7 @@ export function AboutPage() {
                 to="/#intakes-section"
                 onClick={() => setMobileMenuOpen(false)}
                 style={{
-                  color: '#fbbf24',
+                  color: '#b45309',
                   textDecoration: 'none',
                   padding: '0.65rem 0.8rem',
                   borderRadius: '10px',
@@ -528,7 +530,8 @@ export function AboutPage() {
                   gap: '10px',
                   fontSize: '0.88rem',
                   fontWeight: 700,
-                  background: 'rgba(251, 191, 36, 0.08)',
+                  background: '#fefce8',
+                  border: '1px solid #fef08a',
                 }}
               >
                 <span>🗓️</span>
@@ -539,7 +542,7 @@ export function AboutPage() {
                 to="/about"
                 onClick={() => setMobileMenuOpen(false)}
                 style={{
-                  color: '#38bdf8',
+                  color: '#1d4ed8',
                   textDecoration: 'none',
                   padding: '0.65rem 0.8rem',
                   borderRadius: '10px',
@@ -548,8 +551,8 @@ export function AboutPage() {
                   gap: '10px',
                   fontSize: '0.88rem',
                   fontWeight: 800,
-                  background: 'rgba(56, 189, 248, 0.1)',
-                  border: '1px solid rgba(56, 189, 248, 0.25)',
+                  background: '#eff6ff',
+                  border: '1px solid #bfdbfe',
                 }}
               >
                 <span>🏛️</span>
@@ -560,7 +563,7 @@ export function AboutPage() {
                 to="/library"
                 onClick={() => setMobileMenuOpen(false)}
                 style={{
-                  color: '#f8fafc',
+                  color: '#0f172a',
                   textDecoration: 'none',
                   padding: '0.65rem 0.8rem',
                   borderRadius: '10px',
@@ -569,7 +572,8 @@ export function AboutPage() {
                   gap: '10px',
                   fontSize: '0.88rem',
                   fontWeight: 700,
-                  background: 'rgba(255, 255, 255, 0.04)',
+                  background: '#f8fafc',
+                  border: '1px solid #e2e8f0',
                 }}
               >
                 <span>📖</span>
@@ -580,7 +584,7 @@ export function AboutPage() {
                 to="/timetable"
                 onClick={() => setMobileMenuOpen(false)}
                 style={{
-                  color: '#f8fafc',
+                  color: '#0f172a',
                   textDecoration: 'none',
                   padding: '0.65rem 0.8rem',
                   borderRadius: '10px',
@@ -589,7 +593,8 @@ export function AboutPage() {
                   gap: '10px',
                   fontSize: '0.88rem',
                   fontWeight: 700,
-                  background: 'rgba(255, 255, 255, 0.04)',
+                  background: '#f8fafc',
+                  border: '1px solid #e2e8f0',
                 }}
               >
                 <span>📅</span>
@@ -600,7 +605,7 @@ export function AboutPage() {
                 to="/#calculator"
                 onClick={() => setMobileMenuOpen(false)}
                 style={{
-                  color: '#f8fafc',
+                  color: '#0f172a',
                   textDecoration: 'none',
                   padding: '0.65rem 0.8rem',
                   borderRadius: '10px',
@@ -609,7 +614,8 @@ export function AboutPage() {
                   gap: '10px',
                   fontSize: '0.88rem',
                   fontWeight: 700,
-                  background: 'rgba(255, 255, 255, 0.04)',
+                  background: '#f8fafc',
+                  border: '1px solid #e2e8f0',
                 }}
               >
                 <span>💳</span>
@@ -621,8 +627,8 @@ export function AboutPage() {
             <div
               style={{
                 padding: '1rem 1.1rem',
-                borderTop: '1px solid rgba(255, 255, 255, 0.08)',
-                background: 'rgba(15, 23, 42, 0.95)',
+                borderTop: '1px solid #e2e8f0',
+                background: '#f8fafc',
                 display: 'flex',
                 flexDirection: 'column',
                 gap: '0.6rem',

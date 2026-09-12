@@ -17,14 +17,14 @@
   position: fixed;
   top: 0; left: 0; right: 0;
   height: var(--navbar-height);
-  background: #0c0e12;
-  border-bottom: 1px solid rgba(212, 175, 55, 0.25);
-  color: white;
+  background: #ffffff;
+  border-bottom: 1px solid #e2e8f0;
+  color: #0f172a;
   display: flex;
   align-items: center;
   padding: 0 var(--space-6);
   z-index: 200;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
   gap: var(--space-4);
 }
 
@@ -33,27 +33,28 @@
   align-items: center;
   gap: var(--space-3);
   text-decoration: none;
-  color: white;
+  color: #0f172a;
   flex-shrink: 0;
 }
 .navbar-logo {
   width: 40px; height: 40px;
   border-radius: 50%;
   object-fit: cover;
-  border: 2px solid rgba(255,255,255,0.3);
+  border: 2px solid #cbd5e1;
 }
 .navbar-school-name {
   font-family: var(--font-heading);
   font-size: var(--text-lg);
-  font-weight: 700;
+  font-weight: 800;
   letter-spacing: -0.01em;
   line-height: 1.1;
+  color: #1e3a8a;
 }
 .navbar-tagline {
   font-size: 9px;
-  opacity: 0.7;
+  color: #64748b;
   display: block;
-  font-weight: 400;
+  font-weight: 600;
   letter-spacing: 0.05em;
   text-transform: uppercase;
 }
@@ -61,13 +62,13 @@
 .navbar-actions { display: flex; align-items: center; gap: var(--space-2); }
 .navbar-user {
   display: flex; align-items: center; gap: var(--space-2);
-  font-size: var(--text-sm); font-weight: 500;
-  color: rgba(255,255,255,0.9);
+  font-size: var(--text-sm); font-weight: 600;
+  color: #334155;
 }
 .navbar-menu-btn {
   display: none;
   background: none; border: none;
-  color: white; font-size: 24px;
+  color: #0f172a; font-size: 24px;
   cursor: pointer; padding: var(--space-2);
   min-height: 44px; min-width: 44px;
   align-items: center; justify-content: center;
@@ -77,7 +78,7 @@
     padding: 0 var(--space-2);
   }
   .navbar-menu-btn { display: flex; }
-  .navbar-school-name { font-size: var(--text-sm); font-weight: 800; }
+  .navbar-school-name { font-size: var(--text-sm); font-weight: 800; color: #1e3a8a; }
   .navbar-tagline { display: none; }
   .navbar-user-name { display: none; }
   .navbar-actions { gap: 4px; }
@@ -127,10 +128,10 @@
   text-decoration: none;
 }
 .sidebar-link.active {
-  background: #e8edf8;
-  color: var(--color-primary);
-  border-left-color: var(--color-accent);
-  font-weight: 600;
+  background: #eff6ff;
+  color: #1d4ed8;
+  border-left-color: #1d4ed8;
+  font-weight: 700;
 }
 .sidebar-backdrop {
   position: fixed;

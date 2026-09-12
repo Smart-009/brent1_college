@@ -845,17 +845,17 @@ tbody td { padding: var(--space-3) var(--space-4); color: var(--color-text-secon
   background: var(--color-bg-alt);
 }
 
-[data-theme="dark"] thead { background: #131b2e; color: #f8fafc; }
-[data-theme="dark"] thead th { color: #f8fafc; }
+[data-theme="dark"] thead { background: #f8fafc; color: #0f172a; }
+[data-theme="dark"] thead th { color: #0f172a; }
 [data-theme="dark"] .table th {
-  color: #f8fafc;
-  background: #131b2e;
+  color: #0f172a;
+  background: #f8fafc;
 }
 [data-theme="dark"] .table td {
-  color: #f8fafc;
+  color: #0f172a;
 }
 [data-theme="dark"] .table tbody tr:hover {
-  background: #1e293b;
+  background: #f1f5f9;
 }
 
 /* ============================================================

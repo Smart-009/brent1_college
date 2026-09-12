@@ -5,6 +5,7 @@ import { PageWrapper } from '@/components/layout/PageWrapper'
 import { Button } from '@/components/ui/Button'
 import { Modal, ConfirmModal } from '@/components/ui/Modal'
 import { Spinner } from '@/components/ui/Spinner'
+import { DatabaseIcon, BookOpenIcon, SearchIcon, RefreshCwIcon } from '@/components/icons/AppIcons'
 
 export interface DbSubject {
   id: string
@@ -224,20 +225,21 @@ export function ManageClasses() {
     <PageWrapper title="Academic Programs & Live Database">
       <div className="space-y-6">
         {/* Top Header Card */}
-        <div className="card p-6" style={{ background: 'linear-gradient(135deg, #090d16 0%, #1e293b 100%)', color: '#ffffff', borderRadius: '16px', border: '1px solid rgba(255, 255, 255, 0.1)' }}>
+        <div className="card p-6" style={{ background: 'linear-gradient(135deg, #1e3a8a 0%, #1e40af 100%)', color: '#ffffff', borderRadius: '16px', border: '1px solid rgba(255, 255, 255, 0.15)', boxShadow: '0 8px 24px rgba(30, 58, 138, 0.15)' }}>
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
             <div>
               <div className="flex items-center gap-2 mb-1">
-                <span style={{ fontSize: '1.4rem' }}>🗄️</span>
+                <DatabaseIcon size={24} color="#93c5fd" />
                 <h1 style={{ fontSize: '1.4rem', fontWeight: 800, color: '#ffffff', margin: 0 }}>
                   Live Academic Database Console
                 </h1>
-                <span className="badge" style={{ background: '#10b981', color: '#ffffff', fontWeight: 800, fontSize: '0.72rem' }}>
-                  🟢 REAL-TIME SUPABASE SYNC
+                <span className="badge" style={{ background: '#10b981', color: '#ffffff', fontWeight: 800, fontSize: '0.72rem', display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+                  <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#ffffff' }} />
+                  REAL-TIME SUPABASE SYNC
                 </span>
               </div>
-              <p style={{ color: '#cbd5e1', fontSize: '0.88rem', margin: '0.25rem 0 0' }}>
-                Direct live synchronization with your database <code style={{ background: 'rgba(52, 211, 153, 0.2)', color: '#34d399', padding: '2px 6px', borderRadius: '4px', fontFamily: 'monospace' }}>courses</code> and <code style={{ background: 'rgba(52, 211, 153, 0.2)', color: '#34d399', padding: '2px 6px', borderRadius: '4px', fontFamily: 'monospace' }}>subjects</code> tables.
+              <p style={{ color: '#e2e8f0', fontSize: '0.88rem', margin: '0.25rem 0 0' }}>
+                Direct live synchronization with your database <code style={{ background: 'rgba(255, 255, 255, 0.2)', color: '#ffffff', padding: '2px 6px', borderRadius: '4px', fontFamily: 'monospace' }}>courses</code> and <code style={{ background: 'rgba(255, 255, 255, 0.2)', color: '#ffffff', padding: '2px 6px', borderRadius: '4px', fontFamily: 'monospace' }}>subjects</code> tables.
               </p>
             </div>
 
@@ -245,7 +247,7 @@ export function ManageClasses() {
               <Button
                 variant="primary"
                 onClick={activeTab === 'courses' ? handleOpenCreateCourse : handleOpenCreateSubject}
-                style={{ fontWeight: 800, padding: '0.65rem 1.25rem' }}
+                style={{ fontWeight: 800, padding: '0.65rem 1.25rem', background: '#ffffff', color: '#1e3a8a' }}
               >
                 {activeTab === 'courses' ? '+ Add New Course' : '+ Add Subject Discipline'}
               </Button>
@@ -256,74 +258,78 @@ export function ManageClasses() {
                   refetchSubjects()
                 }}
                 className="btn btn-secondary btn-sm"
-                style={{ background: 'rgba(255, 255, 255, 0.15)', color: '#ffffff', border: '1px solid rgba(255, 255, 255, 0.2)' }}
+                style={{ background: 'rgba(255, 255, 255, 0.15)', color: '#ffffff', border: '1px solid rgba(255, 255, 255, 0.3)', display: 'inline-flex', alignItems: 'center', gap: '6px' }}
                 title="Refresh from Supabase"
               >
-                🔄 Refresh Cloud Data
+                <RefreshCwIcon size={14} color="#ffffff" />
+                <span>Refresh Cloud Data</span>
               </button>
             </div>
           </div>
 
           {/* Database Metrics Grid */}
-          <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 mt-6 pt-5" style={{ borderTop: '1px solid rgba(255, 255, 255, 0.1)' }}>
-            <div style={{ background: 'rgba(15, 23, 42, 0.8)', padding: '1rem', borderRadius: '12px', border: '1px solid rgba(255, 255, 255, 0.1)' }}>
-              <div style={{ fontSize: '0.75rem', color: '#94a3b8', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em' }}>Total Online Courses</div>
-              <div style={{ fontSize: '1.8rem', fontWeight: 900, color: '#60a5fa', margin: '0.25rem 0' }}>{courses.length}</div>
-              <div style={{ fontSize: '0.75rem', color: '#94a3b8' }}>Live in courses table</div>
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 mt-6 pt-5" style={{ borderTop: '1px solid rgba(255, 255, 255, 0.15)' }}>
+            <div style={{ background: 'rgba(255, 255, 255, 0.12)', padding: '1rem', borderRadius: '12px', border: '1px solid rgba(255, 255, 255, 0.15)' }}>
+              <div style={{ fontSize: '0.75rem', color: '#e2e8f0', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em' }}>Total Online Courses</div>
+              <div style={{ fontSize: '1.8rem', fontWeight: 900, color: '#ffffff', margin: '0.25rem 0' }}>{courses.length}</div>
+              <div style={{ fontSize: '0.75rem', color: '#cbd5e1' }}>Live in courses table</div>
             </div>
 
-            <div style={{ background: 'rgba(15, 23, 42, 0.8)', padding: '1rem', borderRadius: '12px', border: '1px solid rgba(255, 255, 255, 0.1)' }}>
-              <div style={{ fontSize: '0.75rem', color: '#94a3b8', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em' }}>Subject Disciplines</div>
-              <div style={{ fontSize: '1.8rem', fontWeight: 900, color: '#34d399', margin: '0.25rem 0' }}>{subjects.length}</div>
-              <div style={{ fontSize: '0.75rem', color: '#94a3b8' }}>Live in subjects table</div>
+            <div style={{ background: 'rgba(255, 255, 255, 0.12)', padding: '1rem', borderRadius: '12px', border: '1px solid rgba(255, 255, 255, 0.15)' }}>
+              <div style={{ fontSize: '0.75rem', color: '#e2e8f0', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em' }}>Subject Disciplines</div>
+              <div style={{ fontSize: '1.8rem', fontWeight: 900, color: '#ffffff', margin: '0.25rem 0' }}>{subjects.length}</div>
+              <div style={{ fontSize: '0.75rem', color: '#cbd5e1' }}>Live in subjects table</div>
             </div>
 
-            <div className="col-span-2 sm:col-span-1" style={{ background: 'rgba(15, 23, 42, 0.8)', padding: '1rem', borderRadius: '12px', border: '1px solid rgba(255, 255, 255, 0.1)' }}>
-              <div style={{ fontSize: '0.75rem', color: '#94a3b8', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em' }}>Published Status</div>
-              <div style={{ fontSize: '1.8rem', fontWeight: 900, color: '#fbbf24', margin: '0.25rem 0' }}>
+            <div className="col-span-2 sm:col-span-1" style={{ background: 'rgba(255, 255, 255, 0.12)', padding: '1rem', borderRadius: '12px', border: '1px solid rgba(255, 255, 255, 0.15)' }}>
+              <div style={{ fontSize: '0.75rem', color: '#e2e8f0', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em' }}>Published Status</div>
+              <div style={{ fontSize: '1.8rem', fontWeight: 900, color: '#ffffff', margin: '0.25rem 0' }}>
                 {courses.filter((c) => c.is_published).length}
               </div>
-              <div style={{ fontSize: '0.75rem', color: '#94a3b8' }}>Active Student Enrollments</div>
+              <div style={{ fontSize: '0.75rem', color: '#cbd5e1' }}>Active Student Enrollments</div>
             </div>
           </div>
         </div>
 
         {/* Tab & Search Control Bar */}
-        <div className="card p-4 flex flex-col sm:flex-row justify-between items-stretch sm:items-center gap-4">
+        <div className="card p-4 flex flex-col sm:flex-row justify-between items-stretch sm:items-center gap-4" style={{ background: '#ffffff', border: '1px solid #e2e8f0' }}>
           {/* Table Switcher Tabs */}
-          <div className="flex gap-2 bg-slate-100 dark:bg-slate-800 p-1 rounded-xl">
+          <div className="flex gap-2 p-1 rounded-xl" style={{ background: '#f1f5f9', border: '1px solid #e2e8f0' }}>
             <button
               type="button"
               onClick={() => setActiveTab('courses')}
-              className={`px-4 py-2 rounded-lg font-bold text-sm transition-all flex items-center gap-2 ${
-                activeTab === 'courses'
-                  ? 'bg-blue-600 text-white shadow'
-                  : 'text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700'
-              }`}
+              className="px-4 py-2 rounded-lg font-bold text-sm transition-all flex items-center gap-2"
+              style={{
+                background: activeTab === 'courses' ? '#1d4ed8' : 'transparent',
+                color: activeTab === 'courses' ? '#ffffff' : '#475569',
+              }}
             >
-              <span>📚</span>
+              <BookOpenIcon size={15} color={activeTab === 'courses' ? '#ffffff' : '#475569'} />
               <span>Online Courses ({courses.length})</span>
             </button>
             <button
               type="button"
               onClick={() => setActiveTab('subjects')}
-              className={`px-4 py-2 rounded-lg font-bold text-sm transition-all flex items-center gap-2 ${
-                activeTab === 'subjects'
-                  ? 'bg-blue-600 text-white shadow'
-                  : 'text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700'
-              }`}
+              className="px-4 py-2 rounded-lg font-bold text-sm transition-all flex items-center gap-2"
+              style={{
+                background: activeTab === 'subjects' ? '#1d4ed8' : 'transparent',
+                color: activeTab === 'subjects' ? '#ffffff' : '#475569',
+              }}
             >
-              <span>🏷️</span>
+              <DatabaseIcon size={15} color={activeTab === 'subjects' ? '#ffffff' : '#475569'} />
               <span>Subject Disciplines ({subjects.length})</span>
             </button>
           </div>
 
           {/* Search Bar */}
           <div className="relative flex-1 max-w-md">
-            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm">🔍</span>
+            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">
+              <SearchIcon size={16} color="#64748b" />
+            </span>
             <input
               type="text"
               className="input pl-9 text-sm"
+              style={{ background: '#ffffff', border: '1.5px solid #cbd5e1', color: '#0f172a' }}
               placeholder={activeTab === 'courses' ? 'Search courses by title or discipline...' : 'Search subjects...'}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
@@ -357,7 +363,9 @@ export function ManageClasses() {
               </div>
             ) : filteredCourses.length === 0 ? (
               <div className="card p-12 text-center text-slate-500">
-                <div className="text-3xl mb-2">📚</div>
+                <div className="flex justify-center mb-2">
+                  <BookOpenIcon size={32} color="#94a3b8" />
+                </div>
                 <h3 className="font-bold text-slate-700 dark:text-slate-300">No Courses Found</h3>
                 <p className="text-xs text-slate-400 mt-1">Add your first course using the "+ Add New Course" button above.</p>
               </div>
@@ -382,7 +390,7 @@ export function ManageClasses() {
                           {c.subjects?.name || 'General Studies'}
                         </span>
                         <span className={`badge ${c.is_published ? 'badge-success' : 'badge-neutral'} text-[11px]`}>
-                          {c.is_published ? '🟢 Published' : 'Draft'}
+                          {c.is_published ? 'Published' : 'Draft'}
                         </span>
                       </div>
 
@@ -407,16 +415,16 @@ export function ManageClasses() {
                           className="btn btn-secondary btn-sm"
                           style={{ padding: '4px 10px', fontSize: '0.75rem', fontWeight: 700 }}
                         >
-                          ✏️ Edit
+                          Edit
                         </button>
                         <button
                           type="button"
                           onClick={() => setCourseToDelete(c)}
                           className="btn btn-ghost btn-sm text-red-600 hover:bg-red-50"
-                          style={{ padding: '4px 8px' }}
+                          style={{ padding: '4px 8px', fontSize: '0.75rem', fontWeight: 700 }}
                           title="Delete course from database"
                         >
-                          🗑️
+                          Delete
                         </button>
                       </div>
                     </div>
@@ -437,7 +445,9 @@ export function ManageClasses() {
               </div>
             ) : filteredSubjects.length === 0 ? (
               <div className="card p-12 text-center text-slate-500">
-                <div className="text-3xl mb-2">🏷️</div>
+                <div className="flex justify-center mb-2">
+                  <DatabaseIcon size={32} color="#94a3b8" />
+                </div>
                 <h3 className="font-bold text-slate-700 dark:text-slate-300">No Subjects Found</h3>
                 <p className="text-xs text-slate-400 mt-1">Add a new discipline using the "+ Add Subject Discipline" button.</p>
               </div>
@@ -468,17 +478,19 @@ export function ManageClasses() {
                           type="button"
                           onClick={() => handleOpenEditSubject(s)}
                           className="btn btn-ghost btn-sm text-blue-600"
+                          style={{ fontSize: '0.75rem', fontWeight: 700 }}
                           title="Edit Subject"
                         >
-                          ✏️
+                          Edit
                         </button>
                         <button
                           type="button"
                           onClick={() => setSubjectToDelete(s)}
                           className="btn btn-ghost btn-sm text-red-600"
+                          style={{ fontSize: '0.75rem', fontWeight: 700 }}
                           title="Delete Subject"
                         >
-                          🗑️
+                          Delete
                         </button>
                       </div>
                     </div>
