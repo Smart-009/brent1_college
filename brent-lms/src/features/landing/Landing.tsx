@@ -12,6 +12,52 @@ import { OFFICIAL_COURSES, getDynamicCoursesList } from '@/config/officialCourse
 import { IntakeAdvertsSection } from './IntakeAdvertsSection'
 import { CertificateGenerator, CertificateData, SAMPLE_CERTIFICATES } from '@/components/shared/CertificateGenerator'
 import type { Role } from '@/lib/database.types'
+import {
+  HomeIcon,
+  BookOpenIcon,
+  LibraryIcon,
+  BuildingIcon,
+  BriefcaseIcon,
+  LaptopIcon,
+  CodeIcon,
+  DatabaseIcon,
+  ChartBarIcon,
+  ShieldCheckIcon,
+  GlobeIcon,
+  GraduationCapIcon,
+  SearchIcon,
+  ClockIcon,
+  CalendarIcon,
+  SparklesIcon,
+  CheckIcon,
+  MessageCircleIcon,
+  LockIcon,
+  RefreshCwIcon,
+  UserIcon,
+  UsersIcon,
+  XIcon,
+  ChevronLeftIcon,
+  ChevronRightIcon,
+  MenuIcon,
+  FlaskIcon,
+  RocketIcon,
+  AwardIcon,
+  CalculatorIcon,
+  PaletteIcon,
+  BoxIcon,
+  BritishShieldIcon,
+  PhoneIcon,
+  MailIcon,
+  CreditCardIcon,
+  PrinterIcon,
+  SmartphoneIcon,
+  FileTextIcon,
+  AlertTriangleIcon,
+  CheckCircleIcon,
+  StarIcon,
+  VideoIcon,
+  CourseIcon,
+} from '@/components/icons/AppIcons'
 
 interface CourseItem {
   id: string
@@ -74,9 +120,9 @@ const TESTIMONIALS = [
     name: 'Dr. Marcus Vance',
     role: 'Lead Health Data Scientist at NHS Trust',
     location: 'London, United Kingdom',
-    countryCode: '🇬🇧 United Kingdom',
+    countryCode: 'United Kingdom',
     course: 'R Programming & Biostatistics',
-    avatar: '📊',
+    avatar: 'MV',
     quote:
       'The hands-on training in RStudio, tidyverse data pipelines, and biostatistical regression models at Éclat was world-class. I was able to automate our NHS hospital trust epidemiological reporting with total precision!',
     rating: 5,
@@ -85,9 +131,9 @@ const TESTIMONIALS = [
     name: 'Clara Schneider',
     role: 'Frontend Software Engineer at SaaS Enterprise',
     location: 'Frankfurt, Germany',
-    countryCode: '🇩🇪 Germany',
+    countryCode: 'Germany',
     course: 'Full-Stack Web Dev (React 19 & Node.js)',
-    avatar: '💻',
+    avatar: 'CS',
     quote:
       'Enrolling in Éclat’s React 19 and Node.js course from Germany was the best career decision I made. The live interactive coding labs, GitHub pull request reviews, and API deployments prepared me to land my software developer role.',
     rating: 5,
@@ -96,9 +142,9 @@ const TESTIMONIALS = [
     name: 'Tariq Al-Hashimi',
     role: 'Regional Operations Director at Logistics Group',
     location: 'Dubai, United Arab Emirates',
-    countryCode: '🇦🇪 UAE',
+    countryCode: 'UAE',
     course: 'Arabic for Business & Corporate Careers',
-    avatar: '🇸🇦',
+    avatar: 'TA',
     quote:
       'Taking the live online Arabic and Corporate Communication classes gave me the exact executive fluency required for regional boardroom negotiations and business expansion across the Gulf Cooperation Council (GCC).',
     rating: 5,
@@ -107,9 +153,9 @@ const TESTIMONIALS = [
     name: 'Ethan Miller',
     role: 'Senior Quantitative Research Lead',
     location: 'Toronto, Canada',
-    countryCode: '🇨🇦 Canada',
+    countryCode: 'Canada',
     course: 'IBM SPSS & Stata Econometric Modeling',
-    avatar: '📈',
+    avatar: 'EM',
     quote:
       'The survey coding in SPSS and multi-level panel regressions in Stata were broken down into practical steps by Éclat’s research methodologists. We used these exact techniques to publish our international health economics study.',
     rating: 5,
@@ -118,9 +164,9 @@ const TESTIMONIALS = [
     name: 'Alexander Hayes',
     role: 'Remote Software Engineer at HealthTech',
     location: 'Austin, Texas, USA',
-    countryCode: '🇺🇸 United States',
+    countryCode: 'United States',
     course: 'Full-Stack JavaScript & React 19',
-    avatar: '💻',
+    avatar: 'AH',
     quote:
       'The 100% online React 19 and Node.js course at Éclat was phenomenal. The live coding labs and mentor code reviews prepared me to build scalable full-stack applications. Within 1 month, I landed a remote developer role!',
     rating: 5,
@@ -129,9 +175,9 @@ const TESTIMONIALS = [
     name: 'Sophie Dubois',
     role: 'Postgraduate Scholar (IELTS Band 8.5 Achieved)',
     location: 'Lyon, France / Montreal, Canada',
-    countryCode: '🇫🇷 France',
+    countryCode: 'France',
     course: 'IELTS Academic Preparation',
-    avatar: '🇬🇧',
+    avatar: 'SD',
     quote:
       'The 1-on-1 live Zoom mock speaking sessions and Cambridge essay evaluations transformed my performance. I achieved an overall Band 8.5 on my first attempt and secured my Canadian academic visa effortlessly!',
     rating: 5,
@@ -140,9 +186,9 @@ const TESTIMONIALS = [
     name: 'Liam O’Connor',
     role: 'Cyber Threat Intelligence & SOC Analyst',
     location: 'Dublin, Ireland',
-    countryCode: '🇮🇪 Ireland',
+    countryCode: 'Ireland',
     course: 'Cybersecurity & Ethical Hacking',
-    avatar: '🛡️',
+    avatar: 'LO',
     quote:
       'The practical network security labs using Wireshark, vulnerability scanning, and incident response simulations gave me the technical edge to pass my global security exams and secure a senior SOC analyst position.',
     rating: 5,
@@ -151,9 +197,9 @@ const TESTIMONIALS = [
     name: 'Elena Rostova',
     role: 'Financial Controller & QuickBooks Specialist',
     location: 'Berlin, Germany',
-    countryCode: '🇩🇪 Germany',
+    countryCode: 'Germany',
     course: 'Computerized Accounting & QuickBooks',
-    avatar: '🧾',
+    avatar: 'ER',
     quote:
       'The practical QuickBooks multi-currency setup, international VAT filing, and automated payroll reconciliation training directly helped our international consultancy automate bookkeeping for European remote clients.',
     rating: 5,
@@ -181,7 +227,7 @@ interface PromoSlide {
 const HERO_PROMO_SLIDES: PromoSlide[] = [
   {
     id: 'cambridge-igcse',
-    badge: '🇬🇧 CAMBRIDGE ASSESSMENT INTERNATIONAL (CENTER KE042)',
+    badge: 'CAMBRIDGE ASSESSMENT INTERNATIONAL (CENTER KE042)',
     badgeBg: 'rgba(2, 132, 199, 0.25)',
     badgeColor: '#38bdf8',
     headline: 'Cambridge IGCSE & Lower Secondary (Years 9-11)',
@@ -189,7 +235,7 @@ const HERO_PROMO_SLIDES: PromoSlide[] = [
     description: 'Master Cambridge IGCSE Mathematics (0580), Physics (0625), Chemistry (0620), Computer Science (0478), English (0500), and Business Studies (0450). Live international exam prep and Cambridge ICE Diploma.',
     gradient: 'radial-gradient(ellipse at 80% 20%, rgba(2, 132, 199, 0.35) 0%, rgba(15, 23, 42, 0.95) 70%), linear-gradient(135deg, #022c22 0%, #0369a1 50%, #0f172a 100%)',
     accentColor: '#38bdf8',
-    icon: '🇬🇧',
+    icon: 'cambridge-igcse',
     metricNumber: 'KE042',
     metricLabel: 'Cambridge Accredited Centre',
     category: 'Cambridge International (Years 9-11)',
@@ -198,7 +244,7 @@ const HERO_PROMO_SLIDES: PromoSlide[] = [
   },
   {
     id: 'edexcel-igcse',
-    badge: '🇬🇧 PEARSON EDEXCEL INTERNATIONAL (CENTER EDX-98421)',
+    badge: 'PEARSON EDEXCEL INTERNATIONAL (CENTER EDX-98421)',
     badgeBg: 'rgba(239, 68, 68, 0.25)',
     badgeColor: '#f87171',
     headline: 'Pearson Edexcel International GCSE (Years 9-11)',
@@ -206,7 +252,7 @@ const HERO_PROMO_SLIDES: PromoSlide[] = [
     description: 'Specialized Pearson Edexcel International GCSE (9-1) curriculum: Mathematics A (4MA1 Higher Tier), Physics (4PH1), Computer Science (4CP0), Business (4BS1), and iLowerSecondary Year 9 foundation.',
     gradient: 'radial-gradient(ellipse at 80% 20%, rgba(239, 68, 68, 0.35) 0%, rgba(15, 23, 42, 0.95) 70%), linear-gradient(135deg, #450a0a 0%, #991b1b 50%, #0f172a 100%)',
     accentColor: '#f87171',
-    icon: '🇬🇧',
+    icon: 'edexcel-igcse',
     metricNumber: 'EDX-98421',
     metricLabel: 'Pearson Edexcel Centre',
     category: 'Pearson Edexcel International (Years 9-11)',
@@ -215,7 +261,7 @@ const HERO_PROMO_SLIDES: PromoSlide[] = [
   },
   {
     id: 'data-research',
-    badge: '📊 DATA SCIENCE & STATISTICAL RESEARCH',
+    badge: 'DATA SCIENCE & STATISTICAL RESEARCH',
     badgeBg: 'rgba(2, 132, 199, 0.2)',
     badgeColor: '#38bdf8',
     headline: 'Master Python, R, SPSS & Stata',
@@ -223,7 +269,7 @@ const HERO_PROMO_SLIDES: PromoSlide[] = [
     description: 'From survey data cleaning & thesis statistical analysis to multivariate regression modeling, RStudio tidyverse pipelines, and Stata do-files. Taught by senior research methodologists.',
     gradient: 'radial-gradient(ellipse at 80% 20%, rgba(2, 132, 199, 0.28) 0%, rgba(15, 23, 42, 0.95) 70%), linear-gradient(135deg, #030712 0%, #082f49 50%, #030712 100%)',
     accentColor: '#38bdf8',
-    icon: '📊',
+    icon: 'data-research',
     metricNumber: '4,200+',
     metricLabel: 'Researchers & Analysts Certified',
     category: 'Data Science & Research',
@@ -232,7 +278,7 @@ const HERO_PROMO_SLIDES: PromoSlide[] = [
   },
   {
     id: 'tech-software',
-    badge: '💻 TECH & SOFTWARE ENGINEERING',
+    badge: 'TECH & SOFTWARE ENGINEERING',
     badgeBg: 'rgba(99, 102, 241, 0.2)',
     badgeColor: '#a5b4fc',
     headline: 'Build Scalable Web Applications &',
@@ -240,7 +286,7 @@ const HERO_PROMO_SLIDES: PromoSlide[] = [
     description: 'Master React 19, Node.js REST APIs, PostgreSQL databases, and Ethical Hacking with live interactive coding rooms, GitHub code reviews, and cloud container deployments.',
     gradient: 'radial-gradient(ellipse at 80% 20%, rgba(99, 102, 241, 0.28) 0%, rgba(15, 23, 42, 0.95) 70%), linear-gradient(135deg, #030712 0%, #1e1b4b 50%, #030712 100%)',
     accentColor: '#818cf8',
-    icon: '💻',
+    icon: 'tech-software',
     metricNumber: '3,850+',
     metricLabel: 'Developers & SOC Analysts Trained',
     category: 'Tech & Programming',
@@ -249,7 +295,7 @@ const HERO_PROMO_SLIDES: PromoSlide[] = [
   },
   {
     id: 'creative-design',
-    badge: '🎨 CREATIVE ARTS & DIGITAL DESIGN',
+    badge: 'CREATIVE ARTS & DIGITAL DESIGN',
     badgeBg: 'rgba(168, 85, 247, 0.2)',
     badgeColor: '#c084fc',
     headline: 'Master UI/UX Product Design &',
@@ -257,7 +303,7 @@ const HERO_PROMO_SLIDES: PromoSlide[] = [
     description: 'From wireframing and design systems in Figma to motion animation, branding in Adobe Illustrator/Photoshop, 3D modeling, and video editing. Taught by senior creative directors.',
     gradient: 'radial-gradient(ellipse at 80% 20%, rgba(168, 85, 247, 0.25) 0%, rgba(15, 23, 42, 0.95) 70%), linear-gradient(135deg, #030712 0%, #3b0764 50%, #030712 100%)',
     accentColor: '#c084fc',
-    icon: '🎨',
+    icon: 'creative-design',
     metricNumber: '2,900+',
     metricLabel: 'Designers & Creatives Certified',
     category: 'Creative Arts & Design',
@@ -266,7 +312,7 @@ const HERO_PROMO_SLIDES: PromoSlide[] = [
   },
   {
     id: 'world-languages',
-    badge: '🗣️ WORLD LANGUAGES & RELOCATION',
+    badge: 'WORLD LANGUAGES & RELOCATION',
     badgeBg: 'rgba(34, 197, 94, 0.2)',
     badgeColor: '#4ade80',
     headline: 'Score IELTS Band 8.5+ & Master',
@@ -274,7 +320,7 @@ const HERO_PROMO_SLIDES: PromoSlide[] = [
     description: 'Targeting UK, Canada, USA, Europe, or Gulf careers? Master Spoken English, Arabic for Middle East jobs, Goethe-Zertifikat German, and French DELF with live certified examiners.',
     gradient: 'radial-gradient(ellipse at 80% 20%, rgba(34, 197, 94, 0.25) 0%, rgba(15, 23, 42, 0.95) 70%), linear-gradient(135deg, #030712 0%, #064e3b 50%, #030712 100%)',
     accentColor: '#4ade80',
-    icon: '🌍',
+    icon: 'world-languages',
     metricNumber: '5,600+',
     metricLabel: 'Successful Global Visa Students',
     category: 'Languages & Communication',
@@ -283,7 +329,7 @@ const HERO_PROMO_SLIDES: PromoSlide[] = [
   },
   {
     id: 'accounting-finance',
-    badge: '🧾 ACCOUNTING, QUICKBOOKS & OFFICE TECH',
+    badge: 'ACCOUNTING, QUICKBOOKS & OFFICE TECH',
     badgeBg: 'rgba(217, 119, 6, 0.2)',
     badgeColor: '#fbbf24',
     headline: 'Lead Corporate Finance, Tax Filing &',
@@ -291,7 +337,7 @@ const HERO_PROMO_SLIDES: PromoSlide[] = [
     description: 'Master QuickBooks multi-currency company files, monthly VAT tax returns, payroll deductions, and executive Ms Excel spreadsheets for business leadership.',
     gradient: 'radial-gradient(ellipse at 80% 20%, rgba(217, 119, 6, 0.25) 0%, rgba(15, 23, 42, 0.95) 70%), linear-gradient(135deg, #030712 0%, #451a03 50%, #030712 100%)',
     accentColor: '#f59e0b',
-    icon: '🧾',
+    icon: 'accounting-finance',
     metricNumber: '5,300+',
     metricLabel: 'Accounting & Office Specialists',
     category: 'Business Tech & Accounting',
@@ -535,7 +581,7 @@ export function Landing() {
   const handleProceedToPayment = (e: React.FormEvent) => {
     e.preventDefault()
     if (!inquiryForm.name.trim() || !inquiryForm.phone.trim()) {
-      showToast('⚠️ Please provide your full name and phone number to proceed.')
+      showToast('Please provide your full name and phone number to proceed.')
       return
     }
     setCardForm((prev) => ({ ...prev, cardHolder: prev.cardHolder || inquiryForm.name }))
@@ -648,7 +694,7 @@ export function Landing() {
     })
 
     setCheckoutStep('receipt')
-    showToast(`🎉 Tuition verified! Welcome to Éclat Institute, ${inquiryForm.name}!`)
+    showToast(`Tuition verified! Welcome to Éclat Institute, ${inquiryForm.name}!`)
   }
 
   const handleVerifyCert = (e: React.FormEvent) => {
@@ -689,12 +735,12 @@ export function Landing() {
         certNumber: q,
         status: isCleared ? 'Officially Verified & Certified' : 'Verified (Academic Registry Clear)',
       })
-      showToast(`✓ Credential record verified for ${studentName}!`)
+      showToast(`Credential record verified for ${studentName}!`)
     } else {
       setCertResult({
         found: false,
       })
-      showToast(`⚠️ No student or certificate record matched "${q}".`)
+      showToast(`No student or certificate record matched "${q}".`)
     }
   }
 
@@ -745,12 +791,14 @@ export function Landing() {
             <strong>Intake Ongoing:</strong> 15% Early Bird Tuition Voucher
           </span>
           <span className="hidden sm:inline" style={{ opacity: 0.8 }}>|</span>
-          <span className="hidden sm:inline">
-            📞 Admissions: <strong>{INSTITUTION_CONFIG.contact.phone}</strong>
+          <span className="hidden sm:inline" style={{ display: 'inline-flex', alignItems: 'center', gap: '5px' }}>
+            <PhoneIcon size={14} color="#ffffff" />
+            <span>Admissions: <strong>{INSTITUTION_CONFIG.contact.phone}</strong></span>
           </span>
           <span className="hidden md:inline" style={{ opacity: 0.8 }}>|</span>
-          <span className="hidden md:inline">
-            🎓 100% Online Live Classes & 24/7 Digital LMS
+          <span className="hidden md:inline" style={{ display: 'inline-flex', alignItems: 'center', gap: '5px' }}>
+            <GraduationCapIcon size={15} color="#ffffff" />
+            <span>100% Online Live Classes & 24/7 Digital LMS</span>
           </span>
         </div>
 
@@ -805,7 +853,7 @@ export function Landing() {
                   transition: 'all 0.2s',
                 }}
               >
-                <span>🗂️</span>
+                <BookOpenIcon size={16} color="#1e3a8a" />
                 <span>Explore Categories</span>
                 <span style={{ fontSize: '0.75rem', transform: categoryDropdownOpen ? 'rotate(180deg)' : 'rotate(0deg)', transition: 'transform 0.2s' }}>▼</span>
               </button>
@@ -816,7 +864,7 @@ export function Landing() {
                     position: 'absolute',
                     top: 'calc(100% + 8px)',
                     left: 0,
-                    width: '260px',
+                    width: '270px',
                     background: '#ffffff',
                     border: '1px solid #cbd5e1',
                     borderRadius: '12px',
@@ -827,45 +875,48 @@ export function Landing() {
                   }}
                 >
                   {[
-                    { id: 'All', icon: '🔥', label: 'All Online Programs' },
-                    { id: 'Cambridge International (Years 9-11)', icon: '🇬🇧', label: 'Cambridge Assessment (Years 9-11)' },
-                    { id: 'Pearson Edexcel International (Years 9-11)', icon: '🇬🇧', label: 'Pearson Edexcel International (Years 9-11)' },
-                    { id: 'Data Science & Research', icon: '📊', label: 'Data Science, R, SPSS & Stata' },
-                    { id: 'Tech & Programming', icon: '💻', label: 'Tech & Software Engineering' },
-                    { id: 'Creative Arts & Design', icon: '🎨', label: 'Creative Arts & UI/UX Design' },
-                    { id: 'Languages & Communication', icon: '🗣️', label: 'World Languages & IELTS' },
-                    { id: 'Computer & Digital Skills', icon: '🖥️', label: 'Digital Literacy & Office Skills' },
-                    { id: 'Business Tech & Accounting', icon: '🧾', label: 'QuickBooks & Tax Accounting' },
-                  ].map((cat) => (
-                    <button
-                      key={cat.id}
-                      type="button"
-                      onClick={() => {
-                        setActiveCategory(cat.id)
-                        setCategoryDropdownOpen(false)
-                        const el = document.getElementById('courses')
-                        if (el) el.scrollIntoView({ behavior: 'smooth' })
-                      }}
-                      style={{
-                        width: '100%',
-                        textAlign: 'left',
-                        background: activeCategory === cat.id ? '#eff6ff' : 'transparent',
-                        color: activeCategory === cat.id ? '#1e3a8a' : '#334155',
-                        border: 'none',
-                        borderRadius: '8px',
-                        padding: '0.6rem 0.75rem',
-                        fontSize: '0.84rem',
-                        fontWeight: activeCategory === cat.id ? 800 : 600,
-                        cursor: 'pointer',
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '8px',
-                      }}
-                    >
-                      <span>{cat.icon}</span>
-                      <span>{cat.label}</span>
-                    </button>
-                  ))}
+                    { id: 'All', icon: SparklesIcon, label: 'All Online Programs', color: '#f59e0b' },
+                    { id: 'Cambridge International (Years 9-11)', icon: BritishShieldIcon, label: 'Cambridge Assessment (Years 9-11)', color: '#00247D' },
+                    { id: 'Pearson Edexcel International (Years 9-11)', icon: BritishShieldIcon, label: 'Pearson Edexcel International (Years 9-11)', color: '#00247D' },
+                    { id: 'Data Science & Research', icon: DatabaseIcon, label: 'Data Science, R, SPSS & Stata', color: '#10b981' },
+                    { id: 'Tech & Programming', icon: CodeIcon, label: 'Tech & Software Engineering', color: '#2563eb' },
+                    { id: 'Creative Arts & Design', icon: PaletteIcon, label: 'Creative Arts & UI/UX Design', color: '#ec4899' },
+                    { id: 'Languages & Communication', icon: GlobeIcon, label: 'World Languages & IELTS', color: '#06b6d4' },
+                    { id: 'Computer & Digital Skills', icon: LaptopIcon, label: 'Digital Literacy & Office Skills', color: '#6366f1' },
+                    { id: 'Business Tech & Accounting', icon: CalculatorIcon, label: 'QuickBooks & Tax Accounting', color: '#059669' },
+                  ].map((cat) => {
+                    const CatIcon = cat.icon
+                    return (
+                      <button
+                        key={cat.id}
+                        type="button"
+                        onClick={() => {
+                          setActiveCategory(cat.id)
+                          setCategoryDropdownOpen(false)
+                          const el = document.getElementById('courses')
+                          if (el) el.scrollIntoView({ behavior: 'smooth' })
+                        }}
+                        style={{
+                          width: '100%',
+                          textAlign: 'left',
+                          background: activeCategory === cat.id ? '#eff6ff' : 'transparent',
+                          color: activeCategory === cat.id ? '#1e3a8a' : '#334155',
+                          border: 'none',
+                          borderRadius: '8px',
+                          padding: '0.6rem 0.75rem',
+                          fontSize: '0.84rem',
+                          fontWeight: activeCategory === cat.id ? 800 : 600,
+                          cursor: 'pointer',
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '8px',
+                        }}
+                      >
+                        <CatIcon size={16} color={cat.color} />
+                        <span>{cat.label}</span>
+                      </button>
+                    )
+                  })}
                 </div>
               )}
             </div>
@@ -876,7 +927,7 @@ export function Landing() {
             <div style={{ position: 'relative', width: '100%' }}>
               <input
                 type="text"
-                placeholder="🔍 Search for courses, skills (e.g. Python, IELTS, React, Excel)..."
+                placeholder="Search for courses, skills (e.g. Python, IELTS, React, Excel)..."
                 value={searchQuery}
                 onChange={(e) => {
                   setSearchQuery(e.target.value)
@@ -887,7 +938,7 @@ export function Landing() {
                 }}
                 style={{
                   width: '100%',
-                  padding: '0.55rem 1rem 0.55rem 2.2rem',
+                  padding: '0.55rem 1rem 0.55rem 2.3rem',
                   borderRadius: '999px',
                   border: '1.5px solid #cbd5e1',
                   background: '#f8fafc',
@@ -896,14 +947,16 @@ export function Landing() {
                   outline: 'none',
                 }}
               />
-              <span style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', opacity: 0.5, fontSize: '0.85rem' }}>🔍</span>
+              <span style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', display: 'flex', alignItems: 'center', pointerEvents: 'none' }}>
+                <SearchIcon size={16} color="#64748b" />
+              </span>
               {searchQuery && (
                 <button
                   type="button"
                   onClick={() => setSearchQuery('')}
-                  style={{ position: 'absolute', right: '12px', top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', cursor: 'pointer', color: '#64748b', fontWeight: 800 }}
+                  style={{ position: 'absolute', right: '12px', top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', cursor: 'pointer', color: '#64748b', display: 'flex', alignItems: 'center', padding: '2px' }}
                 >
-                  ✕
+                  <XIcon size={14} color="#64748b" />
                 </button>
               )}
             </div>
@@ -915,16 +968,16 @@ export function Landing() {
             {!isMobile && (
               <>
                 <nav className="desktop-nav-links" style={{ fontSize: '0.88rem', fontWeight: 600, marginRight: '0.25rem', display: 'flex', gap: '1rem', alignItems: 'center' }}>
-                  <a href="#intakes-section" style={{ color: '#d97706', fontWeight: 800, textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '4px' }}>
-                    <span>🗓️</span>
+                  <a href="#intakes-section" style={{ color: '#d97706', fontWeight: 800, textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: '5px' }}>
+                    <CalendarIcon size={14} color="#d97706" />
                     <span>Intakes</span>
                   </a>
-                  <Link to="/courses" style={{ color: '#0284c7', fontWeight: 800, textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '4px' }}>
-                    <span>🇬🇧</span>
+                  <Link to="/courses" style={{ color: '#0284c7', fontWeight: 800, textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: '5px' }}>
+                    <BritishShieldIcon size={15} />
                     <span>Cambridge IGCSE</span>
                   </Link>
-                  <Link to="/library" style={{ color: '#2563eb', fontWeight: 800, textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '4px' }}>
-                    <span>📖</span>
+                  <Link to="/library" style={{ color: '#2563eb', fontWeight: 800, textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: '5px' }}>
+                    <LibraryIcon size={14} color="#2563eb" />
                     <span>E-Library</span>
                   </Link>
                   <a href="#calculator" style={{ color: '#334155', textDecoration: 'none' }}>Fees Inquiry</a>
@@ -943,7 +996,7 @@ export function Landing() {
                     borderRadius: '8px',
                     boxShadow: '0 2px 6px rgba(22, 163, 74, 0.3)',
                     alignItems: 'center',
-                    gap: '4px',
+                    gap: '5px',
                     fontSize: '0.78rem',
                     whiteSpace: 'nowrap',
                     cursor: 'pointer',
@@ -955,7 +1008,7 @@ export function Landing() {
                   }}
                   title="Install & Download Official Native Apps"
                 >
-                  <span>📲</span>
+                  <SmartphoneIcon size={14} color="#ffffff" />
                   <span>Get Apps</span>
                 </button>
 
@@ -971,10 +1024,14 @@ export function Landing() {
                     borderRadius: '8px',
                     fontSize: '0.78rem',
                     whiteSpace: 'nowrap',
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '4px',
                   }}
                   onClick={() => setInquiryModalOpen(true)}
                 >
-                  ⚡ Apply
+                  <RocketIcon size={13} color="#1d4ed8" />
+                  <span>Apply</span>
                 </button>
 
                 <button
@@ -987,10 +1044,14 @@ export function Landing() {
                     boxShadow: '0 4px 10px rgba(30, 58, 138, 0.25)',
                     fontSize: '0.78rem',
                     whiteSpace: 'nowrap',
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '5px',
                   }}
                   onClick={() => setShowPortalDesksModal(true)}
                 >
-                  🔐 Portals
+                  <LockIcon size={13} color="#ffffff" />
+                  <span>Portals</span>
                 </button>
               </>
             )}
@@ -1009,12 +1070,12 @@ export function Landing() {
                     whiteSpace: 'nowrap',
                     display: 'inline-flex',
                     alignItems: 'center',
-                    gap: '4px',
+                    gap: '5px',
                     boxShadow: '0 2px 8px rgba(37, 99, 235, 0.35)',
                   }}
                   onClick={() => setShowPortalDesksModal(true)}
                 >
-                  <span>🔐</span>
+                  <LockIcon size={13} color="#ffffff" />
                   <span>Portals</span>
                 </button>
 
@@ -1140,7 +1201,7 @@ export function Landing() {
                 }}
                 aria-label="Close menu"
               >
-                ✕
+                <XIcon size={18} color="#ffffff" />
               </button>
             </div>
 
@@ -1179,7 +1240,7 @@ export function Landing() {
                   background: 'rgba(255, 255, 255, 0.04)',
                 }}
               >
-                <span>🏠</span>
+                <HomeIcon size={18} color="#f8fafc" />
                 <span>Home</span>
               </Link>
 
@@ -1200,7 +1261,7 @@ export function Landing() {
                   border: '1px solid rgba(56, 189, 248, 0.25)',
                 }}
               >
-                <span>🏛️</span>
+                <BuildingIcon size={18} color="#38bdf8" />
                 <span>All Academic Faculties</span>
               </Link>
 
@@ -1220,7 +1281,7 @@ export function Landing() {
                   background: 'rgba(16, 185, 129, 0.08)',
                 }}
               >
-                <span>💼</span>
+                <BriefcaseIcon size={18} color="#10b981" />
                 <span>School of Business</span>
               </Link>
 
@@ -1240,7 +1301,7 @@ export function Landing() {
                   background: 'rgba(56, 189, 248, 0.08)',
                 }}
               >
-                <span>💻</span>
+                <CodeIcon size={18} color="#38bdf8" />
                 <span>School of IT and Data Science</span>
               </Link>
 
@@ -1260,7 +1321,7 @@ export function Landing() {
                   background: 'rgba(245, 158, 11, 0.08)',
                 }}
               >
-                <span>🗣️</span>
+                <GlobeIcon size={18} color="#f59e0b" />
                 <span>School of Language</span>
               </Link>
 
@@ -1281,7 +1342,7 @@ export function Landing() {
                   border: '1px solid rgba(212, 175, 55, 0.28)',
                 }}
               >
-                <span>🇬🇧</span>
+                <BritishShieldIcon size={18} />
                 <span>IGCSE (Cambridge KE042 & Edexcel)</span>
               </Link>
 
@@ -1301,7 +1362,7 @@ export function Landing() {
                   background: 'rgba(251, 191, 36, 0.08)',
                 }}
               >
-                <span>🗓️</span>
+                <CalendarIcon size={18} color="#fbbf24" />
                 <span>Upcoming Intakes & Admissions</span>
               </a>
 
@@ -1321,7 +1382,7 @@ export function Landing() {
                   background: 'rgba(255, 255, 255, 0.04)',
                 }}
               >
-                <span>📖</span>
+                <LibraryIcon size={18} color="#f8fafc" />
                 <span>Free E-Library & Past Papers</span>
               </Link>
 
@@ -1341,7 +1402,7 @@ export function Landing() {
                   background: 'rgba(255, 255, 255, 0.04)',
                 }}
               >
-                <span>💳</span>
+                <CreditCardIcon size={18} color="#f8fafc" />
                 <span>Tuition Fees Inquiry</span>
               </a>
 
@@ -1361,7 +1422,7 @@ export function Landing() {
                   background: 'rgba(255, 255, 255, 0.04)',
                 }}
               >
-                <span>📅</span>
+                <ClockIcon size={18} color="#f8fafc" />
                 <span>Virtual Class Timetable</span>
               </Link>
 
@@ -1381,7 +1442,7 @@ export function Landing() {
                   background: 'rgba(255, 255, 255, 0.04)',
                 }}
               >
-                <span>🏛️</span>
+                <BuildingIcon size={18} color="#f8fafc" />
                 <span>About Éclat Institute</span>
               </Link>
 
@@ -1410,7 +1471,7 @@ export function Landing() {
                   marginTop: '0.25rem',
                 }}
               >
-                <span>📲</span>
+                <SmartphoneIcon size={18} color="#4ade80" />
                 <span>Download Native App (APK)</span>
               </button>
             </div>
@@ -1450,7 +1511,7 @@ export function Landing() {
                   boxShadow: '0 2px 10px rgba(212, 175, 55, 0.35)',
                 }}
               >
-                <span>⚡</span>
+                <RocketIcon size={16} color="#0c0e12" />
                 <span>Apply & Enroll in Intake</span>
               </button>
 
@@ -1473,7 +1534,7 @@ export function Landing() {
                   gap: '6px',
                 }}
               >
-                <span>🔐</span>
+                <LockIcon size={16} color="#ffffff" />
                 <span>Student & Staff Portals</span>
               </button>
 
@@ -1496,7 +1557,7 @@ export function Landing() {
                   fontSize: '0.84rem',
                 }}
               >
-                <span>💬</span>
+                <MessageCircleIcon size={16} color="#ffffff" />
                 <span>WhatsApp Admissions Desk</span>
               </a>
             </div>
@@ -1554,7 +1615,7 @@ export function Landing() {
               wordBreak: 'break-word',
             }}
           >
-            <span>🌐</span>
+            <GlobeIcon size={16} color="#d4af37" />
             <span>ÉCLAT INSTITUTE • 100% ONLINE VIRTUAL CAMPUS & CAMBRIDGE IGCSE CENTRE (KE042)</span>
           </div>
 
@@ -1619,7 +1680,7 @@ export function Landing() {
                 width: isMobile ? '100%' : 'auto',
               }}
             >
-              <span>🚀 Explore All Programs</span>
+              <SparklesIcon size={18} color="#0c0e12" /><span>Explore All Programs</span>
               <span>↓</span>
             </a>
 
@@ -1643,7 +1704,7 @@ export function Landing() {
               }}
               onClick={() => setInquiryModalOpen(true)}
             >
-              ⚡ Enroll in Intake
+              <SparklesIcon size={18} color="#ffffff" style={{ marginRight: '6px' }} /><span>Enroll in Intake</span>
             </button>
 
             <a
@@ -1667,7 +1728,7 @@ export function Landing() {
                 width: isMobile ? '100%' : 'auto',
               }}
             >
-              <span>💬</span>
+              <MessageCircleIcon size={18} color="#4ade80" />
               <span>WhatsApp Counselor</span>
             </a>
           </div>
@@ -1688,16 +1749,16 @@ export function Landing() {
             }}
           >
             <span style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
-              <span style={{ color: '#22c55e' }}>✓</span> ⭐️ 4.9/5 Student Satisfaction
+              <CheckIcon size={14} color="#22c55e" /> <StarIcon size={14} fill="#f59e0b" color="#f59e0b" /> 4.9/5 Student Satisfaction
             </span>
             <span style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
-              <span style={{ color: '#22c55e' }}>✓</span> 6 Daily Shifts: Early Morning to Night
+              <CheckIcon size={14} color="#22c55e" /> 6 Daily Shifts: Early Morning to Night
             </span>
             <span style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
-              <span style={{ color: '#22c55e' }}>✓</span> Verified Digital Certificates
+              <CheckIcon size={14} color="#22c55e" /> Verified Digital Certificates
             </span>
             <span style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
-              <span style={{ color: '#22c55e' }}>✓</span> 50% Flexible Monthly Installments
+              <CheckIcon size={14} color="#22c55e" /> 50% Flexible Monthly Installments
             </span>
           </div>
         </div>
@@ -1726,7 +1787,7 @@ export function Landing() {
           {/* Spotlight Header Row */}
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '0.75rem', marginBottom: '1.25rem' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
-              <span style={{ fontSize: '1.15rem' }}>✨</span>
+              <SparklesIcon size={18} color="#d4af37" />
               <div>
                 <div style={{ fontSize: '0.7rem', color: '#94a3b8', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.08em' }}>
                   FEATURED ONLINE PROGRAM SPOTLIGHT
@@ -1758,7 +1819,7 @@ export function Landing() {
                 }}
                 title="Previous Slide"
               >
-                ❮
+                <ChevronLeftIcon size={16} />
               </button>
 
               <div style={{ display: 'flex', gap: '4px', padding: '0 4px' }}>
@@ -1801,7 +1862,7 @@ export function Landing() {
                 }}
                 title="Next Slide"
               >
-                ❯
+                <ChevronRightIcon size={16} />
               </button>
             </div>
           </div>
@@ -1842,7 +1903,7 @@ export function Landing() {
                   {HERO_PROMO_SLIDES[currentHeroSlide].badge}
                 </span>
                 <span style={{ fontSize: '0.72rem', color: '#94a3b8', fontWeight: 600 }}>
-                  🟢 Live Cohort Enrolling
+                  <span style={{ display: 'inline-block', width: '8px', height: '8px', borderRadius: '50%', background: '#22c55e', marginRight: '6px' }} />Live Cohort Enrolling
                 </span>
               </div>
 
@@ -1884,7 +1945,7 @@ export function Landing() {
                       wordBreak: 'break-word',
                     }}
                   >
-                    ✓ {feat}
+                    <CheckIcon size={12} color="#4ade80" style={{ marginRight: '4px', verticalAlign: 'middle' }} />{feat}
                   </span>
                 ))}
               </div>
@@ -1898,7 +1959,7 @@ export function Landing() {
                   {HERO_PROMO_SLIDES[currentHeroSlide].category}
                 </div>
                 <div style={{ fontSize: '0.74rem', color: '#d4af37', fontWeight: 700, marginTop: '3px' }}>
-                  ⭐ {HERO_PROMO_SLIDES[currentHeroSlide].metricNumber} {HERO_PROMO_SLIDES[currentHeroSlide].metricLabel}
+                  <StarIcon size={13} fill="#d4af37" color="#d4af37" style={{ verticalAlign: 'middle', marginRight: '4px' }} />{HERO_PROMO_SLIDES[currentHeroSlide].metricNumber} {HERO_PROMO_SLIDES[currentHeroSlide].metricLabel}
                 </div>
               </div>
 
@@ -1930,7 +1991,7 @@ export function Landing() {
                   wordBreak: 'break-word',
                 }}
               >
-                <span>🚀 {HERO_PROMO_SLIDES[currentHeroSlide].primaryCtaText}</span>
+                <RocketIcon size={16} color="#0c0e12" /><span>{HERO_PROMO_SLIDES[currentHeroSlide].primaryCtaText}</span>
                 <span>↓</span>
               </button>
             </div>
@@ -1961,13 +2022,13 @@ export function Landing() {
           >
             <div style={{ textAlign: isMobile ? 'center' : 'left', width: isMobile ? '100%' : 'auto' }}>
               <div style={{ fontSize: '0.8rem', color: '#f5df88', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.05em' }}>
-                ⚡ 100% ONLINE INTAKE REGISTRATION OPEN
+                <SparklesIcon size={14} color="#f5df88" style={{ marginRight: '5px', verticalAlign: 'middle' }} />100% ONLINE INTAKE REGISTRATION OPEN
               </div>
               <div style={{ fontSize: isMobile ? '0.94rem' : '1.05rem', fontWeight: 800, color: '#ffffff', marginTop: '2px' }}>
                 Live Virtual Cohorts — Early Morning, Late Morning, Midday, Afternoon, Evening & Night Batches
               </div>
               <div style={{ fontSize: '0.76rem', color: '#cbd5e1', marginTop: '2px' }}>
-                🌐 Study from anywhere in Kenya, Africa & Worldwide • 24/7 LMS Access
+                <GlobeIcon size={14} color="#93c5fd" style={{ marginRight: '5px', verticalAlign: 'middle' }} />Study from anywhere in Kenya, Africa & Worldwide • 24/7 LMS Access
               </div>
             </div>
 
@@ -2037,7 +2098,7 @@ export function Landing() {
       <section id="about" style={{ padding: isMobile ? '3.5rem 1rem' : '5rem 1.5rem', maxWidth: '1240px', margin: '0 auto' }}>
         <div id="why-eclat" style={{ textAlign: 'center', marginBottom: isMobile ? '2.25rem' : '3.5rem' }}>
           <span style={{ fontSize: '0.82rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.08em', color: '#b45309' }}>
-            🏛️ ABOUT ÉCLAT INSTITUTE
+            <BuildingIcon size={15} color="#b45309" style={{ marginRight: '6px', verticalAlign: 'middle' }} />ABOUT ÉCLAT INSTITUTE
           </span>
           <h2 style={{ fontSize: isMobile ? '1.75rem' : '2.3rem', fontWeight: 900, color: '#0f172a', margin: '0.35rem 0 0.75rem', fontFamily: 'var(--font-heading)', lineHeight: 1.2 }}>
             Empowering Modern Learners Worldwide
@@ -2054,11 +2115,11 @@ export function Landing() {
           </div>
           <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : 'repeat(auto-fit, minmax(220px, 1fr))', gap: '1rem' }}>
             {[
-              { icon: '💻', name: 'Tech & Software', desc: 'React 19, Node.js REST APIs, PostgreSQL & Ethical Hacking' },
-              { icon: '📊', name: 'Data Science & Research', desc: 'Python, RStudio Biostats, SPSS Surveys & Stata Econometrics' },
-              { icon: '🎨', name: 'Creative Arts & Design', desc: 'Figma UI/UX Design Systems, Adobe Suite & 3D Animation' },
-              { icon: '🗣️', name: 'World Languages & IELTS', desc: 'IELTS Band 8.5+, German Goethe, Arabic & French' },
-              { icon: '🧾', name: 'Business Tech & Accounting', desc: 'QuickBooks Pro, VAT Tax Compliance & Payroll' },
+              { icon: <LaptopIcon size={24} color="#2563eb" />, name: 'Tech & Software', desc: 'React 19, Node.js REST APIs, PostgreSQL & Ethical Hacking' },
+              { icon: <DatabaseIcon size={24} color="#0284c7" />, name: 'Data Science & Research', desc: 'Python, RStudio Biostats, SPSS Surveys & Stata Econometrics' },
+              { icon: <PaletteIcon size={24} color="#9333ea" />, name: 'Creative Arts & Design', desc: 'Figma UI/UX Design Systems, Adobe Suite & 3D Animation' },
+              { icon: <GlobeIcon size={24} color="#16a34a" />, name: 'World Languages & IELTS', desc: 'IELTS Band 8.5+, German Goethe, Arabic & French' },
+              { icon: <CalculatorIcon size={24} color="#d97706" />, name: 'Business Tech & Accounting', desc: 'QuickBooks Pro, VAT Tax Compliance & Payroll' },
             ].map((dept, idx) => (
               <div
                 key={idx}
@@ -2073,7 +2134,7 @@ export function Landing() {
                   gap: '12px',
                 }}
               >
-                <span style={{ fontSize: '1.6rem', flexShrink: 0 }}>{dept.icon}</span>
+                <div style={{ flexShrink: 0, display: 'flex', alignItems: 'center' }}>{dept.icon}</div>
                 <div>
                   <div style={{ fontSize: '0.92rem', fontWeight: 800, color: '#0f172a' }}>{dept.name}</div>
                   <div style={{ fontSize: '0.78rem', color: '#64748b', marginTop: '3px', lineHeight: 1.45 }}>{dept.desc}</div>
@@ -2086,8 +2147,8 @@ export function Landing() {
         {/* 4 Core Institutional Pillars */}
         <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : 'repeat(auto-fit, minmax(260px, 1fr))', gap: isMobile ? '1rem' : '1.75rem' }}>
           <div style={{ background: '#ffffff', border: '1px solid #cbd5e1', borderRadius: '16px', padding: isMobile ? '1.25rem' : '2rem', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.04)' }}>
-            <div style={{ width: '48px', height: '48px', borderRadius: '12px', background: '#eff6ff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.5rem', marginBottom: '1rem' }}>
-              💻
+            <div style={{ width: '48px', height: '48px', borderRadius: '12px', background: '#eff6ff', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '1rem' }}>
+              <LaptopIcon size={26} color="#2563eb" />
             </div>
             <h3 style={{ fontSize: '1.15rem', fontWeight: 800, color: '#0f172a', margin: '0 0 0.4rem' }}>
               Live Virtual Coding & Language Labs
@@ -2098,8 +2159,8 @@ export function Landing() {
           </div>
 
           <div style={{ background: '#ffffff', border: '1px solid #cbd5e1', borderRadius: '16px', padding: isMobile ? '1.25rem' : '2rem', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.04)' }}>
-            <div style={{ width: '48px', height: '48px', borderRadius: '12px', background: '#f0fdf4', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.5rem', marginBottom: '1rem' }}>
-              ⏰
+            <div style={{ width: '48px', height: '48px', borderRadius: '12px', background: '#f0fdf4', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '1rem' }}>
+              <ClockIcon size={26} color="#16a34a" />
             </div>
             <h3 style={{ fontSize: '1.15rem', fontWeight: 800, color: '#0f172a', margin: '0 0 0.4rem' }}>
               Flexible Shifts: Early Morning to Night
@@ -2110,8 +2171,8 @@ export function Landing() {
           </div>
 
           <div style={{ background: '#ffffff', border: '1px solid #cbd5e1', borderRadius: '16px', padding: isMobile ? '1.25rem' : '2rem', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.04)' }}>
-            <div style={{ width: '48px', height: '48px', borderRadius: '12px', background: '#faf5ff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.5rem', marginBottom: '1rem' }}>
-              📜
+            <div style={{ width: '48px', height: '48px', borderRadius: '12px', background: '#faf5ff', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '1rem' }}>
+              <AwardIcon size={26} color="#9333ea" />
             </div>
             <h3 style={{ fontSize: '1.15rem', fontWeight: 800, color: '#0f172a', margin: '0 0 0.4rem' }}>
               Verified Digital E-Certificates
@@ -2137,14 +2198,14 @@ export function Landing() {
                 textDecoration: 'underline',
               }}
             >
-              <span>👁️ Preview Official Sample Diploma</span>
+              <AwardIcon size={15} color="#2563eb" /><span>Preview Official Sample Diploma</span>
               <span>→</span>
             </button>
           </div>
 
           <div style={{ background: '#ffffff', border: '1px solid #cbd5e1', borderRadius: '16px', padding: isMobile ? '1.25rem' : '2rem', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.04)' }}>
-            <div style={{ width: '48px', height: '48px', borderRadius: '12px', background: '#fffbeb', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.5rem', marginBottom: '1rem' }}>
-              💳
+            <div style={{ width: '48px', height: '48px', borderRadius: '12px', background: '#fffbeb', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '1rem' }}>
+              <CreditCardIcon size={26} color="#d97706" />
             </div>
             <h3 style={{ fontSize: '1.15rem', fontWeight: 800, color: '#0f172a', margin: '0 0 0.4rem' }}>
               Global Flexible Installments ($ USD)
@@ -2173,7 +2234,7 @@ export function Landing() {
         >
           <div>
             <div style={{ fontSize: '0.78rem', fontWeight: 800, color: '#93c5fd', textTransform: 'uppercase', letterSpacing: '0.06em' }}>
-              🌟 Deep-Dive Institutional Profile
+              <SparklesIcon size={14} color="#93c5fd" style={{ marginRight: '5px', verticalAlign: 'middle' }} />Deep-Dive Institutional Profile
             </div>
             <h3 style={{ fontSize: isMobile ? '1.2rem' : '1.45rem', fontWeight: 900, color: '#ffffff', margin: '0.25rem 0 0.35rem' }}>
               Discover Our Mission, Global Faculty & Accreditation
@@ -2196,7 +2257,7 @@ export function Landing() {
               boxShadow: '0 4px 14px rgba(37, 99, 235, 0.4)',
             }}
           >
-            🏛️ Read Full About Page →
+            <BuildingIcon size={16} color="#ffffff" style={{ marginRight: '6px', verticalAlign: 'middle' }} />Read Full About Page →
           </Link>
         </div>
       </section>
@@ -2222,7 +2283,7 @@ export function Landing() {
               <input
                 type="text"
                 className="input"
-                placeholder="🔍 Search course (e.g. Python, IELTS, React, Excel, Arabic)..."
+                placeholder="Search courses, faculties, or codes (e.g. Python, IELTS, React, Excel)..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 style={{
@@ -2234,7 +2295,9 @@ export function Landing() {
                   width: '100%',
                 }}
               />
-              <span style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', opacity: 0.6 }}>🔍</span>
+              <span style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', display: 'flex', alignItems: 'center', pointerEvents: 'none' }}>
+                <SearchIcon size={16} color="#64748b" />
+              </span>
               {searchQuery && (
                 <button
                   type="button"
@@ -2248,10 +2311,12 @@ export function Landing() {
                     border: 'none',
                     cursor: 'pointer',
                     color: '#64748b',
-                    fontWeight: 700,
+                    display: 'flex',
+                    alignItems: 'center',
+                    padding: '2px',
                   }}
                 >
-                  ✕
+                  <XIcon size={14} color="#64748b" />
                 </button>
               )}
             </div>
@@ -2270,53 +2335,58 @@ export function Landing() {
               scrollbarWidth: 'none',
             }}>
               {[
-                { id: 'All', label: '🔥 All Programs', count: coursesList.length },
-                { id: 'Cambridge International (Years 9-11)', label: '🇬🇧 Cambridge (Y9-11)', count: coursesList.filter((c) => c.category === 'Cambridge International (Years 9-11)').length },
-                { id: 'Pearson Edexcel International (Years 9-11)', label: '🇬🇧 Pearson Edexcel (Y9-11)', count: coursesList.filter((c) => c.category === 'Pearson Edexcel International (Years 9-11)').length },
-                { id: 'Data Science & Research', label: '📊 Data, R & SPSS', count: coursesList.filter((c) => c.category === 'Data Science & Research').length },
-                { id: 'Tech & Programming', label: '💻 Tech & Software', count: coursesList.filter((c) => c.category === 'Tech & Programming').length },
-                { id: 'Creative Arts & Design', label: '🎨 Creative Arts & Design', count: coursesList.filter((c) => c.category === 'Creative Arts & Design').length },
-                { id: 'Languages & Communication', label: '🗣️ Languages & IELTS', count: coursesList.filter((c) => c.category === 'Languages & Communication').length },
-                { id: 'Computer & Digital Skills', label: '🖥️ Digital Literacy', count: coursesList.filter((c) => c.category === 'Computer & Digital Skills').length },
-                { id: 'Business Tech & Accounting', label: '🧾 Accounting & Tax', count: coursesList.filter((c) => c.category === 'Business Tech & Accounting').length },
-              ].map((cat) => (
-                <button
-                  key={cat.id}
-                  type="button"
-                  style={{
-                    background: activeCategory === cat.id ? '#0f172a' : '#ffffff',
-                    color: activeCategory === cat.id ? '#ffffff' : '#334155',
-                    border: `1.5px solid ${activeCategory === cat.id ? '#0f172a' : '#cbd5e1'}`,
-                    borderRadius: '999px',
-                    padding: isMobile ? '0.45rem 0.95rem' : '0.55rem 1.15rem',
-                    fontSize: isMobile ? '0.8rem' : '0.86rem',
-                    fontWeight: 700,
-                    cursor: 'pointer',
-                    boxShadow: activeCategory === cat.id ? '0 4px 12px rgba(15, 23, 42, 0.2)' : '0 1px 3px rgba(0,0,0,0.05)',
-                    display: 'inline-flex',
-                    alignItems: 'center',
-                    gap: '6px',
-                    whiteSpace: 'nowrap',
-                    flexShrink: 0,
-                    transition: 'all 0.2s ease',
-                  }}
-                  onClick={() => setActiveCategory(cat.id)}
-                >
-                  <span>{cat.label}</span>
-                  <span
+                { id: 'All', icon: SparklesIcon, label: 'All Programs', count: coursesList.length, color: '#f59e0b' },
+                { id: 'Cambridge International (Years 9-11)', icon: BritishShieldIcon, label: 'Cambridge (Y9-11)', count: coursesList.filter((c) => c.category === 'Cambridge International (Years 9-11)').length, color: '#00247D' },
+                { id: 'Pearson Edexcel International (Years 9-11)', icon: BritishShieldIcon, label: 'Pearson Edexcel (Y9-11)', count: coursesList.filter((c) => c.category === 'Pearson Edexcel International (Years 9-11)').length, color: '#00247D' },
+                { id: 'Data Science & Research', icon: DatabaseIcon, label: 'Data, R & SPSS', count: coursesList.filter((c) => c.category === 'Data Science & Research').length, color: '#10b981' },
+                { id: 'Tech & Programming', icon: CodeIcon, label: 'Tech & Software', count: coursesList.filter((c) => c.category === 'Tech & Programming').length, color: '#2563eb' },
+                { id: 'Creative Arts & Design', icon: PaletteIcon, label: 'Creative Arts & Design', count: coursesList.filter((c) => c.category === 'Creative Arts & Design').length, color: '#ec4899' },
+                { id: 'Languages & Communication', icon: GlobeIcon, label: 'Languages & IELTS', count: coursesList.filter((c) => c.category === 'Languages & Communication').length, color: '#06b6d4' },
+                { id: 'Computer & Digital Skills', icon: LaptopIcon, label: 'Digital Literacy', count: coursesList.filter((c) => c.category === 'Computer & Digital Skills').length, color: '#6366f1' },
+                { id: 'Business Tech & Accounting', icon: CalculatorIcon, label: 'Accounting & Tax', count: coursesList.filter((c) => c.category === 'Business Tech & Accounting').length, color: '#059669' },
+              ].map((cat) => {
+                const CatIcon = cat.icon
+                const isActive = activeCategory === cat.id
+                return (
+                  <button
+                    key={cat.id}
+                    type="button"
                     style={{
-                      background: activeCategory === cat.id ? '#d4af37' : '#e2e8f0',
-                      color: activeCategory === cat.id ? '#0c0e12' : '#475569',
-                      fontSize: '0.72rem',
-                      fontWeight: 900,
-                      padding: '2px 7px',
+                      background: isActive ? '#0f172a' : '#ffffff',
+                      color: isActive ? '#ffffff' : '#334155',
+                      border: `1.5px solid ${isActive ? '#0f172a' : '#cbd5e1'}`,
                       borderRadius: '999px',
+                      padding: isMobile ? '0.45rem 0.95rem' : '0.55rem 1.15rem',
+                      fontSize: isMobile ? '0.8rem' : '0.86rem',
+                      fontWeight: 700,
+                      cursor: 'pointer',
+                      boxShadow: isActive ? '0 4px 12px rgba(15, 23, 42, 0.2)' : '0 1px 3px rgba(0,0,0,0.05)',
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: '7px',
+                      whiteSpace: 'nowrap',
+                      flexShrink: 0,
+                      transition: 'all 0.2s ease',
                     }}
+                    onClick={() => setActiveCategory(cat.id)}
                   >
-                    {cat.count}
-                  </span>
-                </button>
-              ))}
+                    <CatIcon size={15} color={isActive ? '#ffffff' : cat.color} />
+                    <span>{cat.label}</span>
+                    <span
+                      style={{
+                        background: isActive ? '#d4af37' : '#e2e8f0',
+                        color: isActive ? '#0c0e12' : '#475569',
+                        fontSize: '0.72rem',
+                        fontWeight: 900,
+                        padding: '2px 7px',
+                        borderRadius: '999px',
+                      }}
+                    >
+                      {cat.count}
+                    </span>
+                  </button>
+                )
+              })}
             </div>
 
             <div style={{ fontSize: '0.85rem', color: '#64748b', fontWeight: 600 }}>
@@ -2326,7 +2396,9 @@ export function Landing() {
 
           {filteredCourses.length === 0 && (
             <div style={{ textAlign: 'center', padding: '4rem 2rem', background: '#f8fafc', borderRadius: '16px', border: '1px dashed #cbd5e1' }}>
-              <div style={{ fontSize: '2.5rem', marginBottom: '0.75rem' }}>🔎</div>
+              <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '0.75rem' }}>
+                <SearchIcon size={36} color="#94a3b8" />
+              </div>
               <h3 style={{ fontSize: '1.25rem', fontWeight: 800, color: '#0f172a', margin: '0 0 0.5rem' }}>No courses match your search "{searchQuery}"</h3>
               <p style={{ color: '#64748b', fontSize: '0.9rem', marginBottom: '1.25rem' }}>Try adjusting your search terms or browse all categories.</p>
               <button
@@ -2368,7 +2440,7 @@ export function Landing() {
                   e.currentTarget.style.boxShadow = course.bestseller ? '0 8px 24px -4px rgba(212, 175, 55, 0.25)' : '0 4px 12px -2px rgba(0, 0, 0, 0.05)'
                 }}
               >
-                {/* Udemy-Style Card Visual Banner / Thumbnail Header */}
+                {/* Card Visual Banner / Thumbnail Header */}
                 <div
                   style={{
                     background: `linear-gradient(135deg, ${(course.tagColor || '#2563eb')}15 0%, #ffffff 100%)`,
@@ -2390,18 +2462,10 @@ export function Landing() {
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
-                        fontSize: isMobile ? '1.5rem' : '1.8rem',
                         boxShadow: '0 2px 8px rgba(0,0,0,0.06)',
                       }}
                     >
-                      {course.id === 'c-python' || course.title?.toLowerCase().includes('python') ? (
-                        <svg width="28" height="28" viewBox="0 0 110 110" fill="none" aria-label="Python Logo">
-                          <path d="M54.5 5C26.5 5 28.2 17.2 28.2 17.2l.03 12.6h26.7v3.8H17.7S1.2 31.6 1.2 59.7c0 28 14.3 27 14.3 27h8.6V74.7s-.4-14.3 14-14.3h24.1s13.5.2 13.5-13.1V29s.9-24-21.2-24zm-12.5 8.6a4.2 4.2 0 1 1 0 8.4 4.2 4.2 0 0 1 0-8.4z" fill="#387eb8"/>
-                          <path d="M55.5 105c28 0 26.3-12.2 26.3-12.2l-.03-12.6H55.1v-3.8h37.2s16.5 2 16.5-26.1c0-28-14.3-27-14.3-27h-8.6v12s.4 14.3-14 14.3H47.8s-13.5-.2-13.5 13.1V81s-.9 24 21.2 24zm12.5-8.6a4.2 4.2 0 1 1 0-8.4 4.2 4.2 0 0 1 0 8.4z" fill="#ffe052"/>
-                        </svg>
-                      ) : (
-                        course.icon || '🎓'
-                      )}
+                      <CourseIcon courseId={course.id} iconKey={course.icon} size={isMobile ? 24 : 28} />
                     </div>
                     <div>
                       <span
@@ -2418,8 +2482,9 @@ export function Landing() {
                       >
                         {course.category ? course.category.split('&')[0] : 'Online Course'}
                       </span>
-                      <div style={{ fontSize: '0.72rem', color: '#64748b', marginTop: '2px' }}>
-                        🌐 100% Online Cohort
+                      <div style={{ fontSize: '0.72rem', color: '#64748b', marginTop: '2px', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                        <GlobeIcon size={12} color="#64748b" />
+                        <span>100% Online Cohort</span>
                       </div>
                     </div>
                   </div>
@@ -2436,9 +2501,13 @@ export function Landing() {
                         borderRadius: '4px',
                         textTransform: 'uppercase',
                         letterSpacing: '0.04em',
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: '4px',
                       }}
                     >
-                      ★ Bestseller
+                      <StarIcon size={11} color="#92400e" fill="#92400e" />
+                      <span>Bestseller</span>
                     </span>
                   ) : (
                     <span
@@ -2475,14 +2544,19 @@ export function Landing() {
                     </h3>
 
                     {/* Instructor Line */}
-                    <div style={{ fontSize: '0.8rem', color: '#475569', marginBottom: '0.65rem' }}>
-                      👨‍🏫 {course.instructor || 'Éclat Senior Faculty & Industry Expert'}
+                    <div style={{ fontSize: '0.8rem', color: '#475569', marginBottom: '0.65rem', display: 'flex', alignItems: 'center', gap: '5px' }}>
+                      <UserIcon size={14} color="#64748b" />
+                      <span>{course.instructor || 'Éclat Senior Faculty & Industry Expert'}</span>
                     </div>
 
-                    {/* Udemy-Style Rating & Student Count */}
+                    {/* Rating & Student Count */}
                     <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '0.85rem', flexWrap: 'wrap' }}>
                       <strong style={{ color: '#b45309', fontSize: '0.92rem', fontWeight: 900 }}>{(course.rating || 4.9).toFixed(1)}</strong>
-                      <span style={{ color: '#f59e0b', fontSize: '0.85rem' }}>★★★★★</span>
+                      <div style={{ display: 'inline-flex', alignItems: 'center', gap: '2px' }}>
+                        {[...Array(5)].map((_, idx) => (
+                          <StarIcon key={idx} size={13} color="#f59e0b" fill="#f59e0b" />
+                        ))}
+                      </div>
                       <span style={{ color: '#64748b', fontSize: '0.78rem' }}>({(course.ratingCount || 1240).toLocaleString()})</span>
                       <span style={{ color: '#94a3b8' }}>•</span>
                       <span style={{ color: '#0369a1', fontSize: '0.78rem', fontWeight: 700 }}>{(course.studentsEnrolled || 2800).toLocaleString()} students</span>
@@ -2490,19 +2564,22 @@ export function Landing() {
 
                     {/* Schedule & Duration Meta */}
                     <div style={{ display: 'flex', gap: '0.5rem', fontSize: '0.78rem', color: '#334155', marginBottom: '0.85rem', flexWrap: 'wrap' }}>
-                      <span style={{ background: '#f8fafc', border: '1px solid #e2e8f0', padding: '3px 8px', borderRadius: '6px' }}>
-                        ⏱️ {course.duration || '8 Weeks'}
+                      <span style={{ background: '#f8fafc', border: '1px solid #e2e8f0', padding: '3px 8px', borderRadius: '6px', display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+                        <ClockIcon size={12} color="#64748b" />
+                        <span>{course.duration || '8 Weeks'}</span>
                       </span>
-                      <span style={{ background: '#f8fafc', border: '1px solid #e2e8f0', padding: '3px 8px', borderRadius: '6px' }}>
-                        📅 {course.schedule ? course.schedule.split('/')[0] : 'Flexible Online Schedule'}
+                      <span style={{ background: '#f8fafc', border: '1px solid #e2e8f0', padding: '3px 8px', borderRadius: '6px', display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+                        <CalendarIcon size={12} color="#64748b" />
+                        <span>{course.schedule ? course.schedule.split('/')[0] : 'Flexible Online Schedule'}</span>
                       </span>
                     </div>
 
                     {/* Career Outcome */}
                     <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '8px', padding: '0.65rem 0.85rem', marginBottom: '0.85rem' }}>
                       <div style={{ fontSize: '0.7rem', fontWeight: 700, color: '#64748b', textTransform: 'uppercase' }}>Target Career Role:</div>
-                      <div style={{ fontSize: '0.84rem', fontWeight: 800, color: '#1e3a8a', marginTop: '2px' }}>
-                        💼 {course.careerOutcome || 'Career Certification Track'}
+                      <div style={{ fontSize: '0.84rem', fontWeight: 800, color: '#1e3a8a', marginTop: '2px', display: 'flex', alignItems: 'center', gap: '5px' }}>
+                        <BriefcaseIcon size={14} color="#1e3a8a" />
+                        <span>{course.careerOutcome || 'Career Certification Track'}</span>
                       </div>
                     </div>
 
@@ -2518,9 +2595,13 @@ export function Landing() {
                             padding: '2px 7px',
                             fontSize: '0.74rem',
                             fontWeight: 600,
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            gap: '4px',
                           }}
                         >
-                          ✓ {s}
+                          <CheckIcon size={11} color="#1d4ed8" />
+                          <span>{s}</span>
                         </span>
                       ))}
                       {(course.skills || []).length > 3 && (
@@ -2556,13 +2637,14 @@ export function Landing() {
                         display: 'inline-flex',
                         alignItems: 'center',
                         justifyContent: 'center',
-                        gap: '4px',
+                        gap: '5px',
                         whiteSpace: 'nowrap',
                         textAlign: 'center',
                         transition: 'all 0.2s ease',
                       }}
                     >
-                      💬 Fees Inquiry
+                      <MessageCircleIcon size={14} color="#2563eb" />
+                      <span>Fees Inquiry</span>
                     </a>
 
                     <button
@@ -2577,14 +2659,15 @@ export function Landing() {
                         display: 'inline-flex',
                         alignItems: 'center',
                         justifyContent: 'center',
-                        gap: '4px',
+                        gap: '5px',
                         whiteSpace: 'nowrap',
                         textAlign: 'center',
                         width: '100%',
                       }}
                       onClick={() => handleOpenCourseApplication(course)}
                     >
-                      ⚡ Enroll Now
+                      <RocketIcon size={14} color="#ffffff" />
+                      <span>Enroll Now</span>
                     </button>
                   </div>
                 </div>
@@ -2659,7 +2742,7 @@ export function Landing() {
                     }}
                     onClick={() => setCalcPlan('full')}
                   >
-                    ✓ Full Payment
+                    <span style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}><CheckIcon size={14} color="#16a34a" /> Full Payment</span>
                     <div style={{ fontSize: '0.72rem', color: '#16a34a', marginTop: '2px' }}>Instant Clearance</div>
                   </button>
 
@@ -2678,15 +2761,15 @@ export function Landing() {
                     }}
                     onClick={() => setCalcPlan('installments')}
                   >
-                    💳 2 Installments
+                    <span style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}><CreditCardIcon size={14} color="#2563eb" /> 2 Installments</span>
                     <div style={{ fontSize: '0.72rem', color: '#2563eb', marginTop: '2px' }}>50% Intake / 50% Midterm</div>
                   </button>
                 </div>
 
                 <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '10px', padding: '1rem', fontSize: '0.82rem', color: '#334155' }}>
-                  <div>⏱️ <strong>Course Duration:</strong> {selectedCalcCourse.duration}</div>
-                  <div>📅 <strong>Timetable Shifts:</strong> {selectedCalcCourse.schedule}</div>
-                  <div>💼 <strong>Career Outcome:</strong> {selectedCalcCourse.careerOutcome}</div>
+                  <div><ClockIcon size={14} color="#64748b" style={{ marginRight: '5px', verticalAlign: 'middle' }} /><strong>Course Duration:</strong> {selectedCalcCourse.duration}</div>
+                  <div><CalendarIcon size={14} color="#64748b" style={{ marginRight: '5px', verticalAlign: 'middle' }} /><strong>Timetable Shifts:</strong> {selectedCalcCourse.schedule}</div>
+                  <div><BriefcaseIcon size={14} color="#64748b" style={{ marginRight: '5px', verticalAlign: 'middle' }} /><strong>Career Outcome:</strong> {selectedCalcCourse.careerOutcome}</div>
                 </div>
               </div>
 
@@ -2713,8 +2796,8 @@ export function Landing() {
                   </div>
 
                   <div style={{ background: 'rgba(255,255,255,0.08)', borderRadius: '8px', padding: '0.75rem', fontSize: '0.8rem', color: '#e2e8f0', lineHeight: 1.5 }}>
-                    <div>🔒 <strong>Accepted Modes:</strong> Visa, Mastercard, M-Pesa, Bank Wire</div>
-                    <div style={{ color: '#93c5fd', marginTop: '3px' }}>⚡ Inquire now to receive official fee details and instant admission guidance.</div>
+                    <div><LockIcon size={13} color="#93c5fd" style={{ marginRight: '5px', verticalAlign: 'middle' }} /><strong>Accepted Modes:</strong> Visa, Mastercard, M-Pesa, Bank Wire</div>
+                    <div style={{ color: '#93c5fd', marginTop: '3px' }}>Inquire now to receive official fee details and instant admission guidance.</div>
                   </div>
                 </div>
 
@@ -2739,7 +2822,7 @@ export function Landing() {
                       boxShadow: '0 4px 12px rgba(34, 197, 94, 0.3)',
                     }}
                   >
-                    💬 Fees Inquiry on WhatsApp →
+                    <MessageCircleIcon size={16} color="#ffffff" style={{ marginRight: '6px', verticalAlign: 'middle' }} />Fees Inquiry on WhatsApp →
                   </a>
 
                   <button
@@ -2755,7 +2838,7 @@ export function Landing() {
                     }}
                     onClick={() => handleOpenCourseApplication(selectedCalcCourse)}
                   >
-                    🚀 Proceed to Online Application
+                    <AwardIcon size={16} color="#ffffff" style={{ marginRight: '6px', verticalAlign: 'middle' }} />Proceed to Online Application
                   </button>
                 </div>
               </div>
@@ -2784,11 +2867,11 @@ export function Landing() {
             <div style={{ background: 'rgba(30, 41, 59, 0.5)', border: '1px solid #334155', borderRadius: '20px', padding: isMobile ? '1.5rem 1.25rem' : '2.5rem', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
               <div>
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1.25rem' }}>
-                  <div style={{ width: '56px', height: '56px', borderRadius: '14px', background: 'rgba(34, 197, 94, 0.15)', border: '1px solid rgba(34, 197, 94, 0.3)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.8rem' }}>
-                    🤖
+                  <div style={{ width: '56px', height: '56px', borderRadius: '14px', background: 'rgba(34, 197, 94, 0.15)', border: '1px solid rgba(34, 197, 94, 0.3)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <SmartphoneIcon size={28} color="#22c55e" />
                   </div>
                   <span style={{ display: 'inline-flex', alignItems: 'center', gap: '5px', background: 'rgba(16, 185, 129, 0.15)', border: '1px solid rgba(16, 185, 129, 0.4)', borderRadius: '999px', padding: '0.3rem 0.75rem', fontSize: '0.74rem', fontWeight: 800, color: '#34d399' }}>
-                    <span>🟢</span> Published on APKPure
+                    <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#22c55e', display: 'inline-block' }} /> Published on APKPure
                   </span>
                 </div>
                 <h3 style={{ fontSize: isMobile ? '1.15rem' : '1.35rem', fontWeight: 800, color: '#ffffff', margin: '0 0 0.5rem' }}>
@@ -2798,10 +2881,10 @@ export function Landing() {
                   Take your entire college in your pocket. Live video classes, swipe-to-refresh cloud sync, and instant timetable push alerts. Verified and available on APKPure.
                 </p>
                 <ul style={{ listStyle: 'none', padding: 0, margin: '0 0 2rem', fontSize: '0.85rem', color: '#94a3b8', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-                  <li>✓ Official APKPure Store Verified Package</li>
-                  <li>✓ Offline E-Library & Study Materials</li>
-                  <li>✓ Swipe Down Pull-to-Refresh Gesture</li>
-                  <li>✓ Instant Cloud Attendance & Exam Grades</li>
+                  <li><CheckIcon size={14} color="#10b981" style={{ marginRight: '6px', verticalAlign: 'middle' }} />Official APKPure Store Verified Package</li>
+                  <li><CheckIcon size={14} color="#10b981" style={{ marginRight: '6px', verticalAlign: 'middle' }} />Offline E-Library & Study Materials</li>
+                  <li><CheckIcon size={14} color="#10b981" style={{ marginRight: '6px', verticalAlign: 'middle' }} />Swipe Down Pull-to-Refresh Gesture</li>
+                  <li><CheckIcon size={14} color="#10b981" style={{ marginRight: '6px', verticalAlign: 'middle' }} />Instant Cloud Attendance & Exam Grades</li>
                 </ul>
               </div>
 
@@ -2828,7 +2911,7 @@ export function Landing() {
                     fontSize: '0.94rem',
                   }}
                 >
-                  <span style={{ fontSize: '1.2rem' }}>⚡</span>
+                  <SparklesIcon size={18} color="#ffffff" />
                   <span>Install via APKPure Store</span>
                 </a>
 
@@ -2855,7 +2938,7 @@ export function Landing() {
                     fontSize: '0.86rem',
                   }}
                 >
-                  <span>📥</span>
+                  <SmartphoneIcon size={16} color="#ffffff" />
                   <span>Direct Download (.APK)</span>
                 </button>
               </div>
@@ -2864,8 +2947,8 @@ export function Landing() {
             {/* Windows Desktop App Card */}
             <div style={{ background: 'rgba(30, 41, 59, 0.5)', border: '1px solid #334155', borderRadius: '20px', padding: isMobile ? '1.5rem 1.25rem' : '2.5rem', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
               <div>
-                <div style={{ width: '56px', height: '56px', borderRadius: '14px', background: 'rgba(59, 130, 246, 0.15)', border: '1px solid rgba(59, 130, 246, 0.3)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.8rem', marginBottom: '1.5rem' }}>
-                  💻
+                <div style={{ width: '56px', height: '56px', borderRadius: '14px', background: 'rgba(59, 130, 246, 0.15)', border: '1px solid rgba(59, 130, 246, 0.3)', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '1.5rem' }}>
+                  <LaptopIcon size={28} color="#3b82f6" />
                 </div>
                 <h3 style={{ fontSize: isMobile ? '1.15rem' : '1.35rem', fontWeight: 800, color: '#ffffff', margin: '0 0 0.5rem' }}>
                   Windows Desktop App (.EXE)
@@ -2874,10 +2957,10 @@ export function Landing() {
                   Built for focused learning on PC. Full-screen lecture viewer, offline digital library, and fast note-taking.
                 </p>
                 <ul style={{ listStyle: 'none', padding: 0, margin: '0 0 2rem', fontSize: '0.85rem', color: '#94a3b8', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-                  <li>✓ Distraction-Free Full Screen Study</li>
-                  <li>✓ Zoom Controls & Dynamic Text Resizing</li>
-                  <li>✓ 1-Click Registration Slip & Fee Printing</li>
-                  <li>✓ Windows 10 & 11 64-bit Compatible</li>
+                  <li><CheckIcon size={14} color="#3b82f6" style={{ marginRight: '6px', verticalAlign: 'middle' }} />Distraction-Free Full Screen Study</li>
+                  <li><CheckIcon size={14} color="#3b82f6" style={{ marginRight: '6px', verticalAlign: 'middle' }} />Zoom Controls & Dynamic Text Resizing</li>
+                  <li><CheckIcon size={14} color="#3b82f6" style={{ marginRight: '6px', verticalAlign: 'middle' }} />1-Click Registration Slip & Fee Printing</li>
+                  <li><CheckIcon size={14} color="#3b82f6" style={{ marginRight: '6px', verticalAlign: 'middle' }} />Windows 10 & 11 64-bit Compatible</li>
                 </ul>
               </div>
 
@@ -2890,7 +2973,7 @@ export function Landing() {
                 className="btn btn-primary"
                 style={{ fontWeight: 800, padding: '0.85rem', borderRadius: '12px', textAlign: 'center', cursor: 'pointer', display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '8px', boxShadow: '0 4px 14px rgba(37, 99, 235, 0.4)' }}
               >
-                <span>💻</span>
+                <LaptopIcon size={16} color="#ffffff" />
                 <span>Download Windows App (.EXE)</span>
               </button>
             </div>
@@ -2930,8 +3013,10 @@ export function Landing() {
             >
               <div>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
-                  <div style={{ color: '#f59e0b', fontSize: '1.1rem' }}>
-                    {'★'.repeat(t.rating)}
+                  <div style={{ display: 'flex', gap: '2px', color: '#f59e0b' }}>
+                    {Array.from({ length: t.rating }).map((_, i) => (
+                      <StarIcon key={i} size={16} fill="#f59e0b" color="#f59e0b" />
+                    ))}
                   </div>
                   {t.location && (
                     <span
@@ -2981,7 +3066,9 @@ export function Landing() {
 
           <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : 'repeat(auto-fit, minmax(280px, 1fr))', gap: isMobile ? '1.25rem' : '2.5rem' }}>
             <div style={{ background: 'rgba(255, 255, 255, 0.07)', border: '1px solid rgba(255, 255, 255, 0.15)', borderRadius: '16px', padding: isMobile ? '1.5rem 1.25rem' : '2rem' }}>
-              <div style={{ fontSize: '2.5rem', marginBottom: '1rem' }}>📝</div>
+              <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '1rem' }}>
+                <FileTextIcon size={34} color="#60a5fa" />
+              </div>
               <div style={{ fontSize: '0.85rem', fontWeight: 800, color: '#60a5fa', textTransform: 'uppercase' }}>Step 1</div>
               <h3 style={{ fontSize: '1.25rem', fontWeight: 800, margin: '0.35rem 0 0.5rem', color: '#ffffff' }}>Apply Online in 60s</h3>
               <p style={{ fontSize: '0.9rem', color: '#cbd5e1', lineHeight: 1.6, margin: 0 }}>
@@ -2990,7 +3077,9 @@ export function Landing() {
             </div>
 
             <div style={{ background: 'rgba(255, 255, 255, 0.07)', border: '1px solid rgba(255, 255, 255, 0.15)', borderRadius: '16px', padding: isMobile ? '1.5rem 1.25rem' : '2rem' }}>
-              <div style={{ fontSize: '2.5rem', marginBottom: '1rem' }}>💻</div>
+              <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '1rem' }}>
+                <LaptopIcon size={34} color="#34d399" />
+              </div>
               <div style={{ fontSize: '0.85rem', fontWeight: 800, color: '#34d399', textTransform: 'uppercase' }}>Step 2</div>
               <h3 style={{ fontSize: '1.25rem', fontWeight: 800, margin: '0.35rem 0 0.5rem', color: '#ffffff' }}>Intensive Practical Training</h3>
               <p style={{ fontSize: '0.9rem', color: '#cbd5e1', lineHeight: 1.6, margin: 0 }}>
@@ -2999,7 +3088,9 @@ export function Landing() {
             </div>
 
             <div style={{ background: 'rgba(255, 255, 255, 0.07)', border: '1px solid rgba(255, 255, 255, 0.15)', borderRadius: '16px', padding: isMobile ? '1.5rem 1.25rem' : '2rem' }}>
-              <div style={{ fontSize: '2.5rem', marginBottom: '1rem' }}>🎓</div>
+              <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '1rem' }}>
+                <GraduationCapIcon size={34} color="#fbbf24" />
+              </div>
               <div style={{ fontSize: '0.85rem', fontWeight: 800, color: '#fbbf24', textTransform: 'uppercase' }}>Step 3</div>
               <h3 style={{ fontSize: '1.25rem', fontWeight: 800, margin: '0.35rem 0 0.5rem', color: '#ffffff' }}>Certification & Job Search</h3>
               <p style={{ fontSize: '0.9rem', color: '#cbd5e1', lineHeight: 1.6, margin: 0 }}>
@@ -3038,27 +3129,43 @@ export function Landing() {
           {/* Global Payment Card */}
           <div style={{ background: 'linear-gradient(135deg, #065f46 0%, #047857 100%)', color: '#ffffff', borderRadius: '20px', padding: '2.5rem', boxShadow: '0 10px 25px rgba(5, 150, 105, 0.2)' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '1rem' }}>
-              <span style={{ fontSize: '2rem' }}>💳</span>
+              <CreditCardIcon size={28} color="#ffffff" />
               <div>
                 <h3 style={{ fontSize: '1.3rem', fontWeight: 900, color: '#ffffff', margin: 0 }}>International Tuition Payment Guide</h3>
                 <div style={{ fontSize: '0.8rem', color: '#a7f3d0' }}>Instant automated digital invoices & receipts</div>
               </div>
             </div>
             <div style={{ background: 'rgba(255, 255, 255, 0.12)', borderRadius: '12px', padding: '1.25rem', marginTop: '1.5rem', lineHeight: 1.8 }}>
-              <div>🌐 <strong>Currency:</strong> <span style={{ fontSize: '1.15rem', fontWeight: 900, color: '#ffffff' }}>USD ($)</span> (or local equivalent)</div>
-              <div>💳 <strong>Card Payment:</strong> Debit / Credit Card (Visa, Mastercard & Prepaid)</div>
-              <div>🏦 <strong>Bank Wire & Mobile Money:</strong> Instant automated invoices generated upon registration</div>
-              <div>💰 <strong>Installment Plan:</strong> 2 flexible parts accepted (50% on admission)</div>
-              <div>📑 <strong>Receipts:</strong> Official stamped digital receipts with instant QR verification</div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '7px' }}>
+                <GlobeIcon size={14} color="#a7f3d0" />
+                <span><strong>Currency:</strong> <span style={{ fontSize: '1.15rem', fontWeight: 900, color: '#ffffff' }}>USD ($)</span> (or local equivalent)</span>
+              </div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '7px' }}>
+                <CreditCardIcon size={14} color="#a7f3d0" />
+                <span><strong>Card Payment:</strong> Debit / Credit Card (Visa, Mastercard & Prepaid)</span>
+              </div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '7px' }}>
+                <BuildingIcon size={14} color="#a7f3d0" />
+                <span><strong>Bank Wire & Mobile Money:</strong> Instant automated invoices generated upon registration</span>
+              </div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '7px' }}>
+                <CheckCircleIcon size={14} color="#a7f3d0" />
+                <span><strong>Installment Plan:</strong> 2 flexible parts accepted (50% on admission)</span>
+              </div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '7px' }}>
+                <FileTextIcon size={14} color="#a7f3d0" />
+                <span><strong>Receipts:</strong> Official stamped digital receipts with instant QR verification</span>
+              </div>
             </div>
             <div style={{ marginTop: '1.25rem' }}>
               <button
                 type="button"
                 className="btn btn-sm"
-                style={{ background: '#ffffff', color: '#065f46', fontWeight: 800, padding: '0.6rem 1.25rem', borderRadius: '8px', border: 'none', cursor: 'pointer' }}
+                style={{ background: '#ffffff', color: '#065f46', fontWeight: 800, padding: '0.6rem 1.25rem', borderRadius: '8px', border: 'none', cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: '6px' }}
                 onClick={() => setInquiryModalOpen(true)}
               >
-                💳 Enroll & Proceed to Payment Desk →
+                <CreditCardIcon size={15} color="#065f46" />
+                <span>Enroll & Proceed to Payment Desk →</span>
               </button>
             </div>
           </div>
@@ -3066,25 +3173,38 @@ export function Landing() {
           {/* Virtual Admissions & Support Desk Card */}
           <div style={{ background: '#ffffff', border: '1px solid #e2e8f0', borderRadius: '20px', padding: '2.5rem', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.05)' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '1rem' }}>
-              <span style={{ fontSize: '2rem' }}>🌐</span>
+              <GlobeIcon size={28} color="#2563eb" />
               <div>
                 <h3 style={{ fontSize: '1.3rem', fontWeight: 900, color: '#0f172a', margin: 0 }}>Online Admissions & Virtual Support</h3>
                 <div style={{ fontSize: '0.8rem', color: '#64748b' }}>Live Zoom Classes • 24/7 Digital Learning Portal</div>
               </div>
             </div>
             <div style={{ fontSize: '0.92rem', color: '#475569', lineHeight: 1.7, marginTop: '1.25rem' }}>
-              <div>💻 <strong>Delivery Mode:</strong> 100% Online (Live Interactive Video + LMS Modules)</div>
-              <div>🕒 <strong>Live Class Shifts:</strong> Early Morning, Late Morning, Midday, Afternoon, Evening & Night Batches</div>
-              <div>📞 <strong>Admissions Hotline:</strong> {INSTITUTION_CONFIG.contact.phone}</div>
-              <div>✉️ <strong>Direct Inquiries:</strong> {INSTITUTION_CONFIG.contact.email}</div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '7px', marginBottom: '4px' }}>
+                <LaptopIcon size={15} color="#64748b" />
+                <span><strong>Delivery Mode:</strong> 100% Online (Live Interactive Video + LMS Modules)</span>
+              </div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '7px', marginBottom: '4px' }}>
+                <ClockIcon size={15} color="#64748b" />
+                <span><strong>Live Class Shifts:</strong> Early Morning, Late Morning, Midday, Afternoon, Evening & Night Batches</span>
+              </div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '7px', marginBottom: '4px' }}>
+                <PhoneIcon size={15} color="#64748b" />
+                <span><strong>Admissions Hotline:</strong> {INSTITUTION_CONFIG.contact.phone}</span>
+              </div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '7px' }}>
+                <MailIcon size={15} color="#64748b" />
+                <span><strong>Direct Inquiries:</strong> {INSTITUTION_CONFIG.contact.email}</span>
+              </div>
             </div>
             <button
               type="button"
               className="btn btn-secondary btn-sm mt-4"
-              style={{ fontWeight: 700 }}
+              style={{ fontWeight: 700, display: 'inline-flex', alignItems: 'center', gap: '6px' }}
               onClick={() => alert(`Online Class Orientation: Call or WhatsApp ${INSTITUTION_CONFIG.contact.phone} to receive a guest Zoom link for a free live class demo!`)}
             >
-              🎥 Request Free Live Class Demo
+              <VideoIcon size={15} color="#334155" />
+              <span>Request Free Live Class Demo</span>
             </button>
           </div>
         </div>
@@ -3115,9 +3235,10 @@ export function Landing() {
             <button
               type="submit"
               className="btn btn-primary"
-              style={{ width: isMobile ? '100%' : 'auto', maxWidth: isMobile ? '400px' : 'none', fontWeight: 800, padding: '0.75rem 1.5rem', borderRadius: '10px' }}
+              style={{ width: isMobile ? '100%' : 'auto', maxWidth: isMobile ? '400px' : 'none', fontWeight: 800, padding: '0.75rem 1.5rem', borderRadius: '10px', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}
             >
-              🔍 Verify Certificate
+              <SearchIcon size={16} color="#ffffff" />
+              <span>Verify Certificate</span>
             </button>
           </form>
 
@@ -3142,7 +3263,7 @@ export function Landing() {
                 transition: 'all 0.15s ease',
               }}
             >
-              <span>🎓</span>
+              <GraduationCapIcon size={16} color="#fef08a" />
               <span>View Official Sample Conferred Diploma (Preview)</span>
               <span style={{ fontSize: '0.75rem', opacity: 0.85 }}>→</span>
             </button>
@@ -3153,18 +3274,18 @@ export function Landing() {
               {certResult.found ? (
                 <div style={{ background: '#0f291e', border: '1.5px solid #22c55e', borderRadius: '14px', padding: isMobile ? '1.25rem 1rem' : '1.5rem', color: '#f0fdf4' }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '0.85rem' }}>
-                    <span style={{ fontSize: '1.75rem' }}>🛡️</span>
+                    <ShieldCheckIcon size={28} color="#86efac" />
                     <div>
                       <div style={{ fontSize: '0.75rem', color: '#86efac', textTransform: 'uppercase', fontWeight: 800 }}>Official Verification Confirmation</div>
                       <div style={{ fontSize: '1.1rem', fontWeight: 900, color: '#ffffff' }}>Authentic Eclat Institute Credential</div>
                     </div>
                   </div>
                   <div style={{ borderTop: '1px solid rgba(255,255,255,0.15)', paddingTop: '0.75rem', fontSize: '0.88rem', lineHeight: 1.7 }}>
-                    <div>🎓 <strong>Graduate Name:</strong> {certResult.studentName}</div>
-                    <div>📜 <strong>Awarded Qualification:</strong> {certResult.courseTitle}</div>
-                    <div>🗓️ <strong>Completion Date:</strong> {certResult.completionDate}</div>
-                    <div>🔢 <strong>Certificate Reference:</strong> <span style={{ color: '#fde047', fontWeight: 800 }}>{certResult.certNumber}</span></div>
-                    <div>🌐 <strong>Delivery Format:</strong> 100% Online (Verified Digital Credential)</div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '7px' }}><UserIcon size={14} color="#86efac" /> <span><strong>Graduate Name:</strong> {certResult.studentName}</span></div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '7px' }}><AwardIcon size={14} color="#86efac" /> <span><strong>Awarded Qualification:</strong> {certResult.courseTitle}</span></div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '7px' }}><CalendarIcon size={14} color="#86efac" /> <span><strong>Completion Date:</strong> {certResult.completionDate}</span></div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '7px' }}><FileTextIcon size={14} color="#86efac" /> <span><strong>Certificate Reference:</strong> <span style={{ color: '#fde047', fontWeight: 800 }}>{certResult.certNumber}</span></span></div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '7px' }}><GlobeIcon size={14} color="#86efac" /> <span><strong>Delivery Format:</strong> 100% Online (Verified Digital Credential)</span></div>
                   </div>
 
                   <button
@@ -3202,13 +3323,15 @@ export function Landing() {
                       boxShadow: '0 4px 14px rgba(16, 185, 129, 0.35)',
                     }}
                   >
-                    <span>📜</span>
+                    <FileTextIcon size={16} color="#ffffff" />
                     <span>View Official Conferred Certificate Document</span>
                   </button>
                 </div>
               ) : (
                 <div style={{ background: '#450a0a', border: '1.5px solid #ef4444', borderRadius: '14px', padding: '1.25rem', color: '#fef2f2', textAlign: 'center' }}>
-                  <div style={{ fontSize: '1.5rem', marginBottom: '0.35rem' }}>⚠️</div>
+                  <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '0.35rem' }}>
+                    <AlertTriangleIcon size={28} color="#ef4444" />
+                  </div>
                   <div style={{ fontWeight: 800, fontSize: '1rem' }}>No Certificate Record Found</div>
                   <div style={{ fontSize: '0.84rem', color: '#fca5a5', marginTop: '0.25rem' }}>
                     Please check the certificate serial number or contact the Academic Registrar at <span style={{ color: '#ffffff' }}>{INSTITUTION_CONFIG.contact.admissionsEmail}</span>.
@@ -3236,7 +3359,8 @@ export function Landing() {
               Kenya & East Africa’s premier virtual institute. Live online interactive coaching in Full-Stack Software Engineering, Python Data Analytics, Cybersecurity, Computer Packages, IELTS Exam Prep, English Fluency, Arabic, French, and German.
             </p>
             <div style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', background: '#131b2e', border: '1px solid #2e3d61', padding: '0.45rem 0.85rem', borderRadius: '8px', fontSize: '0.82rem', color: '#cbd5e1', fontWeight: 600 }}>
-              <span>🛡️ Verified Global Online Certifications</span>
+              <ShieldCheckIcon size={16} color="#38bdf8" />
+              <span>Verified Global Online Certifications</span>
             </div>
           </div>
 
@@ -3246,14 +3370,38 @@ export function Landing() {
               Online Tech & Language Programs
             </h4>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '0.65rem', fontSize: '0.88rem' }}>
-              <a href="#courses" style={{ color: '#cbd5e1', textDecoration: 'none', transition: 'color 0.2s' }}>💻 Full-Stack Web Development (React 19 & Node.js)</a>
-              <a href="#courses" style={{ color: '#cbd5e1', textDecoration: 'none', transition: 'color 0.2s' }}>📊 Python Programming & Data Analytics</a>
-              <a href="#courses" style={{ color: '#cbd5e1', textDecoration: 'none', transition: 'color 0.2s' }}>⚡ Comprehensive Computer Packages & Digital Literacy</a>
-              <a href="#courses" style={{ color: '#cbd5e1', textDecoration: 'none', transition: 'color 0.2s' }}>🛡️ Cybersecurity Fundamentals & Network Defense</a>
-              <a href="#courses" style={{ color: '#cbd5e1', textDecoration: 'none', transition: 'color 0.2s' }}>📈 Computerized Accounting (QuickBooks & iTax)</a>
-              <a href="#courses" style={{ color: '#cbd5e1', textDecoration: 'none', transition: 'color 0.2s' }}>🎓 IELTS Exam Preparation (Target Band 7.5 - 9.0)</a>
-              <a href="#courses" style={{ color: '#cbd5e1', textDecoration: 'none', transition: 'color 0.2s' }}>🗣️ English Language Mastery & Public Speaking</a>
-              <a href="#courses" style={{ color: '#cbd5e1', textDecoration: 'none', transition: 'color 0.2s' }}>🗣️ Arabic, French & German Languages</a>
+              <a href="#courses" style={{ color: '#cbd5e1', textDecoration: 'none', transition: 'color 0.2s', display: 'inline-flex', alignItems: 'center', gap: '7px' }}>
+                <CodeIcon size={14} color="#94a3b8" />
+                <span>Full-Stack Web Development (React 19 & Node.js)</span>
+              </a>
+              <a href="#courses" style={{ color: '#cbd5e1', textDecoration: 'none', transition: 'color 0.2s', display: 'inline-flex', alignItems: 'center', gap: '7px' }}>
+                <DatabaseIcon size={14} color="#94a3b8" />
+                <span>Python Programming & Data Analytics</span>
+              </a>
+              <a href="#courses" style={{ color: '#cbd5e1', textDecoration: 'none', transition: 'color 0.2s', display: 'inline-flex', alignItems: 'center', gap: '7px' }}>
+                <LaptopIcon size={14} color="#94a3b8" />
+                <span>Comprehensive Computer Packages & Digital Literacy</span>
+              </a>
+              <a href="#courses" style={{ color: '#cbd5e1', textDecoration: 'none', transition: 'color 0.2s', display: 'inline-flex', alignItems: 'center', gap: '7px' }}>
+                <ShieldCheckIcon size={14} color="#94a3b8" />
+                <span>Cybersecurity Fundamentals & Network Defense</span>
+              </a>
+              <a href="#courses" style={{ color: '#cbd5e1', textDecoration: 'none', transition: 'color 0.2s', display: 'inline-flex', alignItems: 'center', gap: '7px' }}>
+                <CalculatorIcon size={14} color="#94a3b8" />
+                <span>Computerized Accounting (QuickBooks & iTax)</span>
+              </a>
+              <a href="#courses" style={{ color: '#cbd5e1', textDecoration: 'none', transition: 'color 0.2s', display: 'inline-flex', alignItems: 'center', gap: '7px' }}>
+                <GraduationCapIcon size={14} color="#94a3b8" />
+                <span>IELTS Exam Preparation (Target Band 7.5 - 9.0)</span>
+              </a>
+              <a href="#courses" style={{ color: '#cbd5e1', textDecoration: 'none', transition: 'color 0.2s', display: 'inline-flex', alignItems: 'center', gap: '7px' }}>
+                <GlobeIcon size={14} color="#94a3b8" />
+                <span>English Language Mastery & Public Speaking</span>
+              </a>
+              <a href="#courses" style={{ color: '#cbd5e1', textDecoration: 'none', transition: 'color 0.2s', display: 'inline-flex', alignItems: 'center', gap: '7px' }}>
+                <GlobeIcon size={14} color="#94a3b8" />
+                <span>Arabic, French & German Languages</span>
+              </a>
             </div>
           </div>
 
@@ -3270,10 +3418,22 @@ export function Landing() {
                   Cards, PayPal, Bank Wire & Mobile Money
                 </div>
               </div>
-              <div style={{ marginBottom: '0.35rem' }}>💳 <span style={{ color: '#94a3b8' }}>Cards:</span> <strong style={{ color: '#f8fafc' }}>Visa & Mastercard</strong></div>
-              <div style={{ marginBottom: '0.35rem' }}>🌐 <span style={{ color: '#94a3b8' }}>Online:</span> <strong style={{ color: '#f8fafc' }}>PayPal, Stripe & Wire Transfer</strong></div>
-              <div style={{ marginBottom: '0.35rem' }}>💰 <span style={{ color: '#94a3b8' }}>Installments:</span> <strong style={{ color: '#f8fafc' }}>2–3 flexible parts accepted</strong></div>
-              <div>📜 <span style={{ color: '#94a3b8' }}>Receipts:</span> <strong style={{ color: '#f8fafc' }}>Official digital receipts with QR</strong></div>
+              <div style={{ marginBottom: '0.35rem', display: 'flex', alignItems: 'center', gap: '7px' }}>
+                <CreditCardIcon size={14} color="#94a3b8" />
+                <span><span style={{ color: '#94a3b8' }}>Cards:</span> <strong style={{ color: '#f8fafc' }}>Visa & Mastercard</strong></span>
+              </div>
+              <div style={{ marginBottom: '0.35rem', display: 'flex', alignItems: 'center', gap: '7px' }}>
+                <GlobeIcon size={14} color="#94a3b8" />
+                <span><span style={{ color: '#94a3b8' }}>Online:</span> <strong style={{ color: '#f8fafc' }}>PayPal, Stripe & Wire Transfer</strong></span>
+              </div>
+              <div style={{ marginBottom: '0.35rem', display: 'flex', alignItems: 'center', gap: '7px' }}>
+                <CheckCircleIcon size={14} color="#94a3b8" />
+                <span><span style={{ color: '#94a3b8' }}>Installments:</span> <strong style={{ color: '#f8fafc' }}>2–3 flexible parts accepted</strong></span>
+              </div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '7px' }}>
+                <FileTextIcon size={14} color="#94a3b8" />
+                <span><span style={{ color: '#94a3b8' }}>Receipts:</span> <strong style={{ color: '#f8fafc' }}>Official digital receipts with QR</strong></span>
+              </div>
             </div>
           </div>
 
@@ -3283,13 +3443,28 @@ export function Landing() {
               Virtual Admissions & Support
             </h4>
             <div style={{ fontSize: '0.88rem', lineHeight: 1.75, color: '#cbd5e1' }}>
-              <div style={{ marginBottom: '0.35rem' }}>🌐 <span style={{ color: '#94a3b8' }}>Delivery:</span> <strong style={{ color: '#f8fafc' }}>{INSTITUTION_CONFIG.tagline} (Worldwide)</strong></div>
-              <div style={{ marginBottom: '0.35rem' }}>📞 <span style={{ color: '#94a3b8' }}>Phone:</span> <strong style={{ color: '#f8fafc' }}>{INSTITUTION_CONFIG.contact.phone}</strong></div>
-              <div style={{ marginBottom: '0.35rem' }}>💬 <span style={{ color: '#94a3b8' }}>WhatsApp:</span> <strong style={{ color: '#f8fafc' }}>{INSTITUTION_CONFIG.contact.phone}</strong></div>
-              <div style={{ marginBottom: '0.5rem' }}>✉️ <span style={{ color: '#94a3b8' }}>Email:</span> <a href={`mailto:${INSTITUTION_CONFIG.contact.admissionsEmail}`} style={{ color: '#93c5fd', textDecoration: 'underline' }}>{INSTITUTION_CONFIG.contact.admissionsEmail}</a></div>
+              <div style={{ marginBottom: '0.35rem', display: 'flex', alignItems: 'center', gap: '7px' }}>
+                <GlobeIcon size={14} color="#94a3b8" />
+                <span><span style={{ color: '#94a3b8' }}>Delivery:</span> <strong style={{ color: '#f8fafc' }}>{INSTITUTION_CONFIG.tagline} (Worldwide)</strong></span>
+              </div>
+              <div style={{ marginBottom: '0.35rem', display: 'flex', alignItems: 'center', gap: '7px' }}>
+                <PhoneIcon size={14} color="#94a3b8" />
+                <span><span style={{ color: '#94a3b8' }}>Phone:</span> <strong style={{ color: '#f8fafc' }}>{INSTITUTION_CONFIG.contact.phone}</strong></span>
+              </div>
+              <div style={{ marginBottom: '0.35rem', display: 'flex', alignItems: 'center', gap: '7px' }}>
+                <MessageCircleIcon size={14} color="#94a3b8" />
+                <span><span style={{ color: '#94a3b8' }}>WhatsApp:</span> <strong style={{ color: '#f8fafc' }}>{INSTITUTION_CONFIG.contact.phone}</strong></span>
+              </div>
+              <div style={{ marginBottom: '0.5rem', display: 'flex', alignItems: 'center', gap: '7px' }}>
+                <MailIcon size={14} color="#94a3b8" />
+                <span><span style={{ color: '#94a3b8' }}>Email:</span> <a href={`mailto:${INSTITUTION_CONFIG.contact.admissionsEmail}`} style={{ color: '#93c5fd', textDecoration: 'underline' }}>{INSTITUTION_CONFIG.contact.admissionsEmail}</a></span>
+              </div>
               
               <div style={{ marginTop: '0.75rem', padding: '0.7rem 0.9rem', background: '#131b2e', border: '1px solid #2e3d61', borderRadius: '8px', fontSize: '0.82rem' }}>
-                <div style={{ color: '#fcd34d', fontWeight: 700, marginBottom: '0.25rem' }}>🕒 Online Learning & Support:</div>
+                <div style={{ color: '#fcd34d', fontWeight: 700, marginBottom: '0.25rem', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                  <ClockIcon size={14} color="#fcd34d" />
+                  <span>Online Learning & Support:</span>
+                </div>
                 <div style={{ color: '#e2e8f0' }}>• Cloud LMS Portal: <strong>24/7 Unlimited Access</strong></div>
                 <div style={{ color: '#e2e8f0' }}>• Live Batches: <strong>Early Morning to Night (6 Daily Shifts)</strong></div>
                 <div style={{ color: '#86efac' }}>• Student Support: <strong>Daily Virtual Desk</strong></div>
@@ -3304,17 +3479,21 @@ export function Landing() {
             © {new Date().getFullYear()} <strong style={{ color: '#e2e8f0' }}>Éclat Institute</strong>. All Rights Reserved.
           </div>
           <div style={{ display: 'flex', gap: isMobile ? '0.75rem' : '1.25rem', alignItems: 'center', flexWrap: 'wrap', justifyContent: 'center' }}>
-            <Link to="/about" style={{ color: '#38bdf8', textDecoration: 'none', fontWeight: 700 }}>🏛️ About Us</Link>
+            <Link to="/about" style={{ color: '#38bdf8', textDecoration: 'none', fontWeight: 700, display: 'inline-flex', alignItems: 'center', gap: '5px' }}>
+              <BuildingIcon size={14} color="#38bdf8" />
+              <span>About Us</span>
+            </Link>
             <Link to="/courses" style={{ color: '#cbd5e1', textDecoration: 'none' }}>Courses</Link>
             <Link to="/library" style={{ color: '#cbd5e1', textDecoration: 'none' }}>E-Library</Link>
             <Link to="/privacy" style={{ color: '#94a3b8', textDecoration: 'none' }}>Privacy Policy</Link>
             <button
               type="button"
               className="btn btn-primary btn-sm"
-              style={{ fontWeight: 700, fontSize: '0.82rem', padding: '0.4rem 1rem' }}
+              style={{ fontWeight: 700, fontSize: '0.82rem', padding: '0.4rem 1rem', display: 'inline-flex', alignItems: 'center', gap: '5px' }}
               onClick={() => setShowPortalDesksModal(true)}
             >
-              🔐 Staff & Student Portals
+              <LockIcon size={13} color="#ffffff" />
+              <span>Staff & Student Portals</span>
             </button>
           </div>
         </div>
@@ -3332,7 +3511,7 @@ export function Landing() {
             <div className="modal-header" style={{ padding: 0, paddingBottom: '1rem', marginBottom: '1.25rem', borderBottom: '1px solid #e2e8f0' }}>
               <div>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.25rem' }}>
-                  <span style={{ fontSize: '1.3rem' }}>🎓</span>
+                  <GraduationCapIcon size={22} color="#1e3a8a" />
                   <h3 className="modal-title" style={{ fontSize: '1.25rem', fontWeight: 900, color: '#1e3a8a', margin: 0 }}>
                     {checkoutStep === 'details' && 'Step 1: Student Admission Details'}
                     {checkoutStep === 'payment' && 'Step 2: Select Mode of Payment & Settle Tuition'}
@@ -3345,7 +3524,9 @@ export function Landing() {
                   {checkoutStep === 'receipt' && 'Your seat is confirmed and your official credential record has been created.'}
                 </p>
               </div>
-              <button type="button" className="modal-close" onClick={() => setInquiryModalOpen(false)}>✕</button>
+              <button type="button" className="modal-close" onClick={() => setInquiryModalOpen(false)} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <XIcon size={18} />
+              </button>
             </div>
 
             {/* Step Progress Tracker */}
@@ -3479,7 +3660,10 @@ export function Landing() {
                           >
                             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                               <strong style={{ fontSize: '0.88rem', color: '#1e3a8a' }}>Full Payment (100%)</strong>
-                              <span style={{ fontSize: '0.72rem', background: '#dcfce7', color: '#166534', padding: '2px 6px', borderRadius: '4px', fontWeight: 800 }}>Cleared ✓</span>
+                              <span style={{ fontSize: '0.72rem', background: '#dcfce7', color: '#166534', padding: '2px 6px', borderRadius: '4px', fontWeight: 800, display: 'inline-flex', alignItems: 'center', gap: '3px' }}>
+                                <CheckIcon size={11} color="#166534" />
+                                <span>100% Cleared</span>
+                              </span>
                             </div>
                             <div style={{ fontSize: '1.35rem', fontWeight: 900, color: '#1e3a8a', marginTop: '4px' }}>
                               ${fullAmount} <span style={{ fontSize: '0.75rem', fontWeight: 600 }}>USD</span>
@@ -3529,10 +3713,10 @@ export function Landing() {
                               display: 'flex',
                               flexDirection: 'column',
                               alignItems: 'center',
-                              gap: '4px',
+                              gap: '6px',
                             }}
                           >
-                            <span>💳</span>
+                            <CreditCardIcon size={20} color={checkoutPaymentMode === 'card' ? '#ffffff' : '#1e293b'} />
                             <span>Credit / Debit Card</span>
                           </button>
 
@@ -3551,10 +3735,10 @@ export function Landing() {
                               display: 'flex',
                               flexDirection: 'column',
                               alignItems: 'center',
-                              gap: '4px',
+                              gap: '6px',
                             }}
                           >
-                            <span>📱</span>
+                            <SmartphoneIcon size={20} color={checkoutPaymentMode === 'paybill' ? '#ffffff' : '#1e293b'} />
                             <span>M-Pesa Paybill</span>
                           </button>
 
@@ -3573,10 +3757,10 @@ export function Landing() {
                               display: 'flex',
                               flexDirection: 'column',
                               alignItems: 'center',
-                              gap: '4px',
+                              gap: '6px',
                             }}
                           >
-                            <span>🏦</span>
+                            <BuildingIcon size={20} color={checkoutPaymentMode === 'kcb_wire' ? '#ffffff' : '#1e293b'} />
                             <span>KCB Bank Wire</span>
                           </button>
                         </div>
@@ -3587,8 +3771,8 @@ export function Landing() {
                         {checkoutPaymentMode === 'card' && (
                           <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
                             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                              <strong style={{ fontSize: '0.85rem', color: '#1e3a8a' }}>💳 Visa / Mastercard Secure Checkout</strong>
-                              <span style={{ fontSize: '0.72rem', color: '#16a34a', fontWeight: 800 }}>🔒 256-Bit SSL Encrypted</span>
+                              <strong style={{ fontSize: '0.85rem', color: '#1e3a8a', display: 'inline-flex', alignItems: 'center', gap: '6px' }}><CreditCardIcon size={16} color="#1e3a8a" /> Visa / Mastercard Secure Checkout</strong>
+                              <span style={{ fontSize: '0.72rem', color: '#16a34a', fontWeight: 800, display: 'inline-flex', alignItems: 'center', gap: '4px' }}><LockIcon size={13} color="#16a34a" /> 256-Bit SSL Encrypted</span>
                             </div>
                             <div>
                               <label className="label" style={{ fontSize: '0.78rem' }}>Cardholder Name</label>
@@ -3642,7 +3826,7 @@ export function Landing() {
 
                         {checkoutPaymentMode === 'paybill' && (
                           <div style={{ fontSize: '0.82rem', color: '#334155' }}>
-                            <strong style={{ color: '#1e3a8a', fontSize: '0.88rem' }}>📱 M-Pesa Paybill Instructions:</strong>
+                            <strong style={{ color: '#1e3a8a', fontSize: '0.88rem', display: 'inline-flex', alignItems: 'center', gap: '6px' }}><SmartphoneIcon size={16} color="#1e3a8a" /> M-Pesa Paybill Instructions:</strong>
                             <ol style={{ paddingLeft: '1.25rem', margin: '0.35rem 0 0.75rem', lineHeight: 1.6 }}>
                               <li>Open <strong>M-PESA → Lipa na M-PESA → Paybill</strong></li>
                               <li>Enter Business No: <strong style={{ color: '#2563eb' }}>{INSTITUTION_CONFIG.bank.paybillNumber}</strong> *({INSTITUTION_CONFIG.bank.name})*</li>
@@ -3664,7 +3848,7 @@ export function Landing() {
 
                         {checkoutPaymentMode === 'kcb_wire' && (
                           <div style={{ fontSize: '0.82rem', color: '#334155' }}>
-                            <strong style={{ color: '#1e3a8a', fontSize: '0.88rem' }}>🏦 Official {INSTITUTION_CONFIG.bank.name} Wire / Deposit Details:</strong>
+                            <strong style={{ color: '#1e3a8a', fontSize: '0.88rem', display: 'inline-flex', alignItems: 'center', gap: '6px' }}><BuildingIcon size={16} color="#1e3a8a" /> Official {INSTITUTION_CONFIG.bank.name} Wire / Deposit Details:</strong>
                             <div style={{ margin: '0.35rem 0 0.75rem', lineHeight: 1.6, background: '#ffffff', padding: '0.65rem', borderRadius: '6px', border: '1px solid #e2e8f0' }}>
                               <div>• Bank: <strong>{INSTITUTION_CONFIG.bank.name}</strong></div>
                               <div>• Account No: <strong style={{ color: '#2563eb', fontSize: '0.95rem' }}>{INSTITUTION_CONFIG.bank.accountNumber}</strong></div>
@@ -3690,7 +3874,7 @@ export function Landing() {
                           ← Back to Details
                         </button>
                         <button type="submit" className="btn btn-primary" style={{ fontWeight: 800, padding: '0.5rem 1.25rem' }}>
-                          ✓ Authorize & Issue Admission Pass (${selectedAmount} USD) →
+                          Authorize & Issue Admission Pass (${selectedAmount} USD) →
                         </button>
                       </div>
                     </div>
@@ -3736,21 +3920,21 @@ export function Landing() {
                     <div style={{ textAlign: 'right', fontSize: '0.8rem', color: '#475569' }}>
                       <div>Balance Due: <strong>${generatedAdmission.balanceRemaining} USD</strong></div>
                       <div style={{ color: generatedAdmission.balanceRemaining === 0 ? '#16a34a' : '#ea580c', fontWeight: 800 }}>
-                        {generatedAdmission.balanceRemaining === 0 ? 'STATUS: FULLY CLEARED ✓' : 'STATUS: 1ST INSTALLMENT CLEARED ✓'}
+                        {generatedAdmission.balanceRemaining === 0 ? 'STATUS: FULLY CLEARED' : 'STATUS: 1ST INSTALLMENT CLEARED'}
                       </div>
                     </div>
                   </div>
 
                   {/* Digital Stamp */}
                   <div style={{ border: '1px dashed #94a3b8', borderRadius: '6px', padding: '0.5rem', textAlign: 'center', fontSize: '0.72rem', color: '#64748b' }}>
-                    🛡️ Verified Transaction Ref: <code>{generatedAdmission.referenceCode}</code> • {INSTITUTION_CONFIG.name} Directorate of Finance
+                    <ShieldCheckIcon size={14} color="#16a34a" style={{ marginRight: '5px', verticalAlign: 'middle' }} />Verified Transaction Ref: <code>{generatedAdmission.referenceCode}</code> • {INSTITUTION_CONFIG.name} Directorate of Finance
                   </div>
                 </div>
 
                 {/* Receipt Actions */}
                 <div style={{ display: 'flex', gap: '0.75rem', justifyContent: 'space-between', flexWrap: 'wrap' }}>
                   <button type="button" className="btn btn-secondary btn-sm" onClick={() => window.print()}>
-                    🖨️ Print Stamped Receipt
+                    <span style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}><PrinterIcon size={14} color="#475569" /> Print Stamped Receipt</span>
                   </button>
                   <div style={{ display: 'flex', gap: '0.5rem' }}>
                     <a
@@ -3760,7 +3944,7 @@ export function Landing() {
                       className="btn btn-sm"
                       style={{ background: '#22c55e', color: '#ffffff', fontWeight: 700, textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: '4px' }}
                     >
-                      <span>💬</span> WhatsApp Admissions
+                      <MessageCircleIcon size={14} color="#ffffff" style={{ marginRight: '4px', verticalAlign: 'middle' }} />WhatsApp Admissions
                     </a>
                     <button
                       type="button"
@@ -3768,7 +3952,7 @@ export function Landing() {
                       onClick={() => handleLaunchRole('student')}
                       style={{ fontWeight: 800 }}
                     >
-                      🎓 Enter Student Portal →
+                      <GraduationCapIcon size={15} color="#ffffff" style={{ marginRight: '6px', verticalAlign: 'middle' }} />Enter Student Portal →
                     </button>
                   </div>
                 </div>
@@ -3832,7 +4016,7 @@ export function Landing() {
                   transition: 'all 0.15s ease',
                 }}
               >
-                ✕
+                <XIcon size={18} />
               </button>
             </div>
 
@@ -3858,7 +4042,7 @@ export function Landing() {
                   transition: 'all 0.15s ease',
                 }}
               >
-                <span style={{ fontSize: '1.1rem' }}>🤖</span>
+                <SmartphoneIcon size={18} color={appModalTab === 'android' ? '#166534' : '#64748b'} />
                 <span>Android (.APK)</span>
               </button>
 
@@ -3882,7 +4066,7 @@ export function Landing() {
                   transition: 'all 0.15s ease',
                 }}
               >
-                <span style={{ fontSize: '1.1rem' }}>💻</span>
+                <LaptopIcon size={18} color={appModalTab === 'windows' ? '#1e40af' : '#64748b'} />
                 <span>Windows PC (.EXE)</span>
               </button>
             </div>
@@ -3893,11 +4077,11 @@ export function Landing() {
                 <div style={{ background: '#f0fdf4', border: '1px solid #bbf7d0', borderRadius: '18px', padding: '1.35rem' }}>
                   <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.5rem', flexWrap: 'wrap', gap: '6px' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                      <span style={{ fontSize: '1.4rem' }}>🤖</span>
+                      <SmartphoneIcon size={22} color="#166534" />
                       <strong style={{ fontSize: '1.05rem', color: '#166534' }}>Official Android Learning App</strong>
                     </div>
                     <span style={{ fontSize: '0.72rem', fontWeight: 800, color: '#047857', background: '#d1fae5', padding: '0.2rem 0.55rem', borderRadius: '20px', border: '1px solid #6ee7b7', display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
-                      <span>🟢</span> Published on APKPure
+                      <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#22c55e', display: 'inline-block' }} /> Published on APKPure
                     </span>
                   </div>
                   <p style={{ fontSize: '0.86rem', color: '#15803d', lineHeight: 1.55, margin: '0 0 0.85rem', fontWeight: 500 }}>
@@ -3934,7 +4118,7 @@ export function Landing() {
                         transition: 'all 0.15s ease',
                       }}
                     >
-                      <span style={{ fontSize: '1.2rem' }}>⚡</span>
+                      <SparklesIcon size={18} color="#ffffff" />
                       <span>Install via APKPure Store (Official)</span>
                     </a>
 
@@ -3960,14 +4144,14 @@ export function Landing() {
                         transition: 'all 0.15s ease',
                       }}
                     >
-                      <span style={{ fontSize: '1.1rem' }}>📥</span>
+                      <SmartphoneIcon size={16} color="#166534" />
                       <span>Direct Standalone .APK Download</span>
                     </a>
                   </div>
                 </div>
 
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px', fontSize: '0.75rem', color: '#64748b' }}>
-                  <span>🛡️</span>
+                  <ShieldCheckIcon size={14} color="#16a34a" />
                   <span>100% Virus-Free & Verified Official Google Play Compatible APK</span>
                 </div>
               </div>
@@ -3979,7 +4163,7 @@ export function Landing() {
                 <div style={{ background: '#eff6ff', border: '1px solid #bfdbfe', borderRadius: '18px', padding: '1.35rem' }}>
                   <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                      <span style={{ fontSize: '1.4rem' }}>💻</span>
+                      <LaptopIcon size={22} color="#1e40af" />
                       <strong style={{ fontSize: '1.05rem', color: '#1e40af' }}>Windows Desktop Learning App</strong>
                     </div>
                     <span style={{ fontSize: '0.72rem', fontWeight: 800, color: '#1d4ed8', background: '#dbeafe', padding: '0.2rem 0.55rem', borderRadius: '20px', border: '1px solid #93c5fd' }}>
@@ -3992,11 +4176,11 @@ export function Landing() {
 
                   <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.5rem', marginBottom: '1.15rem' }}>
                     <div style={{ background: '#ffffff', padding: '0.6rem 0.75rem', borderRadius: '10px', border: '1px solid #dbeafe', fontSize: '0.78rem', color: '#1e40af', display: 'flex', alignItems: 'center', gap: '6px', fontWeight: 600 }}>
-                      <span>💻</span>
+                      <LaptopIcon size={16} color="#1e40af" />
                       <span>Desktop Study Hub</span>
                     </div>
                     <div style={{ background: '#ffffff', padding: '0.6rem 0.75rem', borderRadius: '10px', border: '1px solid #dbeafe', fontSize: '0.78rem', color: '#1e40af', display: 'flex', alignItems: 'center', gap: '6px', fontWeight: 600 }}>
-                      <span>🖨️</span>
+                      <PrinterIcon size={16} color="#1e40af" />
                       <span>Direct Slips & Prints</span>
                     </div>
                   </div>
@@ -4023,13 +4207,13 @@ export function Landing() {
                       transition: 'all 0.15s ease',
                     }}
                   >
-                    <span style={{ fontSize: '1.1rem' }}>📥</span>
+                    <LaptopIcon size={16} color="#ffffff" />
                     <span>Download Windows Installer (.EXE)</span>
                   </a>
                 </div>
 
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px', fontSize: '0.75rem', color: '#64748b' }}>
-                  <span>🛡️</span>
+                  <ShieldCheckIcon size={14} color="#16a34a" />
                   <span>100% Virus-Free & Verified Official Package</span>
                 </div>
               </div>
@@ -4045,13 +4229,13 @@ export function Landing() {
             <div className="modal-header" style={{ padding: 0, paddingBottom: '1rem', marginBottom: '1.25rem', borderBottom: '1px solid #cbd5e1' }}>
               <div>
                 <h3 className="modal-title" style={{ fontSize: '1.25rem', fontWeight: 900, color: '#1e3a8a' }}>
-                  🔐 College Portals & Management Workstations
+                  <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}><LockIcon size={20} color="#1e3a8a" /> College Portals & Management Workstations</span>
                 </h3>
                 <p style={{ fontSize: '0.82rem', color: '#334155', margin: '0.25rem 0 0', fontWeight: 500 }}>
                   Select your role to access your personalized workstation:
                 </p>
               </div>
-              <button type="button" className="modal-close" onClick={() => setShowPortalDesksModal(false)}>✕</button>
+              <button type="button" className="modal-close" onClick={() => setShowPortalDesksModal(false)}><XIcon size={18} /></button>
             </div>
 
             <div style={{ display: 'flex', flexDirection: 'column', gap: '0.65rem' }}>
@@ -4068,7 +4252,7 @@ export function Landing() {
                   cursor: 'pointer',
                 }}
               >
-                <span style={{ fontSize: '1.6rem' }}>🎓</span>
+                <GraduationCapIcon size={28} color="#1e3a8a" />
                 <div>
                   <div style={{ fontWeight: 800, color: '#1e3a8a', fontSize: '0.95rem' }}>Student & Trainee Portal</div>
                   <div style={{ fontSize: '0.78rem', color: '#334155' }}>Access registered units, video lessons & timetable</div>
@@ -4088,7 +4272,7 @@ export function Landing() {
                   cursor: 'pointer',
                 }}
               >
-                <span style={{ fontSize: '1.6rem' }}>👩‍🏫</span>
+                <BuildingIcon size={28} color="#d97706" />
                 <div>
                   <div style={{ fontWeight: 800, color: '#d97706', fontSize: '0.95rem' }}>Faculty & HOD Portal</div>
                   <div style={{ fontSize: '0.78rem', color: '#334155' }}>Upload video tutorials, grade books & lab assignments</div>
@@ -4108,7 +4292,7 @@ export function Landing() {
                   cursor: 'pointer',
                 }}
               >
-                <span style={{ fontSize: '1.6rem' }}>👨‍👩‍👧</span>
+                <UsersIcon size={28} color="#059669" />
                 <div>
                   <div style={{ fontWeight: 800, color: '#059669', fontSize: '0.95rem' }}>Parent & Sponsor Portal</div>
                   <div style={{ fontSize: '0.78rem', color: '#334155' }}>Track student fee statements, attendance & academic reports</div>
@@ -4121,7 +4305,7 @@ export function Landing() {
                 Go to Standard Login →
               </Link>
               <Link to="/login?role=admin" style={{ fontSize: '0.75rem', color: '#64748b', textDecoration: 'underline' }}>
-                🔐 Staff Access
+                <span style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}><LockIcon size={12} color="#64748b" /> Staff Access</span>
               </Link>
             </div>
           </div>
@@ -4193,7 +4377,7 @@ export function Landing() {
                   flexShrink: 0,
                 }}
               >
-                ✕
+                <XIcon size={18} />
               </button>
             </div>
 
@@ -4201,7 +4385,7 @@ export function Landing() {
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '0.75rem', marginBottom: '1.25rem', background: '#f8fafc', padding: '1rem', borderRadius: '12px', border: '1px solid #e2e8f0' }}>
               <div>
                 <div style={{ fontSize: '0.72rem', color: '#64748b', fontWeight: 700, textTransform: 'uppercase' }}>Duration & Shift</div>
-                <div style={{ fontWeight: 800, color: '#0f172a', marginTop: '2px', fontSize: '0.9rem' }}>⏱️ {selectedCourseForModal.duration}</div>
+                <div style={{ fontWeight: 800, color: '#0f172a', marginTop: '2px', fontSize: '0.9rem', display: 'flex', alignItems: 'center', gap: '4px' }}><ClockIcon size={14} color="#64748b" /> {selectedCourseForModal.duration}</div>
                 <div style={{ fontSize: '0.75rem', color: '#475569' }}>{selectedCourseForModal.schedule}</div>
               </div>
               <div>
@@ -4225,13 +4409,13 @@ export function Landing() {
                       textDecoration: 'none',
                     }}
                   >
-                    💬 Fees Inquiry
+                    <MessageCircleIcon size={13} color="#2563eb" /> Fees Inquiry
                   </a>
                 </div>
               </div>
               <div>
                 <div style={{ fontSize: '0.72rem', color: '#64748b', fontWeight: 700, textTransform: 'uppercase' }}>Learning Format</div>
-                <div style={{ fontWeight: 800, color: '#0f172a', marginTop: '2px', fontSize: '0.88rem' }}>🌐 100% Online</div>
+                <div style={{ fontWeight: 800, color: '#0f172a', marginTop: '2px', fontSize: '0.88rem', display: 'flex', alignItems: 'center', gap: '4px' }}><GlobeIcon size={14} color="#0f172a" /> 100% Online</div>
                 <div style={{ fontSize: '0.75rem', color: '#475569' }}>Live Zoom & 24/7 LMS</div>
               </div>
             </div>
@@ -4239,7 +4423,7 @@ export function Landing() {
             {/* Key Skills Covered */}
             <div style={{ marginBottom: '1.25rem' }}>
               <div style={{ fontSize: '0.85rem', fontWeight: 800, color: '#1e3a8a', marginBottom: '0.5rem' }}>
-                🎯 Core Practical Competencies & Tools Covered:
+                <span style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}><AwardIcon size={16} color="#1e3a8a" /> Core Practical Competencies & Tools Covered:</span>
               </div>
               <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
                 {selectedCourseForModal.skills.map((skill, idx) => (
@@ -4255,7 +4439,7 @@ export function Landing() {
                       fontWeight: 700,
                     }}
                   >
-                    ✓ {skill}
+                    <CheckIcon size={12} color="#1d4ed8" style={{ marginRight: '4px', verticalAlign: 'middle' }} />{skill}
                   </span>
                 ))}
               </div>
@@ -4265,7 +4449,7 @@ export function Landing() {
             {selectedCourseForModal.syllabus && selectedCourseForModal.syllabus.length > 0 && (
               <div style={{ marginBottom: '1.25rem' }}>
                 <div style={{ fontSize: '0.85rem', fontWeight: 800, color: '#1e3a8a', marginBottom: '0.65rem' }}>
-                  📚 Week-by-Week Practical Lab Breakdown:
+                  <span style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}><BookOpenIcon size={16} color="#1e3a8a" /> Week-by-Week Practical Lab Breakdown:</span>
                 </div>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '0.65rem' }}>
                   {selectedCourseForModal.syllabus.map((s, idx) => (
@@ -4283,7 +4467,7 @@ export function Landing() {
                         <strong style={{ color: '#1e3a8a', fontSize: '0.85rem' }}>{s.week}: {s.topic}</strong>
                       </div>
                       <div style={{ fontSize: '0.8rem', color: '#475569', marginTop: '2px' }}>
-                        🧪 <strong>Lab Practical:</strong> {s.practicalLab}
+                        <FlaskIcon size={13} color="#2563eb" style={{ marginRight: '5px', verticalAlign: 'middle' }} /><strong>Lab Practical:</strong> {s.practicalLab}
                       </div>
                     </div>
                   ))}
@@ -4293,7 +4477,7 @@ export function Landing() {
 
             {/* Career Outcomes */}
             <div style={{ background: '#f0fdf4', border: '1px solid #bbf7d0', borderRadius: '8px', padding: '0.85rem 1rem', marginBottom: '1.25rem', fontSize: '0.82rem', color: '#166534' }}>
-              💼 <strong>Target Career Outcomes:</strong> {selectedCourseForModal.careerOutcome}
+              <BriefcaseIcon size={15} color="#166534" style={{ marginRight: '6px', verticalAlign: 'middle' }} /><strong>Target Career Outcomes:</strong> {selectedCourseForModal.careerOutcome}
             </div>
 
             {/* Modal Actions (Sticky at bottom) */}
@@ -4316,7 +4500,7 @@ export function Landing() {
                   borderRadius: '8px',
                 }}
               >
-                <span>💬</span> WhatsApp Consultation
+                <MessageCircleIcon size={15} color="#ffffff" style={{ marginRight: '6px', verticalAlign: 'middle' }} />WhatsApp Consultation
               </a>
 
               <button
@@ -4330,7 +4514,7 @@ export function Landing() {
                   setInquiryModalOpen(true)
                 }}
               >
-                💳 Enroll & Pay Online →
+                <CreditCardIcon size={15} color="#ffffff" style={{ marginRight: '6px', verticalAlign: 'middle' }} />Enroll & Pay Online →
               </button>
             </div>
           </div>
@@ -4364,9 +4548,9 @@ export function Landing() {
           <button
             type="button"
             onClick={() => setToastMessage(null)}
-            style={{ background: 'none', border: 'none', color: '#94a3b8', cursor: 'pointer', fontWeight: 900, marginLeft: '8px' }}
+            style={{ background: 'none', border: 'none', color: '#94a3b8', cursor: 'pointer', display: 'flex', alignItems: 'center', marginLeft: '8px' }}
           >
-            ✕
+            <XIcon size={14} />
           </button>
         </div>
       )}
@@ -4434,13 +4618,13 @@ export function Landing() {
                 }}
                 aria-label="Close Support Desk"
               >
-                ✕
+                <XIcon size={16} />
               </button>
             </div>
 
             {/* Friendly Greeting Message */}
             <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '12px', padding: '0.75rem 0.85rem', fontSize: '0.82rem', color: '#334155', lineHeight: 1.5, marginBottom: '1rem' }}>
-              👋 <strong>Hi there!</strong> Have questions about our 100% online programs, tuition installment plans, or live class schedules? Connect with our virtual admissions team:
+              <strong>Hi there!</strong> Have questions about our 100% online programs, tuition installment plans, or live class schedules? Connect with our virtual admissions team:
             </div>
 
             {/* Support Action Triggers */}
@@ -4464,7 +4648,7 @@ export function Landing() {
                   boxShadow: '0 4px 12px rgba(34, 197, 94, 0.3)',
                 }}
               >
-                <span style={{ fontSize: '1.2rem' }}>💬</span>
+                <MessageCircleIcon size={16} color="#ffffff" style={{ marginRight: '6px' }} />
                 <span>WhatsApp ({INSTITUTION_CONFIG.contact.phone})</span>
               </a>
 
@@ -4485,7 +4669,7 @@ export function Landing() {
                   gap: '8px',
                 }}
               >
-                <span>📞</span>
+                <PhoneIcon size={16} color="#1d4ed8" style={{ marginRight: '6px' }} />
                 <span>Call Hotline: {INSTITUTION_CONFIG.contact.phone}</span>
               </a>
 
@@ -4506,7 +4690,7 @@ export function Landing() {
                   gap: '6px',
                 }}
               >
-                <span>✉️</span>
+                <MailIcon size={16} color="#475569" style={{ marginRight: '6px' }} />
                 <span>Email Admissions Registry</span>
               </a>
             </div>
@@ -4536,7 +4720,7 @@ export function Landing() {
           title={`Live Admissions & WhatsApp Support (${INSTITUTION_CONFIG.contact.phone})`}
         >
           {supportModalOpen ? (
-            <span style={{ fontSize: '1.3rem', fontWeight: 900 }}>✕</span>
+            <XIcon size={24} color="#ffffff" strokeWidth={2.5} />
           ) : (
             <svg width={isMobile ? '24' : '28'} height={isMobile ? '24' : '28'} viewBox="0 0 24 24" fill="#ffffff" style={{ filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.15))' }}>
               <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z"/>

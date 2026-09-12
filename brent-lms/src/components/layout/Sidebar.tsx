@@ -1,71 +1,98 @@
 import { NavLink, useNavigate } from 'react-router-dom'
 import { useAuth } from '@/hooks/useAuth'
 import { RoleBadge } from '@/components/ui/Badge'
+import {
+  HomeIcon,
+  BookOpenIcon,
+  LibraryIcon,
+  LockIcon,
+  CreditCardIcon,
+  FileTextIcon,
+  MegaphoneIcon,
+  UsersIcon,
+  UserIcon,
+  BriefcaseIcon,
+  SettingsIcon,
+  CalendarIcon,
+  BuildingIcon,
+  GraduationCapIcon,
+  LogOutIcon,
+  ShieldCheckIcon,
+  AwardIcon,
+} from '@/components/icons/AppIcons'
+
+interface NavItem {
+  to: string
+  label: string
+  icon: React.ComponentType<{ size?: number | string; color?: string; className?: string }>
+}
 
 export function Sidebar({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) {
   const { profile, signOut } = useAuth()
   const navigate = useNavigate()
+
   // Streamlined Role-Specific Navigation Definitions
-  const guestNav = [
-    { to: '/', label: 'Home & Overview', icon: '🏠' },
-    { to: '/courses', label: 'Vocational & IGCSE Courses', icon: '📚' },
-    { to: '/library', label: 'E-Library & Past Papers', icon: '📖' },
-    { to: '/login', label: 'Student / Faculty Login', icon: '🔐' },
+  const guestNav: NavItem[] = [
+    { to: '/', label: 'Home & Overview', icon: HomeIcon },
+    { to: '/courses', label: 'Vocational & IGCSE Courses', icon: BookOpenIcon },
+    { to: '/library', label: 'E-Library & Past Papers', icon: LibraryIcon },
+    { to: '/login', label: 'Student / Faculty Login', icon: LockIcon },
   ]
 
-  const studentNav = [
-    { to: '/student', label: 'My Student Dashboard', icon: '🏠' },
-    { to: '/student/courses', label: 'My Enrolled Lessons & LMS', icon: '📚' },
-    { to: '/library', label: 'E-Library & IGCSE Past Papers', icon: '📖' },
-    { to: '/fees', label: 'My Fee Statement & Paybill', icon: '💳' },
-    { to: '/exams', label: 'IGCSE Results & Transcripts', icon: '📜' },
-    { to: '/noticeboard', label: 'Student Noticeboard', icon: '📢' },
+  const studentNav: NavItem[] = [
+    { to: '/student', label: 'My Student Dashboard', icon: HomeIcon },
+    { to: '/student/courses', label: 'My Enrolled Lessons & LMS', icon: BookOpenIcon },
+    { to: '/library', label: 'E-Library & IGCSE Past Papers', icon: LibraryIcon },
+    { to: '/fees', label: 'My Fee Statement & Paybill', icon: CreditCardIcon },
+    { to: '/exams', label: 'IGCSE Results & Transcripts', icon: FileTextIcon },
+    { to: '/noticeboard', label: 'Student Noticeboard', icon: MegaphoneIcon },
   ]
 
-  const teacherNav = [
-    { to: '/teacher', label: 'Faculty Dashboard', icon: '👩‍🏫' },
-    { to: '/teacher/courses', label: 'My Courses & Upload Lessons', icon: '📖' },
-    { to: '/teacher/attendance', label: 'Mark Class Attendance', icon: '📋' },
-    { to: '/teacher/gradebook', label: 'Continuous Gradebook', icon: '💯' },
-    { to: '/library', label: 'E-Library & Courseware', icon: '📖' },
-    { to: '/noticeboard', label: 'College Noticeboard', icon: '📢' },
+  const teacherNav: NavItem[] = [
+    { to: '/teacher', label: 'Faculty Dashboard', icon: UserIcon },
+    { to: '/teacher/courses', label: 'My Courses & Upload Lessons', icon: BookOpenIcon },
+    { to: '/teacher/attendance', label: 'Mark Class Attendance', icon: CalendarIcon },
+    { to: '/teacher/gradebook', label: 'Continuous Gradebook', icon: AwardIcon },
+    { to: '/library', label: 'E-Library & Courseware', icon: LibraryIcon },
+    { to: '/noticeboard', label: 'College Noticeboard', icon: MegaphoneIcon },
   ]
 
-  const parentNav = [
-    { to: '/parent', label: 'Ward Overview & Attendance', icon: '👨‍👩‍👧' },
-    { to: '/exams', label: 'Ward Academic Transcript', icon: '📄' },
-    { to: '/fees', label: 'Fee Clearance & Payments ($ USD)', icon: '💳' },
-    { to: '/noticeboard', label: 'College Circulars', icon: '📢' },
+  const parentNav: NavItem[] = [
+    { to: '/parent', label: 'Ward Overview & Attendance', icon: UsersIcon },
+    { to: '/exams', label: 'Ward Academic Transcript', icon: FileTextIcon },
+    { to: '/fees', label: 'Fee Clearance & Payments ($ USD)', icon: CreditCardIcon },
+    { to: '/noticeboard', label: 'College Circulars', icon: MegaphoneIcon },
   ]
 
-  const bursarNav = [
-    { to: '/bursar', label: 'Bursar & Admissions Desk', icon: '💼' },
-    { to: '/students', label: 'Student Directory & Admissions', icon: '🎓' },
-    { to: '/fees', label: 'Fee Invoices & Payments', icon: '💳' },
-    { to: '/noticeboard', label: 'Publish Circulars & Notices', icon: '📢' },
+  const bursarNav: NavItem[] = [
+    { to: '/bursar', label: 'Bursar & Admissions Desk', icon: BriefcaseIcon },
+    { to: '/students', label: 'Student Directory & Admissions', icon: GraduationCapIcon },
+    { to: '/fees', label: 'Fee Invoices & Payments', icon: CreditCardIcon },
+    { to: '/noticeboard', label: 'Publish Circulars & Notices', icon: MegaphoneIcon },
   ]
 
-  const adminNav = [
-    { to: '/admin', label: 'Admin Dashboard', icon: '⚙️' },
-    { to: '/admin/intakes', label: 'Intake Scheduler & Adverts', icon: '🗓️' },
-    { to: '/admin/classes', label: 'Academic Programs & Courses', icon: '🏫' },
-    { to: '/students', label: 'Student Directory & Admissions', icon: '🎓' },
-    { to: '/library', label: 'E-Library & Cloud Drive', icon: '📖' },
-    { to: '/fees', label: 'Tuition Fees & Bursar Desk', icon: '💳' },
-    { to: '/exams', label: 'Transcripts & Certificates', icon: '📜' },
-    { to: '/admin/users', label: 'Staff & Faculty Accounts', icon: '👤' },
-    { to: '/noticeboard', label: 'College Noticeboard', icon: '📢' },
+  const adminNav: NavItem[] = [
+    { to: '/admin', label: 'Admin Dashboard', icon: SettingsIcon },
+    { to: '/admin/intakes', label: 'Intake Scheduler & Adverts', icon: CalendarIcon },
+    { to: '/admin/classes', label: 'Academic Programs & Courses', icon: BuildingIcon },
+    { to: '/students', label: 'Student Directory & Admissions', icon: GraduationCapIcon },
+    { to: '/library', label: 'E-Library & Cloud Drive', icon: LibraryIcon },
+    { to: '/fees', label: 'Tuition Fees & Bursar Desk', icon: CreditCardIcon },
+    { to: '/exams', label: 'Transcripts & Certificates', icon: FileTextIcon },
+    { to: '/admin/users', label: 'Staff & Faculty Accounts', icon: UserIcon },
+    { to: '/noticeboard', label: 'College Noticeboard', icon: MegaphoneIcon },
   ]
 
-  const roleNavMap: Record<string, { label: string; links: typeof studentNav }> = {
-    student: { label: '🎓 Student Portal', links: studentNav },
-    teacher: { label: '👩‍🏫 Faculty Desk', links: teacherNav },
-    parent: { label: '👨‍👩‍👧 Guardian Portal', links: parentNav },
-    bursar: { label: '💼 Bursar & Admissions Desk', links: bursarNav },
-    admin: { label: '🛡️ Institutional Administration', links: adminNav },
+  const roleNavMap: Record<string, { label: string; icon: React.ComponentType<{ size?: number | string }>; links: NavItem[] }> = {
+    student: { label: 'Student Portal', icon: GraduationCapIcon, links: studentNav },
+    teacher: { label: 'Faculty Desk', icon: UserIcon, links: teacherNav },
+    parent: { label: 'Guardian Portal', icon: UsersIcon, links: parentNav },
+    bursar: { label: 'Bursar & Admissions Desk', icon: BriefcaseIcon, links: bursarNav },
+    admin: { label: 'Institutional Administration', icon: ShieldCheckIcon, links: adminNav },
   }
 
-  const currentSection = profile ? (roleNavMap[profile.role] || roleNavMap.student) : { label: 'Éclat Institute Hub', links: guestNav }
+  const currentSection = profile ? (roleNavMap[profile.role] || roleNavMap.student) : { label: 'Éclat Institute Hub', icon: BuildingIcon, links: guestNav }
+  const SectionHeaderIcon = currentSection.icon
 
   const handleSignOut = async () => {
     onClose()
@@ -76,21 +103,27 @@ export function Sidebar({ isOpen, onClose }: { isOpen: boolean; onClose: () => v
   return (
     <aside className={`sidebar ${isOpen ? 'open' : ''}`} style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
       <div className="sidebar-section" style={{ flex: 1, overflowY: 'auto' }}>
-        <div className="sidebar-section-label" style={{ color: 'var(--color-primary)', fontWeight: 700 }}>
-          {currentSection.label}
+        <div className="sidebar-section-label" style={{ color: 'var(--color-primary)', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <SectionHeaderIcon size={16} />
+          <span>{currentSection.label}</span>
         </div>
-        {currentSection.links.map((link) => (
-          <NavLink
-            key={link.to}
-            to={link.to}
-            end={link.to === '/' || link.to === '/student' || link.to === '/teacher' || link.to === '/parent' || link.to === '/admin' || link.to === '/bursar' || link.to === '/secretary'}
-            className={({ isActive }) => `sidebar-link ${isActive ? 'active' : ''}`}
-            onClick={onClose}
-          >
-            <span className="sidebar-link-icon">{link.icon}</span>
-            <span>{link.label}</span>
-          </NavLink>
-        ))}
+        {currentSection.links.map((link) => {
+          const IconComp = link.icon
+          return (
+            <NavLink
+              key={link.to}
+              to={link.to}
+              end={link.to === '/' || link.to === '/student' || link.to === '/teacher' || link.to === '/parent' || link.to === '/admin' || link.to === '/bursar' || link.to === '/secretary'}
+              className={({ isActive }) => `sidebar-link ${isActive ? 'active' : ''}`}
+              onClick={onClose}
+            >
+              <span className="sidebar-link-icon" style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center' }}>
+                <IconComp size={18} />
+              </span>
+              <span>{link.label}</span>
+            </NavLink>
+          )
+        })}
       </div>
 
       {/* User Account or Guest Login Section */}
@@ -145,13 +178,13 @@ export function Sidebar({ isOpen, onClose }: { isOpen: boolean; onClose: () => v
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                gap: '6px',
+                gap: '8px',
                 fontSize: '0.82rem',
                 cursor: 'pointer',
                 boxShadow: '0 2px 6px rgba(220, 38, 38, 0.25)',
               }}
             >
-              <span>🚪</span>
+              <LogOutIcon size={16} color="#ffffff" />
               <span>Log Out of System</span>
             </button>
           </>
@@ -165,11 +198,11 @@ export function Sidebar({ isOpen, onClose }: { isOpen: boolean; onClose: () => v
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              gap: '6px',
+              gap: '8px',
               textDecoration: 'none',
             }}
           >
-            <span>🔐</span>
+            <LockIcon size={16} />
             <span>Student / Staff Login</span>
           </NavLink>
         )}

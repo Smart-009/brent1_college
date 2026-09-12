@@ -4,6 +4,14 @@ import { useAuthContext } from '@/features/auth/AuthContext'
 import { isNativeApp } from '@/utils/platform'
 import { schoolStore } from '@/lib/schoolData'
 import { checkForOTAUpdates } from '@/lib/otaUpdater'
+import {
+  HomeIcon,
+  BookOpenIcon,
+  LibraryIcon,
+  RefreshCwIcon,
+  GraduationCapIcon,
+  LockIcon,
+} from '@/components/icons/AppIcons'
 
 export function MobileAppBottomNav() {
   const isNative = isNativeApp()
@@ -107,12 +115,12 @@ export function MobileAppBottomNav() {
           transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
           fontSize: '0.7rem',
           fontWeight: isHomeActive ? 800 : 500,
-          gap: '2px',
+          gap: '3px',
           userSelect: 'none',
           transform: isHomeActive ? 'scale(1.05)' : 'scale(1)',
         }}
       >
-        <span style={{ fontSize: '1.25rem', lineHeight: 1 }}>🏠</span>
+        <HomeIcon size={20} color={isHomeActive ? '#60a5fa' : '#94a3b8'} strokeWidth={isHomeActive ? 2.5 : 2} />
         <span>{profile ? 'Dashboard' : 'Home'}</span>
         {isHomeActive && (
           <span style={{ width: '4px', height: '4px', borderRadius: '50%', background: '#60a5fa', boxShadow: '0 0 8px #60a5fa' }} />
@@ -140,12 +148,12 @@ export function MobileAppBottomNav() {
           transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
           fontSize: '0.7rem',
           fontWeight: isCoursesActive ? 800 : 500,
-          gap: '2px',
+          gap: '3px',
           userSelect: 'none',
           transform: isCoursesActive ? 'scale(1.05)' : 'scale(1)',
         }}
       >
-        <span style={{ fontSize: '1.25rem', lineHeight: 1 }}>📚</span>
+        <BookOpenIcon size={20} color={isCoursesActive ? '#60a5fa' : '#94a3b8'} strokeWidth={isCoursesActive ? 2.5 : 2} />
         <span>{profile?.role === 'student' ? 'My Units' : 'Courses'}</span>
         {isCoursesActive && (
           <span style={{ width: '4px', height: '4px', borderRadius: '50%', background: '#60a5fa', boxShadow: '0 0 8px #60a5fa' }} />
@@ -168,12 +176,12 @@ export function MobileAppBottomNav() {
           transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
           fontSize: '0.7rem',
           fontWeight: currentPath === '/library' ? 800 : 500,
-          gap: '2px',
+          gap: '3px',
           userSelect: 'none',
           transform: currentPath === '/library' ? 'scale(1.05)' : 'scale(1)',
         }}
       >
-        <span style={{ fontSize: '1.25rem', lineHeight: 1 }}>📖</span>
+        <LibraryIcon size={20} color={currentPath === '/library' ? '#60a5fa' : '#94a3b8'} strokeWidth={currentPath === '/library' ? 2.5 : 2} />
         <span>E-Library</span>
         {currentPath === '/library' && (
           <span style={{ width: '4px', height: '4px', borderRadius: '50%', background: '#60a5fa', boxShadow: '0 0 8px #60a5fa' }} />
@@ -198,14 +206,14 @@ export function MobileAppBottomNav() {
           transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
           fontSize: '0.7rem',
           fontWeight: 600,
-          gap: '2px',
+          gap: '3px',
           cursor: 'pointer',
           padding: 0,
         }}
         title="Sync Cloud Data & Live Updates"
       >
-        <span style={{ fontSize: '1.25rem', lineHeight: 1, display: 'inline-block', animation: isSyncing ? 'spin 0.8s linear infinite' : 'none' }}>
-          🔄
+        <span style={{ display: 'inline-block', animation: isSyncing ? 'spin 0.8s linear infinite' : 'none' }}>
+          <RefreshCwIcon size={20} color={isSyncing ? '#38bdf8' : '#94a3b8'} />
         </span>
         <span>{isSyncing ? 'Syncing...' : 'Live Sync'}</span>
       </button>
@@ -226,12 +234,16 @@ export function MobileAppBottomNav() {
           transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
           fontSize: '0.7rem',
           fontWeight: isPortalActive ? 800 : 500,
-          gap: '2px',
+          gap: '3px',
           userSelect: 'none',
           transform: isPortalActive ? 'scale(1.05)' : 'scale(1)',
         }}
       >
-        <span style={{ fontSize: '1.25rem', lineHeight: 1 }}>{profile ? '🎓' : '🔐'}</span>
+        {profile ? (
+          <GraduationCapIcon size={20} color={isPortalActive ? '#60a5fa' : '#94a3b8'} strokeWidth={isPortalActive ? 2.5 : 2} />
+        ) : (
+          <LockIcon size={20} color={isPortalActive ? '#60a5fa' : '#94a3b8'} strokeWidth={isPortalActive ? 2.5 : 2} />
+        )}
         <span>{portalLabel}</span>
         {isPortalActive && (
           <span style={{ width: '4px', height: '4px', borderRadius: '50%', background: '#60a5fa', boxShadow: '0 0 8px #60a5fa' }} />

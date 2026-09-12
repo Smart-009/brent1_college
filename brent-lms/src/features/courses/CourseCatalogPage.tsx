@@ -9,6 +9,31 @@ import { schoolStore } from '@/lib/schoolData'
 import { intakeStore } from '@/lib/intakeStore'
 import { formatDate } from '@/lib/utils'
 import type { IntakeSchedule } from '@/types/intake'
+import {
+  SearchIcon,
+  SparklesIcon,
+  BriefcaseIcon,
+  CodeIcon,
+  GlobeIcon,
+  GraduationCapIcon,
+  BookOpenIcon,
+  LibraryIcon,
+  HomeIcon,
+  CalculatorIcon,
+  CheckIcon,
+  BuildingIcon,
+  BritishShieldIcon,
+  ClockIcon,
+  CalendarIcon,
+  AwardIcon,
+  MessageCircleIcon,
+  LockIcon,
+  XIcon,
+  MenuIcon,
+  FlaskIcon,
+  RocketIcon,
+  CourseIcon,
+} from '@/components/icons/AppIcons'
 
 export interface CourseItem {
   id: string
@@ -259,9 +284,13 @@ export function CourseCatalogPage() {
               fontWeight: 700,
               textDecoration: 'none',
               border: '1px solid rgba(56, 189, 248, 0.25)',
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '6px',
             }}
           >
-            🏛️ About Us
+            <BuildingIcon size={14} color="#38bdf8" />
+            <span>About Us</span>
           </Link>
 
           <Link
@@ -276,9 +305,13 @@ export function CourseCatalogPage() {
               fontWeight: 700,
               textDecoration: 'none',
               border: '1px solid rgba(255, 255, 255, 0.12)',
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '6px',
             }}
           >
-            📖 E-Library
+            <LibraryIcon size={14} color="#cbd5e1" />
+            <span>E-Library</span>
           </Link>
 
           <Link
@@ -293,9 +326,13 @@ export function CourseCatalogPage() {
               textDecoration: 'none',
               boxShadow: '0 2px 10px rgba(37, 99, 235, 0.3)',
               whiteSpace: 'nowrap',
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '6px',
             }}
           >
-            {profile ? '🎓 My Portal' : '🔐 Sign In'}
+            {profile ? <GraduationCapIcon size={14} color="#ffffff" /> : <LockIcon size={14} color="#ffffff" />}
+            <span>{profile ? 'My Portal' : 'Sign In'}</span>
           </Link>
 
           {/* Mobile Hamburger Button */}
@@ -313,14 +350,12 @@ export function CourseCatalogPage() {
               display: 'inline-flex',
               alignItems: 'center',
               justifyContent: 'center',
-              fontSize: '1.25rem',
-              lineHeight: 1,
               flexShrink: 0,
             }}
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             aria-label={mobileMenuOpen ? 'Close Navigation Menu' : 'Open Navigation Menu'}
           >
-            {mobileMenuOpen ? '✕' : '☰'}
+            {mobileMenuOpen ? <XIcon size={18} color="#ffffff" /> : <MenuIcon size={18} color="#ffffff" />}
           </button>
         </div>
 
@@ -407,7 +442,7 @@ export function CourseCatalogPage() {
                 }}
                 aria-label="Close menu"
               >
-                ✕
+                <XIcon size={18} />
               </button>
             </div>
 
@@ -443,7 +478,7 @@ export function CourseCatalogPage() {
                   background: 'rgba(255, 255, 255, 0.04)',
                 }}
               >
-                <span>🏠</span>
+                <HomeIcon size={18} color="#cbd5e1" />
                 <span>Home</span>
               </Link>
 
@@ -464,7 +499,7 @@ export function CourseCatalogPage() {
                   border: '1px solid rgba(56, 189, 248, 0.25)',
                 }}
               >
-                <span>📚</span>
+                <BookOpenIcon size={18} color="#38bdf8" />
                 <span>Course Catalog & Programs</span>
               </Link>
 
@@ -488,7 +523,7 @@ export function CourseCatalogPage() {
                   border: '1px solid rgba(56, 189, 248, 0.25)',
                 }}
               >
-                <span>🇬🇧</span>
+                <BritishShieldIcon size={18} />
                 <span>Cambridge Assessment (Years 9-11)</span>
               </Link>
 
@@ -512,7 +547,7 @@ export function CourseCatalogPage() {
                   border: '1px solid rgba(239, 68, 68, 0.25)',
                 }}
               >
-                <span>🇬🇧</span>
+                <BritishShieldIcon size={18} />
                 <span>Pearson Edexcel International (Years 9-11)</span>
               </Link>
 
@@ -532,7 +567,7 @@ export function CourseCatalogPage() {
                   background: 'rgba(251, 191, 36, 0.08)',
                 }}
               >
-                <span>🗓️</span>
+                <CalendarIcon size={18} color="#fbbf24" />
                 <span>Upcoming Intakes & Admissions</span>
               </Link>
 
@@ -552,7 +587,7 @@ export function CourseCatalogPage() {
                   background: 'rgba(255, 255, 255, 0.04)',
                 }}
               >
-                <span>📖</span>
+                <LibraryIcon size={18} color="#cbd5e1" />
                 <span>Free E-Library & Past Papers</span>
               </Link>
 
@@ -572,7 +607,7 @@ export function CourseCatalogPage() {
                   background: 'rgba(255, 255, 255, 0.04)',
                 }}
               >
-                <span>💳</span>
+                <CalculatorIcon size={18} color="#cbd5e1" />
                 <span>Tuition Fees Inquiry</span>
               </Link>
 
@@ -592,7 +627,7 @@ export function CourseCatalogPage() {
                   background: 'rgba(255, 255, 255, 0.04)',
                 }}
               >
-                <span>📅</span>
+                <ClockIcon size={18} color="#cbd5e1" />
                 <span>Virtual Class Timetable</span>
               </Link>
 
@@ -612,7 +647,7 @@ export function CourseCatalogPage() {
                   background: 'rgba(255, 255, 255, 0.04)',
                 }}
               >
-                <span>🏛️</span>
+                <BuildingIcon size={18} color="#cbd5e1" />
                 <span>About Éclat Institute</span>
               </Link>
             </div>
@@ -641,11 +676,11 @@ export function CourseCatalogPage() {
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  gap: '6px',
+                  gap: '8px',
                   textDecoration: 'none',
                 }}
               >
-                <span>🔐</span>
+                <LockIcon size={16} color="#ffffff" />
                 <span>{profile ? 'Student & Staff Portals' : 'Portal Sign In'}</span>
               </Link>
 
@@ -664,11 +699,11 @@ export function CourseCatalogPage() {
                   display: 'flex',
                   justifyContent: 'center',
                   alignItems: 'center',
-                  gap: '6px',
+                  gap: '8px',
                   fontSize: '0.84rem',
                 }}
               >
-                <span>💬</span>
+                <MessageCircleIcon size={16} color="#ffffff" />
                 <span>WhatsApp Admissions Desk</span>
               </a>
             </div>
@@ -678,8 +713,9 @@ export function CourseCatalogPage() {
 
       {/* Hero Header Strip */}
       <div style={{ background: 'linear-gradient(180deg, rgba(30, 58, 138, 0.25) 0%, transparent 100%)', padding: '2rem 1.25rem 1.5rem', textAlign: 'center', maxWidth: '900px', margin: '0 auto' }}>
-        <span style={{ background: 'rgba(37, 99, 235, 0.2)', color: '#60a5fa', padding: '3px 12px', borderRadius: '999px', fontSize: '0.75rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.05em', border: '1px solid rgba(37, 99, 235, 0.3)' }}>
-          📚 2026 Academic Catalog
+        <span style={{ background: 'rgba(37, 99, 235, 0.2)', color: '#60a5fa', padding: '4px 14px', borderRadius: '999px', fontSize: '0.75rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.05em', border: '1px solid rgba(37, 99, 235, 0.3)', display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
+          <BookOpenIcon size={14} color="#60a5fa" />
+          <span>2026 Academic Catalog</span>
         </span>
         <h1 style={{ fontSize: 'clamp(1.5rem, 3.5vw, 2.2rem)', fontWeight: 900, color: '#ffffff', margin: '0.75rem 0 0.4rem', fontFamily: 'var(--font-heading)' }}>
           Explore Certified Career Masterclasses
@@ -707,20 +743,30 @@ export function CourseCatalogPage() {
             }}
           >
             <div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                 <span style={{ background: '#16a34a', color: '#ffffff', padding: '2px 8px', borderRadius: '999px', fontSize: '0.7rem', fontWeight: 900, textTransform: 'uppercase' }}>
                   ● {matchedIntake.status}
                 </span>
-                <span style={{ fontSize: '0.78rem', color: '#d4af37', fontWeight: 800 }}>
-                  🗓️ {matchedIntake.title}
+                <span style={{ fontSize: '0.82rem', color: '#d4af37', fontWeight: 800, display: 'inline-flex', alignItems: 'center', gap: '5px' }}>
+                  <CalendarIcon size={14} color="#d4af37" />
+                  <span>{matchedIntake.title}</span>
                 </span>
               </div>
-              <div style={{ fontSize: '0.85rem', color: '#cbd5e1', marginTop: '3px' }}>
-                ⏰ Deadline: <strong>{formatDate(matchedIntake.application_deadline)}</strong> • 🚀 Classes Start: <strong>{formatDate(matchedIntake.commencement_date)}</strong>
+              <div style={{ fontSize: '0.85rem', color: '#cbd5e1', marginTop: '4px', display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: '10px' }}>
+                <span style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+                  <ClockIcon size={13} color="#94a3b8" />
+                  <span>Deadline: <strong>{formatDate(matchedIntake.application_deadline)}</strong></span>
+                </span>
+                <span>•</span>
+                <span style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+                  <RocketIcon size={13} color="#60a5fa" />
+                  <span>Classes Start: <strong>{formatDate(matchedIntake.commencement_date)}</strong></span>
+                </span>
               </div>
               {matchedIntake.early_bird_discount && (
-                <div style={{ fontSize: '0.78rem', color: '#fef08a', fontWeight: 700, marginTop: '2px' }}>
-                  🎁 {matchedIntake.early_bird_discount}
+                <div style={{ fontSize: '0.78rem', color: '#fef08a', fontWeight: 700, marginTop: '3px', display: 'inline-flex', alignItems: 'center', gap: '5px' }}>
+                  <AwardIcon size={13} color="#fef08a" />
+                  <span>{matchedIntake.early_bird_discount}</span>
                 </div>
               )}
             </div>
@@ -740,11 +786,11 @@ export function CourseCatalogPage() {
                 textDecoration: 'none',
                 display: 'flex',
                 alignItems: 'center',
-                gap: '6px',
+                gap: '8px',
                 whiteSpace: 'nowrap',
               }}
             >
-              <span>💬</span>
+              <MessageCircleIcon size={16} color="#ffffff" />
               <span>Enroll in this Intake</span>
             </a>
           </div>
@@ -755,15 +801,18 @@ export function CourseCatalogPage() {
       <div style={{ maxWidth: '1100px', margin: '0 auto', padding: '0 1.25rem 1.5rem' }}>
         <div style={{ display: 'flex', flexDirection: 'column', gap: '0.85rem' }}>
           {/* Search Box */}
-          <div style={{ position: 'relative' }}>
+          <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
+            <div style={{ position: 'absolute', left: '1rem', pointerEvents: 'none', display: 'flex', alignItems: 'center' }}>
+              <SearchIcon size={18} color="#94a3b8" />
+            </div>
             <input
               type="text"
-              placeholder="🔍 Search programs by skill or title (e.g. Python, IELTS, SPSS, React, Figma, QuickBooks, German)..."
+              placeholder="Search programs by skill, title, or exam board (e.g. Python, IELTS, SPSS, React, Accounting, German)..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               style={{
                 width: '100%',
-                padding: '0.85rem 1.1rem',
+                padding: '0.85rem 1.1rem 0.85rem 2.8rem',
                 borderRadius: '14px',
                 background: '#131b2e',
                 border: '1px solid #24304d',
@@ -786,18 +835,34 @@ export function CourseCatalogPage() {
             }}
           >
             {CATEGORIES.map((cat) => {
+              const icon =
+                cat === 'All' ? (
+                  <SparklesIcon size={14} color={selectedCat === cat ? '#ffffff' : '#cbd5e1'} />
+                ) : cat === 'School of Business' ? (
+                  <BriefcaseIcon size={14} color={selectedCat === cat ? '#ffffff' : '#cbd5e1'} />
+                ) : cat === 'School of IT and Data Science' ? (
+                  <CodeIcon size={14} color={selectedCat === cat ? '#ffffff' : '#cbd5e1'} />
+                ) : cat === 'School of Language' ? (
+                  <GlobeIcon size={14} color={selectedCat === cat ? '#ffffff' : '#cbd5e1'} />
+                ) : cat === 'IGCSE' ? (
+                  <BritishShieldIcon size={14} />
+                ) : (
+                  <GraduationCapIcon size={14} color={selectedCat === cat ? '#ffffff' : '#cbd5e1'} />
+                )
+
               const label =
                 cat === 'All'
-                  ? '🔥 All Academic Programs'
+                  ? 'All Academic Programs'
                   : cat === 'School of Business'
-                  ? '💼 School of Business'
+                  ? 'School of Business'
                   : cat === 'School of IT and Data Science'
-                  ? '💻 School of IT and Data Science'
+                  ? 'School of IT and Data Science'
                   : cat === 'School of Language'
-                  ? '🗣️ School of Language'
+                  ? 'School of Language'
                   : cat === 'IGCSE'
-                  ? '🇬🇧 IGCSE (Cambridge & Edexcel)'
+                  ? 'IGCSE (Cambridge & Edexcel)'
                   : cat
+
               return (
                 <button
                   key={cat}
@@ -816,9 +881,13 @@ export function CourseCatalogPage() {
                     whiteSpace: 'nowrap',
                     transition: 'all 0.15s ease',
                     minHeight: '38px',
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '6px',
                   }}
                 >
-                  {label}
+                  {icon}
+                  <span>{label}</span>
                 </button>
               )
             })}
@@ -837,8 +906,9 @@ export function CourseCatalogPage() {
               border: '1px solid rgba(255, 255, 255, 0.06)',
             }}
           >
-            <span style={{ fontSize: '0.72rem', color: '#cbd5e1', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.04em', whiteSpace: 'nowrap', paddingLeft: '4px' }}>
-              🎓 Year Level:
+            <span style={{ fontSize: '0.72rem', color: '#cbd5e1', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.04em', whiteSpace: 'nowrap', paddingLeft: '4px', display: 'inline-flex', alignItems: 'center', gap: '5px' }}>
+              <GraduationCapIcon size={14} color="#38bdf8" />
+              <span>Year Level:</span>
             </span>
             {YEAR_LEVELS.map((lvl) => (
               <button
@@ -884,7 +954,7 @@ export function CourseCatalogPage() {
                   gap: '6px',
                 }}
               >
-                <span>📚</span>
+                <BookOpenIcon size={14} color={viewMode === 'courses' ? '#ffffff' : '#cbd5e1'} />
                 <span>Courses & Syllabi ({filteredCourses.length})</span>
               </button>
               <button
@@ -904,13 +974,14 @@ export function CourseCatalogPage() {
                   gap: '6px',
                 }}
               >
-                <span>🏛️</span>
+                <BuildingIcon size={14} color={viewMode === 'schools' ? '#ffffff' : '#cbd5e1'} />
                 <span>Browse Schools & Departments ({INSTITUTIONAL_SCHOOLS.length})</span>
               </button>
             </div>
 
-            <div style={{ fontSize: '0.78rem', color: '#cbd5e1', fontWeight: 600 }}>
-              Centres: <strong style={{ color: '#38bdf8' }}>CAIE KE042</strong> &bull; <strong style={{ color: '#f87171' }}>Edexcel EDX-98421</strong>
+            <div style={{ fontSize: '0.78rem', color: '#cbd5e1', fontWeight: 600, display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
+              <BritishShieldIcon size={14} />
+              <span>Centres: <strong style={{ color: '#38bdf8' }}>CAIE KE042</strong> &bull; <strong style={{ color: '#f87171' }}>Edexcel EDX-98421</strong></span>
             </div>
           </div>
         </div>
@@ -920,8 +991,9 @@ export function CourseCatalogPage() {
       {viewMode === 'schools' ? (
         <div style={{ maxWidth: '1100px', margin: '0 auto', padding: '0 1.25rem 2rem' }}>
           <div style={{ marginBottom: '1.25rem' }}>
-            <h2 style={{ fontSize: '1.35rem', fontWeight: 900, color: '#ffffff', margin: 0, fontFamily: 'var(--font-heading)' }}>
-              🏛️ Academic Faculties & Specialized Departments
+            <h2 style={{ fontSize: '1.35rem', fontWeight: 900, color: '#ffffff', margin: 0, fontFamily: 'var(--font-heading)', display: 'inline-flex', alignItems: 'center', gap: '8px' }}>
+              <BuildingIcon size={22} color="#38bdf8" />
+              <span>Academic Faculties & Specialized Departments</span>
             </h2>
             <p style={{ fontSize: '0.85rem', color: '#94a3b8', margin: '4px 0 0' }}>
               Explore our 4 academic faculties: School of Business, School of IT and Data Science, School of Language, and IGCSE (British International Curriculum).
@@ -951,7 +1023,21 @@ export function CourseCatalogPage() {
                 <div>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.75rem' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem' }}>
-                      <span style={{ fontSize: '1.8rem' }}>{school.icon}</span>
+                      <div
+                        style={{
+                          width: '44px',
+                          height: '44px',
+                          borderRadius: '12px',
+                          background: '#1e293b',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          border: `1px solid ${school.color}66`,
+                          flexShrink: 0,
+                        }}
+                      >
+                        <CourseIcon courseId={school.id} iconKey={school.icon} size={24} color={school.color} />
+                      </div>
                       <div>
                         <span style={{ background: `${school.color}22`, color: school.color, padding: '2px 8px', borderRadius: '6px', fontSize: '0.68rem', fontWeight: 900, textTransform: 'uppercase' }}>
                           {school.code}
@@ -1038,7 +1124,7 @@ export function CourseCatalogPage() {
       ) : (
         /* Programs Grid */
         <div style={{ maxWidth: '1100px', margin: '0 auto', padding: '0 1.25rem 2rem' }}>
-          <div style={{ fontSize: '0.85rem', color: '#94a3b8', marginBottom: '1rem', fontWeight: 600 }}>
+          <div style={{ fontSize: '0.85rem', color: '#cbd5e1', marginBottom: '1rem', fontWeight: 600 }}>
             Showing <strong style={{ color: '#ffffff' }}>{filteredCourses.length}</strong> program{filteredCourses.length === 1 ? '' : 's'}
           </div>
 
@@ -1071,19 +1157,11 @@ export function CourseCatalogPage() {
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
-                        fontSize: '1.6rem',
                         border: '1px solid #334155',
                         flexShrink: 0,
                       }}
                     >
-                      {course.id === 'c-python' || course.title?.toLowerCase().includes('python') ? (
-                        <svg width="28" height="28" viewBox="0 0 110 110" fill="none" aria-label="Python Logo">
-                          <path d="M54.5 5C26.5 5 28.2 17.2 28.2 17.2l.03 12.6h26.7v3.8H17.7S1.2 31.6 1.2 59.7c0 28 14.3 27 14.3 27h8.6V74.7s-.4-14.3 14-14.3h24.1s13.5.2 13.5-13.1V29s.9-24-21.2-24zm-12.5 8.6a4.2 4.2 0 1 1 0 8.4 4.2 4.2 0 0 1 0-8.4z" fill="#387eb8"/>
-                          <path d="M55.5 105c28 0 26.3-12.2 26.3-12.2l-.03-12.6H55.1v-3.8h37.2s16.5 2 16.5-26.1c0-28-14.3-27-14.3-27h-8.6v12s.4 14.3-14 14.3H47.8s-13.5-.2-13.5 13.1V81s-.9 24 21.2 24zm12.5-8.6a4.2 4.2 0 1 1 0-8.4 4.2 4.2 0 0 1 0 8.4z" fill="#ffe052"/>
-                        </svg>
-                      ) : (
-                        course.icon
-                      )}
+                      <CourseIcon courseId={course.id} iconKey={course.icon} size={26} color="#38bdf8" />
                     </div>
 
                     <div style={{ textAlign: 'right' }}>
@@ -1101,7 +1179,7 @@ export function CourseCatalogPage() {
                           marginBottom: '4px',
                         }}
                       >
-                        {course.tag}
+                        {course.tag.replace(/[\uD800-\uDBFF][\uDC00-\uDFFF]|\p{Extended_Pictographic}/gu, '').trim()}
                       </span>
                       <a
                         href={getWhatsAppInquiryUrl(`Hello ${INSTITUTION_CONFIG.name} Admissions! I would like to make a Fees Inquiry for ${course.title}.`)}
@@ -1110,7 +1188,7 @@ export function CourseCatalogPage() {
                         style={{
                           display: 'inline-flex',
                           alignItems: 'center',
-                          gap: '4px',
+                          gap: '6px',
                           background: 'rgba(37, 99, 235, 0.2)',
                           color: '#60a5fa',
                           border: '1px solid rgba(96, 165, 250, 0.4)',
@@ -1121,7 +1199,8 @@ export function CourseCatalogPage() {
                           textDecoration: 'none',
                         }}
                       >
-                        💬 Fees Inquiry
+                        <MessageCircleIcon size={12} color="#60a5fa" />
+                        <span>Fees Inquiry</span>
                       </a>
                     </div>
                   </div>
@@ -1138,9 +1217,13 @@ export function CourseCatalogPage() {
                           borderRadius: '6px',
                           fontSize: '0.68rem',
                           fontWeight: 800,
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          gap: '4px',
                         }}
                       >
-                        🇬🇧 {course.examBoard}
+                        <BritishShieldIcon size={12} />
+                        <span>{course.examBoard}</span>
                       </span>
                     )}
                     {course.yearLevel && (
@@ -1153,9 +1236,13 @@ export function CourseCatalogPage() {
                           borderRadius: '6px',
                           fontSize: '0.68rem',
                           fontWeight: 800,
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          gap: '4px',
                         }}
                       >
-                        🎓 {course.yearLevel}
+                        <GraduationCapIcon size={12} color="#d4af37" />
+                        <span>{course.yearLevel}</span>
                       </span>
                     )}
                     {course.syllabusCode && (
@@ -1180,14 +1267,21 @@ export function CourseCatalogPage() {
                     {course.title}
                   </h3>
 
-                  <p style={{ fontSize: '0.78rem', color: '#cbd5e1', margin: '0 0 0.75rem', lineHeight: 1.4 }}>
-                    💼 Career Outcome: <strong style={{ color: '#ffffff' }}>{course.careerOutcome}</strong>
+                  <p style={{ fontSize: '0.78rem', color: '#cbd5e1', margin: '0 0 0.75rem', lineHeight: 1.4, display: 'flex', alignItems: 'center', gap: '5px' }}>
+                    <BriefcaseIcon size={14} color="#60a5fa" />
+                    <span>Career Outcome: <strong style={{ color: '#ffffff' }}>{course.careerOutcome}</strong></span>
                   </p>
 
                 {/* Duration & Schedule Badges */}
                 <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.4rem', marginBottom: '0.85rem', fontSize: '0.74rem', color: '#cbd5e1' }}>
-                  <span style={{ background: '#182238', padding: '3px 8px', borderRadius: '6px', border: '1px solid #2e3d61', color: '#cbd5e1' }}>⏱️ {course.duration}</span>
-                  <span style={{ background: '#182238', padding: '3px 8px', borderRadius: '6px', border: '1px solid #2e3d61', color: '#cbd5e1' }}>🏛️ {course.schedule.split('(')[0]}</span>
+                  <span style={{ background: '#182238', padding: '3px 8px', borderRadius: '6px', border: '1px solid #2e3d61', color: '#cbd5e1', display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+                    <ClockIcon size={13} color="#94a3b8" />
+                    <span>{course.duration}</span>
+                  </span>
+                  <span style={{ background: '#182238', padding: '3px 8px', borderRadius: '6px', border: '1px solid #2e3d61', color: '#cbd5e1', display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+                    <BuildingIcon size={13} color="#94a3b8" />
+                    <span>{course.schedule.split('(')[0]}</span>
+                  </span>
                 </div>
 
                 {/* Skills Learned */}
@@ -1205,7 +1299,7 @@ export function CourseCatalogPage() {
                         border: '1px solid rgba(255,255,255,0.05)',
                       }}
                     >
-                      ✓ {skill}
+                      <CheckIcon size={12} color="#60a5fa" style={{ marginRight: '4px', verticalAlign: 'middle' }} />{skill}
                     </span>
                   ))}
                 </div>
@@ -1286,14 +1380,18 @@ export function CourseCatalogPage() {
               <button
                 type="button"
                 onClick={() => setSelectedCourse(null)}
-                style={{ background: '#1e293b', border: 'none', color: '#94a3b8', width: '32px', height: '32px', borderRadius: '50%', cursor: 'pointer', fontSize: '0.9rem', fontWeight: 800 }}
+                style={{ background: '#1e293b', border: 'none', color: '#94a3b8', width: '32px', height: '32px', borderRadius: '50%', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                aria-label="Close modal"
               >
-                ✕
+                <XIcon size={16} color="#cbd5e1" />
               </button>
             </div>
 
             <div style={{ marginBottom: '1rem', display: 'flex', gap: '1rem', alignItems: 'center', justifyContent: 'space-between', background: '#0a0e17', padding: '0.75rem 1rem', borderRadius: '12px', fontSize: '0.8rem', flexWrap: 'wrap' }}>
-              <div>⏱️ <strong>Duration:</strong> {selectedCourse.duration}</div>
+              <div style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
+                <ClockIcon size={14} color="#60a5fa" />
+                <span><strong>Duration:</strong> {selectedCourse.duration}</span>
+              </div>
               <a
                 href={getWhatsAppInquiryUrl(`Hello ${INSTITUTION_CONFIG.name} Admissions! I would like to make a Fees Inquiry for the course: ${selectedCourse.title}.`)}
                 target="_blank"
@@ -1301,7 +1399,7 @@ export function CourseCatalogPage() {
                 style={{
                   display: 'inline-flex',
                   alignItems: 'center',
-                  gap: '5px',
+                  gap: '6px',
                   background: 'rgba(37, 99, 235, 0.25)',
                   color: '#93c5fd',
                   border: '1px solid rgba(96, 165, 250, 0.4)',
@@ -1312,12 +1410,14 @@ export function CourseCatalogPage() {
                   textDecoration: 'none',
                 }}
               >
-                💬 Fees Inquiry
+                <MessageCircleIcon size={13} color="#93c5fd" />
+                <span>Fees Inquiry</span>
               </a>
             </div>
 
-            <h4 style={{ fontSize: '0.9rem', fontWeight: 800, color: '#93c5fd', margin: '0 0 0.75rem', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
-              Weekly Syllabus & Practical Labs
+            <h4 style={{ fontSize: '0.9rem', fontWeight: 800, color: '#93c5fd', margin: '0 0 0.75rem', textTransform: 'uppercase', letterSpacing: '0.04em', display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
+              <FlaskIcon size={14} color="#93c5fd" />
+              <span>Weekly Syllabus & Practical Labs</span>
             </h4>
 
             <div style={{ display: 'flex', flexDirection: 'column', gap: '0.65rem', marginBottom: '1.25rem' }}>
@@ -1325,7 +1425,10 @@ export function CourseCatalogPage() {
                 <div key={idx} style={{ background: '#182238', borderRadius: '10px', padding: '0.75rem', border: '1px solid #2e3d61' }}>
                   <div style={{ fontSize: '0.75rem', color: '#60a5fa', fontWeight: 800 }}>{s.week}</div>
                   <div style={{ fontSize: '0.86rem', color: '#ffffff', fontWeight: 700, margin: '2px 0' }}>{s.topic}</div>
-                  <div style={{ fontSize: '0.78rem', color: '#cbd5e1' }}>🧪 Lab: {s.practicalLab}</div>
+                  <div style={{ fontSize: '0.78rem', color: '#cbd5e1', display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+                    <FlaskIcon size={12} color="#94a3b8" />
+                    <span>Lab: {s.practicalLab}</span>
+                  </div>
                 </div>
               ))}
             </div>
@@ -1346,11 +1449,11 @@ export function CourseCatalogPage() {
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                gap: '6px',
+                gap: '8px',
                 boxShadow: '0 4px 14px rgba(37, 99, 235, 0.4)',
               }}
             >
-              <span>🚀</span>
+              <RocketIcon size={16} color="#ffffff" />
               <span>Enroll in This Program</span>
             </a>
           </div>
