@@ -719,7 +719,7 @@ export function Landing() {
   }
 
   return (
-    <div style={{ minHeight: '100vh', paddingBottom: isMobile ? '74px' : 0, background: '#f8fafc', color: '#0f172a', fontFamily: 'Inter, system-ui, -apple-system, sans-serif' }}>
+    <div style={{ minHeight: '100vh', background: '#f8fafc', color: '#0f172a', fontFamily: 'Inter, system-ui, -apple-system, sans-serif' }}>
       <DesktopCommandPalette />
 
       {/* Top Admissions & Quick Contacts Bar */}
@@ -1021,26 +1021,36 @@ export function Landing() {
                 <button
                   type="button"
                   style={{
-                    background: mobileNavOpen ? '#0f172a' : '#1e293b',
-                    color: '#ffffff',
-                    border: '1px solid rgba(255, 255, 255, 0.15)',
-                    width: '38px',
-                    height: '38px',
-                    borderRadius: '8px',
+                    background: mobileNavOpen ? '#0f172a' : '#f8fafc',
+                    color: mobileNavOpen ? '#d4af37' : '#0f172a',
+                    border: mobileNavOpen ? '1.5px solid #d4af37' : '1.5px solid #cbd5e1',
+                    width: '42px',
+                    height: '42px',
+                    borderRadius: '10px',
                     cursor: 'pointer',
                     display: 'inline-flex',
                     alignItems: 'center',
                     justifyContent: 'center',
-                    fontSize: '1.25rem',
-                    lineHeight: 1,
                     transition: 'all 0.2s ease',
-                    boxShadow: '0 2px 8px rgba(0,0,0,0.15)',
+                    boxShadow: '0 2px 8px rgba(0,0,0,0.08)',
                     flexShrink: 0,
                   }}
                   onClick={() => setMobileNavOpen(!mobileNavOpen)}
                   aria-label={mobileNavOpen ? 'Close Navigation Menu' : 'Open Navigation Menu'}
+                  title={mobileNavOpen ? 'Close Menu' : 'Open Website Menu'}
                 >
-                  {mobileNavOpen ? '✕' : '☰'}
+                  {mobileNavOpen ? (
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                      <line x1="18" y1="6" x2="6" y2="18"></line>
+                      <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                  ) : (
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                      <line x1="3" y1="6" x2="21" y2="6"></line>
+                      <line x1="3" y1="12" x2="21" y2="12"></line>
+                      <line x1="3" y1="18" x2="21" y2="18"></line>
+                    </svg>
+                  )}
                 </button>
               </div>
             )}
@@ -4355,7 +4365,7 @@ export function Landing() {
       )}
 
       {/* Sleek Modern Floating Support Desk (WhatsApp / Admissions Live Desk) */}
-      <div style={{ position: 'fixed', bottom: isMobile ? '76px' : '24px', right: isMobile ? '16px' : '24px', zIndex: 9990, display: 'flex', flexDirection: 'column', alignItems: 'flex-end' }}>
+      <div style={{ position: 'fixed', bottom: '24px', right: isMobile ? '16px' : '24px', zIndex: 9990, display: 'flex', flexDirection: 'column', alignItems: 'flex-end' }}>
         {supportModalOpen && (
           <div
             style={{
@@ -4580,156 +4590,6 @@ export function Landing() {
         </button>
       )}
 
-      {/* Sleek Mobile Bottom Navigation Bar (Persistent on Mobile Website) */}
-      {isMobile && (
-        <nav
-          aria-label="Mobile Bottom Navigation"
-          style={{
-            position: 'fixed',
-            bottom: 0,
-            left: 0,
-            right: 0,
-            height: '62px',
-            background: 'rgba(11, 16, 29, 0.96)',
-            backdropFilter: 'blur(16px)',
-            WebkitBackdropFilter: 'blur(16px)',
-            borderTop: '1px solid rgba(255, 255, 255, 0.12)',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-around',
-            zIndex: 9995,
-            padding: '0 4px',
-            boxShadow: '0 -4px 24px rgba(0, 0, 0, 0.5)',
-          }}
-        >
-          <Link
-            to="/"
-            onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-            style={{
-              flex: 1,
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-              justifyContent: 'center',
-              gap: '2px',
-              textDecoration: 'none',
-              color: location.pathname === '/' && !location.hash ? '#d4af37' : '#94a3b8',
-              fontSize: '0.68rem',
-              fontWeight: 700,
-            }}
-          >
-            <span style={{ fontSize: '1.25rem', lineHeight: 1 }}>🏠</span>
-            <span>Home</span>
-          </Link>
-
-          <Link
-            to="/courses"
-            style={{
-              flex: 1,
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-              justifyContent: 'center',
-              gap: '2px',
-              textDecoration: 'none',
-              color: location.pathname.startsWith('/courses') ? '#38bdf8' : '#94a3b8',
-              fontSize: '0.68rem',
-              fontWeight: 700,
-            }}
-          >
-            <span style={{ fontSize: '1.25rem', lineHeight: 1 }}>🎓</span>
-            <span>Schools</span>
-          </Link>
-
-          <a
-            href="#intakes-section"
-            onClick={() => {
-              const el = document.getElementById('intakes-section')
-              if (el) el.scrollIntoView({ behavior: 'smooth' })
-            }}
-            style={{
-              flex: 1,
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-              justifyContent: 'center',
-              gap: '2px',
-              textDecoration: 'none',
-              color: '#fbbf24',
-              fontSize: '0.68rem',
-              fontWeight: 700,
-            }}
-          >
-            <span style={{ fontSize: '1.25rem', lineHeight: 1 }}>🗓️</span>
-            <span>Intakes</span>
-          </a>
-
-          <Link
-            to="/library"
-            style={{
-              flex: 1,
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-              justifyContent: 'center',
-              gap: '2px',
-              textDecoration: 'none',
-              color: location.pathname.startsWith('/library') ? '#60a5fa' : '#94a3b8',
-              fontSize: '0.68rem',
-              fontWeight: 700,
-            }}
-          >
-            <span style={{ fontSize: '1.25rem', lineHeight: 1 }}>📖</span>
-            <span>Library</span>
-          </Link>
-
-          <button
-            type="button"
-            onClick={() => setShowPortalDesksModal(true)}
-            style={{
-              flex: 1,
-              background: 'none',
-              border: 'none',
-              padding: 0,
-              cursor: 'pointer',
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-              justifyContent: 'center',
-              gap: '2px',
-              color: '#38bdf8',
-              fontSize: '0.68rem',
-              fontWeight: 700,
-            }}
-          >
-            <span style={{ fontSize: '1.25rem', lineHeight: 1 }}>🔐</span>
-            <span>Portals</span>
-          </button>
-
-          <button
-            type="button"
-            onClick={() => setMobileNavOpen(true)}
-            style={{
-              flex: 1,
-              background: 'none',
-              border: 'none',
-              padding: 0,
-              cursor: 'pointer',
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-              justifyContent: 'center',
-              gap: '2px',
-              color: mobileNavOpen ? '#d4af37' : '#ffffff',
-              fontSize: '0.68rem',
-              fontWeight: 800,
-            }}
-          >
-            <span style={{ fontSize: '1.25rem', lineHeight: 1 }}>☰</span>
-            <span>Menu</span>
-          </button>
-        </nav>
-      )}
       {/* World-Class Conferred Institutional Certificate Modal */}
       {previewCert && (
         <CertificateGenerator
