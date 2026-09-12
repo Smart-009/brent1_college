@@ -1,6 +1,7 @@
 import { useState, useMemo, useEffect, useRef } from 'react'
 import { Link, useNavigate, useLocation } from 'react-router-dom'
 import { YouTubeEmbed } from '@/components/shared/YouTubeEmbed'
+import { extractYouTubeId } from '@/lib/utils'
 import { useIsMobile } from '@/hooks/useMediaQuery'
 import { NativeAppHome } from './NativeAppHome'
 import { DesktopAppHome } from './DesktopAppHome'
@@ -367,11 +368,11 @@ const SAMPLE_LECTURE_TRACKS: LecturePreviewTrack[] = [
     id: 'cambridge-igcse-math',
     badge: 'CAMBRIDGE IGCSE CENTRE KE042',
     faculty: 'Cambridge International',
-    title: 'Cambridge IGCSE 0580: Quadratic Functions & Graphic Analysis',
+    title: 'Cambridge IGCSE 0580: Quadratic Sequences & Algebraic Modeling',
     instructor: 'Dr. Kevin Kipruto • Lead Cambridge Examiner',
     duration: '14:20 mins',
     resolution: '1080p HD',
-    videoUrl: 'https://www.youtube.com/watch?v=302J530O_9E',
+    videoUrl: 'https://www.youtube.com/watch?v=8O5reRAn3M4',
     description: 'Live interactive derivation of quadratic roots, vertex form transformations, and past paper examination technique for Higher Tier Papers 2H & 4H.',
     keyPoints: ['Quadratic Graphs & Vertex Coordinates', 'Higher Tier Past Paper Solving', 'Cambridge ICE Group Grading Strategy'],
     courseTitle: 'Cambridge IGCSE Mathematics (0580) Extended',
@@ -381,11 +382,11 @@ const SAMPLE_LECTURE_TRACKS: LecturePreviewTrack[] = [
     id: 'tech-react-python',
     badge: 'TECH & SOFTWARE ENGINEERING',
     faculty: 'School of IT & Software',
-    title: 'Full-Stack Web Dev: React 19 Server Components & Python API',
+    title: 'Full-Stack Web Dev: React 19 Components & Python API Architecture',
     instructor: 'Eng. Alex Vance • Senior Cloud Solutions Architect',
     duration: '16:45 mins',
     resolution: '1080p 60fps',
-    videoUrl: 'https://www.youtube.com/watch?v=8pDqJVdNa44',
+    videoUrl: 'https://www.youtube.com/watch?v=bMknfKXIFA8',
     description: 'Practical live terminal session building a full-stack dashboard with React 19 hooks, FastAPI REST endpoints, and PostgreSQL database queries.',
     keyPoints: ['React 19 Server Actions & Hooks', 'Python FastAPI REST Architecture', 'GitHub Pull Requests & CI/CD'],
     courseTitle: 'Full-Stack Web Dev (React 19 & Node.js)',
@@ -395,11 +396,11 @@ const SAMPLE_LECTURE_TRACKS: LecturePreviewTrack[] = [
     id: 'world-languages-ielts',
     badge: 'WORLD LANGUAGES & RELOCATION',
     faculty: 'School of Language',
-    title: 'IELTS Academic Speaking Mock: Band 8.5+ Lexical Strategy',
+    title: 'IELTS Academic Speaking Mock: Band 8.5+ Lexical Resource & Fluency',
     instructor: 'Sarah Jenkins • Certified Cambridge Assessor',
     duration: '12:10 mins',
     resolution: '1080p HD',
-    videoUrl: 'https://www.youtube.com/watch?v=sRFEVPrKzJ4',
+    videoUrl: 'https://www.youtube.com/watch?v=plez24i0vKk',
     description: 'One-on-one live Zoom speaking simulation demonstrating Part 2 cue card structure, fluency markers, and complex idiomatic vocabulary.',
     keyPoints: ['Part 2 2-Minute Monologue Strategy', 'Band 9.0 Lexical Resource & Collocations', 'Eliminating Hesitation Fillers'],
     courseTitle: 'IELTS Academic & General Training',
@@ -409,11 +410,11 @@ const SAMPLE_LECTURE_TRACKS: LecturePreviewTrack[] = [
     id: 'data-science-spss',
     badge: 'DATA SCIENCE & RESEARCH',
     faculty: 'School of Data Analytics',
-    title: 'Survey Data Analytics: Multivariate Regression & ANOVA in SPSS',
+    title: 'Data Science Masterclass: Multivariate Statistical Modeling & Python',
     instructor: 'Dr. Marcus Vance • Senior Quantitative Methodologist',
     duration: '15:30 mins',
     resolution: '1080p HD',
-    videoUrl: 'https://www.youtube.com/watch?v=qAtrCof10hM',
+    videoUrl: 'https://www.youtube.com/watch?v=ua-CiDNNj30',
     description: 'Step-by-step thesis survey cleaning, demographic cross-tabulations, Cronbach Alpha reliability analysis, and regression modeling.',
     keyPoints: ['Survey Cleaning & Missing Values', 'Cronbach Alpha Scale Reliability', 'Multivariate Regression Diagnostics'],
     courseTitle: 'IBM SPSS & Stata Econometric Modeling',
@@ -427,7 +428,7 @@ const SAMPLE_LECTURE_TRACKS: LecturePreviewTrack[] = [
     instructor: 'David Omondi, PMP® • Global Corporate Consultant',
     duration: '13:50 mins',
     resolution: '1080p HD',
-    videoUrl: 'https://www.youtube.com/watch?v=2n4c_w6zV4w',
+    videoUrl: 'https://www.youtube.com/watch?v=rkgHgVpQpsU',
     description: 'Executive case study examining Earned Value Management (EVM), critical path calculations, and hybrid Scrum project governance.',
     keyPoints: ['Earned Value Cost Performance Index (CPI)', 'Sprint Backlog & Velocity Tracking', 'PMP® 2026 Examination Scenarios'],
     courseTitle: 'Project Management Professional (PMP®)',
@@ -454,9 +455,12 @@ export function Landing() {
   const [showScrollTop, setShowScrollTop] = useState(false)
   const [toastMessage, setToastMessage] = useState<string | null>(null)
 
-  // Sample Lecture Video Showcase Modal State
+  // Sample Lecture Video Showcase Modal State & Hero Background Video Player
   const [showVideoShowcaseModal, setShowVideoShowcaseModal] = useState<boolean>(false)
   const [activeVideoTrackIndex, setActiveVideoTrackIndex] = useState<number>(0)
+  const [activeBgVideoTrackIndex, setActiveBgVideoTrackIndex] = useState<number>(0)
+  const [bgVideoPlaying, setBgVideoPlaying] = useState<boolean>(true)
+  const [bgVideoSource, setBgVideoSource] = useState<'youtube' | 'local'>('youtube')
   const heroCanvasRef = useRef<HTMLCanvasElement | null>(null)
 
   // Ambient Interactive Digital Classroom Waveform & Starfield in Hero
@@ -1803,6 +1807,81 @@ export function Landing() {
           }}
         />
 
+        {/* Real Visible Background Video Player (Active Sample Lecture or Campus Tour Stream) */}
+        {bgVideoPlaying && (
+          <div
+            style={{
+              position: 'absolute',
+              inset: 0,
+              overflow: 'hidden',
+              zIndex: 1,
+              pointerEvents: 'none',
+            }}
+          >
+            {bgVideoSource === 'youtube' && extractYouTubeId(SAMPLE_LECTURE_TRACKS[activeBgVideoTrackIndex].videoUrl) ? (
+              <iframe
+                key={SAMPLE_LECTURE_TRACKS[activeBgVideoTrackIndex].id}
+                src={`https://www.youtube-nocookie.com/embed/${extractYouTubeId(SAMPLE_LECTURE_TRACKS[activeBgVideoTrackIndex].videoUrl)}?autoplay=1&mute=1&controls=0&showinfo=0&rel=0&loop=1&playlist=${extractYouTubeId(SAMPLE_LECTURE_TRACKS[activeBgVideoTrackIndex].videoUrl)}&playsinline=1&modestbranding=1&iv_load_policy=3&disablekb=1&enablejsapi=1`}
+                style={{
+                  position: 'absolute',
+                  top: '50%',
+                  left: '50%',
+                  width: '100vw',
+                  height: '56.25vw',
+                  minHeight: '100vh',
+                  minWidth: '177.77vh',
+                  transform: 'translate(-50%, -50%) scale(1.18)',
+                  border: 'none',
+                  opacity: 0.58,
+                  filter: 'saturate(1.25) contrast(1.15)',
+                  pointerEvents: 'none',
+                }}
+                allow="autoplay; encrypted-media"
+                title="Background Class Preview Video"
+              />
+            ) : (
+              <video
+                autoPlay
+                loop
+                muted
+                playsInline
+                style={{
+                  position: 'absolute',
+                  top: 0,
+                  left: 0,
+                  width: '100%',
+                  height: '100%',
+                  objectFit: 'cover',
+                  opacity: 0.52,
+                  filter: 'saturate(1.2) contrast(1.1)',
+                }}
+              >
+                <source src="/videos/eclat-classroom-preview.mp4" type="video/mp4" />
+              </video>
+            )}
+
+            {/* Cinema Dark Mask Overlay to ensure hero text is 100% readable while the video plays vividly */}
+            <div
+              style={{
+                position: 'absolute',
+                inset: 0,
+                background:
+                  'linear-gradient(180deg, rgba(9, 13, 22, 0.74) 0%, rgba(15, 23, 42, 0.60) 50%, rgba(9, 13, 22, 0.90) 100%)',
+              }}
+            />
+
+            {/* Subtle grid mesh overlay */}
+            <div
+              style={{
+                position: 'absolute',
+                inset: 0,
+                backgroundImage: 'radial-gradient(circle at 1px 1px, rgba(255,255,255,0.06) 1px, transparent 0)',
+                backgroundSize: '24px 24px',
+              }}
+            />
+          </div>
+        )}
+
         {/* Creative Ambient Animated Classroom Visualizer Waveform & Node Mesh */}
         <canvas
           ref={heroCanvasRef}
@@ -1813,12 +1892,12 @@ export function Landing() {
             width: '100%',
             height: '100%',
             pointerEvents: 'none',
-            zIndex: 1,
-            opacity: 0.7,
+            zIndex: 2,
+            opacity: 0.45,
           }}
         />
 
-        <div style={{ maxWidth: '1200px', margin: '0 auto', textAlign: 'center', position: 'relative', zIndex: 2 }}>
+        <div style={{ maxWidth: '1200px', margin: '0 auto', textAlign: 'center', position: 'relative', zIndex: 3 }}>
           {/* Academy Global Badge */}
           <div
             style={{
@@ -1883,6 +1962,110 @@ export function Landing() {
           >
             Master <strong style={{ color: '#38bdf8', fontWeight: 800 }}>Cambridge IGCSE & A-Levels (Center KE042)</strong>, in-demand <strong style={{ color: '#ffffff', fontWeight: 800 }}>Tech & Software</strong> (React, Node, Python, Cyber), <strong style={{ color: '#ffffff', fontWeight: 800 }}>Data Science & Research</strong> (R, SPSS, Stata), <strong style={{ color: '#ffffff', fontWeight: 800 }}>Creative Arts & Design</strong> (UI/UX, Figma), <strong style={{ color: '#ffffff', fontWeight: 800 }}>World Languages</strong> (IELTS, German, Arabic, French), and <strong style={{ color: '#ffffff', fontWeight: 800 }}>Accounting</strong> with live interactive classes, expert mentorship, and flexible installment plans.
           </p>
+
+          {/* Interactive Live Background Video Controller Bar */}
+          <div
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '0.65rem',
+              background: 'rgba(15, 23, 42, 0.88)',
+              backdropFilter: 'blur(12px)',
+              border: '1.5px solid rgba(212, 175, 55, 0.45)',
+              borderRadius: '999px',
+              padding: '0.35rem 0.95rem',
+              margin: '0 auto 1.85rem',
+              boxShadow: '0 10px 28px rgba(0, 0, 0, 0.5), 0 0 16px rgba(212, 175, 55, 0.12)',
+              fontSize: isMobile ? '0.74rem' : '0.82rem',
+              color: '#e2e8f0',
+              flexWrap: 'wrap',
+              justifyContent: 'center',
+              maxWidth: '100%',
+              lineHeight: 1.4,
+            }}
+          >
+            <span style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', fontWeight: 800, color: '#f87171', letterSpacing: '0.04em' }}>
+              <span
+                style={{
+                  width: '8px',
+                  height: '8px',
+                  borderRadius: '50%',
+                  background: '#ef4444',
+                  boxShadow: '0 0 8px #ef4444',
+                }}
+              />
+              <span>PLAYING IN BACKGROUND:</span>
+            </span>
+            <span style={{ fontWeight: 700, color: '#fef08a' }}>
+              {SAMPLE_LECTURE_TRACKS[activeBgVideoTrackIndex].title}
+            </span>
+            <div style={{ display: 'inline-flex', alignItems: 'center', gap: '5px' }}>
+              <button
+                type="button"
+                onClick={() => {
+                  setActiveBgVideoTrackIndex((prev) => (prev + 1) % SAMPLE_LECTURE_TRACKS.length)
+                }}
+                style={{
+                  background: 'rgba(212, 175, 55, 0.2)',
+                  border: '1px solid rgba(212, 175, 55, 0.45)',
+                  color: '#ffffff',
+                  borderRadius: '999px',
+                  padding: '2px 9px',
+                  fontSize: '0.72rem',
+                  fontWeight: 700,
+                  cursor: 'pointer',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '4px',
+                }}
+                title="Switch which lecture is playing in the background"
+              >
+                <RefreshCwIcon size={11} color="#fef08a" />
+                <span>Next Class ({activeBgVideoTrackIndex + 1}/5)</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => setBgVideoSource(bgVideoSource === 'youtube' ? 'local' : 'youtube')}
+                style={{
+                  background: 'rgba(255, 255, 255, 0.08)',
+                  border: '1px solid rgba(255, 255, 255, 0.18)',
+                  color: '#cbd5e1',
+                  borderRadius: '999px',
+                  padding: '2px 8px',
+                  fontSize: '0.7rem',
+                  fontWeight: 600,
+                  cursor: 'pointer',
+                }}
+                title="Toggle between YouTube Lecture Live Stream and Campus Tour MP4"
+              >
+                {bgVideoSource === 'youtube' ? 'YouTube Live' : 'Campus MP4'}
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  setActiveVideoTrackIndex(activeBgVideoTrackIndex)
+                  setShowVideoShowcaseModal(true)
+                }}
+                style={{
+                  background: '#2563eb',
+                  border: 'none',
+                  color: '#ffffff',
+                  borderRadius: '999px',
+                  padding: '2px 10px',
+                  fontSize: '0.72rem',
+                  fontWeight: 700,
+                  cursor: 'pointer',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '4px',
+                }}
+                title="Open video in full player modal with audio and details"
+              >
+                <VideoIcon size={12} color="#ffffff" />
+                <span>Watch Fullscreen & Audio</span>
+              </button>
+            </div>
+          </div>
 
           {/* Primary Academy CTAs */}
           <div style={{ display: 'flex', flexDirection: isMobile ? 'column' : 'row', justifyContent: 'center', alignItems: 'center', gap: '0.75rem', width: '100%', maxWidth: isMobile ? '380px' : 'none', margin: '0 auto 2.25rem', flexWrap: 'wrap' }}>
