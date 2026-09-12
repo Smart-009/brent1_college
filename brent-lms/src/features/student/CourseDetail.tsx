@@ -319,7 +319,7 @@ export function CourseDetail() {
               </span>
             ) : (
               <span className="badge badge-warning" style={{ fontWeight: 800, background: '#fef3c7', color: '#92400e', border: '1px solid #fcd34d' }}>
-                ⏳ Pending Bursar Clearance
+                Pending Bursar Clearance
               </span>
             )}
           </div>
@@ -333,9 +333,52 @@ export function CourseDetail() {
           </p>
 
           <div className="flex items-center gap-4 text-sm text-muted mb-4 flex-wrap">
-            <span>👩‍🏫 Instructor: <strong>{course.teacher?.full_name || 'Eclat Teacher'}</strong></span>
-            <span>📖 {totalLessons} Modules</span>
+            <span>Instructor: <strong>{course.teacher?.full_name || 'Eclat Teacher'}</strong></span>
+            <span>{totalLessons} Modules</span>
           </div>
+
+          {/* Forex & Algorithmic Trading Interactive Studio Banner */}
+          {(course.title?.toLowerCase().includes('forex') || course.title?.toLowerCase().includes('trading') || courseId?.toLowerCase().includes('forex') || courseId?.toLowerCase().includes('algo')) && (
+            <div
+              style={{
+                marginTop: '1rem',
+                marginBottom: '1rem',
+                padding: '1.25rem',
+                borderRadius: '12px',
+                background: 'linear-gradient(135deg, #ecfdf5 0%, #f0fdf4 100%)',
+                border: '1.5px solid #a7f3d0',
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                flexWrap: 'wrap',
+                gap: '1rem',
+              }}
+            >
+              <div>
+                <div style={{ fontWeight: 800, color: '#065f46', fontSize: '1rem' }}>
+                  Interactive Quantitative Bot Simulator & Backtesting Studio
+                </div>
+                <div style={{ fontSize: '0.85rem', color: '#047857', marginTop: '0.25rem' }}>
+                  Design rule-based EMA crossovers, RSI mean-reversion, test lot sizing, and export runnable Python MT5 bot code.
+                </div>
+              </div>
+              <Link
+                to="/student/trading-bot"
+                className="btn btn-sm"
+                style={{
+                  background: '#059669',
+                  color: '#ffffff',
+                  fontWeight: 700,
+                  borderRadius: '10px',
+                  padding: '0.6rem 1.1rem',
+                  textDecoration: 'none',
+                  border: 'none',
+                }}
+              >
+                Open Trading Bot Studio
+              </Link>
+            </div>
+          )}
 
           {/* Pending Clearance Warning Notice */}
           {!isStudentCleared && (
@@ -351,8 +394,8 @@ export function CourseDetail() {
                 lineHeight: 1.6,
               }}
             >
-              <div style={{ fontWeight: 800, color: '#dc2626', marginBottom: '0.35rem', display: 'flex', alignItems: 'center', gap: '6px' }}>
-                <span>🔒</span> Bursar Tuition Clearance Required to Stream Video Lectures
+              <div style={{ fontWeight: 800, color: '#dc2626', marginBottom: '0.35rem' }}>
+                Bursar Tuition Clearance Required to Stream Video Lectures
               </div>
               <div>
                 To unlock lecture videos and interactive materials, please pay tuition via M-Pesa Paybill <strong>{INSTITUTION_CONFIG.bank.paybillNumber}</strong> (Account: <strong>{INSTITUTION_CONFIG.bank.accountNumber}</strong>) and contact the Bursar Desk to clear your portal account.

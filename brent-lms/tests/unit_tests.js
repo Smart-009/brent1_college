@@ -947,3 +947,42 @@ test('Top-Paying Business Certificate Courses: School of Business Credentials & 
   assert.ok(indexHtml.includes('Professional Forex Trading, Currency Markets & Technical Analysis (FX Mastery)'))
 })
 
+test('Quantitative Trading Bot Studio & Python MT5 Package: Architecture & Formulas', () => {
+  // 1. Verify in-app TradingBotStudio component exists and has core strategies
+  const studioContent = fs.readFileSync(path.join(process.cwd(), 'src/features/trading/TradingBotStudio.tsx'), 'utf-8')
+  assert.ok(studioContent.includes('TradingBotStudio'))
+  assert.ok(studioContent.includes('EMA Trend-Following Crossover'))
+  assert.ok(studioContent.includes('RSI Dynamic Mean-Reversion'))
+  assert.ok(studioContent.includes('Institutional ICT Smart Money Order Blocks'))
+  assert.ok(studioContent.includes('Simulated Account Equity Trajectory'))
+  assert.ok(studioContent.includes('Start Live Paper Bot Simulation'))
+  assert.ok(studioContent.includes('calculate_position_size'))
+
+  // 2. Verify App.tsx routing
+  const appContent = fs.readFileSync(path.join(process.cwd(), 'src/App.tsx'), 'utf-8')
+  assert.ok(appContent.includes('/trading-bot'))
+  assert.ok(appContent.includes('/student/trading-bot'))
+
+  // 3. Verify Sidebar.tsx navigation links
+  const sidebarContent = fs.readFileSync(path.join(process.cwd(), 'src/components/layout/Sidebar.tsx'), 'utf-8')
+  assert.ok(sidebarContent.includes('Quant Trading Bot Studio'))
+
+  // 4. Verify Python MT5 package files
+  const botDir = path.join(process.cwd(), 'trading_bot')
+  assert.ok(fs.existsSync(path.join(botDir, 'requirements.txt')), 'Missing trading_bot/requirements.txt')
+  assert.ok(fs.existsSync(path.join(botDir, 'config.py')), 'Missing trading_bot/config.py')
+  assert.ok(fs.existsSync(path.join(botDir, 'mt5_interface.py')), 'Missing trading_bot/mt5_interface.py')
+  assert.ok(fs.existsSync(path.join(botDir, 'risk_manager.py')), 'Missing trading_bot/risk_manager.py')
+  assert.ok(fs.existsSync(path.join(botDir, 'strategies', 'ema_crossover.py')), 'Missing ema_crossover.py')
+  assert.ok(fs.existsSync(path.join(botDir, 'strategies', 'rsi_mean_reversion.py')), 'Missing rsi_mean_reversion.py')
+  assert.ok(fs.existsSync(path.join(botDir, 'backtester.py')), 'Missing trading_bot/backtester.py')
+  assert.ok(fs.existsSync(path.join(botDir, 'main.py')), 'Missing trading_bot/main.py')
+  assert.ok(fs.existsSync(path.join(botDir, 'README.md')), 'Missing trading_bot/README.md')
+
+  // 5. Verify institutional risk rules in risk_manager.py
+  const riskManagerContent = fs.readFileSync(path.join(botDir, 'risk_manager.py'), 'utf-8')
+  assert.ok(riskManagerContent.includes('calculate_lot_size'))
+  assert.ok(riskManagerContent.includes('max_daily_drawdown_pct'))
+  assert.ok(riskManagerContent.includes('EMERGENCY KILL SWITCH TRIGGERED'))
+})
+

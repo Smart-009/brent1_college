@@ -8,6 +8,15 @@ import { AnnouncementCard } from '@/components/shared/AnnouncementCard'
 import { Spinner } from '@/components/ui/Spinner'
 import { CertificateGenerator } from '@/components/shared/CertificateGenerator'
 import { schoolStore, schoolEventBus } from '@/lib/schoolData'
+import {
+  ChartBarIcon,
+  BookOpenIcon,
+  CreditCardIcon,
+  LibraryIcon,
+  MegaphoneIcon,
+  FileTextIcon,
+  SparklesIcon,
+} from '@/components/icons/AppIcons'
 import type { Course, Enrollment, Announcement } from '@/lib/database.types'
 
 export function StudentDashboard() {
@@ -363,22 +372,34 @@ export function StudentDashboard() {
 
         {/* Quick Links Card */}
         <div className="card" style={{ padding: '1.25rem' }}>
-          <h3 style={{ fontSize: '1.1rem', fontWeight: 700, marginBottom: '1rem' }}>⚡ Student Quick Links</h3>
+          <h3 style={{ fontSize: '1.1rem', fontWeight: 700, marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+            <SparklesIcon size={18} color="#f59e0b" />
+            <span>Student Quick Workstations</span>
+          </h3>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-            <Link to="/student/courses" className="btn btn-secondary btn-sm" style={{ justifyContent: 'flex-start' }}>
-              📚 Online Lessons & LMS
+            <Link to="/student/trading-bot" className="btn btn-sm" style={{ justifyContent: 'flex-start', background: '#ecfdf5', color: '#065f46', border: '1.5px solid #a7f3d0', fontWeight: 700, gap: '0.5rem' }}>
+              <ChartBarIcon size={16} color="#059669" />
+              <span>Quant Trading Bot Studio & Simulator</span>
             </Link>
-            <Link to="/exams" className="btn btn-secondary btn-sm" style={{ justifyContent: 'flex-start' }}>
-              📜 Download Transcript PDF
+            <Link to="/student/courses" className="btn btn-secondary btn-sm" style={{ justifyContent: 'flex-start', gap: '0.5rem' }}>
+              <BookOpenIcon size={16} color="#475569" />
+              <span>Online Lessons & LMS</span>
             </Link>
-            <Link to="/fees" className="btn btn-secondary btn-sm" style={{ justifyContent: 'flex-start' }}>
-              💳 Pay Tuition via M-Pesa
+            <Link to="/exams" className="btn btn-secondary btn-sm" style={{ justifyContent: 'flex-start', gap: '0.5rem' }}>
+              <FileTextIcon size={16} color="#475569" />
+              <span>Download Transcript PDF</span>
             </Link>
-            <Link to="/library" className="btn btn-secondary btn-sm" style={{ justifyContent: 'flex-start' }}>
-              📖 Past Papers & Lab Manuals
+            <Link to="/fees" className="btn btn-secondary btn-sm" style={{ justifyContent: 'flex-start', gap: '0.5rem' }}>
+              <CreditCardIcon size={16} color="#475569" />
+              <span>Pay Tuition via M-Pesa</span>
             </Link>
-            <Link to="/noticeboard" className="btn btn-secondary btn-sm" style={{ justifyContent: 'flex-start' }}>
-              📢 Student Noticeboard
+            <Link to="/library" className="btn btn-secondary btn-sm" style={{ justifyContent: 'flex-start', gap: '0.5rem' }}>
+              <LibraryIcon size={16} color="#475569" />
+              <span>Past Papers & Lab Manuals</span>
+            </Link>
+            <Link to="/noticeboard" className="btn btn-secondary btn-sm" style={{ justifyContent: 'flex-start', gap: '0.5rem' }}>
+              <MegaphoneIcon size={16} color="#475569" />
+              <span>Student Noticeboard</span>
             </Link>
           </div>
         </div>
