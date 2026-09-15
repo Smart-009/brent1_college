@@ -281,27 +281,5 @@ button, a, input, select, textarea {
     transform: translateY(0);
   }
 }
-
-/* Hide Mobile Quick Dock on larger screens (Desktop / Laptop) */
-@media (min-width: 769px) {
-  .mobile-quick-dock {
-    display: none !important;
-  }
-}
-
-/* Responsive adjustment for Floating Action Buttons on Phone Screens */
-@media (max-width: 768px) {
-  aside[aria-label="Upcoming Academic Intakes Widget"] {
-    bottom: calc(68px + env(safe-area-inset-bottom, 0px)) !important;
-    left: 12px !important;
-  }
-  button[aria-label="Scroll back to top"] {
-    bottom: calc(72px + env(safe-area-inset-bottom, 0px)) !important;
-    right: 12px !important;
-  }
-  /* Give the body extra padding so bottom dock doesn't obscure footer content */
-  body {
-    padding-bottom: calc(64px + env(safe-area-inset-bottom, 0px)) !important;
-  }
 }
 

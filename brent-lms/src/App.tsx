@@ -8,8 +8,6 @@ import { LayoutShell } from '@/components/layout/LayoutShell'
 import { LoadingScreen, AppOpeningSplashScreen } from '@/components/ui/Spinner'
 import { PullToRefresh } from '@/components/shared/PullToRefresh'
 import { FloatingIntakesWidget } from '@/components/shared/FloatingIntakesWidget'
-import { ScrollToTopFAB } from '@/components/shared/ScrollToTopFAB'
-import { MobileQuickDock } from '@/components/shared/MobileQuickDock'
 import { ConcurrentSessionAlertModal } from '@/components/shared/ConcurrentSessionAlertModal'
 
 // Direct import for Home/Landing page for instant render
@@ -131,8 +129,6 @@ export function App() {
       <PullToRefresh />
       <ConcurrentSessionAlertModal />
       {!isNativeApp() && <FloatingIntakesWidget />}
-      {!isNativeApp() && <ScrollToTopFAB />}
-      {!isNativeApp() && <MobileQuickDock />}
       <Routes>
         {/* Platform-Aware Root Route */}
         <Route path="/" element={<RootEntryRouter />} />
