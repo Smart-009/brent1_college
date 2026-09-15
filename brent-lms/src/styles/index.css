@@ -232,44 +232,9 @@ h1, h2, h3, h4, h5, h6 {
   letter-spacing: -0.02em;
 }
 
-/* NOTE: Dark theme is not used — app always runs in light mode.
-   Headings always use --color-primary (deep blue) for full readability. */
-
-/* ---- Headings inside DARK backgrounds must be white ---- */
-/* Covers hero sections, dark footer sections, app download sections etc. */
-section[style*="background: linear-gradient(135deg, #1e3a8a"] h1,
-section[style*="background: linear-gradient(135deg, #1e3a8a"] h2,
-section[style*="background: linear-gradient(135deg, #1e3a8a"] h3,
-section[style*="background: linear-gradient(180deg, #070b18"] h1,
-section[style*="background: linear-gradient(180deg, #070b18"] h2,
-section[style*="background: linear-gradient(180deg, #070b18"] h3,
-section[style*="background: '#0a0f1d'"] h1,
-section[style*="background: '#0f172a'"] h1,
-section[style*="background: #0a0f1d"] h1,
-section[style*="background: #0f172a"] h1,
-section[style*="background: #0f172a"] h2,
-section[style*="color: #ffffff"] h1,
-section[style*="color: #ffffff"] h2,
-section[style*="color: #ffffff"] h3 {
-  color: #ffffff !important;
-}
-
-/* High-Contrast Visibility Safeguard: Any heading inside a light surface, card, modal, or white section is ALWAYS crisp dark */
-#courses h1, #courses h2, #courses h3, #courses h4, #courses h5, #courses h6,
-.card h1, .card h2, .card h3, .card h4, .card h5, .card h6,
-.course-card h1, .course-card h2, .course-card h3,
-.modal-content h1, .modal-content h2, .modal-content h3, .modal-content h4,
-.modal-box h1, .modal-box h2, .modal-box h3, .modal-box h4,
-form h1, form h2, form h3, form h4,
-.form h1, .form h2, .form h3, .form h4,
-.light-surface h1, .light-surface h2, .light-surface h3,
-section[style*="background: #ffffff"] h1, section[style*="background: #ffffff"] h2, section[style*="background: #ffffff"] h3,
-section[style*="background:#ffffff"] h1, section[style*="background:#ffffff"] h2, section[style*="background:#ffffff"] h3,
-div[style*="background: #ffffff"] h1, div[style*="background: #ffffff"] h2, div[style*="background: #ffffff"] h3,
-div[style*="background:#ffffff"] h1, div[style*="background:#ffffff"] h2, div[style*="background:#ffffff"] h3,
-div[style*="background: #f8fafc"] h1, div[style*="background: #f8fafc"] h2, div[style*="background: #f8fafc"] h3 {
-  color: #0f172a !important;
-}
+/* NOTE: Dark theme is not used — app runs in high-contrast light mode.
+   Headings default to --color-primary (deep royal blue) on light pages,
+   while headings with inline color (e.g. #ffffff on hero/banners) naturally display their set color. */
 
 p { margin-bottom: var(--space-4); color: var(--color-text-secondary); }
 p:last-child { margin-bottom: 0; }
