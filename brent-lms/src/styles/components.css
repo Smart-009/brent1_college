@@ -374,7 +374,7 @@
   background: #ffffff !important;
   color: #0f172a !important;
 }
-.modal-title { font-size: var(--text-xl); font-family: var(--font-heading); color: #0f172a !important; margin: 0; font-weight: 800; }
+.modal-title { font-size: var(--text-xl); font-family: var(--font-heading); color: #0f172a; margin: 0; font-weight: 800; }
 .modal-close {
   width: 32px; height: 32px;
   border: none; background: none;

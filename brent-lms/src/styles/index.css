@@ -280,8 +280,8 @@ form,
 }
 
 .modal-title {
-  color: #0f172a !important;
-  font-weight: 800 !important;
+  color: #0f172a;
+  font-weight: 800;
 }
 
 .modal-close {
@@ -354,7 +354,7 @@ datalist option,
   display: inline-block;
   font-size: var(--text-sm);
   font-weight: 700;
-  color: #1e293b !important;
+  color: #1e293b;
   margin-bottom: var(--space-1);
 }
 

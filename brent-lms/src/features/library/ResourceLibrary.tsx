@@ -3213,10 +3213,10 @@ export function ResourceLibrary() {
               boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.5)',
             }}
           >
-            <div className="modal-header" style={{ padding: '1.25rem 1.5rem', background: '#0f172a', color: '#ffffff' }}>
+            <div className="modal-header" style={{ padding: '1.25rem 1.5rem', background: '#ffffff', color: '#0f172a', borderBottom: '1px solid #e2e8f0' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
                 <span style={{ fontSize: '1.3rem' }}>📤</span>
-                <h3 className="modal-title" style={{ color: '#ffffff', fontSize: '1.1rem', fontWeight: 800, margin: 0 }}>
+                <h3 className="modal-title" style={{ color: '#0f172a', fontSize: '1.1rem', fontWeight: 800, margin: 0 }}>
                   Upload Academic E-Resource
                 </h3>
               </div>
@@ -3224,7 +3224,7 @@ export function ResourceLibrary() {
                 type="button"
                 className="modal-close"
                 onClick={() => setShowUploadModal(false)}
-                style={{ color: '#ffffff', background: 'rgba(255, 255, 255, 0.15)', borderRadius: '50%', width: '32px', height: '32px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                style={{ color: '#64748b', background: '#f1f5f9', borderRadius: '50%', width: '32px', height: '32px', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '1px solid #cbd5e1' }}
               >
                 ✕
               </button>
@@ -3549,17 +3549,17 @@ export function ResourceLibrary() {
               background: '#ffffff',
             }}
           >
-            <div style={{ padding: '1.25rem 1.5rem', background: '#0f172a', color: '#ffffff', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <div style={{ padding: '1.25rem 1.5rem', background: '#ffffff', color: '#0f172a', borderBottom: '1px solid #e2e8f0', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                 <span style={{ fontSize: '1.25rem' }}>🏷️</span>
-                <h3 style={{ color: '#ffffff', fontSize: '1.05rem', fontWeight: 800, margin: 0 }}>
+                <h3 style={{ color: '#0f172a', fontSize: '1.05rem', fontWeight: 800, margin: 0 }}>
                   Add Custom Category
                 </h3>
               </div>
               <button
                 type="button"
                 onClick={() => setShowAddCatModal(false)}
-                style={{ color: '#ffffff', background: 'rgba(255, 255, 255, 0.15)', border: 'none', borderRadius: '50%', width: '28px', height: '28px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                style={{ color: '#64748b', background: '#f1f5f9', border: '1px solid #cbd5e1', borderRadius: '50%', width: '28px', height: '28px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
               >
                 ✕
               </button>

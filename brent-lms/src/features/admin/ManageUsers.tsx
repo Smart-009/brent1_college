@@ -621,7 +621,7 @@ export function ManageUsers() {
               <div style={{ fontSize: '0.75rem', textTransform: 'uppercase', color: '#93c5fd', fontWeight: 700 }}>
                 Student Profile & Program Registration
               </div>
-              <h3 style={{ fontSize: '1.25rem', fontWeight: 800, margin: '0.25rem 0' }}>
+              <h3 style={{ fontSize: '1.25rem', fontWeight: 800, margin: '0.25rem 0', color: '#ffffff' }}>
                 {managingStudent.full_name} ({managingStudent.admission_number})
               </h3>
               <div style={{ fontSize: '0.8rem', color: '#cbd5e1' }}>
