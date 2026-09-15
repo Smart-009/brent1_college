@@ -486,6 +486,7 @@ export function IntakeAdvertsSection() {
             return (
               <div
                 key={intake.id}
+                className="interactive-card"
                 style={{
                   background: '#ffffff',
                   border: isFillingFast
@@ -500,7 +501,7 @@ export function IntakeAdvertsSection() {
                   boxShadow: isBritishCurriculum
                     ? '0 12px 35px rgba(2, 132, 199, 0.12)'
                     : '0 10px 30px rgba(15, 23, 42, 0.08)',
-                  transition: 'transform 0.2s ease, box-shadow 0.2s ease',
+                  transition: 'transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.25s ease',
                   position: 'relative',
                 }}
               >

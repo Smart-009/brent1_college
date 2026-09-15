@@ -1189,6 +1189,7 @@ export function CourseCatalogPage() {
             {filteredCourses.map((course) => (
               <div
                 key={course.id}
+                className="interactive-card"
                 style={{
                   background: '#ffffff',
                   borderRadius: '18px',
@@ -1199,7 +1200,7 @@ export function CourseCatalogPage() {
                   justifyContent: 'space-between',
                   gap: '1rem',
                   boxShadow: '0 4px 16px rgba(0,0,0,0.05)',
-                  transition: 'transform 0.2s ease, border-color 0.2s ease',
+                  transition: 'transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1), border-color 0.25s ease, box-shadow 0.25s ease',
                 }}
               >
                 <div>

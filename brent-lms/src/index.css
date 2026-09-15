@@ -166,3 +166,142 @@ code {
   }
 }
 
+/* ============================================================
+   INTERACTIVE TOUCH & PROFESSIONAL ANIMATION SYSTEM
+   ============================================================ */
+
+/* Smooth page navigation and scrolling */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Touch responsiveness for phones and tablets */
+button, a, input, select, textarea {
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Interactive Card Elevation & Tactile Physics */
+.interactive-card {
+  transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.25s ease, border-color 0.25s ease;
+}
+.interactive-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 16px 36px rgba(15, 23, 42, 0.08) !important;
+}
+.interactive-card:active {
+  transform: scale(0.985);
+}
+
+/* Interactive Pills & Filter Chips */
+.interactive-pill {
+  transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.interactive-pill:active {
+  transform: scale(0.93);
+}
+
+/* Interactive Action Buttons */
+.interactive-btn {
+  transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.2s ease;
+}
+.interactive-btn:hover {
+  transform: translateY(-2px);
+}
+.interactive-btn:active {
+  transform: scale(0.95);
+}
+
+/* Shimmer Light Reflection across Buttons & Badges */
+@keyframes shimmerSlide {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+.shimmer-badge {
+  background: linear-gradient(90deg, rgba(212,175,55,0.08) 0%, rgba(212,175,55,0.3) 50%, rgba(212,175,55,0.08) 100%);
+  background-size: 200% 100%;
+  animation: shimmerSlide 3.5s infinite linear;
+}
+
+/* Gentle Organic Floating Animation */
+@keyframes floatGently {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-5px);
+  }
+}
+
+.floating-element {
+  animation: floatGently 3.5s ease-in-out infinite;
+}
+
+/* Radar Pulse Ring for Live Urgent Indicators */
+@keyframes pulseRing {
+  0% {
+    box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.6);
+  }
+  70% {
+    box-shadow: 0 0 0 9px rgba(34, 197, 94, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(34, 197, 94, 0);
+  }
+}
+
+.live-pulse-dot {
+  animation: pulseRing 2s cubic-bezier(0.45, 0, 0.55, 1) infinite;
+}
+
+/* Pop-in & Slide-up Keyframes */
+@keyframes fadeInScale {
+  from {
+    opacity: 0;
+    transform: scale(0.85);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes slideUpSoft {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Hide Mobile Quick Dock on larger screens (Desktop / Laptop) */
+@media (min-width: 769px) {
+  .mobile-quick-dock {
+    display: none !important;
+  }
+}
+
+/* Responsive adjustment for Floating Action Buttons on Phone Screens */
+@media (max-width: 768px) {
+  aside[aria-label="Upcoming Academic Intakes Widget"] {
+    bottom: calc(68px + env(safe-area-inset-bottom, 0px)) !important;
+    left: 12px !important;
+  }
+  button[aria-label="Scroll back to top"] {
+    bottom: calc(72px + env(safe-area-inset-bottom, 0px)) !important;
+    right: 12px !important;
+  }
+  /* Give the body extra padding so bottom dock doesn't obscure footer content */
+  body {
+    padding-bottom: calc(64px + env(safe-area-inset-bottom, 0px)) !important;
+  }
+}
+
