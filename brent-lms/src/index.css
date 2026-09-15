@@ -17,7 +17,7 @@
 
   font: 18px/145% var(--sans);
   letter-spacing: 0.18px;
-  color-scheme: light;
+  color-scheme: only light;
   color: var(--text);
   background: var(--bg);
   font-synthesis: none;
@@ -30,6 +30,7 @@
   }
 }
 
+/* Force light theme — never allow OS dark mode to affect the app */
 @media (prefers-color-scheme: dark) {
   :root {
     --text: #0f172a;
@@ -43,7 +44,18 @@
     --social-bg: rgba(241, 245, 249, 0.9);
     --shadow:
       rgba(0, 0, 0, 0.06) 0 4px 6px -1px, rgba(0, 0, 0, 0.04) 0 2px 4px -1px;
-    color-scheme: light;
+    color-scheme: only light;
+  }
+
+  /* Prevent any browser-injected dark backgrounds on inputs/selects/buttons */
+  html, body, input, textarea, select, button {
+    background-color: #ffffff !important;
+    color: #0f172a !important;
+  }
+
+  /* Ensure body and root stay light */
+  html {
+    background: #f8fafc !important;
   }
 }
 
