@@ -948,6 +948,49 @@ export function CourseCatalogPage() {
             })}
           </div>
 
+          {/* IGCSE Integrated Curriculum Policy Banner */}
+          {selectedCat === 'IGCSE' && (
+            <div
+              style={{
+                background: 'linear-gradient(135deg, #eff6ff 0%, #f0fdf4 100%)',
+                border: '1.5px solid #60a5fa',
+                borderRadius: '14px',
+                padding: '0.85rem 1.15rem',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '12px',
+                boxShadow: '0 2px 8px rgba(37, 99, 235, 0.08)',
+              }}
+            >
+              <div
+                style={{
+                  width: '38px',
+                  height: '38px',
+                  borderRadius: '10px',
+                  background: '#1d4ed8',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  color: '#ffffff',
+                  flexShrink: 0,
+                }}
+              >
+                <BritishShieldIcon size={20} />
+              </div>
+              <div>
+                <div style={{ fontSize: '0.88rem', fontWeight: 900, color: '#1e3a8a', display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
+                  <span>IGCSE Integrated Cohort Model — All Subjects Taught Together</span>
+                  <span style={{ background: '#dbeafe', color: '#1d4ed8', fontSize: '0.68rem', padding: '2px 8px', borderRadius: '999px', fontWeight: 800 }}>
+                    Unified Cohort Schedule
+                  </span>
+                </div>
+                <div style={{ fontSize: '0.8rem', color: '#334155', marginTop: '2px', lineHeight: 1.45 }}>
+                  At Éclat Institute, <strong>we do not teach separate subjects in IGCSE</strong>. Students enrol into comprehensive academic cohorts (Year 9, Year 10, or Year 11) where Mathematics, Pure Sciences, English, Computer Science, and Humanities are taught together in one cohesive programme.
+                </div>
+              </div>
+            </div>
+          )}
+
           {/* View Mode Toggle: All Courses vs Browse by School & Department */}
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '0.75rem', marginTop: '0.35rem' }}>
             <div style={{ display: 'flex', gap: '6px', background: '#f1f5f9', padding: '4px', borderRadius: '10px', border: '1px solid #cbd5e1' }}>

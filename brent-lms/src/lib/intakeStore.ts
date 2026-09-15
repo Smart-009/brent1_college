@@ -7,17 +7,17 @@ import { supabase } from './supabase'
 import { INSTITUTION_CONFIG } from '@/config/institution'
 import type { IntakeSchedule } from '@/types/intake'
 
-const INTAKE_STORAGE_KEY = 'eclat_intake_schedules_store_v3'
+const INTAKE_STORAGE_KEY = 'eclat_intake_schedules_store_v4'
 
 export const INITIAL_INTAKE_SCHEDULES: IntakeSchedule[] = [
   {
     id: 'intake-2026-11-igcse',
-    title: 'November 2026 British International Curriculum Intake',
+    title: 'November 2026 British International Curriculum Integrated Intake',
     academic_year: '2026/2027',
     term_session: 'November 2026 & May/June 2027 Series',
-    headline: 'Cambridge Centre KE042 & Pearson Edexcel EDX-98421 — Years 9, 10 & 11 Admissions',
+    headline: 'Accredited Cambridge KE042 & Pearson EDX-98421 — All Subjects Taught Together',
     description:
-      'Accredited British curriculum admissions across Year 9 Foundation (Lower Secondary), Year 10 IGCSE Core & Extended, and Year 11 Exam Intensive. Rigorous dual 9-1 & A*-G mastery with live interactive classrooms, weekly past paper clinics, and official center candidate registration.',
+      'Accredited British curriculum admissions across Year 9 Checkpoint, Year 10 IGCSE, and Year 11 Exam Series. We do not teach separate, isolated subjects — all core subjects (Mathematics, Pure Sciences [Physics, Chemistry, Biology], English First Language, Computer Science, and Humanities) are taught together as a unified, cohesive cohort with comprehensive daily timetables, weekly past paper clinics, and official centre candidate registration.',
     poster_image_url:
       'https://images.unsplash.com/photo-1427504494785-3a9ca7044f45?auto=format&fit=crop&w=1200&q=80',
     application_deadline: '2026-10-28',
@@ -25,18 +25,16 @@ export const INITIAL_INTAKE_SCHEDULES: IntakeSchedule[] = [
     commencement_date: '2026-11-02',
     status: 'Open',
     target_courses: [
-      'Cambridge IGCSE Mathematics (0580)',
-      'Pearson Edexcel Mathematics A (4MA1 Higher Tier)',
-      'Cambridge IGCSE Physics (0625) & Chemistry (0620)',
-      'Pearson Edexcel Computer Science (4CP0 with Python)',
-      'British Lower Secondary Foundation (Year 9 Checkpoint)',
-      'Cambridge IGCSE Biology (0610) & English First Lang (0500)',
-      'Cambridge ICE Group Award & Past Paper Clinic',
+      'Year 9 Lower Secondary Checkpoint — Complete Integrated Cohort (All Subjects Taught Together)',
+      'Year 10 IGCSE Integrated Academic Cohort (All Core & Elective Subjects Taught Together)',
+      'Year 11 IGCSE Final Candidate Series — Intensive All-Subject Exam Cohort (KE042 & EDX-98421)',
+      'Cambridge ICE & Pearson Edexcel Multi-Subject Diploma Track (Dual 9-1 & A*-G)',
     ],
-    early_bird_discount: '🇬🇧 Free Official Syllabus Packs & Complete Past-Paper Topical Kits',
+    early_bird_discount: '🇬🇧 Full All-Subject Integrated Curriculum & Official Cambridge/Edexcel Past-Paper Kits',
     installment_plan: 'Flexible Termly & Monthly Installments ($ USD & KES Paybill)',
     study_modes: [
-      '100% Online (Live Interactive & Recorded)',
+      '100% Online (Live Interactive & Recorded Cohorts)',
+      'All Subjects Taught Together (Unified Timetable)',
       'Cambridge Centre KE042 Exam Candidate Support',
       'Pearson Edexcel Centre EDX-98421 Support',
       'Weekend Executive Cohort & Evening Labs',
@@ -47,16 +45,16 @@ export const INITIAL_INTAKE_SCHEDULES: IntakeSchedule[] = [
     is_published: true,
     featured: true,
     created_at: '2026-09-10T10:00:00.000Z',
-    updated_at: '2026-09-15T09:00:00.000Z',
+    updated_at: '2026-09-16T00:00:00.000Z',
   },
   {
     id: 'intake-2027-01-igcse',
     title: 'January 2027 British Curriculum (Years 9, 10 & 11) Full Academic Year',
     academic_year: '2027',
     term_session: 'Term 1 / Annual British Academic Session',
-    headline: 'Accredited Cambridge KE042 & Edexcel EDX-98421 Admissions — May/June 2027 & Oct/Nov 2027 Series',
+    headline: 'Accredited Cambridge KE042 & Edexcel EDX-98421 — All Subjects Taught Together in Unified Cohorts',
     description:
-      'Premier full academic year enrolment for British curriculum students worldwide. Comprehensive Year 9 iLowerSecondary, Year 10 (IGCSE Core & Extended), and Year 11 Final Candidate Registration. Daily live interactive seminars, virtual STEM labs, and personalized mentor evaluations.',
+      'Premier full academic year enrolment for British curriculum students worldwide. We teach the complete curriculum together as a cohesive cohort for Year 9 (Foundation), Year 10 (IGCSE Year 1), and Year 11 (Candidate Series). All subjects — Mathematics, English Language, Physics, Chemistry, Biology, Computer Science, and Business — are taught together under one unified programme with daily live interactive seminars, virtual STEM labs, and personalized mentor evaluations.',
     poster_image_url:
       'https://images.unsplash.com/photo-1523240795612-9a054b0db644?auto=format&fit=crop&w=1200&q=80',
     application_deadline: '2027-01-15',
@@ -64,17 +62,16 @@ export const INITIAL_INTAKE_SCHEDULES: IntakeSchedule[] = [
     commencement_date: '2027-01-20',
     status: 'Open',
     target_courses: [
-      'Cambridge Lower Secondary Checkpoint (Year 9)',
-      'Cambridge IGCSE Mathematics (0580) & Edexcel (4MA1)',
-      'IGCSE Sciences: Physics (0625), Chemistry (0620), Biology (0610)',
-      'Pearson Edexcel Computer Science (4CP0) Python Onscreen',
-      'Cambridge Business Studies (0450) & Economics (0455)',
-      'French (0520) & German (0525) World Languages',
+      'Year 9 British Lower Secondary Full Academic Package (All Subjects Taught Together)',
+      'Year 10 Cambridge & Edexcel IGCSE Full Academic Package (All Subjects Taught Together)',
+      'Year 11 IGCSE Final Examination Candidate Cohort (All Subjects Taught Together & Center Exam Sitting)',
+      'Integrated British Curriculum Cohort — Daily Live Seminars & Virtual Practical Labs',
     ],
-    early_bird_discount: '⭐ 15% Academic Scholarship for Full-Year Tuition (Early Registration)',
+    early_bird_discount: '⭐ 15% Academic Scholarship for Full-Year Integrated Cohort Tuition (Early Registration)',
     installment_plan: 'Split across 3 Terms or 9 Monthly Installments',
     study_modes: [
-      '100% Online (Live & Recorded)',
+      '100% Online (Live Interactive & Recorded)',
+      'All Subjects Taught Together (Unified Cohort Timetable)',
       'Cambridge ICE Group Diploma Track',
       'Pearson Edexcel High Achiever Track',
       'All Daily Shifts (Morning, Afternoon & Evening)',
@@ -85,7 +82,7 @@ export const INITIAL_INTAKE_SCHEDULES: IntakeSchedule[] = [
     is_published: true,
     featured: true,
     created_at: '2026-09-12T08:00:00.000Z',
-    updated_at: '2026-09-15T09:00:00.000Z',
+    updated_at: '2026-09-16T00:00:00.000Z',
   },
   {
     id: 'intake-2026-10',

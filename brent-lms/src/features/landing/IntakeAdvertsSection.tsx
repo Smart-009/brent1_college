@@ -441,25 +441,28 @@ export function IntakeAdvertsSection() {
               </div>
               <div>
                 <div style={{ fontSize: '0.74rem', fontWeight: 900, color: '#0369a1', textTransform: 'uppercase', letterSpacing: '0.06em' }}>
-                  Accredited UK Exam Centre KE042 &amp; Pearson EDX-98421
+                  Accredited UK Exam Centre KE042 &amp; Pearson EDX-98421 &bull; Integrated Cohorts
                 </div>
                 <h3 style={{ margin: '2px 0 4px', fontSize: isMobile ? '1.15rem' : '1.35rem', fontWeight: 900, color: '#0f172a' }}>
-                  British International Curriculum Hub (Years 9, 10 &amp; 11)
+                  British International Curriculum &amp; IGCSE Hub (Years 9, 10 &amp; 11)
                 </h3>
                 <p style={{ margin: 0, fontSize: '0.84rem', color: '#334155', lineHeight: 1.5 }}>
-                  Master <strong>Cambridge IGCSE &amp; Pearson Edexcel</strong> on a dual 9-1 &amp; A*-G scale. Features weekly topical past paper clinics, virtual science practicals, coursework moderation, and official center candidate registration.
+                  <strong style={{ color: '#0369a1' }}>We do not teach separate subjects in IGCSE — we teach all subjects together.</strong> Students enrol into cohesive cohorts (Year 9 Checkpoint, Year 10 IGCSE, or Year 11 Exam Series) where Mathematics, Pure Sciences (Physics, Chemistry, Biology), English, Computer Science, and Humanities are seamlessly taught together under a unified daily timetable with official Cambridge (KE042) &amp; Edexcel (EDX-98421) exam center candidacy.
                 </p>
               </div>
             </div>
             <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
               <span style={{ background: '#ffffff', border: '1px solid #bae6fd', color: '#0369a1', fontSize: '0.74rem', fontWeight: 800, padding: '4px 10px', borderRadius: '999px' }}>
-                ✓ Year 9 Lower Secondary
+                ✓ All Subjects Taught Together
               </span>
               <span style={{ background: '#ffffff', border: '1px solid #bae6fd', color: '#0369a1', fontSize: '0.74rem', fontWeight: 800, padding: '4px 10px', borderRadius: '999px' }}>
-                ✓ Year 10 IGCSE Core &amp; Ext
+                ✓ Year 9 Lower Sec Checkpoint
               </span>
               <span style={{ background: '#ffffff', border: '1px solid #bae6fd', color: '#0369a1', fontSize: '0.74rem', fontWeight: 800, padding: '4px 10px', borderRadius: '999px' }}>
-                ✓ Year 11 Exam Intensive
+                ✓ Year 10 IGCSE Complete Cohort
+              </span>
+              <span style={{ background: '#ffffff', border: '1px solid #bae6fd', color: '#0369a1', fontSize: '0.74rem', fontWeight: 800, padding: '4px 10px', borderRadius: '999px' }}>
+                ✓ Year 11 Candidate Exam Series
               </span>
             </div>
           </div>
@@ -644,6 +647,30 @@ export function IntakeAdvertsSection() {
                       >
                         <span>🎁</span>
                         <span>{intake.early_bird_discount}</span>
+                      </div>
+                    )}
+
+                    {/* Integrated Cohort Banner for British Curriculum */}
+                    {intake.id.includes('igcse') && (
+                      <div
+                        style={{
+                          background: '#f0f9ff',
+                          border: '1px solid #bae6fd',
+                          borderRadius: '8px',
+                          padding: '0.45rem 0.65rem',
+                          marginBottom: '0.85rem',
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '6px',
+                          fontSize: '0.74rem',
+                          color: '#0369a1',
+                          fontWeight: 700,
+                        }}
+                      >
+                        <span>🇬🇧</span>
+                        <span>
+                          <strong>Integrated Cohort:</strong> All subjects taught together under a unified timetable
+                        </span>
                       </div>
                     )}
 
