@@ -53,8 +53,9 @@ function IntakeCountdown({ deadline }: { deadline: string }) {
     <div style={{ display: 'inline-flex', gap: '4px', alignItems: 'center', marginTop: '2px' }}>
       <span
         style={{
-          background: 'rgba(239, 68, 68, 0.25)',
-          color: '#fca5a5',
+          background: '#fee2e2',
+          border: '1px solid #fca5a5',
+          color: '#991b1b',
           padding: '2px 5px',
           borderRadius: '4px',
           fontWeight: 800,
@@ -64,11 +65,12 @@ function IntakeCountdown({ deadline }: { deadline: string }) {
       >
         {timeLeft.days}d
       </span>
-      <span style={{ color: '#94a3b8', fontSize: '0.68rem' }}>:</span>
+      <span style={{ color: '#b91c1c', fontSize: '0.68rem', fontWeight: 800 }}>:</span>
       <span
         style={{
-          background: 'rgba(239, 68, 68, 0.25)',
-          color: '#fca5a5',
+          background: '#fee2e2',
+          border: '1px solid #fca5a5',
+          color: '#991b1b',
           padding: '2px 5px',
           borderRadius: '4px',
           fontWeight: 800,
@@ -78,11 +80,12 @@ function IntakeCountdown({ deadline }: { deadline: string }) {
       >
         {String(timeLeft.hours).padStart(2, '0')}h
       </span>
-      <span style={{ color: '#94a3b8', fontSize: '0.68rem' }}>:</span>
+      <span style={{ color: '#b91c1c', fontSize: '0.68rem', fontWeight: 800 }}>:</span>
       <span
         style={{
-          background: 'rgba(239, 68, 68, 0.25)',
-          color: '#fca5a5',
+          background: '#fee2e2',
+          border: '1px solid #fca5a5',
+          color: '#991b1b',
           padding: '2px 5px',
           borderRadius: '4px',
           fontWeight: 800,
@@ -92,11 +95,12 @@ function IntakeCountdown({ deadline }: { deadline: string }) {
       >
         {String(timeLeft.minutes).padStart(2, '0')}m
       </span>
-      <span style={{ color: '#94a3b8', fontSize: '0.68rem' }}>:</span>
+      <span style={{ color: '#b91c1c', fontSize: '0.68rem', fontWeight: 800 }}>:</span>
       <span
         style={{
-          background: 'rgba(239, 68, 68, 0.25)',
-          color: '#fca5a5',
+          background: '#fee2e2',
+          border: '1px solid #fca5a5',
+          color: '#991b1b',
           padding: '2px 5px',
           borderRadius: '4px',
           fontWeight: 800,
@@ -178,15 +182,15 @@ export function IntakeAdvertsSection() {
       id="intakes-section"
       style={{
         padding: isMobile ? '3rem 1rem' : '4.5rem 1.5rem',
-        background: 'linear-gradient(180deg, #070b18 0%, #0c142b 50%, #070b18 100%)',
-        color: '#ffffff',
+        background: 'linear-gradient(180deg, #f8fafc 0%, #ffffff 50%, #f8fafc 100%)',
+        color: '#0f172a',
         position: 'relative',
         overflow: 'hidden',
-        borderTop: '1px solid rgba(59, 130, 246, 0.2)',
-        borderBottom: '1px solid rgba(59, 130, 246, 0.2)',
+        borderTop: '1px solid #e2e8f0',
+        borderBottom: '1px solid #e2e8f0',
       }}
     >
-      {/* Background glow effects */}
+      {/* Ambient decorative glow */}
       <div
         style={{
           position: 'absolute',
@@ -194,7 +198,7 @@ export function IntakeAdvertsSection() {
           left: '20%',
           width: '500px',
           height: '500px',
-          background: 'radial-gradient(circle, rgba(37, 99, 235, 0.15) 0%, transparent 70%)',
+          background: 'radial-gradient(circle, rgba(37, 99, 235, 0.06) 0%, transparent 70%)',
           pointerEvents: 'none',
         }}
       />
@@ -205,7 +209,7 @@ export function IntakeAdvertsSection() {
           right: '15%',
           width: '450px',
           height: '450px',
-          background: 'radial-gradient(circle, rgba(212, 175, 55, 0.12) 0%, transparent 70%)',
+          background: 'radial-gradient(circle, rgba(212, 175, 55, 0.08) 0%, transparent 70%)',
           pointerEvents: 'none',
         }}
       />
@@ -215,8 +219,8 @@ export function IntakeAdvertsSection() {
         <div
           style={{
             marginBottom: '2rem',
-            background: 'linear-gradient(90deg, rgba(220, 38, 38, 0.2), rgba(217, 119, 6, 0.25), rgba(37, 99, 235, 0.2))',
-            border: '1px solid rgba(245, 158, 11, 0.4)',
+            background: 'linear-gradient(90deg, #eff6ff 0%, #fffbeb 50%, #ecfdf5 100%)',
+            border: '1.5px solid #d4af37',
             borderRadius: '16px',
             padding: isMobile ? '0.75rem 1rem' : '0.85rem 1.5rem',
             display: 'flex',
@@ -224,7 +228,7 @@ export function IntakeAdvertsSection() {
             justifyContent: 'space-between',
             gap: '1rem',
             flexWrap: 'wrap',
-            boxShadow: '0 8px 24px rgba(0,0,0,0.3)',
+            boxShadow: '0 4px 16px rgba(0,0,0,0.05)',
           }}
         >
           <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
@@ -245,17 +249,17 @@ export function IntakeAdvertsSection() {
               >
                 Admissions Advert
               </span>
-              <strong style={{ fontSize: isMobile ? '0.82rem' : '0.9rem', color: '#fef08a' }}>
+              <strong style={{ fontSize: isMobile ? '0.82rem' : '0.9rem', color: '#1e3a8a' }}>
                 Upcoming Intakes Enrolling Now:
               </strong>{' '}
-              <span style={{ fontSize: isMobile ? '0.78rem' : '0.86rem', color: '#e2e8f0' }}>
-                <strong>Oct 15, 2026</strong> (Career Fast-Track) • <strong>Nov 02, 2026</strong> (Cambridge KE042 & Pearson Edexcel Years 9–11) • <strong>Jan 20, 2027</strong> (Global New Year)
+              <span style={{ fontSize: isMobile ? '0.78rem' : '0.86rem', color: '#334155' }}>
+                <strong>Nov 02, 2026</strong> (Cambridge KE042 &amp; Pearson Edexcel Years 9–11) • <strong>Oct 15, 2026</strong> (Career Fast-Track) • <strong>Jan 20, 2027</strong> (Global New Year)
               </span>
             </div>
           </div>
 
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <span style={{ fontSize: '0.78rem', color: '#86efac', fontWeight: 800 }}>
+            <span style={{ fontSize: '0.78rem', color: '#15803d', fontWeight: 800 }}>
               ⚡ 15%–20% Early Bird Scholarship
             </span>
             <a
@@ -265,14 +269,15 @@ export function IntakeAdvertsSection() {
               style={{
                 background: '#16a34a',
                 color: '#ffffff',
-                padding: '5px 12px',
+                padding: '6px 14px',
                 borderRadius: '8px',
-                fontSize: '0.74rem',
+                fontSize: '0.76rem',
                 fontWeight: 800,
                 textDecoration: 'none',
                 display: 'inline-flex',
                 alignItems: 'center',
                 gap: '4px',
+                boxShadow: '0 2px 6px rgba(22, 163, 74, 0.3)',
               }}
             >
               <span>💬</span> Apply Now
@@ -287,9 +292,9 @@ export function IntakeAdvertsSection() {
               display: 'inline-flex',
               alignItems: 'center',
               gap: '8px',
-              background: 'rgba(59, 130, 246, 0.15)',
-              border: '1px solid rgba(59, 130, 246, 0.4)',
-              color: '#93c5fd',
+              background: '#eff6ff',
+              border: '1px solid #bfdbfe',
+              color: '#1d4ed8',
               padding: '6px 16px',
               borderRadius: '999px',
               fontSize: isMobile ? '0.75rem' : '0.82rem',
@@ -300,27 +305,27 @@ export function IntakeAdvertsSection() {
             }}
           >
             <span>🗓️</span>
-            <span>Official Academic Intakes & Enrollments Hub</span>
+            <span>Official Academic Intakes &amp; Enrollments Hub</span>
           </div>
 
           <h2
             style={{
               fontSize: isMobile ? '1.75rem' : 'clamp(1.8rem, 4vw, 2.75rem)',
               fontWeight: 900,
-              color: '#ffffff',
+              color: '#0f172a',
               margin: '0 0 1rem',
               lineHeight: 1.2,
               letterSpacing: '-0.02em',
             }}
           >
-            Explore Next <span style={{ color: '#d4af37' }}>Admissions & Intake Adverts</span>
+            Explore Next <span style={{ color: '#b45309' }}>Admissions &amp; Intake Adverts</span>
           </h2>
 
           <p
             style={{
-              fontSize: isMobile ? '0.9rem' : '1rem',
-              color: '#94a3b8',
-              maxWidth: '720px',
+              fontSize: isMobile ? '0.9rem' : '1.02rem',
+              color: '#475569',
+              maxWidth: '740px',
               margin: '0 auto 1.75rem',
               lineHeight: 1.6,
             }}
@@ -335,22 +340,23 @@ export function IntakeAdvertsSection() {
               flexWrap: 'wrap',
               gap: '8px',
               justifyContent: 'center',
-              background: 'rgba(15, 23, 42, 0.7)',
-              border: '1px solid rgba(255, 255, 255, 0.1)',
+              background: '#ffffff',
+              border: '1.5px solid #cbd5e1',
               padding: '6px',
               borderRadius: '999px',
+              boxShadow: '0 4px 12px rgba(0,0,0,0.04)',
             }}
           >
             <button
               type="button"
               onClick={() => setActiveFilter('all')}
               style={{
-                background: activeFilter === 'all' ? 'linear-gradient(135deg, #2563eb, #1d4ed8)' : 'transparent',
-                color: activeFilter === 'all' ? '#ffffff' : '#94a3b8',
+                background: activeFilter === 'all' ? 'linear-gradient(135deg, #1e3a8a, #2563eb)' : 'transparent',
+                color: activeFilter === 'all' ? '#ffffff' : '#475569',
                 border: 'none',
-                padding: '6px 16px',
+                padding: '7px 18px',
                 borderRadius: '999px',
-                fontSize: '0.8rem',
+                fontSize: '0.82rem',
                 fontWeight: 800,
                 cursor: 'pointer',
                 transition: 'all 0.2s ease',
@@ -360,31 +366,14 @@ export function IntakeAdvertsSection() {
             </button>
             <button
               type="button"
-              onClick={() => setActiveFilter('career')}
-              style={{
-                background: activeFilter === 'career' ? 'linear-gradient(135deg, #ea580c, #c2410c)' : 'transparent',
-                color: activeFilter === 'career' ? '#ffffff' : '#94a3b8',
-                border: 'none',
-                padding: '6px 16px',
-                borderRadius: '999px',
-                fontSize: '0.8rem',
-                fontWeight: 800,
-                cursor: 'pointer',
-                transition: 'all 0.2s ease',
-              }}
-            >
-              🔥 October 2026 Fast-Track
-            </button>
-            <button
-              type="button"
               onClick={() => setActiveFilter('british')}
               style={{
                 background: activeFilter === 'british' ? 'linear-gradient(135deg, #0284c7, #0369a1)' : 'transparent',
-                color: activeFilter === 'british' ? '#ffffff' : '#94a3b8',
-                border: 'none',
-                padding: '6px 16px',
+                color: activeFilter === 'british' ? '#ffffff' : '#0369a1',
+                border: activeFilter === 'british' ? 'none' : '1px solid #bae6fd',
+                padding: '7px 18px',
                 borderRadius: '999px',
-                fontSize: '0.8rem',
+                fontSize: '0.82rem',
                 fontWeight: 800,
                 cursor: 'pointer',
                 transition: 'all 0.2s ease',
@@ -394,14 +383,31 @@ export function IntakeAdvertsSection() {
             </button>
             <button
               type="button"
+              onClick={() => setActiveFilter('career')}
+              style={{
+                background: activeFilter === 'career' ? 'linear-gradient(135deg, #ea580c, #c2410c)' : 'transparent',
+                color: activeFilter === 'career' ? '#ffffff' : '#475569',
+                border: 'none',
+                padding: '7px 18px',
+                borderRadius: '999px',
+                fontSize: '0.82rem',
+                fontWeight: 800,
+                cursor: 'pointer',
+                transition: 'all 0.2s ease',
+              }}
+            >
+              🔥 October 2026 Fast-Track
+            </button>
+            <button
+              type="button"
               onClick={() => setActiveFilter('january')}
               style={{
                 background: activeFilter === 'january' ? 'linear-gradient(135deg, #d97706, #b45309)' : 'transparent',
-                color: activeFilter === 'january' ? '#ffffff' : '#94a3b8',
+                color: activeFilter === 'january' ? '#ffffff' : '#475569',
                 border: 'none',
-                padding: '6px 16px',
+                padding: '7px 18px',
                 borderRadius: '999px',
-                fontSize: '0.8rem',
+                fontSize: '0.82rem',
                 fontWeight: 800,
                 cursor: 'pointer',
                 transition: 'all 0.2s ease',
@@ -411,6 +417,53 @@ export function IntakeAdvertsSection() {
             </button>
           </div>
         </div>
+
+        {/* Dedicated British International Curriculum & IGCSE Banner */}
+        {activeFilter === 'british' && (
+          <div
+            style={{
+              marginBottom: '2rem',
+              background: 'linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%)',
+              border: '2px solid #38bdf8',
+              borderRadius: '16px',
+              padding: isMobile ? '1.25rem 1rem' : '1.35rem 1.75rem',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              gap: '1.25rem',
+              flexWrap: 'wrap',
+              boxShadow: '0 8px 24px rgba(2, 132, 199, 0.1)',
+            }}
+          >
+            <div style={{ display: 'flex', alignItems: 'center', gap: '1.1rem', flex: 1, minWidth: '280px' }}>
+              <div style={{ fontSize: '2.5rem', background: '#ffffff', width: '56px', height: '56px', borderRadius: '14px', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 4px 12px rgba(2, 132, 199, 0.15)', flexShrink: 0 }}>
+                🇬🇧
+              </div>
+              <div>
+                <div style={{ fontSize: '0.74rem', fontWeight: 900, color: '#0369a1', textTransform: 'uppercase', letterSpacing: '0.06em' }}>
+                  Accredited UK Exam Centre KE042 &amp; Pearson EDX-98421
+                </div>
+                <h3 style={{ margin: '2px 0 4px', fontSize: isMobile ? '1.15rem' : '1.35rem', fontWeight: 900, color: '#0f172a' }}>
+                  British International Curriculum Hub (Years 9, 10 &amp; 11)
+                </h3>
+                <p style={{ margin: 0, fontSize: '0.84rem', color: '#334155', lineHeight: 1.5 }}>
+                  Master <strong>Cambridge IGCSE &amp; Pearson Edexcel</strong> on a dual 9-1 &amp; A*-G scale. Features weekly topical past paper clinics, virtual science practicals, coursework moderation, and official center candidate registration.
+                </p>
+              </div>
+            </div>
+            <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
+              <span style={{ background: '#ffffff', border: '1px solid #bae6fd', color: '#0369a1', fontSize: '0.74rem', fontWeight: 800, padding: '4px 10px', borderRadius: '999px' }}>
+                ✓ Year 9 Lower Secondary
+              </span>
+              <span style={{ background: '#ffffff', border: '1px solid #bae6fd', color: '#0369a1', fontSize: '0.74rem', fontWeight: 800, padding: '4px 10px', borderRadius: '999px' }}>
+                ✓ Year 10 IGCSE Core &amp; Ext
+              </span>
+              <span style={{ background: '#ffffff', border: '1px solid #bae6fd', color: '#0369a1', fontSize: '0.74rem', fontWeight: 800, padding: '4px 10px', borderRadius: '999px' }}>
+                ✓ Year 11 Exam Intensive
+              </span>
+            </div>
+          </div>
+        )}
 
         {/* Intakes Cards Grid */}
         <div
@@ -431,19 +484,19 @@ export function IntakeAdvertsSection() {
               <div
                 key={intake.id}
                 style={{
-                  background: 'linear-gradient(145deg, rgba(15, 23, 42, 0.95), rgba(9, 14, 28, 0.95))',
+                  background: '#ffffff',
                   border: isFillingFast
                     ? '2px solid #f59e0b'
                     : isBritishCurriculum
-                    ? '2px solid #38bdf8'
-                    : '1px solid rgba(59, 130, 246, 0.3)',
+                    ? '2px solid #0284c7'
+                    : '1.5px solid #e2e8f0',
                   borderRadius: '20px',
                   overflow: 'hidden',
                   display: 'flex',
                   flexDirection: 'column',
                   boxShadow: isBritishCurriculum
-                    ? '0 15px 35px rgba(56, 189, 248, 0.15)'
-                    : '0 15px 35px rgba(0, 0, 0, 0.4)',
+                    ? '0 12px 35px rgba(2, 132, 199, 0.12)'
+                    : '0 10px 30px rgba(15, 23, 42, 0.08)',
                   transition: 'transform 0.2s ease, box-shadow 0.2s ease',
                   position: 'relative',
                 }}
@@ -477,7 +530,7 @@ export function IntakeAdvertsSection() {
                       position: 'absolute',
                       inset: 0,
                       background:
-                        'linear-gradient(to top, rgba(15, 23, 42, 0.98) 0%, rgba(15, 23, 42, 0.35) 60%, transparent 100%)',
+                        'linear-gradient(to top, rgba(15, 23, 42, 0.95) 0%, rgba(15, 23, 42, 0.3) 60%, transparent 100%)',
                     }}
                   />
 
@@ -526,7 +579,7 @@ export function IntakeAdvertsSection() {
                     {isBritishCurriculum && (
                       <span
                         style={{
-                          background: 'rgba(2, 132, 199, 0.85)',
+                          background: '#0284c7',
                           color: '#ffffff',
                           padding: '4px 8px',
                           borderRadius: '999px',
@@ -535,7 +588,7 @@ export function IntakeAdvertsSection() {
                           letterSpacing: '0.04em',
                         }}
                       >
-                        🇬🇧 Cambridge KE042 & Pearson EDX
+                        🇬🇧 Cambridge KE042 &amp; Pearson EDX
                       </span>
                     )}
                   </div>
@@ -545,6 +598,7 @@ export function IntakeAdvertsSection() {
                 <div
                   style={{
                     padding: '1.5rem',
+                    background: '#ffffff',
                     display: 'flex',
                     flexDirection: 'column',
                     flex: 1,
@@ -555,19 +609,19 @@ export function IntakeAdvertsSection() {
                   <div>
                     <h3
                       style={{
-                        fontSize: '1.3rem',
+                        fontSize: '1.25rem',
                         fontWeight: 900,
-                        color: '#ffffff',
+                        color: '#0f172a',
                         margin: '0 0 0.4rem',
                         lineHeight: 1.3,
                       }}
                     >
                       {intake.title}
                     </h3>
-                    <div style={{ fontSize: '0.88rem', color: '#60a5fa', fontWeight: 700, marginBottom: '0.75rem' }}>
+                    <div style={{ fontSize: '0.88rem', color: isBritishCurriculum ? '#0284c7' : '#1d4ed8', fontWeight: 700, marginBottom: '0.75rem' }}>
                       {intake.headline}
                     </div>
-                    <p style={{ fontSize: '0.85rem', color: '#94a3b8', lineHeight: 1.5, margin: '0 0 1rem' }}>
+                    <p style={{ fontSize: '0.86rem', color: '#475569', lineHeight: 1.55, margin: '0 0 1rem' }}>
                       {intake.description}
                     </p>
 
@@ -575,11 +629,11 @@ export function IntakeAdvertsSection() {
                     {intake.early_bird_discount && (
                       <div
                         style={{
-                          background: 'rgba(217, 119, 6, 0.15)',
-                          border: '1px solid rgba(245, 158, 11, 0.4)',
+                          background: '#fef3c7',
+                          border: '1px solid #fde68a',
                           borderRadius: '10px',
                           padding: '0.65rem 0.85rem',
-                          color: '#fef08a',
+                          color: '#92400e',
                           fontSize: '0.8rem',
                           fontWeight: 700,
                           marginBottom: '1rem',
@@ -604,17 +658,17 @@ export function IntakeAdvertsSection() {
                     >
                       <div
                         style={{
-                          background: 'rgba(220, 38, 38, 0.12)',
-                          border: '1px solid rgba(220, 38, 38, 0.35)',
+                          background: '#fef2f2',
+                          border: '1px solid #fecaca',
                           borderRadius: '10px',
-                          padding: '0.6rem 0.75rem',
+                          padding: '0.65rem 0.75rem',
                         }}
                       >
                         <div
                           style={{
                             fontSize: '0.68rem',
                             fontWeight: 800,
-                            color: '#fca5a5',
+                            color: '#dc2626',
                             textTransform: 'uppercase',
                             display: 'flex',
                             justifyContent: 'space-between',
@@ -623,7 +677,7 @@ export function IntakeAdvertsSection() {
                         >
                           <span>⏰ App Deadline</span>
                         </div>
-                        <div style={{ fontSize: '0.88rem', fontWeight: 900, color: '#ffffff', marginTop: '2px' }}>
+                        <div style={{ fontSize: '0.88rem', fontWeight: 900, color: '#991b1b', marginTop: '2px' }}>
                           {formatDate(intake.application_deadline)}
                         </div>
                         <IntakeCountdown deadline={intake.application_deadline} />
@@ -631,26 +685,26 @@ export function IntakeAdvertsSection() {
 
                       <div
                         style={{
-                          background: 'rgba(22, 163, 74, 0.12)',
-                          border: '1px solid rgba(22, 163, 74, 0.35)',
+                          background: '#ecfdf5',
+                          border: '1px solid #a7f3d0',
                           borderRadius: '10px',
-                          padding: '0.6rem 0.75rem',
+                          padding: '0.65rem 0.75rem',
                         }}
                       >
                         <div
                           style={{
                             fontSize: '0.68rem',
                             fontWeight: 800,
-                            color: '#86efac',
+                            color: '#15803d',
                             textTransform: 'uppercase',
                           }}
                         >
                           🚀 Classes Start
                         </div>
-                        <div style={{ fontSize: '0.88rem', fontWeight: 900, color: '#ffffff', marginTop: '2px' }}>
+                        <div style={{ fontSize: '0.88rem', fontWeight: 900, color: '#166534', marginTop: '2px' }}>
                           {formatDate(intake.commencement_date)}
                         </div>
-                        <div style={{ fontSize: '0.72rem', color: '#a7f3d0', fontWeight: 700, marginTop: '4px' }}>
+                        <div style={{ fontSize: '0.72rem', color: '#047857', fontWeight: 700, marginTop: '4px' }}>
                           Orientation: {intake.orientation_date ? formatDate(intake.orientation_date) : 'Day Prior'}
                         </div>
                       </div>
@@ -674,10 +728,10 @@ export function IntakeAdvertsSection() {
                           <span
                             key={idx}
                             style={{
-                              background: 'rgba(255, 255, 255, 0.06)',
-                              border: '1px solid rgba(255, 255, 255, 0.12)',
-                              color: '#cbd5e1',
-                              padding: '2px 8px',
+                              background: '#f1f5f9',
+                              border: '1px solid #e2e8f0',
+                              color: '#1e293b',
+                              padding: '3px 8px',
                               borderRadius: '6px',
                               fontSize: '0.72rem',
                               fontWeight: 600,
@@ -690,7 +744,7 @@ export function IntakeAdvertsSection() {
                           <span
                             style={{
                               fontSize: '0.72rem',
-                              color: '#93c5fd',
+                              color: '#0284c7',
                               fontWeight: 700,
                               padding: '2px 4px',
                             }}
@@ -704,23 +758,23 @@ export function IntakeAdvertsSection() {
                     {/* Flexible Shifts & Installments Ribbon */}
                     <div
                       style={{
-                        background: 'rgba(255, 255, 255, 0.03)',
+                        background: '#f8fafc',
                         borderRadius: '8px',
-                        padding: '0.5rem 0.75rem',
+                        padding: '0.55rem 0.75rem',
                         fontSize: '0.75rem',
-                        color: '#94a3b8',
+                        color: '#334155',
                         display: 'flex',
                         flexDirection: 'column',
                         gap: '4px',
-                        border: '1px solid rgba(255, 255, 255, 0.06)',
+                        border: '1px solid #e2e8f0',
                       }}
                     >
                       <div>
-                        <span style={{ color: '#d4af37', fontWeight: 800 }}>⚡ Flexibility:</span>{' '}
+                        <span style={{ color: '#b45309', fontWeight: 800 }}>⚡ Flexibility:</span>{' '}
                         {intake.installment_plan || 'Flexible 2 to 3 Monthly Installments'}
                       </div>
                       <div>
-                        <span style={{ color: '#38bdf8', fontWeight: 800 }}>🕒 Shifts:</span> 6 Daily Shifts (6:00 AM – 10:00 PM) + Weekend Cohorts
+                        <span style={{ color: '#0284c7', fontWeight: 800 }}>🕒 Shifts:</span> 6 Daily Shifts (6:00 AM – 10:00 PM) + Weekend Cohorts
                       </div>
                     </div>
                   </div>
@@ -732,7 +786,7 @@ export function IntakeAdvertsSection() {
                       gridTemplateColumns: 'repeat(2, minmax(0, 1fr))',
                       gap: '0.5rem',
                       paddingTop: '0.85rem',
-                      borderTop: '1px solid rgba(255, 255, 255, 0.1)',
+                      borderTop: '1px solid #e2e8f0',
                     }}
                   >
                     <a

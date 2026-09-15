@@ -117,12 +117,12 @@ export function FloatingIntakesWidget() {
             bottom: '68px',
             left: '0',
             width: 'min(360px, calc(100vw - 36px))',
-            background: 'linear-gradient(145deg, #090e1f, #0d162f)',
-            border: '1.5px solid rgba(212, 175, 55, 0.45)',
+            background: '#ffffff',
+            border: '2px solid #d4af37',
             borderRadius: '20px',
             padding: '1.25rem',
-            boxShadow: '0 20px 50px rgba(0, 0, 0, 0.7), 0 0 25px rgba(212, 175, 55, 0.2)',
-            color: '#ffffff',
+            boxShadow: '0 20px 50px rgba(15, 23, 42, 0.18), 0 0 25px rgba(212, 175, 55, 0.2)',
+            color: '#0f172a',
             animation: 'fadeIn 0.25s ease-out',
           }}
         >
@@ -130,7 +130,7 @@ export function FloatingIntakesWidget() {
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.75rem' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
               <span style={{ fontSize: '1.1rem' }}>🗓️</span>
-              <span style={{ fontSize: '0.75rem', fontWeight: 900, color: '#fef08a', textTransform: 'uppercase', letterSpacing: '0.06em' }}>
+              <span style={{ fontSize: '0.75rem', fontWeight: 900, color: '#b45309', textTransform: 'uppercase', letterSpacing: '0.06em' }}>
                 {currentIntake.status === 'Filling Fast' ? '🔥 Enrolling Now' : '✨ Upcoming Intake'}
               </span>
             </div>
@@ -141,12 +141,12 @@ export function FloatingIntakesWidget() {
                   type="button"
                   onClick={() => setActiveIntakeIndex((prev) => (prev + 1) % intakes.length)}
                   style={{
-                    background: 'rgba(255,255,255,0.08)',
-                    border: '1px solid rgba(255,255,255,0.2)',
-                    color: '#93c5fd',
+                    background: '#eff6ff',
+                    border: '1px solid #bfdbfe',
+                    color: '#1d4ed8',
                     fontSize: '0.7rem',
                     fontWeight: 800,
-                    padding: '2px 8px',
+                    padding: '3px 8px',
                     borderRadius: '6px',
                     cursor: 'pointer',
                   }}
@@ -159,13 +159,18 @@ export function FloatingIntakesWidget() {
                 type="button"
                 onClick={() => setIsOpen(false)}
                 style={{
-                  background: 'none',
-                  border: 'none',
-                  color: '#94a3b8',
-                  fontSize: '1.1rem',
+                  background: '#f1f5f9',
+                  border: '1px solid #e2e8f0',
+                  color: '#64748b',
+                  fontSize: '1rem',
                   cursor: 'pointer',
                   fontWeight: 900,
-                  padding: '2px 6px',
+                  width: '28px',
+                  height: '28px',
+                  borderRadius: '50%',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
                 }}
                 aria-label="Close Floating Intake Modal"
               >
@@ -175,43 +180,43 @@ export function FloatingIntakesWidget() {
           </div>
 
           {/* Intake Title & Term */}
-          <h3 style={{ fontSize: '1.05rem', fontWeight: 900, color: '#ffffff', margin: '0 0 0.35rem', lineHeight: 1.25 }}>
+          <h3 style={{ fontSize: '1.05rem', fontWeight: 900, color: '#0f172a', margin: '0 0 0.35rem', lineHeight: 1.25 }}>
             {currentIntake.title}
           </h3>
-          <div style={{ fontSize: '0.78rem', color: '#60a5fa', fontWeight: 700, marginBottom: '0.75rem' }}>
-            {currentIntake.term_session} • 100% Online Batches
+          <div style={{ fontSize: '0.78rem', color: '#0284c7', fontWeight: 700, marginBottom: '0.75rem' }}>
+            {currentIntake.term_session} • 100% Online Live Classes
           </div>
 
           {/* Countdown Clock Box */}
           <div
             style={{
-              background: 'rgba(15, 23, 42, 0.8)',
-              border: '1px solid rgba(59, 130, 246, 0.3)',
+              background: '#f8fafc',
+              border: '1px solid #e2e8f0',
               borderRadius: '12px',
               padding: '0.65rem 0.5rem',
               marginBottom: '0.85rem',
               textAlign: 'center',
             }}
           >
-            <div style={{ fontSize: '0.68rem', fontWeight: 800, color: '#fca5a5', textTransform: 'uppercase', marginBottom: '4px' }}>
+            <div style={{ fontSize: '0.68rem', fontWeight: 800, color: '#dc2626', textTransform: 'uppercase', marginBottom: '4px' }}>
               ⏰ Application Deadline Countdown:
             </div>
             <div style={{ display: 'flex', justifyContent: 'center', gap: '8px' }}>
-              <div style={{ background: '#1e293b', padding: '4px 6px', borderRadius: '6px', minWidth: '40px' }}>
-                <span style={{ fontSize: '0.95rem', fontWeight: 900, color: '#ffffff' }}>{timeLeft.days}</span>
-                <div style={{ fontSize: '0.58rem', color: '#94a3b8', textTransform: 'uppercase' }}>Days</div>
+              <div style={{ background: '#ffffff', border: '1px solid #cbd5e1', padding: '4px 6px', borderRadius: '6px', minWidth: '40px' }}>
+                <span style={{ fontSize: '0.95rem', fontWeight: 900, color: '#0f172a' }}>{timeLeft.days}</span>
+                <div style={{ fontSize: '0.58rem', color: '#64748b', textTransform: 'uppercase' }}>Days</div>
               </div>
-              <div style={{ background: '#1e293b', padding: '4px 6px', borderRadius: '6px', minWidth: '40px' }}>
-                <span style={{ fontSize: '0.95rem', fontWeight: 900, color: '#ffffff' }}>{timeLeft.hours}</span>
-                <div style={{ fontSize: '0.58rem', color: '#94a3b8', textTransform: 'uppercase' }}>Hours</div>
+              <div style={{ background: '#ffffff', border: '1px solid #cbd5e1', padding: '4px 6px', borderRadius: '6px', minWidth: '40px' }}>
+                <span style={{ fontSize: '0.95rem', fontWeight: 900, color: '#0f172a' }}>{timeLeft.hours}</span>
+                <div style={{ fontSize: '0.58rem', color: '#64748b', textTransform: 'uppercase' }}>Hours</div>
               </div>
-              <div style={{ background: '#1e293b', padding: '4px 6px', borderRadius: '6px', minWidth: '40px' }}>
-                <span style={{ fontSize: '0.95rem', fontWeight: 900, color: '#ffffff' }}>{timeLeft.minutes}</span>
-                <div style={{ fontSize: '0.58rem', color: '#94a3b8', textTransform: 'uppercase' }}>Mins</div>
+              <div style={{ background: '#ffffff', border: '1px solid #cbd5e1', padding: '4px 6px', borderRadius: '6px', minWidth: '40px' }}>
+                <span style={{ fontSize: '0.95rem', fontWeight: 900, color: '#0f172a' }}>{timeLeft.minutes}</span>
+                <div style={{ fontSize: '0.58rem', color: '#64748b', textTransform: 'uppercase' }}>Mins</div>
               </div>
-              <div style={{ background: '#1e293b', padding: '4px 6px', borderRadius: '6px', minWidth: '40px' }}>
-                <span style={{ fontSize: '0.95rem', fontWeight: 900, color: '#38bdf8' }}>{timeLeft.seconds}</span>
-                <div style={{ fontSize: '0.58rem', color: '#94a3b8', textTransform: 'uppercase' }}>Secs</div>
+              <div style={{ background: '#ffffff', border: '1px solid #cbd5e1', padding: '4px 6px', borderRadius: '6px', minWidth: '40px' }}>
+                <span style={{ fontSize: '0.95rem', fontWeight: 900, color: '#2563eb' }}>{timeLeft.seconds}</span>
+                <div style={{ fontSize: '0.58rem', color: '#64748b', textTransform: 'uppercase' }}>Secs</div>
               </div>
             </div>
           </div>
@@ -220,12 +225,12 @@ export function FloatingIntakesWidget() {
           {currentIntake.early_bird_discount && (
             <div
               style={{
-                background: 'rgba(245, 158, 11, 0.15)',
-                border: '1px solid rgba(245, 158, 11, 0.35)',
+                background: '#fef3c7',
+                border: '1px solid #fde68a',
                 borderRadius: '8px',
                 padding: '0.45rem 0.65rem',
                 fontSize: '0.74rem',
-                color: '#fef08a',
+                color: '#92400e',
                 fontWeight: 700,
                 marginBottom: '0.85rem',
                 display: 'flex',
@@ -240,13 +245,13 @@ export function FloatingIntakesWidget() {
 
           {/* Key Dates Summary */}
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.5rem', fontSize: '0.75rem', marginBottom: '0.85rem' }}>
-            <div style={{ background: 'rgba(255, 255, 255, 0.04)', padding: '0.45rem', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.08)' }}>
-              <div style={{ color: '#94a3b8', fontSize: '0.65rem' }}>DEADLINE:</div>
-              <div style={{ fontWeight: 800, color: '#ffffff' }}>{formatDate(currentIntake.application_deadline)}</div>
+            <div style={{ background: '#fef2f2', padding: '0.45rem', borderRadius: '8px', border: '1px solid #fecaca' }}>
+              <div style={{ color: '#b91c1c', fontSize: '0.65rem', fontWeight: 700 }}>DEADLINE:</div>
+              <div style={{ fontWeight: 800, color: '#991b1b' }}>{formatDate(currentIntake.application_deadline)}</div>
             </div>
-            <div style={{ background: 'rgba(255, 255, 255, 0.04)', padding: '0.45rem', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.08)' }}>
-              <div style={{ color: '#94a3b8', fontSize: '0.65rem' }}>CLASSES START:</div>
-              <div style={{ fontWeight: 800, color: '#86efac' }}>{formatDate(currentIntake.commencement_date)}</div>
+            <div style={{ background: '#ecfdf5', padding: '0.45rem', borderRadius: '8px', border: '1px solid #a7f3d0' }}>
+              <div style={{ color: '#166534', fontSize: '0.65rem', fontWeight: 700 }}>CLASSES START:</div>
+              <div style={{ fontWeight: 800, color: '#15803d' }}>{formatDate(currentIntake.commencement_date)}</div>
             </div>
           </div>
 
@@ -337,25 +342,25 @@ export function FloatingIntakesWidget() {
           style={{
             background: isOpen
               ? 'linear-gradient(135deg, #d4af37 0%, #b45309 100%)'
-              : 'linear-gradient(135deg, #090e1f 0%, #1e3a8a 100%)',
-            color: '#ffffff',
+              : '#ffffff',
+            color: isOpen ? '#ffffff' : '#0f172a',
             border: '2px solid #d4af37',
             borderRadius: '999px',
-            padding: '0.6rem 1.1rem',
+            padding: '0.6rem 1.15rem',
             fontSize: '0.84rem',
             fontWeight: 800,
             cursor: 'pointer',
             display: 'inline-flex',
             alignItems: 'center',
             gap: '8px',
-            boxShadow: '0 8px 25px rgba(0, 0, 0, 0.5), 0 0 15px rgba(212, 175, 55, 0.35)',
+            boxShadow: '0 8px 25px rgba(0, 0, 0, 0.12), 0 0 15px rgba(212, 175, 55, 0.25)',
             transition: 'all 0.25s ease',
           }}
           aria-expanded={isOpen}
           aria-label="Toggle Upcoming Intakes"
         >
           <span style={{ fontSize: '1.1rem', animation: 'bounce 2s infinite' }}>🗓️</span>
-          <span style={{ color: '#fef08a' }}>
+          <span style={{ color: isOpen ? '#ffffff' : '#0f172a', fontWeight: 800 }}>
             {isOpen ? 'Close Intakes' : `Intakes: ${currentIntake.term_session}`}
           </span>
           <span
@@ -379,18 +384,19 @@ export function FloatingIntakesWidget() {
           type="button"
           onClick={() => setIsDismissed(true)}
           style={{
-            background: 'rgba(15, 23, 42, 0.8)',
-            border: '1px solid rgba(255, 255, 255, 0.2)',
-            color: '#94a3b8',
+            background: '#ffffff',
+            border: '1.5px solid #cbd5e1',
+            color: '#64748b',
             borderRadius: '50%',
-            width: '24px',
-            height: '24px',
-            fontSize: '0.7rem',
+            width: '26px',
+            height: '26px',
+            fontSize: '0.75rem',
             fontWeight: 900,
             cursor: 'pointer',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
+            boxShadow: '0 2px 6px rgba(0,0,0,0.08)',
           }}
           title="Dismiss Intakes Badge"
           aria-label="Dismiss Intakes Badge"

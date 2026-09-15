@@ -7,9 +7,86 @@ import { supabase } from './supabase'
 import { INSTITUTION_CONFIG } from '@/config/institution'
 import type { IntakeSchedule } from '@/types/intake'
 
-const INTAKE_STORAGE_KEY = 'eclat_intake_schedules_store_v2'
+const INTAKE_STORAGE_KEY = 'eclat_intake_schedules_store_v3'
 
 export const INITIAL_INTAKE_SCHEDULES: IntakeSchedule[] = [
+  {
+    id: 'intake-2026-11-igcse',
+    title: 'November 2026 British International Curriculum Intake',
+    academic_year: '2026/2027',
+    term_session: 'November 2026 & May/June 2027 Series',
+    headline: 'Cambridge Centre KE042 & Pearson Edexcel EDX-98421 — Years 9, 10 & 11 Admissions',
+    description:
+      'Accredited British curriculum admissions across Year 9 Foundation (Lower Secondary), Year 10 IGCSE Core & Extended, and Year 11 Exam Intensive. Rigorous dual 9-1 & A*-G mastery with live interactive classrooms, weekly past paper clinics, and official center candidate registration.',
+    poster_image_url:
+      'https://images.unsplash.com/photo-1427504494785-3a9ca7044f45?auto=format&fit=crop&w=1200&q=80',
+    application_deadline: '2026-10-28',
+    orientation_date: '2026-10-31',
+    commencement_date: '2026-11-02',
+    status: 'Open',
+    target_courses: [
+      'Cambridge IGCSE Mathematics (0580)',
+      'Pearson Edexcel Mathematics A (4MA1 Higher Tier)',
+      'Cambridge IGCSE Physics (0625) & Chemistry (0620)',
+      'Pearson Edexcel Computer Science (4CP0 with Python)',
+      'British Lower Secondary Foundation (Year 9 Checkpoint)',
+      'Cambridge IGCSE Biology (0610) & English First Lang (0500)',
+      'Cambridge ICE Group Award & Past Paper Clinic',
+    ],
+    early_bird_discount: '🇬🇧 Free Official Syllabus Packs & Complete Past-Paper Topical Kits',
+    installment_plan: 'Flexible Termly & Monthly Installments ($ USD & KES Paybill)',
+    study_modes: [
+      '100% Online (Live Interactive & Recorded)',
+      'Cambridge Centre KE042 Exam Candidate Support',
+      'Pearson Edexcel Centre EDX-98421 Support',
+      'Weekend Executive Cohort & Evening Labs',
+    ],
+    contact_phone: INSTITUTION_CONFIG.contact.phone,
+    contact_email: INSTITUTION_CONFIG.contact.admissionsEmail,
+    registration_fee: 'Free ($0 USD Application Fee)',
+    is_published: true,
+    featured: true,
+    created_at: '2026-09-10T10:00:00.000Z',
+    updated_at: '2026-09-15T09:00:00.000Z',
+  },
+  {
+    id: 'intake-2027-01-igcse',
+    title: 'January 2027 British Curriculum (Years 9, 10 & 11) Full Academic Year',
+    academic_year: '2027',
+    term_session: 'Term 1 / Annual British Academic Session',
+    headline: 'Accredited Cambridge KE042 & Edexcel EDX-98421 Admissions — May/June 2027 & Oct/Nov 2027 Series',
+    description:
+      'Premier full academic year enrolment for British curriculum students worldwide. Comprehensive Year 9 iLowerSecondary, Year 10 (IGCSE Core & Extended), and Year 11 Final Candidate Registration. Daily live interactive seminars, virtual STEM labs, and personalized mentor evaluations.',
+    poster_image_url:
+      'https://images.unsplash.com/photo-1523240795612-9a054b0db644?auto=format&fit=crop&w=1200&q=80',
+    application_deadline: '2027-01-15',
+    orientation_date: '2027-01-18',
+    commencement_date: '2027-01-20',
+    status: 'Open',
+    target_courses: [
+      'Cambridge Lower Secondary Checkpoint (Year 9)',
+      'Cambridge IGCSE Mathematics (0580) & Edexcel (4MA1)',
+      'IGCSE Sciences: Physics (0625), Chemistry (0620), Biology (0610)',
+      'Pearson Edexcel Computer Science (4CP0) Python Onscreen',
+      'Cambridge Business Studies (0450) & Economics (0455)',
+      'French (0520) & German (0525) World Languages',
+    ],
+    early_bird_discount: '⭐ 15% Academic Scholarship for Full-Year Tuition (Early Registration)',
+    installment_plan: 'Split across 3 Terms or 9 Monthly Installments',
+    study_modes: [
+      '100% Online (Live & Recorded)',
+      'Cambridge ICE Group Diploma Track',
+      'Pearson Edexcel High Achiever Track',
+      'All Daily Shifts (Morning, Afternoon & Evening)',
+    ],
+    contact_phone: INSTITUTION_CONFIG.contact.phone,
+    contact_email: INSTITUTION_CONFIG.contact.admissionsEmail,
+    registration_fee: 'Free ($0 USD Application Fee)',
+    is_published: true,
+    featured: true,
+    created_at: '2026-09-12T08:00:00.000Z',
+    updated_at: '2026-09-15T09:00:00.000Z',
+  },
   {
     id: 'intake-2026-10',
     title: 'October 2026 Career & Executive Fast-Track Intake',
@@ -45,57 +122,18 @@ export const INITIAL_INTAKE_SCHEDULES: IntakeSchedule[] = [
     is_published: true,
     featured: true,
     created_at: '2026-09-08T08:00:00.000Z',
-    updated_at: '2026-09-12T09:00:00.000Z',
-  },
-  {
-    id: 'intake-2026-11-igcse',
-    title: 'November 2026 British International Curriculum Intake',
-    academic_year: '2026/2027',
-    term_session: 'November 2026 & May/June 2027 Series',
-    headline: 'Cambridge Centre KE042 & Pearson Edexcel EDX-98421 — Years 9, 10 & 11 Admissions',
-    description:
-      'Accredited British curriculum admissions across Year 9 Foundation (Lower Secondary), Year 10 IGCSE, and Year 11 Exam Intensive. Rigorous dual 9-1 & A*-G mastery with live interactive classrooms, weekly past paper clinics, and official center candidate registration.',
-    poster_image_url:
-      'https://images.unsplash.com/photo-1427504494785-3a9ca7044f45?auto=format&fit=crop&w=1200&q=80',
-    application_deadline: '2026-10-28',
-    orientation_date: '2026-10-31',
-    commencement_date: '2026-11-02',
-    status: 'Open',
-    target_courses: [
-      'Cambridge IGCSE Mathematics (0580)',
-      'Pearson Edexcel Mathematics A (4MA1)',
-      'Cambridge IGCSE Physics (0625) & Chemistry (0620)',
-      'Pearson Edexcel Computer Science (4CP0)',
-      'British Lower Secondary Foundation (Year 9)',
-      'Cambridge ICE Group Award & Past Paper Clinic',
-    ],
-    early_bird_discount: '🇬🇧 Free Official Syllabus Packs & Complete Past-Paper Topical Kits',
-    installment_plan: 'Flexible Termly & Monthly Installments ($ USD & KES Paybill)',
-    study_modes: [
-      '100% Online (Live & Recorded)',
-      'Cambridge IGCSE Complete Structure',
-      'Cambridge Centre KE042 Exam Support',
-      'Pearson Edexcel Centre EDX-98421 Support',
-      'Weekend Executive Cohort',
-    ],
-    contact_phone: INSTITUTION_CONFIG.contact.phone,
-    contact_email: INSTITUTION_CONFIG.contact.admissionsEmail,
-    registration_fee: 'Free ($0 USD Application Fee)',
-    is_published: true,
-    featured: true,
-    created_at: '2026-09-10T10:00:00.000Z',
-    updated_at: '2026-09-12T09:00:00.000Z',
+    updated_at: '2026-09-15T09:00:00.000Z',
   },
   {
     id: 'intake-2027-01',
-    title: 'January 2027 Global Professional & Academic New Year Intake',
+    title: 'January 2027 Global Professional & Tech New Year Intake',
     academic_year: '2027',
     term_session: 'Term 1 / First Quarter 2027',
     headline: 'Flagship New Year Admissions — Modular Diplomas, Tech Cohorts & Language Immersions',
     description:
       'Our comprehensive annual intake enrolling students worldwide across 7 specialized schools: Tech & Engineering, Data Science & Research, Cambridge International (KE042), Pearson Edexcel (EDX-98421), Business & Accounting, Languages & Communication, and Creative Arts. 100% online live interactive classes with mentor reviews.',
     poster_image_url:
-      'https://images.unsplash.com/photo-1523240795612-9a054b0db644?auto=format&fit=crop&w=1200&q=80',
+      'https://images.unsplash.com/photo-1531482615713-2afd69097998?auto=format&fit=crop&w=1200&q=80',
     application_deadline: '2027-01-15',
     orientation_date: '2027-01-18',
     commencement_date: '2027-01-20',
@@ -121,7 +159,7 @@ export const INITIAL_INTAKE_SCHEDULES: IntakeSchedule[] = [
     is_published: true,
     featured: true,
     created_at: '2026-09-01T08:00:00.000Z',
-    updated_at: '2026-09-12T09:00:00.000Z',
+    updated_at: '2026-09-15T09:00:00.000Z',
   },
   {
     id: 'intake-2026-09',
@@ -132,8 +170,8 @@ export const INITIAL_INTAKE_SCHEDULES: IntakeSchedule[] = [
     description:
       'Final opportunity to join ongoing September accelerated certification tracks with access to session recordings, tutor mentorship, and live weekend catch-up labs. Practical hands-on training in RStudio, SPSS, foreign languages, and digital media.',
     poster_image_url:
-      'https://images.unsplash.com/photo-1531482615713-2afd69097998?auto=format&fit=crop&w=1200&q=80',
-    application_deadline: '2026-09-18',
+      'https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=1200&q=80',
+    application_deadline: '2026-09-25',
     orientation_date: '2026-09-12',
     commencement_date: '2026-09-14',
     status: 'Filling Fast',
@@ -157,7 +195,7 @@ export const INITIAL_INTAKE_SCHEDULES: IntakeSchedule[] = [
     is_published: true,
     featured: false,
     created_at: '2026-08-15T10:00:00.000Z',
-    updated_at: '2026-09-12T09:00:00.000Z',
+    updated_at: '2026-09-15T09:00:00.000Z',
   },
   {
     id: 'intake-2026-05',
