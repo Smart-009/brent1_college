@@ -1735,12 +1735,12 @@ export function Landing() {
       {/* Hero Section: 100% Online Global Academy Billboard */}
       <section
         style={{
-          background: 'linear-gradient(135deg, #f0f7ff 0%, #e8f4ff 40%, #f8faff 70%, #eef5ff 100%)',
-          color: '#0f172a',
+          background: 'linear-gradient(160deg, #080e1a 0%, #0d1f3c 40%, #0a1628 100%)',
+          color: '#ffffff',
           padding: isMobile ? '2.5rem 1rem 2rem' : '5rem 2rem 4rem',
           position: 'relative',
           overflow: 'hidden',
-          borderBottom: '1px solid #dbeafe',
+          borderBottom: '1px solid #1e3a8a',
         }}
       >
         {/* Ambient background glow */}
@@ -1752,9 +1752,9 @@ export function Landing() {
             width: '650px',
             height: '650px',
             borderRadius: '50%',
-            background: 'radial-gradient(circle, #bfdbfe 0%, #93c5fd 100%)',
-            opacity: 0.35,
-            filter: 'blur(130px)',
+            background: 'radial-gradient(circle, #1d4ed8 0%, #0284c7 100%)',
+            opacity: 0.18,
+            filter: 'blur(140px)',
             pointerEvents: 'none',
           }}
         />
@@ -1795,7 +1795,7 @@ export function Landing() {
                 position: 'absolute',
                 inset: 0,
                 background:
-                  'linear-gradient(180deg, rgba(240, 247, 255, 0.72) 0%, rgba(219, 234, 254, 0.55) 50%, rgba(240, 247, 255, 0.82) 100%)',
+                  'linear-gradient(180deg, rgba(8, 14, 26, 0.78) 0%, rgba(13, 31, 60, 0.62) 50%, rgba(8, 14, 26, 0.88) 100%)',
               }}
             />
 
@@ -1804,7 +1804,7 @@ export function Landing() {
               style={{
                 position: 'absolute',
                 inset: 0,
-                backgroundImage: 'radial-gradient(circle at 1px 1px, rgba(37,99,235,0.06) 1px, transparent 0)',
+                backgroundImage: 'radial-gradient(circle at 1px 1px, rgba(255,255,255,0.04) 1px, transparent 0)',
                 backgroundSize: '24px 24px',
               }}
             />
@@ -1822,7 +1822,7 @@ export function Landing() {
             height: '100%',
             pointerEvents: 'none',
             zIndex: 2,
-            opacity: 0.12,
+            opacity: 0,
           }}
         />
 
@@ -1833,14 +1833,14 @@ export function Landing() {
               display: 'inline-flex',
               alignItems: 'center',
               gap: '0.5rem',
-              background: 'rgba(255, 255, 255, 0.85)',
-              backdropFilter: 'blur(10px)',
-              border: '1px solid rgba(212, 175, 55, 0.5)',
+              background: 'rgba(255, 255, 255, 0.09)',
+              backdropFilter: 'blur(12px)',
+              border: '1px solid rgba(212, 175, 55, 0.4)',
               borderRadius: isMobile ? '12px' : '999px',
               padding: isMobile ? '0.35rem 0.65rem' : '0.45rem 1.35rem',
               fontSize: isMobile ? '0.72rem' : '0.85rem',
               fontWeight: 800,
-              color: '#b45309',
+              color: '#d4af37',
               letterSpacing: '0.04em',
               marginBottom: isMobile ? '1rem' : '1.5rem',
               boxShadow: '0 4px 16px rgba(0,0,0,0.2)',
@@ -1863,9 +1863,9 @@ export function Landing() {
               lineHeight: isMobile ? 1.22 : 1.15,
               margin: isMobile ? '0 auto 1rem' : '0 auto 1.25rem',
               maxWidth: '960px',
-              color: '#0f172a',
+              color: '#ffffff',
               fontFamily: 'var(--font-heading)',
-              textShadow: '0 1px 4px rgba(59,130,246,0.08)',
+              textShadow: '0 2px 12px rgba(0,0,0,0.5)',
             }}
           >
             Skills that drive your career forward. <br />
