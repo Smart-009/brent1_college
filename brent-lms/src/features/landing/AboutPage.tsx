@@ -167,8 +167,8 @@ export function AboutPage() {
     <div
       style={{
         minHeight: '100vh',
-        background: '#070a13',
-        color: '#f8fafc',
+        background: '#f8fafc',
+        color: '#0f172a',
         fontFamily: 'Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
         overflowX: 'hidden',
       }}
@@ -176,13 +176,13 @@ export function AboutPage() {
       {/* Top Banner Alert */}
       <div
         style={{
-          background: 'linear-gradient(90deg, #1e3a8a 0%, #1e40af 50%, #0f172a 100%)',
+          background: 'linear-gradient(90deg, #1d4ed8 0%, #2563eb 50%, #1e40af 100%)',
           color: '#ffffff',
           fontSize: '0.82rem',
           padding: '0.55rem 1rem',
           textAlign: 'center',
           fontWeight: 700,
-          borderBottom: '1px solid rgba(59, 130, 246, 0.3)',
+          borderBottom: '1px solid rgba(255, 255, 255, 0.2)',
           display: 'flex',
           justifyContent: 'center',
           alignItems: 'center',
@@ -209,11 +209,12 @@ export function AboutPage() {
           position: 'sticky',
           top: 0,
           zIndex: 100,
-          background: 'rgba(7, 10, 19, 0.92)',
+          background: 'rgba(255, 255, 255, 0.96)',
           backdropFilter: 'blur(20px)',
           WebkitBackdropFilter: 'blur(20px)',
-          borderBottom: '1px solid rgba(255, 255, 255, 0.08)',
+          borderBottom: '1px solid #e2e8f0',
           padding: '0.85rem 1.5rem',
+          boxShadow: '0 2px 10px rgba(15, 23, 42, 0.04)',
         }}
       >
         <div
@@ -237,8 +238,8 @@ export function AboutPage() {
                 width: '40px',
                 height: '40px',
                 borderRadius: '50%',
-                border: '2px solid #d4af37',
-                boxShadow: '0 0 12px rgba(212, 175, 55, 0.35)',
+                border: '2px solid #1d4ed8',
+                boxShadow: '0 0 10px rgba(29, 78, 216, 0.25)',
               }}
             />
             <div>
@@ -246,7 +247,7 @@ export function AboutPage() {
                 style={{
                   fontSize: '1.2rem',
                   fontWeight: 900,
-                  color: '#d4af37',
+                  color: '#1e3a8a',
                   letterSpacing: '0.04em',
                   fontFamily: 'var(--font-heading, "Cinzel", serif)',
                   lineHeight: 1.1,
@@ -254,7 +255,7 @@ export function AboutPage() {
               >
                 {INSTITUTION_CONFIG.name}
               </div>
-              <div style={{ fontSize: '0.7rem', color: '#94a3b8', fontWeight: 600 }}>
+              <div style={{ fontSize: '0.7rem', color: '#64748b', fontWeight: 600 }}>
                 100% Online Virtual Campus
               </div>
             </div>
@@ -265,20 +266,20 @@ export function AboutPage() {
             className="hidden md:flex"
             style={{ display: 'flex', alignItems: 'center', gap: '1.5rem', fontSize: '0.88rem', fontWeight: 700 }}
           >
-            <Link to="/" style={{ color: '#cbd5e1', textDecoration: 'none', transition: 'color 0.2s' }}>
+            <Link to="/" style={{ color: '#334155', textDecoration: 'none', transition: 'color 0.2s' }}>
               Home
             </Link>
-            <Link to="/courses" style={{ color: '#cbd5e1', textDecoration: 'none' }}>
+            <Link to="/courses" style={{ color: '#334155', textDecoration: 'none' }}>
               Courses
             </Link>
-            <Link to="/#intakes-section" style={{ color: '#f59e0b', textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '4px' }}>
+            <Link to="/#intakes-section" style={{ color: '#b45309', textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '4px' }}>
               <span>🗓️</span>
               <span>Intakes</span>
             </Link>
-            <Link to="/library" style={{ color: '#cbd5e1', textDecoration: 'none' }}>
+            <Link to="/library" style={{ color: '#334155', textDecoration: 'none' }}>
               E-Library
             </Link>
-            <Link to="/about" style={{ color: '#38bdf8', textDecoration: 'none', borderBottom: '2px solid #38bdf8', paddingBottom: '2px' }}>
+            <Link to="/about" style={{ color: '#1d4ed8', textDecoration: 'none', borderBottom: '2px solid #1d4ed8', paddingBottom: '2px' }}>
               About Us
             </Link>
           </nav>
@@ -329,9 +330,9 @@ export function AboutPage() {
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
               className="md:hidden"
               style={{
-                background: mobileMenuOpen ? '#0f172a' : '#1e293b',
-                border: '1px solid rgba(255, 255, 255, 0.15)',
-                color: '#ffffff',
+                background: mobileMenuOpen ? '#e2e8f0' : '#f1f5f9',
+                border: '1px solid #cbd5e1',
+                color: '#0f172a',
                 width: '38px',
                 height: '38px',
                 borderRadius: '8px',
@@ -686,9 +687,9 @@ export function AboutPage() {
       <section
         style={{
           position: 'relative',
-          padding: '4.5rem 1.5rem 3.5rem',
-          background: 'radial-gradient(ellipse 80% 50% at 50% -20%, rgba(30, 58, 138, 0.4), transparent)',
-          borderBottom: '1px solid rgba(255, 255, 255, 0.08)',
+          padding: '5rem 1.5rem 4rem',
+          background: 'linear-gradient(180deg, #eff6ff 0%, #ffffff 100%)',
+          borderBottom: '1px solid #e2e8f0',
           textAlign: 'center',
         }}
       >
@@ -698,9 +699,9 @@ export function AboutPage() {
               display: 'inline-flex',
               alignItems: 'center',
               gap: '8px',
-              background: 'rgba(212, 175, 55, 0.12)',
-              border: '1px solid rgba(212, 175, 55, 0.4)',
-              color: '#fef08a',
+              background: '#fef3c7',
+              border: '1px solid #fde68a',
+              color: '#b45309',
               padding: '6px 16px',
               borderRadius: '999px',
               fontSize: '0.82rem',
@@ -718,19 +719,19 @@ export function AboutPage() {
             style={{
               fontSize: 'clamp(2.1rem, 5vw, 3.5rem)',
               fontWeight: 900,
-              color: '#ffffff',
+              color: '#0f172a',
               lineHeight: 1.15,
               margin: '0 0 1.25rem',
               letterSpacing: '-0.02em',
             }}
           >
-            Pioneering Rigorous, <span style={{ color: '#d4af37' }}>Practical Online Education</span> for the Modern World
+            Pioneering Rigorous, <span style={{ color: '#1d4ed8' }}>Practical Online Education</span> for the Modern World
           </h1>
 
           <p
             style={{
               fontSize: 'clamp(1rem, 2vw, 1.2rem)',
-              color: '#94a3b8',
+              color: '#475569',
               lineHeight: 1.7,
               maxWidth: '820px',
               margin: '0 auto 2rem',
@@ -743,16 +744,16 @@ export function AboutPage() {
           <div style={{ display: 'flex', justifyContent: 'center', gap: '1rem', flexWrap: 'wrap' }}>
             <Link
               to="/courses"
-              className="btn"
+              className="btn interactive-btn"
               style={{
-                background: 'linear-gradient(135deg, #2563eb, #1d4ed8)',
+                background: 'linear-gradient(135deg, #1d4ed8, #2563eb)',
                 color: '#ffffff',
                 fontWeight: 800,
                 fontSize: '0.95rem',
                 padding: '0.85rem 1.75rem',
                 borderRadius: '12px',
                 textDecoration: 'none',
-                boxShadow: '0 4px 20px rgba(37, 99, 235, 0.4)',
+                boxShadow: '0 4px 16px rgba(29, 78, 216, 0.3)',
               }}
             >
               🎓 Explore Academic Programs
@@ -762,11 +763,11 @@ export function AboutPage() {
               href={getWhatsAppInquiryUrl('Hello Admissions, I would like to schedule a 1-on-1 academic consultation regarding your online courses.')}
               target="_blank"
               rel="noopener noreferrer"
-              className="btn"
+              className="btn interactive-btn"
               style={{
-                background: 'rgba(255, 255, 255, 0.08)',
-                border: '1px solid rgba(255, 255, 255, 0.2)',
-                color: '#ffffff',
+                background: '#ffffff',
+                border: '1.5px solid #cbd5e1',
+                color: '#1e293b',
                 fontWeight: 800,
                 fontSize: '0.95rem',
                 padding: '0.85rem 1.5rem',
@@ -775,6 +776,7 @@ export function AboutPage() {
                 display: 'inline-flex',
                 alignItems: 'center',
                 gap: '8px',
+                boxShadow: '0 2px 8px rgba(15, 23, 42, 0.05)',
               }}
             >
               <span>💬</span>
@@ -787,9 +789,9 @@ export function AboutPage() {
       {/* Global Impact Numbers Bar */}
       <section
         style={{
-          background: '#0a0f1d',
+          background: '#f8fafc',
           padding: '2.5rem 1.5rem',
-          borderBottom: '1px solid rgba(255, 255, 255, 0.08)',
+          borderBottom: '1px solid #e2e8f0',
         }}
       >
         <div
@@ -805,11 +807,13 @@ export function AboutPage() {
           {stats.map((st, idx) => (
             <div
               key={idx}
+              className="interactive-card"
               style={{
-                background: 'rgba(15, 23, 42, 0.6)',
-                border: '1px solid rgba(59, 130, 246, 0.15)',
+                background: '#ffffff',
+                border: '1.5px solid #e2e8f0',
                 borderRadius: '16px',
                 padding: '1.25rem 1rem',
+                boxShadow: '0 4px 12px rgba(15, 23, 42, 0.04)',
               }}
             >
               <div style={{ fontSize: '1.8rem', marginBottom: '0.25rem' }}>{st.icon}</div>
@@ -817,14 +821,14 @@ export function AboutPage() {
                 style={{
                   fontSize: '1.9rem',
                   fontWeight: 900,
-                  color: '#ffffff',
+                  color: '#1d4ed8',
                   fontFamily: 'var(--font-heading, sans-serif)',
                   lineHeight: 1.1,
                 }}
               >
                 {st.number}
               </div>
-              <div style={{ fontSize: '0.78rem', color: '#94a3b8', fontWeight: 600, marginTop: '0.35rem' }}>
+              <div style={{ fontSize: '0.78rem', color: '#475569', fontWeight: 600, marginTop: '0.35rem' }}>
                 {st.label}
               </div>
             </div>
@@ -854,10 +858,11 @@ export function AboutPage() {
               key={tab.id}
               type="button"
               onClick={() => setActiveTab(tab.id as any)}
+              className="interactive-pill"
               style={{
-                background: activeTab === tab.id ? 'linear-gradient(135deg, #2563eb, #1e40af)' : '#131b2e',
-                color: activeTab === tab.id ? '#ffffff' : '#94a3b8',
-                border: activeTab === tab.id ? '1px solid #3b82f6' : '1px solid #1e293b',
+                background: activeTab === tab.id ? 'linear-gradient(135deg, #1d4ed8, #2563eb)' : '#ffffff',
+                color: activeTab === tab.id ? '#ffffff' : '#475569',
+                border: activeTab === tab.id ? '1px solid #1d4ed8' : '1.5px solid #e2e8f0',
                 padding: '0.75rem 1.5rem',
                 borderRadius: '12px',
                 fontWeight: 800,
@@ -866,7 +871,7 @@ export function AboutPage() {
                 display: 'flex',
                 alignItems: 'center',
                 gap: '8px',
-                boxShadow: activeTab === tab.id ? '0 4px 15px rgba(37, 99, 235, 0.4)' : 'none',
+                boxShadow: activeTab === tab.id ? '0 4px 15px rgba(29, 78, 216, 0.25)' : '0 2px 6px rgba(15, 23, 42, 0.04)',
                 transition: 'all 0.2s ease',
               }}
             >
@@ -889,11 +894,13 @@ export function AboutPage() {
             >
               {/* Mission Card */}
               <div
+                className="interactive-card"
                 style={{
-                  background: 'linear-gradient(145deg, rgba(30, 58, 138, 0.25), rgba(15, 23, 42, 0.8))',
-                  border: '1px solid rgba(59, 130, 246, 0.3)',
+                  background: 'linear-gradient(145deg, #eff6ff, #ffffff)',
+                  border: '1.5px solid #bfdbfe',
                   borderRadius: '20px',
                   padding: '2.5rem 2rem',
+                  boxShadow: '0 8px 24px rgba(29, 78, 216, 0.08)',
                 }}
               >
                 <div
@@ -901,7 +908,7 @@ export function AboutPage() {
                     width: '56px',
                     height: '56px',
                     borderRadius: '14px',
-                    background: '#1e3a8a',
+                    background: '#dbeafe',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
@@ -911,21 +918,23 @@ export function AboutPage() {
                 >
                   🚀
                 </div>
-                <h3 style={{ fontSize: '1.6rem', fontWeight: 900, color: '#ffffff', margin: '0 0 1rem' }}>
+                <h3 style={{ fontSize: '1.6rem', fontWeight: 900, color: '#1e3a8a', margin: '0 0 1rem' }}>
                   Our Academic Mission
                 </h3>
-                <p style={{ color: '#cbd5e1', lineHeight: 1.7, fontSize: '0.96rem', margin: 0 }}>
+                <p style={{ color: '#334155', lineHeight: 1.7, fontSize: '0.96rem', margin: 0 }}>
                   To democratize access to elite-level technological, analytical, and linguistic education by delivering 100% online, live mentor-supported programs that equip learners worldwide with competitive, verifiable workplace competencies.
                 </p>
               </div>
 
               {/* Vision Card */}
               <div
+                className="interactive-card"
                 style={{
-                  background: 'linear-gradient(145deg, rgba(212, 175, 55, 0.15), rgba(15, 23, 42, 0.8))',
-                  border: '1px solid rgba(212, 175, 55, 0.3)',
+                  background: 'linear-gradient(145deg, #fefce8, #ffffff)',
+                  border: '1.5px solid #fde68a',
                   borderRadius: '20px',
                   padding: '2.5rem 2rem',
+                  boxShadow: '0 8px 24px rgba(217, 119, 6, 0.08)',
                 }}
               >
                 <div
@@ -933,7 +942,7 @@ export function AboutPage() {
                     width: '56px',
                     height: '56px',
                     borderRadius: '14px',
-                    background: 'rgba(212, 175, 55, 0.25)',
+                    background: '#fef3c7',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
@@ -943,35 +952,51 @@ export function AboutPage() {
                 >
                   👁️
                 </div>
-                <h3 style={{ fontSize: '1.6rem', fontWeight: 900, color: '#fef08a', margin: '0 0 1rem' }}>
+                <h3 style={{ fontSize: '1.6rem', fontWeight: 900, color: '#b45309', margin: '0 0 1rem' }}>
                   Our Global Vision
                 </h3>
-                <p style={{ color: '#cbd5e1', lineHeight: 1.7, fontSize: '0.96rem', margin: 0 }}>
+                <p style={{ color: '#334155', lineHeight: 1.7, fontSize: '0.96rem', margin: 0 }}>
                   To become the world's most trusted online virtual campus for applied skills, recognized by multinational employers, academic institutions, and remote global organizations for unparalleled graduate readiness and ethical rigor.
                 </p>
               </div>
             </div>
 
             {/* Core Values Grid */}
-            <h3 style={{ fontSize: '1.5rem', fontWeight: 900, color: '#ffffff', textAlign: 'center', margin: '0 0 2rem' }}>
+            <h3 style={{ fontSize: '1.5rem', fontWeight: 900, color: '#0f172a', textAlign: 'center', margin: '0 0 2rem' }}>
               Institutional Core Values
             </h3>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '1.5rem' }}>
               {values.map((val, idx) => (
                 <div
                   key={idx}
+                  className="interactive-card"
                   style={{
-                    background: '#0d1424',
-                    border: '1px solid #1e293b',
+                    background: '#ffffff',
+                    border: '1.5px solid #e2e8f0',
                     borderRadius: '16px',
                     padding: '1.75rem',
+                    boxShadow: '0 6px 20px rgba(15, 23, 42, 0.05)',
                   }}
                 >
-                  <div style={{ fontSize: '2rem', marginBottom: '0.75rem' }}>{val.icon}</div>
-                  <h4 style={{ fontSize: '1.1rem', fontWeight: 800, color: '#ffffff', margin: '0 0 0.5rem' }}>
+                  <div
+                    style={{
+                      width: '48px',
+                      height: '48px',
+                      borderRadius: '12px',
+                      background: '#eff6ff',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      fontSize: '1.5rem',
+                      marginBottom: '1rem',
+                    }}
+                  >
+                    {val.icon}
+                  </div>
+                  <h4 style={{ fontSize: '1.1rem', fontWeight: 800, color: '#0f172a', margin: '0 0 0.5rem' }}>
                     {val.title}
                   </h4>
-                  <p style={{ fontSize: '0.86rem', color: '#94a3b8', lineHeight: 1.6, margin: 0 }}>
+                  <p style={{ fontSize: '0.86rem', color: '#475569', lineHeight: 1.6, margin: 0 }}>
                     {val.desc}
                   </p>
                 </div>
@@ -984,10 +1009,10 @@ export function AboutPage() {
         {activeTab === 'methodology' && (
           <div style={{ animation: 'fadeIn 0.3s ease' }}>
             <div style={{ maxWidth: '850px', margin: '0 auto', textAlign: 'center', marginBottom: '3rem' }}>
-              <h3 style={{ fontSize: '1.8rem', fontWeight: 900, color: '#ffffff', margin: '0 0 1rem' }}>
+              <h3 style={{ fontSize: '1.8rem', fontWeight: 900, color: '#0f172a', margin: '0 0 1rem' }}>
                 The Éclat Hybrid-Live Pedagogy
               </h3>
-              <p style={{ color: '#94a3b8', fontSize: '1rem', lineHeight: 1.7 }}>
+              <p style={{ color: '#475569', fontSize: '1rem', lineHeight: 1.7 }}>
                 We believe passive video binge-watching does not produce world-class software engineers or fluent language speakers. Our multi-tiered learning loop guarantees active participation and mentor oversight.
               </p>
             </div>
@@ -1021,12 +1046,14 @@ export function AboutPage() {
               ].map((item, idx) => (
                 <div
                   key={idx}
+                  className="interactive-card"
                   style={{
-                    background: '#0d1424',
-                    border: '1px solid rgba(59, 130, 246, 0.25)',
+                    background: '#ffffff',
+                    border: '1.5px solid #e2e8f0',
                     borderRadius: '16px',
                     padding: '2rem',
                     position: 'relative',
+                    boxShadow: '0 6px 20px rgba(15, 23, 42, 0.05)',
                   }}
                 >
                   <div
@@ -1036,16 +1063,16 @@ export function AboutPage() {
                       right: '1.25rem',
                       fontSize: '1.8rem',
                       fontWeight: 900,
-                      color: 'rgba(59, 130, 246, 0.2)',
+                      color: 'rgba(29, 78, 216, 0.18)',
                     }}
                   >
                     {item.step}
                   </div>
                   <div style={{ fontSize: '2.2rem', marginBottom: '0.75rem' }}>{item.icon}</div>
-                  <h4 style={{ fontSize: '1.2rem', fontWeight: 800, color: '#ffffff', margin: '0 0 0.6rem' }}>
+                  <h4 style={{ fontSize: '1.2rem', fontWeight: 800, color: '#0f172a', margin: '0 0 0.6rem' }}>
                     {item.title}
                   </h4>
-                  <p style={{ fontSize: '0.88rem', color: '#cbd5e1', lineHeight: 1.6, margin: 0 }}>
+                  <p style={{ fontSize: '0.88rem', color: '#475569', lineHeight: 1.6, margin: 0 }}>
                     {item.desc}
                   </p>
                 </div>
@@ -1059,21 +1086,22 @@ export function AboutPage() {
           <div style={{ animation: 'fadeIn 0.3s ease' }}>
             <div
               style={{
-                background: 'linear-gradient(145deg, #0f172a, #0b0f19)',
-                border: '1px solid rgba(212, 175, 55, 0.35)',
+                background: 'linear-gradient(145deg, #eff6ff, #ffffff)',
+                border: '1.5px solid #bfdbfe',
                 borderRadius: '24px',
                 padding: '3rem 2rem',
                 display: 'grid',
                 gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
                 gap: '2.5rem',
                 alignItems: 'center',
+                boxShadow: '0 10px 30px rgba(29, 78, 216, 0.08)',
               }}
             >
               <div>
                 <span
                   style={{
-                    background: 'rgba(212, 175, 55, 0.15)',
-                    color: '#fef08a',
+                    background: '#fef3c7',
+                    color: '#b45309',
                     padding: '4px 12px',
                     borderRadius: '999px',
                     fontSize: '0.75rem',
@@ -1083,10 +1111,10 @@ export function AboutPage() {
                 >
                   Instant Global Credential Verification
                 </span>
-                <h3 style={{ fontSize: '2rem', fontWeight: 900, color: '#ffffff', margin: '0.75rem 0 1rem' }}>
+                <h3 style={{ fontSize: '2rem', fontWeight: 900, color: '#0f172a', margin: '0.75rem 0 1rem' }}>
                   Cryptographically Verified Digital Certificates
                 </h3>
-                <p style={{ color: '#cbd5e1', lineHeight: 1.7, fontSize: '0.95rem', marginBottom: '1.5rem' }}>
+                <p style={{ color: '#475569', lineHeight: 1.7, fontSize: '0.95rem', marginBottom: '1.5rem' }}>
                   Every graduate from {INSTITUTION_CONFIG.name} is issued a tamper-proof digital certificate featuring a unique cryptographic verification hash and scannable QR code. Employers and university admission boards can verify credential authenticity in real-time without paper delays.
                 </p>
 
@@ -1097,8 +1125,8 @@ export function AboutPage() {
                     'Official Academic Transcript Generation with GPA & Unit Breakdown',
                     'Hardware-Guarded Digital Rights Management (DRM) on Learning Materials',
                   ].map((feat, i) => (
-                    <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '10px', fontSize: '0.9rem', color: '#e2e8f0' }}>
-                      <span style={{ color: '#22c55e', fontWeight: 900 }}>✓</span>
+                    <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '10px', fontSize: '0.9rem', color: '#334155' }}>
+                      <span style={{ color: '#16a34a', fontWeight: 900 }}>✓</span>
                       <span>{feat}</span>
                     </div>
                   ))}
@@ -1108,31 +1136,31 @@ export function AboutPage() {
               {/* Certificate Mockup Visual */}
               <div
                 style={{
-                  background: 'radial-gradient(circle, #1e293b 0%, #0f172a 100%)',
-                  border: '2px solid #d4af37',
+                  background: '#ffffff',
+                  border: '2px solid #b45309',
                   borderRadius: '16px',
                   padding: '2rem',
-                  boxShadow: '0 20px 50px rgba(0, 0, 0, 0.6)',
+                  boxShadow: '0 20px 40px rgba(15, 23, 42, 0.12)',
                   textAlign: 'center',
                 }}
               >
                 <div style={{ fontSize: '2.5rem', marginBottom: '0.5rem' }}>📜</div>
-                <div style={{ fontSize: '0.75rem', fontWeight: 800, letterSpacing: '0.1em', color: '#d4af37', textTransform: 'uppercase' }}>
+                <div style={{ fontSize: '0.75rem', fontWeight: 800, letterSpacing: '0.1em', color: '#b45309', textTransform: 'uppercase' }}>
                   ÉCLAT INSTITUTE OF TECHNOLOGY & LANGUAGES
                 </div>
-                <div style={{ fontSize: '1.3rem', fontWeight: 900, color: '#ffffff', margin: '0.5rem 0 0.25rem' }}>
+                <div style={{ fontSize: '1.3rem', fontWeight: 900, color: '#0f172a', margin: '0.5rem 0 0.25rem' }}>
                   Certificate of Professional Achievement
                 </div>
-                <div style={{ fontSize: '0.8rem', color: '#94a3b8', fontStyle: 'italic', marginBottom: '1rem' }}>
+                <div style={{ fontSize: '0.8rem', color: '#64748b', fontStyle: 'italic', marginBottom: '1rem' }}>
                   Awarded to Qualified Graduate with High Distinction
                 </div>
-                <div style={{ background: 'rgba(255,255,255,0.05)', borderRadius: '8px', padding: '0.75rem', margin: '0 auto 1rem', maxWidth: '280px' }}>
+                <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '8px', padding: '0.75rem', margin: '0 auto 1rem', maxWidth: '280px' }}>
                   <div style={{ fontSize: '0.7rem', color: '#64748b' }}>VERIFICATION ID:</div>
-                  <div style={{ fontSize: '0.85rem', color: '#38bdf8', fontWeight: 800, letterSpacing: '0.05em' }}>
+                  <div style={{ fontSize: '0.85rem', color: '#1d4ed8', fontWeight: 800, letterSpacing: '0.05em' }}>
                     ECLAT-2026-CERT-948271
                   </div>
                 </div>
-                <div style={{ fontSize: '0.75rem', color: '#22c55e', fontWeight: 700 }}>
+                <div style={{ fontSize: '0.75rem', color: '#16a34a', fontWeight: 700 }}>
                   ● Authenticity Verified on Official Ledger
                 </div>
               </div>
@@ -1144,10 +1172,10 @@ export function AboutPage() {
         {activeTab === 'leadership' && (
           <div style={{ animation: 'fadeIn 0.3s ease' }}>
             <div style={{ maxWidth: '800px', margin: '0 auto', textAlign: 'center', marginBottom: '3rem' }}>
-              <h3 style={{ fontSize: '1.8rem', fontWeight: 900, color: '#ffffff', margin: '0 0 0.75rem' }}>
+              <h3 style={{ fontSize: '1.8rem', fontWeight: 900, color: '#0f172a', margin: '0 0 0.75rem' }}>
                 Academic Leadership & Faculty Leads
               </h3>
-              <p style={{ color: '#94a3b8', fontSize: '0.98rem', lineHeight: 1.6 }}>
+              <p style={{ color: '#475569', fontSize: '0.98rem', lineHeight: 1.6 }}>
                 Our leadership comprises recognized computer scientists, Cambridge-certified linguists, econometricians, and software architects with decades of collective experience in global industry and academia.
               </p>
             </div>
@@ -1156,35 +1184,37 @@ export function AboutPage() {
               {leadership.map((lead, idx) => (
                 <div
                   key={idx}
+                  className="interactive-card"
                   style={{
-                    background: '#0d1424',
-                    border: '1px solid #1e293b',
+                    background: '#ffffff',
+                    border: '1.5px solid #e2e8f0',
                     borderRadius: '16px',
                     padding: '1.75rem',
                     display: 'flex',
                     flexDirection: 'column',
                     justifyContent: 'space-between',
+                    boxShadow: '0 6px 20px rgba(15, 23, 42, 0.05)',
                   }}
                 >
                   <div>
                     <div style={{ fontSize: '2.5rem', marginBottom: '0.75rem' }}>{lead.avatar}</div>
-                    <h4 style={{ fontSize: '1.15rem', fontWeight: 800, color: '#ffffff', margin: '0 0 0.25rem' }}>
+                    <h4 style={{ fontSize: '1.15rem', fontWeight: 800, color: '#0f172a', margin: '0 0 0.25rem' }}>
                       {lead.name}
                     </h4>
-                    <div style={{ fontSize: '0.8rem', color: '#60a5fa', fontWeight: 700, marginBottom: '0.5rem' }}>
+                    <div style={{ fontSize: '0.8rem', color: '#1d4ed8', fontWeight: 700, marginBottom: '0.5rem' }}>
                       {lead.role}
                     </div>
-                    <div style={{ fontSize: '0.75rem', color: '#94a3b8', marginBottom: '1rem', fontStyle: 'italic' }}>
+                    <div style={{ fontSize: '0.75rem', color: '#64748b', marginBottom: '1rem', fontStyle: 'italic' }}>
                       {lead.qual}
                     </div>
                   </div>
                   <div
                     style={{
-                      background: 'rgba(255, 255, 255, 0.03)',
-                      borderLeft: '3px solid #d4af37',
+                      background: '#f8fafc',
+                      borderLeft: '3px solid #b45309',
                       padding: '0.75rem',
                       fontSize: '0.8rem',
-                      color: '#cbd5e1',
+                      color: '#334155',
                       lineHeight: 1.5,
                       fontStyle: 'italic',
                     }}
@@ -1201,18 +1231,19 @@ export function AboutPage() {
       {/* 5 Specialized Academic Faculties Section */}
       <section
         style={{
-          background: 'linear-gradient(180deg, #0a0f1e 0%, #070a13 100%)',
+          background: '#f8fafc',
           padding: '5rem 1.5rem',
-          borderTop: '1px solid rgba(255, 255, 255, 0.08)',
-          borderBottom: '1px solid rgba(255, 255, 255, 0.08)',
+          borderTop: '1px solid #e2e8f0',
+          borderBottom: '1px solid #e2e8f0',
         }}
       >
         <div style={{ maxWidth: '1240px', margin: '0 auto' }}>
           <div style={{ textAlign: 'center', marginBottom: '3.5rem' }}>
             <span
               style={{
-                background: 'rgba(59, 130, 246, 0.15)',
-                color: '#60a5fa',
+                background: '#eff6ff',
+                color: '#1d4ed8',
+                border: '1px solid #bfdbfe',
                 padding: '4px 14px',
                 borderRadius: '999px',
                 fontSize: '0.8rem',
@@ -1222,10 +1253,10 @@ export function AboutPage() {
             >
               Academic Scope
             </span>
-            <h2 style={{ fontSize: 'clamp(1.8rem, 4vw, 2.6rem)', fontWeight: 900, color: '#ffffff', margin: '0.75rem 0 0.5rem' }}>
+            <h2 style={{ fontSize: 'clamp(1.8rem, 4vw, 2.6rem)', fontWeight: 900, color: '#0f172a', margin: '0.75rem 0 0.5rem' }}>
               Our 5 Academic Faculties
             </h2>
-            <p style={{ color: '#94a3b8', maxWidth: '720px', margin: '0 auto', fontSize: '1rem', lineHeight: 1.6 }}>
+            <p style={{ color: '#475569', maxWidth: '720px', margin: '0 auto', fontSize: '1rem', lineHeight: 1.6 }}>
               Comprehensive curricula engineered to take learners from foundational principles to advanced industrial proficiency.
             </p>
           </div>
@@ -1234,15 +1265,16 @@ export function AboutPage() {
             {faculties.map((fac) => (
               <div
                 key={fac.id}
+                className="interactive-card"
                 style={{
-                  background: '#0d1424',
-                  border: `1px solid ${fac.color}33`,
+                  background: '#ffffff',
+                  border: '1.5px solid #e2e8f0',
                   borderRadius: '20px',
                   padding: '2rem',
                   display: 'flex',
                   flexDirection: 'column',
                   justifyContent: 'space-between',
-                  boxShadow: '0 10px 30px rgba(0,0,0,0.3)',
+                  boxShadow: '0 6px 24px rgba(15, 23, 42, 0.05)',
                 }}
               >
                 <div>
@@ -1250,9 +1282,9 @@ export function AboutPage() {
                     <span style={{ fontSize: '2.5rem' }}>{fac.icon}</span>
                     <span
                       style={{
-                        background: `${fac.color}22`,
+                        background: `${fac.color}15`,
                         color: fac.color,
-                        border: `1px solid ${fac.color}55`,
+                        border: `1px solid ${fac.color}44`,
                         padding: '3px 10px',
                         borderRadius: '999px',
                         fontSize: '0.72rem',
@@ -1264,19 +1296,19 @@ export function AboutPage() {
                     </span>
                   </div>
 
-                  <h3 style={{ fontSize: '1.25rem', fontWeight: 900, color: '#ffffff', margin: '0 0 0.75rem', lineHeight: 1.3 }}>
+                  <h3 style={{ fontSize: '1.25rem', fontWeight: 900, color: '#0f172a', margin: '0 0 0.75rem', lineHeight: 1.3 }}>
                     {fac.name}
                   </h3>
 
-                  <p style={{ fontSize: '0.86rem', color: '#94a3b8', lineHeight: 1.6, marginBottom: '1.25rem' }}>
+                  <p style={{ fontSize: '0.86rem', color: '#475569', lineHeight: 1.6, marginBottom: '1.25rem' }}>
                     {fac.description}
                   </p>
 
                   <div style={{ marginBottom: '1.25rem' }}>
-                    <div style={{ fontSize: '0.75rem', fontWeight: 800, color: '#cbd5e1', textTransform: 'uppercase', marginBottom: '0.5rem' }}>
+                    <div style={{ fontSize: '0.75rem', fontWeight: 800, color: '#0f172a', textTransform: 'uppercase', marginBottom: '0.5rem' }}>
                       Key Course Units:
                     </div>
-                    <ul style={{ margin: 0, paddingLeft: '1.2rem', color: '#94a3b8', fontSize: '0.82rem', lineHeight: 1.6 }}>
+                    <ul style={{ margin: 0, paddingLeft: '1.2rem', color: '#334155', fontSize: '0.82rem', lineHeight: 1.6 }}>
                       {fac.units.map((u, idx) => (
                         <li key={idx} style={{ marginBottom: '3px' }}>
                           {u}
@@ -1286,11 +1318,11 @@ export function AboutPage() {
                   </div>
                 </div>
 
-                <div style={{ borderTop: '1px solid rgba(255, 255, 255, 0.08)', paddingTop: '1rem', marginTop: '0.5rem' }}>
+                <div style={{ borderTop: '1px solid #e2e8f0', paddingTop: '1rem', marginTop: '0.5rem' }}>
                   <div style={{ fontSize: '0.72rem', color: '#64748b', fontWeight: 800, textTransform: 'uppercase' }}>
                     Target Career Pathways:
                   </div>
-                  <div style={{ fontSize: '0.82rem', color: '#38bdf8', fontWeight: 700, marginTop: '2px' }}>
+                  <div style={{ fontSize: '0.82rem', color: '#1d4ed8', fontWeight: 700, marginTop: '2px' }}>
                     {fac.careerOutcomes}
                   </div>
                 </div>
@@ -1304,19 +1336,19 @@ export function AboutPage() {
       <section style={{ maxWidth: '1000px', margin: '0 auto', padding: '5rem 1.5rem' }}>
         <div
           style={{
-            background: 'linear-gradient(145deg, #1e3a8a, #0f172a)',
+            background: 'linear-gradient(145deg, #1e3a8a, #1d4ed8)',
             borderRadius: '24px',
-            border: '1px solid rgba(59, 130, 246, 0.4)',
+            border: '1px solid #3b82f6',
             padding: '3rem 2rem',
             textAlign: 'center',
-            boxShadow: '0 20px 50px rgba(0, 0, 0, 0.5)',
+            boxShadow: '0 20px 40px rgba(29, 78, 216, 0.2)',
           }}
         >
           <div style={{ fontSize: '3rem', marginBottom: '0.5rem' }}>🎓</div>
           <h2 style={{ fontSize: 'clamp(1.8rem, 4vw, 2.4rem)', fontWeight: 900, color: '#ffffff', margin: '0 0 1rem' }}>
             Ready to Begin Your Studies with {INSTITUTION_CONFIG.name}?
           </h2>
-          <p style={{ color: '#cbd5e1', fontSize: '1rem', lineHeight: 1.7, maxWidth: '680px', margin: '0 auto 2rem' }}>
+          <p style={{ color: '#e2e8f0', fontSize: '1rem', lineHeight: 1.7, maxWidth: '680px', margin: '0 auto 2rem' }}>
             Join thousands of graduates across 40+ countries who have unlocked remote careers, international academic scholarships, and industry certifications.
           </p>
 
@@ -1325,7 +1357,7 @@ export function AboutPage() {
               href={getWhatsAppInquiryUrl('Hello Admissions, I would like to register for the next cohort.')}
               target="_blank"
               rel="noopener noreferrer"
-              className="btn"
+              className="btn interactive-btn"
               style={{
                 background: 'linear-gradient(135deg, #16a34a, #15803d)',
                 color: '#ffffff',
@@ -1346,10 +1378,10 @@ export function AboutPage() {
 
             <Link
               to="/courses"
-              className="btn"
+              className="btn interactive-btn"
               style={{
-                background: 'rgba(255, 255, 255, 0.1)',
-                border: '1px solid rgba(255, 255, 255, 0.2)',
+                background: 'rgba(255, 255, 255, 0.15)',
+                border: '1px solid rgba(255, 255, 255, 0.3)',
                 color: '#ffffff',
                 fontWeight: 800,
                 fontSize: '1rem',
@@ -1370,9 +1402,9 @@ export function AboutPage() {
               flexWrap: 'wrap',
               marginTop: '2.5rem',
               paddingTop: '1.5rem',
-              borderTop: '1px solid rgba(255, 255, 255, 0.15)',
+              borderTop: '1px solid rgba(255, 255, 255, 0.2)',
               fontSize: '0.85rem',
-              color: '#94a3b8',
+              color: '#cbd5e1',
             }}
           >
             <div>
@@ -1391,8 +1423,8 @@ export function AboutPage() {
       {/* Footer */}
       <footer
         style={{
-          borderTop: '1px solid rgba(255, 255, 255, 0.08)',
-          background: '#05070d',
+          borderTop: '1.5px solid #e2e8f0',
+          background: '#ffffff',
           padding: '3rem 1.5rem',
           color: '#64748b',
           fontSize: '0.85rem',
@@ -1410,29 +1442,29 @@ export function AboutPage() {
           }}
         >
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-            <img src="/logo.png" alt="Éclat" style={{ width: '32px', height: '32px', borderRadius: '50%', border: '1px solid #d4af37' }} />
+            <img src="/logo.png" alt="Éclat" style={{ width: '32px', height: '32px', borderRadius: '50%', border: '1.5px solid #1d4ed8' }} />
             <div>
-              <div style={{ color: '#ffffff', fontWeight: 800 }}>{INSTITUTION_CONFIG.name}</div>
-              <div style={{ fontSize: '0.72rem' }}>100% Online Virtual Campus</div>
+              <div style={{ color: '#0f172a', fontWeight: 800 }}>{INSTITUTION_CONFIG.name}</div>
+              <div style={{ fontSize: '0.72rem', color: '#64748b' }}>100% Online Virtual Campus</div>
             </div>
           </div>
 
           <div style={{ display: 'flex', gap: '1.5rem', flexWrap: 'wrap' }}>
-            <Link to="/" style={{ color: '#94a3b8', textDecoration: 'none' }}>
+            <Link to="/" style={{ color: '#475569', textDecoration: 'none' }}>
               Home
             </Link>
-            <Link to="/courses" style={{ color: '#94a3b8', textDecoration: 'none' }}>
+            <Link to="/courses" style={{ color: '#475569', textDecoration: 'none' }}>
               Courses
             </Link>
-            <Link to="/library" style={{ color: '#94a3b8', textDecoration: 'none' }}>
+            <Link to="/library" style={{ color: '#475569', textDecoration: 'none' }}>
               E-Library
             </Link>
-            <Link to="/privacy" style={{ color: '#94a3b8', textDecoration: 'none' }}>
+            <Link to="/privacy" style={{ color: '#475569', textDecoration: 'none' }}>
               Privacy Policy
             </Link>
           </div>
 
-          <div>
+          <div style={{ color: '#64748b' }}>
             © 2026 {INSTITUTION_CONFIG.name}. All Rights Reserved.
           </div>
         </div>
