@@ -84,7 +84,7 @@ const buildCatalogCourses = (): CourseItem[] => {
       installment: c.installmentText,
       careerOutcome: c.careerOutcome,
       skills: c.skills,
-      icon: c.icon,
+      icon: c.icon || 'book',
       popular: c.popular || c.bestseller,
       syllabus: c.syllabus,
       schoolId: c.schoolId,
@@ -97,10 +97,12 @@ const buildCatalogCourses = (): CourseItem[] => {
 
 const CATEGORIES = [
   'All',
+  'Home Schooling',
+  'Tuition & Boosters',
+  'IGCSE',
   'School of Business',
   'School of IT and Data Science',
   'School of Language',
-  'IGCSE',
 ]
 
 const YEAR_LEVELS = [
@@ -134,6 +136,10 @@ export function CourseCatalogPage() {
         setSelectedCat('School of IT and Data Science')
       } else if (lower.includes('lang') || lower.includes('ielts') || lower.includes('english')) {
         setSelectedCat('School of Language')
+      } else if (lower.includes('homeschool') || lower.includes('home schooling') || lower.includes('home-schooling')) {
+        setSelectedCat('Home Schooling')
+      } else if (lower.includes('tuition') || lower.includes('tutor') || lower.includes('booster')) {
+        setSelectedCat('Tuition & Boosters')
       } else if (lower.includes('igcse') || lower.includes('cambridge') || lower.includes('edexcel') || lower.includes('british')) {
         setSelectedCat('IGCSE')
       } else {
@@ -195,12 +201,29 @@ export function CourseCatalogPage() {
             c.schoolId === 'school-languages' ||
             c.category === 'School of Language' ||
             c.category === 'Languages & Communication'
+        } else if (selectedCat === 'Home Schooling') {
+          matchCat =
+            c.category === 'Home Schooling' ||
+            c.schoolId === 'school-homeschooling' ||
+            c.id.includes('homeschool') ||
+            c.title.toLowerCase().includes('home schooling') ||
+            c.title.toLowerCase().includes('homeschool')
+        } else if (selectedCat === 'Tuition & Boosters') {
+          matchCat =
+            c.category === 'Tuition & Boosters' ||
+            c.schoolId === 'school-tuition' ||
+            c.id.includes('tuition') ||
+            c.title.toLowerCase().includes('tuition')
         } else if (selectedCat === 'IGCSE') {
           matchCat =
             c.schoolId === 'school-igcse' ||
             c.schoolId === 'school-cambridge' ||
             c.schoolId === 'school-edexcel' ||
+            c.schoolId === 'school-homeschooling' ||
+            c.schoolId === 'school-tuition' ||
             c.category === 'IGCSE' ||
+            c.category === 'Home Schooling' ||
+            c.category === 'Tuition & Boosters' ||
             c.category.includes('International (Years 9-11)') ||
             Boolean(c.yearLevel)
         } else {
@@ -947,6 +970,94 @@ export function CourseCatalogPage() {
               )
             })}
           </div>
+
+          {/* Home Schooling Policy Banner */}
+          {selectedCat === 'Home Schooling' && (
+            <div
+              style={{
+                background: 'linear-gradient(135deg, #ecfdf5 0%, #f0fdf4 100%)',
+                border: '1.5px solid #34d399',
+                borderRadius: '14px',
+                padding: '0.85rem 1.15rem',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '12px',
+                boxShadow: '0 2px 8px rgba(5, 150, 105, 0.08)',
+              }}
+            >
+              <div
+                style={{
+                  width: '38px',
+                  height: '38px',
+                  borderRadius: '10px',
+                  background: '#059669',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  color: '#ffffff',
+                  fontSize: '1.25rem',
+                  flexShrink: 0,
+                }}
+              >
+                🏡
+              </div>
+              <div>
+                <div style={{ fontSize: '0.88rem', fontWeight: 900, color: '#065f46', display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
+                  <span>Full-Time British Curriculum Home Schooling Academy (Years 7–11)</span>
+                  <span style={{ background: '#d1fae5', color: '#047857', fontSize: '0.68rem', padding: '2px 8px', borderRadius: '999px', fontWeight: 800 }}>
+                    All Subjects Taught Together
+                  </span>
+                </div>
+                <div style={{ fontSize: '0.8rem', color: '#1f2937', marginTop: '2px', lineHeight: 1.45 }}>
+                  Accredited online schooling from home. Complete year cohorts with daily live lessons, certified UK teachers, virtual science labs, termly report cards, and official Cambridge (KE042) &amp; Edexcel (EDX-98421) candidate exam center registration.
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Tuition & Boosters Policy Banner */}
+          {selectedCat === 'Tuition & Boosters' && (
+            <div
+              style={{
+                background: 'linear-gradient(135deg, #f5f3ff 0%, #faf5ff 100%)',
+                border: '1.5px solid #a78bfa',
+                borderRadius: '14px',
+                padding: '0.85rem 1.15rem',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '12px',
+                boxShadow: '0 2px 8px rgba(124, 58, 237, 0.08)',
+              }}
+            >
+              <div
+                style={{
+                  width: '38px',
+                  height: '38px',
+                  borderRadius: '10px',
+                  background: '#7c3aed',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  color: '#ffffff',
+                  fontSize: '1.25rem',
+                  flexShrink: 0,
+                }}
+              >
+                📚
+              </div>
+              <div>
+                <div style={{ fontSize: '0.88rem', fontWeight: 900, color: '#5b21b6', display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
+                  <span>IGCSE &amp; Checkpoint Tuition — 1-on-1 &amp; Evening / Weekend Booster Classes</span>
+                  <span style={{ background: '#ede9fe', color: '#6d28d9', fontSize: '0.68rem', padding: '2px 8px', borderRadius: '999px', fontWeight: 800 }}>
+                    Flexible Shifts
+                  </span>
+                </div>
+                <div style={{ fontSize: '0.8rem', color: '#334155', marginTop: '2px', lineHeight: 1.45 }}>
+                  Targeted subject mastery, exam techniques, and past paper clinics led by senior Cambridge and Edexcel examiners. Evening, weekend, and holiday sessions designed to jump grades and guarantee exam success.
+                </div>
+              </div>
+            </div>
+          )}
 
           {/* IGCSE Integrated Curriculum Policy Banner */}
           {selectedCat === 'IGCSE' && (

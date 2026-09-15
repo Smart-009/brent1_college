@@ -226,6 +226,40 @@ interface PromoSlide {
 
 const HERO_PROMO_SLIDES: PromoSlide[] = [
   {
+    id: 'home-schooling',
+    badge: 'FULL-TIME BRITISH CURRICULUM ONLINE SCHOOL',
+    badgeBg: 'rgba(34, 197, 94, 0.25)',
+    badgeColor: '#4ade80',
+    headline: 'Accredited Online Home Schooling (Years 7-11)',
+    highlight: 'Integrated Cohorts • Cambridge & Edexcel Dual Track',
+    description: 'Full-time British Curriculum schooling from home. Live interactive classes covering all core subjects together (Maths, Sciences, English, Humanities, Computer Science), weekly assessments, termly report cards, and physical exam center placement (KE042 / EDX-98421).',
+    gradient: 'radial-gradient(ellipse at 80% 20%, rgba(34, 197, 94, 0.35) 0%, rgba(15, 23, 42, 0.95) 70%), linear-gradient(135deg, #052e16 0%, #166534 50%, #0f172a 100%)',
+    accentColor: '#4ade80',
+    icon: 'homeschooling',
+    metricNumber: 'Years 7-11',
+    metricLabel: 'Full-Time Structured Timetable',
+    category: 'Home Schooling',
+    primaryCtaText: 'Explore Home Schooling Programs',
+    features: ['Cohesive Cohorts (All Subjects)', 'Cambridge & Edexcel Dual Track', 'Termly Progress & Report Cards', 'Physical Exam Center Placement'],
+  },
+  {
+    id: 'private-tuition',
+    badge: 'PRIVATE 1-ON-1 & EVENING TUITION CLINICS',
+    badgeBg: 'rgba(245, 158, 11, 0.25)',
+    badgeColor: '#fbbf24',
+    headline: 'IGCSE & Checkpoint Private Tuition Masterclasses',
+    highlight: '1-on-1 Personalized Mentorship & Evening Boosters',
+    description: 'Targeted exam performance clinics for Cambridge (0580, 0625, 0620, 0478, 0500) and Edexcel (4MA1, 4PH1, 4CH1, 4CP0). 1-on-1 private tutoring, after-school booster groups, mark scheme mastery, and examiner-led past paper clinics.',
+    gradient: 'radial-gradient(ellipse at 80% 20%, rgba(245, 158, 11, 0.35) 0%, rgba(15, 23, 42, 0.95) 70%), linear-gradient(135deg, #451a03 0%, #b45309 50%, #0f172a 100%)',
+    accentColor: '#fbbf24',
+    icon: 'tuition',
+    metricNumber: '100%',
+    metricLabel: 'Personalized 1-on-1 Attention',
+    category: 'Tuition & Boosters',
+    primaryCtaText: 'Book Tuition & Booster Sessions',
+    features: ['1-on-1 Dedicated Tutor Option', 'Past Paper & Mark Scheme Clinics', 'Evening & Weekend Slots', 'Guaranteed Grade Improvement'],
+  },
+  {
     id: 'cambridge-igcse',
     badge: 'CAMBRIDGE ASSESSMENT INTERNATIONAL (CENTER KE042)',
     badgeBg: 'rgba(2, 132, 199, 0.25)',
@@ -997,6 +1031,8 @@ export function Landing() {
                 >
                   {[
                     { id: 'All', icon: SparklesIcon, label: 'All Online Programs', color: '#f59e0b' },
+                    { id: 'Home Schooling', icon: BookOpenIcon, label: '🏡 Home Schooling (Years 7-11)', color: '#16a34a' },
+                    { id: 'Tuition & Boosters', icon: SparklesIcon, label: '📚 Private & Evening Tuition', color: '#d97706' },
                     { id: 'Cambridge International (Years 9-11)', icon: BritishShieldIcon, label: 'Cambridge Assessment (Years 9-11)', color: '#00247D' },
                     { id: 'Pearson Edexcel International (Years 9-11)', icon: BritishShieldIcon, label: 'Pearson Edexcel International (Years 9-11)', color: '#00247D' },
                     { id: 'Data Science & Research', icon: DatabaseIcon, label: 'Data Science, R, SPSS & Stata', color: '#10b981' },
@@ -1699,12 +1735,12 @@ export function Landing() {
       {/* Hero Section: 100% Online Global Academy Billboard */}
       <section
         style={{
-          background: 'linear-gradient(135deg, #1e3a8a 0%, #1e40af 50%, #2563eb 100%)',
-          color: '#ffffff',
+          background: 'linear-gradient(135deg, #f0f7ff 0%, #e8f4ff 40%, #f8faff 70%, #eef5ff 100%)',
+          color: '#0f172a',
           padding: isMobile ? '2.5rem 1rem 2rem' : '5rem 2rem 4rem',
           position: 'relative',
           overflow: 'hidden',
-          borderBottom: '1px solid #1e3a8a',
+          borderBottom: '1px solid #dbeafe',
         }}
       >
         {/* Ambient background glow */}
@@ -1716,8 +1752,8 @@ export function Landing() {
             width: '650px',
             height: '650px',
             borderRadius: '50%',
-            background: '#2563eb',
-            opacity: 0.12,
+            background: 'radial-gradient(circle, #bfdbfe 0%, #93c5fd 100%)',
+            opacity: 0.35,
             filter: 'blur(130px)',
             pointerEvents: 'none',
           }}
@@ -1759,7 +1795,7 @@ export function Landing() {
                 position: 'absolute',
                 inset: 0,
                 background:
-                  'linear-gradient(180deg, rgba(9, 13, 22, 0.74) 0%, rgba(15, 23, 42, 0.60) 50%, rgba(9, 13, 22, 0.90) 100%)',
+                  'linear-gradient(180deg, rgba(240, 247, 255, 0.72) 0%, rgba(219, 234, 254, 0.55) 50%, rgba(240, 247, 255, 0.82) 100%)',
               }}
             />
 
@@ -1768,7 +1804,7 @@ export function Landing() {
               style={{
                 position: 'absolute',
                 inset: 0,
-                backgroundImage: 'radial-gradient(circle at 1px 1px, rgba(255,255,255,0.06) 1px, transparent 0)',
+                backgroundImage: 'radial-gradient(circle at 1px 1px, rgba(37,99,235,0.06) 1px, transparent 0)',
                 backgroundSize: '24px 24px',
               }}
             />
@@ -1786,7 +1822,7 @@ export function Landing() {
             height: '100%',
             pointerEvents: 'none',
             zIndex: 2,
-            opacity: 0.45,
+            opacity: 0.12,
           }}
         />
 
@@ -1797,14 +1833,14 @@ export function Landing() {
               display: 'inline-flex',
               alignItems: 'center',
               gap: '0.5rem',
-              background: 'rgba(255, 255, 255, 0.08)',
+              background: 'rgba(255, 255, 255, 0.85)',
               backdropFilter: 'blur(10px)',
-              border: '1px solid rgba(212, 175, 55, 0.35)',
+              border: '1px solid rgba(212, 175, 55, 0.5)',
               borderRadius: isMobile ? '12px' : '999px',
               padding: isMobile ? '0.35rem 0.65rem' : '0.45rem 1.35rem',
               fontSize: isMobile ? '0.72rem' : '0.85rem',
               fontWeight: 800,
-              color: '#d4af37',
+              color: '#b45309',
               letterSpacing: '0.04em',
               marginBottom: isMobile ? '1rem' : '1.5rem',
               boxShadow: '0 4px 16px rgba(0,0,0,0.2)',
@@ -1827,9 +1863,9 @@ export function Landing() {
               lineHeight: isMobile ? 1.22 : 1.15,
               margin: isMobile ? '0 auto 1rem' : '0 auto 1.25rem',
               maxWidth: '960px',
-              color: '#ffffff',
+              color: '#0f172a',
               fontFamily: 'var(--font-heading)',
-              textShadow: '0 2px 8px rgba(0,0,0,0.4)',
+              textShadow: '0 1px 4px rgba(59,130,246,0.08)',
             }}
           >
             Skills that drive your career forward. <br />
@@ -2536,6 +2572,8 @@ export function Landing() {
             }}>
               {[
                 { id: 'All', icon: SparklesIcon, label: 'All Programs', count: coursesList.length, color: '#f59e0b' },
+                { id: 'Home Schooling', icon: BookOpenIcon, label: '🏡 Home Schooling (Y7-11)', count: coursesList.filter((c) => c.category === 'Home Schooling').length, color: '#16a34a' },
+                { id: 'Tuition & Boosters', icon: SparklesIcon, label: '📚 Private Tuition & Clinics', count: coursesList.filter((c) => c.category === 'Tuition & Boosters').length, color: '#d97706' },
                 { id: 'Cambridge International (Years 9-11)', icon: BritishShieldIcon, label: 'Cambridge (Y9-11)', count: coursesList.filter((c) => c.category === 'Cambridge International (Years 9-11)').length, color: '#00247D' },
                 { id: 'Pearson Edexcel International (Years 9-11)', icon: BritishShieldIcon, label: 'Pearson Edexcel (Y9-11)', count: coursesList.filter((c) => c.category === 'Pearson Edexcel International (Years 9-11)').length, color: '#00247D' },
                 { id: 'Data Science & Research', icon: DatabaseIcon, label: 'Data, R & SPSS', count: coursesList.filter((c) => c.category === 'Data Science & Research').length, color: '#10b981' },

@@ -7,7 +7,7 @@ import { supabase } from './supabase'
 import { INSTITUTION_CONFIG } from '@/config/institution'
 import type { IntakeSchedule } from '@/types/intake'
 
-const INTAKE_STORAGE_KEY = 'eclat_intake_schedules_store_v4'
+const INTAKE_STORAGE_KEY = 'eclat_intake_schedules_store_v5'
 
 export const INITIAL_INTAKE_SCHEDULES: IntakeSchedule[] = [
   {
@@ -46,6 +46,80 @@ export const INITIAL_INTAKE_SCHEDULES: IntakeSchedule[] = [
     featured: true,
     created_at: '2026-09-10T10:00:00.000Z',
     updated_at: '2026-09-16T00:00:00.000Z',
+  },
+  {
+    id: 'intake-2026-homeschooling',
+    title: 'Full-Time British Curriculum Online Home Schooling (Years 7–11)',
+    academic_year: '2026/2027 Academic Year',
+    term_session: 'Full-Time Home Schooling Cohort',
+    headline: 'Accredited Cambridge KE042 & Pearson EDX-98421 — Complete Home Schooling from Home',
+    description:
+      'Complete, structured British curriculum schooling for home schoolers worldwide. Students enrol into cohesive grade cohorts (Years 7, 8, 9 Checkpoint and Years 10 & 11 IGCSE) where all subjects (Mathematics, Pure Sciences, English, Computer Science, and Humanities) are taught together under a full daily school timetable. Includes certified teachers, virtual science labs, termly report cards, parent-teacher reviews, and official candidate exam center placement.',
+    poster_image_url:
+      'https://images.unsplash.com/photo-1503676260728-1c00da094a0b?auto=format&fit=crop&w=1200&q=80',
+    application_deadline: '2026-10-25',
+    orientation_date: '2026-10-28',
+    commencement_date: '2026-11-02',
+    status: 'Open',
+    target_courses: [
+      'Year 7 & 8 Cambridge Lower Secondary Full Home Schooling Package',
+      'Year 9 Checkpoint British Home Schooling Cohort (All Subjects Taught Together)',
+      'Year 10 IGCSE Complete Home Schooling Program (All Subjects Taught Together)',
+      'Year 11 IGCSE Final Candidate Home Schooling & Exam Series Sitting',
+    ],
+    early_bird_discount: '🏡 15% Family & Full-Year Home Schooling Scholarship',
+    installment_plan: 'Convenient 3-Term Split or 10 Monthly Installments',
+    study_modes: [
+      '100% Online Full-Time Home Schooling',
+      'All Subjects Taught Together (Cohesive Cohort)',
+      'Daily Live Interactive Morning & Midday Schedules',
+      'Termly Official Report Cards & Parent Portal',
+      'Accredited Exam Centre Registration (KE042 & EDX-98421)',
+    ],
+    contact_phone: INSTITUTION_CONFIG.contact.phone,
+    contact_email: INSTITUTION_CONFIG.contact.admissionsEmail,
+    registration_fee: 'Free ($0 USD Application Fee)',
+    is_published: true,
+    featured: true,
+    created_at: '2026-09-16T02:00:00.000Z',
+    updated_at: '2026-09-16T02:00:00.000Z',
+  },
+  {
+    id: 'intake-2026-tuition',
+    title: 'IGCSE & Checkpoint Private 1-on-1 & Evening Tuition Masterclasses',
+    academic_year: '2026/2027 Rolling Sessions',
+    term_session: 'Evening, Weekend & Holiday Tuition Batches',
+    headline: 'Targeted Subject Mastery & Past Paper Clinics — Cambridge & Edexcel Candidates',
+    description:
+      'Specialized private 1-on-1 and small-group interactive tuition for students requiring intensive subject coaching, syllabus catch-up, and exam technique mastery. Taught by senior Cambridge and Edexcel examiners across Extended Mathematics (0580 / 4MA1), Physics (0625 / 4PH1), Chemistry (0620), Biology (0610), Computer Science (0478), and English Language. Flexible evening and weekend timeslots.',
+    poster_image_url:
+      'https://images.unsplash.com/photo-1434030216411-0b793f4b4173?auto=format&fit=crop&w=1200&q=80',
+    application_deadline: 'Rolling Admissions (Weekly Batches)',
+    orientation_date: 'Immediate Onboarding',
+    commencement_date: 'Weekly Intake Commencements',
+    status: 'Open',
+    target_courses: [
+      '1-on-1 Personalized Private Tuition (Cambridge & Edexcel IGCSE)',
+      'Evening STEM & Extended Math Booster Pods (Mon–Thu 5:30 PM - 8:00 PM)',
+      'Weekend Intensive Past Paper Exam Drills (Saturday & Sunday)',
+      'May/June & Oct/Nov Candidate Final Examination Bootcamp',
+    ],
+    early_bird_discount: '📚 10% Discount on Termly Multi-Subject Tuition Packages',
+    installment_plan: 'Weekly, Monthly, or Termly Tuition Billing',
+    study_modes: [
+      '1-on-1 Private Virtual Lessons',
+      'Small Group Masterclass Pods (Max 5 Students)',
+      'Evening & Weekend Flexible Shifts',
+      'Past Paper Drills & Marking Scheme Mastery',
+      'Direct WhatsApp Mentor Q&A Support',
+    ],
+    contact_phone: INSTITUTION_CONFIG.contact.phone,
+    contact_email: INSTITUTION_CONFIG.contact.admissionsEmail,
+    registration_fee: 'Free ($0 USD Application Fee)',
+    is_published: true,
+    featured: true,
+    created_at: '2026-09-16T02:00:00.000Z',
+    updated_at: '2026-09-16T02:00:00.000Z',
   },
   {
     id: 'intake-2027-01-igcse',

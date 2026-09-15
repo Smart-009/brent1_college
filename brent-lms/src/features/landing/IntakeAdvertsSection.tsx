@@ -160,6 +160,22 @@ export function IntakeAdvertsSection() {
     if (activeFilter === 'career') {
       return intakes.filter((i) => i.id.includes('2026-10') || i.id.includes('2026-09'))
     }
+    if (activeFilter === 'homeschooling') {
+      return intakes.filter(
+        (i) =>
+          i.id.includes('homeschool') ||
+          i.title.toLowerCase().includes('home school') ||
+          i.description.toLowerCase().includes('home school')
+      )
+    }
+    if (activeFilter === 'tuition') {
+      return intakes.filter(
+        (i) =>
+          i.id.includes('tuition') ||
+          i.title.toLowerCase().includes('tuition') ||
+          i.description.toLowerCase().includes('tuition')
+      )
+    }
     if (activeFilter === 'british') {
       return intakes.filter(
         (i) =>
@@ -383,6 +399,42 @@ export function IntakeAdvertsSection() {
             </button>
             <button
               type="button"
+              onClick={() => setActiveFilter('homeschooling')}
+              className="interactive-pill"
+              style={{
+                background: activeFilter === 'homeschooling' ? 'linear-gradient(135deg, #059669, #047857)' : 'transparent',
+                color: activeFilter === 'homeschooling' ? '#ffffff' : '#047857',
+                border: activeFilter === 'homeschooling' ? 'none' : '1px solid #a7f3d0',
+                padding: '7px 18px',
+                borderRadius: '999px',
+                fontSize: '0.82rem',
+                fontWeight: 800,
+                cursor: 'pointer',
+                transition: 'all 0.2s ease',
+              }}
+            >
+              🏡 Home Schooling (Years 7–11)
+            </button>
+            <button
+              type="button"
+              onClick={() => setActiveFilter('tuition')}
+              className="interactive-pill"
+              style={{
+                background: activeFilter === 'tuition' ? 'linear-gradient(135deg, #7c3aed, #6d28d9)' : 'transparent',
+                color: activeFilter === 'tuition' ? '#ffffff' : '#7c3aed',
+                border: activeFilter === 'tuition' ? 'none' : '1px solid #ddd6fe',
+                padding: '7px 18px',
+                borderRadius: '999px',
+                fontSize: '0.82rem',
+                fontWeight: 800,
+                cursor: 'pointer',
+                transition: 'all 0.2s ease',
+              }}
+            >
+              📚 Private &amp; Evening Tuition
+            </button>
+            <button
+              type="button"
               onClick={() => setActiveFilter('career')}
               style={{
                 background: activeFilter === 'career' ? 'linear-gradient(135deg, #ea580c, #c2410c)' : 'transparent',
@@ -417,6 +469,106 @@ export function IntakeAdvertsSection() {
             </button>
           </div>
         </div>
+
+        {/* Dedicated Home Schooling Banner */}
+        {activeFilter === 'homeschooling' && (
+          <div
+            style={{
+              marginBottom: '2rem',
+              background: 'linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%)',
+              border: '2px solid #34d399',
+              borderRadius: '16px',
+              padding: isMobile ? '1.25rem 1rem' : '1.35rem 1.75rem',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              gap: '1.25rem',
+              flexWrap: 'wrap',
+              boxShadow: '0 8px 24px rgba(5, 150, 105, 0.1)',
+            }}
+          >
+            <div style={{ display: 'flex', alignItems: 'center', gap: '1.1rem', flex: 1, minWidth: '280px' }}>
+              <div style={{ fontSize: '2.5rem', background: '#ffffff', width: '56px', height: '56px', borderRadius: '14px', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 4px 12px rgba(5, 150, 105, 0.15)', flexShrink: 0 }}>
+                🏡
+              </div>
+              <div>
+                <div style={{ fontSize: '0.74rem', fontWeight: 900, color: '#047857', textTransform: 'uppercase', letterSpacing: '0.06em' }}>
+                  Full-Time Accredited British Online Schooling &bull; Years 7 to 11
+                </div>
+                <h3 style={{ margin: '2px 0 4px', fontSize: isMobile ? '1.15rem' : '1.35rem', fontWeight: 900, color: '#0f172a' }}>
+                  Full-Time Online Home Schooling Academy
+                </h3>
+                <p style={{ margin: 0, fontSize: '0.84rem', color: '#1f2937', lineHeight: 1.5 }}>
+                  Give your child a world-class British education from home. Our full-time online home schooling programme features <strong style={{ color: '#047857' }}>all subjects taught together in cohesive year cohorts</strong>, live daily timetables, weekly assignments, termly report cards, and guaranteed candidate registration at our accredited Cambridge (KE042) &amp; Edexcel (EDX-98421) exam centres.
+                </p>
+              </div>
+            </div>
+            <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
+              <span style={{ background: '#ffffff', border: '1px solid #a7f3d0', color: '#047857', fontSize: '0.74rem', fontWeight: 800, padding: '4px 10px', borderRadius: '999px' }}>
+                ✓ Complete British Curriculum
+              </span>
+              <span style={{ background: '#ffffff', border: '1px solid #a7f3d0', color: '#047857', fontSize: '0.74rem', fontWeight: 800, padding: '4px 10px', borderRadius: '999px' }}>
+                ✓ Live Daily Timetable
+              </span>
+              <span style={{ background: '#ffffff', border: '1px solid #a7f3d0', color: '#047857', fontSize: '0.74rem', fontWeight: 800, padding: '4px 10px', borderRadius: '999px' }}>
+                ✓ Termly Report Cards
+              </span>
+              <span style={{ background: '#ffffff', border: '1px solid #a7f3d0', color: '#047857', fontSize: '0.74rem', fontWeight: 800, padding: '4px 10px', borderRadius: '999px' }}>
+                ✓ Official Exam Center Placement
+              </span>
+            </div>
+          </div>
+        )}
+
+        {/* Dedicated Tuition & Booster Banner */}
+        {activeFilter === 'tuition' && (
+          <div
+            style={{
+              marginBottom: '2rem',
+              background: 'linear-gradient(135deg, #f5f3ff 0%, #ede9fe 100%)',
+              border: '2px solid #a78bfa',
+              borderRadius: '16px',
+              padding: isMobile ? '1.25rem 1rem' : '1.35rem 1.75rem',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              gap: '1.25rem',
+              flexWrap: 'wrap',
+              boxShadow: '0 8px 24px rgba(124, 58, 237, 0.1)',
+            }}
+          >
+            <div style={{ display: 'flex', alignItems: 'center', gap: '1.1rem', flex: 1, minWidth: '280px' }}>
+              <div style={{ fontSize: '2.5rem', background: '#ffffff', width: '56px', height: '56px', borderRadius: '14px', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 4px 12px rgba(124, 58, 237, 0.15)', flexShrink: 0 }}>
+                📚
+              </div>
+              <div>
+                <div style={{ fontSize: '0.74rem', fontWeight: 900, color: '#6d28d9', textTransform: 'uppercase', letterSpacing: '0.06em' }}>
+                  1-on-1 &bull; Small Group Pods &bull; Evening &amp; Weekend Booster Clinics
+                </div>
+                <h3 style={{ margin: '2px 0 4px', fontSize: isMobile ? '1.15rem' : '1.35rem', fontWeight: 900, color: '#0f172a' }}>
+                  IGCSE &amp; Checkpoint Private &amp; Evening Tuition
+                </h3>
+                <p style={{ margin: 0, fontSize: '0.84rem', color: '#334155', lineHeight: 1.5 }}>
+                  Accelerate your academic performance with <strong style={{ color: '#6d28d9' }}>personalized 1-on-1 and small-group tuition</strong> led by senior Cambridge &amp; Edexcel examiners. Targeted past paper drills, mark scheme breakdowns, Extended Mathematics (0580/4MA1), and Pure Science clinics designed to turn B/C grades into solid A/A* distinctions.
+                </p>
+              </div>
+            </div>
+            <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
+              <span style={{ background: '#ffffff', border: '1px solid #ddd6fe', color: '#6d28d9', fontSize: '0.74rem', fontWeight: 800, padding: '4px 10px', borderRadius: '999px' }}>
+                ✓ 1-on-1 Private Tuition
+              </span>
+              <span style={{ background: '#ffffff', border: '1px solid #ddd6fe', color: '#6d28d9', fontSize: '0.74rem', fontWeight: 800, padding: '4px 10px', borderRadius: '999px' }}>
+                ✓ Past Paper Exam Drills
+              </span>
+              <span style={{ background: '#ffffff', border: '1px solid #ddd6fe', color: '#6d28d9', fontSize: '0.74rem', fontWeight: 800, padding: '4px 10px', borderRadius: '999px' }}>
+                ✓ Evening &amp; Weekend Shifts
+              </span>
+              <span style={{ background: '#ffffff', border: '1px solid #ddd6fe', color: '#6d28d9', fontSize: '0.74rem', fontWeight: 800, padding: '4px 10px', borderRadius: '999px' }}>
+                ✓ Senior Examiner Mentors
+              </span>
+            </div>
+          </div>
+        )}
 
         {/* Dedicated British International Curriculum & IGCSE Banner */}
         {activeFilter === 'british' && (
