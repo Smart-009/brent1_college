@@ -235,6 +235,25 @@ h1, h2, h3, h4, h5, h6 {
 /* NOTE: Dark theme is not used — app always runs in light mode.
    Headings always use --color-primary (deep blue) for full readability. */
 
+/* ---- Headings inside DARK backgrounds must be white ---- */
+/* Covers hero sections, dark footer sections, app download sections etc. */
+section[style*="background: linear-gradient(135deg, #1e3a8a"] h1,
+section[style*="background: linear-gradient(135deg, #1e3a8a"] h2,
+section[style*="background: linear-gradient(135deg, #1e3a8a"] h3,
+section[style*="background: linear-gradient(180deg, #070b18"] h1,
+section[style*="background: linear-gradient(180deg, #070b18"] h2,
+section[style*="background: linear-gradient(180deg, #070b18"] h3,
+section[style*="background: '#0a0f1d'"] h1,
+section[style*="background: '#0f172a'"] h1,
+section[style*="background: #0a0f1d"] h1,
+section[style*="background: #0f172a"] h1,
+section[style*="background: #0f172a"] h2,
+section[style*="color: #ffffff"] h1,
+section[style*="color: #ffffff"] h2,
+section[style*="color: #ffffff"] h3 {
+  color: #ffffff !important;
+}
+
 /* High-Contrast Visibility Safeguard: Any heading inside a light surface, card, modal, or white section is ALWAYS crisp dark */
 #courses h1, #courses h2, #courses h3, #courses h4, #courses h5, #courses h6,
 .card h1, .card h2, .card h3, .card h4, .card h5, .card h6,

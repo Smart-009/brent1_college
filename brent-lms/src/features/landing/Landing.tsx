@@ -1819,6 +1819,7 @@ export function Landing() {
 
           {/* Master Academy Headline */}
           <h1
+            className="landing-hero-heading"
             style={{
               fontSize: isMobile ? 'clamp(1.35rem, 5.6vw, 1.8rem)' : 'clamp(2.5rem, 4.8vw, 3.8rem)',
               fontWeight: 900,
@@ -1828,6 +1829,7 @@ export function Landing() {
               maxWidth: '960px',
               color: '#ffffff',
               fontFamily: 'var(--font-heading)',
+              textShadow: '0 2px 8px rgba(0,0,0,0.4)',
             }}
           >
             Skills that drive your career forward. <br />

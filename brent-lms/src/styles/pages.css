@@ -3,6 +3,36 @@
    ============================================================ */
 
 /* =====================
+   DARK SECTION HEADING VISIBILITY FIX
+   Headings inside dark/hero sections must be white regardless of global h1 color rule
+   ===================== */
+.landing-hero-heading {
+  color: #ffffff !important;
+}
+
+/* Any h1/h2/h3 inside a section that declares color: white should be white */
+section[style*="color: #ffffff"] h1,
+section[style*="color: #ffffff"] h2,
+section[style*="color: #ffffff"] h3,
+section[style*="color: white"] h1,
+section[style*="color: white"] h2,
+section[style*="color: white"] h3 {
+  color: #ffffff !important;
+}
+
+/* Any heading that explicitly has a white color inline style */
+h1[style*="color: #ffffff"],
+h2[style*="color: #ffffff"],
+h3[style*="color: #ffffff"],
+h4[style*="color: #ffffff"],
+h1[style*="color: white"],
+h2[style*="color: white"],
+h3[style*="color: white"] {
+  color: #ffffff !important;
+}
+
+
+/* =====================
    LAYOUT SHELL
    ===================== */
 .app-layout {
