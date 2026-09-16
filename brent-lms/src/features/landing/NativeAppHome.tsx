@@ -116,27 +116,9 @@ export function NativeAppHome({ courses, onSelectCourse }: { courses: CourseItem
           </div>
         </div>
 
-        <button
-          type="button"
-          onClick={handlePortalClick}
-          style={{
-            background: profile ? 'linear-gradient(135deg, #16a34a, #15803d)' : 'linear-gradient(135deg, #2563eb, #1d4ed8)',
-            color: '#ffffff',
-            border: 'none',
-            padding: '0.45rem 0.85rem',
-            borderRadius: '999px',
-            fontSize: '0.75rem',
-            fontWeight: 800,
-            cursor: 'pointer',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '6px',
-            boxShadow: '0 2px 8px rgba(37, 99, 235, 0.25)',
-          }}
-        >
-          {profile ? <GraduationCapIcon size={14} color="#ffffff" /> : <LockIcon size={14} color="#ffffff" />}
-          <span>{profile ? 'My Portal' : 'Sign In'}</span>
-        </button>
+<span style={{ fontSize: '0.68rem', color: '#64748b', fontWeight: 600, background: '#f1f5f9', padding: '0.3rem 0.75rem', borderRadius: '999px' }}>
+          {profile ? `👋 ${profile.full_name?.split(' ')[0] || 'Welcome'}` : '🎓 Éclat Campus'}
+        </span>
       </header>
 
       {/* 2. Motivational Hero Card */}
@@ -203,7 +185,7 @@ export function NativeAppHome({ courses, onSelectCourse }: { courses: CourseItem
               }}
             >
               <RocketIcon size={16} color="#1e3a8a" />
-              <span>{profile ? 'Enter My Learning Room' : 'Access Student Desk'}</span>
+              <span>{profile ? 'My Learning Room' : 'Student Desk'}</span>
             </button>
 
             <Link
@@ -259,7 +241,7 @@ export function NativeAppHome({ courses, onSelectCourse }: { courses: CourseItem
             <span style={{ width: '38px', height: '38px', borderRadius: '10px', background: '#eff6ff', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
               <GraduationCapIcon size={20} color="#1d4ed8" />
             </span>
-            <span style={{ fontSize: '0.75rem', fontWeight: 700, textAlign: 'center', color: '#0f172a' }}>My Portal</span>
+            <span style={{ fontSize: '0.72rem', fontWeight: 700, textAlign: 'center', color: '#0f172a', lineHeight: 1.2 }}>My Portal</span>
           </button>
 
           {/* Tile 2: Schedule */}

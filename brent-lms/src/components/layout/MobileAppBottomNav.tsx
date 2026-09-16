@@ -19,7 +19,6 @@ export function MobileAppBottomNav() {
 
   const currentPath = location.pathname
 
-  // ── Automatic sync on mount + window focus ────────────────────────────────
   useEffect(() => {
     if (!isNative) return
     const runSync = async () => {
@@ -37,12 +36,10 @@ export function MobileAppBottomNav() {
     return () => window.removeEventListener('focus', runSync)
   }, [isNative])
 
-  // Hide on desktop / during lesson player
   if (!isNative || currentPath.includes('/lesson/') || currentPath.startsWith('/student/lesson')) {
     return null
   }
 
-  // Home ALWAYS goes to the public landing page — never the dashboard
   const homeLink = '/'
 
   const getCoursesLink = () => {
@@ -53,7 +50,6 @@ export function MobileAppBottomNav() {
     return '/courses'
   }
 
-  // Portal goes to the role dashboard (or login if not logged in)
   const getPortalLink = () => {
     if (!profile) return '/login'
     if (profile.role === 'admin') return '/admin'
@@ -85,23 +81,47 @@ export function MobileAppBottomNav() {
     flexDirection: 'column' as const,
     alignItems: 'center',
     justifyContent: 'center',
-    flex: 1,
+    flex: '1 1 0%',          // equal width, no shrink issues
+    minWidth: 0,              // allow flex children to shrink
     height: '100%',
     textDecoration: 'none',
     color: isActive ? '#1d4ed8' : '#64748b',
-    transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
-    fontSize: '0.68rem',
+    transition: 'color 0.18s ease',
+    fontSize: '0.66rem',
     fontWeight: (isActive ? 800 : 600) as number,
-    gap: '3px',
+    gap: '2px',
     userSelect: 'none' as const,
-    transform: isActive ? 'scale(1.06)' : 'scale(1)',
-    padding: '0.3rem 0',
+    padding: '0.25rem 0.2rem',
+    boxSizing: 'border-box' as const,
+    overflow: 'hidden',
   })
 
-  const dot = (isActive: boolean) =>
+  const label = (text: string, isActive: boolean) => (
+    <span style={{
+      display: 'block',
+      whiteSpace: 'nowrap' as const,
+      overflow: 'hidden',
+      textOverflow: 'ellipsis',
+      maxWidth: '100%',
+      textAlign: 'center' as const,
+      lineHeight: 1.2,
+      fontWeight: isActive ? 800 : 600,
+    }}>
+      {text}
+    </span>
+  )
+
+  const bar = (isActive: boolean) =>
     isActive ? (
-      <span style={{ width: '4px', height: '4px', borderRadius: '50%', background: '#1d4ed8', boxShadow: '0 0 6px rgba(29,78,216,0.4)' }} />
-    ) : null
+      <span style={{
+        display: 'block',
+        width: '20px',
+        height: '3px',
+        borderRadius: '999px',
+        background: '#1d4ed8',
+        marginTop: '2px',
+      }} />
+    ) : <span style={{ display: 'block', height: '5px' }} />
 
   return (
     <nav
@@ -112,63 +132,46 @@ export function MobileAppBottomNav() {
         bottom: 0,
         left: 0,
         right: 0,
-        height: 'calc(64px + env(safe-area-inset-bottom, 0px))',
+        height: 'calc(60px + env(safe-area-inset-bottom, 0px))',
         paddingBottom: 'env(safe-area-inset-bottom, 0px)',
-        background: 'rgba(255, 255, 255, 0.98)',
-        backdropFilter: 'blur(16px)',
-        WebkitBackdropFilter: 'blur(16px)',
-        borderTop: '1px solid #e2e8f0',
+        background: '#ffffff',
+        borderTop: '1.5px solid #e2e8f0',
         display: 'flex',
-        justifyContent: 'space-around',
-        alignItems: 'center',
+        justifyContent: 'stretch',
+        alignItems: 'stretch',
         zIndex: 9999,
-        boxShadow: '0 -4px 16px rgba(0, 0, 0, 0.06)',
+        boxShadow: '0 -2px 12px rgba(0, 0, 0, 0.07)',
       }}
     >
-      {/* 1. Home — always the public landing page */}
-      <Link
-        to={homeLink}
-        onClick={() => { if (isHomeActive) window.scrollTo({ top: 0, behavior: 'smooth' }) }}
-        style={tab(isHomeActive)}
-      >
-        <HomeIcon size={20} color={isHomeActive ? '#1d4ed8' : '#64748b'} strokeWidth={isHomeActive ? 2.5 : 2} />
-        <span>Home</span>
-        {dot(isHomeActive)}
+      {/* 1. Home */}
+      <Link to={homeLink} onClick={() => { if (isHomeActive) window.scrollTo({ top: 0, behavior: 'smooth' }) }} style={tab(isHomeActive)}>
+        <HomeIcon size={22} color={isHomeActive ? '#1d4ed8' : '#94a3b8'} strokeWidth={isHomeActive ? 2.5 : 1.8} />
+        {label('Home', isHomeActive)}
+        {bar(isHomeActive)}
       </Link>
 
-      {/* 2. Courses / My Units */}
-      <Link
-        to={getCoursesLink()}
-        onClick={() => { if (isCoursesActive) window.scrollTo({ top: 0, behavior: 'smooth' }) }}
-        style={tab(isCoursesActive)}
-      >
-        <BookOpenIcon size={20} color={isCoursesActive ? '#1d4ed8' : '#64748b'} strokeWidth={isCoursesActive ? 2.5 : 2} />
-        <span>{profile?.role === 'student' ? 'My Units' : 'Courses'}</span>
-        {dot(isCoursesActive)}
+      {/* 2. Courses */}
+      <Link to={getCoursesLink()} onClick={() => { if (isCoursesActive) window.scrollTo({ top: 0, behavior: 'smooth' }) }} style={tab(isCoursesActive)}>
+        <BookOpenIcon size={22} color={isCoursesActive ? '#1d4ed8' : '#94a3b8'} strokeWidth={isCoursesActive ? 2.5 : 1.8} />
+        {label(profile?.role === 'student' ? 'My Units' : 'Courses', isCoursesActive)}
+        {bar(isCoursesActive)}
       </Link>
 
       {/* 3. E-Library */}
-      <Link
-        to="/library"
-        style={tab(isLibraryActive)}
-      >
-        <LibraryIcon size={20} color={isLibraryActive ? '#1d4ed8' : '#64748b'} strokeWidth={isLibraryActive ? 2.5 : 2} />
-        <span>E-Library</span>
-        {dot(isLibraryActive)}
+      <Link to="/library" style={tab(isLibraryActive)}>
+        <LibraryIcon size={22} color={isLibraryActive ? '#1d4ed8' : '#94a3b8'} strokeWidth={isLibraryActive ? 2.5 : 1.8} />
+        {label('E-Library', isLibraryActive)}
+        {bar(isLibraryActive)}
       </Link>
 
-      {/* 4. My Portal (dashboard) or Sign In */}
-      <Link
-        to={getPortalLink()}
-        style={tab(isPortalActive)}
-      >
-        {profile ? (
-          <GraduationCapIcon size={20} color={isPortalActive ? '#1d4ed8' : '#64748b'} strokeWidth={isPortalActive ? 2.5 : 2} />
-        ) : (
-          <LockIcon size={20} color={isPortalActive ? '#1d4ed8' : '#64748b'} strokeWidth={isPortalActive ? 2.5 : 2} />
-        )}
-        <span>{profile ? 'My Portal' : 'Sign In'}</span>
-        {dot(isPortalActive)}
+      {/* 4. Portal / Sign In */}
+      <Link to={getPortalLink()} style={tab(isPortalActive)}>
+        {profile
+          ? <GraduationCapIcon size={22} color={isPortalActive ? '#1d4ed8' : '#94a3b8'} strokeWidth={isPortalActive ? 2.5 : 1.8} />
+          : <LockIcon size={22} color={isPortalActive ? '#1d4ed8' : '#94a3b8'} strokeWidth={isPortalActive ? 2.5 : 1.8} />
+        }
+        {label(profile ? 'My Portal' : 'Sign In', isPortalActive)}
+        {bar(isPortalActive)}
       </Link>
     </nav>
   )
