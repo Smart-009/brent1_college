@@ -49,7 +49,7 @@ export function NativeAppHome({ courses, onSelectCourse }: { courses: CourseItem
     return MOTIVATIONAL_QUOTES[day % MOTIVATIONAL_QUOTES.length]
   }, [])
 
-  const categories = ['All', 'Tech & Programming', 'Creative Arts & Design', 'Languages & Communication', 'Computer & Digital Skills']
+  const categories = ['All', 'Tech & Dev', 'Creative Arts', 'Languages', 'Digital Skills', 'Home Schooling', 'Tuition']
 
   const filteredCourses = useMemo(() => {
     return courses.filter((c) => {
@@ -185,7 +185,7 @@ export function NativeAppHome({ courses, onSelectCourse }: { courses: CourseItem
               }}
             >
               <RocketIcon size={16} color="#1e3a8a" />
-              <span>{profile ? 'My Learning Room' : 'Student Desk'}</span>
+              <span style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{profile ? 'My Learning Room' : 'Student Portal'}</span>
             </button>
 
             <Link
@@ -265,7 +265,7 @@ export function NativeAppHome({ courses, onSelectCourse }: { courses: CourseItem
             <span style={{ width: '38px', height: '38px', borderRadius: '10px', background: '#f0f9ff', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
               <CalendarIcon size={20} color="#0284c7" />
             </span>
-            <span style={{ fontSize: '0.75rem', fontWeight: 700, textAlign: 'center', color: '#0f172a' }}>Schedule</span>
+            <span style={{ fontSize: '0.72rem', fontWeight: 700, textAlign: 'center', color: '#0f172a', lineHeight: 1.2, maxWidth: '100%', wordBreak: 'break-word' }}>Schedule</span>
           </Link>
 
           {/* Tile 3: Exams */}
@@ -289,7 +289,7 @@ export function NativeAppHome({ courses, onSelectCourse }: { courses: CourseItem
             <span style={{ width: '38px', height: '38px', borderRadius: '10px', background: '#f5f3ff', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
               <FileTextIcon size={20} color="#7c3aed" />
             </span>
-            <span style={{ fontSize: '0.75rem', fontWeight: 700, textAlign: 'center', color: '#0f172a' }}>Exams</span>
+            <span style={{ fontSize: '0.72rem', fontWeight: 700, textAlign: 'center', color: '#0f172a', lineHeight: 1.2, maxWidth: '100%', wordBreak: 'break-word' }}>Exams</span>
           </Link>
 
           {/* Tile 4: Fees */}
@@ -313,7 +313,7 @@ export function NativeAppHome({ courses, onSelectCourse }: { courses: CourseItem
             <span style={{ width: '38px', height: '38px', borderRadius: '10px', background: '#ecfdf5', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
               <CreditCardIcon size={20} color="#059669" />
             </span>
-            <span style={{ fontSize: '0.75rem', fontWeight: 700, textAlign: 'center', color: '#0f172a' }}>Fees & Pay</span>
+            <span style={{ fontSize: '0.72rem', fontWeight: 700, textAlign: 'center', color: '#0f172a', lineHeight: 1.2, maxWidth: '100%', wordBreak: 'break-word' }}>Fees & Pay</span>
           </Link>
 
           {/* Tile 5: Noticeboard */}
@@ -337,7 +337,7 @@ export function NativeAppHome({ courses, onSelectCourse }: { courses: CourseItem
             <span style={{ width: '38px', height: '38px', borderRadius: '10px', background: '#fffbeb', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
               <MegaphoneIcon size={20} color="#d97706" />
             </span>
-            <span style={{ fontSize: '0.75rem', fontWeight: 700, textAlign: 'center', color: '#0f172a' }}>Circulars</span>
+            <span style={{ fontSize: '0.72rem', fontWeight: 700, textAlign: 'center', color: '#0f172a', lineHeight: 1.2, maxWidth: '100%', wordBreak: 'break-word' }}>Circulars</span>
           </Link>
 
           {/* Tile 6: Help Desk */}
@@ -363,7 +363,7 @@ export function NativeAppHome({ courses, onSelectCourse }: { courses: CourseItem
             <span style={{ width: '38px', height: '38px', borderRadius: '10px', background: '#f0fdf4', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
               <MessageCircleIcon size={20} color="#16a34a" />
             </span>
-            <span style={{ fontSize: '0.75rem', fontWeight: 700, textAlign: 'center', color: '#15803d' }}>Support</span>
+            <span style={{ fontSize: '0.72rem', fontWeight: 700, textAlign: 'center', color: '#15803d', lineHeight: 1.2 }}>Support</span>
           </a>
         </div>
       </div>
@@ -475,7 +475,7 @@ export function NativeAppHome({ courses, onSelectCourse }: { courses: CourseItem
 
               <div style={{ flex: 1 }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <span style={{ fontSize: '0.68rem', fontWeight: 800, color: '#1d4ed8', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
+                  <span style={{ fontSize: '0.64rem', fontWeight: 800, color: '#1d4ed8', textTransform: 'uppercase', letterSpacing: '0.03em', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', maxWidth: '120px' }}>
                     {course.tag}
                   </span>
                   <a
@@ -501,7 +501,7 @@ export function NativeAppHome({ courses, onSelectCourse }: { courses: CourseItem
                     <span>Fees Inquiry</span>
                   </a>
                 </div>
-                <h4 style={{ fontSize: '0.94rem', fontWeight: 800, color: '#0f172a', margin: '3px 0 0', lineHeight: 1.3 }}>
+                <h4 style={{ fontSize: '0.88rem', fontWeight: 800, color: '#0f172a', margin: '3px 0 0', lineHeight: 1.3, overflow: 'hidden', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical' }}>
                   {course.title}
                 </h4>
               </div>
@@ -529,7 +529,7 @@ export function NativeAppHome({ courses, onSelectCourse }: { courses: CourseItem
                 }}
               >
                 <RocketIcon size={15} color="#ffffff" />
-                <span>Access Student Portal</span>
+                <span style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '100%' }}>{profile ? 'Open My Learning Room' : 'Enroll Now'}</span>
               </button>
             </div>
           </div>
