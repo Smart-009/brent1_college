@@ -10,7 +10,6 @@ import {
   LibraryIcon,
   GraduationCapIcon,
   LockIcon,
-  ChartBarIcon,
 } from '@/components/icons/AppIcons'
 
 export function MobileAppBottomNav() {
@@ -20,7 +19,7 @@ export function MobileAppBottomNav() {
 
   const currentPath = location.pathname
 
-  // ── Automatic sync on mount + window focus (no manual button needed) ──────
+  // ── Automatic sync on mount + window focus ────────────────────────────────
   useEffect(() => {
     if (!isNative) return
     const runSync = async () => {
@@ -43,14 +42,8 @@ export function MobileAppBottomNav() {
     return null
   }
 
-  const getHomeLink = () => {
-    if (!profile) return '/'
-    if (profile.role === 'admin') return '/admin'
-    if (profile.role === 'teacher') return '/teacher'
-    if (profile.role === 'bursar') return '/bursar'
-    if (profile.role === 'parent') return '/parent'
-    return '/student'
-  }
+  // Home ALWAYS goes to the public landing page — never the dashboard
+  const homeLink = '/'
 
   const getCoursesLink = () => {
     if (!profile) return '/courses'
@@ -60,39 +53,34 @@ export function MobileAppBottomNav() {
     return '/courses'
   }
 
-  const getProgressLink = () => {
-    if (!profile) return '/courses'
-    if (profile.role === 'student') return '/student/progress'
-    if (profile.role === 'teacher') return '/teacher'
-    if (profile.role === 'admin') return '/admin'
-    return '/student/progress'
-  }
-
-  const getAccountLink = () => {
+  // Portal goes to the role dashboard (or login if not logged in)
+  const getPortalLink = () => {
     if (!profile) return '/login'
     if (profile.role === 'admin') return '/admin'
     if (profile.role === 'teacher') return '/teacher'
+    if (profile.role === 'bursar') return '/bursar'
+    if (profile.role === 'parent') return '/parent'
     return '/student'
   }
 
-  const isHomeActive = currentPath === '/' || currentPath === getHomeLink()
+  const isHomeActive = currentPath === '/'
   const isCoursesActive =
     currentPath === '/courses' ||
     currentPath === '/student/courses' ||
     currentPath === '/teacher/courses' ||
     currentPath === '/admin/classes'
   const isLibraryActive = currentPath === '/library'
-  const isProgressActive =
-    currentPath.includes('/progress') ||
-    currentPath.includes('/grades') ||
-    currentPath.includes('/report')
-  const isAccountActive =
+  const isPortalActive =
     currentPath === '/login' ||
-    currentPath.includes('/profile') ||
-    (!isHomeActive && !isCoursesActive && !isLibraryActive && !isProgressActive &&
-      profile && currentPath.startsWith('/' + profile.role))
+    (!!profile && (
+      currentPath.startsWith('/admin') ||
+      currentPath.startsWith('/teacher') ||
+      currentPath.startsWith('/student') ||
+      currentPath.startsWith('/bursar') ||
+      currentPath.startsWith('/parent')
+    ))
 
-  const tabStyle = (isActive: boolean) => ({
+  const tab = (isActive: boolean) => ({
     display: 'flex',
     flexDirection: 'column' as const,
     alignItems: 'center',
@@ -112,15 +100,7 @@ export function MobileAppBottomNav() {
 
   const dot = (isActive: boolean) =>
     isActive ? (
-      <span
-        style={{
-          width: '4px',
-          height: '4px',
-          borderRadius: '50%',
-          background: '#1d4ed8',
-          boxShadow: '0 0 6px rgba(29, 78, 216, 0.4)',
-        }}
-      />
+      <span style={{ width: '4px', height: '4px', borderRadius: '50%', background: '#1d4ed8', boxShadow: '0 0 6px rgba(29,78,216,0.4)' }} />
     ) : null
 
   return (
@@ -145,14 +125,14 @@ export function MobileAppBottomNav() {
         boxShadow: '0 -4px 16px rgba(0, 0, 0, 0.06)',
       }}
     >
-      {/* 1. Home / Dashboard */}
+      {/* 1. Home — always the public landing page */}
       <Link
-        to={getHomeLink()}
+        to={homeLink}
         onClick={() => { if (isHomeActive) window.scrollTo({ top: 0, behavior: 'smooth' }) }}
-        style={tabStyle(isHomeActive)}
+        style={tab(isHomeActive)}
       >
         <HomeIcon size={20} color={isHomeActive ? '#1d4ed8' : '#64748b'} strokeWidth={isHomeActive ? 2.5 : 2} />
-        <span>{profile ? 'Dashboard' : 'Home'}</span>
+        <span>Home</span>
         {dot(isHomeActive)}
       </Link>
 
@@ -160,7 +140,7 @@ export function MobileAppBottomNav() {
       <Link
         to={getCoursesLink()}
         onClick={() => { if (isCoursesActive) window.scrollTo({ top: 0, behavior: 'smooth' }) }}
-        style={tabStyle(isCoursesActive)}
+        style={tab(isCoursesActive)}
       >
         <BookOpenIcon size={20} color={isCoursesActive ? '#1d4ed8' : '#64748b'} strokeWidth={isCoursesActive ? 2.5 : 2} />
         <span>{profile?.role === 'student' ? 'My Units' : 'Courses'}</span>
@@ -170,35 +150,25 @@ export function MobileAppBottomNav() {
       {/* 3. E-Library */}
       <Link
         to="/library"
-        style={tabStyle(isLibraryActive)}
+        style={tab(isLibraryActive)}
       >
         <LibraryIcon size={20} color={isLibraryActive ? '#1d4ed8' : '#64748b'} strokeWidth={isLibraryActive ? 2.5 : 2} />
         <span>E-Library</span>
         {dot(isLibraryActive)}
       </Link>
 
-      {/* 4. My Grades / Progress */}
+      {/* 4. My Portal (dashboard) or Sign In */}
       <Link
-        to={getProgressLink()}
-        style={tabStyle(isProgressActive)}
-      >
-        <ChartBarIcon size={20} color={isProgressActive ? '#1d4ed8' : '#64748b'} strokeWidth={isProgressActive ? 2.5 : 2} />
-        <span>{profile ? 'My Grades' : 'Results'}</span>
-        {dot(isProgressActive)}
-      </Link>
-
-      {/* 5. Account (only shows Sign In when not logged in) */}
-      <Link
-        to={getAccountLink()}
-        style={tabStyle(!!isAccountActive)}
+        to={getPortalLink()}
+        style={tab(isPortalActive)}
       >
         {profile ? (
-          <GraduationCapIcon size={20} color={isAccountActive ? '#1d4ed8' : '#64748b'} strokeWidth={isAccountActive ? 2.5 : 2} />
+          <GraduationCapIcon size={20} color={isPortalActive ? '#1d4ed8' : '#64748b'} strokeWidth={isPortalActive ? 2.5 : 2} />
         ) : (
-          <LockIcon size={20} color={isAccountActive ? '#1d4ed8' : '#64748b'} strokeWidth={isAccountActive ? 2.5 : 2} />
+          <LockIcon size={20} color={isPortalActive ? '#1d4ed8' : '#64748b'} strokeWidth={isPortalActive ? 2.5 : 2} />
         )}
-        <span>{profile ? 'Account' : 'Sign In'}</span>
-        {dot(!!isAccountActive)}
+        <span>{profile ? 'My Portal' : 'Sign In'}</span>
+        {dot(isPortalActive)}
       </Link>
     </nav>
   )
