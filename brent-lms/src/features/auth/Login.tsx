@@ -397,7 +397,7 @@ export function Login() {
               </div>
             )}
 
-            <form onSubmit={handleSubmit}>
+            <form onSubmit={handleSubmit} autoComplete="off">
                 <div style={{ marginBottom: '1.1rem' }}>
                   <label className="label" style={{ fontSize: '0.84rem', fontWeight: 700, color: '#1e293b' }}>
                     {selectedRole === 'student' ? 'Admission Number' : 'Username / Admission Number'}
@@ -405,6 +405,7 @@ export function Login() {
                   <input
                     type="text"
                     required
+                    autoComplete="off"
                     autoCapitalize="none"
                     autoCorrect="off"
                     spellCheck={false}
@@ -446,6 +447,7 @@ export function Login() {
                   <input
                     type={showPassword ? 'text' : 'password'}
                     required
+                    autoComplete="new-password"
                     autoCapitalize="none"
                     autoCorrect="off"
                     spellCheck={false}
