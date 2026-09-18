@@ -1,4 +1,4 @@
-import { NavLink, useNavigate } from 'react-router-dom'
+import { NavLink, useNavigate, useLocation } from 'react-router-dom'
 import { useAuth } from '@/hooks/useAuth'
 import { RoleBadge } from '@/components/ui/Badge'
 import {
@@ -31,11 +31,13 @@ interface NavItem {
 export function Sidebar({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) {
   const { profile, signOut } = useAuth()
   const navigate = useNavigate()
+  const location = useLocation()
 
   // Streamlined Role-Specific Navigation Definitions
   const guestNav: NavItem[] = [
     { to: '/', label: 'Home & Overview', icon: HomeIcon },
     { to: '/courses', label: 'Vocational & IGCSE Courses', icon: BookOpenIcon },
+    { to: '/igcse', label: 'Cambridge & Edexcel IGCSE', icon: AwardIcon },
     { to: '/library', label: 'E-Library & Past Papers', icon: LibraryIcon },
     { to: '/login', label: 'Student / Faculty Login', icon: LockIcon },
   ]
@@ -43,10 +45,19 @@ export function Sidebar({ isOpen, onClose }: { isOpen: boolean; onClose: () => v
   const studentNav: NavItem[] = [
     { to: '/student', label: 'My Student Dashboard', icon: HomeIcon },
     { to: '/student/courses', label: 'My Enrolled Lessons & LMS', icon: BookOpenIcon },
-    { to: '/library', label: 'E-Library & IGCSE Past Papers', icon: LibraryIcon },
+    { to: '/library', label: 'Digital E-Library & Courseware', icon: LibraryIcon },
     { to: '/fees', label: 'My Fee Statement & Paybill', icon: CreditCardIcon },
-    { to: '/exams', label: 'IGCSE Results & Transcripts', icon: FileTextIcon },
+    { to: '/exams', label: 'My Academic Transcripts', icon: FileTextIcon },
     { to: '/noticeboard', label: 'Student Noticeboard', icon: MegaphoneIcon },
+  ]
+
+  const igcseNav: NavItem[] = [
+    { to: '/igcse', label: 'IGCSE Candidate Dashboard', icon: AwardIcon },
+    { to: '/courses?cat=IGCSE', label: 'Cambridge & Edexcel Subjects', icon: BookOpenIcon },
+    { to: '/library', label: 'IGCSE Past Papers & Mark Schemes', icon: LibraryIcon },
+    { to: '/timetable', label: 'International Exam Timetable', icon: CalendarIcon },
+    { to: '/exams', label: 'Official Statement of Results', icon: FileTextIcon },
+    { to: '/noticeboard', label: 'Candidate Noticeboard', icon: MegaphoneIcon },
   ]
 
   const teacherNav: NavItem[] = [
@@ -85,14 +96,20 @@ export function Sidebar({ isOpen, onClose }: { isOpen: boolean; onClose: () => v
   ]
 
   const roleNavMap: Record<string, { label: string; icon: React.ComponentType<{ size?: number | string }>; links: NavItem[] }> = {
-    student: { label: 'Student Portal', icon: GraduationCapIcon, links: studentNav },
+    student: { label: 'Vocational Student Portal', icon: GraduationCapIcon, links: studentNav },
+    igcse: { label: 'Cambridge & Edexcel Portal', icon: AwardIcon, links: igcseNav },
     teacher: { label: 'Faculty Desk', icon: UserIcon, links: teacherNav },
     parent: { label: 'Guardian Portal', icon: UsersIcon, links: parentNav },
     bursar: { label: 'Bursar & Admissions Desk', icon: BriefcaseIcon, links: bursarNav },
     admin: { label: 'Institutional Administration', icon: ShieldCheckIcon, links: adminNav },
   }
 
-  const currentSection = profile ? (roleNavMap[profile.role] || roleNavMap.student) : { label: 'Éclat Institute Hub', icon: BuildingIcon, links: guestNav }
+  const isIGCSEPath = location.pathname.startsWith('/igcse')
+  const currentSection = isIGCSEPath
+    ? roleNavMap.igcse
+    : profile
+    ? (roleNavMap[profile.role] || roleNavMap.student)
+    : { label: 'Éclat Institute Hub', icon: BuildingIcon, links: guestNav }
   const SectionHeaderIcon = currentSection.icon
 
   const handleSignOut = async () => {

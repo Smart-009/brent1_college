@@ -14,6 +14,7 @@ import {
   LockIcon,
   AlertTriangleIcon,
   CheckIcon,
+  AwardIcon,
 } from '@/components/icons/AppIcons'
 
 export function Login() {
@@ -27,6 +28,7 @@ export function Login() {
   // If URL has ?role=admin or ?role=bursar, start in staff mode
   const [isStaffMode, setIsStaffMode] = useState<boolean>(paramRole === 'admin' || paramRole === 'bursar')
   const [selectedRole, setSelectedRole] = useState<Role>(paramRole || (isNative ? 'student' : 'student'))
+  const [selectedPortalKey, setSelectedPortalKey] = useState<string>(paramRole === ('igcse' as any) ? 'igcse' : (paramRole || 'student'))
   const [admissionNumber, setAdmissionNumber] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState<string | null>(null)
@@ -47,6 +49,7 @@ export function Login() {
   useEffect(() => {
     if (paramRole && ['admin', 'bursar', 'teacher', 'student', 'parent'].includes(paramRole)) {
       setSelectedRole(paramRole)
+      setSelectedPortalKey(paramRole)
       if (paramRole === 'admin' || paramRole === 'bursar') {
         setIsStaffMode(true)
       }
@@ -57,13 +60,23 @@ export function Login() {
   const publicRoles = [
     {
       role: 'student' as Role,
-      label: 'Student / Trainee Portal',
+      portalKey: 'student',
+      label: 'Vocational & Short Courses Portal',
       renderIcon: () => <GraduationCapIcon size={22} color="#1d4ed8" />,
       route: '/student',
-      desc: 'Access your registered short course units, video lessons, and transcripts.',
+      desc: 'Access your registered short course units, practical video lessons, and transcripts.',
+    },
+    {
+      role: 'student' as Role,
+      portalKey: 'igcse',
+      label: 'Cambridge & Edexcel IGCSE Portal',
+      renderIcon: () => <AwardIcon size={22} color="#b45309" />,
+      route: '/igcse',
+      desc: 'Access Cambridge Assessment & Pearson Edexcel secondary syllabus, past papers, and statement of results.',
     },
     {
       role: 'teacher' as Role,
+      portalKey: 'teacher',
       label: 'Faculty & Lecturer Portal',
       renderIcon: () => <BookOpenIcon size={22} color="#059669" />,
       route: '/teacher',
@@ -71,6 +84,7 @@ export function Login() {
     },
     {
       role: 'parent' as Role,
+      portalKey: 'parent',
       label: 'Parent & Sponsor Portal',
       renderIcon: () => <UsersIcon size={22} color="#7c3aed" />,
       route: '/parent',
@@ -82,6 +96,7 @@ export function Login() {
   const staffRoles = [
     {
       role: 'admin' as Role,
+      portalKey: 'admin',
       label: 'Principal & Directorate Terminal',
       renderIcon: () => <BuildingIcon size={22} color="#d97706" />,
       route: '/admin',
@@ -89,6 +104,7 @@ export function Login() {
     },
     {
       role: 'bursar' as Role,
+      portalKey: 'bursar',
       label: 'Finance & Admissions Registry',
       renderIcon: () => <CreditCardIcon size={22} color="#0284c7" />,
       route: '/bursar',
@@ -98,8 +114,9 @@ export function Login() {
 
   const activeRolesList = isStaffMode ? staffRoles : publicRoles
 
-  const handleSelectRole = (role: Role) => {
-    setSelectedRole(role)
+  const handleSelectPortal = (cfg: { role: Role; portalKey: string }) => {
+    setSelectedRole(cfg.role)
+    setSelectedPortalKey(cfg.portalKey)
     setError(null)
   }
 
@@ -143,6 +160,8 @@ export function Login() {
         navigate('/teacher')
       } else if (role === 'parent') {
         navigate('/parent')
+      } else if (selectedPortalKey === 'igcse' || cleanAdmission.toLowerCase().startsWith('edx') || cleanAdmission.toLowerCase().startsWith('cai')) {
+        navigate('/igcse')
       } else {
         navigate('/student')
       }
@@ -150,7 +169,7 @@ export function Login() {
   }
 
   const currentActiveRole =
-    [...publicRoles, ...staffRoles].find((r) => r.role === selectedRole) || publicRoles[0]
+    [...publicRoles, ...staffRoles].find((r) => r.portalKey === selectedPortalKey) || publicRoles[0]
 
   return (
     <div
@@ -249,24 +268,24 @@ export function Login() {
             <div style={{ display: 'flex', flexDirection: 'column', gap: '0.65rem' }}>
               {activeRolesList.map((cfg) => (
                 <button
-                  key={cfg.role}
+                  key={cfg.portalKey}
                   type="button"
-                  onClick={() => handleSelectRole(cfg.role)}
+                  onClick={() => handleSelectPortal(cfg)}
                   style={{
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'space-between',
                     padding: '0.85rem 1rem',
                     borderRadius: '12px',
-                    border: selectedRole === cfg.role ? '2px solid #2563eb' : '1px solid #cbd5e1',
-                    background: selectedRole === cfg.role ? '#eff6ff' : '#ffffff',
+                    border: selectedPortalKey === cfg.portalKey ? '2px solid #2563eb' : '1px solid #cbd5e1',
+                    background: selectedPortalKey === cfg.portalKey ? '#eff6ff' : '#ffffff',
                     cursor: 'pointer',
                     textAlign: 'left',
                     transition: 'all 0.2s',
                   }}
                 >
                   <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                    <span style={{ width: '38px', height: '38px', borderRadius: '10px', background: selectedRole === cfg.role ? '#dbeafe' : '#f1f5f9', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                    <span style={{ width: '38px', height: '38px', borderRadius: '10px', background: selectedPortalKey === cfg.portalKey ? '#dbeafe' : '#f1f5f9', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
                       {cfg.renderIcon()}
                     </span>
                     <div>
@@ -274,7 +293,7 @@ export function Login() {
                         style={{
                           fontWeight: 800,
                           fontSize: '0.88rem',
-                          color: selectedRole === cfg.role ? '#1e3a8a' : '#0f172a',
+                          color: selectedPortalKey === cfg.portalKey ? '#1e3a8a' : '#0f172a',
                         }}
                       >
                         {cfg.label}
@@ -284,7 +303,7 @@ export function Login() {
                       </div>
                     </div>
                   </div>
-                  {selectedRole === cfg.role && (
+                  {selectedPortalKey === cfg.portalKey && (
                     <span style={{ color: '#2563eb', marginLeft: '6px' }}>
                       <CheckIcon size={18} color="#2563eb" />
                     </span>
@@ -317,6 +336,7 @@ export function Login() {
                 const nextMode = !isStaffMode
                 setIsStaffMode(nextMode)
                 setSelectedRole(nextMode ? 'admin' : 'student')
+                setSelectedPortalKey(nextMode ? 'admin' : 'student')
                 setError(null)
               }}
               style={{
@@ -400,7 +420,11 @@ export function Login() {
             <form onSubmit={handleSubmit} autoComplete="off">
                 <div style={{ marginBottom: '1.1rem' }}>
                   <label className="label" style={{ fontSize: '0.84rem', fontWeight: 700, color: '#1e293b' }}>
-                    {selectedRole === 'student' ? 'Admission Number' : 'Username / Admission Number'}
+                    {selectedPortalKey === 'igcse'
+                      ? 'IGCSE Candidate Number / Unique ID'
+                      : selectedRole === 'student'
+                      ? 'Admission Number'
+                      : 'Username / Admission Number'}
                   </label>
                   <input
                     type="text"
@@ -412,7 +436,13 @@ export function Login() {
                     className="input"
                     value={admissionNumber}
                     onChange={(e) => setAdmissionNumber(e.target.value)}
-                    placeholder={selectedRole === 'student' ? 'Enter admission number or full name' : 'Enter username or staff email'}
+                    placeholder={
+                      selectedPortalKey === 'igcse'
+                        ? 'Enter candidate number (e.g. KE042/0001/2026) or name'
+                        : selectedRole === 'student'
+                        ? 'Enter admission number or full name'
+                        : 'Enter username or staff email'
+                    }
                     style={{ fontSize: '0.95rem', padding: '0.75rem 0.9rem' }}
                   />
                 </div>
@@ -467,6 +497,26 @@ export function Login() {
                 >
                   {loading ? 'Authenticating...' : `Sign In to Portal →`}
                 </button>
+
+                {selectedPortalKey === 'igcse' && (
+                  <div style={{ marginTop: '0.85rem', textAlign: 'center' }}>
+                    <Link
+                      to="/igcse"
+                      style={{
+                        fontSize: '0.82rem',
+                        color: '#0284c7',
+                        fontWeight: 700,
+                        textDecoration: 'none',
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: '4px',
+                      }}
+                    >
+                      <span>🏛️</span>
+                      <span>Open Cambridge & Edexcel Examination Center Portal →</span>
+                    </Link>
+                  </div>
+                )}
               </form>
           </div>
 

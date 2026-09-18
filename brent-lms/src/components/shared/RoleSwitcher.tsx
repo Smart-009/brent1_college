@@ -125,6 +125,42 @@ export function RoleSwitcher() {
               )
             })}
 
+            {/* Direct Link to Cambridge / IGCSE Portal */}
+            <button
+              type="button"
+              onClick={() => {
+                setIsOpen(false)
+                navigate('/igcse')
+              }}
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                width: '100%',
+                padding: '0.5rem 0.65rem',
+                borderRadius: 'var(--radius-sm)',
+                border: 'none',
+                background: 'transparent',
+                color: '#0284c7',
+                textAlign: 'left',
+                cursor: 'pointer',
+                fontSize: '0.82rem',
+                fontWeight: 700,
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.background = 'var(--color-bg-hover)'
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.background = 'transparent'
+              }}
+            >
+              <span style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                <span>🏛️</span>
+                <span>Cambridge / IGCSE Portal</span>
+              </span>
+              <span>↗</span>
+            </button>
+
             <div
               style={{
                 borderTop: '1px solid var(--color-border)',

@@ -55,6 +55,7 @@ const ResourceLibrary = lazy(() => import('@/features/library/ResourceLibrary').
 const DisciplineTracker = lazy(() => import('@/features/discipline/DisciplineTracker').then((m) => ({ default: m.DisciplineTracker })))
 const ParentDashboard = lazy(() => import('@/features/parent/ParentDashboard').then((m) => ({ default: m.ParentDashboard })))
 const SchoolNoticeboard = lazy(() => import('@/features/announcements/SchoolNoticeboard').then((m) => ({ default: m.SchoolNoticeboard })))
+const IGCSEPortal = lazy(() => import('@/features/igcse/IGCSEPortal').then((m) => ({ default: m.IGCSEPortal })))
 import { BursarDesk } from '@/features/bursar/BursarDesk'
 import { isNativeApp } from '@/utils/platform'
 
@@ -140,6 +141,7 @@ export function App() {
         {/* Open Public Routes with App Layout */}
         <Route element={<LayoutShell />}>
           <Route path="/library" element={<ResourceLibrary />} />
+          <Route path="/igcse" element={<IGCSEPortal />} />
         </Route>
 
         {/* Authenticated Layout Routes */}
