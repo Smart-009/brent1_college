@@ -273,114 +273,48 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, [profile?.id])
 
   function signInAsDemo(role: Role) {
-    const demoProf = DEMO_PROFILES[role]
-    localStorage.setItem('eclat_active_profile', JSON.stringify(demoProf))
-    sessionStorage.setItem('eclat_active_profile', JSON.stringify(demoProf))
-    setProfile(demoProf)
-    bindActiveDeviceSession(demoProf).catch(() => {})
-    schoolStore.syncWithCloud(true).catch(() => {})
+    if (role === 'admin') {
+      const demoProf = ADMIN_PROFILE
+      localStorage.setItem('eclat_active_profile', JSON.stringify(demoProf))
+      sessionStorage.setItem('eclat_active_profile', JSON.stringify(demoProf))
+      setProfile(demoProf)
+      bindActiveDeviceSession(demoProf).catch(() => {})
+      schoolStore.syncWithCloud(true).catch(() => {})
+    }
   }
 
   async function signIn(inputIdentifier: string, password: string): Promise<{ error: string | null; profile?: Profile }> {
     const rawInput = inputIdentifier.trim()
     const cleanAlpha = rawInput.toLowerCase().replace(/[^a-z0-9]/g, '')
-    const configuredAdminPass = INSTITUTION_CONFIG.auth.adminDefaultPassword
 
-    // 1. Staff & Role Standard Credentials Verification
-    const validUniversalPasswords = [
-      configuredAdminPass,
-      'Eclat@2026#!',
-      'Eclat@2026',
-      'Admin@2026#!',
-      'Admin@2026',
-      'Password123!',
-      'Password123',
-      'Admin123!',
-      'admin123',
-      'admin',
-      'eclat2026',
-      'Student@2026',
-      'Student@2026#!',
-      'student',
-    ].filter(Boolean)
-
-    const isMatchPass = validUniversalPasswords.includes(password.trim())
-
-    // Admin
+    // 1. Strict Administrator Authentication (Only authorized account in the system)
     const isAdminIdentifier =
+      rawInput.toLowerCase() === 'admin' ||
       rawInput.toLowerCase() === 'eclat2026@admin' ||
-      rawInput === 'Eclat2026@admin' ||
-      cleanAlpha === 'eclat2026admin' ||
+      rawInput.toLowerCase() === 'admin-001' ||
       cleanAlpha === 'admin' ||
-      cleanAlpha === 'principal' ||
       cleanAlpha === 'admin001' ||
-      cleanAlpha === 'superadmin' ||
-      cleanAlpha.includes('admin') ||
-      rawInput.toLowerCase().includes('admin')
+      cleanAlpha === 'eclat2026admin' ||
+      cleanAlpha === 'principal'
 
-    if (isAdminIdentifier || (cleanAlpha.includes('eclat') && cleanAlpha.includes('admin'))) {
-      if (isMatchPass) {
-        signInAsDemo('admin')
-        return { error: null, profile: DEMO_PROFILES['admin'] }
-      }
-    }
-
-    // Bursar / Finance
-    const isBursarIdentifier =
-      cleanAlpha === 'bursar' ||
-      cleanAlpha === 'finance' ||
-      cleanAlpha === 'registry' ||
-      cleanAlpha === 'secretary' ||
-      cleanAlpha === 'bursec001' ||
-      cleanAlpha.includes('bursar') ||
-      rawInput.toUpperCase().startsWith('BUR')
-
-    if (isBursarIdentifier) {
-      if (isMatchPass || ['Bursar@2026', 'Bursar@2026#!', 'bursar'].includes(password.trim())) {
-        signInAsDemo('bursar')
-        return { error: null, profile: DEMO_PROFILES['bursar'] }
-      }
-    }
-
-    // Teacher / Faculty
-    const isTeacherIdentifier =
-      cleanAlpha === 'teacher' ||
-      cleanAlpha === 'lecturer' ||
-      cleanAlpha === 'faculty' ||
-      cleanAlpha === 'tch001' ||
-      cleanAlpha.includes('teacher') ||
-      rawInput.toUpperCase().startsWith('TCH')
-
-    if (isTeacherIdentifier) {
-      if (isMatchPass || ['Teacher@2026', 'Teacher@2026#!', 'teacher'].includes(password.trim())) {
-        signInAsDemo('teacher')
-        return { error: null, profile: DEMO_PROFILES['teacher'] }
-      }
-    }
-
-    // Parent / Sponsor
-    const isParentIdentifier =
-      cleanAlpha === 'parent' ||
-      cleanAlpha === 'sponsor' ||
-      cleanAlpha === 'guardian' ||
-      cleanAlpha.startsWith('par')
-
-    if (isParentIdentifier) {
-      if (isMatchPass || ['Parent@2026', 'Parent@2026#!', 'parent'].includes(password.trim())) {
-        signInAsDemo('parent')
-        return { error: null, profile: DEMO_PROFILES['parent'] }
-      }
-    }
-
-    // Default Demo / Enrolled Student
-    if (
-      cleanAlpha === 'student' ||
-      cleanAlpha === 'trainee' ||
-      cleanAlpha === 'demo'
-    ) {
-      if (isMatchPass || ['Student@2026', 'Student@2026#!', 'student', 'eclat2026', 'admin123', 'admin'].includes(password.trim())) {
-        signInAsDemo('student')
-        return { error: null, profile: DEMO_PROFILES['student'] }
+    if (isAdminIdentifier) {
+      if (password.trim() === 'Eclat@2026#!') {
+        const adminProfile: Profile = {
+          id: '40bcf126-5fa0-4df1-be4b-480088ce315a',
+          full_name: `${INSTITUTION_CONFIG.name} Principal & Administrator`,
+          admission_number: 'admin',
+          role: 'admin',
+          first_login_at: new Date().toISOString(),
+          access_expires_at: null,
+          is_active: true,
+          created_at: '2026-01-01T00:00:00Z',
+        }
+        localStorage.setItem('eclat_active_profile', JSON.stringify(adminProfile))
+        sessionStorage.setItem('eclat_active_profile', JSON.stringify(adminProfile))
+        setProfile(adminProfile)
+        return { error: null, profile: adminProfile }
+      } else {
+        return { error: 'Incorrect password for Administrator account.' }
       }
     }
 
@@ -476,13 +410,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     })
 
     if (student) {
-      if (student.portal_password && student.portal_password.trim() !== '') {
-        const isStandardPass =
-          validUniversalPasswords.includes(password.trim()) ||
-          ['Student@2026', 'Student@2026#!', 'student', 'eclat2026', 'admin123', 'admin'].includes(password.trim())
-        if (!isStandardPass && password.trim() !== student.portal_password.trim()) {
-          return { error: 'Incorrect password for this student admission account.' }
-        }
+      if (!student.portal_password || student.portal_password.trim() === '') {
+        return { error: 'Account password not configured. Please contact the Administrator.' }
+      }
+      if (password.trim() !== student.portal_password.trim()) {
+        return { error: 'Incorrect password for this student admission account.' }
       }
 
       const renewedExpiry = new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString()
@@ -509,28 +441,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       return { error: null, profile: studentProfile }
     }
 
-    // 5. Fallback auto-provisioning for any student identifier
-    if (cleanAlpha.startsWith('el') || cleanAlpha.startsWith('ei') || cleanAlpha.length >= 2) {
-      const renewedExpiry = new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString()
-      const fallbackProfile: Profile = {
-        id: `usr-${cleanAlpha}`,
-        full_name: rawInput,
-        admission_number: rawInput,
-        role: 'student',
-        first_login_at: new Date().toISOString(),
-        access_expires_at: renewedExpiry,
-        is_active: true,
-        created_at: new Date().toISOString(),
-      }
-      localStorage.setItem('eclat_active_profile', JSON.stringify(fallbackProfile))
-      sessionStorage.setItem('eclat_active_profile', JSON.stringify(fallbackProfile))
-      setProfile(fallbackProfile)
-      await bindActiveDeviceSession(fallbackProfile)
-      return { error: null, profile: fallbackProfile }
-    }
-
     return {
-      error: lastError || 'Account not found or has been removed. Please contact the Admissions Office or Administrator to activate your account.',
+      error: lastError || 'Account not found or has been removed. Please contact the Administrator to activate your account.',
     }
   }
 
