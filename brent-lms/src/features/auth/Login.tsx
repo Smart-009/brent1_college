@@ -411,7 +411,7 @@ export function Login() {
                     className="input"
                     value={admissionNumber}
                     onChange={(e) => setAdmissionNumber(e.target.value)}
-                    placeholder={selectedRole === 'student' ? 'e.g. EL/001/2026 or Mustafa Hassan' : 'e.g. Eclat2026@admin or username'}
+                    placeholder={selectedRole === 'student' ? 'Enter admission number or full name' : 'Enter username or staff email'}
                     style={{ fontSize: '0.95rem', padding: '0.75rem 0.9rem' }}
                   />
                 </div>

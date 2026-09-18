@@ -39,6 +39,18 @@ export function ExamManagement() {
   const topStudent = reportCards.reduce((prev, curr) => (curr.mean_percentage > prev.mean_percentage ? curr : prev), reportCards[0])
   const averageMean = (reportCards.reduce((acc, c) => acc + c.mean_percentage, 0) / (reportCards.length || 1)).toFixed(1)
 
+  const myIGCSEStatements = igcseStatements.filter((stmt) => {
+    const candName = stmt.candidate_name?.toLowerCase().trim()
+    const candId = stmt.candidate_unique_id?.toLowerCase().trim()
+    const candNo = stmt.candidate_number?.toLowerCase().trim()
+    const stdAdm = (currentStudent?.admission_number || profile?.admission_number || '').toLowerCase().trim()
+    const stdName = (currentStudent?.full_name || profile?.full_name || '').toLowerCase().trim()
+    return (
+      (stdAdm && (candId?.includes(stdAdm) || candNo === stdAdm)) ||
+      (stdName && candName === stdName)
+    )
+  })
+
   // -------------------------------------------------------------
   // Dedicated Student Personal Academic View
   // -------------------------------------------------------------
@@ -73,7 +85,7 @@ export function ExamManagement() {
                 📄 View Modular Transcript
               </button>
             )}
-            {igcseStatements.map((stmt) => {
+            {myIGCSEStatements.map((stmt) => {
               const isEdx =
                 stmt.examination_board?.toLowerCase().includes('edexcel') ||
                 stmt.center_number?.toUpperCase().includes('EDX')

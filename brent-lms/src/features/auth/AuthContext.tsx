@@ -42,14 +42,14 @@ export const DEMO_PROFILES: Record<Role, Profile> = {
     created_at: '2026-01-01T00:00:00Z',
   },
   student: {
-    id: 'bd2b7948-d3dc-43b8-809a-c77f2ebb33a1',
-    full_name: 'Mustafa Hassan',
-    admission_number: 'EL/001/2026',
+    id: 'student-demo',
+    full_name: 'Enrolled Student',
+    admission_number: 'STD-2026-001',
     role: 'student',
-    first_login_at: '2026-09-04T00:00:00Z',
+    first_login_at: new Date().toISOString(),
     access_expires_at: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString(),
     is_active: true,
-    created_at: '2026-09-04T00:00:00Z',
+    created_at: new Date().toISOString(),
   },
   parent: {
     id: 'parent-unregistered',
@@ -365,12 +365,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     if (
       cleanAlpha === 'student' ||
       cleanAlpha === 'trainee' ||
-      cleanAlpha === 'demo' ||
-      cleanAlpha === 'el0012026' ||
-      cleanAlpha === 'el001' ||
-      cleanAlpha === 'mustafahassan' ||
-      cleanAlpha === 'mustafa' ||
-      rawInput.toUpperCase() === 'EL/001/2026'
+      cleanAlpha === 'demo'
     ) {
       if (isMatchPass || ['Student@2026', 'Student@2026#!', 'student', 'eclat2026', 'admin123', 'admin'].includes(password.trim())) {
         signInAsDemo('student')
@@ -508,7 +503,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       const renewedExpiry = new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString()
       const fallbackProfile: Profile = {
         id: `usr-${cleanAlpha}`,
-        full_name: rawInput.toUpperCase().startsWith('EL') ? 'Mustafa Hassan' : rawInput,
+        full_name: rawInput,
         admission_number: rawInput,
         role: 'student',
         first_login_at: new Date().toISOString(),

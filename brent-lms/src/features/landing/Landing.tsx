@@ -685,9 +685,9 @@ export function Landing() {
   const [checkoutPaymentPlan, setCheckoutPaymentPlan] = useState<'full' | 'installment'>('full')
   const [checkoutPaymentMode, setCheckoutPaymentMode] = useState<'card' | 'paybill' | 'kcb_wire'>('card')
   const [cardForm, setCardForm] = useState({
-    cardNumber: '4242 •••• •••• 4242',
-    cardExpiry: '12/28',
-    cardCvv: '789',
+    cardNumber: '',
+    cardExpiry: '',
+    cardCvv: '',
     cardHolder: '',
   })
   const [checkoutRefCode, setCheckoutRefCode] = useState('')
@@ -810,7 +810,7 @@ export function Landing() {
       fee_balance: balanceRemaining,
       term_fee_total: fullFeeNum,
       fee_cleared: balanceRemaining === 0,
-      attendance_rate: 100,
+      attendance_rate: 0,
       discipline_points: 100,
       merits_count: 0,
       demerits_count: 0,
