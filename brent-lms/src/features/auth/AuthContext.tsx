@@ -8,6 +8,12 @@ import type { Profile, Role } from '@/lib/database.types'
 
 import { getFriendlyDeviceName } from '@/utils/platform'
 
+export const isStaffRole = (role?: Role | string | null): boolean => {
+  if (!role) return false
+  const r = role.toLowerCase().trim()
+  return r === 'admin' || r === 'teacher' || r === 'bursar' || r === 'staff' || r === 'faculty' || r === 'instructor'
+}
+
 export const ADMIN_PROFILE: Profile = {
   id: '40bcf126-5fa0-4df1-be4b-480088ce315a',
   full_name: `${INSTITUTION_CONFIG.name} Principal & Administrator`,
@@ -101,6 +107,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   async function bindActiveDeviceSession(userProfile: Profile) {
     if (!userProfile?.id) return
+    // Only students/non-staff are bound to a single active device.
+    // All staff members (admin, teacher, bursar) are allowed concurrent multi-device logins.
+    if (isStaffRole(userProfile.role)) return
     const sessionToken = `ses-${userProfile.id}-${Date.now()}-${Math.random().toString(36).substring(2, 10)}`
     try {
       localStorage.setItem('eclat_device_session_token', sessionToken)
@@ -167,8 +176,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     if (!profile?.id) return
 
-    // Administrators are exempted from single-device restrictions for multi-device management
-    if (profile.role === 'admin') return
+    // Only students/non-staff are restricted to single-device sessions (anti-account sharing policy).
+    // All staff members (admin, teacher, bursar) are allowed concurrent multi-device logins.
+    if (isStaffRole(profile.role)) return
 
     // Ensure active device session token exists
     const localToken =
@@ -211,6 +221,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         channel.onmessage = (event) => {
           const data = event.data
           if (data && data.type === 'SESSION_REGISTERED' && data.userId) {
+            if (isStaffRole(profile.role)) return
             const cleanCur = profile.id.toLowerCase().trim()
             const cleanEvt = data.userId.toLowerCase().trim()
             if (cleanCur === cleanEvt) {
@@ -524,7 +535,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }
 
   async function signOut() {
-    if (profile?.id) {
+    if (profile?.id && !isStaffRole(profile.role)) {
       schoolStore.terminateDeviceSession(profile.id).catch(() => {})
     }
     try {
