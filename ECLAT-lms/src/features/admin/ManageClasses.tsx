@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/Button'
 import { Modal, ConfirmModal } from '@/components/ui/Modal'
 import { Spinner } from '@/components/ui/Spinner'
 import { DatabaseIcon, BookOpenIcon, SearchIcon, RefreshCwIcon } from '@/components/icons/AppIcons'
+import { OFFICIAL_COURSES } from '@/config/officialCourses'
 
 export interface DbSubject {
   id: string
@@ -32,7 +33,7 @@ export function ManageClasses() {
   const [activeTab, setActiveTab] = useState<'courses' | 'subjects'>('courses')
   const [searchQuery, setSearchQuery] = useState('')
 
-  // 1. Fetch live courses with joined subject from Supabase
+  // 1. Fetch live courses with joined subject from Supabase, falling back to OFFICIAL_COURSES
   const { data: courses = [], isLoading: isLoadingCourses, isError: isErrorCourses, refetch: refetchCourses } = useQuery<DbCourse[]>({
     queryKey: ['db-courses-live'],
     queryFn: async () => {
@@ -43,10 +44,31 @@ export function ManageClasses() {
 
       if (error) throw error
       const rows = ((data || []) as any[]).filter((r) => !r.title?.startsWith('__ECLAT_SYNC_') && !r.id?.startsWith('aaaaaaaa-'))
-      return rows.map((r) => ({
+      const dbCourses = rows.map((r) => ({
         ...r,
         subjects: Array.isArray(r.subjects) ? (r.subjects[0] || null) : (r.subjects || null),
       })) as DbCourse[]
+
+      // If Supabase has no courses yet, show official courses from local config
+      if (dbCourses.length === 0) {
+        return OFFICIAL_COURSES.map((c) => ({
+          id: c.id,
+          title: c.title,
+          description: c.description || `${c.category} • ${c.duration} • ${c.careerOutcome}`,
+          subject_id: null,
+          is_published: true,
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString(),
+          subjects: {
+            id: c.departmentId,
+            name: c.departmentName,
+            color_hex: '#1e3a8a',
+          },
+          _isOfficial: true, // mark as read-only local config entry
+        } as DbCourse & { _isOfficial?: boolean }))
+      }
+
+      return dbCourses
     },
   })
 
@@ -239,7 +261,7 @@ export function ManageClasses() {
                 </span>
               </div>
               <p style={{ color: '#e2e8f0', fontSize: '0.88rem', margin: '0.25rem 0 0' }}>
-                Direct live synchronization with your database <code style={{ background: 'rgba(255, 255, 255, 0.2)', color: '#ffffff', padding: '2px 6px', borderRadius: '4px', fontFamily: 'monospace' }}>courses</code> and <code style={{ background: 'rgba(255, 255, 255, 0.2)', color: '#ffffff', padding: '2px 6px', borderRadius: '4px', fontFamily: 'monospace' }}>subjects</code> tables.
+                Showing all <strong style={{ color: '#ffffff' }}>{courses.length} active courses</strong>. Sync to Supabase to enable per-course lesson uploads and student enrollments.
               </p>
             </div>
 
@@ -270,9 +292,9 @@ export function ManageClasses() {
           {/* Database Metrics Grid */}
           <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 mt-6 pt-5" style={{ borderTop: '1px solid rgba(255, 255, 255, 0.15)' }}>
             <div style={{ background: 'rgba(255, 255, 255, 0.12)', padding: '1rem', borderRadius: '12px', border: '1px solid rgba(255, 255, 255, 0.15)' }}>
-              <div style={{ fontSize: '0.75rem', color: '#e2e8f0', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em' }}>Total Online Courses</div>
+              <div style={{ fontSize: '0.75rem', color: '#e2e8f0', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em' }}>Total Active Courses</div>
               <div style={{ fontSize: '1.8rem', fontWeight: 900, color: '#ffffff', margin: '0.25rem 0' }}>{courses.length}</div>
-              <div style={{ fontSize: '0.75rem', color: '#cbd5e1' }}>Live in courses table</div>
+              <div style={{ fontSize: '0.75rem', color: '#cbd5e1' }}>{(courses as any[])[0]?._isOfficial ? 'Official course registry' : 'Live in Supabase DB'}</div>
             </div>
 
             <div style={{ background: 'rgba(255, 255, 255, 0.12)', padding: '1rem', borderRadius: '12px', border: '1px solid rgba(255, 255, 255, 0.15)' }}>
@@ -349,6 +371,18 @@ export function ManageClasses() {
         {/* TAB 1: COURSES TABLE VIEW */}
         {activeTab === 'courses' && (
           <div>
+            {/* Info Banner — shown when displaying official local courses */}
+            {(courses as any[])[0]?._isOfficial && (
+              <div className="alert alert-info mb-4" style={{ background: '#eff6ff', border: '1.5px solid #bfdbfe', borderRadius: '12px', padding: '0.85rem 1rem', display: 'flex', alignItems: 'flex-start', gap: '10px' }}>
+                <span style={{ fontSize: '1.25rem' }}>📋</span>
+                <div>
+                  <strong style={{ color: '#1e40af' }}>Showing Official Course Registry ({courses.length} courses)</strong>
+                  <p style={{ margin: '4px 0 0', fontSize: '0.82rem', color: '#3b82f6' }}>
+                    These are your official courses from the config file. To enable editing, go to the <strong>Admin Dashboard → ☁️ Sync &amp; Seed Cloud DB</strong> to push them to Supabase. After syncing, full edit/delete controls will appear here.
+                  </p>
+                </div>
+              </div>
+            )}
             {isLoadingCourses ? (
               <div className="card p-12 text-center">
                 <Spinner />
