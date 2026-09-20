@@ -1,4 +1,4 @@
-import { useNavigate } from 'react-router-dom'
+﻿import { useNavigate } from 'react-router-dom'
 import { INSTITUTION_CONFIG } from '@/config/institution'
 
 export function PrivacyPolicy() {
@@ -95,7 +95,7 @@ export function PrivacyPolicy() {
           </p>
           <ul style={{ color: '#334155', paddingLeft: '1.25rem', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
             <li>Delivering online live lectures, course materials, and virtual lab sessions.</li>
-            <li>Verifying student eligibility, evaluating academic performance, and issuing accredited certificates and transcripts.</li>
+            <li>Verifying student eligibility, evaluating academic performance, and issuing certified certificates and transcripts.</li>
             <li>Facilitating official fee billing, tuition payment processing, and Bursar clearance passes.</li>
             <li>Communicating urgent academic notices, cohort schedules, and institutional announcements.</li>
           </ul>
@@ -138,3 +138,4 @@ export function PrivacyPolicy() {
     </div>
   )
 }
+

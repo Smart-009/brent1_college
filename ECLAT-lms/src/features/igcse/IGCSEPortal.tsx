@@ -1,4 +1,4 @@
-import { useState } from 'react'
+﻿import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useAuth } from '@/hooks/useAuth'
 import { schoolStore } from '@/lib/schoolData'
@@ -173,7 +173,7 @@ export function IGCSEPortal() {
                   borderRadius: '9999px',
                 }}
               >
-                Accredited International Examination Center
+                International Examination Center
               </span>
             </div>
             <h1
@@ -621,3 +621,4 @@ export function IGCSEPortal() {
     </PageWrapper>
   )
 }
+

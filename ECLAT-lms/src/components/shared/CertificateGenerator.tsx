@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react'
+﻿import { useState, useMemo } from 'react'
 import { INSTITUTION_CONFIG } from '@/config/institution'
 import { GraduationCapIcon, CheckIcon, CodeIcon, ChartBarIcon, BuildingIcon, SparklesIcon } from '@/components/icons/AppIcons'
 
@@ -607,7 +607,7 @@ export function CertificateGenerator({
                         marginTop: '2px',
                       }}
                     >
-                      Accredited British Curriculum Centre (KE042) • {INSTITUTION_CONFIG.tagline}
+                      British curriculum Centre (KE042) • {INSTITUTION_CONFIG.tagline}
                     </div>
                   </div>
                 </div>
@@ -1115,3 +1115,4 @@ export function CertificateGenerator({
     </div>
   )
 }
+

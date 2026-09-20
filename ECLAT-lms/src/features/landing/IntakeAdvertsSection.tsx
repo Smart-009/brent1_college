@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from 'react'
+﻿import { useState, useEffect, useMemo } from 'react'
 import { Link } from 'react-router-dom'
 import { intakeStore } from '@/lib/intakeStore'
 import { formatDate } from '@/lib/utils'
@@ -346,7 +346,7 @@ export function IntakeAdvertsSection() {
               lineHeight: 1.6,
             }}
           >
-            100% Online live interactive classes across 6 flexible daily shifts (Early Morning to Night) + Weekend Executive Cohorts. Accredited by Cambridge International (Center KE042) and Pearson Edexcel (Center EDX-98421).
+            100% Online live interactive classes across 6 flexible daily shifts (Early Morning to Night) + Weekend Executive Cohorts. Registered with Cambridge International (Center KE042) and Pearson Edexcel (Center EDX-98421).
           </p>
 
           {/* Interactive Cohort Filter Tabs */}
@@ -493,13 +493,13 @@ export function IntakeAdvertsSection() {
               </div>
               <div>
                 <div style={{ fontSize: '0.74rem', fontWeight: 900, color: '#047857', textTransform: 'uppercase', letterSpacing: '0.06em' }}>
-                  Full-Time Accredited British Online Schooling &bull; Years 7 to 11
+                  Full-Time British Online Schooling &bull; Years 7 to 11
                 </div>
                 <h3 style={{ margin: '2px 0 4px', fontSize: isMobile ? '1.15rem' : '1.35rem', fontWeight: 900, color: '#0f172a' }}>
                   Full-Time Online Home Schooling Academy
                 </h3>
                 <p style={{ margin: 0, fontSize: '0.84rem', color: '#1f2937', lineHeight: 1.5 }}>
-                  Give your child a world-class British education from home. Our full-time online home schooling programme features <strong style={{ color: '#047857' }}>all subjects taught together in cohesive year cohorts</strong>, live daily timetables, weekly assignments, termly report cards, and guaranteed candidate registration at our accredited Cambridge (KE042) &amp; Edexcel (EDX-98421) exam centres.
+                  Give your child a world-class British education from home. Our full-time online home schooling programme features <strong style={{ color: '#047857' }}>all subjects taught together in cohesive year cohorts</strong>, live daily timetables, weekly assignments, termly report cards, and guaranteed candidate registration at our Cambridge (KE042) &amp; Edexcel (EDX-98421) exam centres.
                 </p>
               </div>
             </div>
@@ -593,7 +593,7 @@ export function IntakeAdvertsSection() {
               </div>
               <div>
                 <div style={{ fontSize: '0.74rem', fontWeight: 900, color: '#0369a1', textTransform: 'uppercase', letterSpacing: '0.06em' }}>
-                  Accredited UK Exam Centre KE042 &amp; Pearson EDX-98421 &bull; Integrated Cohorts
+                  UK Exam Centre KE042 &amp; Pearson EDX-98421 &bull; Integrated Cohorts
                 </div>
                 <h3 style={{ margin: '2px 0 4px', fontSize: isMobile ? '1.15rem' : '1.35rem', fontWeight: 900, color: '#0f172a' }}>
                   British International Curriculum &amp; IGCSE Hub (Years 9, 10 &amp; 11)
@@ -1077,4 +1077,5 @@ export function IntakeAdvertsSection() {
     </section>
   )
 }
+
 

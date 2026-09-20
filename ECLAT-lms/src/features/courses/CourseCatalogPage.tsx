@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect } from 'react'
+﻿import { useState, useMemo, useEffect } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
 import { useAuthContext } from '@/features/auth/AuthContext'
 import { MobileAppBottomNav } from '@/components/layout/MobileAppBottomNav'
@@ -1009,7 +1009,7 @@ export function CourseCatalogPage() {
                   </span>
                 </div>
                 <div style={{ fontSize: '0.8rem', color: '#1f2937', marginTop: '2px', lineHeight: 1.45 }}>
-                  Accredited online schooling from home. Complete year cohorts with daily live lessons, certified UK teachers, virtual science labs, termly report cards, and official Cambridge (KE042) &amp; Edexcel (EDX-98421) candidate exam center registration.
+                  Online schooling from home. Complete year cohorts with daily live lessons, certified UK teachers, virtual science labs, termly report cards, and official Cambridge (KE042) &amp; Edexcel (EDX-98421) candidate exam center registration.
                 </div>
               </div>
             </div>
@@ -1634,3 +1634,4 @@ export function CourseCatalogPage() {
     </div>
   )
 }
+

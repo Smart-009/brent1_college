@@ -1,4 +1,4 @@
-// ============================================================
+﻿// ============================================================
 // Éclat Institute — Official Institutional Courses & Fee Registry
 // Single authoritative source of truth across Landing, Catalog, 
 // E-Reader, Fees Management, and SIMS Invoicing.
@@ -801,7 +801,7 @@ export const OFFICIAL_COURSES: CourseProgram[] = [
     prerequisites: 'Completion of Primary Year 6 or equivalent home schooling background.',
     targetAudience: 'Home schoolers, expatriate families, travelling students, and athletes seeking structured British schooling from home.',
     description:
-      'A complete, accredited online schooling solution for Years 7 & 8 students. All core subjects are taught together by certified British curriculum teachers with daily live interactive lessons, virtual STEM science simulations, structured homework, and termly academic performance reports.',
+      'A complete, Online schooling solution for Years 7 & 8 students. All core subjects are taught together by certified British curriculum teachers with daily live interactive lessons, virtual STEM science simulations, structured homework, and termly academic performance reports.',
     bestseller: true,
     modules: [
       { week: 'Term 1', topic: 'Foundational Mathematics, Physics, Chemistry, English & Computing', practicalLab: 'Live virtual classroom seminars, guided problem-solving, and science simulations.' },
@@ -907,7 +907,7 @@ export const OFFICIAL_COURSES: CourseProgram[] = [
     prerequisites: 'Completion of Year 9 Checkpoint or equivalent homeschool portfolio.',
     targetAudience: 'Year 10 homeschool students beginning the 2-year IGCSE examination cycle.',
     description:
-      'Rigorous, accredited Year 10 British IGCSE homeschooling package. All subjects are taught together by expert subject specialists. Includes live daily seminars, full curriculum coverage, virtual laboratory experiments, weekly homework reviews, and structured termly progress assessments.',
+      'Rigorous, intensive Year 10 British IGCSE homeschooling package. All subjects are taught together by expert subject specialists. Includes live daily seminars, full curriculum coverage, virtual laboratory experiments, weekly homework reviews, and structured termly progress assessments.',
     bestseller: true,
     modules: [
       { week: 'Term 1', topic: 'IGCSE Pure Mathematics, Atomic Chemistry, Newtonian Physics & English Composition', practicalLab: 'Live lectures, interactive virtual labs, and problem set walkthroughs.' },
@@ -955,12 +955,12 @@ export const OFFICIAL_COURSES: CourseProgram[] = [
       'Extended Mathematics Papers 2 & 4 (0580) / Papers 1H & 2H (4MA1)',
       'Physics, Chemistry & Biology Alternative to Practical Papers (Paper 6)',
       'Computer Science Paper 1 Theory & Paper 2 Problem Solving',
-      'Official Accredited Exam Centre Candidate Registration (KE042 / EDX-98421)',
+      'Official Official Exam Centre Candidate Registration (KE042 / EDX-98421)',
     ],
     prerequisites: 'Completion of Year 10 IGCSE syllabus or equivalent homeschooling transcript.',
     targetAudience: 'Year 11 homeschool students sitting the May/June or October/November IGCSE examination series.',
     description:
-      'The ultimate candidate preparation cohort for home schooling students. All subjects are taught together with intensive syllabus completion, 7+ years of past paper drills, examiner marking tips, and guaranteed candidate registration at our accredited Cambridge & Pearson Edexcel examination centers.',
+      'The ultimate candidate preparation cohort for home schooling students. All subjects are taught together with intensive syllabus completion, 7+ years of past paper drills, examiner marking tips, and guaranteed candidate registration at our Cambridge & Pearson Edexcel examination centers.',
     bestseller: true,
     modules: [
       { week: 'Term 1', topic: 'Final Syllabus Mastery across All Subjects & Topical Past Paper Drills', practicalLab: 'Weekly full-paper timed tests under strict examination conditions.' },
@@ -3202,4 +3202,5 @@ export function getOfficialCourseByTitle(title: string, storeSubjects?: any[], s
   const list = storeSubjects || storeUnits ? getDynamicCoursesList(storeSubjects, storeUnits) : OFFICIAL_COURSES
   return list.find((c) => c.title.toLowerCase() === title.toLowerCase() || title.toLowerCase().includes(c.shortTitle.toLowerCase()))
 }
+
 

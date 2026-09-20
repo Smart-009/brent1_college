@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect, useRef } from 'react'
+﻿import { useState, useMemo, useEffect, useRef } from 'react'
 import { Link, useNavigate, useLocation } from 'react-router-dom'
 import { useIsMobile } from '@/hooks/useMediaQuery'
 import { NativeAppHome } from './NativeAppHome'
@@ -230,7 +230,7 @@ const HERO_PROMO_SLIDES: PromoSlide[] = [
     badge: 'FULL-TIME BRITISH CURRICULUM ONLINE SCHOOL',
     badgeBg: 'rgba(34, 197, 94, 0.25)',
     badgeColor: '#4ade80',
-    headline: 'Accredited Online Home Schooling (Years 7-11)',
+    headline: 'Online Home Schooling (Years 7-11)',
     highlight: 'Integrated Cohorts • Cambridge & Edexcel Dual Track',
     description: 'Full-time British Curriculum schooling from home. Live interactive classes covering all core subjects together (Maths, Sciences, English, Humanities, Computer Science), weekly assessments, termly report cards, and physical exam center placement (KE042 / EDX-98421).',
     gradient: 'radial-gradient(ellipse at 80% 20%, rgba(34, 197, 94, 0.35) 0%, rgba(15, 23, 42, 0.95) 70%), linear-gradient(135deg, #052e16 0%, #166534 50%, #0f172a 100%)',
@@ -265,13 +265,13 @@ const HERO_PROMO_SLIDES: PromoSlide[] = [
     badgeBg: 'rgba(2, 132, 199, 0.25)',
     badgeColor: '#38bdf8',
     headline: 'Cambridge IGCSE & Lower Secondary (Years 9-11)',
-    highlight: 'Accredited Exam Venue (KE042) • Dual 9-1 & A*-G',
+    highlight: 'Registered Exam Venue (KE042) • Dual 9-1 & A*-G',
     description: 'Master Cambridge IGCSE Mathematics (0580), Physics (0625), Chemistry (0620), Computer Science (0478), English (0500), and Business Studies (0450). Live international exam prep and Cambridge ICE Diploma.',
     gradient: 'radial-gradient(ellipse at 80% 20%, rgba(2, 132, 199, 0.35) 0%, rgba(15, 23, 42, 0.95) 70%), linear-gradient(135deg, #022c22 0%, #0369a1 50%, #0f172a 100%)',
     accentColor: '#38bdf8',
     icon: 'cambridge-igcse',
     metricNumber: 'KE042',
-    metricLabel: 'Cambridge Accredited Centre',
+    metricLabel: 'Cambridge Registered Centre',
     category: 'Cambridge International (Years 9-11)',
     primaryCtaText: 'Explore Cambridge IGCSE Courses',
     features: ['Dual 9-1 & A*-G Scale', 'Cambridge ICE Group Diploma', 'Weekly Past Paper Labs', 'Center KE042 Statements'],
@@ -5050,3 +5050,4 @@ export function Landing() {
     </div>
   )
 }
+

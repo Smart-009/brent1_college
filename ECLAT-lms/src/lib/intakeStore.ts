@@ -1,4 +1,4 @@
-// ============================================================
+﻿// ============================================================
 // Éclat Institute — Intake Scheduler & Marketing Store
 // Handles Database Persistence (Supabase) + Offline LocalStorage Cache
 // ============================================================
@@ -15,9 +15,9 @@ export const INITIAL_INTAKE_SCHEDULES: IntakeSchedule[] = [
     title: 'November 2026 British International Curriculum Integrated Intake',
     academic_year: '2026/2027',
     term_session: 'November 2026 & May/June 2027 Series',
-    headline: 'Accredited Cambridge KE042 & Pearson EDX-98421 — All Subjects Taught Together',
+    headline: 'Cambridge KE042 & Pearson EDX-98421 — All Subjects Taught Together',
     description:
-      'Accredited British curriculum admissions across Year 9 Checkpoint, Year 10 IGCSE, and Year 11 Exam Series. We do not teach separate, isolated subjects — all core subjects (Mathematics, Pure Sciences [Physics, Chemistry, Biology], English First Language, Computer Science, and Humanities) are taught together as a unified, cohesive cohort with comprehensive daily timetables, weekly past paper clinics, and official centre candidate registration.',
+      'British curriculum admissions across Year 9 Checkpoint, Year 10 IGCSE, and Year 11 Exam Series. We do not teach separate, isolated subjects — all core subjects (Mathematics, Pure Sciences [Physics, Chemistry, Biology], English First Language, Computer Science, and Humanities) are taught together as a unified, cohesive cohort with comprehensive daily timetables, weekly past paper clinics, and official centre candidate registration.',
     poster_image_url:
       'https://images.unsplash.com/photo-1427504494785-3a9ca7044f45?auto=format&fit=crop&w=1200&q=80',
     application_deadline: '2026-10-28',
@@ -52,7 +52,7 @@ export const INITIAL_INTAKE_SCHEDULES: IntakeSchedule[] = [
     title: 'Full-Time British Curriculum Online Home Schooling (Years 7–11)',
     academic_year: '2026/2027 Academic Year',
     term_session: 'Full-Time Home Schooling Cohort',
-    headline: 'Accredited Cambridge KE042 & Pearson EDX-98421 — Complete Home Schooling from Home',
+    headline: 'Cambridge KE042 & Pearson EDX-98421 — Complete Home Schooling from Home',
     description:
       'Complete, structured British curriculum schooling for home schoolers worldwide. Students enrol into cohesive grade cohorts (Years 7, 8, 9 Checkpoint and Years 10 & 11 IGCSE) where all subjects (Mathematics, Pure Sciences, English, Computer Science, and Humanities) are taught together under a full daily school timetable. Includes certified teachers, virtual science labs, termly report cards, parent-teacher reviews, and official candidate exam center placement.',
     poster_image_url:
@@ -74,7 +74,7 @@ export const INITIAL_INTAKE_SCHEDULES: IntakeSchedule[] = [
       'All Subjects Taught Together (Cohesive Cohort)',
       'Daily Live Interactive Morning & Midday Schedules',
       'Termly Official Report Cards & Parent Portal',
-      'Accredited Exam Centre Registration (KE042 & EDX-98421)',
+      'Registered Exam Centre (KE042 & EDX-98421)',
     ],
     contact_phone: INSTITUTION_CONFIG.contact.phone,
     contact_email: INSTITUTION_CONFIG.contact.admissionsEmail,
@@ -126,7 +126,7 @@ export const INITIAL_INTAKE_SCHEDULES: IntakeSchedule[] = [
     title: 'January 2027 British Curriculum (Years 9, 10 & 11) Full Academic Year',
     academic_year: '2027',
     term_session: 'Term 1 / Annual British Academic Session',
-    headline: 'Accredited Cambridge KE042 & Edexcel EDX-98421 — All Subjects Taught Together in Unified Cohorts',
+    headline: 'Cambridge KE042 & Edexcel EDX-98421 — All Subjects Taught Together in Unified Cohorts',
     description:
       'Premier full academic year enrolment for British curriculum students worldwide. We teach the complete curriculum together as a cohesive cohort for Year 9 (Foundation), Year 10 (IGCSE Year 1), and Year 11 (Candidate Series). All subjects — Mathematics, English Language, Physics, Chemistry, Biology, Computer Science, and Business — are taught together under one unified programme with daily live interactive seminars, virtual STEM labs, and personalized mentor evaluations.',
     poster_image_url:
@@ -549,3 +549,4 @@ class IntakeStore {
 
 export const intakeStore = new IntakeStore()
 intakeStore.initRealtimeSync()
+

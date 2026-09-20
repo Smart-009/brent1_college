@@ -1,4 +1,4 @@
-// ============================================================
+﻿// ============================================================
 // Centralized Institutional & Platform Configuration
 // Single source of truth driven by environment variables
 // ============================================================
@@ -43,7 +43,7 @@ export interface InstitutionConfig {
   igcse: {
     centerNumber: string
     centerName: string
-    accreditedBoards: string[]
+    examBoards: string[]
     currentSeries: string
     qualificationsOffered: string[]
   }
@@ -112,7 +112,7 @@ export const INSTITUTION_CONFIG: InstitutionConfig = {
   igcse: {
     centerNumber: (import.meta.env.VITE_IGCSE_CENTER_NUMBER as string) || 'KE042',
     centerName: 'Éclat Institute International Examination Centre',
-    accreditedBoards: ['Cambridge Assessment International Education (CAIE)', 'Pearson Edexcel International'],
+    examBoards: ['Cambridge Assessment International Education (CAIE)', 'Pearson Edexcel International'],
     currentSeries: 'May/June 2026 Examination Series',
     qualificationsOffered: [
       'Cambridge Lower Secondary (Checkpoint Years 7-9)',
@@ -282,7 +282,7 @@ export const INSTITUTIONAL_SCHOOLS = [
         id: 'dept-foreign-lang',
         code: 'DEPT-LANG',
         name: 'Department of Modern Foreign Languages (Arabic, French, German)',
-        description: 'CEFR-accredited foreign language instruction for diplomacy, multinational careers, and international commerce.',
+        description: 'CEFR-aligned foreign language instruction for diplomacy, multinational careers, and international commerce.',
         hod_name: 'Dr. Julian Croft',
         programs: ['French Language Certificate (A1-C1 DELF)', 'German Language Proficiency (Goethe-Zertifikat)', 'Modern Standard Arabic for Professionals'],
       },
@@ -310,7 +310,7 @@ export const INSTITUTIONAL_SCHOOLS = [
     name: 'IGCSE',
     shortName: 'IGCSE',
     category: 'IGCSE',
-    description: 'Accredited international British curriculum delivering Cambridge Assessment International Education (CAIE Center KE042) and Pearson Edexcel International (Center EDX-98421) across Year 9 Checkpoint, Year 10 IGCSE, and Year 11 Exam Series.',
+    description: 'International British curriculum delivering Cambridge Assessment International Education (CAIE Center KE042) and Pearson Edexcel International (Center EDX-98421) across Year 9 Checkpoint, Year 10 IGCSE, and Year 11 Exam Series.',
     icon: '🇬🇧',
     color: '#0284c7',
     dean_name: 'Dr. Michael Davies & Prof. Alistair Sterling',
@@ -367,3 +367,4 @@ export function getWhatsAppInquiryUrl(message?: string): string {
 export function getPaybillSummary(): string {
   return `Paybill: ${INSTITUTION_CONFIG.bank.paybillNumber} • Acc: ${INSTITUTION_CONFIG.bank.accountNumber}`
 }
+
