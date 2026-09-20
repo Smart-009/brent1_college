@@ -1,8 +1,8 @@
 {
   "framework": "vite",
-  "buildCommand": "npm --prefix brent-lms run build",
-  "outputDirectory": "brent-lms/dist",
-  "installCommand": "npm --prefix brent-lms install",
+  "buildCommand": "npm --prefix ECLAT-lms run build",
+  "outputDirectory": "ECLAT-lms/dist",
+  "installCommand": "npm --prefix ECLAT-lms install",
   "rewrites": [
     {
       "source": "/(.*)",
