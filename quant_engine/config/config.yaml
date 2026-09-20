@@ -82,7 +82,7 @@ markets:
     - NEAR/USDT
     - ATOM/USDT
     # ── Layer 2 / DeFi (different market cycles to L1) ─────────────────
-    - MATIC/USDT
+    - POL/USDT
     - ARB/USDT
     - LINK/USDT
     # ── Commodities / Store-of-Value Crypto ────────────────────────────
@@ -107,13 +107,47 @@ markets:
     htf_timeframe: 4h
     primary_timeframe: 15m
     symbols:
-    - EURUSD
-    - GBPUSD
-    - USDJPY
-    - AUDUSD
-    - USDCAD
-    - XAUUSD
-    - XAGUSD
+    # ── Sydney & Tokyo (Asia-Pacific Sessions: 22:00 – 09:00 UTC) ───────
+    - AUDUSD    # Australian Dollar / US Dollar
+    - NZDUSD    # New Zealand Dollar / US Dollar
+    - AUDJPY    # Aussie / Yen (top Asia-Pacific momentum cross)
+    - AUDNZD    # Trans-Tasman mean-reverting cross
+    - USDJPY    # US Dollar / Yen (core Tokyo mover)
+    - EURJPY    # Euro / Yen (high intraday trend persistence)
+    - GBPJPY    # Pound / Yen ("The Dragon" - high volatility)
+    - CADJPY    # Canadian Dollar / Yen
+    - NZDJPY    # Kiwi / Yen
+    # ── London / European Session (08:00 – 17:00 UTC) ──────────────────
+    - EURUSD    # Euro / US Dollar (highest global forex liquidity)
+    - GBPUSD    # Pound / US Dollar ("Cable")
+    - USDCHF    # US Dollar / Swiss Franc
+    - EURGBP    # Euro / Pound cross
+    - EURCHF    # Euro / Swiss Franc
+    - GBPCHF    # Pound / Swiss Franc
+    - EURAUD    # Euro / Aussie high-beta cross
+    - GBPAUD    # Pound / Aussie high-beta cross
+    # ── New York / American Session (13:00 – 22:00 UTC) ────────────────
+    - USDCAD    # US Dollar / Canadian Dollar
+    - CADCHF    # Loonie / Swiss Franc cross
+    # ── Secondary Crosses (High Beta Volatility) ───────────────────────
+    - AUDCAD    # Aussie / Canadian Dollar (commodity cross)
+    - NZDCAD    # Kiwi / Canadian Dollar
+    - GBPNZD    # Pound / Kiwi (wide daily pip swings)
+    - EURNZD    # Euro / Kiwi
+    # ── Metals & Commodities (Global London/NY Overlap) ───────────────
+    - XAUUSD    # Spot Gold
+    - XAGUSD    # Spot Silver
+    - USOIL     # WTI Crude Oil
+    - UKOIL     # Brent Crude Oil
+    # ── Global Index CFDs (Session Momentum Powerhouses) ──────────────
+    - AUS200    # Australia ASX 200 (Active: Sydney Session)
+    - JP225     # Japan Nikkei 225 (Active: Tokyo Session)
+    - GER40     # Germany DAX 40 (Active: London Session)
+    - UK100     # UK FTSE 100 (Active: London Session)
+    - ESTX50    # Euro Stoxx 50 (Active: London Session)
+    - US30      # Dow Jones 30 (Active: New York Session)
+    - NAS100    # Nasdaq 100 (Active: New York Session)
+    - SPX500    # S&P 500 CFD (Active: New York Session)
     timeframes:
     - 1m
     - 5m

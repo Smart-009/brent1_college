@@ -13,7 +13,7 @@ crypto:
     - "XRP/USDT"
     - "AVAX/USDT"
     - "DOGE/USDT"
-    - "MATIC/USDT"
+    - "POL/USDT"
     - "LINK/USDT"
     - "DOT/USDT"
 
@@ -80,14 +80,35 @@ forex:
     - "AUDUSD"
     - "USDCAD"
     - "NZDUSD"
-  minors:
+  minors_and_crosses:
     - "EURGBP"
     - "EURJPY"
     - "GBPJPY"
     - "AUDJPY"
+    - "AUDNZD"
+    - "NZDJPY"
+    - "CADJPY"
+    - "GBPAUD"
+    - "EURAUD"
+    - "EURCHF"
+    - "GBPCHF"
+    - "CADCHF"
+    - "AUDCAD"
+    - "NZDCAD"
+    - "GBPNZD"
+    - "EURNZD"
   metals:
     - "XAUUSD"  # Gold
     - "XAGUSD"  # Silver
   energies:
     - "USOIL"   # WTI Crude Oil
     - "UKOIL"   # Brent Crude Oil
+  indices:
+    - "AUS200"  # Australia ASX 200
+    - "JP225"   # Japan Nikkei 225
+    - "GER40"   # Germany DAX 40
+    - "UK100"   # UK FTSE 100
+    - "ESTX50"  # Euro Stoxx 50
+    - "US30"    # Dow Jones 30
+    - "NAS100"  # Nasdaq 100
+    - "SPX500"  # S&P 500

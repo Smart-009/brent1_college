@@ -223,13 +223,19 @@ class MarketDataRouter:
 
         # Pre-load historical data into ring buffers for all crypto symbols
         symbols = cfg.get("symbols", [])
-        timeframes = cfg.get("timeframes", ["15m"])
+        timeframes = list(dict.fromkeys([
+            cfg.get("primary_timeframe", "15m"),
+            cfg.get("htf_timeframe", "4h"),
+        ]))
         for symbol in symbols:
             for tf in timeframes:
                 key = f"{symbol}:{tf}"
                 self._ohlcv_buffers[key] = OHLCVRingBuffer(symbol, tf, capacity=500)
-                bars = await broker.get_ohlcv(symbol, tf, limit=500)
-                self._ohlcv_buffers[key].push_many(bars)
+                try:
+                    bars = await broker.get_ohlcv(symbol, tf, limit=500)
+                    self._ohlcv_buffers[key].push_many(bars)
+                except Exception as e:
+                    logger.warning(f"[DataRouter] Could not pre-load {symbol} {tf}: {e}")
             self._tick_buffers[symbol] = TickRingBuffer(symbol, capacity=10_000)
         logger.info(f"[DataRouter] Crypto: {len(symbols)} symbols pre-loaded.")
 

@@ -158,6 +158,9 @@ export function AdminDashboard() {
             <Button variant="accent" size="sm" onClick={() => navigate('/teacher/courses/new')}>
               + 📖 Build Course Unit
             </Button>
+            <Button variant="primary" size="sm" onClick={() => navigate('/admin/classes')} style={{ fontWeight: 800 }}>
+              📚 Manage Courses
+            </Button>
             <Button variant="outline" size="sm" style={{ color: 'white', borderColor: 'white' }} onClick={() => navigate('/library')}>
               + 📚 Upload E-Resource
             </Button>
@@ -192,7 +195,12 @@ export function AdminDashboard() {
           </div>
         </div>
 
-        <div className="stat-card">
+        <div
+          className="stat-card"
+          style={{ cursor: 'pointer' }}
+          onClick={() => navigate('/admin/classes')}
+          title="Click to manage courses"
+        >
           <div className="stat-icon stat-icon-success">📚</div>
           <div>
             <div className="stat-value">{stats?.courseCount || 0}</div>
@@ -267,8 +275,8 @@ export function AdminDashboard() {
         <div className="card">
           <div className="card-header flex justify-between items-center">
             <h3 style={{ margin: 0 }}>📖 Recent Published Courses</h3>
-            <Button variant="ghost" size="sm" onClick={() => navigate('/admin/moderation')}>
-              Moderate →
+            <Button variant="ghost" size="sm" onClick={() => navigate('/admin/classes')}>
+              Manage All →
             </Button>
           </div>
           <div className="table-wrapper">

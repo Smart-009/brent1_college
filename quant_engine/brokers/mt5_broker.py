@@ -101,9 +101,10 @@ class MT5Broker(BaseBroker):
                 "Install it on Windows or use OandaBroker instead."
             )
 
-        login = int(os.environ.get(self._config.get("login_env", ""), 0))
-        password = os.environ.get(self._config.get("password_env", ""), "")
-        server = os.environ.get(self._config.get("server_env", ""), "")
+        login_str = os.environ.get(self._config.get("login_env", ""), "").strip()
+        login = int(login_str) if login_str.isdigit() else 0
+        password = os.environ.get(self._config.get("password_env", ""), "").strip()
+        server = os.environ.get(self._config.get("server_env", ""), "").strip()
 
         if not login or not password or not server:
             raise ValueError(
@@ -401,6 +402,6 @@ class MT5Broker(BaseBroker):
             return AssetClass.COMMODITY
         if any(energy in symbol_upper for energy in ("OIL", "BRENT", "WTI", "GAS")):
             return AssetClass.COMMODITY
-        if any(idx in symbol_upper for idx in ("US30", "US500", "NAS", "GER", "UK100", "JPN")):
+        if any(idx in symbol_upper for idx in ("US30", "US500", "SPX", "NAS", "GER", "UK100", "JPN", "JP225", "AUS", "ESTX")):
             return AssetClass.INDEX
         return AssetClass.FOREX
