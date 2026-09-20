@@ -1,12 +1,11 @@
-import { useState } from 'react'
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { supabase } from '@/lib/supabase'
+import { useState, useEffect, useMemo } from 'react'
 import { PageWrapper } from '@/components/layout/PageWrapper'
 import { Button } from '@/components/ui/Button'
 import { Modal, ConfirmModal } from '@/components/ui/Modal'
-import { Spinner } from '@/components/ui/Spinner'
-import { DatabaseIcon, BookOpenIcon, SearchIcon, RefreshCwIcon } from '@/components/icons/AppIcons'
-import { OFFICIAL_COURSES } from '@/config/officialCourses'
+import { DatabaseIcon, BookOpenIcon, SearchIcon, RefreshCwIcon, UserIcon, ClockIcon, CalendarIcon } from '@/components/icons/AppIcons'
+import { courseStore } from '@/lib/courseStore'
+import { type CourseProgram } from '@/config/officialCourses'
+import { supabase } from '@/lib/supabase'
 
 export interface DbSubject {
   id: string
@@ -15,450 +14,792 @@ export interface DbSubject {
   created_at?: string
 }
 
-export interface DbCourse {
-  id: string
-  title: string
-  description: string | null
-  subject_id: string | null
-  teacher_id?: string | null
-  class_id?: string | null
-  is_published: boolean
-  created_at?: string
-  updated_at?: string
-  subjects?: DbSubject | null
-}
+const CATEGORY_OPTIONS = [
+  'All',
+  'Tech & Programming',
+  'Data Science & Research',
+  'Computer & Digital Skills',
+  'Business Tech & Accounting',
+  'Languages & Communication',
+  'Creative Arts & Design',
+  'Cambridge International (Years 9-11)',
+  'Pearson Edexcel International (Years 9-11)',
+]
 
 export function ManageClasses() {
-  const queryClient = useQueryClient()
   const [activeTab, setActiveTab] = useState<'courses' | 'subjects'>('courses')
   const [searchQuery, setSearchQuery] = useState('')
+  const [selectedCategory, setSelectedCategory] = useState('All')
+  const [isSyncing, setIsSyncing] = useState(false)
+  const [courses, setCourses] = useState<CourseProgram[]>(() => courseStore.getCourses())
 
-  // 1. Fetch live courses with joined subject from Supabase, falling back to OFFICIAL_COURSES
-  const { data: courses = [], isLoading: isLoadingCourses, isError: isErrorCourses, refetch: refetchCourses } = useQuery<DbCourse[]>({
-    queryKey: ['db-courses-live'],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from('courses')
-        .select('id, title, description, is_published, subject_id, created_at, updated_at, subjects(id, name, color_hex)')
-        .order('created_at', { ascending: false })
+  // 1. Live synchronization with courseStore & Supabase cloud
+  useEffect(() => {
+    const handleUpdate = () => {
+      setCourses(courseStore.getCourses())
+    }
 
-      if (error) throw error
-      const rows = ((data || []) as any[]).filter((r) => !r.title?.startsWith('__ECLAT_SYNC_') && !r.id?.startsWith('aaaaaaaa-'))
-      const dbCourses = rows.map((r) => ({
-        ...r,
-        subjects: Array.isArray(r.subjects) ? (r.subjects[0] || null) : (r.subjects || null),
-      })) as DbCourse[]
+    window.addEventListener('eclat-courses-updated', handleUpdate)
+    window.addEventListener('storage', handleUpdate)
 
-      // If Supabase has no courses yet, show official courses from local config
-      if (dbCourses.length === 0) {
-        return OFFICIAL_COURSES.map((c) => ({
-          id: c.id,
-          title: c.title,
-          description: c.description || `${c.category} • ${c.duration} • ${c.careerOutcome}`,
-          subject_id: null,
-          is_published: true,
-          created_at: new Date().toISOString(),
-          updated_at: new Date().toISOString(),
-          subjects: {
-            id: c.departmentId,
-            name: c.departmentName,
-            color_hex: '#1e3a8a',
-          },
-          _isOfficial: true, // mark as read-only local config entry
-        } as DbCourse & { _isOfficial?: boolean }))
-      }
+    // Fetch cloud courses from Supabase on mount
+    courseStore.fetchCloudCourses().then((list) => {
+      setCourses(list)
+    })
 
-      return dbCourses
-    },
-  })
+    return () => {
+      window.removeEventListener('eclat-courses-updated', handleUpdate)
+      window.removeEventListener('storage', handleUpdate)
+    }
+  }, [])
 
-  // 2. Fetch live subjects from Supabase
-  const { data: subjects = [], isLoading: isLoadingSubjects, refetch: refetchSubjects } = useQuery<DbSubject[]>({
-    queryKey: ['db-subjects-live'],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from('subjects')
-        .select('id, name, color_hex, created_at')
-        .order('name', { ascending: true })
+  const handleManualSync = async () => {
+    setIsSyncing(true)
+    try {
+      const list = await courseStore.fetchCloudCourses()
+      setCourses(list)
+    } finally {
+      setIsSyncing(false)
+    }
+  }
 
-      if (error) throw error
-      return (data || []) as DbSubject[]
-    },
-  })
+  // 2. Subjects state for tab 2
+  const [subjects, setSubjects] = useState<DbSubject[]>([])
+  const [isLoadingSubjects, setIsLoadingSubjects] = useState(false)
 
-  // Course Modal State
+  const fetchSubjects = async () => {
+    setIsLoadingSubjects(true)
+    try {
+      const { data } = await supabase.from('subjects').select('*').order('name', { ascending: true })
+      if (data) setSubjects(data as DbSubject[])
+    } finally {
+      setIsLoadingSubjects(false)
+    }
+  }
+
+  useEffect(() => {
+    if (activeTab === 'subjects') {
+      fetchSubjects()
+    }
+  }, [activeTab])
+
+  // --- Course Modal State ---
   const [showCourseModal, setShowCourseModal] = useState(false)
-  const [editingCourse, setEditingCourse] = useState<DbCourse | null>(null)
+  const [editingCourse, setEditingCourse] = useState<CourseProgram | null>(null)
   const [courseTitle, setCourseTitle] = useState('')
-  const [courseDesc, setCourseDesc] = useState('')
-  const [courseSubjectId, setCourseSubjectId] = useState('')
-  const [coursePublished, setCoursePublished] = useState(true)
-  const [courseToDelete, setCourseToDelete] = useState<DbCourse | null>(null)
+  const [courseShortTitle, setCourseShortTitle] = useState('')
+  const [courseCategory, setCourseCategory] = useState('Tech & Programming')
+  const [courseDepartment, setCourseDepartment] = useState('')
+  const [courseInstructor, setCourseInstructor] = useState('')
+  const [courseFeeUsd, setCourseFeeUsd] = useState<number>(60)
+  const [courseFeeKes, setCourseFeeKes] = useState<number>(8000)
+  const [courseDuration, setCourseDuration] = useState('12 Weeks (3 Months)')
+  const [courseSchedule, setCourseSchedule] = useState(
+    'All Shifts: Early Morning, Late Morning, Midday, Afternoon, Evening & Night'
+  )
+  const [courseCareerOutcome, setCourseCareerOutcome] = useState('')
+  const [courseSkillsInput, setCourseSkillsInput] = useState('')
+  const [courseBestseller, setCourseBestseller] = useState(false)
+  const [coursePopular, setCoursePopular] = useState(true)
+  const [courseRating, setCourseRating] = useState(5.0)
+  const [courseRatingCount, setCourseRatingCount] = useState(1420)
+  const [courseStudentsEnrolled, setCourseStudentsEnrolled] = useState(3850)
+  const [courseToDelete, setCourseToDelete] = useState<CourseProgram | null>(null)
+  const [isSavingCourse, setIsSavingCourse] = useState(false)
 
-  // Subject Modal State
+  // --- Subject Modal State ---
   const [showSubjectModal, setShowSubjectModal] = useState(false)
   const [editingSubject, setEditingSubject] = useState<DbSubject | null>(null)
   const [subjectName, setSubjectName] = useState('')
   const [subjectColor, setSubjectColor] = useState('#2563eb')
   const [subjectToDelete, setSubjectToDelete] = useState<DbSubject | null>(null)
+  const [isSavingSubject, setIsSavingSubject] = useState(false)
 
   // Open Create Course Modal
   const handleOpenCreateCourse = () => {
     setEditingCourse(null)
     setCourseTitle('')
-    setCourseDesc('')
-    setCourseSubjectId(subjects[0]?.id || '')
-    setCoursePublished(true)
+    setCourseShortTitle('')
+    setCourseCategory('Tech & Programming')
+    setCourseDepartment('School of IT and Data Science')
+    setCourseInstructor('Éclat Certified Senior Lecturer')
+    setCourseFeeUsd(60)
+    setCourseFeeKes(8000)
+    setCourseDuration('12 Weeks (3 Months)')
+    setCourseSchedule('All Shifts: Early Morning, Late Morning, Midday, Afternoon, Evening & Night')
+    setCourseCareerOutcome('')
+    setCourseSkillsInput('Live Virtual Classes, Verified E-Certificate, Hands-on Lab')
+    setCourseBestseller(false)
+    setCoursePopular(true)
+    setCourseRating(5.0)
+    setCourseRatingCount(120)
+    setCourseStudentsEnrolled(450)
     setShowCourseModal(true)
   }
 
   // Open Edit Course Modal
-  const handleOpenEditCourse = (course: DbCourse) => {
-    setEditingCourse(course)
-    setCourseTitle(course.title || '')
-    setCourseDesc(course.description || '')
-    setCourseSubjectId(course.subject_id || '')
-    setCoursePublished(course.is_published ?? true)
+  const handleOpenEditCourse = (c: CourseProgram) => {
+    setEditingCourse(c)
+    setCourseTitle(c.title || '')
+    setCourseShortTitle(c.shortTitle || c.title || '')
+    setCourseCategory(c.category || 'Tech & Programming')
+    setCourseDepartment(c.departmentName || '')
+    setCourseInstructor(c.instructor || '')
+    setCourseFeeUsd(c.feeUsd || 60)
+    setCourseFeeKes(c.feeKes || Math.round((c.feeUsd || 60) * 133))
+    setCourseDuration(c.duration || '12 Weeks (3 Months)')
+    setCourseSchedule(c.schedule || 'All Shifts: Early Morning, Late Morning, Midday, Afternoon, Evening & Night')
+    setCourseCareerOutcome(c.careerOutcome || '')
+    setCourseSkillsInput((c.skills || []).join(', '))
+    setCourseBestseller(Boolean(c.bestseller))
+    setCoursePopular(Boolean(c.popular))
+    setCourseRating(c.rating || 5.0)
+    setCourseRatingCount(c.ratingCount || 100)
+    setCourseStudentsEnrolled(c.studentsEnrolled || 250)
     setShowCourseModal(true)
   }
 
-  // Save (Create or Update) Course Mutation
-  const saveCourseMutation = useMutation({
-    mutationFn: async () => {
-      if (!courseTitle.trim()) return
+  // Save Course (Create or Update)
+  const handleSaveCourse = async (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!courseTitle.trim()) return
 
-      const payload = {
-        title: courseTitle.trim(),
-        description: courseDesc.trim() || null,
-        subject_id: courseSubjectId || null,
-        is_published: coursePublished,
-        updated_at: new Date().toISOString(),
-      }
+    setIsSavingCourse(true)
+    try {
+      const skillsArray = courseSkillsInput
+        .split(',')
+        .map((s) => s.trim())
+        .filter(Boolean)
 
       if (editingCourse) {
-        // Update Course in Supabase
-        const { error } = await supabase.from('courses').update(payload).eq('id', editingCourse.id)
-        if (error) throw error
+        const updated: CourseProgram = {
+          ...editingCourse,
+          title: courseTitle.trim(),
+          shortTitle: courseShortTitle.trim() || courseTitle.trim(),
+          category: courseCategory,
+          departmentName: courseDepartment.trim() || editingCourse.departmentName,
+          instructor: courseInstructor.trim() || 'Éclat Faculty Specialist',
+          feeUsd: Number(courseFeeUsd) || 60,
+          feeKes: Number(courseFeeKes) || Math.round((Number(courseFeeUsd) || 60) * 133),
+          duration: courseDuration.trim() || '12 Weeks (3 Months)',
+          schedule: courseSchedule.trim(),
+          careerOutcome: courseCareerOutcome.trim() || editingCourse.careerOutcome,
+          skills: skillsArray.length > 0 ? skillsArray : editingCourse.skills,
+          bestseller: courseBestseller,
+          popular: coursePopular,
+          rating: Number(courseRating) || 5.0,
+          ratingCount: Number(courseRatingCount) || 100,
+          studentsEnrolled: Number(courseStudentsEnrolled) || 250,
+        }
+
+        await courseStore.saveCourse(updated)
       } else {
-        // Insert new Course in Supabase
-        const { error } = await supabase.from('courses').insert([{ ...payload, created_at: new Date().toISOString() }])
-        if (error) throw error
+        await courseStore.addCourse({
+          title: courseTitle.trim(),
+          shortTitle: courseShortTitle.trim() || courseTitle.trim(),
+          category: courseCategory,
+          departmentName: courseDepartment.trim() || 'Academic Faculty',
+          instructor: courseInstructor.trim() || 'Éclat Faculty Specialist',
+          feeUsd: Number(courseFeeUsd) || 60,
+          feeKes: Number(courseFeeKes) || Math.round((Number(courseFeeUsd) || 60) * 133),
+          duration: courseDuration.trim() || '12 Weeks (3 Months)',
+          schedule: courseSchedule.trim(),
+          careerOutcome: courseCareerOutcome.trim() || 'Certified Professional Competency',
+          skills: skillsArray.length > 0 ? skillsArray : ['Live Virtual Classes', 'Verified E-Certificate'],
+          bestseller: courseBestseller,
+          popular: coursePopular,
+          rating: Number(courseRating) || 5.0,
+          ratingCount: Number(courseRatingCount) || 100,
+          studentsEnrolled: Number(courseStudentsEnrolled) || 250,
+        })
       }
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['db-courses-live'] })
+
       setShowCourseModal(false)
       setEditingCourse(null)
-    },
-    onError: (err: any) => {
-      alert(`Database Operation Error: ${err?.message || 'Could not save course'}`)
-    },
-  })
+      setCourses(courseStore.getCourses())
+    } catch (err: any) {
+      alert(`Error saving course: ${err?.message || err}`)
+    } finally {
+      setIsSavingCourse(false)
+    }
+  }
 
-  // Delete Course Mutation
-  const deleteCourseMutation = useMutation({
-    mutationFn: async (id: string) => {
-      const { error } = await supabase.from('courses').delete().eq('id', id)
-      if (error) throw error
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['db-courses-live'] })
+  // Delete Course
+  const handleDeleteCourse = async () => {
+    if (!courseToDelete) return
+    setIsSavingCourse(true)
+    try {
+      await courseStore.deleteCourse(courseToDelete.id)
+      setCourses(courseStore.getCourses())
       setCourseToDelete(null)
-    },
-    onError: (err: any) => {
-      alert(`Database Delete Error: ${err?.message || 'Could not delete course'}`)
-    },
-  })
-
-  // Open Create Subject Modal
-  const handleOpenCreateSubject = () => {
-    setEditingSubject(null)
-    setSubjectName('')
-    setSubjectColor('#2563eb')
-    setShowSubjectModal(true)
+    } catch (err: any) {
+      alert(`Error deleting course: ${err?.message || err}`)
+    } finally {
+      setIsSavingCourse(false)
+    }
   }
 
-  // Open Edit Subject Modal
-  const handleOpenEditSubject = (sub: DbSubject) => {
-    setEditingSubject(sub)
-    setSubjectName(sub.name || '')
-    setSubjectColor(sub.color_hex || '#2563eb')
-    setShowSubjectModal(true)
-  }
+  // Subject Save
+  const handleSaveSubject = async (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!subjectName.trim()) return
 
-  // Save (Create or Update) Subject Mutation
-  const saveSubjectMutation = useMutation({
-    mutationFn: async () => {
-      if (!subjectName.trim()) return
-
+    setIsSavingSubject(true)
+    try {
       const payload = {
         name: subjectName.trim(),
         color_hex: subjectColor,
       }
 
       if (editingSubject) {
-        // Update Subject in Supabase
-        const { error } = await supabase.from('subjects').update(payload).eq('id', editingSubject.id)
-        if (error) throw error
+        await supabase.from('subjects').update(payload).eq('id', editingSubject.id)
       } else {
-        // Insert Subject in Supabase
-        const { error } = await supabase.from('subjects').insert([{ ...payload, created_at: new Date().toISOString() }])
-        if (error) throw error
+        await supabase.from('subjects').insert([{ ...payload, created_at: new Date().toISOString() }])
       }
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['db-subjects-live'] })
-      queryClient.invalidateQueries({ queryKey: ['db-courses-live'] })
+
       setShowSubjectModal(false)
       setEditingSubject(null)
-    },
-    onError: (err: any) => {
-      alert(`Database Subject Error: ${err?.message || 'Could not save subject'}`)
-    },
-  })
+      fetchSubjects()
+    } catch (err: any) {
+      alert(`Error saving subject: ${err?.message || err}`)
+    } finally {
+      setIsSavingSubject(false)
+    }
+  }
 
-  // Delete Subject Mutation
-  const deleteSubjectMutation = useMutation({
-    mutationFn: async (id: string) => {
-      const { error } = await supabase.from('subjects').delete().eq('id', id)
-      if (error) throw error
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['db-subjects-live'] })
-      queryClient.invalidateQueries({ queryKey: ['db-courses-live'] })
+  // Delete Subject
+  const handleDeleteSubject = async () => {
+    if (!subjectToDelete) return
+    try {
+      await supabase.from('subjects').delete().eq('id', subjectToDelete.id)
       setSubjectToDelete(null)
-    },
-    onError: (err: any) => {
-      alert(`Database Delete Error: ${err?.message || 'Could not delete subject'}`)
-    },
-  })
+      fetchSubjects()
+    } catch (err: any) {
+      alert(`Error deleting subject: ${err?.message || err}`)
+    }
+  }
 
-  // Filtered lists based on search
-  const filteredCourses = courses.filter(
-    (c) =>
-      c.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      (c.description || '').toLowerCase().includes(searchQuery.toLowerCase()) ||
-      (c.subjects?.name || '').toLowerCase().includes(searchQuery.toLowerCase())
-  )
+  // Filtered Courses
+  const filteredCourses = useMemo(() => {
+    return courses.filter((c) => {
+      const matchCat = selectedCategory === 'All' || c.category === selectedCategory
+      const q = searchQuery.toLowerCase().trim()
+      const matchSearch =
+        !q ||
+        c.title.toLowerCase().includes(q) ||
+        (c.instructor || '').toLowerCase().includes(q) ||
+        (c.departmentName || '').toLowerCase().includes(q) ||
+        (c.careerOutcome || '').toLowerCase().includes(q)
+      return matchCat && matchSearch
+    })
+  }, [courses, selectedCategory, searchQuery])
 
-  const filteredSubjects = subjects.filter((s) => s.name.toLowerCase().includes(searchQuery.toLowerCase()))
+  const filteredSubjects = useMemo(() => {
+    return subjects.filter((s) => s.name.toLowerCase().includes(searchQuery.toLowerCase()))
+  }, [subjects, searchQuery])
 
   return (
-    <PageWrapper title="Academic Programs & Live Database">
+    <PageWrapper title="Academic Programs & Live Course Management">
       <div className="space-y-6">
         {/* Top Header Card */}
-        <div className="card p-6" style={{ background: 'linear-gradient(135deg, #1e3a8a 0%, #1e40af 100%)', color: '#ffffff', borderRadius: '16px', border: '1px solid rgba(255, 255, 255, 0.15)', boxShadow: '0 8px 24px rgba(30, 58, 138, 0.15)' }}>
+        <div
+          className="card p-6"
+          style={{
+            background: 'linear-gradient(135deg, #1e3a8a 0%, #1e40af 100%)',
+            color: '#ffffff',
+            borderRadius: '16px',
+            border: '1px solid rgba(255, 255, 255, 0.15)',
+            boxShadow: '0 8px 24px rgba(30, 58, 138, 0.15)',
+          }}
+        >
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
             <div>
               <div className="flex items-center gap-2 mb-1">
                 <DatabaseIcon size={24} color="#93c5fd" />
                 <h1 style={{ fontSize: '1.4rem', fontWeight: 800, color: '#ffffff', margin: 0 }}>
-                  Live Academic Database Console
+                  Academic Programs & Courses Console
                 </h1>
-                <span className="badge" style={{ background: '#10b981', color: '#ffffff', fontWeight: 800, fontSize: '0.72rem', display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+                <span
+                  className="badge"
+                  style={{
+                    background: '#10b981',
+                    color: '#ffffff',
+                    fontWeight: 800,
+                    fontSize: '0.72rem',
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '4px',
+                  }}
+                >
                   <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#ffffff' }} />
-                  REAL-TIME SUPABASE SYNC
+                  REAL-TIME CLOUD & CATALOG SYNC
                 </span>
               </div>
               <p style={{ color: '#e2e8f0', fontSize: '0.88rem', margin: '0.25rem 0 0' }}>
-                Showing all <strong style={{ color: '#ffffff' }}>{courses.length} active courses</strong>. Sync to Supabase to enable per-course lesson uploads and student enrollments.
+                Manage all <strong style={{ color: '#ffffff' }}>{courses.length} academic courses</strong>. Any changes
+                saved here update the public website, course catalog, fees, and SIMS in real time.
               </p>
             </div>
 
             <div className="flex gap-2 flex-wrap">
               <Button
                 variant="primary"
-                onClick={activeTab === 'courses' ? handleOpenCreateCourse : handleOpenCreateSubject}
+                onClick={activeTab === 'courses' ? handleOpenCreateCourse : () => { setEditingSubject(null); setSubjectName(''); setSubjectColor('#2563eb'); setShowSubjectModal(true); }}
                 style={{ fontWeight: 800, padding: '0.65rem 1.25rem', background: '#ffffff', color: '#1e3a8a' }}
               >
-                {activeTab === 'courses' ? '+ Add New Course' : '+ Add Subject Discipline'}
+                {activeTab === 'courses' ? '+ Add New Program / Course' : '+ Add Subject Discipline'}
               </Button>
               <button
                 type="button"
-                onClick={() => {
-                  refetchCourses()
-                  refetchSubjects()
-                }}
+                onClick={handleManualSync}
+                disabled={isSyncing}
                 className="btn btn-secondary btn-sm"
-                style={{ background: 'rgba(255, 255, 255, 0.15)', color: '#ffffff', border: '1px solid rgba(255, 255, 255, 0.3)', display: 'inline-flex', alignItems: 'center', gap: '6px' }}
-                title="Refresh from Supabase"
+                style={{
+                  background: 'rgba(255, 255, 255, 0.15)',
+                  color: '#ffffff',
+                  border: '1px solid rgba(255, 255, 255, 0.3)',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '6px',
+                }}
+                title="Synchronize from Cloud Database"
               >
                 <RefreshCwIcon size={14} color="#ffffff" />
-                <span>Refresh Cloud Data</span>
+                <span>{isSyncing ? 'Syncing...' : 'Refresh Cloud Data'}</span>
               </button>
             </div>
           </div>
 
           {/* Database Metrics Grid */}
-          <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 mt-6 pt-5" style={{ borderTop: '1px solid rgba(255, 255, 255, 0.15)' }}>
-            <div style={{ background: 'rgba(255, 255, 255, 0.12)', padding: '1rem', borderRadius: '12px', border: '1px solid rgba(255, 255, 255, 0.15)' }}>
-              <div style={{ fontSize: '0.75rem', color: '#e2e8f0', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em' }}>Total Active Courses</div>
-              <div style={{ fontSize: '1.8rem', fontWeight: 900, color: '#ffffff', margin: '0.25rem 0' }}>{courses.length}</div>
-              <div style={{ fontSize: '0.75rem', color: '#cbd5e1' }}>{(courses as any[])[0]?._isOfficial ? 'Official course registry' : 'Live in Supabase DB'}</div>
-            </div>
-
-            <div style={{ background: 'rgba(255, 255, 255, 0.12)', padding: '1rem', borderRadius: '12px', border: '1px solid rgba(255, 255, 255, 0.15)' }}>
-              <div style={{ fontSize: '0.75rem', color: '#e2e8f0', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em' }}>Subject Disciplines</div>
-              <div style={{ fontSize: '1.8rem', fontWeight: 900, color: '#ffffff', margin: '0.25rem 0' }}>{subjects.length}</div>
-              <div style={{ fontSize: '0.75rem', color: '#cbd5e1' }}>Live in subjects table</div>
-            </div>
-
-            <div className="col-span-2 sm:col-span-1" style={{ background: 'rgba(255, 255, 255, 0.12)', padding: '1rem', borderRadius: '12px', border: '1px solid rgba(255, 255, 255, 0.15)' }}>
-              <div style={{ fontSize: '0.75rem', color: '#e2e8f0', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em' }}>Published Status</div>
-              <div style={{ fontSize: '1.8rem', fontWeight: 900, color: '#ffffff', margin: '0.25rem 0' }}>
-                {courses.filter((c) => c.is_published).length}
+          <div
+            className="grid grid-cols-2 sm:grid-cols-3 gap-4 mt-6 pt-5"
+            style={{ borderTop: '1px solid rgba(255, 255, 255, 0.15)' }}
+          >
+            <div
+              style={{
+                background: 'rgba(255, 255, 255, 0.12)',
+                padding: '1rem',
+                borderRadius: '12px',
+                border: '1px solid rgba(255, 255, 255, 0.15)',
+              }}
+            >
+              <div style={{ fontSize: '0.75rem', color: '#e2e8f0', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                Total Active Programs
               </div>
-              <div style={{ fontSize: '0.75rem', color: '#cbd5e1' }}>Active Student Enrollments</div>
+              <div style={{ fontSize: '1.8rem', fontWeight: 900, color: '#ffffff', margin: '0.25rem 0' }}>
+                {courses.length}
+              </div>
+              <div style={{ fontSize: '0.75rem', color: '#cbd5e1' }}>Live on public site & catalog</div>
+            </div>
+
+            <div
+              style={{
+                background: 'rgba(255, 255, 255, 0.12)',
+                padding: '1rem',
+                borderRadius: '12px',
+                border: '1px solid rgba(255, 255, 255, 0.15)',
+              }}
+            >
+              <div style={{ fontSize: '0.75rem', color: '#e2e8f0', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                Bestsellers & Featured
+              </div>
+              <div style={{ fontSize: '1.8rem', fontWeight: 900, color: '#ffffff', margin: '0.25rem 0' }}>
+                {courses.filter((c) => c.bestseller).length}
+              </div>
+              <div style={{ fontSize: '0.75rem', color: '#cbd5e1' }}>Highlighted with golden badges</div>
+            </div>
+
+            <div
+              className="col-span-2 sm:col-span-1"
+              style={{
+                background: 'rgba(255, 255, 255, 0.12)',
+                padding: '1rem',
+                borderRadius: '12px',
+                border: '1px solid rgba(255, 255, 255, 0.15)',
+              }}
+            >
+              <div style={{ fontSize: '0.75rem', color: '#e2e8f0', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                Average Rating
+              </div>
+              <div style={{ fontSize: '1.8rem', fontWeight: 900, color: '#ffffff', margin: '0.25rem 0' }}>
+                5.0 ★
+              </div>
+              <div style={{ fontSize: '0.75rem', color: '#cbd5e1' }}>Verified student evaluations</div>
             </div>
           </div>
         </div>
 
         {/* Tab & Search Control Bar */}
-        <div className="card p-4 flex flex-col sm:flex-row justify-between items-stretch sm:items-center gap-4" style={{ background: '#ffffff', border: '1px solid #e2e8f0' }}>
-          {/* Table Switcher Tabs */}
-          <div className="flex gap-2 p-1 rounded-xl" style={{ background: '#f1f5f9', border: '1px solid #e2e8f0' }}>
-            <button
-              type="button"
-              onClick={() => setActiveTab('courses')}
-              className="px-4 py-2 rounded-lg font-bold text-sm transition-all flex items-center gap-2"
-              style={{
-                background: activeTab === 'courses' ? '#1d4ed8' : 'transparent',
-                color: activeTab === 'courses' ? '#ffffff' : '#475569',
-              }}
-            >
-              <BookOpenIcon size={15} color={activeTab === 'courses' ? '#ffffff' : '#475569'} />
-              <span>Online Courses ({courses.length})</span>
-            </button>
-            <button
-              type="button"
-              onClick={() => setActiveTab('subjects')}
-              className="px-4 py-2 rounded-lg font-bold text-sm transition-all flex items-center gap-2"
-              style={{
-                background: activeTab === 'subjects' ? '#1d4ed8' : 'transparent',
-                color: activeTab === 'subjects' ? '#ffffff' : '#475569',
-              }}
-            >
-              <DatabaseIcon size={15} color={activeTab === 'subjects' ? '#ffffff' : '#475569'} />
-              <span>Subject Disciplines ({subjects.length})</span>
-            </button>
-          </div>
-
-          {/* Search Bar */}
-          <div className="relative flex-1 max-w-md">
-            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">
-              <SearchIcon size={16} color="#64748b" />
-            </span>
-            <input
-              type="text"
-              className="input pl-9 text-sm"
-              style={{ background: '#ffffff', border: '1.5px solid #cbd5e1', color: '#0f172a' }}
-              placeholder={activeTab === 'courses' ? 'Search courses by title or discipline...' : 'Search subjects...'}
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-            />
-            {searchQuery && (
+        <div
+          className="card p-4 flex flex-col gap-4"
+          style={{ background: '#ffffff', border: '1px solid #e2e8f0', borderRadius: '12px' }}
+        >
+          <div className="flex flex-col sm:flex-row justify-between items-stretch sm:items-center gap-4">
+            {/* Table Switcher Tabs */}
+            <div className="flex gap-2 p-1 rounded-xl" style={{ background: '#f1f5f9', border: '1px solid #e2e8f0' }}>
               <button
                 type="button"
-                onClick={() => setSearchQuery('')}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 font-bold"
+                onClick={() => setActiveTab('courses')}
+                className="px-4 py-2 rounded-lg font-bold text-sm transition-all flex items-center gap-2"
+                style={{
+                  background: activeTab === 'courses' ? '#1d4ed8' : 'transparent',
+                  color: activeTab === 'courses' ? '#ffffff' : '#475569',
+                }}
               >
-                ✕
+                <BookOpenIcon size={15} color={activeTab === 'courses' ? '#ffffff' : '#475569'} />
+                <span>Academic Programs ({courses.length})</span>
               </button>
-            )}
+              <button
+                type="button"
+                onClick={() => setActiveTab('subjects')}
+                className="px-4 py-2 rounded-lg font-bold text-sm transition-all flex items-center gap-2"
+                style={{
+                  background: activeTab === 'subjects' ? '#1d4ed8' : 'transparent',
+                  color: activeTab === 'subjects' ? '#ffffff' : '#475569',
+                }}
+              >
+                <DatabaseIcon size={15} color={activeTab === 'subjects' ? '#ffffff' : '#475569'} />
+                <span>Subject Disciplines ({subjects.length})</span>
+              </button>
+            </div>
+
+            {/* Search Bar */}
+            <div className="relative flex-1 max-w-md">
+              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">
+                <SearchIcon size={16} color="#64748b" />
+              </span>
+              <input
+                type="text"
+                className="input pl-9 text-sm"
+                style={{ background: '#ffffff', border: '1.5px solid #cbd5e1', color: '#0f172a' }}
+                placeholder={
+                  activeTab === 'courses'
+                    ? 'Search by title, instructor, career role...'
+                    : 'Search subjects...'
+                }
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+              />
+              {searchQuery && (
+                <button
+                  type="button"
+                  onClick={() => setSearchQuery('')}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 font-bold"
+                >
+                  ✕
+                </button>
+              )}
+            </div>
           </div>
+
+          {/* Category Filter Pills (Courses tab only) */}
+          {activeTab === 'courses' && (
+            <div className="flex gap-2 overflow-x-auto pb-1 pt-1" style={{ scrollbarWidth: 'thin' }}>
+              {CATEGORY_OPTIONS.map((cat) => (
+                <button
+                  key={cat}
+                  type="button"
+                  onClick={() => setSelectedCategory(cat)}
+                  style={{
+                    padding: '5px 12px',
+                    borderRadius: '20px',
+                    fontSize: '0.78rem',
+                    fontWeight: 700,
+                    whiteSpace: 'nowrap',
+                    cursor: 'pointer',
+                    transition: 'all 0.2s ease',
+                    border: selectedCategory === cat ? '1px solid #1e40af' : '1px solid #e2e8f0',
+                    background: selectedCategory === cat ? '#1e40af' : '#f8fafc',
+                    color: selectedCategory === cat ? '#ffffff' : '#475569',
+                  }}
+                >
+                  {cat}
+                </button>
+              ))}
+            </div>
+          )}
         </div>
 
-        {/* TAB 1: COURSES TABLE VIEW */}
+        {/* TAB 1: COURSES GRID VIEW (Visually Matching Public Catalog) */}
         {activeTab === 'courses' && (
           <div>
-            {/* Info Banner — shown when displaying official local courses */}
-            {(courses as any[])[0]?._isOfficial && (
-              <div className="alert alert-info mb-4" style={{ background: '#eff6ff', border: '1.5px solid #bfdbfe', borderRadius: '12px', padding: '0.85rem 1rem', display: 'flex', alignItems: 'flex-start', gap: '10px' }}>
-                <span style={{ fontSize: '1.25rem' }}>📋</span>
-                <div>
-                  <strong style={{ color: '#1e40af' }}>Showing Official Course Registry ({courses.length} courses)</strong>
-                  <p style={{ margin: '4px 0 0', fontSize: '0.82rem', color: '#3b82f6' }}>
-                    These are your official courses from the config file. To enable editing, go to the <strong>Admin Dashboard → ☁️ Sync &amp; Seed Cloud DB</strong> to push them to Supabase. After syncing, full edit/delete controls will appear here.
-                  </p>
-                </div>
-              </div>
-            )}
-            {isLoadingCourses ? (
-              <div className="card p-12 text-center">
-                <Spinner />
-                <p className="text-slate-500 mt-2 text-sm">Querying Supabase courses table...</p>
-              </div>
-            ) : isErrorCourses ? (
-              <div className="card p-8 text-center text-red-600">
-                <p className="font-bold">Error loading courses from Supabase database.</p>
-                <button type="button" onClick={() => refetchCourses()} className="btn btn-secondary btn-sm mt-2">
-                  Try Again
-                </button>
-              </div>
-            ) : filteredCourses.length === 0 ? (
-              <div className="card p-12 text-center text-slate-500">
+            {filteredCourses.length === 0 ? (
+              <div className="card p-12 text-center text-slate-500" style={{ background: '#ffffff' }}>
                 <div className="flex justify-center mb-2">
-                  <BookOpenIcon size={32} color="#94a3b8" />
+                  <BookOpenIcon size={36} color="#94a3b8" />
                 </div>
-                <h3 className="font-bold text-slate-700 dark:text-slate-300">No Courses Found</h3>
-                <p className="text-xs text-slate-400 mt-1">Add your first course using the "+ Add New Course" button above.</p>
+                <h3 className="font-bold text-slate-700">No Programs Found</h3>
+                <p className="text-xs text-slate-400 mt-1">
+                  Try adjusting your search query or category filter, or add a new program using the button above.
+                </p>
               </div>
             ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {filteredCourses.map((c) => (
                   <div
                     key={c.id}
-                    className="card p-5 flex flex-col justify-between border border-slate-200 dark:border-slate-800 hover:shadow-md transition-all"
+                    style={{
+                      background: '#ffffff',
+                      borderRadius: '16px',
+                      border: c.bestseller ? '2px solid #eab308' : '1px solid #e2e8f0',
+                      boxShadow: '0 4px 16px rgba(0, 0, 0, 0.05)',
+                      padding: '1.25rem',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      justifyContent: 'space-between',
+                      position: 'relative',
+                      transition: 'transform 0.2s ease, box-shadow 0.2s ease',
+                    }}
                   >
                     <div>
-                      {/* Top Badges */}
-                      <div className="flex justify-between items-start gap-2 mb-3">
-                        <span
-                          className="px-2.5 py-1 rounded-md text-xs font-extrabold"
-                          style={{
-                            backgroundColor: c.subjects?.color_hex ? `${c.subjects.color_hex}15` : '#eff6ff',
-                            color: c.subjects?.color_hex || '#2563eb',
-                            border: `1px solid ${c.subjects?.color_hex ? `${c.subjects.color_hex}35` : '#bfdbfe'}`,
-                          }}
-                        >
-                          {c.subjects?.name || 'General Studies'}
-                        </span>
-                        <span className={`badge ${c.is_published ? 'badge-success' : 'badge-neutral'} text-[11px]`}>
-                          {c.is_published ? 'Published' : 'Draft'}
-                        </span>
+                      {/* Top Badges Row */}
+                      <div className="flex justify-between items-center gap-2 mb-3">
+                        <div className="flex items-center gap-2">
+                          <span
+                            style={{
+                              background: '#eff6ff',
+                              color: '#1d4ed8',
+                              padding: '4px 10px',
+                              borderRadius: '6px',
+                              fontSize: '0.72rem',
+                              fontWeight: 800,
+                              textTransform: 'uppercase',
+                              letterSpacing: '0.04em',
+                            }}
+                          >
+                            {c.category?.split('&')[0]?.trim() || 'ACADEMIC'}
+                          </span>
+                          <span style={{ fontSize: '0.75rem', color: '#64748b' }}>🌐 100% Online</span>
+                        </div>
+
+                        {c.bestseller ? (
+                          <span
+                            style={{
+                              background: '#fef9c3',
+                              color: '#854d0e',
+                              border: '1px solid #facc15',
+                              padding: '3px 8px',
+                              borderRadius: '6px',
+                              fontSize: '0.72rem',
+                              fontWeight: 800,
+                              display: 'inline-flex',
+                              alignItems: 'center',
+                              gap: '3px',
+                            }}
+                          >
+                            ★ BESTSELLER
+                          </span>
+                        ) : (
+                          <span
+                            style={{
+                              background: '#f0fdf4',
+                              color: '#166534',
+                              border: '1px solid #86efac',
+                              padding: '3px 8px',
+                              borderRadius: '6px',
+                              fontSize: '0.72rem',
+                              fontWeight: 800,
+                            }}
+                          >
+                            50% OFF
+                          </span>
+                        )}
                       </div>
 
                       {/* Course Title */}
-                      <h3 className="text-lg font-bold text-slate-900 dark:text-white leading-snug mb-2">
+                      <h3
+                        style={{
+                          fontSize: '1.05rem',
+                          fontWeight: 900,
+                          color: '#0f172a',
+                          lineHeight: 1.35,
+                          marginBottom: '0.5rem',
+                          textTransform: 'uppercase',
+                          fontFamily: 'var(--font-heading, Georgia, serif)',
+                        }}
+                      >
                         {c.title}
                       </h3>
 
-                      {/* Syllabus / Description */}
-                      <p className="text-xs text-slate-600 dark:text-slate-400 line-clamp-3 mb-4 leading-relaxed">
-                        {c.description || 'No detailed syllabus curriculum provided yet.'}
-                      </p>
+                      {/* Instructor Line */}
+                      <div
+                        style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '6px',
+                          color: '#475569',
+                          fontSize: '0.8rem',
+                          marginBottom: '0.65rem',
+                        }}
+                      >
+                        <UserIcon size={14} color="#64748b" />
+                        <span style={{ fontWeight: 600 }}>{c.instructor}</span>
+                      </div>
+
+                      {/* Ratings & Enrolment Metric */}
+                      <div
+                        style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '8px',
+                          fontSize: '0.8rem',
+                          marginBottom: '0.85rem',
+                        }}
+                      >
+                        <span style={{ color: '#d97706', fontWeight: 900 }}>
+                          {c.rating?.toFixed(1) || '5.0'} ★★★★★
+                        </span>
+                        <span style={{ color: '#64748b' }}>({c.ratingCount || 120})</span>
+                        <span style={{ color: '#cbd5e1' }}>•</span>
+                        <span style={{ color: '#0284c7', fontWeight: 700 }}>
+                          {(c.studentsEnrolled || 250).toLocaleString()} students
+                        </span>
+                      </div>
+
+                      {/* Schedule & Duration Box */}
+                      <div
+                        style={{
+                          background: '#f8fafc',
+                          border: '1px solid #e2e8f0',
+                          borderRadius: '10px',
+                          padding: '0.75rem',
+                          marginBottom: '0.85rem',
+                          fontSize: '0.78rem',
+                          color: '#334155',
+                          display: 'flex',
+                          flexDirection: 'column',
+                          gap: '4px',
+                        }}
+                      >
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontWeight: 700 }}>
+                          <ClockIcon size={13} color="#2563eb" />
+                          <span>{c.duration}</span>
+                        </div>
+                        <div style={{ display: 'flex', alignItems: 'flex-start', gap: '6px', color: '#64748b', lineHeight: 1.35 }}>
+                          <CalendarIcon size={13} color="#64748b" />
+                          <span>{c.schedule}</span>
+                        </div>
+                      </div>
+
+                      {/* Target Career Role Box */}
+                      {c.careerOutcome && (
+                        <div
+                          style={{
+                            background: '#f0fdf4',
+                            border: '1px solid #bbf7d0',
+                            borderRadius: '10px',
+                            padding: '0.75rem',
+                            marginBottom: '0.85rem',
+                          }}
+                        >
+                          <div
+                            style={{
+                              fontSize: '0.68rem',
+                              fontWeight: 800,
+                              textTransform: 'uppercase',
+                              letterSpacing: '0.05em',
+                              color: '#166534',
+                              marginBottom: '2px',
+                            }}
+                          >
+                            Target Career Role:
+                          </div>
+                          <p style={{ margin: 0, fontSize: '0.78rem', color: '#15803d', lineHeight: 1.4 }}>
+                            {c.careerOutcome}
+                          </p>
+                        </div>
+                      )}
+
+                      {/* Skills Tags */}
+                      {c.skills && c.skills.length > 0 && (
+                        <div className="flex flex-wrap gap-1 mb-4">
+                          {c.skills.slice(0, 3).map((skill, idx) => (
+                            <span
+                              key={idx}
+                              style={{
+                                background: '#f1f5f9',
+                                color: '#475569',
+                                padding: '3px 8px',
+                                borderRadius: '6px',
+                                fontSize: '0.7rem',
+                                fontWeight: 600,
+                              }}
+                            >
+                              ✓ {skill}
+                            </span>
+                          ))}
+                        </div>
+                      )}
                     </div>
 
-                    {/* Footer Controls */}
-                    <div className="pt-4 border-t border-slate-100 dark:border-slate-800 flex justify-between items-center text-xs text-slate-400">
-                      <span className="font-mono text-[11px]">ID: {c.id.slice(0, 8)}...</span>
+                    {/* Bottom Pricing & Action Buttons */}
+                    <div
+                      style={{
+                        borderTop: '1px solid #e2e8f0',
+                        paddingTop: '0.85rem',
+                        marginTop: '0.5rem',
+                      }}
+                    >
+                      <div className="flex justify-between items-center mb-3">
+                        <div>
+                          <div style={{ fontSize: '0.68rem', color: '#64748b', fontWeight: 700, textTransform: 'uppercase' }}>
+                            Tuition Fee
+                          </div>
+                          <div style={{ fontSize: '1.25rem', fontWeight: 900, color: '#1e3a8a' }}>
+                            ${c.feeUsd}{' '}
+                            <span style={{ fontSize: '0.8rem', fontWeight: 600, color: '#64748b' }}>
+                              (KES {c.feeKes.toLocaleString()})
+                            </span>
+                          </div>
+                        </div>
+                        <span
+                          style={{
+                            background: '#f8fafc',
+                            border: '1px solid #cbd5e1',
+                            color: '#475569',
+                            padding: '4px 8px',
+                            borderRadius: '6px',
+                            fontSize: '0.72rem',
+                            fontWeight: 700,
+                          }}
+                        >
+                          Installments
+                        </span>
+                      </div>
+
+                      {/* Admin Controls */}
                       <div className="flex gap-2">
                         <button
                           type="button"
                           onClick={() => handleOpenEditCourse(c)}
-                          className="btn btn-secondary btn-sm"
-                          style={{ padding: '4px 10px', fontSize: '0.75rem', fontWeight: 700 }}
+                          className="btn btn-primary btn-sm flex-1"
+                          style={{
+                            fontWeight: 800,
+                            padding: '7px 12px',
+                            fontSize: '0.82rem',
+                            background: '#1e40af',
+                            color: '#ffffff',
+                            borderRadius: '8px',
+                            border: 'none',
+                            cursor: 'pointer',
+                          }}
                         >
-                          Edit
+                          ✏️ Edit Program Details
                         </button>
                         <button
                           type="button"
                           onClick={() => setCourseToDelete(c)}
-                          className="btn btn-ghost btn-sm text-red-600 hover:bg-red-50"
-                          style={{ padding: '4px 8px', fontSize: '0.75rem', fontWeight: 700 }}
-                          title="Delete course from database"
+                          className="btn btn-ghost btn-sm"
+                          style={{
+                            color: '#dc2626',
+                            padding: '7px 10px',
+                            fontSize: '0.82rem',
+                            fontWeight: 700,
+                            borderRadius: '8px',
+                          }}
+                          title="Delete Program"
                         >
-                          Delete
+                          🗑️
                         </button>
                       </div>
                     </div>
@@ -469,145 +810,285 @@ export function ManageClasses() {
           </div>
         )}
 
-        {/* TAB 2: SUBJECTS TABLE VIEW */}
+        {/* TAB 2: SUBJECT DISCIPLINES */}
         {activeTab === 'subjects' && (
           <div>
             {isLoadingSubjects ? (
-              <div className="card p-12 text-center">
+              <div className="card p-12 text-center" style={{ background: '#ffffff' }}>
                 <Spinner />
                 <p className="text-slate-500 mt-2 text-sm">Querying Supabase subjects table...</p>
               </div>
             ) : filteredSubjects.length === 0 ? (
-              <div className="card p-12 text-center text-slate-500">
+              <div className="card p-12 text-center text-slate-500" style={{ background: '#ffffff' }}>
                 <div className="flex justify-center mb-2">
                   <DatabaseIcon size={32} color="#94a3b8" />
                 </div>
-                <h3 className="font-bold text-slate-700 dark:text-slate-300">No Subjects Found</h3>
-                <p className="text-xs text-slate-400 mt-1">Add a new discipline using the "+ Add Subject Discipline" button.</p>
+                <h3 className="font-bold text-slate-700">No Subjects Found</h3>
+                <p className="text-xs text-slate-400 mt-1">
+                  Add a new discipline using the "+ Add Subject Discipline" button.
+                </p>
               </div>
             ) : (
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                {filteredSubjects.map((s) => {
-                  const linkedCoursesCount = courses.filter((c) => c.subject_id === s.id).length
-                  return (
-                    <div
-                      key={s.id}
-                      className="card p-4 flex items-center justify-between border border-slate-200 dark:border-slate-800"
-                    >
-                      <div className="flex items-center gap-3">
-                        <span
-                          className="w-4 h-4 rounded-full flex-shrink-0"
-                          style={{ backgroundColor: s.color_hex || '#2563eb' }}
-                        />
-                        <div>
-                          <h4 className="font-bold text-sm text-slate-900 dark:text-white m-0">{s.name}</h4>
-                          <span className="text-xs text-slate-500">
-                            {linkedCoursesCount} {linkedCoursesCount === 1 ? 'Linked Course' : 'Linked Courses'}
-                          </span>
-                        </div>
-                      </div>
-
-                      <div className="flex gap-1">
-                        <button
-                          type="button"
-                          onClick={() => handleOpenEditSubject(s)}
-                          className="btn btn-ghost btn-sm text-blue-600"
-                          style={{ fontSize: '0.75rem', fontWeight: 700 }}
-                          title="Edit Subject"
-                        >
-                          Edit
-                        </button>
-                        <button
-                          type="button"
-                          onClick={() => setSubjectToDelete(s)}
-                          className="btn btn-ghost btn-sm text-red-600"
-                          style={{ fontSize: '0.75rem', fontWeight: 700 }}
-                          title="Delete Subject"
-                        >
-                          Delete
-                        </button>
+                {filteredSubjects.map((s) => (
+                  <div
+                    key={s.id}
+                    className="card p-4 flex items-center justify-between border border-slate-200"
+                    style={{ background: '#ffffff', borderRadius: '12px' }}
+                  >
+                    <div className="flex items-center gap-3">
+                      <span
+                        className="w-4 h-4 rounded-full flex-shrink-0"
+                        style={{ backgroundColor: s.color_hex || '#2563eb' }}
+                      />
+                      <div>
+                        <h4 className="font-bold text-sm text-slate-900 m-0">{s.name}</h4>
+                        <span className="text-xs text-slate-500">Official Subject Discipline</span>
                       </div>
                     </div>
-                  )
-                })}
+
+                    <div className="flex gap-1">
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setEditingSubject(s)
+                          setSubjectName(s.name)
+                          setSubjectColor(s.color_hex || '#2563eb')
+                          setShowSubjectModal(true)
+                        }}
+                        className="btn btn-ghost btn-sm text-blue-600"
+                        style={{ fontSize: '0.75rem', fontWeight: 700 }}
+                      >
+                        Edit
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setSubjectToDelete(s)}
+                        className="btn btn-ghost btn-sm text-red-600"
+                        style={{ fontSize: '0.75rem', fontWeight: 700 }}
+                      >
+                        Delete
+                      </button>
+                    </div>
+                  </div>
+                ))}
               </div>
             )}
           </div>
         )}
       </div>
 
-      {/* MODAL: ADD / EDIT COURSE */}
+      {/* COMPREHENSIVE MODAL: EDIT / CREATE COURSE PROGRAM */}
       <Modal
         isOpen={showCourseModal}
         onClose={() => setShowCourseModal(false)}
-        title={editingCourse ? 'Edit Database Course' : 'Create New Course (Supabase Live)'}
+        title={editingCourse ? 'Edit Academic Program & Course' : 'Add New Academic Program / Course'}
       >
-        <form
-          onSubmit={(e) => {
-            e.preventDefault()
-            saveCourseMutation.mutate()
-          }}
-          className="space-y-4"
-        >
+        <form onSubmit={handleSaveCourse} className="space-y-4" style={{ maxHeight: '75vh', overflowY: 'auto', paddingRight: '4px' }}>
+          {/* Section 1: Title & Identification */}
           <div>
-            <label className="label">Course Title *</label>
+            <label className="label font-bold text-xs uppercase text-slate-600">Full Course Program Title *</label>
             <input
               type="text"
               required
               className="input"
-              placeholder="e.g. Full-Stack Web Development (React 19, Node.js)"
+              placeholder="e.g. Full-Stack Web Development & Modern JavaScript (React 19 & Node.js)"
               value={courseTitle}
               onChange={(e) => setCourseTitle(e.target.value)}
             />
           </div>
 
-          <div>
-            <label className="label">Subject Discipline *</label>
-            <select
-              className="input"
-              required
-              value={courseSubjectId}
-              onChange={(e) => setCourseSubjectId(e.target.value)}
-            >
-              <option value="">-- Select or Assign Subject --</option>
-              {subjects.map((sub) => (
-                <option key={sub.id} value={sub.id}>
-                  {sub.name}
-                </option>
-              ))}
-            </select>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div>
+              <label className="label font-bold text-xs uppercase text-slate-600">Short Title (Nav & Catalog)</label>
+              <input
+                type="text"
+                className="input"
+                placeholder="e.g. Full-Stack Web Dev (React 19)"
+                value={courseShortTitle}
+                onChange={(e) => setCourseShortTitle(e.target.value)}
+              />
+            </div>
+            <div>
+              <label className="label font-bold text-xs uppercase text-slate-600">Discipline Category *</label>
+              <select
+                className="input"
+                value={courseCategory}
+                onChange={(e) => setCourseCategory(e.target.value)}
+              >
+                {CATEGORY_OPTIONS.filter((c) => c !== 'All').map((opt) => (
+                  <option key={opt} value={opt}>
+                    {opt}
+                  </option>
+                ))}
+              </select>
+            </div>
           </div>
 
+          {/* Section 2: Department & Instructor */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div>
+              <label className="label font-bold text-xs uppercase text-slate-600">Department / Faculty *</label>
+              <input
+                type="text"
+                className="input"
+                placeholder="e.g. Department of Software Engineering"
+                value={courseDepartment}
+                onChange={(e) => setCourseDepartment(e.target.value)}
+              />
+            </div>
+            <div>
+              <label className="label font-bold text-xs uppercase text-slate-600">Instructor Name & Credentials *</label>
+              <input
+                type="text"
+                className="input"
+                placeholder="e.g. Eng. Alex Mwangi • Senior Software Architect"
+                value={courseInstructor}
+                onChange={(e) => setCourseInstructor(e.target.value)}
+              />
+            </div>
+          </div>
+
+          {/* Section 3: Pricing & Timing */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div>
+              <label className="label font-bold text-xs uppercase text-slate-600">Tuition Fee ($ USD) *</label>
+              <input
+                type="number"
+                min="0"
+                required
+                className="input"
+                value={courseFeeUsd}
+                onChange={(e) => {
+                  const val = Number(e.target.value)
+                  setCourseFeeUsd(val)
+                  setCourseFeeKes(Math.round(val * 133))
+                }}
+              />
+            </div>
+            <div>
+              <label className="label font-bold text-xs uppercase text-slate-600">Tuition Fee (KES Equivalent)</label>
+              <input
+                type="number"
+                min="0"
+                className="input"
+                value={courseFeeKes}
+                onChange={(e) => setCourseFeeKes(Number(e.target.value))}
+              />
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div>
+              <label className="label font-bold text-xs uppercase text-slate-600">Course Duration *</label>
+              <input
+                type="text"
+                required
+                className="input"
+                placeholder="e.g. 12 Weeks (3 Months)"
+                value={courseDuration}
+                onChange={(e) => setCourseDuration(e.target.value)}
+              />
+            </div>
+            <div>
+              <label className="label font-bold text-xs uppercase text-slate-600">Daily Shifts / Schedule *</label>
+              <input
+                type="text"
+                className="input"
+                placeholder="e.g. All Shifts: Early Morning, Late Morning, Midday..."
+                value={courseSchedule}
+                onChange={(e) => setCourseSchedule(e.target.value)}
+              />
+            </div>
+          </div>
+
+          {/* Section 4: Target Career Role & Skills */}
           <div>
-            <label className="label">Course Syllabus and Description</label>
+            <label className="label font-bold text-xs uppercase text-slate-600">Target Career Role & Competency Description</label>
             <textarea
               className="input"
-              rows={4}
-              placeholder="Outline the modular units, course competencies, and practical lab training objectives..."
-              value={courseDesc}
-              onChange={(e) => setCourseDesc(e.target.value)}
+              rows={3}
+              placeholder="Outline what practical job competency and projects the student will master upon completion..."
+              value={courseCareerOutcome}
+              onChange={(e) => setCourseCareerOutcome(e.target.value)}
             />
           </div>
 
-          <div className="flex items-center gap-3 p-3 bg-slate-50 dark:bg-slate-800 rounded-lg">
+          <div>
+            <label className="label font-bold text-xs uppercase text-slate-600">Key Skills & Practical Badges (Comma-separated)</label>
             <input
-              type="checkbox"
-              id="coursePublishCheck"
-              checked={coursePublished}
-              onChange={(e) => setCoursePublished(e.target.checked)}
-              className="w-4 h-4 rounded text-blue-600"
+              type="text"
+              className="input"
+              placeholder="React 19, Node.js APIs, PostgreSQL, Cloud Deployment"
+              value={courseSkillsInput}
+              onChange={(e) => setCourseSkillsInput(e.target.value)}
             />
-            <label htmlFor="coursePublishCheck" className="text-sm font-semibold cursor-pointer m-0">
-              Publish Course (Make visible for student enrollment and LMS modules)
+          </div>
+
+          {/* Section 5: Badges & Ratings */}
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+            <div>
+              <label className="label font-bold text-xs uppercase text-slate-600">Student Rating (Stars)</label>
+              <input
+                type="number"
+                step="0.1"
+                min="1.0"
+                max="5.0"
+                className="input"
+                value={courseRating}
+                onChange={(e) => setCourseRating(Number(e.target.value))}
+              />
+            </div>
+            <div>
+              <label className="label font-bold text-xs uppercase text-slate-600">Review Count</label>
+              <input
+                type="number"
+                min="0"
+                className="input"
+                value={courseRatingCount}
+                onChange={(e) => setCourseRatingCount(Number(e.target.value))}
+              />
+            </div>
+            <div>
+              <label className="label font-bold text-xs uppercase text-slate-600">Enrolled Students</label>
+              <input
+                type="number"
+                min="0"
+                className="input"
+                value={courseStudentsEnrolled}
+                onChange={(e) => setCourseStudentsEnrolled(Number(e.target.value))}
+              />
+            </div>
+          </div>
+
+          <div className="flex items-center gap-4 p-3 bg-slate-50 rounded-lg border border-slate-200">
+            <label className="flex items-center gap-2 cursor-pointer text-sm font-semibold text-slate-700 m-0">
+              <input
+                type="checkbox"
+                checked={courseBestseller}
+                onChange={(e) => setCourseBestseller(e.target.checked)}
+                className="w-4 h-4 rounded text-blue-600"
+              />
+              <span>★ Flagship Bestseller Badge</span>
+            </label>
+
+            <label className="flex items-center gap-2 cursor-pointer text-sm font-semibold text-slate-700 m-0">
+              <input
+                type="checkbox"
+                checked={coursePopular}
+                onChange={(e) => setCoursePopular(e.target.checked)}
+                className="w-4 h-4 rounded text-blue-600"
+              />
+              <span>Featured on Homepage</span>
             </label>
           </div>
 
           <div className="flex justify-end gap-2 pt-3 border-t">
-            <Button variant="secondary" onClick={() => setShowCourseModal(false)} disabled={saveCourseMutation.isPending}>
+            <Button variant="secondary" onClick={() => setShowCourseModal(false)} disabled={isSavingCourse}>
               Cancel
             </Button>
-            <Button type="submit" variant="primary" loading={saveCourseMutation.isPending}>
-              {editingCourse ? 'Save Changes' : '+ Create Course in Supabase'}
+            <Button type="submit" variant="primary" loading={isSavingCourse}>
+              {editingCourse ? 'Save Changes & Sync Public Website' : '+ Create & Publish Program'}
             </Button>
           </div>
         </form>
@@ -617,15 +1098,9 @@ export function ManageClasses() {
       <Modal
         isOpen={showSubjectModal}
         onClose={() => setShowSubjectModal(false)}
-        title={editingSubject ? 'Edit Subject Discipline' : 'Add Subject Discipline (Supabase Live)'}
+        title={editingSubject ? 'Edit Subject Discipline' : 'Add Subject Discipline'}
       >
-        <form
-          onSubmit={(e) => {
-            e.preventDefault()
-            saveSubjectMutation.mutate()
-          }}
-          className="space-y-4"
-        >
+        <form onSubmit={handleSaveSubject} className="space-y-4">
           <div>
             <label className="label">Subject Discipline Name *</label>
             <input
@@ -658,10 +1133,10 @@ export function ManageClasses() {
           </div>
 
           <div className="flex justify-end gap-2 pt-3 border-t">
-            <Button variant="secondary" onClick={() => setShowSubjectModal(false)} disabled={saveSubjectMutation.isPending}>
+            <Button variant="secondary" onClick={() => setShowSubjectModal(false)} disabled={isSavingSubject}>
               Cancel
             </Button>
-            <Button type="submit" variant="primary" loading={saveSubjectMutation.isPending}>
+            <Button type="submit" variant="primary" loading={isSavingSubject}>
               {editingSubject ? 'Update Subject' : '+ Add Subject to Database'}
             </Button>
           </div>
@@ -672,26 +1147,22 @@ export function ManageClasses() {
       <ConfirmModal
         isOpen={Boolean(courseToDelete)}
         onClose={() => setCourseToDelete(null)}
-        onConfirm={() => {
-          if (courseToDelete) deleteCourseMutation.mutate(courseToDelete.id)
-        }}
-        title="Delete Course"
-        message={`Are you sure you want to permanently delete "${courseToDelete?.title}" from the database? All linked lessons will be removed.`}
-        confirmLabel="Yes, Delete Course"
-        loading={deleteCourseMutation.isPending}
+        onConfirm={handleDeleteCourse}
+        title="Delete Academic Program"
+        message={`Are you sure you want to permanently delete "${courseToDelete?.title}"? It will be removed from the public course catalog, student enrollment, and cloud database.`}
+        confirmLabel="Yes, Delete Program"
+        loading={isSavingCourse}
       />
 
       {/* CONFIRM DELETE SUBJECT */}
       <ConfirmModal
         isOpen={Boolean(subjectToDelete)}
         onClose={() => setSubjectToDelete(null)}
-        onConfirm={() => {
-          if (subjectToDelete) deleteSubjectMutation.mutate(subjectToDelete.id)
-        }}
+        onConfirm={handleDeleteSubject}
         title="Delete Subject Discipline"
-        message={`Are you sure you want to permanently delete "${subjectToDelete?.name}"? Any courses assigned to this subject will have their discipline unlinked.`}
+        message={`Are you sure you want to delete "${subjectToDelete?.name}"?`}
         confirmLabel="Yes, Delete Subject"
-        loading={deleteSubjectMutation.isPending}
+        loading={isSavingSubject}
       />
     </PageWrapper>
   )

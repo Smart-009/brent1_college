@@ -141,6 +141,19 @@ export async function seedCloudDatabase(): Promise<SeedResult> {
 
     if (!clErr) classesCount = classesPayload.length
 
+    // 4b. Seed Full Official Course Programs in app_cloud_sync
+    try {
+      await supabase.from('app_cloud_sync').upsert(
+        {
+          key: 'official_courses',
+          data: OFFICIAL_COURSES,
+          updated_at: new Date().toISOString(),
+          updated_by: 'Cloud Seeder',
+        },
+        { onConflict: 'key' }
+      )
+    } catch {}
+
     // 5. Seed Intake Schedules
     if (INITIAL_INTAKE_SCHEDULES.length > 0) {
       const intakesPayload = INITIAL_INTAKE_SCHEDULES.map((i) => ({

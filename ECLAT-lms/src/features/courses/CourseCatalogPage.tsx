@@ -1,4 +1,4 @@
-﻿import { useState, useMemo, useEffect } from 'react'
+import { useState, useMemo, useEffect } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
 import { useAuthContext } from '@/features/auth/AuthContext'
 import { MobileAppBottomNav } from '@/components/layout/MobileAppBottomNav'
@@ -7,6 +7,7 @@ import { getWhatsAppInquiryUrl, INSTITUTION_CONFIG, INSTITUTIONAL_SCHOOLS } from
 import { getDynamicCoursesList } from '@/config/officialCourses'
 import { schoolStore } from '@/lib/schoolData'
 import { intakeStore } from '@/lib/intakeStore'
+import { courseStore } from '@/lib/courseStore'
 import { formatDate } from '@/lib/utils'
 import type { IntakeSchedule } from '@/types/intake'
 import {
@@ -152,6 +153,9 @@ export function CourseCatalogPage() {
   useEffect(() => {
     intakeStore.fetchCloudIntakes().then((list) => {
       setIntakes(list.filter((i) => i.is_published))
+    })
+    courseStore.fetchCloudCourses().then(() => {
+      setCourses(buildCatalogCourses())
     })
   }, [])
 

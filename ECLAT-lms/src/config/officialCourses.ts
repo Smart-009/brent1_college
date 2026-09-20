@@ -1,4 +1,4 @@
-﻿// ============================================================
+// ============================================================
 // Éclat Institute — Official Institutional Courses & Fee Registry
 // Single authoritative source of truth across Landing, Catalog, 
 // E-Reader, Fees Management, and SIMS Invoicing.
@@ -3071,7 +3071,20 @@ export function getDynamicCoursesList(
   const usedSubjectIds = new Set<string>()
   const usedUnitIds = new Set<string>()
 
-  for (const base of OFFICIAL_COURSES) {
+  let baseCourses: CourseProgram[] = OFFICIAL_COURSES
+  if (typeof window !== 'undefined') {
+    try {
+      const stored = localStorage.getItem('eclat_school_official_courses_v2')
+      if (stored) {
+        const parsed = JSON.parse(stored)
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          baseCourses = parsed
+        }
+      }
+    } catch {}
+  }
+
+  for (const base of baseCourses) {
     const matchedSub = safeStoreSubjects.find((s) => {
       if (s.id === base.id || s.id === `sub-${base.id.replace(/^c-/, '')}`) return true
       if (s.code && (s.code.toLowerCase() === base.id.toLowerCase() || s.code.toLowerCase() === base.shortTitle.toLowerCase())) return true

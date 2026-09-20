@@ -2480,6 +2480,11 @@ class SchoolDataStore {
               this.set('receipts', row.data)
             } else if (row.key === 'unit_registrations' && Array.isArray(row.data)) {
               this.set('unit_registrations', row.data)
+            } else if (row.key === 'official_courses' && Array.isArray(row.data) && row.data.length > 0) {
+              try {
+                localStorage.setItem('eclat_school_official_courses_v2', JSON.stringify(row.data))
+              } catch {}
+              window.dispatchEvent(new CustomEvent('eclat-courses-updated', { detail: row.data }))
             } else if ((row.key === 'fee_structures' || row.key === 'custom_course_fees') && typeof row.data === 'object' && row.data !== null) {
               this.set('custom_course_fees', row.data)
               window.dispatchEvent(new CustomEvent('eclat-courses-updated'))
