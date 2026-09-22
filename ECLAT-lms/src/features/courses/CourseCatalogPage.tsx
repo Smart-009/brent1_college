@@ -81,8 +81,8 @@ const buildCatalogCourses = (): CourseItem[] => {
       tagColor: c.tagColor,
       duration: c.duration,
       schedule: c.schedule,
-      fee: `$${c.feeUsd} (KES ${c.feeKes.toLocaleString()})`,
-      installment: c.installmentText,
+      fee: 'Available upon request',
+      installment: 'Inquire via WhatsApp for official fee details',
       careerOutcome: c.careerOutcome,
       skills: c.skills,
       icon: c.icon || 'book',
@@ -756,7 +756,7 @@ export function CourseCatalogPage() {
           Explore Certified Career Masterclasses
         </h1>
         <p style={{ fontSize: '0.9rem', color: '#475569', margin: 0, lineHeight: 1.5 }}>
-          100% online live classes across flexible shifts (Early Morning, Late Morning, Midday, Afternoon, Evening & Night), verifiable global certificates, real-world practical projects, and flexible 2-month installment fee plans.
+          100% online live classes across flexible shifts (Early Morning, Late Morning, Midday, Afternoon, Evening & Night), verifiable global certificates, real-world practical projects, and flexible payment plans available upon inquiry.
         </p>
 
         {/* Matched Intake Cohort Highlight Banner */}

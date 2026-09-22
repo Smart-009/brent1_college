@@ -1,4 +1,4 @@
-﻿import { useState, useMemo, useEffect, useRef } from 'react'
+import { useState, useMemo, useEffect, useRef } from 'react'
 import { Link, useNavigate, useLocation } from 'react-router-dom'
 import { useIsMobile } from '@/hooks/useMediaQuery'
 import { NativeAppHome } from './NativeAppHome'
@@ -94,17 +94,17 @@ const mapProgramToCourseItem = (c: any): CourseItem => ({
   tagColor: c.tagColor,
   duration: c.duration,
   schedule: c.schedule,
-  fee: `$${c.feeUsd}`,
+  fee: 'Available upon request',
   feeUsd: c.feeUsd,
   feeKes: c.feeKes,
   feeDisplay: c.feeDisplay,
-  originalFee: `$${c.originalFeeUsd}`,
+  originalFee: 'Available upon request',
   discountBadge: c.discountBadge,
   rating: c.rating,
   ratingCount: c.ratingCount,
   studentsEnrolled: c.studentsEnrolled,
   instructor: c.instructor,
-  installment: c.installmentText,
+  installment: 'Inquire via WhatsApp for official fee details',
   careerOutcome: c.careerOutcome,
   skills: c.skills,
   icon: c.icon,
@@ -3920,8 +3920,8 @@ export function Landing() {
                                 <span>100% Cleared</span>
                               </span>
                             </div>
-                            <div style={{ fontSize: '1.35rem', fontWeight: 900, color: '#1e3a8a', marginTop: '4px' }}>
-                              ${fullAmount} <span style={{ fontSize: '0.75rem', fontWeight: 600 }}>USD</span>
+                            <div style={{ fontSize: '0.88rem', fontWeight: 700, color: '#1e3a8a', marginTop: '4px' }}>
+                              Tuition quote provided by Bursar
                             </div>
                             <div style={{ fontSize: '0.74rem', color: '#64748b', marginTop: '2px' }}>Immediate 100% course clearance</div>
                           </div>
@@ -3941,13 +3941,14 @@ export function Landing() {
                               <strong style={{ fontSize: '0.88rem', color: '#1e3a8a' }}>2-Part Installment</strong>
                               <span style={{ fontSize: '0.72rem', background: '#fef3c7', color: '#92400e', padding: '2px 6px', borderRadius: '4px', fontWeight: 800 }}>50% Deposit</span>
                             </div>
-                            <div style={{ fontSize: '1.35rem', fontWeight: 900, color: '#1e3a8a', marginTop: '4px' }}>
-                              ${instAmount} <span style={{ fontSize: '0.75rem', fontWeight: 600 }}>USD</span>
+                            <div style={{ fontSize: '0.88rem', fontWeight: 700, color: '#1e3a8a', marginTop: '4px' }}>
+                              50% intake · 50% mid-course
                             </div>
-                            <div style={{ fontSize: '0.74rem', color: '#64748b', marginTop: '2px' }}>Balance of ${remainingBal} due mid-course</div>
+                            <div style={{ fontSize: '0.74rem', color: '#64748b', marginTop: '2px' }}>Official fee schedule provided at bursar desk</div>
                           </div>
                         </div>
                       </div>
+
 
                       {/* Mode of Payment Selector */}
                       <div style={{ marginBottom: '1.25rem' }}>

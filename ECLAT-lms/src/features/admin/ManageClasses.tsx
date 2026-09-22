@@ -884,8 +884,9 @@ export function ManageClasses() {
         isOpen={showCourseModal}
         onClose={() => setShowCourseModal(false)}
         title={editingCourse ? 'Edit Academic Program & Course' : 'Add New Academic Program / Course'}
+        size="lg"
       >
-        <form onSubmit={handleSaveCourse} className="space-y-4" style={{ maxHeight: '75vh', overflowY: 'auto', paddingRight: '4px' }}>
+        <form onSubmit={handleSaveCourse} className="space-y-4">
           {/* Section 1: Title & Identification */}
           <div>
             <label className="label font-bold text-xs uppercase text-slate-600">Full Course Program Title *</label>
