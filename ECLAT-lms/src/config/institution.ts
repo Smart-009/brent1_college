@@ -1,4 +1,4 @@
-﻿// ============================================================
+// ============================================================
 // Centralized Institutional & Platform Configuration
 // Single source of truth driven by environment variables
 // ============================================================
@@ -105,6 +105,7 @@ export const INSTITUTION_CONFIG: InstitutionConfig = {
   },
 
   auth: {
+    adminUsername: (import.meta.env.VITE_ADMIN_USERNAME as string) || 'Eclat@admin',
     adminDefaultPassword: (import.meta.env.VITE_ADMIN_PASSWORD as string) || (import.meta.env.ADMIN_PASSWORD as string) || 'Eclat@2026#!',
     internalEmailDomain: (import.meta.env.VITE_INTERNAL_EMAIL_DOMAIN as string) || 'eclatinstitute.internal',
   },

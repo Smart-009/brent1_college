@@ -63,10 +63,10 @@ function sanitizeInput(str) {
 
 // 2. AUTHENTICATION & SECURITY TESTS
 test('Authentication: Admin Credentials Verification', () => {
-  const adminUsername = 'Eclat2026@admin'
+  const adminUsername = 'Eclat@admin'
   const adminPassword = 'Eclat@2026#!'
 
-  assert.equal(adminUsername.toLowerCase(), 'eclat2026@admin')
+  assert.equal(adminUsername.toLowerCase(), 'eclat@admin')
   assert.ok(adminPassword.length >= 8)
   assert.ok(/[A-Z]/.test(adminPassword))
   assert.ok(/[0-9]/.test(adminPassword))
@@ -85,7 +85,7 @@ test('Authentication: Role Verification for All 5 System Roles', () => {
 
 test('Authentication: Synthetic Internal Email Mapping', () => {
   assert.equal(admissionToEmail('EI-2026-001'), 'ei2026001@eclatinstitute.internal')
-  assert.equal(admissionToEmail('Eclat2026@admin'), 'eclat2026admin@eclatinstitute.internal')
+  assert.equal(admissionToEmail('Eclat@admin'), 'eclatadmin@eclatinstitute.internal')
   assert.equal(admissionToEmail('TCH/042/2026'), 'tch0422026@eclatinstitute.internal')
 })
 
@@ -549,8 +549,8 @@ function mockAuthenticateStudent(inputIdentifier, password, storedStudents = [])
   const isMatchPass = validUniversalPasswords.includes(password.trim())
 
   // Admin
-  if (cleanAlpha.includes('admin') || rawInput === 'Eclat2026@admin') {
-    if (isMatchPass) return { error: null, role: 'admin', admission_number: 'Eclat2026@admin' }
+  if (cleanAlpha.includes('admin') || rawInput === 'Eclat@admin' || rawInput === 'Eclat2026@admin') {
+    if (isMatchPass) return { error: null, role: 'admin', admission_number: 'Eclat@admin' }
   }
 
   // Bursar

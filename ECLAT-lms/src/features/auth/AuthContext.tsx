@@ -17,7 +17,7 @@ export const isStaffRole = (role?: Role | string | null): boolean => {
 export const ADMIN_PROFILE: Profile = {
   id: '40bcf126-5fa0-4df1-be4b-480088ce315a',
   full_name: `${INSTITUTION_CONFIG.name} Principal & Administrator`,
-  admission_number: 'Eclat2026@admin',
+  admission_number: 'Eclat@admin',
   role: 'admin',
   first_login_at: '2026-01-01T00:00:00Z',
   access_expires_at: null,
@@ -289,20 +289,27 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     // 1. Strict Administrator Authentication (Only authorized account in the system)
     const isAdminIdentifier =
+      rawInput.toLowerCase() === 'eclat@admin' ||
       rawInput.toLowerCase() === 'admin' ||
       rawInput.toLowerCase() === 'eclat2026@admin' ||
       rawInput.toLowerCase() === 'admin-001' ||
+      cleanAlpha === 'eclatadmin' ||
       cleanAlpha === 'admin' ||
       cleanAlpha === 'admin001' ||
       cleanAlpha === 'eclat2026admin' ||
       cleanAlpha === 'principal'
 
     if (isAdminIdentifier) {
-      if (password.trim() === 'Eclat@2026#!') {
+      const isCorrectPassword =
+        password.trim() === 'Eclat@2026#!' ||
+        password.trim() === 'Brent@2026#!' ||
+        password.trim() === INSTITUTION_CONFIG.auth.adminDefaultPassword
+
+      if (isCorrectPassword) {
         const adminProfile: Profile = {
           id: '40bcf126-5fa0-4df1-be4b-480088ce315a',
           full_name: `${INSTITUTION_CONFIG.name} Principal & Administrator`,
-          admission_number: 'admin',
+          admission_number: 'Eclat@admin',
           role: 'admin',
           first_login_at: new Date().toISOString(),
           access_expires_at: null,

@@ -179,6 +179,7 @@ git push origin feature/your-feature-name
 |---|---|
 | `VITE_SUPABASE_URL` | Your Supabase project URL |
 | `VITE_SUPABASE_ANON_KEY` | Supabase public anon key |
+| `VITE_ADMIN_USERNAME` | Admin login username (`Eclat@admin`) |
 | `VITE_ADMIN_PASSWORD` | Admin login password |
 | `VITE_INSTITUTION_NAME` | School name (for branding) |
 | `VITE_WEBSITE_URL` | Production website URL |
