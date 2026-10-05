@@ -2643,256 +2643,199 @@ export function Landing() {
             {filteredCourses.map((course) => (
               <div
                 key={course.id}
+                id={course.id}
                 style={{
                   background: '#ffffff',
-                  border: course.bestseller ? '2px solid #d4af37' : '1px solid #e2e8f0',
-                  borderRadius: '16px',
+                  border: '1px solid #e2e8f0',
+                  borderRadius: '12px',
                   display: 'flex',
                   flexDirection: 'column',
-                  justifyContent: 'space-between',
-                  boxShadow: course.bestseller ? '0 8px 24px -4px rgba(212, 175, 55, 0.25)' : '0 4px 12px -2px rgba(0, 0, 0, 0.05)',
                   overflow: 'hidden',
                   position: 'relative',
-                  transition: 'all 0.25s ease',
+                  boxShadow: '0 1px 3px rgba(0, 0, 0, 0.05)',
+                  transition: 'all 0.2s cubic-bezier(0.16, 1, 0.3, 1)',
+                  cursor: 'pointer',
                 }}
                 onMouseEnter={(e) => {
-                  e.currentTarget.style.transform = 'translateY(-4px)'
-                  e.currentTarget.style.boxShadow = '0 16px 32px -4px rgba(0, 0, 0, 0.12)'
+                  e.currentTarget.style.transform = 'translateY(-3px)'
+                  e.currentTarget.style.boxShadow = '0 12px 24px -4px rgba(0, 0, 0, 0.08), 0 4px 8px -2px rgba(0, 0, 0, 0.04)'
+                  e.currentTarget.style.borderColor = '#cbd5e1'
                 }}
                 onMouseLeave={(e) => {
                   e.currentTarget.style.transform = 'translateY(0)'
-                  e.currentTarget.style.boxShadow = course.bestseller ? '0 8px 24px -4px rgba(212, 175, 55, 0.25)' : '0 4px 12px -2px rgba(0, 0, 0, 0.05)'
+                  e.currentTarget.style.boxShadow = '0 1px 3px rgba(0, 0, 0, 0.05)'
+                  e.currentTarget.style.borderColor = '#e2e8f0'
                 }}
               >
-                {/* Card Visual Banner / Thumbnail Header */}
+                {/* 16:9 Clean Aspect Ratio Card Banner */}
                 <div
                   style={{
-                    background: `linear-gradient(135deg, ${(course.tagColor || '#2563eb')}15 0%, #ffffff 100%)`,
+                    position: 'relative',
+                    aspectRatio: '16 / 9',
+                    width: '100%',
+                    background: `linear-gradient(135deg, ${(course.tagColor || '#1e3a8a')}20 0%, ${(course.tagColor || '#1e3a8a')}08 100%)`,
                     borderBottom: '1px solid #f1f5f9',
-                    padding: isMobile ? '1rem 1.15rem' : '1.25rem 1.5rem',
                     display: 'flex',
-                    justifyContent: 'space-between',
                     alignItems: 'center',
+                    justifyContent: 'center',
+                    overflow: 'hidden',
                   }}
                 >
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                    <div
-                      style={{
-                        width: isMobile ? '42px' : '48px',
-                        height: isMobile ? '42px' : '48px',
-                        borderRadius: '12px',
-                        background: '#ffffff',
-                        border: '1px solid #e2e8f0',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        boxShadow: '0 2px 8px rgba(0,0,0,0.06)',
-                      }}
-                    >
-                      <CourseIcon courseId={course.id} iconKey={course.icon} size={isMobile ? 24 : 28} />
-                    </div>
-                    <div>
-                      <span
-                        style={{
-                          background: `${(course.tagColor || '#2563eb')}20`,
-                          color: course.tagColor || '#2563eb',
-                          fontWeight: 800,
-                          fontSize: '0.72rem',
-                          padding: '2px 8px',
-                          borderRadius: '6px',
-                          textTransform: 'uppercase',
-                          letterSpacing: '0.04em',
-                        }}
-                      >
-                        {course.category ? course.category.split('&')[0] : 'Online Course'}
-                      </span>
-                      <div style={{ fontSize: '0.72rem', color: '#64748b', marginTop: '2px', display: 'flex', alignItems: 'center', gap: '4px' }}>
-                        <GlobeIcon size={12} color="#64748b" />
-                        <span>100% Online Cohort</span>
-                      </div>
-                    </div>
+                  <div
+                    style={{
+                      width: '56px',
+                      height: '56px',
+                      borderRadius: '14px',
+                      background: '#ffffff',
+                      border: '1px solid #e2e8f0',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      boxShadow: '0 4px 12px rgba(0,0,0,0.06)',
+                    }}
+                  >
+                    <CourseIcon courseId={course.id} iconKey={course.icon} size={30} />
                   </div>
 
-                  {course.bestseller ? (
-                    <span
-                      style={{
-                        background: '#fef3c7',
-                        color: '#92400e',
-                        border: '1px solid #fcd34d',
-                        fontWeight: 900,
-                        fontSize: '0.72rem',
-                        padding: '3px 8px',
-                        borderRadius: '4px',
-                        textTransform: 'uppercase',
-                        letterSpacing: '0.04em',
-                        display: 'inline-flex',
-                        alignItems: 'center',
-                        gap: '4px',
-                      }}
-                    >
-                      <StarIcon size={11} color="#92400e" fill="#92400e" />
-                      <span>Bestseller</span>
-                    </span>
-                  ) : (
-                    <span
-                      style={{
-                        background: '#f0fdf4',
-                        color: '#166534',
-                        border: '1px solid #bbf7d0',
-                        fontWeight: 800,
-                        fontSize: '0.72rem',
-                        padding: '3px 8px',
-                        borderRadius: '4px',
-                      }}
-                    >
-                      {course.discountBadge || '50% OFF'}
-                    </span>
-                  )}
+                  {/* Top-Right Pill */}
+                  <div style={{ position: 'absolute', top: '10px', right: '10px', display: 'flex', gap: '6px' }}>
+                    {course.bestseller ? (
+                      <span
+                        style={{
+                          background: '#fef3c7',
+                          color: '#92400e',
+                          fontWeight: 800,
+                          fontSize: '0.68rem',
+                          padding: '3px 8px',
+                          borderRadius: '4px',
+                          textTransform: 'uppercase',
+                          letterSpacing: '0.04em',
+                          border: '1px solid #fde68a',
+                        }}
+                      >
+                        Bestseller
+                      </span>
+                    ) : (
+                      <span
+                        style={{
+                          background: '#ffffff',
+                          color: '#475569',
+                          fontWeight: 700,
+                          fontSize: '0.68rem',
+                          padding: '3px 8px',
+                          borderRadius: '4px',
+                          border: '1px solid #e2e8f0',
+                        }}
+                      >
+                        Live Online
+                      </span>
+                    )}
+                  </div>
                 </div>
 
-                {/* Main Card Body */}
-                <div style={{ padding: isMobile ? '1rem 1.15rem' : '1.25rem 1.5rem', flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+                {/* Card Body */}
+                <div style={{ padding: '1.25rem', flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
                   <div>
-                    {/* Course Title */}
+                    {/* Course Title (clean 2-line clamp) */}
                     <h3
                       style={{
-                        fontSize: isMobile ? '1.05rem' : '1.15rem',
-                        fontWeight: 900,
+                        fontSize: '1.05rem',
+                        fontWeight: 800,
                         color: '#0f172a',
                         margin: '0 0 0.35rem',
                         lineHeight: 1.35,
                         fontFamily: 'var(--font-heading)',
+                        minHeight: '2.7rem',
+                        display: '-webkit-box',
+                        WebkitLineClamp: 2,
+                        WebkitBoxOrient: 'vertical',
+                        overflow: 'hidden',
                       }}
                     >
                       {course.title}
                     </h3>
 
-                    {/* Instructor Line */}
-                    <div style={{ fontSize: '0.8rem', color: '#475569', marginBottom: '0.65rem', display: 'flex', alignItems: 'center', gap: '5px' }}>
-                      <UserIcon size={14} color="#64748b" />
-                      <span>{course.instructor || 'Éclat Senior Faculty & Industry Expert'}</span>
+                    {/* Instructor / Faculty */}
+                    <div style={{ fontSize: '0.78rem', color: '#64748b', marginBottom: '0.65rem' }}>
+                      {course.instructor || 'Éclat Senior Faculty & Certified Lead'}
                     </div>
 
-                    {/* Rating & Student Count */}
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '0.85rem', flexWrap: 'wrap' }}>
-                      <strong style={{ color: '#b45309', fontSize: '0.92rem', fontWeight: 900 }}>{(course.rating || 4.9).toFixed(1)}</strong>
+                    {/* Rating & Social Proof */}
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '0.85rem' }}>
+                      <span style={{ color: '#b45309', fontSize: '0.88rem', fontWeight: 900 }}>{(course.rating || 4.9).toFixed(1)}</span>
                       <div style={{ display: 'inline-flex', alignItems: 'center', gap: '2px' }}>
-                        {[...Array(5)].map((_, idx) => (
-                          <StarIcon key={idx} size={13} color="#f59e0b" fill="#f59e0b" />
+                        {[...Array(5)].map((_, starIdx) => (
+                          <StarIcon key={starIdx} size={13} color="#f59e0b" fill="#f59e0b" />
                         ))}
                       </div>
-                      <span style={{ color: '#64748b', fontSize: '0.78rem' }}>({(course.ratingCount || 1240).toLocaleString()})</span>
-                      <span style={{ color: '#94a3b8' }}>•</span>
-                      <span style={{ color: '#0369a1', fontSize: '0.78rem', fontWeight: 700 }}>{(course.studentsEnrolled || 2800).toLocaleString()} students</span>
+                      <span style={{ color: '#64748b', fontSize: '0.76rem' }}>({(course.ratingCount || 1240).toLocaleString()})</span>
                     </div>
 
-                    {/* Schedule & Duration Meta */}
-                    <div style={{ display: 'flex', gap: '0.5rem', fontSize: '0.78rem', color: '#334155', marginBottom: '0.85rem', flexWrap: 'wrap' }}>
-                      <span style={{ background: '#f8fafc', border: '1px solid #e2e8f0', padding: '3px 8px', borderRadius: '6px', display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
-                        <ClockIcon size={12} color="#64748b" />
-                        <span>{course.duration || '8 Weeks'}</span>
+                    {/* Metadata line */}
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.78rem', color: '#64748b', marginBottom: '1rem' }}>
+                      <span style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+                        <ClockIcon size={12} color="#64748b" /> {course.duration || '8 Weeks'}
                       </span>
-                      <span style={{ background: '#f8fafc', border: '1px solid #e2e8f0', padding: '3px 8px', borderRadius: '6px', display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
-                        <CalendarIcon size={12} color="#64748b" />
-                        <span>{course.schedule ? course.schedule.split('/')[0] : 'Flexible Online Schedule'}</span>
-                      </span>
-                    </div>
-
-                    {/* Career Outcome */}
-                    <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '8px', padding: '0.65rem 0.85rem', marginBottom: '0.85rem' }}>
-                      <div style={{ fontSize: '0.7rem', fontWeight: 700, color: '#64748b', textTransform: 'uppercase' }}>Target Career Role:</div>
-                      <div style={{ fontSize: '0.84rem', fontWeight: 800, color: '#1e3a8a', marginTop: '2px', display: 'flex', alignItems: 'center', gap: '5px' }}>
-                        <BriefcaseIcon size={14} color="#1e3a8a" />
-                        <span>{course.careerOutcome || 'Career Certification Track'}</span>
-                      </div>
-                    </div>
-
-                    {/* Key Skills */}
-                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px', marginBottom: '1rem' }}>
-                      {(course.skills || []).slice(0, 3).map((s) => (
-                        <span
-                          key={s}
-                          style={{
-                            background: '#eff6ff',
-                            color: '#1d4ed8',
-                            borderRadius: '4px',
-                            padding: '2px 7px',
-                            fontSize: '0.74rem',
-                            fontWeight: 600,
-                            display: 'inline-flex',
-                            alignItems: 'center',
-                            gap: '4px',
-                          }}
-                        >
-                          <CheckIcon size={11} color="#1d4ed8" />
-                          <span>{s}</span>
-                        </span>
-                      ))}
-                      {(course.skills || []).length > 3 && (
-                        <span style={{ color: '#64748b', fontSize: '0.72rem', padding: '2px 4px' }}>
-                          +{(course.skills || []).length - 3} more
-                        </span>
-                      )}
+                      <span>•</span>
+                      <span>Live Virtual Cohort</span>
+                      <span>•</span>
+                      <span>Verified Certificate</span>
                     </div>
                   </div>
 
-                  {/* Fees Inquiry & Direct Enrollment CTA */}
-                  <div style={{
-                    borderTop: '1px solid #f1f5f9',
-                    paddingTop: '0.85rem',
-                    display: 'grid',
-                    gridTemplateColumns: '1fr 1fr',
-                    gap: '0.5rem',
-                  }}>
-                    <a
-                      href={getWhatsAppInquiryUrl(`Hello Brent College Admissions, I would like to make a Fees Inquiry for the course "${course.title}".`)}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="btn"
-                      style={{
-                        background: '#eff6ff',
-                        color: '#2563eb',
-                        border: '1.5px solid #bfdbfe',
-                        borderRadius: '8px',
-                        padding: '0.6rem 0.5rem',
-                        fontSize: isMobile ? '0.76rem' : '0.82rem',
-                        fontWeight: 700,
-                        textDecoration: 'none',
-                        display: 'inline-flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        gap: '5px',
-                        whiteSpace: 'nowrap',
-                        textAlign: 'center',
-                        transition: 'all 0.2s ease',
-                      }}
-                    >
-                      <MessageCircleIcon size={14} color="#2563eb" />
-                      <span>Fees Inquiry</span>
-                    </a>
+                  {/* Clean Action Footer */}
+                  <div
+                    style={{
+                      borderTop: '1px solid #f1f5f9',
+                      paddingTop: '0.85rem',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'space-between',
+                      gap: '0.75rem',
+                    }}
+                  >
+                    <div>
+                      <div style={{ fontSize: '0.68rem', color: '#64748b', textTransform: 'uppercase', fontWeight: 700 }}>Tuition</div>
+                      <div style={{ fontSize: '1.1rem', fontWeight: 900, color: '#0f172a' }}>
+                        {course.feeUsd ? `$${course.feeUsd}` : (course.feeDisplay || course.fee || 'Inquire')}
+                      </div>
+                    </div>
 
-                    <button
-                      type="button"
-                      className="btn btn-primary"
-                      style={{
-                        fontWeight: 800,
-                        borderRadius: '8px',
-                        padding: '0.6rem 0.5rem',
-                        fontSize: isMobile ? '0.78rem' : '0.85rem',
-                        boxShadow: '0 4px 12px rgba(37, 99, 235, 0.25)',
-                        display: 'inline-flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        gap: '5px',
-                        whiteSpace: 'nowrap',
-                        textAlign: 'center',
-                        width: '100%',
-                      }}
-                      onClick={() => handleOpenCourseApplication(course)}
-                    >
-                      <RocketIcon size={14} color="#ffffff" />
-                      <span>Enroll Now</span>
-                    </button>
+                    <div style={{ display: 'flex', gap: '0.4rem' }}>
+                      <button
+                        type="button"
+                        onClick={() => setSelectedCourseForModal(course)}
+                        style={{
+                          background: '#ffffff',
+                          border: '1px solid #cbd5e1',
+                          color: '#334155',
+                          borderRadius: '6px',
+                          padding: '0.5rem 0.75rem',
+                          fontSize: '0.8rem',
+                          fontWeight: 700,
+                          cursor: 'pointer',
+                        }}
+                      >
+                        Syllabus
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={() => handleOpenCourseApplication(course)}
+                        style={{
+                          background: '#1e3a8a',
+                          border: '1px solid #1e3a8a',
+                          color: '#ffffff',
+                          borderRadius: '6px',
+                          padding: '0.5rem 0.95rem',
+                          fontSize: '0.8rem',
+                          fontWeight: 800,
+                          cursor: 'pointer',
+                        }}
+                      >
+                        Enroll Now
+                      </button>
+                    </div>
                   </div>
                 </div>
               </div>
