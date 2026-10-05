@@ -9,6 +9,7 @@ import { BiometricClearancePassModal } from '@/components/biometrics/BiometricCl
 import { generateBiometricVerificationCode } from '@/lib/biometricEngine'
 import { INSTITUTION_CONFIG } from '@/config/institution'
 import { CourseProgram, getDynamicCoursesList } from '@/config/officialCourses'
+import { initializePaystackCheckout } from '@/lib/paystack'
 
 export function FeeManagement() {
   const { profile } = useAuth()
@@ -458,9 +459,72 @@ export function FeeManagement() {
               <h2 style={{ fontSize: '1.75rem', fontWeight: 900, color: '#ffffff', margin: '0.35rem 0' }}>
                 {isCleared ? '✓ Tuition 100% Cleared' : `$${myBalance} Outstanding Balance`}
               </h2>
-              <p style={{ color: '#cbd5e1', fontSize: '0.85rem', margin: 0 }}>
+              <p style={{ color: '#cbd5e1', fontSize: '0.85rem', margin: '0 0 1rem' }}>
                 Student: <strong>{currentStudent?.full_name || profile?.full_name}</strong> • Admission: <strong>{currentStudent?.admission_number || profile?.admission_number}</strong> • Program: <strong>{currentStudent?.class_name || 'Graphics Design & Animation'}</strong>
               </p>
+
+              {!isCleared && myBalance > 0 && (
+                <button
+                  type="button"
+                  style={{
+                    background: '#00c3f7',
+                    color: '#081426',
+                    border: 'none',
+                    fontWeight: 900,
+                    padding: '0.7rem 1.4rem',
+                    borderRadius: '8px',
+                    fontSize: '0.92rem',
+                    cursor: 'pointer',
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '8px',
+                    boxShadow: '0 4px 14px rgba(0, 195, 247, 0.4)',
+                  }}
+                  onClick={() => {
+                    const studentEmail = (profile as any)?.email || (currentStudent as any)?.email || 'student@eclat.institute'
+                    const studentName = currentStudent?.full_name || profile?.full_name || 'Student'
+                    const studentAdm = currentStudent?.admission_number || profile?.admission_number || 'EI-2026'
+
+                    initializePaystackCheckout({
+                      email: studentEmail,
+                      amount: myBalance,
+                      currency: 'KES',
+                      studentName: studentName,
+                      admissionNumber: studentAdm,
+                      purpose: `Tuition Fee Clearance - ${studentName}`,
+                      invoiceId: myInvoices[0]?.id || `INV-${studentAdm}`,
+                      onSuccess: async (refCode) => {
+                        // Instant LMS registration of Paystack payment
+                        const newRec: FeePaymentReceipt = {
+                          id: `rec-paystack-${Date.now()}`,
+                          receipt_number: `REC-${new Date().getFullYear()}-${Math.floor(1000 + Math.random() * 9000)}`,
+                          student_id: currentStudent?.id || profile?.id || 'std',
+                          student_name: studentName,
+                          admission_number: studentAdm,
+                          amount: myBalance,
+                          amount_paid: myBalance,
+                          payment_method: 'Card',
+                          reference_code: `PAYSTACK-${refCode}`,
+                          payment_date: new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }),
+                          paid_by: studentName,
+                          recorded_by: 'Paystack Automated Gateway',
+                          received_by: 'Academic Registrar',
+                          balance_after: 0,
+                          balance_remaining: 0,
+                        }
+                        await schoolStore.recordPayment(newRec)
+                        await schoolStore.unlockStudentLessons(studentAdm, 'Paystack Automated Gateway')
+                        setReceipts(schoolStore.getReceipts())
+                        setInvoices(schoolStore.getInvoices())
+                        setStudents(schoolStore.getStudents())
+                        setSelectedReceipt(newRec)
+                      },
+                    })
+                  }}
+                >
+                  <span>⚡ Pay Now with Paystack (M-Pesa / Card)</span>
+                </button>
+              )}
             </div>
             <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
               <div style={{ background: 'rgba(255,255,255,0.1)', padding: '0.75rem 1.25rem', borderRadius: '8px', textAlign: 'center' }}>
@@ -1374,6 +1438,7 @@ export function FeeManagement() {
                       value={payData.payment_method}
                       onChange={(e) => setPayData({ ...payData, payment_method: e.target.value as any })}
                     >
+                      <option value="Card">💳 Paystack (M-Pesa, Visa, Mastercard, Apple Pay)</option>
                       <option value="Card">💳 Credit / Debit Card (Visa, Mastercard)</option>
                       <option value="Bank Transfer">🏦 Direct Bank Wire Transfer</option>
                       <option value="Paybill">📱 Paybill / Mobile Money</option>

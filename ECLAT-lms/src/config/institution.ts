@@ -29,6 +29,11 @@ export interface InstitutionConfig {
     branch: string
   }
 
+  paystack: {
+    publicKey: string
+    currency: string
+  }
+
   pricing: {
     currencySymbol: string
     currencyCode: string
@@ -97,6 +102,11 @@ export const INSTITUTION_CONFIG: InstitutionConfig = {
     paybillNumber: (import.meta.env.VITE_PAYBILL_NUMBER as string) || '522522',
     accountName: (import.meta.env.VITE_BANK_ACCOUNT_NAME as string) || 'Éclat Institute',
     branch: (import.meta.env.VITE_BANK_BRANCH as string) || 'Nairobi Central',
+  },
+
+  paystack: {
+    publicKey: (import.meta.env.VITE_PAYSTACK_PUBLIC_KEY as string) || 'pk_test_9fb570106b515b91f8b6cc1ce225ace3dd12a54a',
+    currency: (import.meta.env.VITE_PAYSTACK_CURRENCY as string) || 'KES',
   },
 
   pricing: {
