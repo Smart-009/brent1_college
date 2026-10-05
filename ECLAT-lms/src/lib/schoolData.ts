@@ -55,6 +55,81 @@ export const INITIAL_REPORT_CARDS: ReportCard[] = []
 
 export const INITIAL_IGCSE_STATEMENTS: IGCSEStatementOfResults[] = []
 
+export const SAMPLE_IGCSE_STATEMENTS: IGCSEStatementOfResults[] = [
+  {
+    id: 'igcse-stmt-001',
+    center_number: 'KE042',
+    center_name: 'Éclat Institute — Cambridge Assessment International Education',
+    candidate_number: '0014',
+    candidate_name: 'Alexander Mwangi',
+    date_of_birth: '2005-08-14',
+    gender: 'Male',
+    examination_series: 'May/June 2026',
+    examination_board: 'Cambridge Assessment International Education (CAIE)',
+    candidate_unique_id: 'KE042/0014/2026',
+    issued_at: new Date().toISOString(),
+    is_verified: true,
+    verification_code: 'ECLAT-CAIE-881290',
+    total_subjects: 8,
+    mean_points: 7.75,
+    ice_award: 'Distinction',
+    results: [
+      {
+        syllabus_code: '0580',
+        subject_name: 'Mathematics (Without Coursework)',
+        subject_group: 'Group 4: Mathematics',
+        tier: 'Extended',
+        components: [
+          { paper_number: 'Paper 2 (Extended)', raw_mark: 65, max_mark: 70, weight_percentage: 35 },
+          { paper_number: 'Paper 4 (Extended)', raw_mark: 122, max_mark: 130, weight_percentage: 65 },
+        ],
+        weighted_percentage: 93,
+        grade_9to1: '9',
+        grade_AtoG: 'A*',
+        points: 8,
+        status: 'Pass',
+        examiner_feedback: 'Demonstrated outstanding algebraic manipulation and geometric proofs.',
+      },
+    ],
+  },
+  {
+    id: 'igcse-stmt-002',
+    center_number: 'EDX-98421',
+    center_name: 'Éclat Institute — Pearson Edexcel International Examination Center',
+    candidate_number: '0042',
+    candidate_name: 'Chloe Bennett',
+    date_of_birth: '2005-04-18',
+    gender: 'Female',
+    examination_series: 'May/June 2026',
+    examination_board: 'Pearson Edexcel International GCSE',
+    candidate_unique_id: 'EDX-98421/0042/2026',
+    issued_at: new Date().toISOString(),
+    is_verified: true,
+    verification_code: 'ECLAT-EDEXCEL-773194',
+    total_subjects: 7,
+    mean_points: 8.71,
+    ice_award: 'Distinction',
+    results: [
+      {
+        syllabus_code: '4MA1',
+        subject_name: 'Mathematics A (Higher Tier Specification)',
+        subject_group: 'Group 4: Mathematics',
+        tier: 'Higher Tier (9-1)',
+        components: [
+          { paper_number: 'Paper 1H (Higher Tier)', raw_mark: 96, max_mark: 100, weight_percentage: 50 },
+          { paper_number: 'Paper 2H (Higher Tier)', raw_mark: 94, max_mark: 100, weight_percentage: 50 },
+        ],
+        weighted_percentage: 95,
+        grade_9to1: '9',
+        grade_AtoG: 'A*',
+        points: 9,
+        status: 'Pass',
+        examiner_feedback: 'Flawless execution in calculus turning points, non-linear vectors, and probability proof trees.',
+      },
+    ],
+  },
+]
+
 export const INITIAL_FACULTY_TEACHERS: FacultyTeacher[] = []
 export const INITIAL_DEPARTMENTS: CollegeDepartment[] = [
   // 1. School of Cambridge Assessment International Education (CAIE)

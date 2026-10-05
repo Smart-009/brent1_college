@@ -57,6 +57,7 @@ import {
   StarIcon,
   VideoIcon,
   CourseIcon,
+  ArrowRightIcon,
 } from '@/components/icons/AppIcons'
 
 interface CourseItem {
@@ -1133,6 +1134,14 @@ export function Landing() {
                     <BritishShieldIcon size={15} />
                     <span>Cambridge IGCSE</span>
                   </Link>
+                  <Link to="/hire" style={{ color: '#2563eb', fontWeight: 800, textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: '5px' }}>
+                    <LaptopIcon size={14} color="#2563eb" />
+                    <span>Hire Us</span>
+                  </Link>
+                  <Link to="/careers" style={{ color: '#16a34a', fontWeight: 800, textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: '5px' }}>
+                    <GraduationCapIcon size={14} color="#16a34a" />
+                    <span>Careers</span>
+                  </Link>
                   <Link to="/library" style={{ color: '#2563eb', fontWeight: 800, textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: '5px' }}>
                     <LibraryIcon size={14} color="#2563eb" />
                     <span>E-Library</span>
@@ -1593,6 +1602,48 @@ export function Landing() {
               </Link>
 
               <Link
+                to="/hire"
+                onClick={() => setMobileNavOpen(false)}
+                style={{
+                  color: '#1d4ed8',
+                  textDecoration: 'none',
+                  padding: '0.65rem 0.8rem',
+                  borderRadius: '10px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '10px',
+                  fontSize: '0.88rem',
+                  fontWeight: 700,
+                  background: '#eff6ff',
+                  border: '1px solid #bfdbfe',
+                }}
+              >
+                <LaptopIcon size={18} color="#1d4ed8" />
+                <span>Hire Éclat (Tech Services)</span>
+              </Link>
+
+              <Link
+                to="/careers"
+                onClick={() => setMobileNavOpen(false)}
+                style={{
+                  color: '#15803d',
+                  textDecoration: 'none',
+                  padding: '0.65rem 0.8rem',
+                  borderRadius: '10px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '10px',
+                  fontSize: '0.88rem',
+                  fontWeight: 700,
+                  background: '#f0fdf4',
+                  border: '1px solid #bbf7d0',
+                }}
+              >
+                <GraduationCapIcon size={18} color="#15803d" />
+                <span>Careers & Teaching Positions</span>
+              </Link>
+
+              <Link
                 to="/about"
                 onClick={() => setMobileNavOpen(false)}
                 style={{
@@ -1826,410 +1877,345 @@ export function Landing() {
           }}
         />
 
-        <div style={{ maxWidth: '1200px', margin: '0 auto', textAlign: 'center', position: 'relative', zIndex: 3 }}>
-          {/* Academy Global Badge */}
+        <div style={{ maxWidth: '1100px', margin: '0 auto', textAlign: 'center', position: 'relative', zIndex: 3 }}>
+          {/* Academy Global Accreditation Pill */}
           <div
             style={{
               display: 'inline-flex',
               alignItems: 'center',
               gap: '0.5rem',
-              background: 'rgba(255, 255, 255, 0.09)',
-              backdropFilter: 'blur(12px)',
-              border: '1px solid rgba(212, 175, 55, 0.4)',
-              borderRadius: isMobile ? '12px' : '999px',
-              padding: isMobile ? '0.35rem 0.65rem' : '0.45rem 1.35rem',
-              fontSize: isMobile ? '0.72rem' : '0.85rem',
-              fontWeight: 800,
-              color: '#d4af37',
+              background: 'rgba(255, 255, 255, 0.08)',
+              border: '1px solid rgba(255, 255, 255, 0.18)',
+              borderRadius: '999px',
+              padding: '0.4rem 1.25rem',
+              fontSize: '0.82rem',
+              fontWeight: 700,
+              color: '#93c5fd',
               letterSpacing: '0.04em',
-              marginBottom: isMobile ? '1rem' : '1.5rem',
-              boxShadow: '0 4px 16px rgba(0,0,0,0.2)',
-              maxWidth: '100%',
-              lineHeight: 1.35,
-              wordBreak: 'break-word',
+              marginBottom: '1.75rem',
             }}
           >
-            <GlobeIcon size={16} color="#d4af37" />
-            <span>ÉCLAT INSTITUTE • 100% ONLINE VIRTUAL CAMPUS & CAMBRIDGE IGCSE CENTRE (KE042)</span>
+            <BritishShieldIcon size={16} />
+            <span>CAMBRIDGE CAIE CENTER KE042 • PEARSON EDEXCEL CENTER EDX-98421</span>
           </div>
 
-          {/* Master Academy Headline */}
+          {/* Clean, Authoritative Headline */}
           <h1
             className="landing-hero-heading"
             style={{
-              fontSize: isMobile ? 'clamp(1.35rem, 5.6vw, 1.8rem)' : 'clamp(2.5rem, 4.8vw, 3.8rem)',
+              fontSize: isMobile ? '2.1rem' : '3.6rem',
               fontWeight: 900,
-              letterSpacing: '-0.02em',
-              lineHeight: isMobile ? 1.22 : 1.15,
-              margin: isMobile ? '0 auto 1rem' : '0 auto 1.25rem',
+              letterSpacing: '-0.025em',
+              lineHeight: 1.15,
+              margin: '0 auto 1.25rem',
               maxWidth: '960px',
               color: '#ffffff',
               fontFamily: 'var(--font-heading)',
-              textShadow: '0 2px 12px rgba(0,0,0,0.5)',
             }}
           >
-            Skills that drive your career forward. <br />
-            <span
-              style={{
-                background: 'linear-gradient(90deg, #d4af37 0%, #fef08a 50%, #d4af37 100%)',
-                WebkitBackgroundClip: 'text',
-                WebkitTextFillColor: 'transparent',
-              }}
-            >
-              100% Online Live Classes & Industry Mentorship
-            </span>
+            World-Class Virtual Education in Technology, Business & British Curriculum
           </h1>
 
-          {/* Subtitle establishing all 5 faculties */}
+          {/* Refined 2-sentence Subtitle */}
           <p
             style={{
-              maxWidth: '860px',
-              margin: isMobile ? '0 auto 1.5rem' : '0 auto 2.25rem',
-              fontSize: isMobile ? '0.88rem' : '1.18rem',
-              color: '#e2e8f0',
-              lineHeight: isMobile ? 1.52 : 1.6,
+              maxWidth: '740px',
+              margin: '0 auto 2.25rem',
+              fontSize: isMobile ? '0.98rem' : '1.15rem',
+              color: '#cbd5e1',
+              lineHeight: 1.6,
               fontWeight: 400,
             }}
           >
-            Master <strong style={{ color: '#38bdf8', fontWeight: 800 }}>Cambridge IGCSE & A-Levels (Center KE042)</strong>, in-demand <strong style={{ color: '#ffffff', fontWeight: 800 }}>Tech & Software</strong> (React, Node, Python, Cyber), <strong style={{ color: '#ffffff', fontWeight: 800 }}>Data Science & Research</strong> (R, SPSS, Stata), <strong style={{ color: '#ffffff', fontWeight: 800 }}>Creative Arts & Design</strong> (UI/UX, Figma), <strong style={{ color: '#ffffff', fontWeight: 800 }}>World Languages</strong> (IELTS, German, Arabic, French), and <strong style={{ color: '#ffffff', fontWeight: 800 }}>Accounting</strong> with live interactive classes, expert mentorship, and flexible installment plans.
+            Join an accredited international virtual campus delivering live interactive lectures, British examination series, and verified professional credentials across 40+ countries.
           </p>
 
-          {/* Primary Academy CTAs */}
-          <div style={{ display: 'flex', flexDirection: isMobile ? 'column' : 'row', justifyContent: 'center', alignItems: 'center', gap: isMobile ? '0.65rem' : '0.75rem', width: '100%', maxWidth: isMobile ? '340px' : 'none', margin: isMobile ? '0 auto 1.5rem' : '0 auto 2.25rem', flexWrap: 'wrap' }}>
+          {/* Clean, High-Contrast CTAs */}
+          <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '1rem', flexWrap: 'wrap', marginBottom: '3rem' }}>
             <a
               href="#courses"
-              className="btn btn-lg"
-              style={{
-                background: '#d4af37',
-                color: '#0c0e12',
-                fontWeight: 900,
-                padding: isMobile ? '0.75rem 1.25rem' : '0.85rem 1.75rem',
-                fontSize: isMobile ? '0.92rem' : '1rem',
-                borderRadius: '10px',
-                boxShadow: '0 10px 24px rgba(212, 175, 55, 0.35)',
-                border: 'none',
-                textDecoration: 'none',
-                display: 'inline-flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                gap: '8px',
-                width: isMobile ? '100%' : 'auto',
-              }}
-            >
-              <SparklesIcon size={18} color="#0c0e12" /><span>Explore All Programs</span>
-              <span>↓</span>
-            </a>
-
-            <button
-              type="button"
-              className="btn btn-lg"
               style={{
                 background: '#2563eb',
                 color: '#ffffff',
                 fontWeight: 800,
-                padding: isMobile ? '0.75rem 1.25rem' : '0.85rem 1.75rem',
-                fontSize: isMobile ? '0.92rem' : '1rem',
+                padding: '0.85rem 1.75rem',
+                fontSize: '1rem',
                 borderRadius: '10px',
-                boxShadow: '0 8px 20px rgba(37, 99, 235, 0.3)',
-                border: 'none',
-                cursor: 'pointer',
-                display: 'inline-flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                width: isMobile ? '100%' : 'auto',
-              }}
-              onClick={() => setInquiryModalOpen(true)}
-            >
-              <SparklesIcon size={18} color="#ffffff" style={{ marginRight: '6px' }} /><span>Enroll in Intake</span>
-            </button>
-
-            <a
-              href={getWhatsAppInquiryUrl('Hello Eclat Admissions! I would like details about your 100% online programs.')}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="btn btn-lg"
-              style={{
-                background: 'rgba(34, 197, 94, 0.15)',
-                color: '#4ade80',
-                fontWeight: 700,
-                padding: isMobile ? '0.75rem 1.25rem' : '0.85rem 1.5rem',
-                fontSize: isMobile ? '0.9rem' : '0.96rem',
-                borderRadius: '10px',
-                border: '1px solid rgba(34, 197, 94, 0.3)',
                 textDecoration: 'none',
                 display: 'inline-flex',
                 alignItems: 'center',
-                justifyContent: 'center',
                 gap: '8px',
-                width: isMobile ? '100%' : 'auto',
+                boxShadow: '0 8px 24px rgba(37, 99, 235, 0.35)',
               }}
             >
-              <MessageCircleIcon size={18} color="#4ade80" />
-              <span>WhatsApp Counselor</span>
+              <span>Explore Programs & Courses</span>
+              <ArrowRightIcon size={16} />
             </a>
+
+            <Link
+              to="/hire"
+              style={{
+                background: 'rgba(255, 255, 255, 0.08)',
+                border: '1px solid rgba(255, 255, 255, 0.25)',
+                color: '#ffffff',
+                fontWeight: 700,
+                padding: '0.85rem 1.75rem',
+                fontSize: '1rem',
+                borderRadius: '10px',
+                textDecoration: 'none',
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '8px',
+              }}
+            >
+              <LaptopIcon size={16} color="#60a5fa" />
+              <span>Hire Our Tech Team</span>
+            </Link>
+
+            <Link
+              to="/careers"
+              style={{
+                background: 'rgba(22, 163, 74, 0.15)',
+                border: '1px solid rgba(34, 197, 94, 0.4)',
+                color: '#4ade80',
+                fontWeight: 700,
+                padding: '0.85rem 1.5rem',
+                fontSize: '0.95rem',
+                borderRadius: '10px',
+                textDecoration: 'none',
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '8px',
+              }}
+            >
+              <GraduationCapIcon size={16} color="#4ade80" />
+              <span>Teaching Careers</span>
+            </Link>
           </div>
 
-          {/* Academy Value Props Trust Row */}
+          {/* Clean Institutional Trust Bar */}
           <div
             style={{
               display: 'flex',
               justifyContent: 'center',
               alignItems: 'center',
-              gap: isMobile ? '0.45rem 0.85rem' : '1.75rem',
+              gap: isMobile ? '1rem' : '2.5rem',
               flexWrap: 'wrap',
-              fontSize: isMobile ? '0.76rem' : '0.88rem',
-              color: '#cbd5e1',
+              fontSize: '0.85rem',
+              color: '#94a3b8',
               fontWeight: 600,
-              paddingTop: isMobile ? '0.85rem' : '1rem',
+              paddingTop: '1.5rem',
               borderTop: '1px solid rgba(255, 255, 255, 0.1)',
             }}
           >
             <span style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
-              <CheckIcon size={14} color="#22c55e" /> <StarIcon size={14} fill="#f59e0b" color="#f59e0b" /> 4.9/5 Student Satisfaction
+              <CheckCircleIcon size={15} color="#38bdf8" /> 100% Live Virtual Labs
             </span>
             <span style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
-              <CheckIcon size={14} color="#22c55e" /> 6 Daily Shifts: Early Morning to Night
+              <CheckCircleIcon size={15} color="#38bdf8" /> Cambridge CAIE (KE042)
             </span>
             <span style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
-              <CheckIcon size={14} color="#22c55e" /> Verified Digital Certificates
+              <CheckCircleIcon size={15} color="#38bdf8" /> Pearson Edexcel (EDX-98421)
             </span>
             <span style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
-              <CheckIcon size={14} color="#22c55e" /> 50% Flexible Monthly Installments
+              <CheckCircleIcon size={15} color="#38bdf8" /> 40+ Countries Represented
             </span>
           </div>
         </div>
       </section>
 
-      {/* Featured Scheduled Academic Intakes & Enrollments */}
-      <IntakeAdvertsSection />
-
-      {/* Featured Courses Spotlight: Interactive Animated Promotional Carousel Banner */}
-      <section
-        onMouseEnter={() => setHeroSliderPaused(true)}
-        onMouseLeave={() => setHeroSliderPaused(false)}
-        style={{
-          background: HERO_PROMO_SLIDES[currentHeroSlide].gradient,
-          color: '#ffffff',
-          padding: isMobile ? '1.5rem 0.85rem' : '2.75rem 1.5rem',
-          position: 'relative',
-          overflow: 'hidden',
-          borderBottom: '1px solid #1e293b',
-          transition: 'background 0.7s ease',
-          boxSizing: 'border-box',
-          width: '100%',
-        }}
-      >
-        <div style={{ maxWidth: '1240px', margin: '0 auto', position: 'relative', zIndex: 2, boxSizing: 'border-box', width: '100%' }}>
-          {/* Spotlight Header Row */}
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '0.75rem', marginBottom: '1.25rem' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
-              <SparklesIcon size={18} color="#d4af37" />
-              <div>
-                <div style={{ fontSize: '0.7rem', color: '#94a3b8', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.08em' }}>
-                  FEATURED ONLINE PROGRAM SPOTLIGHT
-                </div>
-                <div style={{ fontSize: isMobile ? '0.98rem' : '1.1rem', fontWeight: 900, color: '#ffffff' }}>
-                  {HERO_PROMO_SLIDES[currentHeroSlide].category}
-                </div>
-              </div>
-            </div>
-
-            {/* Prev / Next & Indicators */}
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
-              <button
-                type="button"
-                onClick={() => setCurrentHeroSlide((prev) => (prev === 0 ? HERO_PROMO_SLIDES.length - 1 : prev - 1))}
-                style={{
-                  width: '32px',
-                  height: '32px',
-                  borderRadius: '50%',
-                  background: 'rgba(255, 255, 255, 0.1)',
-                  border: '1px solid rgba(255, 255, 255, 0.2)',
-                  color: '#ffffff',
-                  fontSize: '0.85rem',
-                  fontWeight: 800,
-                  cursor: 'pointer',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                }}
-                title="Previous Slide"
-              >
-                <ChevronLeftIcon size={16} />
-              </button>
-
-              <div style={{ display: 'flex', gap: '4px', padding: '0 4px' }}>
-                {HERO_PROMO_SLIDES.map((_, idx) => (
-                  <button
-                    key={idx}
-                    type="button"
-                    onClick={() => setCurrentHeroSlide(idx)}
-                    style={{
-                      width: currentHeroSlide === idx ? '20px' : '7px',
-                      height: '7px',
-                      borderRadius: '999px',
-                      background: currentHeroSlide === idx ? '#d4af37' : 'rgba(255, 255, 255, 0.25)',
-                      border: 'none',
-                      cursor: 'pointer',
-                      transition: 'all 0.3s ease',
-                      padding: 0,
-                    }}
-                    title={`Slide ${idx + 1}`}
-                  />
-                ))}
-              </div>
-
-              <button
-                type="button"
-                onClick={() => setCurrentHeroSlide((prev) => (prev + 1) % HERO_PROMO_SLIDES.length)}
-                style={{
-                  width: '32px',
-                  height: '32px',
-                  borderRadius: '50%',
-                  background: 'rgba(255, 255, 255, 0.1)',
-                  border: '1px solid rgba(255, 255, 255, 0.2)',
-                  color: '#ffffff',
-                  fontSize: '0.85rem',
-                  fontWeight: 800,
-                  cursor: 'pointer',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                }}
-                title="Next Slide"
-              >
-                <ChevronRightIcon size={16} />
-              </button>
-            </div>
+      {/* Canonical Disciplines & Institutional Focus */}
+      <section style={{ background: '#f8fafc', padding: isMobile ? '2.5rem 1rem' : '3.5rem 1.5rem', borderBottom: '1px solid #e2e8f0' }}>
+        <div style={{ maxWidth: '1240px', margin: '0 auto' }}>
+          <div style={{ textAlign: 'center', marginBottom: isMobile ? '1.75rem' : '2.5rem' }}>
+            <span style={{ fontSize: '0.8rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.08em', color: '#1e3a8a' }}>
+              Academic Faculties & Professional Services
+            </span>
+            <h2 style={{ fontSize: isMobile ? '1.6rem' : '2.2rem', fontWeight: 900, color: '#0f172a', margin: '0.4rem 0 0.5rem', letterSpacing: '-0.02em' }}>
+              Structured Excellence Across Four Faculties
+            </h2>
+            <p style={{ fontSize: '0.95rem', color: '#64748b', maxWidth: '640px', margin: '0 auto' }}>
+              Direct Cambridge & Pearson accreditation, Silicon Valley tech curriculum, and corporate-grade industry services.
+            </p>
           </div>
 
-          {/* Slide Card Content */}
-          <div
-            style={{
-              background: 'rgba(15, 23, 42, 0.65)',
-              backdropFilter: 'blur(16px)',
-              border: `1.5px solid ${HERO_PROMO_SLIDES[currentHeroSlide].accentColor}40`,
-              borderRadius: isMobile ? '14px' : '20px',
-              padding: isMobile ? '1.25rem 1rem' : '2rem 2.5rem',
-              display: 'grid',
-              gridTemplateColumns: isMobile ? '1fr' : '1.4fr 0.6fr',
-              gap: isMobile ? '1.25rem' : '2rem',
-              alignItems: 'center',
-              boxShadow: '0 12px 36px rgba(0,0,0,0.3)',
-              boxSizing: 'border-box',
-              maxWidth: '100%',
-              overflow: 'hidden',
-            }}
-          >
-            <div style={{ minWidth: 0, overflow: 'hidden' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.65rem', flexWrap: 'wrap' }}>
-                <span
+          <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : 'repeat(auto-fit, minmax(260px, 1fr))', gap: '1.25rem' }}>
+            {[
+              {
+                title: 'Cambridge & Edexcel International',
+                badge: 'Years 7–11 • IGCSE / Lower Sec',
+                desc: 'Official exam-board mapped curriculum with certified educators and live personalized clinics.',
+                link: '#courses',
+                color: '#1e3a8a',
+                bg: '#eff6ff',
+                icon: BritishShieldIcon,
+              },
+              {
+                title: 'Computer Science & Software',
+                badge: 'Full-Stack & Cloud Architecture',
+                desc: 'Production-ready software engineering: React 19, TypeScript, Python, Node, and secure REST APIs.',
+                link: '#courses',
+                color: '#0284c7',
+                bg: '#f0f9ff',
+                icon: LaptopIcon,
+              },
+              {
+                title: 'Data Science & Statistical Research',
+                badge: 'Python, R, SPSS & Econometrics',
+                desc: 'Applied biostatistics, machine learning, econometric modeling, and thesis quantitative support.',
+                link: '#courses',
+                color: '#059669',
+                bg: '#ecfdf5',
+                icon: DatabaseIcon,
+              },
+              {
+                title: 'World Languages & IELTS Mastery',
+                badge: 'Global Certification Prep',
+                desc: 'High-scoring IELTS Academic preparation, German Goethe-Zertifikat, French DELF, and Arabic.',
+                link: '#courses',
+                color: '#d97706',
+                bg: '#fffbeb',
+                icon: GlobeIcon,
+              },
+            ].map((fac, idx) => {
+              const FacIcon = fac.icon
+              return (
+                <div
+                  key={idx}
                   style={{
-                    background: HERO_PROMO_SLIDES[currentHeroSlide].badgeBg,
-                    color: HERO_PROMO_SLIDES[currentHeroSlide].badgeColor,
-                    border: `1px solid ${HERO_PROMO_SLIDES[currentHeroSlide].badgeColor}50`,
-                    borderRadius: '999px',
-                    padding: '3px 10px',
-                    fontSize: isMobile ? '0.72rem' : '0.78rem',
-                    fontWeight: 800,
-                    maxWidth: '100%',
-                    wordBreak: 'break-word',
+                    background: '#ffffff',
+                    border: '1px solid #e2e8f0',
+                    borderRadius: '16px',
+                    padding: '1.5rem',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    justifyContent: 'space-between',
+                    boxShadow: '0 2px 8px rgba(0,0,0,0.03)',
+                    transition: 'transform 0.2s ease, box-shadow 0.2s ease',
                   }}
                 >
-                  {HERO_PROMO_SLIDES[currentHeroSlide].badge}
-                </span>
-                <span style={{ fontSize: '0.72rem', color: '#94a3b8', fontWeight: 600 }}>
-                  <span style={{ display: 'inline-block', width: '8px', height: '8px', borderRadius: '50%', background: '#22c55e', marginRight: '6px' }} />Live Cohort Enrolling
-                </span>
-              </div>
-
-              <h2
-                style={{
-                  fontSize: isMobile ? 'clamp(1.1rem, 4.8vw, 1.35rem)' : '1.85rem',
-                  fontWeight: 900,
-                  margin: '0 0 0.65rem',
-                  color: '#ffffff',
-                  lineHeight: 1.25,
-                  wordBreak: 'break-word',
-                  overflowWrap: 'break-word',
-                  maxWidth: '100%',
-                }}
-              >
-                {HERO_PROMO_SLIDES[currentHeroSlide].headline}: <br />
-                <span style={{ color: HERO_PROMO_SLIDES[currentHeroSlide].accentColor, wordBreak: 'break-word' }}>
-                  {HERO_PROMO_SLIDES[currentHeroSlide].highlight}
-                </span>
-              </h2>
-
-              <p style={{ fontSize: isMobile ? '0.86rem' : '0.94rem', color: '#cbd5e1', lineHeight: 1.55, margin: '0 0 1.1rem', maxWidth: '680px', wordBreak: 'break-word' }}>
-                {HERO_PROMO_SLIDES[currentHeroSlide].description}
-              </p>
-
-              <div style={{ display: 'flex', gap: '0.4rem', flexWrap: 'wrap', maxWidth: '100%' }}>
-                {HERO_PROMO_SLIDES[currentHeroSlide].features.map((feat, idx) => (
-                  <span
-                    key={idx}
+                  <div>
+                    <div style={{ display: 'inline-flex', padding: '10px', borderRadius: '12px', background: fac.bg, color: fac.color, marginBottom: '1rem' }}>
+                      <FacIcon size={24} color={fac.color} />
+                    </div>
+                    <div style={{ fontSize: '0.72rem', fontWeight: 800, color: fac.color, textTransform: 'uppercase', letterSpacing: '0.04em', marginBottom: '4px' }}>
+                      {fac.badge}
+                    </div>
+                    <h3 style={{ fontSize: '1.1rem', fontWeight: 800, color: '#0f172a', margin: '0 0 0.5rem', lineHeight: 1.35 }}>
+                      {fac.title}
+                    </h3>
+                    <p style={{ fontSize: '0.86rem', color: '#64748b', lineHeight: 1.55, margin: 0 }}>
+                      {fac.desc}
+                    </p>
+                  </div>
+                  <a
+                    href={fac.link}
                     style={{
-                      background: 'rgba(255, 255, 255, 0.08)',
-                      border: '1px solid rgba(255, 255, 255, 0.12)',
-                      borderRadius: '6px',
-                      padding: '3px 8px',
-                      fontSize: '0.74rem',
+                      marginTop: '1.25rem',
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: '5px',
+                      fontSize: '0.84rem',
                       fontWeight: 700,
-                      color: '#f8fafc',
-                      whiteSpace: 'normal',
-                      wordBreak: 'break-word',
+                      color: fac.color,
+                      textDecoration: 'none',
                     }}
                   >
-                    <CheckIcon size={12} color="#4ade80" style={{ marginRight: '4px', verticalAlign: 'middle' }} />{feat}
-                  </span>
-                ))}
+                    Explore Faculty Courses →
+                  </a>
+                </div>
+              )
+            })}
+          </div>
+
+          {/* Strategic Services Dual Cards: Hire Us & Careers */}
+          <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : 'repeat(2, 1fr)', gap: '1.25rem', marginTop: '1.5rem' }}>
+            <div
+              style={{
+                background: 'linear-gradient(135deg, #0f172a 0%, #1e293b 100%)',
+                color: '#ffffff',
+                borderRadius: '16px',
+                padding: isMobile ? '1.5rem 1.25rem' : '1.75rem 2rem',
+                display: 'flex',
+                flexDirection: 'column',
+                justifyContent: 'space-between',
+                border: '1px solid rgba(255,255,255,0.1)',
+              }}
+            >
+              <div>
+                <span style={{ fontSize: '0.72rem', fontWeight: 800, color: '#38bdf8', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
+                  Enterprise & Client Solutions
+                </span>
+                <h3 style={{ fontSize: '1.25rem', fontWeight: 900, color: '#ffffff', margin: '0.35rem 0 0.5rem' }}>
+                  Hire Éclat Institute for Tech & Digital Services
+                </h3>
+                <p style={{ fontSize: '0.88rem', color: '#cbd5e1', lineHeight: 1.55, margin: 0 }}>
+                  Full-stack engineering, bespoke web & mobile applications, institutional LMS platforms, corporate staff training, and data analytics.
+                </p>
+              </div>
+              <div style={{ marginTop: '1.25rem' }}>
+                <Link
+                  to="/hire"
+                  style={{
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '6px',
+                    padding: '0.65rem 1.25rem',
+                    background: '#38bdf8',
+                    color: '#0f172a',
+                    fontWeight: 800,
+                    fontSize: '0.86rem',
+                    borderRadius: '8px',
+                    textDecoration: 'none',
+                  }}
+                >
+                  Request a Quote or Service →
+                </Link>
               </div>
             </div>
 
-            {/* Right Quick Jump & Action */}
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', justifyContent: 'center', minWidth: 0 }}>
-              <div style={{ background: 'rgba(255, 255, 255, 0.05)', padding: isMobile ? '0.75rem' : '1rem', borderRadius: '12px', border: '1px solid rgba(255, 255, 255, 0.1)' }}>
-                <div style={{ fontSize: '0.7rem', color: '#94a3b8', fontWeight: 700, textTransform: 'uppercase' }}>Academic Department</div>
-                <div style={{ fontSize: isMobile ? '0.92rem' : '1rem', fontWeight: 800, color: '#ffffff', marginTop: '2px' }}>
-                  {HERO_PROMO_SLIDES[currentHeroSlide].category}
-                </div>
-                <div style={{ fontSize: '0.74rem', color: '#d4af37', fontWeight: 700, marginTop: '3px' }}>
-                  <StarIcon size={13} fill="#d4af37" color="#d4af37" style={{ verticalAlign: 'middle', marginRight: '4px' }} />{HERO_PROMO_SLIDES[currentHeroSlide].metricNumber} {HERO_PROMO_SLIDES[currentHeroSlide].metricLabel}
-                </div>
+            <div
+              style={{
+                background: 'linear-gradient(135deg, #1e3a8a 0%, #172554 100%)',
+                color: '#ffffff',
+                borderRadius: '16px',
+                padding: isMobile ? '1.5rem 1.25rem' : '1.75rem 2rem',
+                display: 'flex',
+                flexDirection: 'column',
+                justifyContent: 'space-between',
+                border: '1px solid rgba(255,255,255,0.1)',
+              }}
+            >
+              <div>
+                <span style={{ fontSize: '0.72rem', fontWeight: 800, color: '#fde047', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
+                  Faculty Recruitment
+                </span>
+                <h3 style={{ fontSize: '1.25rem', fontWeight: 900, color: '#ffffff', margin: '0.35rem 0 0.5rem' }}>
+                  Teach at Éclat — Academic & Faculty Openings
+                </h3>
+                <p style={{ fontSize: '0.88rem', color: '#cbd5e1', lineHeight: 1.55, margin: 0 }}>
+                  We are hiring Cambridge IGCSE instructors, senior software trainers, data scientists, and language faculty for live online cohorts worldwide.
+                </p>
               </div>
-
-              <button
-                type="button"
-                onClick={() => {
-                  setActiveCategory(HERO_PROMO_SLIDES[currentHeroSlide].category)
-                  const el = document.getElementById('courses')
-                  if (el) el.scrollIntoView({ behavior: 'smooth' })
-                }}
-                className="btn"
-                style={{
-                  background: '#d4af37',
-                  color: '#0c0e12',
-                  fontWeight: 900,
-                  fontSize: isMobile ? '0.86rem' : '0.92rem',
-                  padding: isMobile ? '0.75rem 1rem' : '0.8rem 1.25rem',
-                  borderRadius: '10px',
-                  border: 'none',
-                  cursor: 'pointer',
-                  boxShadow: '0 6px 18px rgba(212, 175, 55, 0.3)',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  gap: '8px',
-                  width: '100%',
-                  textAlign: 'center',
-                  whiteSpace: 'normal',
-                  wordBreak: 'break-word',
-                }}
-              >
-                <RocketIcon size={16} color="#0c0e12" /><span>{HERO_PROMO_SLIDES[currentHeroSlide].primaryCtaText}</span>
-                <span>↓</span>
-              </button>
+              <div style={{ marginTop: '1.25rem' }}>
+                <Link
+                  to="/careers"
+                  style={{
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '6px',
+                    padding: '0.65rem 1.25rem',
+                    background: '#fde047',
+                    color: '#0f172a',
+                    fontWeight: 800,
+                    fontSize: '0.86rem',
+                    borderRadius: '8px',
+                    textDecoration: 'none',
+                  }}
+                >
+                  View Open Teaching Positions →
+                </Link>
+              </div>
             </div>
           </div>
         </div>
@@ -3720,6 +3706,14 @@ export function Landing() {
             <Link to="/about" style={{ color: '#1d4ed8', textDecoration: 'none', fontWeight: 700, display: 'inline-flex', alignItems: 'center', gap: '5px' }}>
               <BuildingIcon size={14} color="#1d4ed8" />
               <span>About Us</span>
+            </Link>
+            <Link to="/hire" style={{ color: '#1d4ed8', textDecoration: 'none', fontWeight: 700, display: 'inline-flex', alignItems: 'center', gap: '5px' }}>
+              <LaptopIcon size={14} color="#1d4ed8" />
+              <span>Hire Us</span>
+            </Link>
+            <Link to="/careers" style={{ color: '#16a34a', textDecoration: 'none', fontWeight: 700, display: 'inline-flex', alignItems: 'center', gap: '5px' }}>
+              <GraduationCapIcon size={14} color="#16a34a" />
+              <span>Careers</span>
             </Link>
             <Link to="/courses" style={{ color: '#475569', textDecoration: 'none' }}>Courses</Link>
             <Link to="/library" style={{ color: '#475569', textDecoration: 'none' }}>E-Library</Link>

@@ -15,6 +15,8 @@ import { Landing } from '@/features/landing/Landing'
 const CourseCatalogPage = lazy(() => import('@/features/courses/CourseCatalogPage').then((m) => ({ default: m.CourseCatalogPage })))
 const AboutPage = lazy(() => import('@/features/landing/AboutPage').then((m) => ({ default: m.AboutPage })))
 const PrivacyPolicy = lazy(() => import('@/features/landing/PrivacyPolicy').then((m) => ({ default: m.PrivacyPolicy })))
+const HireEclatPage = lazy(() => import('@/features/services/HireEclatPage').then((m) => ({ default: m.HireEclatPage })))
+const CareersPage = lazy(() => import('@/features/careers/CareersPage').then((m) => ({ default: m.CareersPage })))
 const Login = lazy(() => import('@/features/auth/Login').then((m) => ({ default: m.Login })))
 const ChangePassword = lazy(() => import('@/features/auth/ChangePassword').then((m) => ({ default: m.ChangePassword })))
 
@@ -129,13 +131,16 @@ export function App() {
       )}
       <PullToRefresh />
       <ConcurrentSessionAlertModal />
-      {!isNativeApp() && <FloatingIntakesWidget />}
       <Routes>
         {/* Platform-Aware Root Route */}
         <Route path="/" element={<RootEntryRouter />} />
         <Route path="/about" element={<AboutPage />} />
         <Route path="/privacy" element={<PrivacyPolicy />} />
         <Route path="/courses" element={<CourseCatalogPage />} />
+        <Route path="/hire" element={<HireEclatPage />} />
+        <Route path="/services" element={<HireEclatPage />} />
+        <Route path="/careers" element={<CareersPage />} />
+        <Route path="/jobs" element={<CareersPage />} />
         <Route path="/login" element={<Login />} />
         <Route path="/change-password" element={<ChangePassword />} />
         {/* Open Public Routes with App Layout */}

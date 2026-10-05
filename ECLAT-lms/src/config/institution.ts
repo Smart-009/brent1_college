@@ -36,6 +36,7 @@ export interface InstitutionConfig {
   }
 
   auth: {
+    adminUsername?: string
     adminDefaultPassword?: string
     internalEmailDomain: string
   }

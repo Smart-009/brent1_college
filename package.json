@@ -2,8 +2,8 @@
   "name": "eclat-institute-root",
   "private": true,
   "scripts": {
-    "dev": "npm --prefix brent-lms run dev",
-    "build": "npm --prefix brent-lms run build",
-    "preview": "npm --prefix brent-lms run preview"
+    "dev": "npm --prefix ECLAT-lms run dev",
+    "build": "npm --prefix ECLAT-lms run build",
+    "preview": "npm --prefix ECLAT-lms run preview"
   }
 }
