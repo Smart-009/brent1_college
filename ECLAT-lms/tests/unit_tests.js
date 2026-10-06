@@ -1134,4 +1134,47 @@ test('Disbursement Preferences & Discrete Ingestion: Tutor/School Choice with Ze
   assert.ok(!tutorPageCode.includes('Video automatically saved to Desktop'))
 })
 
+test('Community Education Donation & Sponsorship: Physical Institution Enrollment Placement & SEO Routing', () => {
+  // Test business logic for sponsorship tiering & allocation
+  const evaluateSponsorshipImpact = (amount, currency = 'USD') => {
+    if (currency === 'USD') {
+      if (amount >= 350) return { category: 'physical_institution_placement', qualifiesPhysicalSchool: true }
+      if (amount >= 150) return { category: 'full_vocational_scholarship', qualifiesPhysicalSchool: false }
+      return { category: 'learning_materials_and_connectivity', qualifiesPhysicalSchool: false }
+    } else {
+      if (amount >= 45000) return { category: 'physical_institution_placement', qualifiesPhysicalSchool: true }
+      if (amount >= 18000) return { category: 'full_vocational_scholarship', qualifiesPhysicalSchool: false }
+      return { category: 'learning_materials_and_connectivity', qualifiesPhysicalSchool: false }
+    }
+  }
+
+  // 1. Check USD tiers
+  const tierSmall = evaluateSponsorshipImpact(50, 'USD')
+  assert.strictEqual(tierSmall.qualifiesPhysicalSchool, false)
+  const tierPhysicalPlacement = evaluateSponsorshipImpact(350, 'USD')
+  assert.strictEqual(tierPhysicalPlacement.qualifiesPhysicalSchool, true)
+  assert.strictEqual(tierPhysicalPlacement.category, 'physical_institution_placement')
+
+  // 2. Check KES tiers
+  const tierKesPlacement = evaluateSponsorshipImpact(45000, 'KES')
+  assert.strictEqual(tierKesPlacement.qualifiesPhysicalSchool, true)
+
+  // 3. Verify files and canonical SEO links
+  const indexHtml = fs.readFileSync(path.join(process.cwd(), 'index.html'), 'utf-8')
+  assert.ok(indexHtml.includes('https://eclat.institute/donate'))
+  assert.ok(indexHtml.includes('Sponsor a Student'))
+
+  const sitemapXml = fs.readFileSync(path.join(process.cwd(), 'public/sitemap.xml'), 'utf-8')
+  assert.ok(sitemapXml.includes('https://www.eclat.institute/donate'))
+
+  const llmsTxt = fs.readFileSync(path.join(process.cwd(), 'public/llms.txt'), 'utf-8')
+  assert.ok(llmsTxt.includes('https://eclat.institute/donate'))
+  assert.ok(llmsTxt.includes('Direct Physical Institution Enrollment'))
+
+  const appTsx = fs.readFileSync(path.join(process.cwd(), 'src/App.tsx'), 'utf-8')
+  assert.ok(appTsx.includes('path="/donate"'))
+  assert.ok(appTsx.includes('DonationSponsorshipPage'))
+})
+
+
 

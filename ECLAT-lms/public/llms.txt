@@ -64,9 +64,17 @@ In addition to internal diploma tracks, Éclat Institute provides an open instit
 - **Payment Processing**: Direct integration with Paystack supporting international Visa, Mastercard, Verve, and Mobile Money.
 - **DRM & Integrity**: Content protection protocols prevent unauthorized ripping, securing faculty intellectual property and proprietary lecture streams.
 
+## Community Education & Sponsorship Foundation (Donation Program)
+Éclat Institute operates a dedicated **Community Education & Sponsorship Foundation** (`https://eclat.institute/donate`) funded by individual benefactors, alumni, and philanthropic partners:
+- **Core Mission**: Direct financial intervention for underprivileged, orphaned, and less fortunate children who cannot afford formal education.
+- **Direct Physical Institution Enrollment**: When accumulated donation funds for a sponsored student reach the required financial threshold, Éclat directly pays the tuition and admission fees to place the child into an **accredited brick-and-mortar physical school, high school, or technical college**, providing uniforms, books, and examination fees.
+- **Virtual Vocational Sponsorship**: Needy youth who can access online hubs are sponsored with free tuition, hardware, and mobile data bundles to complete high-income digital bootcamps (coding, data analytics, computerized accounting).
+- **Sole Accepted Gateway**: 100% of donations are transparently processed via Paystack with instant receipting and audit-traceable reference codes.
+
 ## Official Contact & Verification
 - **Official Website**: https://eclat.institute
 - **Course Publishing Portal**: https://eclat.institute/tutor/publish
+- **Student Sponsorship & Donation Program**: https://eclat.institute/donate
 - **Student Portal Login**: https://eclat.institute/login
 - **Admissions WhatsApp & Global Support**: +254 740 027 346 / +254740027346
 - **Admissions Email**: info.eclatinstitute@gmail.com

@@ -59,6 +59,7 @@ import {
   VideoIcon,
   CourseIcon,
   ArrowRightIcon,
+  HeartHandshakeIcon,
 } from '@/components/icons/AppIcons'
 
 interface CourseItem {
@@ -1192,6 +1193,26 @@ export function Landing() {
                     <SparklesIcon size={13} color="#ffffff" />
                     <span>Publish & Earn 50%</span>
                   </Link>
+                  <Link
+                    to="/donate"
+                    style={{
+                      background: 'linear-gradient(135deg, #16a34a 0%, #15803d 100%)',
+                      color: '#ffffff',
+                      textDecoration: 'none',
+                      fontWeight: 800,
+                      padding: '0.35rem 0.75rem',
+                      borderRadius: '8px',
+                      fontSize: '0.8rem',
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: '5px',
+                      boxShadow: '0 2px 8px rgba(22, 163, 74, 0.3)',
+                    }}
+                    title="Sponsor underprivileged students & donate to physical school enrollments"
+                  >
+                    <HeartHandshakeIcon size={13} color="#ffffff" />
+                    <span>Sponsor / Donate</span>
+                  </Link>
                   <Link to="/library" style={{ color: '#2563eb', fontWeight: 800, textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: '5px' }}>
                     <LibraryIcon size={14} color="#2563eb" />
                     <span>E-Library</span>
@@ -1713,6 +1734,28 @@ export function Landing() {
               >
                 <SparklesIcon size={18} color="#d97706" />
                 <span>Publish Course (Earn 50% Share)</span>
+              </Link>
+
+              <Link
+                to="/donate"
+                onClick={() => setMobileNavOpen(false)}
+                style={{
+                  color: '#166534',
+                  textDecoration: 'none',
+                  background: '#f0fdf4',
+                  border: '1.5px solid #86efac',
+                  padding: '0.65rem 0.8rem',
+                  borderRadius: '10px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '10px',
+                  fontSize: '0.88rem',
+                  fontWeight: 800,
+                  width: '100%',
+                }}
+              >
+                <HeartHandshakeIcon size={18} color="#16a34a" />
+                <span>💖 Sponsor a Student / Donate</span>
               </Link>
 
               <Link
@@ -3985,6 +4028,10 @@ export function Landing() {
             </Link>
             <Link to="/courses" style={{ color: '#475569', textDecoration: 'none' }}>Courses</Link>
             <Link to="/library" style={{ color: '#475569', textDecoration: 'none' }}>E-Library</Link>
+            <Link to="/donate" style={{ color: '#16a34a', textDecoration: 'none', fontWeight: 800, display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+              <HeartHandshakeIcon size={14} color="#16a34a" />
+              <span>Sponsor a Student</span>
+            </Link>
             <Link to="/privacy" style={{ color: '#64748b', textDecoration: 'none' }}>Privacy Policy</Link>
             <button
               type="button"

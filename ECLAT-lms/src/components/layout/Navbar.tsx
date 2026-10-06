@@ -95,6 +95,30 @@ export function Navbar({ onToggleSidebar }: { onToggleSidebar: () => void }) {
           <span className="hide-on-mobile">School Bell</span>
         </button>
 
+        {/* Sponsor a Student / Donation Link */}
+        <Link
+          to="/donate"
+          className="btn btn-sm hide-mobile"
+          style={{
+            background: 'linear-gradient(135deg, #16a34a 0%, #15803d 100%)',
+            color: '#ffffff',
+            border: 'none',
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: '0.35rem',
+            fontSize: '0.78rem',
+            fontWeight: 800,
+            textDecoration: 'none',
+            borderRadius: '8px',
+            padding: '4px 10px',
+            boxShadow: '0 2px 8px rgba(22, 163, 74, 0.35)',
+          }}
+          title="Sponsor an Underprivileged Learner / Support Less Fortunate Students"
+        >
+          <span>💖</span>
+          <span>Sponsor / Donate</span>
+        </Link>
+
         {/* Download Native Apps Link (Public Website Only) */}
         {!isNativeApp() && (
           <a

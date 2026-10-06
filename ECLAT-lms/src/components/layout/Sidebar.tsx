@@ -20,6 +20,7 @@ import {
   ShieldCheckIcon,
   AwardIcon,
   ChartBarIcon,
+  HeartHandshakeIcon,
 } from '@/components/icons/AppIcons'
 
 interface NavItem {
@@ -39,6 +40,7 @@ export function Sidebar({ isOpen, onClose }: { isOpen: boolean; onClose: () => v
     { to: '/courses', label: 'Vocational & IGCSE Courses', icon: BookOpenIcon },
     { to: '/igcse', label: 'Cambridge & Edexcel IGCSE', icon: AwardIcon },
     { to: '/library', label: 'E-Library & Past Papers', icon: LibraryIcon },
+    { to: '/donate', label: '💖 Sponsor a Student / Donate', icon: HeartHandshakeIcon },
     { to: '/login', label: 'Student / Faculty Login', icon: LockIcon },
   ]
 
