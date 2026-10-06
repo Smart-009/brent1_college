@@ -738,6 +738,7 @@ export function SchoolRegistrationPage() {
                       id={`${formId}-country`}
                       type="text"
                       required
+                      autoComplete="off"
                       placeholder="Kenya"
                       value={country}
                       onChange={(e) => setCountry(e.target.value)}
@@ -759,6 +760,7 @@ export function SchoolRegistrationPage() {
                       id={`${formId}-city`}
                       type="text"
                       required
+                      autoComplete="off"
                       placeholder="Nairobi"
                       value={city}
                       onChange={(e) => setCity(e.target.value)}
@@ -781,6 +783,7 @@ export function SchoolRegistrationPage() {
                   <input
                     id={`${formId}-address`}
                     type="text"
+                    autoComplete="off"
                     placeholder="e.g. Karen Road, P.O. Box 4020, Nairobi"
                     value={address}
                     onChange={(e) => setAddress(e.target.value)}
