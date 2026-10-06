@@ -4,7 +4,9 @@ import { useAuthContext } from '@/features/auth/AuthContext'
 import { MobileAppBottomNav } from '@/components/layout/MobileAppBottomNav'
 import { isNativeApp } from '@/utils/platform'
 import { sanitizeInput } from '@/lib/utils'
-import type { Role } from '@/lib/database.types'
+import type { Role, Profile } from '@/lib/database.types'
+import { schoolStore } from '@/lib/schoolData'
+import { hashPassword } from '@/lib/crypto'
 import {
   GraduationCapIcon,
   BookOpenIcon,
@@ -15,6 +17,9 @@ import {
   AlertTriangleIcon,
   CheckIcon,
   AwardIcon,
+  SparklesIcon,
+  VideoIcon,
+  UserIcon,
 } from '@/components/icons/AppIcons'
 
 export function Login() {
@@ -24,6 +29,21 @@ export function Login() {
   const paramRole = searchParams.get('role') as Role | null
 
   const isNative = isNativeApp()
+
+  const [authMode, setAuthMode] = useState<'signin' | 'register'>(
+    searchParams.get('mode') === 'register' ? 'register' : 'signin'
+  )
+  const [regType, setRegType] = useState<'student' | 'tutor' | 'school'>('student')
+  const [regName, setRegName] = useState('')
+  const [regEmail, setRegEmail] = useState('')
+  const [regPhone, setRegPhone] = useState('')
+  const [regPassword, setRegPassword] = useState('')
+  const [regDeliveryTrack, setRegDeliveryTrack] = useState<'self_paced' | 'live_cohort'>('self_paced')
+  const [regInstitutionName, setRegInstitutionName] = useState('')
+  const [regSignatory, setRegSignatory] = useState('')
+  const [regLogoUrl, setRegLogoUrl] = useState('')
+  const [regLoading, setRegLoading] = useState(false)
+  const [regSuccessMsg, setRegSuccessMsg] = useState<string | null>(null)
 
   // If URL has ?role=admin or ?role=bursar, start in staff mode
   const [isStaffMode, setIsStaffMode] = useState<boolean>(paramRole === 'admin' || paramRole === 'bursar')
@@ -165,6 +185,137 @@ export function Login() {
       } else {
         navigate('/student')
       }
+    }
+  }
+
+  const handleRegister = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setError(null)
+    setRegSuccessMsg(null)
+    setRegLoading(true)
+
+    try {
+      const cleanName = sanitizeInput(regType === 'school' ? regInstitutionName : regName).trim()
+      const cleanEmail = sanitizeInput(regEmail).toLowerCase().trim()
+      const cleanPassword = regPassword.trim()
+      const cleanPhone = sanitizeInput(regPhone).trim()
+
+      if (!cleanName || !cleanPassword) {
+        setError('Please provide your name/institution name and password.')
+        setRegLoading(false)
+        return
+      }
+
+      // Generate systematic admission / identifier code
+      let generatedCode = ''
+      const year = new Date().getFullYear()
+      const randNum = Math.floor(1000 + Math.random() * 9000)
+
+      if (regType === 'student') {
+        generatedCode = `EI-${year}-STD${randNum}`
+      } else if (regType === 'tutor') {
+        generatedCode = `EI-TCH-${randNum}`
+      } else {
+        generatedCode = `EI-SCH-${randNum}`
+      }
+
+      const passHash = await hashPassword(cleanPassword)
+      const registeredUserId = `usr-${Date.now()}`
+      const userRole: Role = regType === 'student' ? 'student' : 'teacher'
+
+      const newProfile: Profile = {
+        id: registeredUserId,
+        full_name: cleanName,
+        admission_number: generatedCode,
+        role: userRole,
+        first_login_at: new Date().toISOString(),
+        access_expires_at: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString(),
+        is_active: true,
+        created_at: new Date().toISOString(),
+      }
+
+      // Store in local credentials store
+      const stored = localStorage.getItem('eclat_local_credentials')
+      const parsed = stored ? JSON.parse(stored) : {}
+      const cleanAlpha = generatedCode.toLowerCase().replace(/[^a-z0-9]/g, '')
+      const emailAlpha = cleanEmail.replace(/[^a-z0-9]/g, '')
+
+      const credEntry = {
+        id: registeredUserId,
+        admission_number: generatedCode,
+        full_name: cleanName,
+        email: cleanEmail,
+        phone: cleanPhone,
+        password: cleanPassword,
+        passwordHash: passHash,
+        role: userRole,
+        account_type: regType,
+        delivery_mode: regType === 'student' ? regDeliveryTrack : undefined,
+        institution_name: regType === 'school' ? cleanName : undefined,
+        institution_signatory: regType === 'school' ? regSignatory : undefined,
+        institution_logo: regType === 'school' ? regLogoUrl : undefined,
+        profile: newProfile,
+        created_at: new Date().toISOString(),
+      }
+
+      parsed[cleanAlpha] = credEntry
+      if (emailAlpha) {
+        parsed[emailAlpha] = credEntry
+      }
+      localStorage.setItem('eclat_local_credentials', JSON.stringify(parsed))
+
+      // If student, add to schoolStore SIS student directory
+      if (regType === 'student') {
+        await schoolStore.addStudent({
+          id: registeredUserId,
+          admission_number: generatedCode,
+          full_name: cleanName,
+          portal_password: cleanPassword,
+          gender: 'Male',
+          dob: '2004-01-01',
+          class_id: 'prog-comp',
+          class_name: regDeliveryTrack === 'live_cohort' ? 'Live Online Cohort' : 'Self-Paced Video Track',
+          grade_level: 'Professional Certificate',
+          stream: regDeliveryTrack === 'live_cohort' ? 'Live Online' : 'Self-Paced On-Demand',
+          enrollment_date: new Date().toLocaleDateString('en-GB'),
+          admission_date: new Date().toLocaleDateString('en-GB'),
+          status: 'Active',
+          guardian: {
+            name: cleanName,
+            relationship: 'Self',
+            phone: cleanPhone,
+            email: cleanEmail,
+          },
+          parent_phone: cleanPhone,
+          emergency_contact: cleanPhone,
+          fee_balance: 0,
+          term_fee_total: 60,
+          fee_cleared: true,
+          attendance_rate: 100,
+          discipline_points: 100,
+          merits_count: 1,
+          demerits_count: 0,
+        })
+      }
+
+      // Automatically sign in
+      const signInRes = await signIn(generatedCode, cleanPassword)
+      setRegLoading(false)
+
+      if (signInRes.error) {
+        setRegSuccessMsg(`Account created! Your Identifier is ${generatedCode}. Please sign in.`)
+        setAuthMode('signin')
+        setAdmissionNumber(generatedCode)
+      } else {
+        if (regType === 'student') {
+          navigate('/student')
+        } else {
+          navigate('/publish-course')
+        }
+      }
+    } catch (err: any) {
+      setRegLoading(false)
+      setError(err?.message || 'Error creating account. Please try again.')
     }
   }
 
@@ -377,24 +528,62 @@ export function Login() {
           }}
         >
           <div>
-            <div style={{ marginBottom: '1.25rem' }}>
-              <span
+            {/* Top Auth Mode Switcher */}
+            <div
+              style={{
+                display: 'flex',
+                background: '#f1f5f9',
+                borderRadius: '12px',
+                padding: '4px',
+                marginBottom: '1.25rem',
+              }}
+            >
+              <button
+                type="button"
+                onClick={() => {
+                  setAuthMode('signin')
+                  setError(null)
+                  setRegSuccessMsg(null)
+                }}
                 style={{
-                  fontSize: '0.75rem',
-                  color: isStaffMode ? '#dc2626' : '#2563eb',
-                  fontWeight: 800,
-                  textTransform: 'uppercase',
-                  letterSpacing: '0.05em',
+                  flex: 1,
+                  padding: '0.55rem',
+                  borderRadius: '9px',
+                  border: 'none',
+                  background: authMode === 'signin' ? '#ffffff' : 'transparent',
+                  fontWeight: authMode === 'signin' ? 800 : 600,
+                  color: authMode === 'signin' ? '#1e3a8a' : '#64748b',
+                  boxShadow: authMode === 'signin' ? '0 1px 4px rgba(0,0,0,0.08)' : 'none',
+                  cursor: 'pointer',
+                  fontSize: '0.86rem',
+                  transition: 'all 0.15s ease',
                 }}
               >
-                {isStaffMode ? 'ADMINISTRATIVE TERMINAL' : 'STUDENT & FACULTY PORTAL'}
-              </span>
-              <h2 style={{ fontSize: '1.35rem', fontWeight: 900, color: '#0f172a', margin: '0.25rem 0 0.35rem' }}>
-                {currentActiveRole.label}
-              </h2>
-              <p style={{ fontSize: '0.82rem', color: '#475569', margin: 0 }}>
-                Enter your registered credentials to sign in to your dashboard.
-              </p>
+                Sign In to Portal
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  setAuthMode('register')
+                  setError(null)
+                  setRegSuccessMsg(null)
+                }}
+                style={{
+                  flex: 1,
+                  padding: '0.55rem',
+                  borderRadius: '9px',
+                  border: 'none',
+                  background: authMode === 'register' ? '#ffffff' : 'transparent',
+                  fontWeight: authMode === 'register' ? 800 : 600,
+                  color: authMode === 'register' ? '#1e3a8a' : '#64748b',
+                  boxShadow: authMode === 'register' ? '0 1px 4px rgba(0,0,0,0.08)' : 'none',
+                  cursor: 'pointer',
+                  fontSize: '0.86rem',
+                  transition: 'all 0.15s ease',
+                }}
+              >
+                Create New Account
+              </button>
             </div>
 
             {error && (
@@ -417,107 +606,404 @@ export function Login() {
               </div>
             )}
 
-            <form onSubmit={handleSubmit} autoComplete="off">
-                <div style={{ marginBottom: '1.1rem' }}>
-                  <label className="label" style={{ fontSize: '0.84rem', fontWeight: 700, color: '#1e293b' }}>
-                    {selectedPortalKey === 'igcse'
-                      ? 'IGCSE Candidate Number / Unique ID'
-                      : selectedRole === 'student'
-                      ? 'Admission Number'
-                      : 'Username / Admission Number'}
-                  </label>
-                  <input
-                    type="text"
-                    required
-                    autoComplete="off"
-                    autoCapitalize="none"
-                    autoCorrect="off"
-                    spellCheck={false}
-                    className="input"
-                    value={admissionNumber}
-                    onChange={(e) => setAdmissionNumber(e.target.value)}
-                    placeholder={
-                      selectedPortalKey === 'igcse'
-                        ? 'Enter candidate number (e.g. KE042/0001/2026) or name'
-                        : selectedRole === 'student'
-                        ? 'Enter admission number or full name'
-                        : 'Enter username or staff email'
-                    }
-                    style={{ fontSize: '0.95rem', padding: '0.75rem 0.9rem' }}
-                  />
-                </div>
+            {regSuccessMsg && (
+              <div
+                style={{
+                  background: '#f0fdf4',
+                  border: '1px solid #86efac',
+                  borderRadius: '10px',
+                  padding: '0.75rem 1rem',
+                  color: '#166534',
+                  fontSize: '0.85rem',
+                  marginBottom: '1.25rem',
+                  display: 'flex',
+                  gap: '0.5rem',
+                  alignItems: 'center',
+                }}
+              >
+                <CheckIcon size={18} color="#16a34a" />
+                <div>{regSuccessMsg}</div>
+              </div>
+            )}
 
-                <div style={{ marginBottom: '1.3rem' }}>
-                  <div
+            {authMode === 'signin' ? (
+              <>
+                <div style={{ marginBottom: '1.25rem' }}>
+                  <span
                     style={{
-                      display: 'flex',
-                      justifyContent: 'space-between',
-                      alignItems: 'center',
-                      marginBottom: '0.35rem',
+                      fontSize: '0.75rem',
+                      color: isStaffMode ? '#dc2626' : '#2563eb',
+                      fontWeight: 800,
+                      textTransform: 'uppercase',
+                      letterSpacing: '0.05em',
                     }}
                   >
-                    <label className="label" style={{ margin: 0, fontSize: '0.84rem', fontWeight: 700, color: '#1e293b' }}>
-                      Password
+                    {isStaffMode ? 'ADMINISTRATIVE TERMINAL' : 'STUDENT & FACULTY PORTAL'}
+                  </span>
+                  <h2 style={{ fontSize: '1.35rem', fontWeight: 900, color: '#0f172a', margin: '0.25rem 0 0.35rem' }}>
+                    {currentActiveRole.label}
+                  </h2>
+                  <p style={{ fontSize: '0.82rem', color: '#475569', margin: 0 }}>
+                    Enter your registered credentials to sign in to your dashboard.
+                  </p>
+                </div>
+
+                <form onSubmit={handleSubmit} autoComplete="off">
+                  <div style={{ marginBottom: '1.1rem' }}>
+                    <label className="label" style={{ fontSize: '0.84rem', fontWeight: 700, color: '#1e293b' }}>
+                      {selectedPortalKey === 'igcse'
+                        ? 'IGCSE Candidate Number / Unique ID'
+                        : selectedRole === 'student'
+                        ? 'Admission Number'
+                        : 'Username / Admission Number'}
                     </label>
+                    <input
+                      type="text"
+                      required
+                      autoComplete="off"
+                      autoCapitalize="none"
+                      autoCorrect="off"
+                      spellCheck={false}
+                      className="input"
+                      value={admissionNumber}
+                      onChange={(e) => setAdmissionNumber(e.target.value)}
+                      placeholder={
+                        selectedPortalKey === 'igcse'
+                          ? 'Enter candidate number (e.g. KE042/0001/2026) or name'
+                          : selectedRole === 'student'
+                          ? 'Enter admission number or full name'
+                          : 'Enter username or staff email'
+                      }
+                      style={{ fontSize: '0.95rem', padding: '0.75rem 0.9rem' }}
+                    />
+                  </div>
+
+                  <div style={{ marginBottom: '1.3rem' }}>
+                    <div
+                      style={{
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        alignItems: 'center',
+                        marginBottom: '0.35rem',
+                      }}
+                    >
+                      <label className="label" style={{ margin: 0, fontSize: '0.84rem', fontWeight: 700, color: '#1e293b' }}>
+                        Password
+                      </label>
+                      <button
+                        type="button"
+                        style={{
+                          background: 'none',
+                          border: 'none',
+                          color: '#2563eb',
+                          fontSize: '0.78rem',
+                          cursor: 'pointer',
+                          fontWeight: 600,
+                        }}
+                        onClick={() => setShowPassword(!showPassword)}
+                      >
+                        {showPassword ? 'Hide' : 'Show'}
+                      </button>
+                    </div>
+                    <input
+                      type={showPassword ? 'text' : 'password'}
+                      required
+                      autoComplete="new-password"
+                      autoCapitalize="none"
+                      autoCorrect="off"
+                      spellCheck={false}
+                      className="input"
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      placeholder="Enter password"
+                      style={{ fontSize: '0.95rem', padding: '0.75rem 0.9rem' }}
+                    />
+                  </div>
+
+                  <button
+                    type="submit"
+                    className="btn btn-primary btn-full"
+                    disabled={loading}
+                    style={{ fontWeight: 800, padding: '0.85rem', borderRadius: '12px', fontSize: '0.95rem' }}
+                  >
+                    {loading ? 'Authenticating...' : `Sign In to Portal →`}
+                  </button>
+
+                  <div style={{ marginTop: '1rem', textAlign: 'center' }}>
                     <button
                       type="button"
+                      onClick={() => setAuthMode('register')}
                       style={{
                         background: 'none',
                         border: 'none',
                         color: '#2563eb',
-                        fontSize: '0.78rem',
+                        fontSize: '0.82rem',
+                        fontWeight: 700,
+                        cursor: 'pointer',
+                      }}
+                    >
+                      Don't have an account? Create one here →
+                    </button>
+                  </div>
+
+                  {selectedPortalKey === 'igcse' && (
+                    <div style={{ marginTop: '0.85rem', textAlign: 'center' }}>
+                      <Link
+                        to="/igcse"
+                        style={{
+                          fontSize: '0.82rem',
+                          color: '#0284c7',
+                          fontWeight: 700,
+                          textDecoration: 'none',
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          gap: '4px',
+                        }}
+                      >
+                        <span>🏛️</span>
+                        <span>Open Cambridge & Edexcel Examination Center Portal →</span>
+                      </Link>
+                    </div>
+                  )}
+                </form>
+              </>
+            ) : (
+              /* REGISTRATION FORM */
+              <>
+                <div style={{ marginBottom: '1.1rem' }}>
+                  <span style={{ fontSize: '0.74rem', color: '#16a34a', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                    NEW ACCOUNT REGISTRATION
+                  </span>
+                  <h2 style={{ fontSize: '1.3rem', fontWeight: 900, color: '#0f172a', margin: '0.2rem 0' }}>
+                    Create Your Account
+                  </h2>
+                  <p style={{ fontSize: '0.82rem', color: '#475569', margin: 0 }}>
+                    Register as a Student, Individual Tutor, or Partner School to publish courses.
+                  </p>
+                </div>
+
+                {/* Account Type Pills */}
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '6px', marginBottom: '1.1rem' }}>
+                  <button
+                    type="button"
+                    onClick={() => setRegType('student')}
+                    style={{
+                      padding: '0.5rem 0.35rem',
+                      borderRadius: '8px',
+                      border: regType === 'student' ? '2px solid #2563eb' : '1px solid #cbd5e1',
+                      background: regType === 'student' ? '#eff6ff' : '#f8fafc',
+                      color: regType === 'student' ? '#1e40af' : '#475569',
+                      fontSize: '0.78rem',
+                      fontWeight: 800,
+                      cursor: 'pointer',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      alignItems: 'center',
+                      gap: '3px',
+                    }}
+                  >
+                    <span>🎓 Student</span>
+                    <span style={{ fontSize: '0.65rem', fontWeight: 500, color: '#64748b' }}>Learn & Certify</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => setRegType('tutor')}
+                    style={{
+                      padding: '0.5rem 0.35rem',
+                      borderRadius: '8px',
+                      border: regType === 'tutor' ? '2px solid #f59e0b' : '1px solid #cbd5e1',
+                      background: regType === 'tutor' ? '#fffbeb' : '#f8fafc',
+                      color: regType === 'tutor' ? '#b45309' : '#475569',
+                      fontSize: '0.78rem',
+                      fontWeight: 800,
+                      cursor: 'pointer',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      alignItems: 'center',
+                      gap: '3px',
+                    }}
+                  >
+                    <span>👨‍🏫 Tutor</span>
+                    <span style={{ fontSize: '0.65rem', fontWeight: 500, color: '#64748b' }}>Earn 50%</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => setRegType('school')}
+                    style={{
+                      padding: '0.5rem 0.35rem',
+                      borderRadius: '8px',
+                      border: regType === 'school' ? '2px solid #16a34a' : '1px solid #cbd5e1',
+                      background: regType === 'school' ? '#f0fdf4' : '#f8fafc',
+                      color: regType === 'school' ? '#15803d' : '#475569',
+                      fontSize: '0.78rem',
+                      fontWeight: 800,
+                      cursor: 'pointer',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      alignItems: 'center',
+                      gap: '3px',
+                    }}
+                  >
+                    <span>🏫 School</span>
+                    <span style={{ fontSize: '0.65rem', fontWeight: 500, color: '#64748b' }}>Publish Brand</span>
+                  </button>
+                </div>
+
+                <form onSubmit={handleRegister} autoComplete="off">
+                  {regType === 'school' ? (
+                    <div style={{ marginBottom: '0.85rem' }}>
+                      <label className="label" style={{ fontSize: '0.82rem', fontWeight: 700 }}>
+                        Institution / School Name *
+                      </label>
+                      <input
+                        type="text"
+                        required
+                        className="input"
+                        placeholder="e.g. Nairobi Coding Academy"
+                        value={regInstitutionName}
+                        onChange={(e) => setRegInstitutionName(e.target.value)}
+                        style={{ fontSize: '0.9rem', padding: '0.65rem 0.85rem' }}
+                      />
+                    </div>
+                  ) : null}
+
+                  <div style={{ marginBottom: '0.85rem' }}>
+                    <label className="label" style={{ fontSize: '0.82rem', fontWeight: 700 }}>
+                      {regType === 'school' ? 'Authorized Principal / Dean Name *' : 'Full Name *'}
+                    </label>
+                    <input
+                      type="text"
+                      required
+                      className="input"
+                      placeholder={regType === 'school' ? 'e.g. Dr. Arthur Vance' : 'e.g. Samuel Karanja'}
+                      value={regName}
+                      onChange={(e) => setRegName(e.target.value)}
+                      style={{ fontSize: '0.9rem', padding: '0.65rem 0.85rem' }}
+                    />
+                  </div>
+
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.65rem', marginBottom: '0.85rem' }}>
+                    <div>
+                      <label className="label" style={{ fontSize: '0.82rem', fontWeight: 700 }}>
+                        Email Address *
+                      </label>
+                      <input
+                        type="email"
+                        required
+                        className="input"
+                        placeholder="email@example.com"
+                        value={regEmail}
+                        onChange={(e) => setRegEmail(e.target.value)}
+                        style={{ fontSize: '0.9rem', padding: '0.65rem 0.85rem' }}
+                      />
+                    </div>
+                    <div>
+                      <label className="label" style={{ fontSize: '0.82rem', fontWeight: 700 }}>
+                        WhatsApp Phone *
+                      </label>
+                      <input
+                        type="tel"
+                        required
+                        className="input"
+                        placeholder="+254 712 345 678"
+                        value={regPhone}
+                        onChange={(e) => setRegPhone(e.target.value)}
+                        style={{ fontSize: '0.9rem', padding: '0.65rem 0.85rem' }}
+                      />
+                    </div>
+                  </div>
+
+                  {regType === 'student' && (
+                    <div style={{ marginBottom: '0.85rem' }}>
+                      <label className="label" style={{ fontSize: '0.82rem', fontWeight: 700 }}>
+                        Primary Learning Track
+                      </label>
+                      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
+                        <button
+                          type="button"
+                          onClick={() => setRegDeliveryTrack('self_paced')}
+                          style={{
+                            padding: '0.5rem',
+                            borderRadius: '8px',
+                            border: regDeliveryTrack === 'self_paced' ? '1.5px solid #d97706' : '1px solid #cbd5e1',
+                            background: regDeliveryTrack === 'self_paced' ? '#fffbeb' : '#ffffff',
+                            color: regDeliveryTrack === 'self_paced' ? '#92400e' : '#475569',
+                            fontSize: '0.78rem',
+                            fontWeight: 700,
+                            cursor: 'pointer',
+                            textAlign: 'left',
+                          }}
+                        >
+                          ⚡ Self-Paced Video
+                          <div style={{ fontSize: '0.66rem', color: '#64748b' }}>Instant streaming access</div>
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => setRegDeliveryTrack('live_cohort')}
+                          style={{
+                            padding: '0.5rem',
+                            borderRadius: '8px',
+                            border: regDeliveryTrack === 'live_cohort' ? '1.5px solid #7c3aed' : '1px solid #cbd5e1',
+                            background: regDeliveryTrack === 'live_cohort' ? '#f5f3ff' : '#ffffff',
+                            color: regDeliveryTrack === 'live_cohort' ? '#6d28d9' : '#475569',
+                            fontSize: '0.78rem',
+                            fontWeight: 700,
+                            cursor: 'pointer',
+                            textAlign: 'left',
+                          }}
+                        >
+                          🎓 Live Cohort
+                          <div style={{ fontSize: '0.66rem', color: '#64748b' }}>Admission pass & Meet link</div>
+                        </button>
+                      </div>
+                    </div>
+                  )}
+
+                  <div style={{ marginBottom: '1.1rem' }}>
+                    <label className="label" style={{ fontSize: '0.82rem', fontWeight: 700 }}>
+                      Create Password *
+                    </label>
+                    <input
+                      type="password"
+                      required
+                      className="input"
+                      placeholder="Minimum 6 characters"
+                      value={regPassword}
+                      onChange={(e) => setRegPassword(e.target.value)}
+                      style={{ fontSize: '0.9rem', padding: '0.65rem 0.85rem' }}
+                    />
+                  </div>
+
+                  <button
+                    type="submit"
+                    className="btn btn-primary btn-full"
+                    disabled={regLoading}
+                    style={{ fontWeight: 800, padding: '0.8rem', borderRadius: '12px', fontSize: '0.92rem' }}
+                  >
+                    {regLoading ? 'Registering Account...' : regType === 'student' ? 'Complete Student Registration →' : regType === 'tutor' ? 'Register Tutor & Open Publisher →' : 'Register School & Open Publisher →'}
+                  </button>
+
+                  <div style={{ marginTop: '0.85rem', textAlign: 'center' }}>
+                    <button
+                      type="button"
+                      onClick={() => setAuthMode('signin')}
+                      style={{
+                        background: 'none',
+                        border: 'none',
+                        color: '#64748b',
+                        fontSize: '0.8rem',
                         cursor: 'pointer',
                         fontWeight: 600,
                       }}
-                      onClick={() => setShowPassword(!showPassword)}
                     >
-                      {showPassword ? 'Hide' : 'Show'}
+                      Already have an account? Sign In →
                     </button>
                   </div>
-                  <input
-                    type={showPassword ? 'text' : 'password'}
-                    required
-                    autoComplete="new-password"
-                    autoCapitalize="none"
-                    autoCorrect="off"
-                    spellCheck={false}
-                    className="input"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    placeholder="Enter password"
-                    style={{ fontSize: '0.95rem', padding: '0.75rem 0.9rem' }}
-                  />
-                </div>
-
-                <button
-                  type="submit"
-                  className="btn btn-primary btn-full"
-                  disabled={loading}
-                  style={{ fontWeight: 800, padding: '0.85rem', borderRadius: '12px', fontSize: '0.95rem' }}
-                >
-                  {loading ? 'Authenticating...' : `Sign In to Portal →`}
-                </button>
-
-                {selectedPortalKey === 'igcse' && (
-                  <div style={{ marginTop: '0.85rem', textAlign: 'center' }}>
-                    <Link
-                      to="/igcse"
-                      style={{
-                        fontSize: '0.82rem',
-                        color: '#0284c7',
-                        fontWeight: 700,
-                        textDecoration: 'none',
-                        display: 'inline-flex',
-                        alignItems: 'center',
-                        gap: '4px',
-                      }}
-                    >
-                      <span>🏛️</span>
-                      <span>Open Cambridge & Edexcel Examination Center Portal →</span>
-                    </Link>
-                  </div>
-                )}
-              </form>
+                </form>
+              </>
+            )}
           </div>
 
           <div style={{ fontSize: '0.75rem', color: '#64748b', textAlign: 'center', marginTop: '1.25rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}>

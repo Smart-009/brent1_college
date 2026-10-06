@@ -1,10 +1,10 @@
-﻿import { useState, useMemo } from 'react'
+import { useState, useMemo } from 'react'
 import { INSTITUTION_CONFIG } from '@/config/institution'
 import { GraduationCapIcon, CheckIcon, CodeIcon, ChartBarIcon, BuildingIcon, SparklesIcon } from '@/components/icons/AppIcons'
 
 export interface CertificateData {
   student_name: string
-  admission_number: string
+  admission_number?: string
   course_title: string
   grade: string
   percentage: number
@@ -18,6 +18,11 @@ export interface CertificateData {
   department?: string
   hash?: string
   qr_code_url?: string
+  provider_type?: 'individual_tutor' | 'partner_institution'
+  institution_name?: string
+  institution_logo?: string
+  institution_signatory?: string
+  delivery_mode?: 'live_cohort' | 'self_paced'
 }
 
 // Sample presets so users & evaluators can preview different disciplines
@@ -104,6 +109,30 @@ export const SAMPLE_CERTIFICATES: Record<string, CertificateData> = {
       'High-Performance Academic Logic',
     ],
     hash: '9a14bc678de23f5678901234567890abcdef1234567890abcdef1234567890ab',
+  },
+  partner_academy: {
+    student_name: 'Kevin Omondi Otieno',
+    admission_number: 'NCA-2026-DEV091',
+    course_title: 'Full-Stack Mobile App Engineering with React Native & Flutter',
+    faculty_name: 'Faculty of Mobile Computing & Cloud Architecture',
+    provider_type: 'partner_institution',
+    institution_name: 'Nairobi Coding Academy',
+    institution_signatory: 'Eng. Patrick Mwangi, Director of Training',
+    delivery_mode: 'self_paced',
+    grade: 'Distinction (Grade A)',
+    percentage: 95.8,
+    honors: 'Conferred with Academy Honors in Applied Software Engineering',
+    issue_date: '12 October 2026',
+    certificate_no: 'NCA-CERT-2026-9921',
+    duration: 'Self-Paced Comprehensive Practicum (80 Training Hours)',
+    trainer_name: 'Eng. Patrick Mwangi',
+    skills_acquired: [
+      'Flutter 3.x & Dart Architecture',
+      'React Native Cross-Platform Workflows',
+      'REST APIs & Cloud Database Sync',
+      'App Store & Play Store Deployment',
+    ],
+    hash: '7b83ec428af94bcde1234567890abcdef1234567890abcdef1234567890abcdef',
   },
 }
 
@@ -372,6 +401,26 @@ export function CertificateGenerator({
             <BuildingIcon size={14} color={activeCert.course_title.includes('Cambridge') ? '#ffffff' : '#475569'} />
             <span>Cambridge IGCSE (KE042)</span>
           </button>
+          <button
+            type="button"
+            onClick={() => setActiveCert(SAMPLE_CERTIFICATES.partner_academy)}
+            style={{
+              background: activeCert.provider_type === 'partner_institution' ? '#1d4ed8' : '#f1f5f9',
+              color: activeCert.provider_type === 'partner_institution' ? '#ffffff' : '#334155',
+              border: activeCert.provider_type === 'partner_institution' ? '1px solid #1d4ed8' : '1px solid #cbd5e1',
+              borderRadius: '6px',
+              padding: '4px 10px',
+              cursor: 'pointer',
+              fontWeight: 700,
+              whiteSpace: 'nowrap',
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '6px',
+            }}
+          >
+            <GraduationCapIcon size={14} color={activeCert.provider_type === 'partner_institution' ? '#ffffff' : '#475569'} />
+            <span>Partner Academy (School-Issued)</span>
+          </button>
         </div>
 
         {/* Scrollable Document Container */}
@@ -560,8 +609,12 @@ export function CertificateGenerator({
               <div>
                 <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginBottom: '6px' }}>
                   <img
-                    src="/logo-emblem-transparent.png"
-                    alt="Éclat Institute Official Crest"
+                    src={
+                      activeCert.provider_type === 'partner_institution' && activeCert.institution_logo
+                        ? activeCert.institution_logo
+                        : '/logo-emblem-transparent.png'
+                    }
+                    alt={activeCert.institution_name || INSTITUTION_CONFIG.name}
                     style={{
                       width: '84px',
                       height: '76px',
@@ -582,7 +635,9 @@ export function CertificateGenerator({
                         lineHeight: 1.1,
                       }}
                     >
-                      {INSTITUTION_CONFIG.name}
+                      {activeCert.provider_type === 'partner_institution' && activeCert.institution_name
+                        ? activeCert.institution_name
+                        : INSTITUTION_CONFIG.name}
                     </div>
                     <div
                       style={{
@@ -595,7 +650,9 @@ export function CertificateGenerator({
                         marginTop: '3px',
                       }}
                     >
-                      DIRECTORATE OF ACADEMIC AFFAIRS & GLOBAL CREDENTIALING
+                      {activeCert.provider_type === 'partner_institution'
+                        ? 'ACCREDITED PARTNER ACADEMY • CONFERRED IN AFFILIATION WITH ÉCLAT INSTITUTE'
+                        : 'DIRECTORATE OF ACADEMIC AFFAIRS & GLOBAL CREDENTIALING'}
                     </div>
                     <div
                       style={{
@@ -607,7 +664,9 @@ export function CertificateGenerator({
                         marginTop: '2px',
                       }}
                     >
-                      British curriculum Centre (KE042) • {INSTITUTION_CONFIG.tagline}
+                      {activeCert.provider_type === 'partner_institution'
+                        ? 'Verified Institutional Provider • Quality Assured by Éclat Examination Board'
+                        : `British curriculum Centre (KE042) • ${INSTITUTION_CONFIG.tagline}`}
                     </div>
                   </div>
                 </div>
@@ -694,7 +753,18 @@ export function CertificateGenerator({
                 />
 
                 <div style={{ fontSize: '0.76rem', color: '#475569', fontWeight: 600, letterSpacing: '0.06em' }}>
-                  Permanent Admission Identifier: <strong style={{ color: '#0f172a' }}>{activeCert.admission_number}</strong>
+                  {activeCert.delivery_mode === 'self_paced' || !activeCert.admission_number ? (
+                    <>
+                      Permanent Credential Identifier:{' '}
+                      <strong style={{ color: '#0f172a' }}>{activeCert.certificate_no}</strong>{' '}
+                      <span style={{ color: '#16a34a', fontWeight: 800 }}>• Self-Paced Track (Direct Credential Completion)</span>
+                    </>
+                  ) : (
+                    <>
+                      Permanent Admission Identifier:{' '}
+                      <strong style={{ color: '#0f172a' }}>{activeCert.admission_number}</strong>
+                    </>
+                  )}
                 </div>
               </div>
 
@@ -983,10 +1053,14 @@ export function CertificateGenerator({
                         />
                       </svg>
                       <div style={{ borderTop: '1px solid #0f172a', paddingTop: '2px', fontSize: '0.62rem', fontWeight: 800, color: '#090d16', whiteSpace: 'nowrap' }}>
-                        Prof. Arthur M. Vance, Ph.D.
+                        {activeCert.provider_type === 'partner_institution'
+                          ? (activeCert.institution_signatory || 'Dean / Authorized Signatory')
+                          : (activeCert.trainer_name ? `${activeCert.trainer_name}` : 'Prof. Arthur M. Vance, Ph.D.')}
                       </div>
                       <div style={{ fontSize: '0.55rem', color: '#64748b' }}>
-                        Dean of Academic Faculty
+                        {activeCert.provider_type === 'partner_institution'
+                          ? `Dean of Studies, ${activeCert.institution_name || 'Partner Academy'}`
+                          : (activeCert.trainer_name ? 'Lead Faculty Lecturer & Instructor' : 'Dean of Academic Faculty')}
                       </div>
                     </div>
 
@@ -1042,7 +1116,9 @@ export function CertificateGenerator({
                         Dr. Amina Yusuf, Ed.D.
                       </div>
                       <div style={{ fontSize: '0.55rem', color: '#64748b' }}>
-                        Director of Academic Registry
+                        {activeCert.provider_type === 'partner_institution'
+                          ? 'Director of Accreditation & Registry, Éclat'
+                          : 'Director of Academic Registry'}
                       </div>
                     </div>
                   </div>

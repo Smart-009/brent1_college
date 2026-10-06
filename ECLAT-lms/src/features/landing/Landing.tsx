@@ -702,6 +702,10 @@ export function Landing() {
     admissionNumber: string
     receiptNumber: string
     courseTitle: string
+    courseId?: string
+    deliveryMode?: 'live_cohort' | 'self_paced'
+    providerType?: 'individual_tutor' | 'partner_institution'
+    institutionName?: string
     amountPaid: number
     totalFee: number
     balanceRemaining: number
@@ -757,7 +761,20 @@ export function Landing() {
     const amountToPay = checkoutPaymentPlan === 'full' ? fullFeeNum : installmentFeeNum
     const balanceRemaining = fullFeeNum - amountToPay
 
-    const admNo = `EI-${new Date().getFullYear()}-${Math.floor(1000 + Math.random() * 9000)}`
+    const isLiveCohortCourse =
+      (selectedCourseObj as any)?.delivery_mode === 'live_cohort' ||
+      selectedCourseObj?.schedule?.toLowerCase().includes('live') ||
+      selectedCourseObj?.title?.toLowerCase().includes('cambridge') ||
+      selectedCourseObj?.title?.toLowerCase().includes('diploma') ||
+      selectedCourseObj?.title?.toLowerCase().includes('igcse')
+
+    const courseDeliveryMode: 'live_cohort' | 'self_paced' = isLiveCohortCourse ? 'live_cohort' : 'self_paced'
+
+    // Only live classes should receive a formal matriculated admission number;
+    // self-paced learners receive instant access with a learner pass code!
+    const admNo = courseDeliveryMode === 'live_cohort'
+      ? `EI-${new Date().getFullYear()}-${Math.floor(1000 + Math.random() * 9000)}`
+      : `SELF-PACED-${Math.floor(1000 + Math.random() * 9000)}`
     const recNo = `EI-REC-${Math.random().toString(36).substring(2, 8).toUpperCase()}`
     const todayDate = new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })
 
@@ -799,7 +816,7 @@ export function Landing() {
           class_id: selectedCourseObj.id,
           class_name: selectedCourseObj.title,
           grade_level: 'Professional Certificate',
-          stream: '100% Online Cohort',
+          stream: courseDeliveryMode === 'live_cohort' ? '100% Online Cohort' : 'Self-Paced Video Track',
           enrollment_date: todayDate,
           admission_date: todayDate,
           status: 'Active',
@@ -844,6 +861,10 @@ export function Landing() {
           admissionNumber: admNo,
           receiptNumber: recNo,
           courseTitle: selectedCourseObj.title,
+          courseId: selectedCourseObj.id,
+          deliveryMode: courseDeliveryMode,
+          providerType: (selectedCourseObj as any)?.provider_type || 'individual_tutor',
+          institutionName: (selectedCourseObj as any)?.institution_name,
           amountPaid: amountToPay,
           totalFee: fullFeeNum,
           balanceRemaining,
@@ -4281,15 +4302,23 @@ export function Landing() {
                   {/* Receipt Header */}
                   <div style={{ textAlign: 'center', borderBottom: `2px solid ${generatedAdmission.isPendingVerification ? '#d97706' : '#1e3a8a'}`, paddingBottom: '0.75rem', marginBottom: '1rem' }}>
                     <img src="/logo.png" alt={INSTITUTION_CONFIG.name} style={{ width: '48px', height: '48px', borderRadius: '50%', border: `2px solid ${generatedAdmission.isPendingVerification ? '#f59e0b' : '#d4af37'}` }} />
-                    <h2 style={{ fontSize: '1.35rem', fontWeight: 900, color: '#1e3a8a', margin: '0.25rem 0 2px', letterSpacing: '0.02em', textTransform: 'uppercase' }}>{INSTITUTION_CONFIG.name}</h2>
-                    <div style={{ fontSize: '0.72rem', color: '#64748b', fontWeight: 700 }}>{INSTITUTION_CONFIG.tagline} • {INSTITUTION_CONFIG.domain}</div>
-                    {generatedAdmission.isPendingVerification ? (
-                      <div style={{ display: 'inline-block', background: '#fef3c7', color: '#92400e', padding: '3px 12px', borderRadius: '999px', fontSize: '0.72rem', fontWeight: 800, marginTop: '5px' }}>
-                        PROVISIONAL TUITION SUBMISSION ACKNOWLEDGEMENT (PENDING BURSAR VERIFICATION)
+                    <h2 style={{ fontSize: '1.35rem', fontWeight: 900, color: '#1e3a8a', margin: '0.25rem 0 2px', letterSpacing: '0.02em', textTransform: 'uppercase' }}>
+                      {generatedAdmission.providerType === 'partner_institution' && generatedAdmission.institutionName
+                        ? generatedAdmission.institutionName
+                        : INSTITUTION_CONFIG.name}
+                    </h2>
+                    <div style={{ fontSize: '0.72rem', color: '#64748b', fontWeight: 700 }}>
+                      {generatedAdmission.providerType === 'partner_institution'
+                        ? 'Accredited Academic Partner • Conferred in Affiliation with Éclat Institute'
+                        : `${INSTITUTION_CONFIG.tagline} • ${INSTITUTION_CONFIG.domain}`}
+                    </div>
+                    {generatedAdmission.deliveryMode === 'live_cohort' ? (
+                      <div style={{ display: 'inline-block', background: '#dcfce7', color: '#166534', padding: '3px 12px', borderRadius: '999px', fontSize: '0.72rem', fontWeight: 800, marginTop: '5px' }}>
+                        🎓 OFFICIAL TUITION RECEIPT & LIVE COHORT ADMISSION PASS
                       </div>
                     ) : (
-                      <div style={{ display: 'inline-block', background: '#dcfce7', color: '#166534', padding: '3px 12px', borderRadius: '999px', fontSize: '0.72rem', fontWeight: 800, marginTop: '5px' }}>
-                        OFFICIAL TUITION PAYMENT RECEIPT & ADMISSION PASS (ORIGINAL)
+                      <div style={{ display: 'inline-block', background: '#ecfdf5', color: '#047857', padding: '3px 12px', borderRadius: '999px', fontSize: '0.72rem', fontWeight: 800, marginTop: '5px' }}>
+                        ⚡ INSTANT SELF-PACED ACCESS PASS (NO ADMISSION HURDLE REQUIRED)
                       </div>
                     )}
                   </div>
@@ -4297,14 +4326,18 @@ export function Landing() {
                   {/* Metadata Grid */}
                   <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem', fontSize: '0.82rem', marginBottom: '1rem', background: '#f8fafc', padding: '0.85rem', borderRadius: '8px', border: '1px solid #e2e8f0' }}>
                     <div>
-                      <div><strong>{generatedAdmission.isPendingVerification ? 'Submission Slip #:' : 'Receipt #:'}</strong> <span style={{ color: '#1e3a8a', fontWeight: 800 }}>{generatedAdmission.receiptNumber}</span></div>
+                      <div><strong>Receipt / Ref #:</strong> <span style={{ color: '#1e3a8a', fontWeight: 800 }}>{generatedAdmission.receiptNumber}</span></div>
                       <div><strong>Student Name:</strong> {generatedAdmission.studentName}</div>
-                      <div><strong>Admission ID:</strong> <span style={{ fontWeight: 800, color: '#2563eb' }}>{generatedAdmission.admissionNumber}</span></div>
+                      {generatedAdmission.deliveryMode === 'live_cohort' ? (
+                        <div><strong>Formal Admission ID:</strong> <span style={{ fontWeight: 800, color: '#2563eb' }}>{generatedAdmission.admissionNumber}</span></div>
+                      ) : (
+                        <div><strong>Track Type:</strong> <span style={{ fontWeight: 800, color: '#16a34a' }}>Self-Paced (Instant Video Access)</span></div>
+                      )}
                     </div>
                     <div>
                       <div><strong>Date:</strong> {generatedAdmission.date}</div>
                       <div><strong>Course:</strong> {generatedAdmission.courseTitle}</div>
-                      <div><strong>Payment Mode:</strong> <span className="badge badge-info" style={{ fontSize: '0.7rem' }}>{generatedAdmission.paymentMode}</span></div>
+                      <div><strong>Certification:</strong> <span style={{ color: '#0369a1', fontWeight: 700 }}>{generatedAdmission.providerType === 'partner_institution' ? `Issued by ${generatedAdmission.institutionName || 'Partner School'}` : 'Issued by Éclat Institute'}</span></div>
                     </div>
                   </div>
 
@@ -4312,54 +4345,41 @@ export function Landing() {
                   <div style={{ background: generatedAdmission.isPendingVerification ? '#fffbeb' : '#f0fdf4', border: `1px solid ${generatedAdmission.isPendingVerification ? '#fde68a' : '#bbf7d0'}`, borderRadius: '8px', padding: '0.85rem 1rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
                     <div>
                       <div style={{ fontSize: '0.72rem', color: generatedAdmission.isPendingVerification ? '#92400e' : '#166534', fontWeight: 800, textTransform: 'uppercase' }}>
-                        {generatedAdmission.isPendingVerification ? 'SUBMITTED AMOUNT:' : 'TUITION AMOUNT PAID:'}
+                        TUITION AMOUNT PAID (PAYSTACK VERIFIED):
                       </div>
-                      <div style={{ fontSize: '1.4rem', fontWeight: 900, color: generatedAdmission.isPendingVerification ? '#d97706' : '#16a34a' }}>
+                      <div style={{ fontSize: '1.4rem', fontWeight: 900, color: '#16a34a' }}>
                         ${generatedAdmission.amountPaid} USD
                       </div>
                     </div>
                     <div style={{ textAlign: 'right', fontSize: '0.8rem', color: '#475569' }}>
                       <div>Balance Due: <strong>${generatedAdmission.balanceRemaining} USD</strong></div>
-                      <div style={{ color: generatedAdmission.isPendingVerification ? '#d97706' : generatedAdmission.balanceRemaining === 0 ? '#16a34a' : '#ea580c', fontWeight: 800 }}>
-                        {generatedAdmission.isPendingVerification
-                          ? 'STATUS: PENDING BURSAR RECONCILIATION'
-                          : generatedAdmission.balanceRemaining === 0
-                          ? 'STATUS: FULLY CLEARED'
-                          : 'STATUS: 1ST INSTALLMENT CLEARED'}
+                      <div style={{ color: generatedAdmission.balanceRemaining === 0 ? '#16a34a' : '#ea580c', fontWeight: 800 }}>
+                        {generatedAdmission.balanceRemaining === 0 ? 'STATUS: FULLY CLEARED' : 'STATUS: 1ST INSTALLMENT CLEARED'}
                       </div>
                     </div>
                   </div>
 
                   {/* Digital Stamp */}
                   <div style={{ border: '1px dashed #94a3b8', borderRadius: '6px', padding: '0.5rem', textAlign: 'center', fontSize: '0.72rem', color: '#64748b' }}>
-                    {generatedAdmission.isPendingVerification ? (
-                      <>
-                        <ClockIcon size={14} color="#d97706" style={{ marginRight: '5px', verticalAlign: 'middle' }} />
-                        Logged Reference Code: <code>{generatedAdmission.referenceCode}</code> • Accounts clearance pending bank statement verification.
-                      </>
-                    ) : (
-                      <>
-                        <ShieldCheckIcon size={14} color="#16a34a" style={{ marginRight: '5px', verticalAlign: 'middle' }} />
-                        Verified Paystack Transaction Ref: <code>{generatedAdmission.referenceCode}</code> • {INSTITUTION_CONFIG.name} Directorate of Finance
-                      </>
-                    )}
+                    <ShieldCheckIcon size={14} color="#16a34a" style={{ marginRight: '5px', verticalAlign: 'middle' }} />
+                    Verified Paystack Ref: <code>{generatedAdmission.referenceCode}</code> • {generatedAdmission.providerType === 'partner_institution' && generatedAdmission.institutionName ? generatedAdmission.institutionName : INSTITUTION_CONFIG.name} Automated Clearing
                   </div>
                 </div>
 
                 {/* Receipt Actions */}
                 <div style={{ display: 'flex', gap: '0.75rem', justifyContent: 'space-between', flexWrap: 'wrap' }}>
                   <button type="button" className="btn btn-secondary btn-sm" onClick={() => window.print()}>
-                    <span style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}><PrinterIcon size={14} color="#475569" /> Print Stamped Receipt</span>
+                    <span style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}><PrinterIcon size={14} color="#475569" /> Print Receipt</span>
                   </button>
                   <div style={{ display: 'flex', gap: '0.5rem' }}>
                     <a
-                      href={getWhatsAppInquiryUrl(`Hello ${INSTITUTION_CONFIG.name}! My name is ${generatedAdmission.studentName} (Adm: ${generatedAdmission.admissionNumber}). I have completed my tuition payment of $${generatedAdmission.amountPaid} for ${generatedAdmission.courseTitle}. Please send my live class schedule.`)}
+                      href={getWhatsAppInquiryUrl(`Hello! My name is ${generatedAdmission.studentName}. I have completed payment of $${generatedAdmission.amountPaid} for ${generatedAdmission.courseTitle}. (Ref: ${generatedAdmission.referenceCode}).`)}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="btn btn-sm"
                       style={{ background: '#22c55e', color: '#ffffff', fontWeight: 700, textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: '4px' }}
                     >
-                      <MessageCircleIcon size={14} color="#ffffff" style={{ marginRight: '4px', verticalAlign: 'middle' }} />WhatsApp Admissions
+                      <MessageCircleIcon size={14} color="#ffffff" style={{ marginRight: '4px', verticalAlign: 'middle' }} />WhatsApp Helpdesk
                     </a>
                     <button
                       type="button"
@@ -4367,7 +4387,8 @@ export function Landing() {
                       onClick={() => handleLaunchRole('student')}
                       style={{ fontWeight: 800 }}
                     >
-                      <GraduationCapIcon size={15} color="#ffffff" style={{ marginRight: '6px', verticalAlign: 'middle' }} />Enter Student Portal →
+                      <GraduationCapIcon size={15} color="#ffffff" style={{ marginRight: '6px', verticalAlign: 'middle' }} />
+                      {generatedAdmission.deliveryMode === 'self_paced' ? 'Start Watching Lessons Now →' : 'Enter Student Portal →'}
                     </button>
                   </div>
                 </div>
@@ -4938,6 +4959,8 @@ export function Landing() {
             </div>
           </div>
         </div>
+      )}
+
       {/* 4. Tutor & Course Creator Application Modal */}
       {tutorModalOpen && (
         <div className="modal-overlay" onClick={() => setTutorModalOpen(false)}>

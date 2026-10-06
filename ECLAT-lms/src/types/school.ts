@@ -332,6 +332,13 @@ export interface CourseUnit {
   }[]
   is_published: boolean
   created_at: string
+  // Multi-tenant institution & individual tutor fields
+  provider_type?: 'individual_tutor' | 'partner_institution'
+  institution_name?: string
+  institution_logo?: string
+  institution_signatory?: string
+  delivery_mode?: 'live_cohort' | 'self_paced'
+  revenue_split_pct?: number
 }
 
 export interface UnitRegistrationReceipt {

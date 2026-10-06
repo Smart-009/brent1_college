@@ -14,15 +14,21 @@ import {
   CreditCardIcon,
   ShieldCheckIcon,
   FileTextIcon,
-  GlobeIcon,
-  DownloadIcon,
+  BuildingIcon,
+  GraduationCapIcon,
   ClockIcon,
   UserIcon,
 } from '@/components/icons/AppIcons'
+import { schoolStore } from '@/lib/schoolData'
 
 interface SubmittedTutorCourse {
   id: string
+  providerType: 'individual_tutor' | 'partner_institution'
   tutorName: string
+  institutionName?: string
+  institutionLogo?: string
+  institutionSignatory?: string
+  deliveryMode: 'live_cohort' | 'self_paced'
   email: string
   phone: string
   courseTitle: string
@@ -39,6 +45,12 @@ interface SubmittedTutorCourse {
 export function TutorPublishCoursePage() {
   const isMobile = useIsMobile(768)
 
+  const [providerType, setProviderType] = useState<'individual_tutor' | 'partner_institution'>('individual_tutor')
+  const [institutionName, setInstitutionName] = useState('')
+  const [institutionLogo, setInstitutionLogo] = useState('')
+  const [institutionSignatory, setInstitutionSignatory] = useState('')
+  const [deliveryMode, setDeliveryMode] = useState<'live_cohort' | 'self_paced'>('self_paced')
+
   const [tutorName, setTutorName] = useState('')
   const [email, setEmail] = useState('')
   const [phone, setPhone] = useState('')
@@ -47,6 +59,7 @@ export function TutorPublishCoursePage() {
   const [suggestedPriceUsd, setSuggestedPriceUsd] = useState(60)
   const [videoUrl, setVideoUrl] = useState('')
   const [courseDescription, setCourseDescription] = useState('')
+  const [revenueSplitPct, setRevenueSplitPct] = useState(50)
   const [payoutMethod, setPayoutMethod] = useState<'mpesa' | 'bank' | 'paypal'>('mpesa')
   const [payoutDetails, setPayoutDetails] = useState('')
 
@@ -72,11 +85,19 @@ export function TutorPublishCoursePage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setSubmitting(true)
-    setDownloadStatusMsg('Initializing automated course registration & video pipeline...')
+    setDownloadStatusMsg('Initializing automated course registration & video ingestion pipeline...')
+
+    const finalTutorOrSchoolName =
+      providerType === 'partner_institution' ? (institutionName.trim() || tutorName) : tutorName
 
     const newCourse: SubmittedTutorCourse = {
       id: `tc-${Date.now()}`,
-      tutorName,
+      providerType,
+      tutorName: finalTutorOrSchoolName,
+      institutionName: providerType === 'partner_institution' ? institutionName.trim() : undefined,
+      institutionLogo: providerType === 'partner_institution' ? institutionLogo.trim() : undefined,
+      institutionSignatory: providerType === 'partner_institution' ? institutionSignatory.trim() : undefined,
+      deliveryMode,
       email,
       phone,
       courseTitle,
@@ -84,12 +105,63 @@ export function TutorPublishCoursePage() {
       courseDescription,
       videoUrl,
       suggestedPriceUsd,
-      payoutSplitPct: 50,
+      payoutSplitPct: providerType === 'partner_institution' ? revenueSplitPct : 50,
       submittedAt: new Date().toISOString(),
-      status: 'Pending Review',
+      status: 'Approved & Live',
     }
 
-    // Trigger local desktop video downloader bridge if online
+    // 1. Immediately register course into schoolStore
+    const newUnitId = `unit-${Date.now()}`
+    const courseCode = `PUB-${Math.floor(100 + Math.random() * 900)}`
+    try {
+      await schoolStore.addCourseUnit({
+        id: newUnitId,
+        code: courseCode,
+        title: courseTitle,
+        department: category,
+        program: courseTitle,
+        course_duration: deliveryMode === 'live_cohort' ? '12 Weeks Cohort' : 'Self-Paced (Lifetime Access)',
+        credit_hours: 40,
+        teacher_id: `tch-${Date.now()}`,
+        teacher_name: finalTutorOrSchoolName,
+        description: courseDescription,
+        fee: suggestedPriceUsd,
+        course_fee: suggestedPriceUsd * 130,
+        live_meeting_url: deliveryMode === 'live_cohort' ? 'https://meet.google.com/new' : undefined,
+        live_schedule_text: deliveryMode === 'live_cohort' ? 'Live Cohort Sessions • Mon & Wed 7:30 PM EAT' : undefined,
+        provider_type: providerType,
+        institution_name: providerType === 'partner_institution' ? institutionName.trim() : undefined,
+        institution_logo: providerType === 'partner_institution' ? institutionLogo.trim() : undefined,
+        institution_signatory: providerType === 'partner_institution' ? institutionSignatory.trim() : undefined,
+        delivery_mode: deliveryMode,
+        revenue_split_pct: providerType === 'partner_institution' ? revenueSplitPct : 50,
+        syllabus_modules: [
+          {
+            id: `mod-${Date.now()}-1`,
+            module_number: 1,
+            title: 'Module 1: Foundations & Core Practical Implementation',
+            topics: ['Introduction & Overview', 'Hands-On Demonstration', 'Applied Project Work'],
+            learning_outcomes: ['Grasp core principles', 'Complete practical assignments'],
+            hours: 20,
+          },
+        ],
+        lessons: [
+          {
+            id: `les-${Date.now()}-1`,
+            title: `${courseTitle} - Complete Practical Masterclass`,
+            video_url: videoUrl,
+            duration_minutes: 60,
+            content: courseDescription,
+          },
+        ],
+        is_published: true,
+        created_at: new Date().toISOString(),
+      })
+    } catch (storeErr) {
+      console.warn('Could not register into schoolStore immediately:', storeErr)
+    }
+
+    // 2. Trigger local desktop video downloader bridge if online
     try {
       const bridgeRes = await fetch('http://127.0.0.1:5179/download', {
         method: 'POST',
@@ -97,7 +169,7 @@ export function TutorPublishCoursePage() {
         body: JSON.stringify({
           videoUrl,
           title: courseTitle,
-          tutorName,
+          tutorName: finalTutorOrSchoolName,
         }),
       })
 
@@ -105,16 +177,16 @@ export function TutorPublishCoursePage() {
         const bridgeData = await bridgeRes.json()
         newCourse.status = 'Video Downloaded'
         newCourse.downloadPath = bridgeData.savedPath
-        setDownloadStatusMsg(`✓ Video stream automatically downloading to Desktop: ${bridgeData.savedFilename}`)
+        setDownloadStatusMsg(`✓ Video automatically saved to Desktop: ${bridgeData.savedFilename}`)
       } else {
-        setDownloadStatusMsg('Course registered. Manual cloud video grab scheduled.')
+        setDownloadStatusMsg('Course registered & published live. Manual cloud video grab scheduled.')
       }
     } catch {
       // If web browser without desktop bridge daemon
-      setDownloadStatusMsg('Course registered. Direct video URL captured for cloud ingestion.')
+      setDownloadStatusMsg('Course registered & published live! Video URL captured for white-label player.')
     }
 
-    // Persist in localStorage
+    // 3. Persist in localStorage
     try {
       const existing: SubmittedTutorCourse[] = JSON.parse(
         localStorage.getItem('eclat_published_tutor_courses') || '[]'
@@ -219,7 +291,7 @@ export function TutorPublishCoursePage() {
             }}
           >
             <SparklesIcon size={14} color="#fbbf24" />
-            <span>50/50 Revenue Share Creator Agreement</span>
+            <span>Tutor & Partner School Course Publishing Network</span>
           </div>
 
           <h1
@@ -231,7 +303,7 @@ export function TutorPublishCoursePage() {
               letterSpacing: '-0.02em',
             }}
           >
-            Publish Your Course With Éclat Institute.{' '}
+            Publish With Éclat Institute.{' '}
             <span
               style={{
                 background: 'linear-gradient(135deg, #fbbf24 0%, #f59e0b 50%, #f97316 100%)',
@@ -239,7 +311,7 @@ export function TutorPublishCoursePage() {
                 WebkitTextFillColor: 'transparent',
               }}
             >
-              Earn 50% on Every Enrollment.
+              For Tutors & Partner Schools.
             </span>
           </h1>
 
@@ -248,13 +320,11 @@ export function TutorPublishCoursePage() {
               fontSize: isMobile ? '0.95rem' : '1.12rem',
               lineHeight: 1.65,
               color: '#cbd5e1',
-              maxWidth: '720px',
+              maxWidth: '740px',
               margin: '0 auto 1.75rem',
             }}
           >
-            All we need from you is your course details and video lecture URL. 
-            Our platform automatically captures the video, applies anti-piracy DRM protection, 
-            markets it across Kenya & East Africa, and deposits <strong>50% of every Paystack enrollment fee</strong> directly to your account.
+            Whether you are an independent tutor creating video courses (earning 50% revenue share) or an academic school publishing accredited programs with your own institutional credentials, our platform handles automated video ingestion, Paystack payments, student portals, and verified certificates.
           </p>
 
           {/* Quick Pillars */}
@@ -345,10 +415,12 @@ export function TutorPublishCoursePage() {
               }}
             >
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem', marginBottom: '0.75rem' }}>
-                <div><strong>Tutor:</strong> {submittedCourse.tutorName}</div>
+                <div><strong>Publisher:</strong> {submittedCourse.providerType === 'partner_institution' ? `🏫 ${submittedCourse.institutionName || submittedCourse.tutorName} (School)` : `👨‍🏫 ${submittedCourse.tutorName} (Tutor)`}</div>
                 <div><strong>Category:</strong> {submittedCourse.category}</div>
+                <div><strong>Delivery Track:</strong> <span style={{ color: submittedCourse.deliveryMode === 'live_cohort' ? '#7c3aed' : '#d97706', fontWeight: 800 }}>{submittedCourse.deliveryMode === 'live_cohort' ? '🎓 Live Cohort (Admissions Issued)' : '⚡ Self-Paced (Instant Streaming)'}</span></div>
                 <div><strong>Tuition Price:</strong> ${submittedCourse.suggestedPriceUsd} USD</div>
-                <div><strong>Tutor Revenue Split:</strong> <span style={{ color: '#16a34a', fontWeight: 900 }}>50% (${(submittedCourse.suggestedPriceUsd * 0.5).toFixed(0)}/student)</span></div>
+                <div><strong>Revenue Split:</strong> <span style={{ color: '#16a34a', fontWeight: 900 }}>{submittedCourse.payoutSplitPct}% (${((submittedCourse.suggestedPriceUsd * submittedCourse.payoutSplitPct) / 100).toFixed(0)}/student)</span></div>
+                <div><strong>Certification:</strong> <span style={{ color: '#0369a1', fontWeight: 700 }}>{submittedCourse.providerType === 'partner_institution' ? `Awarded by ${submittedCourse.institutionName || 'Partner School'}` : 'Awarded by Éclat Institute'}</span></div>
               </div>
               <div style={{ borderTop: '1px solid #e2e8f0', paddingTop: '0.65rem' }}>
                 <strong>Source Video URL:</strong> <code style={{ fontSize: '0.78rem', wordBreak: 'break-all' }}>{submittedCourse.videoUrl}</code>
@@ -412,22 +484,202 @@ export function TutorPublishCoursePage() {
             </div>
 
             <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1.35rem' }}>
-              {/* Section 1: Tutor Identity */}
+              {/* Creator Type Selector: Individual Tutor vs Partner School */}
+              <div style={{ background: '#f8fafc', padding: '1rem', borderRadius: '12px', border: '1.5px solid #cbd5e1' }}>
+                <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 800, color: '#0f172a', marginBottom: '8px' }}>
+                  Step 1: Select Publishing Entity Type:
+                </label>
+                <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: '10px' }}>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setProviderType('individual_tutor')
+                      setRevenueSplitPct(50)
+                    }}
+                    style={{
+                      padding: '0.85rem 1rem',
+                      borderRadius: '10px',
+                      border: providerType === 'individual_tutor' ? '2px solid #2563eb' : '1px solid #cbd5e1',
+                      background: providerType === 'individual_tutor' ? '#eff6ff' : '#ffffff',
+                      color: providerType === 'individual_tutor' ? '#1e40af' : '#475569',
+                      fontWeight: 800,
+                      textAlign: 'left',
+                      cursor: 'pointer',
+                    }}
+                  >
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.95rem', marginBottom: '4px' }}>
+                      <UserIcon size={18} color={providerType === 'individual_tutor' ? '#2563eb' : '#64748b'} />
+                      <span>Individual Tutor (50% Revenue Share)</span>
+                    </div>
+                    <div style={{ fontSize: '0.76rem', color: '#64748b', fontWeight: 500 }}>
+                      Automatic Éclat Institute-issued certificate naming you as Lead Faculty Instructor.
+                    </div>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setProviderType('partner_institution')
+                      setRevenueSplitPct(70)
+                    }}
+                    style={{
+                      padding: '0.85rem 1rem',
+                      borderRadius: '10px',
+                      border: providerType === 'partner_institution' ? '2px solid #16a34a' : '1px solid #cbd5e1',
+                      background: providerType === 'partner_institution' ? '#f0fdf4' : '#ffffff',
+                      color: providerType === 'partner_institution' ? '#15803d' : '#475569',
+                      fontWeight: 800,
+                      textAlign: 'left',
+                      cursor: 'pointer',
+                    }}
+                  >
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.95rem', marginBottom: '4px' }}>
+                      <BuildingIcon size={18} color={providerType === 'partner_institution' ? '#16a34a' : '#64748b'} />
+                      <span>Partner School / Academic Institution</span>
+                    </div>
+                    <div style={{ fontSize: '0.76rem', color: '#64748b', fontWeight: 500 }}>
+                      Certificates issued directly under your school's name & crest, in affiliation with Éclat.
+                    </div>
+                  </button>
+                </div>
+              </div>
+
+              {/* Course Delivery Mode: Live Cohort vs Self-Paced */}
+              <div style={{ background: '#f8fafc', padding: '1rem', borderRadius: '12px', border: '1.5px solid #cbd5e1' }}>
+                <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 800, color: '#0f172a', marginBottom: '8px' }}>
+                  Step 2: Course Delivery & Admission Mode:
+                </label>
+                <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: '10px' }}>
+                  <button
+                    type="button"
+                    onClick={() => setDeliveryMode('self_paced')}
+                    style={{
+                      padding: '0.85rem 1rem',
+                      borderRadius: '10px',
+                      border: deliveryMode === 'self_paced' ? '2px solid #d97706' : '1px solid #cbd5e1',
+                      background: deliveryMode === 'self_paced' ? '#fffbeb' : '#ffffff',
+                      color: deliveryMode === 'self_paced' ? '#92400e' : '#475569',
+                      fontWeight: 800,
+                      textAlign: 'left',
+                      cursor: 'pointer',
+                    }}
+                  >
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.95rem', marginBottom: '4px' }}>
+                      <VideoIcon size={18} color={deliveryMode === 'self_paced' ? '#d97706' : '#64748b'} />
+                      <span>Self-Paced / On-Demand Video Course</span>
+                    </div>
+                    <div style={{ fontSize: '0.76rem', color: '#64748b', fontWeight: 500 }}>
+                      Instant streaming unlock upon checkout. No admission hurdles. Verified certificate upon module completion.
+                    </div>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => setDeliveryMode('live_cohort')}
+                    style={{
+                      padding: '0.85rem 1rem',
+                      borderRadius: '10px',
+                      border: deliveryMode === 'live_cohort' ? '2px solid #7c3aed' : '1px solid #cbd5e1',
+                      background: deliveryMode === 'live_cohort' ? '#f5f3ff' : '#ffffff',
+                      color: deliveryMode === 'live_cohort' ? '#6d28d9' : '#475569',
+                      fontWeight: 800,
+                      textAlign: 'left',
+                      cursor: 'pointer',
+                    }}
+                  >
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.95rem', marginBottom: '4px' }}>
+                      <GraduationCapIcon size={18} color={deliveryMode === 'live_cohort' ? '#7c3aed' : '#64748b'} />
+                      <span>Live Cohort Classes</span>
+                    </div>
+                    <div style={{ fontSize: '0.76rem', color: '#64748b', fontWeight: 500 }}>
+                      Formal Éclat Admission Number generated, live Google Meet schedule, and timetable allocation.
+                    </div>
+                  </button>
+                </div>
+              </div>
+
+              {/* Section 1: Instructor / Institution Identity */}
               <div>
                 <h3 style={{ fontSize: '0.95rem', fontWeight: 800, color: '#1e3a8a', marginBottom: '0.85rem', display: 'flex', alignItems: 'center', gap: '6px' }}>
-                  <UserIcon size={16} color="#1e3a8a" />
-                  <span>1. Instructor & Revenue Details</span>
+                  {providerType === 'partner_institution' ? <BuildingIcon size={16} color="#1e3a8a" /> : <UserIcon size={16} color="#1e3a8a" />}
+                  <span>3. {providerType === 'partner_institution' ? 'Institution Profile & Credential Settings' : 'Instructor & Revenue Details'}</span>
                 </h3>
+
+                {providerType === 'partner_institution' ? (
+                  <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : 'repeat(3, 1fr)', gap: '0.85rem', marginBottom: '0.85rem' }}>
+                    <div>
+                      <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 800, color: '#334155', marginBottom: '4px' }}>
+                        Institution / School Name *
+                      </label>
+                      <input
+                        type="text"
+                        required
+                        placeholder="e.g. Nairobi Coding Academy"
+                        value={institutionName}
+                        onChange={(e) => setInstitutionName(e.target.value)}
+                        style={{
+                          width: '100%',
+                          padding: '0.65rem 0.85rem',
+                          borderRadius: '8px',
+                          border: '1.5px solid #cbd5e1',
+                          fontSize: '0.88rem',
+                          outline: 'none',
+                        }}
+                      />
+                    </div>
+
+                    <div>
+                      <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 800, color: '#334155', marginBottom: '4px' }}>
+                        Certificate Signatory & Title *
+                      </label>
+                      <input
+                        type="text"
+                        required
+                        placeholder="e.g. Dr. Patrick Mwangi, Principal"
+                        value={institutionSignatory}
+                        onChange={(e) => setInstitutionSignatory(e.target.value)}
+                        style={{
+                          width: '100%',
+                          padding: '0.65rem 0.85rem',
+                          borderRadius: '8px',
+                          border: '1.5px solid #cbd5e1',
+                          fontSize: '0.88rem',
+                          outline: 'none',
+                        }}
+                      />
+                    </div>
+
+                    <div>
+                      <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 800, color: '#334155', marginBottom: '4px' }}>
+                        School Crest / Logo URL
+                      </label>
+                      <input
+                        type="url"
+                        placeholder="https://yourschool.com/logo.png"
+                        value={institutionLogo}
+                        onChange={(e) => setInstitutionLogo(e.target.value)}
+                        style={{
+                          width: '100%',
+                          padding: '0.65rem 0.85rem',
+                          borderRadius: '8px',
+                          border: '1.5px solid #cbd5e1',
+                          fontSize: '0.88rem',
+                          outline: 'none',
+                        }}
+                      />
+                    </div>
+                  </div>
+                ) : null}
 
                 <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : 'repeat(3, 1fr)', gap: '0.85rem' }}>
                   <div>
                     <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 800, color: '#334155', marginBottom: '4px' }}>
-                      Full Name *
+                      {providerType === 'partner_institution' ? 'Administrator / Lead Contact Name *' : 'Tutor Full Name *'}
                     </label>
                     <input
                       type="text"
                       required
-                      placeholder="e.g. Samuel Karanja"
+                      placeholder={providerType === 'partner_institution' ? 'e.g. Eng. Arthur Vance' : 'e.g. Samuel Karanja'}
                       value={tutorName}
                       onChange={(e) => setTutorName(e.target.value)}
                       style={{
@@ -443,12 +695,12 @@ export function TutorPublishCoursePage() {
 
                   <div>
                     <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 800, color: '#334155', marginBottom: '4px' }}>
-                      Email Address *
+                      Official Email Address *
                     </label>
                     <input
                       type="email"
                       required
-                      placeholder="e.g. samuel@example.com"
+                      placeholder={providerType === 'partner_institution' ? 'dean@nairobiacademy.ac.ke' : 'samuel@example.com'}
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
                       style={{
@@ -464,12 +716,12 @@ export function TutorPublishCoursePage() {
 
                   <div>
                     <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 800, color: '#334155', marginBottom: '4px' }}>
-                      WhatsApp Phone Number *
+                      Official WhatsApp Phone Number *
                     </label>
                     <input
                       type="tel"
                       required
-                      placeholder="e.g. +254 712 345 678"
+                      placeholder="+254 712 345 678"
                       value={phone}
                       onChange={(e) => setPhone(e.target.value)}
                       style={{

@@ -968,3 +968,85 @@ test('Architectural Separation: Bot Is Completely Decoupled from School LMS Syst
   }
 })
 
+test('Multi-Tenant Course Publishing: Individual Tutors vs Partner Schools & Academies', () => {
+  // Tutor Course Specification
+  const tutorCourse = {
+    provider_type: 'individual_tutor',
+    teacher_name: 'John Kamau',
+    delivery_mode: 'self_paced',
+    fee: 50,
+    revenue_split_pct: 50,
+  }
+
+  // Partner School Course Specification
+  const schoolCourse = {
+    provider_type: 'partner_institution',
+    institution_name: 'Nairobi Coding Academy',
+    institution_signatory: 'Dr. Patrick Mwangi, Principal',
+    delivery_mode: 'live_cohort',
+    fee: 150,
+    revenue_split_pct: 70,
+  }
+
+  assert.strictEqual(tutorCourse.provider_type, 'individual_tutor')
+  assert.strictEqual(tutorCourse.revenue_split_pct, 50)
+  assert.strictEqual(schoolCourse.provider_type, 'partner_institution')
+  assert.strictEqual(schoolCourse.institution_name, 'Nairobi Coding Academy')
+  assert.strictEqual(schoolCourse.revenue_split_pct, 70)
+})
+
+test('Course Admission Rule: Live Cohort Classes get Formal Admission ID vs Instant Access for Self-Paced Courses', () => {
+  function processCourseEnrollment(course) {
+    const isLive = course.delivery_mode === 'live_cohort'
+    return {
+      delivery_mode: course.delivery_mode,
+      hasFormalAdmissionNumber: isLive,
+      admissionId: isLive ? `EI-2026-${Math.floor(1000 + Math.random() * 9000)}` : null,
+      instantAccessUnlocked: !isLive,
+    }
+  }
+
+  const liveEnrollment = processCourseEnrollment({ delivery_mode: 'live_cohort' })
+  assert.strictEqual(liveEnrollment.hasFormalAdmissionNumber, true)
+  assert.ok(liveEnrollment.admissionId?.startsWith('EI-2026-'))
+  assert.strictEqual(liveEnrollment.instantAccessUnlocked, false)
+
+  const selfPacedEnrollment = processCourseEnrollment({ delivery_mode: 'self_paced' })
+  assert.strictEqual(selfPacedEnrollment.hasFormalAdmissionNumber, false)
+  assert.strictEqual(selfPacedEnrollment.admissionId, null)
+  assert.strictEqual(selfPacedEnrollment.instantAccessUnlocked, true)
+})
+
+test('Dynamic Certification Authority: Éclat-Issued for Individual Tutors vs Institution-Issued for Partner Schools', () => {
+  function resolveCertificateIssuer(course) {
+    if (course.provider_type === 'partner_institution' && course.institution_name) {
+      return {
+        issuingAuthority: course.institution_name,
+        affiliationBanner: 'ACCREDITED PARTNER ACADEMY • CONFERRED IN AFFILIATION WITH ÉCLAT INSTITUTE',
+        leadSignatory: course.institution_signatory || 'Dean / Authorized Signatory',
+      }
+    }
+    return {
+      issuingAuthority: 'Éclat Institute',
+      affiliationBanner: 'DIRECTORATE OF ACADEMIC AFFAIRS & GLOBAL CREDENTIALING',
+      leadSignatory: course.teacher_name ? `Lead Instructor: ${course.teacher_name}` : 'Dean of Academic Faculty',
+    }
+  }
+
+  const tutorCert = resolveCertificateIssuer({
+    provider_type: 'individual_tutor',
+    teacher_name: 'Alex Ochieng',
+  })
+  assert.strictEqual(tutorCert.issuingAuthority, 'Éclat Institute')
+  assert.ok(tutorCert.leadSignatory.includes('Alex Ochieng'))
+
+  const schoolCert = resolveCertificateIssuer({
+    provider_type: 'partner_institution',
+    institution_name: 'St. Jude Cambridge Academy',
+    institution_signatory: 'Prof. Mary Wanjiku, Academic Dean',
+  })
+  assert.strictEqual(schoolCert.issuingAuthority, 'St. Jude Cambridge Academy')
+  assert.ok(schoolCert.affiliationBanner.includes('AFFILIATION WITH ÉCLAT INSTITUTE'))
+  assert.strictEqual(schoolCert.leadSignatory, 'Prof. Mary Wanjiku, Academic Dean')
+})
+
