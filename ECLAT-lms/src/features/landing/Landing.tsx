@@ -3844,11 +3844,11 @@ export function Landing() {
               <img src="/logo.png" alt="Éclat Institute Logo" style={{ width: '44px', height: '44px', borderRadius: '50%', border: '2px solid #1d4ed8' }} />
               <div>
                 <span style={{ fontSize: '1.2rem', fontWeight: 900, color: '#0f172a', fontFamily: 'var(--font-heading)', letterSpacing: '0.02em' }}>ÉCLAT INSTITUTE</span>
-                <div style={{ fontSize: '0.75rem', color: '#1d4ed8', fontWeight: 700 }}>100% ONLINE TECH & LANGUAGES</div>
+                <div style={{ fontSize: '0.75rem', color: '#1d4ed8', fontWeight: 700 }}>100% ONLINE VIRTUAL CAMPUS & ACADEMY</div>
               </div>
             </div>
             <p style={{ fontSize: '0.9rem', lineHeight: 1.65, color: '#475569', marginBottom: '1.25rem' }}>
-              Kenya & East Africa’s premier virtual institute. Live online interactive coaching in Full-Stack Software Engineering, Python Data Analytics, Cybersecurity, Computer Packages, IELTS Exam Prep, English Fluency, Arabic, French, and German.
+              Global 100% Online Virtual Campus & Open Educational Platform. Delivering live interactive cohorts, self-paced video masterclasses, and verified digital credentials across Business, IT & Data Science, Languages, and British IGCSE, with open publishing for partner schools and expert tutors.
             </p>
             <div style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', background: '#ffffff', border: '1px solid #e2e8f0', padding: '0.45rem 0.85rem', borderRadius: '8px', fontSize: '0.82rem', color: '#334155', fontWeight: 600, boxShadow: '0 1px 3px rgba(0,0,0,0.04)' }}>
               <ShieldCheckIcon size={16} color="#1d4ed8" />

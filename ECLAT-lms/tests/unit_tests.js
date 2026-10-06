@@ -880,6 +880,8 @@ test('SEO Metadata: 4 Canonical Faculties, Meta Tags, Schema.org JSON-LD, and ll
   assert.ok(htmlContent.includes('"name": "Cambridge Assessment International Education IGCSE (Center KE042)"'))
   assert.ok(htmlContent.includes('"name": "Pearson Edexcel International Curriculum (Center EDX-98421)"'))
   assert.ok(htmlContent.includes('"text": "Éclat Institute consists of 4 canonical faculties'))
+  assert.ok(htmlContent.includes('Can external schools, academies, and independent tutors publish courses on Éclat Institute?'))
+  assert.ok(htmlContent.includes('What is the difference between Live Cohort Classes and Self-Paced Courses?'))
 
   // llms.txt AI Knowledge Grounding
   const llmsContent = fs.readFileSync(path.join(process.cwd(), 'public/llms.txt'), 'utf-8')
@@ -889,6 +891,10 @@ test('SEO Metadata: 4 Canonical Faculties, Meta Tags, Schema.org JSON-LD, and ll
   assert.ok(llmsContent.includes('4. **IGCSE (British International Curriculum)**:'))
   assert.ok(llmsContent.includes('Cambridge Assessment International Education (CAIE Center KE042)'))
   assert.ok(llmsContent.includes('Pearson Edexcel (Center EDX-98421)'))
+  assert.ok(llmsContent.includes('Multi-Tenant Course Publishing & Academic Partnerships'))
+  assert.ok(llmsContent.includes('Dual Delivery Modes & Admissions Policy'))
+  assert.ok(llmsContent.includes('Individual Tutor Courses'))
+  assert.ok(llmsContent.includes('Partner School Courses'))
 })
 
 test('Top-Paying Business Certificate Courses: School of Business Credentials & Metadata', () => {

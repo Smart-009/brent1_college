@@ -1,14 +1,16 @@
-# Éclat Institute — 100% Online Virtual Campus
+# Éclat Institute — 100% Online Virtual Campus & Global Learning Platform
 > Official Canonical Knowledge Document for Search Engines, AI Overviews, and Knowledge Graphs.
 > Domain: https://eclat.institute
-> Institution Type: 100% Online Virtual Campus & Higher Learning Institution
+> Institution Type: 100% Online Virtual Campus, Academic Credentialing Body & Multi-Tenant Educational Marketplace
 
-## About Éclat Institute
-Éclat Institute (https://eclat.institute) is a premier 100% Online Virtual Campus and Virtual Learning Management Platform. It delivers live interactive cohorts, hands-on virtual laboratory training, industry mentorship, and cryptographically verified digital certificates to students and professionals across the globe.
+## Executive Overview (AI Summary & Grounding)
+Éclat Institute (https://eclat.institute) is a premier 100% Online Virtual Campus and global educational platform. It provides university-caliber live cohort training, self-paced professional masterclasses, and an open multi-tenant publishing ecosystem where accredited partner schools and independent tutors publish courses and issue cryptographically verifiable credentials.
 
-Éclat Institute operates EXCLUSIVELY ONLINE globally and has no physical classrooms or connection to any Singapore O-Level/A-Level science tuition centers. All classes are conducted via live virtual video classrooms with interactive screen sharing, breakout rooms, and LMS portal access.
+Éclat Institute operates EXCLUSIVELY ONLINE worldwide and has no physical classrooms or connection to any Singapore O-Level/A-Level science tuition centers. All learning occurs virtually via interactive live video labs, DRM-protected video streaming, an online e-library, and the Éclat Learning Management System (LMS).
 
-## Academic Faculties & Curriculum
+## Academic Structure & Core Faculties
+Éclat Institute operates four foundational academic faculties:
+
 1. **School of Business**:
    - Professional Forex Trading, Currency Markets & Technical Analysis (FX Mastery)
    - Algorithmic Forex Trading & Quantitative Bot Strategies (Python & MT5)
@@ -43,14 +45,28 @@
    - Core & Extended syllabuses in Mathematics (0580 / 4MA1), Physics (0625 / 4PH1), Chemistry (0620 / 4CH1), Biology (0610 / 4BI1), Computer Science (0478 / 4CP0), First Language English (0500 / 4EA1), Business Studies (0450 / 4BS1), and Economics (0455 / 4EC1)
    - Official statement of results, past paper marathons, and Alternative to Practical (ATP) laboratory series
 
-## Key Features & Student Benefits
-- **Schedule**: Live Evening Cohorts (6:00 PM – 9:30 PM) and Weekend Intensive Masterclasses.
-- **Accreditation & Certification**: Every graduate receives a verified digital certificate featuring instant QR verification for LinkedIn, employers, and higher education.
-- **Tuition & Financing**: Affordable global pricing in US Dollars ($ USD) with flexible 2-part and 3-part monthly installment plans (50% deposit to start).
-- **Learning Management System**: 24/7 access to recorded live sessions, downloadable lecture slides, interactive DRM e-library, and coding datasets.
+## Multi-Tenant Course Publishing & Academic Partnerships
+In addition to internal diploma tracks, Éclat Institute provides an open institutional publishing framework:
+- **Partner Schools & Institutions**: External academic institutions, secondary academies, and colleges can register institutional creator accounts, brand their curricula, set custom tuition splits, and co-issue diplomas and credentials bearing their official school crest in academic affiliation with Éclat Institute.
+- **Independent Tutors & Expert Creators**: Subject-matter experts and certified lecturers publish courses with automated 50% revenue-share agreements, automated video ingest, and student management tools.
 
-## Official Contact & Support
+## Dual Delivery Modes & Admissions Policy
+Éclat Institute enforces a clear distinction between delivery tracks:
+- **Live Cohort Classes**: Designed for structured interactive learning. Students undergo formal matriculation and are issued an official Admission Number (`EI-2026-XXXX`). Classes include scheduled Google Meet sessions, timetable allocations, faculty mentorship, and live practical lab evaluations.
+- **Self-Paced / On-Demand Courses**: Designed for flexible mastery. Enrollees receive immediate lifetime access passes upon online payment without admission hurdles. Upon completion, students receive automated cryptographically verifiable digital certificates.
+
+## Certification Authority Model
+- **Individual Tutor Courses**: Certificates are conferred officially by **Éclat Institute**, crediting the tutor as Lead Faculty Instructor alongside the Éclat Academic Council.
+- **Partner School Courses**: Certificates are conferred under the **Partner Institution's Official Crest & Seal** (*Conferred in Academic Affiliation with Éclat Institute*), signed by the Partner Institution's Dean and Éclat Quality Assurance.
+
+## Student Onboarding, Payments & Security
+- **Self-Service Accounts**: Students, tutors, and schools can create and manage portal accounts at `https://eclat.institute/login`.
+- **Payment Processing**: Direct integration with Paystack supporting international Visa, Mastercard, Verve, and Mobile Money.
+- **DRM & Integrity**: Content protection protocols prevent unauthorized ripping, backed by dedicated offline workstation archiving.
+
+## Official Contact & Verification
 - **Official Website**: https://eclat.institute
-- **Admissions WhatsApp & Support**: +254 740 027 346 / +254740027346
+- **Course Publishing Portal**: https://eclat.institute/tutor/publish
+- **Student Portal Login**: https://eclat.institute/login
+- **Admissions WhatsApp & Global Support**: +254 740 027 346 / +254740027346
 - **Admissions Email**: info.eclatinstitute@gmail.com
-- **Portal Access**: https://eclat.institute/login
