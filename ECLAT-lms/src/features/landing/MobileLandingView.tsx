@@ -360,10 +360,10 @@ export function MobileLandingView({
             <span style={{ fontSize: '0.68rem', fontWeight: 800, textAlign: 'center', color: '#0f172a' }}>Apply</span>
           </button>
 
-          {/* Tile 2: Paybill */}
+          {/* Tile 2: Online Pay */}
           <button
             type="button"
-            onClick={copyPaybill}
+            onClick={() => onOpenInquiry()}
             style={{
               background: '#ffffff',
               border: '1px solid #e2e8f0',
@@ -380,7 +380,7 @@ export function MobileLandingView({
             }}
           >
             <span style={{ fontSize: '1.35rem' }}>💳</span>
-            <span style={{ fontSize: '0.68rem', fontWeight: 800, textAlign: 'center', color: '#0f172a' }}>KCB / Pay</span>
+            <span style={{ fontSize: '0.68rem', fontWeight: 800, textAlign: 'center', color: '#0f172a' }}>Pay Online</span>
           </button>
 
           {/* Tile 3: Timetable */}

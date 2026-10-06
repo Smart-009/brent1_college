@@ -7,6 +7,7 @@ import { sanitizeInput } from '@/lib/utils'
 import type { Role, Profile } from '@/lib/database.types'
 import { schoolStore } from '@/lib/schoolData'
 import { hashPassword } from '@/lib/crypto'
+import { supabase } from '@/lib/supabase'
 import {
   GraduationCapIcon,
   BookOpenIcon,
@@ -44,6 +45,31 @@ export function Login() {
   const [regLogoUrl, setRegLogoUrl] = useState('')
   const [regLoading, setRegLoading] = useState(false)
   const [regSuccessMsg, setRegSuccessMsg] = useState<string | null>(null)
+  const [googleLoading, setGoogleLoading] = useState(false)
+
+  const handleGoogleLogin = async () => {
+    try {
+      setGoogleLoading(true)
+      setError(null)
+      const redirectUrl = `${window.location.origin}/student`
+      const { error: oauthError } = await supabase.auth.signInWithOAuth({
+        provider: 'google',
+        options: {
+          redirectTo: redirectUrl,
+          queryParams: {
+            access_type: 'offline',
+            prompt: 'select_account',
+          },
+        },
+      })
+      if (oauthError) {
+        throw oauthError
+      }
+    } catch (err: any) {
+      setError(err?.message || 'Google authentication failed. Please try again.')
+      setGoogleLoading(false)
+    }
+  }
 
   // If URL has ?role=admin or ?role=bursar, start in staff mode
   const [isStaffMode, setIsStaffMode] = useState<boolean>(paramRole === 'admin' || paramRole === 'bursar')
@@ -723,13 +749,63 @@ export function Login() {
                   <button
                     type="submit"
                     className="btn btn-primary btn-full"
-                    disabled={loading}
+                    disabled={loading || googleLoading}
                     style={{ fontWeight: 800, padding: '0.85rem', borderRadius: '12px', fontSize: '0.95rem' }}
                   >
                     {loading ? 'Authenticating...' : `Sign In to Portal →`}
                   </button>
 
-                  <div style={{ marginTop: '1rem', textAlign: 'center' }}>
+                  {/* Google OAuth Single Sign-On Button */}
+                  <div style={{ margin: '1.25rem 0', display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                    <div style={{ flex: 1, height: '1px', background: '#e2e8f0' }} />
+                    <span style={{ fontSize: '0.75rem', color: '#64748b', fontWeight: 600, textTransform: 'uppercase' }}>or sign in with</span>
+                    <div style={{ flex: 1, height: '1px', background: '#e2e8f0' }} />
+                  </div>
+
+                  <button
+                    type="button"
+                    onClick={handleGoogleLogin}
+                    disabled={googleLoading || loading}
+                    style={{
+                      width: '100%',
+                      padding: '0.75rem',
+                      borderRadius: '12px',
+                      border: '1.5px solid #cbd5e1',
+                      background: '#ffffff',
+                      color: '#1e293b',
+                      fontSize: '0.92rem',
+                      fontWeight: 700,
+                      cursor: 'pointer',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      gap: '10px',
+                      boxShadow: '0 1px 3px rgba(0,0,0,0.06)',
+                      transition: 'all 0.15s ease',
+                    }}
+                  >
+                    <svg width="20" height="20" viewBox="0 0 24 24">
+                      <path
+                        fill="#4285F4"
+                        d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.665-5.17 3.665-9.17z"
+                      />
+                      <path
+                        fill="#34A853"
+                        d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.1-6.72-4.93H1.26v3.15C3.25 21.36 7.34 24 12 24z"
+                      />
+                      <path
+                        fill="#FBBC05"
+                        d="M5.28 14.27c-.25-.72-.38-1.49-.38-2.27s.13-1.55.38-2.27V6.58H1.26C.46 8.17 0 9.99 0 12s.46 3.83 1.26 5.42l4.02-3.15z"
+                      />
+                      <path
+                        fill="#EA4335"
+                        d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.34 0 3.25 2.64 1.26 6.58l4.02 3.15c.95-2.83 3.6-4.98 6.72-4.98z"
+                      />
+                    </svg>
+                    <span>{googleLoading ? 'Connecting Google Account...' : 'Continue with Google / Gmail'}</span>
+                  </button>
+
+                  <div style={{ marginTop: '1.1rem', textAlign: 'center' }}>
                     <button
                       type="button"
                       onClick={() => setAuthMode('register')}
@@ -979,10 +1055,60 @@ export function Login() {
                   <button
                     type="submit"
                     className="btn btn-primary btn-full"
-                    disabled={regLoading}
+                    disabled={regLoading || googleLoading}
                     style={{ fontWeight: 800, padding: '0.8rem', borderRadius: '12px', fontSize: '0.92rem' }}
                   >
                     {regLoading ? 'Registering Account...' : regType === 'student' ? 'Complete Student Registration →' : regType === 'tutor' ? 'Register Tutor & Open Publisher →' : 'Register School & Open Publisher →'}
+                  </button>
+
+                  {/* Google OAuth Single Sign-On Button for Instant Registration */}
+                  <div style={{ margin: '1rem 0', display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                    <div style={{ flex: 1, height: '1px', background: '#e2e8f0' }} />
+                    <span style={{ fontSize: '0.75rem', color: '#64748b', fontWeight: 600, textTransform: 'uppercase' }}>or sign up with</span>
+                    <div style={{ flex: 1, height: '1px', background: '#e2e8f0' }} />
+                  </div>
+
+                  <button
+                    type="button"
+                    onClick={handleGoogleLogin}
+                    disabled={googleLoading || regLoading}
+                    style={{
+                      width: '100%',
+                      padding: '0.75rem',
+                      borderRadius: '12px',
+                      border: '1.5px solid #cbd5e1',
+                      background: '#ffffff',
+                      color: '#1e293b',
+                      fontSize: '0.92rem',
+                      fontWeight: 700,
+                      cursor: 'pointer',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      gap: '10px',
+                      boxShadow: '0 1px 3px rgba(0,0,0,0.06)',
+                      transition: 'all 0.15s ease',
+                    }}
+                  >
+                    <svg width="20" height="20" viewBox="0 0 24 24">
+                      <path
+                        fill="#4285F4"
+                        d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.665-5.17 3.665-9.17z"
+                      />
+                      <path
+                        fill="#34A853"
+                        d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.1-6.72-4.93H1.26v3.15C3.25 21.36 7.34 24 12 24z"
+                      />
+                      <path
+                        fill="#FBBC05"
+                        d="M5.28 14.27c-.25-.72-.38-1.49-.38-2.27s.13-1.55.38-2.27V6.58H1.26C.46 8.17 0 9.99 0 12s.46 3.83 1.26 5.42l4.02-3.15z"
+                      />
+                      <path
+                        fill="#EA4335"
+                        d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.34 0 3.25 2.64 1.26 6.58l4.02 3.15c.95-2.83 3.6-4.98 6.72-4.98z"
+                      />
+                    </svg>
+                    <span>{googleLoading ? 'Connecting Google Account...' : 'Sign Up with Google / Gmail'}</span>
                   </button>
 
                   <div style={{ marginTop: '0.85rem', textAlign: 'center' }}>

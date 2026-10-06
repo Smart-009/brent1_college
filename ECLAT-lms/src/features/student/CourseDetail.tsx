@@ -395,10 +395,10 @@ export function CourseDetail() {
               }}
             >
               <div style={{ fontWeight: 800, color: '#dc2626', marginBottom: '0.35rem' }}>
-                Bursar Tuition Clearance Required to Stream Video Lectures
+                Tuition Fee Clearance Required to Stream Video Lectures
               </div>
               <div>
-                To unlock lecture videos and interactive materials, please pay tuition via M-Pesa Paybill <strong>{INSTITUTION_CONFIG.bank.paybillNumber}</strong> (Account: <strong>{INSTITUTION_CONFIG.bank.accountNumber}</strong>) and contact the Bursar Desk to clear your portal account.
+                To unlock video lectures and interactive labs, tuition must be cleared online via Paystack (M-Pesa Express / Card) or verified with the Admissions & Bursar Desk.
               </div>
             </div>
           )}

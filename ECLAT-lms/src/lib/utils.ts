@@ -239,10 +239,25 @@ export function getGoogleDrivePreviewUrl(url: string): string | null {
 /**
  * Transforms any document/file URL (Google Drive, cloud PDF/DOCX, direct data URL)
  * into a suitable in-app embed preview URL.
+ * Strictly prevents self-referencing SPA paths (e.g., '/', '/index.html', 'index.html') from exposing site source code.
  */
 export function getEmbeddableDocumentUrl(url: string, engine: 'cloud' | 'direct' = 'direct'): string {
   if (!url || typeof url !== 'string') return ''
   const trimmed = url.trim()
+
+  // Prevent self-referencing SPA paths from returning source HTML
+  const lower = trimmed.toLowerCase()
+  if (
+    lower === '/' ||
+    lower === '/index.html' ||
+    lower === 'index.html' ||
+    lower === './index.html' ||
+    lower.startsWith('/?') ||
+    lower.startsWith('/#') ||
+    lower === ''
+  ) {
+    return ''
+  }
 
   // 1. Google Drive / Docs / Slides / Sheets preview embed
   const gdriveEmbed = getGoogleDrivePreviewUrl(trimmed)

@@ -125,7 +125,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         .from('profiles')
         .select('*')
         .eq('id', userId)
-        .single()
+        .maybeSingle()
       if (data) {
         const enriched = {
           ...data,
@@ -136,6 +136,66 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         const existingToken = sessionStorage.getItem('eclat_device_session_token') || localStorage.getItem('eclat_device_session_token')
         if (!existingToken) {
           bindActiveDeviceSession(enriched).catch(() => {})
+        }
+      } else {
+        // Auto-provision profile from Google OAuth user
+        const { data: userData } = await supabase.auth.getUser()
+        const authUser = userData?.user
+        if (authUser && authUser.id === userId) {
+          const userMeta = authUser.user_metadata || {}
+          const fullName = userMeta.full_name || userMeta.name || authUser.email?.split('@')[0] || 'Google Student'
+          const generatedAdm = `EI-${new Date().getFullYear()}-G${Math.floor(1000 + Math.random() * 9000)}`
+
+          const newProfile: Profile = {
+            id: userId,
+            full_name: fullName,
+            admission_number: generatedAdm,
+            role: 'student',
+            first_login_at: new Date().toISOString(),
+            access_expires_at: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString(),
+            is_active: true,
+            created_at: new Date().toISOString(),
+          }
+
+          try {
+            await supabase.from('profiles').insert(newProfile)
+          } catch {}
+
+          // Also register in local SIS store
+          await schoolStore.addStudent({
+            id: userId,
+            admission_number: generatedAdm,
+            full_name: fullName,
+            portal_password: 'oauth_verified',
+            gender: 'Male',
+            dob: '2002-01-01',
+            class_id: 'prog-comp',
+            class_name: 'Self-Paced Video Track',
+            grade_level: 'Professional Certificate',
+            stream: 'Google Verified Student',
+            enrollment_date: new Date().toLocaleDateString('en-GB'),
+            admission_date: new Date().toLocaleDateString('en-GB'),
+            status: 'Active',
+            guardian: {
+              name: fullName,
+              relationship: 'Self',
+              phone: userMeta.phone || '',
+              email: authUser.email || '',
+            },
+            parent_phone: userMeta.phone || '',
+            emergency_contact: userMeta.phone || '',
+            fee_balance: 0,
+            term_fee_total: 0,
+            fee_cleared: true,
+            attendance_rate: 100,
+            discipline_points: 100,
+            merits_count: 1,
+            demerits_count: 0,
+          })
+
+          setProfile(newProfile)
+          localStorage.setItem('eclat_active_profile', JSON.stringify(newProfile))
+          await bindActiveDeviceSession(newProfile).catch(() => {})
         }
       }
     } catch {

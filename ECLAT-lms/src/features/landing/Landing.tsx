@@ -12,7 +12,7 @@ import { OFFICIAL_COURSES, getDynamicCoursesList } from '@/config/officialCourse
 import { IntakeAdvertsSection } from './IntakeAdvertsSection'
 import { CertificateGenerator, CertificateData, SAMPLE_CERTIFICATES } from '@/components/shared/CertificateGenerator'
 import { initializePaystackCheckout } from '@/lib/paystack'
-import type { Role } from '@/lib/database.types'
+import type { Role, Profile } from '@/lib/database.types'
 import {
   HomeIcon,
   BookOpenIcon,
@@ -857,7 +857,53 @@ export function Landing() {
           balance_remaining: balanceRemaining,
         })
 
-        // 4. Set generated admission pass
+        // 4. Enroll course in student's academic units
+        try {
+          await schoolStore.addCourseToStudentProgram(admNo, selectedCourseObj.id)
+        } catch {}
+
+        // 5. Auto-provision instant student profile & portal login session
+        const studentUserId = `usr-${Date.now()}`
+        const studentProfile: Profile = {
+          id: studentUserId,
+          full_name: inquiryForm.name,
+          admission_number: admNo,
+          role: 'student',
+          first_login_at: new Date().toISOString(),
+          access_expires_at: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString(),
+          is_active: true,
+          created_at: new Date().toISOString(),
+        }
+
+        try {
+          // Store active student profile for instant seamless navigation into the course
+          localStorage.setItem('eclat_active_profile', JSON.stringify(studentProfile))
+          sessionStorage.setItem('eclat_active_profile', JSON.stringify(studentProfile))
+
+          // Save credentials in local storage lookup table
+          const stored = localStorage.getItem('eclat_local_credentials')
+          const parsed = stored ? JSON.parse(stored) : {}
+          const cleanAdm = admNo.toLowerCase().replace(/[^a-z0-9]/g, '')
+          const cleanEmail = (inquiryForm.email || '').toLowerCase().replace(/[^a-z0-9]/g, '')
+          const credData = {
+            id: studentUserId,
+            admission_number: admNo,
+            full_name: inquiryForm.name,
+            email: inquiryForm.email,
+            phone: inquiryForm.phone,
+            password: 'eclat_cleared',
+            role: 'student' as Role,
+            account_type: 'student',
+            delivery_mode: courseDeliveryMode,
+            profile: studentProfile,
+            created_at: new Date().toISOString(),
+          }
+          parsed[cleanAdm] = credData
+          if (cleanEmail) parsed[cleanEmail] = credData
+          localStorage.setItem('eclat_local_credentials', JSON.stringify(parsed))
+        } catch {}
+
+        // 6. Set generated admission pass
         setGeneratedAdmission({
           studentName: inquiryForm.name,
           admissionNumber: admNo,
@@ -4448,7 +4494,10 @@ export function Landing() {
                     <button
                       type="button"
                       className="btn btn-primary btn-sm"
-                      onClick={() => handleLaunchRole('student')}
+                      onClick={() => {
+                        setInquiryModalOpen(false)
+                        navigate(generatedAdmission.courseId ? `/student/courses/${generatedAdmission.courseId}` : '/student/courses')
+                      }}
                       style={{ fontWeight: 800 }}
                     >
                       <GraduationCapIcon size={15} color="#ffffff" style={{ marginRight: '6px', verticalAlign: 'middle' }} />

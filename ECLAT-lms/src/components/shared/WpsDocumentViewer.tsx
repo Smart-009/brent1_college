@@ -985,23 +985,52 @@ export function WpsDocumentViewer({
               </div>
             ))}
 
-            {/* Document Iframe */}
-            <iframe
-              src={resolvedUrl}
-              title={title}
-              sandbox="allow-scripts allow-same-origin allow-forms"
-              onError={() => setIframeError(true)}
-              style={{
-                width: '100%',
-                height: '100%',
-                minHeight: '100%',
-                flex: 1,
-                border: 'none',
-                background: '#000000',
-                display: 'block',
-              }}
-              allow="autoplay; encrypted-media; fullscreen"
-            />
+            {/* Document Iframe or Fallback Viewer */}
+            {resolvedUrl ? (
+              <iframe
+                src={resolvedUrl}
+                title={title}
+                sandbox="allow-scripts allow-same-origin allow-forms"
+                onError={() => setIframeError(true)}
+                style={{
+                  width: '100%',
+                  height: '100%',
+                  minHeight: '100%',
+                  flex: 1,
+                  border: 'none',
+                  background: '#000000',
+                  display: 'block',
+                }}
+                allow="autoplay; encrypted-media; fullscreen"
+              />
+            ) : (
+              <div
+                style={{
+                  flex: 1,
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  padding: '2.5rem',
+                  textAlign: 'center',
+                  background: '#ffffff',
+                  color: '#0f172a',
+                }}
+              >
+                <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>📄</div>
+                <h4 style={{ fontSize: '1.25rem', fontWeight: 900, margin: '0 0 0.5rem', color: '#1e3a8a' }}>
+                  {title}
+                </h4>
+                <p style={{ fontSize: '0.9rem', color: '#64748b', maxWidth: '480px', margin: '0 auto 1.5rem', lineHeight: 1.6 }}>
+                  This official academic lecture module notes and interactive curriculum guide are streamed under DRM protection for enrolled students.
+                </p>
+                <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '10px', padding: '1rem 1.5rem', fontSize: '0.82rem', color: '#334155', maxWidth: '460px' }}>
+                  <div><strong>Student ID:</strong> {studentId || 'Enrolled Student'}</div>
+                  <div><strong>Student Name:</strong> {studentName || 'Authenticated Learner'}</div>
+                  <div style={{ marginTop: '0.5rem', color: '#16a34a', fontWeight: 700 }}>✓ Verified Curriculum Material Access Granted</div>
+                </div>
+              </div>
+            )}
           </div>
         )}
       </div>

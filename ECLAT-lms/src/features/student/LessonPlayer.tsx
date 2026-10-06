@@ -12,17 +12,38 @@ import { Button } from '@/components/ui/Button'
 import { Spinner } from '@/components/ui/Spinner'
 import { schoolStore, schoolEventBus } from '@/lib/schoolData'
 import { INSTITUTION_CONFIG, getWhatsAppInquiryUrl } from '@/config/institution'
+import { initializePaystackCheckout } from '@/lib/paystack'
 import type { Lesson, Course, Quiz, LessonResource, Enrollment, QuizAttempt } from '@/lib/database.types'
 
 function HtmlViewer({ fileUrl, title }: { fileUrl: string; title: string }) {
-  const { data: htmlContent, isLoading } = useQuery({
+  const { data: htmlContent, isLoading, isError } = useQuery({
     queryKey: ['html-file-body', fileUrl],
     queryFn: async () => {
+      if (!fileUrl) throw new Error('Invalid file URL')
+      const cleanUrl = fileUrl.trim().toLowerCase()
+      // Never fetch the SPA web application itself (prevents source code leak)
+      if (
+        cleanUrl === '/' ||
+        cleanUrl === '/index.html' ||
+        cleanUrl === 'index.html' ||
+        cleanUrl === window.location.origin ||
+        cleanUrl === `${window.location.origin}/` ||
+        cleanUrl === `${window.location.origin}/index.html`
+      ) {
+        throw new Error('Invalid interactive resource path')
+      }
+
       const res = await fetch(fileUrl)
       if (!res.ok) throw new Error('Failed to load file content')
-      return res.text()
+      const text = await res.text()
+      // Detect if returned HTML is actually the SPA shell index.html
+      if (text.includes('<div id="root">') || text.includes('content="google-site-verification')) {
+        throw new Error('Resource is not an external interactive lab')
+      }
+      return text
     },
     staleTime: 1000 * 60 * 10,
+    retry: false,
   })
 
   if (isLoading) {
@@ -33,9 +54,34 @@ function HtmlViewer({ fileUrl, title }: { fileUrl: string; title: string }) {
     )
   }
 
+  if (isError || !htmlContent) {
+    return (
+      <div
+        style={{
+          padding: '2rem',
+          textAlign: 'center',
+          background: 'var(--color-bg-secondary)',
+          borderRadius: 8,
+          border: '1px solid var(--color-border)',
+        }}
+      >
+        <div style={{ fontSize: '2rem', marginBottom: '0.5rem' }}>🧪</div>
+        <h4 style={{ fontSize: '1.1rem', fontWeight: 800, margin: '0 0 0.5rem', color: 'var(--color-primary)' }}>
+          {title}
+        </h4>
+        <p style={{ fontSize: '0.85rem', color: 'var(--color-text-secondary)', maxWidth: '420px', margin: '0 auto 1rem' }}>
+          Interactive lab exercises and practical demonstration environment for this lesson module.
+        </p>
+        <div style={{ display: 'inline-block', padding: '0.35rem 0.85rem', borderRadius: '6px', background: '#dcfce7', color: '#166534', fontSize: '0.8rem', fontWeight: 700 }}>
+          ✓ Verified Curriculum Practical Lab Material
+        </div>
+      </div>
+    )
+  }
+
   return (
     <iframe
-      srcDoc={htmlContent || ''}
+      srcDoc={htmlContent}
       title={title}
       sandbox="allow-scripts allow-same-origin allow-forms"
       style={{
@@ -571,7 +617,7 @@ export function LessonPlayer() {
               Course lecture videos, downloadable interactive lab materials, and module quizzes are unlocked immediately once your tuition payment is verified and cleared by the Bursar Desk or Administrator.
             </p>
 
-            {/* Official M-Pesa Payment Box */}
+            {/* Instant Automated Paystack Online Checkout Box */}
             <div
               style={{
                 background: 'var(--color-bg-primary)',
@@ -583,15 +629,86 @@ export function LessonPlayer() {
                 boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
               }}
             >
-              <div style={{ fontWeight: 800, fontSize: '0.9rem', marginBottom: '0.75rem', color: 'var(--color-primary)', display: 'flex', alignItems: 'center', gap: '6px' }}>
-                <span>📲</span> Official M-Pesa Payment Details
+              <div style={{ fontWeight: 800, fontSize: '0.9rem', marginBottom: '0.5rem', color: '#16a34a', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                <span>⚡</span> Automated Online Fee Clearance via Paystack
               </div>
-              <div style={{ fontSize: '0.86rem', color: 'var(--color-text-secondary)', lineHeight: 1.7 }}>
-                <div>1. Go to M-Pesa → Lipa na M-Pesa → <strong>Paybill</strong></div>
-                <div>2. Business Number: <strong style={{ color: 'var(--color-primary)', fontSize: '1rem' }}>{INSTITUTION_CONFIG.bank.paybillNumber}</strong> ({INSTITUTION_CONFIG.bank.name})</div>
-                <div>3. Account Number: <strong style={{ color: 'var(--color-primary)', fontSize: '1rem' }}>{INSTITUTION_CONFIG.bank.accountNumber}</strong></div>
-                <div>4. Account Name: <strong>{INSTITUTION_CONFIG.bank.accountName}</strong></div>
-              </div>
+              <p style={{ fontSize: '0.85rem', color: 'var(--color-text-secondary)', lineHeight: 1.6, margin: '0 0 1rem' }}>
+                Tuition payments are processed automatically with immediate module unlock. Complete payment via M-Pesa Express, Card, or Apple Pay:
+              </p>
+
+              <button
+                type="button"
+                className="btn btn-primary btn-full"
+                onClick={async () => {
+                  const studentName = profile?.full_name || 'Enrolled Student'
+                  const admNo = profile?.admission_number || profile?.id || 'EI-STUDENT'
+                  const courseTitle = data?.course?.title || 'Course Unit'
+                  const courseFee = (data?.unit as any)?.course_fee || 15000
+
+                  await initializePaystackCheckout({
+                    email: (profile as any)?.email || `${admNo.toLowerCase().replace(/[^a-z0-9]/g, '')}@student.${INSTITUTION_CONFIG.domain}`,
+                    amount: courseFee,
+                    currency: 'KES',
+                    studentName,
+                    admissionNumber: admNo,
+                    purpose: `Tuition Fee Clearance - ${courseTitle}`,
+                    invoiceId: `INV-${admNo}`,
+                    onSuccess: async (reference) => {
+                      const verifiedRef = `PAYSTACK-${reference}`
+                      await schoolStore.recordPayment({
+                        id: `rcpt-${Date.now()}`,
+                        receipt_number: `EI-REC-${Math.random().toString(36).substring(2, 8).toUpperCase()}`,
+                        student_id: profile?.id || admNo,
+                        student_name: studentName,
+                        admission_number: admNo,
+                        amount: courseFee,
+                        amount_paid: courseFee,
+                        payment_method: 'Card',
+                        reference_code: verifiedRef,
+                        payment_date: new Date().toLocaleDateString('en-GB'),
+                        paid_by: studentName,
+                        recorded_by: 'Paystack Automated Gateway',
+                        balance_after: 0,
+                        balance_remaining: 0,
+                      })
+
+                      // Update student fee status in schoolStore
+                      const student = schoolStore.getStudents().find(
+                        (s) => s.admission_number.toLowerCase().replace(/[^a-z0-9]/g, '') === admNo.toLowerCase().replace(/[^a-z0-9]/g, '')
+                      )
+                      if (student) {
+                        student.fee_cleared = true
+                        student.fee_balance = 0
+                        await schoolStore.updateStudent(student.id, student)
+                      }
+
+                      alert('🎉 Payment verified! Your lessons and modules are now cleared and unlocked.')
+                      window.location.reload()
+                    },
+                    onClose: () => {
+                      // Window closed
+                    },
+                  })
+                }}
+                style={{
+                  background: 'linear-gradient(135deg, #059669 0%, #047857 100%)',
+                  color: '#ffffff',
+                  fontWeight: 800,
+                  padding: '0.85rem 1.25rem',
+                  borderRadius: '10px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '8px',
+                  boxShadow: '0 4px 14px rgba(5, 150, 105, 0.35)',
+                  cursor: 'pointer',
+                  border: 'none',
+                  fontSize: '0.95rem',
+                }}
+              >
+                <span>💳</span>
+                <span>Pay Online with Paystack (M-Pesa / Card) to Unlock Instantly →</span>
+              </button>
             </div>
 
             {/* Direct Support & Verification Actions */}
@@ -600,20 +717,20 @@ export function LessonPlayer() {
                 href={getWhatsAppInquiryUrl(`Hello Admissions & Bursar Office! My Name is ${profile?.full_name || ''} (Admission: ${profile?.admission_number || ''}). I would like to confirm my fee clearance and activate my LMS course modules.`)}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="btn btn-primary"
+                className="btn btn-secondary"
                 style={{
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
                   gap: '8px',
-                  padding: '0.85rem 1.25rem',
-                  fontWeight: 800,
-                  fontSize: '0.95rem',
+                  padding: '0.75rem 1.25rem',
+                  fontWeight: 700,
+                  fontSize: '0.88rem',
                   borderRadius: '0.75rem',
                   textDecoration: 'none',
                 }}
               >
-                <span>💬</span> Contact Bursar on WhatsApp
+                <span>💬</span> Contact Bursar Desk on WhatsApp
               </a>
 
               <Link

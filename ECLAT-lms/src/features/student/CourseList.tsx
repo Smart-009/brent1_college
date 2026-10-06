@@ -5,6 +5,7 @@ import { PageWrapper } from '@/components/layout/PageWrapper'
 import { schoolStore, schoolEventBus } from '@/lib/schoolData'
 import { UnitRegistrationSlip } from '@/components/shared/UnitRegistrationSlip'
 import { INSTITUTION_CONFIG, getWhatsAppInquiryUrl } from '@/config/institution'
+import { initializePaystackCheckout } from '@/lib/paystack'
 import type { CourseUnit } from '@/types/school'
 
 export function CourseList() {
@@ -60,45 +61,72 @@ export function CourseList() {
   const handleEnrollSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!enrollUnit || !studentIdentifier) return
+
+    const studentName = profile?.full_name || 'Enrolled Student'
+    const admNo = profile?.admission_number || studentIdentifier
+    const feeAmount = enrollUnit.course_fee || 15000
+
     setIsProcessingEnrollment(true)
 
     try {
-      // 1. Add course to student program
-      await schoolStore.addCourseToStudentProgram(studentIdentifier, enrollUnit.id)
+      await initializePaystackCheckout({
+        email: (profile as any)?.email || `${admNo.toLowerCase().replace(/[^a-z0-9]/g, '')}@student.${INSTITUTION_CONFIG.domain}`,
+        amount: feeAmount,
+        currency: 'KES',
+        studentName,
+        admissionNumber: admNo,
+        purpose: `Course Enrollment Fee: ${enrollUnit.title}`,
+        invoiceId: `INV-${admNo}`,
+        onSuccess: async (reference) => {
+          const verifiedRef = `PAYSTACK-${reference}`
+          const recNo = `RCT-${new Date().getFullYear()}-${Math.floor(100000 + Math.random() * 900000)}`
 
-      // 2. Record fee payment if code provided
-      if (mpesaCode.trim()) {
-        const feeAmount = enrollUnit.course_fee || 15000
-        await schoolStore.recordPayment({
-          id: `pay-mpesa-${Date.now()}`,
-          receipt_number: `RCT-${new Date().getFullYear()}-${Math.floor(100000 + Math.random() * 900000)}`,
-          student_id: profile?.id || studentIdentifier,
-          student_name: profile?.full_name || 'Enrolled Student',
-          admission_number: profile?.admission_number || studentIdentifier,
-          amount: feeAmount,
-          payment_method: 'M-Pesa',
-          reference_code: mpesaCode.trim().toUpperCase(),
-          payment_reference: mpesaCode.trim().toUpperCase(),
-          paid_by: profile?.full_name || 'Self',
-          balance_after: 0,
-          payment_date: new Date().toISOString().split('T')[0],
-          description: `Course Enrollment Fee: ${enrollUnit.title}`,
-          recorded_by: 'Online M-Pesa Portal Gateway',
-        })
-      }
+          // 1. Add course to student program
+          await schoolStore.addCourseToStudentProgram(studentIdentifier, enrollUnit.id)
 
-      setEnrollSuccessMsg(`🎉 Successfully enrolled in ${enrollUnit.title}! Your course units and lecture materials are now active.`)
-      setTimeout(() => {
-        setEnrollUnit(null)
-        setEnrollSuccessMsg(null)
-        setMpesaCode('')
-        setPaymentPhone('')
-        setViewMode('my_courses')
-        setVersion((v) => v + 1)
-      }, 2000)
+          // 2. Record payment
+          await schoolStore.recordPayment({
+            id: `pay-paystack-${Date.now()}`,
+            receipt_number: recNo,
+            student_id: profile?.id || studentIdentifier,
+            student_name: studentName,
+            admission_number: admNo,
+            amount: feeAmount,
+            amount_paid: feeAmount,
+            payment_method: 'Card',
+            reference_code: verifiedRef,
+            payment_reference: verifiedRef,
+            paid_by: studentName,
+            balance_after: 0,
+            payment_date: new Date().toISOString().split('T')[0],
+            description: `Course Enrollment Fee: ${enrollUnit.title}`,
+            recorded_by: 'Paystack Automated Gateway',
+          })
+
+          // 3. Update student fee cleared
+          const student = schoolStore.getStudents().find(
+            (s) => s.admission_number.toLowerCase().replace(/[^a-z0-9]/g, '') === admNo.toLowerCase().replace(/[^a-z0-9]/g, '')
+          )
+          if (student) {
+            student.fee_cleared = true
+            student.fee_balance = 0
+            await schoolStore.updateStudent(student.id, student)
+          }
+
+          setEnrollSuccessMsg(`🎉 Payment verified! Successfully enrolled in ${enrollUnit.title}. Your course units and lecture materials are now active.`)
+          setTimeout(() => {
+            setEnrollUnit(null)
+            setEnrollSuccessMsg(null)
+            setViewMode('my_courses')
+            setVersion((v) => v + 1)
+          }, 2000)
+        },
+        onClose: () => {
+          setIsProcessingEnrollment(false)
+        },
+      })
     } catch (err: any) {
-      alert('Enrollment error: ' + (err.message || 'Could not complete registration'))
-    } finally {
+      alert('Enrollment error: ' + (err.message || 'Could not launch payment gateway'))
       setIsProcessingEnrollment(false)
     }
   }
@@ -420,49 +448,20 @@ export function CourseList() {
                       </div>
                     </div>
 
-                    <div style={{ background: 'var(--color-bg-secondary)', padding: '1rem', borderRadius: '8px', border: '1px solid var(--color-border)' }}>
-                      <div style={{ fontWeight: 800, fontSize: '0.85rem', marginBottom: '0.5rem', color: 'var(--color-primary)' }}>
-                        📲 Official M-Pesa Payment Instructions:
+                    <div style={{ background: 'var(--color-bg-secondary)', padding: '1.25rem', borderRadius: '10px', border: '1px solid var(--color-border)' }}>
+                      <div style={{ fontWeight: 800, fontSize: '0.9rem', marginBottom: '0.4rem', color: '#16a34a', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                        <span>⚡</span> Automated Online Payment via Paystack
                       </div>
-                      <div style={{ fontSize: '0.82rem', color: 'var(--color-text-secondary)', lineHeight: 1.6 }}>
-                        1. Go to M-Pesa → Lipa na M-Pesa → <strong>Paybill</strong><br />
-                        2. Business No: <strong>{INSTITUTION_CONFIG.bank.paybillNumber}</strong> ({INSTITUTION_CONFIG.bank.name})<br />
-                        3. Account No: <strong>{INSTITUTION_CONFIG.bank.accountNumber}</strong><br />
-                        4. Account Name: <strong>{INSTITUTION_CONFIG.bank.accountName}</strong><br />
-                        5. Enter Amount and M-Pesa PIN, then enter your M-Pesa Confirmation Code below:
+                      <div style={{ fontSize: '0.84rem', color: 'var(--color-text-secondary)', lineHeight: 1.6 }}>
+                        Pay securely with instant activation using <strong>M-Pesa Express (STK prompt)</strong>, <strong>Debit/Credit Card (Visa & Mastercard)</strong>, or <strong>Apple Pay</strong>. No manual Paybill entry needed—your course units and interactive video lectures unlock immediately!
                       </div>
-                    </div>
-
-                    <div className="form-group">
-                      <label className="form-label" htmlFor="mpesaCode">M-Pesa Confirmation Code</label>
-                      <input
-                        id="mpesaCode"
-                        type="text"
-                        className="form-input"
-                        placeholder="e.g. TKB78190XZ (or leave blank to request bursar invoice)"
-                        value={mpesaCode}
-                        onChange={(e) => setMpesaCode(e.target.value)}
-                        style={{ textTransform: 'uppercase', fontWeight: 700 }}
-                      />
-                    </div>
-
-                    <div className="form-group">
-                      <label className="form-label" htmlFor="paymentPhone">Student M-Pesa Phone Number</label>
-                      <input
-                        id="paymentPhone"
-                        type="tel"
-                        className="form-input"
-                        placeholder="e.g. 0712 345 678"
-                        value={paymentPhone}
-                        onChange={(e) => setPaymentPhone(e.target.value)}
-                      />
                     </div>
                   </>
                 )}
               </div>
 
               {!enrollSuccessMsg && (
-                <div className="modal-footer">
+                <div className="modal-footer" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                   <button type="button" className="btn btn-secondary" onClick={() => setEnrollUnit(null)}>
                     Cancel
                   </button>
@@ -470,9 +469,19 @@ export function CourseList() {
                     type="submit"
                     className="btn btn-primary"
                     disabled={isProcessingEnrollment}
-                    style={{ fontWeight: 800 }}
+                    style={{
+                      fontWeight: 800,
+                      background: 'linear-gradient(135deg, #059669 0%, #047857 100%)',
+                      borderColor: '#059669',
+                      padding: '0.75rem 1.4rem',
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: '8px',
+                      boxShadow: '0 4px 14px rgba(5, 150, 105, 0.35)',
+                    }}
                   >
-                    {isProcessingEnrollment ? 'Registering...' : '✅ Complete Course Enrollment'}
+                    <span>💳</span>
+                    <span>{isProcessingEnrollment ? 'Opening Checkout...' : `Pay Online & Activate Now →`}</span>
                   </button>
                 </div>
               )}
