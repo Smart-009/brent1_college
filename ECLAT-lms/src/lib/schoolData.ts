@@ -1621,16 +1621,16 @@ export const INITIAL_COURSE_UNITS: CourseUnit[] = [
       {
         id: 'les-grd-1',
         title: 'Lesson 1: Introduction to Graphic Design & Tools Setup',
-        video_url: 'https://www.youtube.com/watch?v=un50Bs4BvZ8',
+        video_url: 'https://cdn.cs50.net/2023/fall/lectures/0/lecture0-720p.mp4',
         duration_minutes: 45,
-        content: 'Welcome to Graphics Design & Animation! In this session we explore core design theory, setup software and begin hands-on practical design.',
+        content: 'Welcome to Graphics Design & Animation! In this session we explore core design theory, digital coordinate systems, setup software and begin hands-on practical design.',
         meeting_url: 'https://meet.google.com/new',
         resources: [],
       },
       {
         id: 'les-grd-2',
         title: 'Lesson 2: Mastering Canva Pro for Brand Kits',
-        video_url: 'https://www.youtube.com/watch?v=un50Bs4BvZ8',
+        video_url: 'https://cdn.cs50.net/2023/fall/lectures/1/lecture1-720p.mp4',
         duration_minutes: 60,
         content: 'Practical workflow for creating high-impact brand kits, flyers, posters, and social media carousels in Canva.',
         meeting_url: 'https://meet.google.com/new',
@@ -1639,7 +1639,7 @@ export const INITIAL_COURSE_UNITS: CourseUnit[] = [
       {
         id: 'les-grd-3',
         title: 'Lesson 3: Adobe Photoshop Foundations & Layer Mastery',
-        video_url: 'https://www.youtube.com/watch?v=un50Bs4BvZ8',
+        video_url: 'https://cdn.cs50.net/2023/fall/lectures/2/lecture2-720p.mp4',
         duration_minutes: 60,
         content: 'Deep dive into Photoshop layers, selection tools, masking, color grading, and commercial asset exports.',
         meeting_url: 'https://meet.google.com/new',
@@ -1669,9 +1669,9 @@ export const INITIAL_COURSE_UNITS: CourseUnit[] = [
       { id: 'mod-swe-3', module_number: 3, title: 'Module 3: Node.js, Express & Database APIs', hours: 20, topics: ['REST APIs', 'PostgreSQL', 'Authentication & Deployment'], learning_outcomes: ['Deploy full-stack web applications with cloud databases'], resources: [] },
     ],
     lessons: [
-      { id: 'les-swe-1', title: 'Lesson 1: Modern Web Architecture & Frontend Setup', video_url: 'https://www.youtube.com/watch?v=kqtD5dpn9C8', duration_minutes: 60, content: 'Introduction to full-stack engineering, development tools setup, and modern JavaScript syntax.' },
-      { id: 'les-swe-2', title: 'Lesson 2: React 19 State Management & Components', video_url: 'https://www.youtube.com/watch?v=kqtD5dpn9C8', duration_minutes: 60, content: 'Building production-grade UI components with React hooks, props, and modern state architecture.' },
-      { id: 'les-swe-3', title: 'Lesson 3: REST API Design & PostgreSQL Integration', video_url: 'https://www.youtube.com/watch?v=kqtD5dpn9C8', duration_minutes: 60, content: 'Connecting frontend clients to PostgreSQL database backend APIs with JWT auth security.' },
+      { id: 'les-swe-1', title: 'Lesson 1: Modern Web Architecture & Frontend Setup', video_url: 'https://cdn.cs50.net/2023/fall/lectures/8/lecture8-720p.mp4', duration_minutes: 60, content: 'Introduction to full-stack engineering, development tools setup, and modern JavaScript syntax.' },
+      { id: 'les-swe-2', title: 'Lesson 2: React 19 State Management & Components', video_url: 'https://cdn.cs50.net/2023/fall/lectures/9/lecture9-720p.mp4', duration_minutes: 60, content: 'Building production-grade UI components with React hooks, props, and modern state architecture.' },
+      { id: 'les-swe-3', title: 'Lesson 3: REST API Design & PostgreSQL Integration', video_url: 'https://cdn.cs50.net/sql/2023/x/lectures/0/lecture0-720p.mp4', duration_minutes: 60, content: 'Connecting frontend clients to PostgreSQL database backend APIs with JWT auth security.' },
     ],
   },
   {
@@ -1696,8 +1696,9 @@ export const INITIAL_COURSE_UNITS: CourseUnit[] = [
       { id: 'mod-data-3', module_number: 3, title: 'Module 3: SQL Databases & BI Dashboards', hours: 15, topics: ['Complex SQL Joins', 'Aggregations', 'Dashboard Reports'], learning_outcomes: ['Query enterprise databases and present executive charts'], resources: [] },
     ],
     lessons: [
-      { id: 'les-data-1', title: 'Lesson 1: Python Fundamentals & Data Structures', video_url: 'https://www.youtube.com/watch?v=kqtD5dpn9C8', duration_minutes: 60, content: 'Mastering Python syntax, variables, lists, dictionaries, and programmatic logic.' },
-      { id: 'les-data-2', title: 'Lesson 2: Data Wrangling & Analysis with Pandas', video_url: 'https://www.youtube.com/watch?v=kqtD5dpn9C8', duration_minutes: 60, content: 'Analyzing enterprise datasets using Python Pandas, filtering records, and extracting insights.' },
+      { id: 'les-data-1', title: 'Lesson 1: Python Fundamentals & Data Structures', video_url: 'https://cdn.cs50.net/python/2022/x/lectures/0/lecture0-720p.mp4', duration_minutes: 60, content: 'Mastering Python syntax, variables, lists, dictionaries, and programmatic logic.' },
+      { id: 'les-data-2', title: 'Lesson 2: Data Wrangling & Analysis with Pandas', video_url: 'https://cdn.cs50.net/python/2022/x/lectures/1/lecture1-720p.mp4', duration_minutes: 60, content: 'Analyzing enterprise datasets using Python Pandas, filtering records, and extracting insights.' },
+      { id: 'les-data-3', title: 'Lesson 3: SQL Relational Queries & Database Aggregations', video_url: 'https://cdn.cs50.net/sql/2023/x/lectures/1/lecture1-720p.mp4', duration_minutes: 60, content: 'Writing complex relational database queries, grouping operations, and building analytics reports.' },
     ],
   },
   {
@@ -1721,8 +1722,8 @@ export const INITIAL_COURSE_UNITS: CourseUnit[] = [
       { id: 'mod-comp-2', module_number: 2, title: 'Module 2: Cloud Workspace & Virtual Assistant Skills', hours: 15, topics: ['Google Drive', 'Email Etiquette', 'Speed Typing'], learning_outcomes: ['Operate as a productive virtual office assistant'], resources: [] },
     ],
     lessons: [
-      { id: 'les-comp-1', title: 'Lesson 1: Professional Document Creation & Formatting in Word', video_url: 'https://www.youtube.com/watch?v=kqtD5dpn9C8', duration_minutes: 45, content: 'Corporate document layout, tables, styles, and automated table of contents in Word.' },
-      { id: 'les-comp-2', title: 'Lesson 2: Excel Functions, Formulas & Data Tables', video_url: 'https://www.youtube.com/watch?v=kqtD5dpn9C8', duration_minutes: 50, content: 'Essential arithmetic functions, VLOOKUP, conditional formatting, and summary charts.' },
+      { id: 'les-comp-1', title: 'Lesson 1: Professional Document Creation & Formatting in Word', video_url: 'https://cdn.cs50.net/2023/fall/lectures/0/lecture0-720p.mp4', duration_minutes: 45, content: 'Corporate document layout, tables, styles, and automated table of contents in Word.' },
+      { id: 'les-comp-2', title: 'Lesson 2: Excel Functions, Formulas & Data Tables', video_url: 'https://cdn.cs50.net/2023/fall/lectures/1/lecture1-720p.mp4', duration_minutes: 50, content: 'Essential arithmetic functions, VLOOKUP, conditional formatting, and summary charts.' },
     ],
   },
   {
@@ -1746,7 +1747,8 @@ export const INITIAL_COURSE_UNITS: CourseUnit[] = [
       { id: 'mod-cyb-2', module_number: 2, title: 'Module 2: Cryptography & Security Operations', hours: 20, topics: ['Hashing', 'SSL/TLS', 'SOC Incident Response'], learning_outcomes: ['Implement security protocols for organizational infrastructure'], resources: [] },
     ],
     lessons: [
-      { id: 'les-cyb-1', title: 'Lesson 1: Network Security, Firewalls & Threat Analysis', video_url: 'https://www.youtube.com/watch?v=kqtD5dpn9C8', duration_minutes: 55, content: 'Understanding attack vectors, packet inspection, and firewall defense strategies.' },
+      { id: 'les-cyb-1', title: 'Lesson 1: Network Security, Threat Analysis & Architecture', video_url: 'https://cdn.cs50.net/cybersecurity/2023/x/lectures/0/lecture0-720p.mp4', duration_minutes: 55, content: 'Understanding attack vectors, packet inspection, and firewall defense strategies.' },
+      { id: 'les-cyb-2', title: 'Lesson 2: Cryptography, Identity & Threat Mitigation', video_url: 'https://cdn.cs50.net/cybersecurity/2023/x/lectures/1/lecture1-720p.mp4', duration_minutes: 60, content: 'Mastering authentication hashes, SSL/TLS handshakes, and cyber incident response.' },
     ],
   },
   {
@@ -1770,7 +1772,8 @@ export const INITIAL_COURSE_UNITS: CourseUnit[] = [
       { id: 'mod-fx-2', module_number: 2, title: 'Module 2: Price Action, Order Blocks & Prop Firm Governance', hours: 20, topics: ['Liquidity Pools & Market Structure', 'Risk-to-Reward Ratio Rules', 'Prop Firm Challenge Rules'], learning_outcomes: ['Pass proprietary firm evaluations with strict drawdown management'], resources: [] },
     ],
     lessons: [
-      { id: 'les-fx-1', title: 'Lesson 1: Multi-Timeframe Price Action & Institutional Order Flow', video_url: 'https://www.youtube.com/watch?v=kqtD5dpn9C8', duration_minutes: 55, content: 'Identifying institutional liquidity pools, break of structure (BOS), and high-probability trading setups.' },
+      { id: 'les-fx-1', title: 'Lesson 1: Multi-Timeframe Price Action & Institutional Order Flow', video_url: 'https://cdn.cs50.net/2023/fall/lectures/3/lecture3-720p.mp4', duration_minutes: 55, content: 'Identifying institutional liquidity pools, break of structure (BOS), and high-probability trading setups.' },
+      { id: 'les-fx-2', title: 'Lesson 2: Risk Management, Position Sizing & Prop Firm Rules', video_url: 'https://cdn.cs50.net/2023/fall/lectures/4/lecture4-720p.mp4', duration_minutes: 50, content: 'Capital preservation math, drawdown circuit-breakers, and passing funded account evaluations.' },
     ],
   },
   {
@@ -1794,7 +1797,8 @@ export const INITIAL_COURSE_UNITS: CourseUnit[] = [
       { id: 'mod-algo-2', module_number: 2, title: 'Module 2: Backtesting, Sharpe Ratios & Cloud VPS Deployment', hours: 20, topics: ['Walk-Forward Optimization', 'Drawdown Circuit Breakers', 'Cloud Linux VPS Hosting'], learning_outcomes: ['Deploy autonomous 24/5 trading bots with fail-safe risk management'], resources: [] },
     ],
     lessons: [
-      { id: 'les-algo-1', title: 'Lesson 1: Building and Backtesting Rule-Based Trading Bots with Python', video_url: 'https://www.youtube.com/watch?v=kqtD5dpn9C8', duration_minutes: 60, content: 'Programming programmatic order placement, moving average crossovers, and stop-loss logic using Python and MetaTrader 5.' },
+      { id: 'les-algo-1', title: 'Lesson 1: Building and Backtesting Rule-Based Trading Bots with Python', video_url: 'https://cdn.cs50.net/python/2022/x/lectures/2/lecture2-720p.mp4', duration_minutes: 60, content: 'Programming programmatic order placement, moving average crossovers, and stop-loss logic using Python and MetaTrader 5.' },
+      { id: 'les-algo-2', title: 'Lesson 2: Algorithmic Execution, Tick Streaming & Cloud VPS', video_url: 'https://cdn.cs50.net/python/2022/x/lectures/3/lecture3-720p.mp4', duration_minutes: 60, content: 'Deploying automated trading algorithms on cloud virtual servers with real-time risk monitor hooks.' },
     ],
   },
   {
@@ -1818,7 +1822,8 @@ export const INITIAL_COURSE_UNITS: CourseUnit[] = [
       { id: 'mod-acc-2', module_number: 2, title: 'Module 2: Payroll & KRA Tax Compliance', hours: 15, topics: ['PAYE Computation', 'VAT Returns', 'iTax Portal Filing'], learning_outcomes: ['Process payroll deductions and file statutory tax returns'], resources: [] },
     ],
     lessons: [
-      { id: 'les-acc-1', title: 'Lesson 1: Setting up Chart of Accounts & Invoicing in QuickBooks', video_url: 'https://www.youtube.com/watch?v=kqtD5dpn9C8', duration_minutes: 50, content: 'Step-by-step setup of commercial company files and customer transactions in QuickBooks.' },
+      { id: 'les-acc-1', title: 'Lesson 1: Setting up Chart of Accounts & Invoicing in QuickBooks', video_url: 'https://cdn.cs50.net/sql/2023/x/lectures/2/lecture2-720p.mp4', duration_minutes: 50, content: 'Step-by-step setup of commercial company files and customer transactions in QuickBooks.' },
+      { id: 'les-acc-2', title: 'Lesson 2: Ledger Auditing, Balance Sheets & Tax Filing', video_url: 'https://cdn.cs50.net/sql/2023/x/lectures/3/lecture3-720p.mp4', duration_minutes: 50, content: 'Reconciliation workflows, profit-loss statement generation, and statutory KRA tax returns.' },
     ],
   },
   {
@@ -1842,7 +1847,7 @@ export const INITIAL_COURSE_UNITS: CourseUnit[] = [
       { id: 'mod-eng-2', module_number: 2, title: 'Module 2: IELTS Reading, Writing & Listening Band 7+', hours: 20, topics: ['Academic Essays', 'Listening Strategies', 'Mock Exams'], learning_outcomes: ['Score Band 7.5+ on IELTS Academic/General exams'], resources: [] },
     ],
     lessons: [
-      { id: 'les-eng-1', title: 'Lesson 1: IELTS Speaking & Academic Writing Mastery', video_url: 'https://www.youtube.com/watch?v=kqtD5dpn9C8', duration_minutes: 50, content: 'Key strategies to excel in IELTS Speaking Part 1-3 and Task 2 argumentative essays.' },
+      { id: 'les-eng-1', title: 'Lesson 1: IELTS Speaking & Academic Writing Mastery', video_url: 'https://cdn.cs50.net/2023/fall/lectures/5/lecture5-720p.mp4', duration_minutes: 50, content: 'Key strategies to excel in IELTS Speaking Part 1-3 and Task 2 argumentative essays.' },
     ],
   },
   {
@@ -1866,7 +1871,7 @@ export const INITIAL_COURSE_UNITS: CourseUnit[] = [
       { id: 'mod-mkt-2', module_number: 2, title: 'Module 2: SEO, Google Search Ads & Email Funnels', hours: 15, topics: ['Keyword Research', 'Google Ads', 'Email Automation'], learning_outcomes: ['Drive organic and paid client acquisition funnels'], resources: [] },
     ],
     lessons: [
-      { id: 'les-mkt-1', title: 'Lesson 1: High-Converting Meta & TikTok Ad Campaigns', video_url: 'https://www.youtube.com/watch?v=kqtD5dpn9C8', duration_minutes: 45, content: 'Configuring Meta Ads Manager, custom audience targeting, and copywriting.' },
+      { id: 'les-mkt-1', title: 'Lesson 1: High-Converting Meta & TikTok Ad Campaigns', video_url: 'https://cdn.cs50.net/2023/fall/lectures/6/lecture6-720p.mp4', duration_minutes: 45, content: 'Configuring Meta Ads Manager, custom audience targeting, and copywriting.' },
     ],
   },
   {
@@ -1890,7 +1895,7 @@ export const INITIAL_COURSE_UNITS: CourseUnit[] = [
       { id: 'mod-frn-2', module_number: 2, title: 'Module 2: Professional French & DELF Prep', hours: 20, topics: ['Workplace French', 'DELF A1/A2 Practice'], learning_outcomes: ['Pass international DELF language assessments'], resources: [] },
     ],
     lessons: [
-      { id: 'les-frn-1', title: 'Lesson 1: French Pronunciation & Daily Conversations', video_url: 'https://www.youtube.com/watch?v=kqtD5dpn9C8', duration_minutes: 50, content: 'Mastering the French alphabet, pronunciation rules, and essential phrases.' },
+      { id: 'les-frn-1', title: 'Lesson 1: French Pronunciation & Daily Conversations', video_url: 'https://cdn.cs50.net/2023/fall/lectures/7/lecture7-720p.mp4', duration_minutes: 50, content: 'Mastering the French alphabet, pronunciation rules, and essential phrases.' },
     ],
   },
   {
@@ -1914,7 +1919,7 @@ export const INITIAL_COURSE_UNITS: CourseUnit[] = [
       { id: 'mod-ger-2', module_number: 2, title: 'Module 2: Goethe A1 Exam Preparation', hours: 20, topics: ['Listening Tests', 'Speaking Simulation'], learning_outcomes: ['Prepare for Goethe-Zertifikat certification'], resources: [] },
     ],
     lessons: [
-      { id: 'les-ger-1', title: 'Lesson 1: German Alphabet, Cases & Essential Verbs', video_url: 'https://www.youtube.com/watch?v=kqtD5dpn9C8', duration_minutes: 50, content: 'Understanding German noun genders (der, die, das) and basic conversational sentences.' },
+      { id: 'les-ger-1', title: 'Lesson 1: German Alphabet, Cases & Essential Verbs', video_url: 'https://cdn.cs50.net/cybersecurity/2023/x/lectures/2/lecture2-720p.mp4', duration_minutes: 50, content: 'Understanding German noun genders (der, die, das) and basic conversational sentences.' },
     ],
   },
   {
@@ -1938,7 +1943,7 @@ export const INITIAL_COURSE_UNITS: CourseUnit[] = [
       { id: 'mod-ara-2', module_number: 2, title: 'Module 2: Conversational Gulf & Standard Arabic', hours: 20, topics: ['Daily Dialogue', 'Business Arabic'], learning_outcomes: ['Communicate effectively in Arabic speaking regions'], resources: [] },
     ],
     lessons: [
-      { id: 'les-ara-1', title: 'Lesson 1: Arabic Alphabet, Pronunciation & Basic Dialogue', video_url: 'https://www.youtube.com/watch?v=kqtD5dpn9C8', duration_minutes: 50, content: 'Mastering Arabic letters, joining letters, and essential greetings.' },
+      { id: 'les-ara-1', title: 'Lesson 1: Arabic Alphabet, Pronunciation & Basic Dialogue', video_url: 'https://cdn.cs50.net/cybersecurity/2023/x/lectures/3/lecture3-720p.mp4', duration_minutes: 50, content: 'Mastering Arabic letters, joining letters, and essential greetings.' },
     ],
   },
   {
@@ -1962,7 +1967,7 @@ export const INITIAL_COURSE_UNITS: CourseUnit[] = [
       { id: 'mod-kis-2', module_number: 2, title: 'Module 2: Ufasaha na Mawasiliano ya Kikazi', hours: 15, topics: ['Hotuba', 'Tafsiri'], learning_outcomes: ['Communicate professionally across East African markets'], resources: [] },
     ],
     lessons: [
-      { id: 'les-kis-1', title: 'Lesson 1: Sarufi ya Kiswahili na Mazungumzo ya Kila Siku', video_url: 'https://www.youtube.com/watch?v=kqtD5dpn9C8', duration_minutes: 45, content: 'Utangulizi wa sarufi ya Kiswahili sanifu, maamkizi, na ufasaha wa mazungumzo.' },
+      { id: 'les-kis-1', title: 'Lesson 1: Sarufi ya Kiswahili na Mazungumzo ya Kila Siku', video_url: 'https://cdn.cs50.net/sql/2023/x/lectures/4/lecture4-720p.mp4', duration_minutes: 45, content: 'Utangulizi wa sarufi ya Kiswahili sanifu, maamkizi, na ufasaha wa mazungumzo.' },
     ],
   },
 ]

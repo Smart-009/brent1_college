@@ -928,6 +928,34 @@ export function YouTubeEmbed({
             )}
           </div>
 
+          {/* White-Label Anti-Piracy Student DRM Watermark */}
+          <div
+            style={{
+              position: 'absolute',
+              bottom: isFullscreen ? '90px' : '65px',
+              right: '16px',
+              pointerEvents: 'none',
+              zIndex: 20,
+              opacity: 0.38,
+              display: 'flex',
+              alignItems: 'center',
+              gap: '6px',
+              background: 'rgba(15, 23, 42, 0.65)',
+              backdropFilter: 'blur(4px)',
+              padding: '3px 8px',
+              borderRadius: '4px',
+              fontSize: '0.66rem',
+              fontWeight: 800,
+              color: '#ffffff',
+              letterSpacing: '0.05em',
+              textTransform: 'uppercase',
+              userSelect: 'none',
+            }}
+          >
+            <span>Éclat Institute</span>
+            {studentId && <span>• ID: {studentId}</span>}
+          </div>
+
           {/* FLOATING PLAYER NOTIFICATIONS & PROMINENT QUICK ACTIONS */}
           <div
             style={{
@@ -973,9 +1001,12 @@ export function YouTubeEmbed({
                   <span>⤦</span> Exit Full Screen
                 </button>
               ) : (
-                <span style={{ fontSize: '0.72rem', color: '#ffffff', background: 'rgba(0,0,0,0.6)', padding: '4px 8px', borderRadius: '6px', fontWeight: 700 }}>
-                  🎥 HD Lecture
-                </span>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '6px', background: 'rgba(15, 23, 42, 0.85)', backdropFilter: 'blur(8px)', padding: '4px 10px', borderRadius: '8px', border: '1px solid rgba(212, 175, 55, 0.4)' }}>
+                  <img src="/logo.png" alt="Éclat" style={{ width: '15px', height: '15px', borderRadius: '50%' }} />
+                  <span style={{ fontSize: '0.74rem', fontWeight: 800, color: '#f8fafc', letterSpacing: '0.02em' }}>
+                    ÉCLAT INSTITUTE • OFFICIAL STREAM
+                  </span>
+                </div>
               )}
             </div>
 
