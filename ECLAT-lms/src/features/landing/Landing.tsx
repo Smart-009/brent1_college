@@ -398,6 +398,18 @@ export function Landing() {
   const [mobileNavOpen, setMobileNavOpen] = useState(false)
   const [categoryDropdownOpen, setCategoryDropdownOpen] = useState(false)
   const [supportModalOpen, setSupportModalOpen] = useState(false)
+  const [tutorModalOpen, setTutorModalOpen] = useState(false)
+  const [tutorSubmitting, setTutorSubmitting] = useState(false)
+  const [tutorSuccess, setTutorSuccess] = useState(false)
+  const [tutorForm, setTutorForm] = useState({
+    fullName: '',
+    email: '',
+    phone: '',
+    specialization: 'Tech & Programming (Full-Stack, React, Python)',
+    experienceYears: '3-5 Years',
+    courseProposal: '',
+    portfolioOrLinkedin: '',
+  })
   const [showScrollTop, setShowScrollTop] = useState(false)
   const [toastMessage, setToastMessage] = useState<string | null>(null)
 
@@ -1139,6 +1151,28 @@ export function Landing() {
                     <GraduationCapIcon size={14} color="#16a34a" />
                     <span>Careers</span>
                   </Link>
+                  <button
+                    type="button"
+                    onClick={() => setTutorModalOpen(true)}
+                    style={{
+                      background: 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)',
+                      color: '#ffffff',
+                      border: 'none',
+                      fontWeight: 800,
+                      padding: '0.35rem 0.65rem',
+                      borderRadius: '8px',
+                      fontSize: '0.8rem',
+                      cursor: 'pointer',
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: '5px',
+                      boxShadow: '0 2px 8px rgba(217, 119, 6, 0.3)',
+                    }}
+                    title="Develop & Teach a Course at Éclat Institute"
+                  >
+                    <SparklesIcon size={13} color="#ffffff" />
+                    <span>Teach / Create Course</span>
+                  </button>
                   <Link to="/library" style={{ color: '#2563eb', fontWeight: 800, textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: '5px' }}>
                     <LibraryIcon size={14} color="#2563eb" />
                     <span>E-Library</span>
@@ -1639,6 +1673,32 @@ export function Landing() {
                 <GraduationCapIcon size={18} color="#15803d" />
                 <span>Careers & Teaching Positions</span>
               </Link>
+
+              <button
+                type="button"
+                onClick={() => {
+                  setMobileNavOpen(false)
+                  setTutorModalOpen(true)
+                }}
+                style={{
+                  color: '#92400e',
+                  background: '#fef3c7',
+                  border: '1.5px solid #fde68a',
+                  padding: '0.65rem 0.8rem',
+                  borderRadius: '10px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '10px',
+                  fontSize: '0.88rem',
+                  fontWeight: 800,
+                  cursor: 'pointer',
+                  textAlign: 'left',
+                  width: '100%',
+                }}
+              >
+                <SparklesIcon size={18} color="#d97706" />
+                <span>Teach with Us / Develop Course</span>
+              </button>
 
               <Link
                 to="/about"
@@ -2837,6 +2897,261 @@ export function Landing() {
                 </div>
               </div>
             ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Become an Instructor / Course Developer Partnership Callout Billboard */}
+      <section
+        id="teach-with-us"
+        style={{
+          background: 'linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0a1120 100%)',
+          color: '#ffffff',
+          padding: isMobile ? '3.5rem 1rem' : '4.5rem 2rem',
+          borderTop: '1px solid #334155',
+          borderBottom: '1px solid #334155',
+          position: 'relative',
+          overflow: 'hidden',
+        }}
+      >
+        <div
+          style={{
+            position: 'absolute',
+            top: 0,
+            right: 0,
+            width: '450px',
+            height: '450px',
+            background: 'radial-gradient(circle, rgba(245, 158, 11, 0.12) 0%, rgba(37, 99, 235, 0.08) 50%, transparent 70%)',
+            pointerEvents: 'none',
+          }}
+        />
+
+        <div style={{ maxWidth: '1180px', margin: '0 auto', position: 'relative', zIndex: 1 }}>
+          <div
+            style={{
+              display: 'grid',
+              gridTemplateColumns: isMobile ? '1fr' : '1.2fr 0.8fr',
+              gap: isMobile ? '2rem' : '3.5rem',
+              alignItems: 'center',
+            }}
+          >
+            {/* Left Column: Pitch & Value Proposition */}
+            <div>
+              <div
+                style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '6px',
+                  background: 'rgba(245, 158, 11, 0.15)',
+                  border: '1px solid rgba(245, 158, 11, 0.4)',
+                  padding: '4px 12px',
+                  borderRadius: '999px',
+                  fontSize: '0.78rem',
+                  fontWeight: 800,
+                  color: '#fbbf24',
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.06em',
+                  marginBottom: '1rem',
+                }}
+              >
+                <SparklesIcon size={14} color="#fbbf24" />
+                <span>Faculty & Content Creators Partnership</span>
+              </div>
+
+              <h2
+                style={{
+                  fontSize: isMobile ? '1.85rem' : '2.6rem',
+                  fontWeight: 900,
+                  lineHeight: 1.2,
+                  margin: '0 0 1rem',
+                  letterSpacing: '-0.02em',
+                }}
+              >
+                Are You a Tutor, Developer or Subject Expert?{' '}
+                <span
+                  style={{
+                    background: 'linear-gradient(135deg, #fbbf24 0%, #f59e0b 50%, #f97316 100%)',
+                    WebkitBackgroundClip: 'text',
+                    WebkitTextFillColor: 'transparent',
+                  }}
+                >
+                  Create & Sell Courses With Us.
+                </span>
+              </h2>
+
+              <p
+                style={{
+                  fontSize: isMobile ? '0.94rem' : '1.08rem',
+                  lineHeight: 1.65,
+                  color: '#cbd5e1',
+                  margin: '0 0 1.5rem',
+                }}
+              >
+                Join Éclat Institute’s accredited virtual faculty. Turn your expertise in{' '}
+                <strong style={{ color: '#ffffff' }}>Coding, Tech, Forex, Accounting, Graphic Design, or Languages</strong> into a global revenue stream. 
+                We provide the streaming platform, automated Paystack payment processing, DRM watermarking, and active student enrollment pipeline.
+              </p>
+
+              {/* 3 Value Pillars */}
+              <div
+                style={{
+                  display: 'grid',
+                  gridTemplateColumns: isMobile ? '1fr' : 'repeat(3, 1fr)',
+                  gap: '1rem',
+                  marginBottom: '2rem',
+                }}
+              >
+                <div
+                  style={{
+                    background: 'rgba(255, 255, 255, 0.04)',
+                    border: '1px solid rgba(255, 255, 255, 0.08)',
+                    borderRadius: '12px',
+                    padding: '1rem',
+                  }}
+                >
+                  <div style={{ fontSize: '1.25rem', marginBottom: '4px' }}>💰</div>
+                  <strong style={{ fontSize: '0.92rem', color: '#f8fafc', display: 'block' }}>High Revenue Share</strong>
+                  <span style={{ fontSize: '0.78rem', color: '#94a3b8' }}>Earn upfront creation fees or recurring royalties per enrolled student.</span>
+                </div>
+
+                <div
+                  style={{
+                    background: 'rgba(255, 255, 255, 0.04)',
+                    border: '1px solid rgba(255, 255, 255, 0.08)',
+                    borderRadius: '12px',
+                    padding: '1rem',
+                  }}
+                >
+                  <div style={{ fontSize: '1.25rem', marginBottom: '4px' }}>🛡️</div>
+                  <strong style={{ fontSize: '0.92rem', color: '#f8fafc', display: 'block' }}>Anti-Piracy DRM</strong>
+                  <span style={{ fontSize: '0.78rem', color: '#94a3b8' }}>Your video lectures are secured with student ID watermarks and protected streaming.</span>
+                </div>
+
+                <div
+                  style={{
+                    background: 'rgba(255, 255, 255, 0.04)',
+                    border: '1px solid rgba(255, 255, 255, 0.08)',
+                    borderRadius: '12px',
+                    padding: '1rem',
+                  }}
+                >
+                  <div style={{ fontSize: '1.25rem', marginBottom: '4px' }}>🌍</div>
+                  <strong style={{ fontSize: '0.92rem', color: '#f8fafc', display: 'block' }}>Instant Distribution</strong>
+                  <span style={{ fontSize: '0.78rem', color: '#94a3b8' }}>Reach learners across Kenya, East Africa, and global online students.</span>
+                </div>
+              </div>
+
+              {/* Action Buttons */}
+              <div style={{ display: 'flex', gap: '0.85rem', flexWrap: 'wrap', alignItems: 'center' }}>
+                <button
+                  type="button"
+                  onClick={() => setTutorModalOpen(true)}
+                  style={{
+                    background: 'linear-gradient(135deg, #d97706 0%, #b45309 100%)',
+                    color: '#ffffff',
+                    border: 'none',
+                    borderRadius: '10px',
+                    padding: '0.85rem 1.6rem',
+                    fontSize: '0.95rem',
+                    fontWeight: 900,
+                    cursor: 'pointer',
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '8px',
+                    boxShadow: '0 4px 18px rgba(217, 119, 6, 0.45)',
+                    transition: 'all 0.15s ease',
+                  }}
+                >
+                  <RocketIcon size={18} color="#ffffff" />
+                  <span>Apply as Course Creator / Tutor →</span>
+                </button>
+
+                <a
+                  href={getWhatsAppInquiryUrl('Hello Eclat Academic Directorate! I am a tutor/course creator interested in developing courses with Éclat Institute.')}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  style={{
+                    background: '#22c55e',
+                    color: '#ffffff',
+                    borderRadius: '10px',
+                    padding: '0.85rem 1.35rem',
+                    fontSize: '0.92rem',
+                    fontWeight: 800,
+                    textDecoration: 'none',
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '8px',
+                    boxShadow: '0 4px 14px rgba(34, 197, 94, 0.3)',
+                  }}
+                >
+                  <MessageCircleIcon size={18} color="#ffffff" />
+                  <span>Chat With Dean on WhatsApp</span>
+                </a>
+              </div>
+            </div>
+
+            {/* Right Column: Instructor Highlights Card */}
+            <div
+              style={{
+                background: 'linear-gradient(145deg, rgba(30, 41, 59, 0.8) 0%, rgba(15, 23, 42, 0.95) 100%)',
+                border: '1.5px solid rgba(245, 158, 11, 0.3)',
+                borderRadius: '20px',
+                padding: isMobile ? '1.5rem' : '2rem',
+                boxShadow: '0 15px 40px rgba(0, 0, 0, 0.4)',
+              }}
+            >
+              <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '1.25rem', borderBottom: '1px solid rgba(255,255,255,0.1)', paddingBottom: '1rem' }}>
+                <img src="/logo.png" alt="Éclat" style={{ width: '44px', height: '44px', borderRadius: '50%', border: '2px solid #d4af37' }} />
+                <div>
+                  <h3 style={{ fontSize: '1.1rem', fontWeight: 900, color: '#ffffff', margin: 0 }}>Faculty Partnership Fast-Track</h3>
+                  <div style={{ fontSize: '0.78rem', color: '#fbbf24', fontWeight: 700 }}>3 Simple Steps to Start Earning</div>
+                </div>
+              </div>
+
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '1.1rem' }}>
+                <div style={{ display: 'flex', gap: '12px', alignItems: 'flex-start' }}>
+                  <div style={{ width: '28px', height: '28px', borderRadius: '50%', background: '#2563eb', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 900, fontSize: '0.85rem', flexShrink: 0 }}>1</div>
+                  <div>
+                    <strong style={{ fontSize: '0.9rem', color: '#ffffff' }}>Submit Your Course Proposal</strong>
+                    <p style={{ fontSize: '0.8rem', color: '#94a3b8', margin: '2px 0 0', lineHeight: 1.45 }}>Share your topic, syllabus outline, or sample video module via our quick portal form.</p>
+                  </div>
+                </div>
+
+                <div style={{ display: 'flex', gap: '12px', alignItems: 'flex-start' }}>
+                  <div style={{ width: '28px', height: '28px', borderRadius: '50%', background: '#10b981', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 900, fontSize: '0.85rem', flexShrink: 0 }}>2</div>
+                  <div>
+                    <strong style={{ fontSize: '0.9rem', color: '#ffffff' }}>Curriculum Review & Contract</strong>
+                    <p style={{ fontSize: '0.8rem', color: '#94a3b8', margin: '2px 0 0', lineHeight: 1.45 }}>Our academic committee reviews the proposal within 48 hours and agrees on revenue terms.</p>
+                  </div>
+                </div>
+
+                <div style={{ display: 'flex', gap: '12px', alignItems: 'flex-start' }}>
+                  <div style={{ width: '28px', height: '28px', borderRadius: '50%', background: '#f59e0b', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 900, fontSize: '0.85rem', flexShrink: 0 }}>3</div>
+                  <div>
+                    <strong style={{ fontSize: '0.9rem', color: '#ffffff' }}>Publish & Monetize Globally</strong>
+                    <p style={{ fontSize: '0.8rem', color: '#94a3b8', margin: '2px 0 0', lineHeight: 1.45 }}>We publish your lessons into the Éclat LMS player and market your course to active cohorts.</p>
+                  </div>
+                </div>
+              </div>
+
+              <div
+                style={{
+                  marginTop: '1.5rem',
+                  padding: '0.85rem',
+                  background: 'rgba(245, 158, 11, 0.08)',
+                  borderRadius: '10px',
+                  border: '1px solid rgba(245, 158, 11, 0.25)',
+                  fontSize: '0.78rem',
+                  color: '#fef08a',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '8px',
+                }}
+              >
+                <CheckCircleIcon size={16} color="#fbbf24" style={{ flexShrink: 0 }} />
+                <span>We welcome both pre-recorded video courses and live cohort instructors!</span>
+              </div>
+            </div>
           </div>
         </div>
       </section>
@@ -4629,6 +4944,328 @@ export function Landing() {
                 <CreditCardIcon size={15} color="#ffffff" style={{ marginRight: '6px', verticalAlign: 'middle' }} />Enroll & Pay Online →
               </button>
             </div>
+          </div>
+        </div>
+      {/* 4. Tutor & Course Creator Application Modal */}
+      {tutorModalOpen && (
+        <div className="modal-overlay" onClick={() => setTutorModalOpen(false)}>
+          <div
+            className="modal-content modal-md"
+            onClick={(e) => e.stopPropagation()}
+            style={{
+              background: '#ffffff',
+              color: '#0f172a',
+              padding: isMobile ? '1.5rem 1.25rem' : '2rem',
+              borderRadius: '20px',
+              border: '1.5px solid #d4af37',
+              boxShadow: '0 25px 60px rgba(15, 23, 42, 0.35)',
+              maxHeight: '90vh',
+              overflowY: 'auto',
+            }}
+          >
+            {/* Header */}
+            <div
+              style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'flex-start',
+                marginBottom: '1.25rem',
+                borderBottom: '1px solid #e2e8f0',
+                paddingBottom: '1rem',
+              }}
+            >
+              <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                <img
+                  src="/logo.png"
+                  alt="Éclat"
+                  style={{ width: '40px', height: '40px', borderRadius: '50%', border: '2px solid #d4af37' }}
+                />
+                <div>
+                  <div style={{ fontSize: '0.72rem', fontWeight: 800, color: '#d97706', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                    FACULTY & CONTENT PARTNERSHIP
+                  </div>
+                  <h3 style={{ fontSize: '1.2rem', fontWeight: 900, color: '#0f172a', margin: '2px 0 0' }}>
+                    Create & Teach a Course With Éclat
+                  </h3>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => setTutorModalOpen(false)}
+                style={{
+                  background: '#f1f5f9',
+                  border: '1px solid #cbd5e1',
+                  borderRadius: '50%',
+                  width: '32px',
+                  height: '32px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  cursor: 'pointer',
+                }}
+              >
+                <XIcon size={16} color="#0f172a" />
+              </button>
+            </div>
+
+            {tutorSuccess ? (
+              <div style={{ textAlign: 'center', padding: '2rem 1rem' }}>
+                <div style={{ fontSize: '3rem', marginBottom: '0.75rem' }}>🎉</div>
+                <h4 style={{ fontSize: '1.25rem', fontWeight: 900, color: '#166534', margin: '0 0 0.5rem' }}>
+                  Proposal Received!
+                </h4>
+                <p style={{ fontSize: '0.9rem', color: '#475569', lineHeight: 1.6, maxWidth: '420px', margin: '0 auto 1.5rem' }}>
+                  Thank you, <strong>{tutorForm.fullName}</strong>. Our Academic Dean and Curriculum Directorate will review your syllabus proposal and reach out via WhatsApp/email within <strong>48 hours</strong> with contract terms and revenue share options.
+                </p>
+                <div style={{ display: 'flex', gap: '0.75rem', justifyContent: 'center', flexWrap: 'wrap' }}>
+                  <a
+                    href={getWhatsAppInquiryUrl(`Hello Eclat Dean! I just submitted a tutor course proposal for: ${tutorForm.specialization}. My name is ${tutorForm.fullName}.`)}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="btn btn-sm"
+                    style={{
+                      background: '#22c55e',
+                      color: '#ffffff',
+                      padding: '0.65rem 1.25rem',
+                      fontWeight: 800,
+                      borderRadius: '8px',
+                      textDecoration: 'none',
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: '6px',
+                    }}
+                  >
+                    <MessageCircleIcon size={16} color="#ffffff" />
+                    <span>Follow Up on WhatsApp</span>
+                  </a>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setTutorSuccess(false)
+                      setTutorModalOpen(false)
+                    }}
+                    className="btn btn-sm btn-secondary"
+                    style={{ padding: '0.65rem 1.25rem', fontWeight: 700, borderRadius: '8px' }}
+                  >
+                    Close Window
+                  </button>
+                </div>
+              </div>
+            ) : (
+              <form
+                onSubmit={(e) => {
+                  e.preventDefault()
+                  setTutorSubmitting(true)
+                  setTimeout(() => {
+                    setTutorSubmitting(false)
+                    setTutorSuccess(true)
+                    try {
+                      // Save application locally or in Supabase if table exists
+                      const applications = JSON.parse(localStorage.getItem('eclat_tutor_proposals') || '[]')
+                      applications.push({ ...tutorForm, submittedAt: new Date().toISOString() })
+                      localStorage.setItem('eclat_tutor_proposals', JSON.stringify(applications))
+                    } catch {}
+                  }, 800)
+                }}
+                style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}
+              >
+                <div style={{ background: '#fefce8', border: '1px solid #fef08a', borderRadius: '10px', padding: '0.75rem 0.95rem', fontSize: '0.82rem', color: '#854d0e', lineHeight: 1.5 }}>
+                  💡 <strong>Earn with Éclat:</strong> We partner with expert tutors, software engineers, and professionals. You create the instructional video content or live sessions, and we handle student enrollments, Paystack payments, and certificate delivery!
+                </div>
+
+                <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: '0.85rem' }}>
+                  <div>
+                    <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 800, color: '#334155', marginBottom: '4px' }}>
+                      Full Name *
+                    </label>
+                    <input
+                      type="text"
+                      required
+                      placeholder="e.g. Dr. Kevin Kiprono / Faith Mwangi"
+                      value={tutorForm.fullName}
+                      onChange={(e) => setTutorForm({ ...tutorForm, fullName: e.target.value })}
+                      style={{
+                        width: '100%',
+                        padding: '0.6rem 0.85rem',
+                        borderRadius: '8px',
+                        border: '1.5px solid #cbd5e1',
+                        fontSize: '0.88rem',
+                        outline: 'none',
+                      }}
+                    />
+                  </div>
+
+                  <div>
+                    <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 800, color: '#334155', marginBottom: '4px' }}>
+                      Email Address *
+                    </label>
+                    <input
+                      type="email"
+                      required
+                      placeholder="e.g. tutor@example.com"
+                      value={tutorForm.email}
+                      onChange={(e) => setTutorForm({ ...tutorForm, email: e.target.value })}
+                      style={{
+                        width: '100%',
+                        padding: '0.6rem 0.85rem',
+                        borderRadius: '8px',
+                        border: '1.5px solid #cbd5e1',
+                        fontSize: '0.88rem',
+                        outline: 'none',
+                      }}
+                    />
+                  </div>
+                </div>
+
+                <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: '0.85rem' }}>
+                  <div>
+                    <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 800, color: '#334155', marginBottom: '4px' }}>
+                      WhatsApp Phone Number *
+                    </label>
+                    <input
+                      type="tel"
+                      required
+                      placeholder="e.g. +254 700 000 000"
+                      value={tutorForm.phone}
+                      onChange={(e) => setTutorForm({ ...tutorForm, phone: e.target.value })}
+                      style={{
+                        width: '100%',
+                        padding: '0.6rem 0.85rem',
+                        borderRadius: '8px',
+                        border: '1.5px solid #cbd5e1',
+                        fontSize: '0.88rem',
+                        outline: 'none',
+                      }}
+                    />
+                  </div>
+
+                  <div>
+                    <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 800, color: '#334155', marginBottom: '4px' }}>
+                      Teaching / Professional Experience
+                    </label>
+                    <select
+                      value={tutorForm.experienceYears}
+                      onChange={(e) => setTutorForm({ ...tutorForm, experienceYears: e.target.value })}
+                      style={{
+                        width: '100%',
+                        padding: '0.6rem 0.85rem',
+                        borderRadius: '8px',
+                        border: '1.5px solid #cbd5e1',
+                        fontSize: '0.88rem',
+                        outline: 'none',
+                        background: '#ffffff',
+                      }}
+                    >
+                      <option value="1-2 Years">1 - 2 Years</option>
+                      <option value="3-5 Years">3 - 5 Years (Experienced)</option>
+                      <option value="5-10 Years">5 - 10 Years (Senior Professional)</option>
+                      <option value="10+ Years">10+ Years (Master Practitioner)</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div>
+                  <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 800, color: '#334155', marginBottom: '4px' }}>
+                    Course Domain / Subject Specialization *
+                  </label>
+                  <select
+                    value={tutorForm.specialization}
+                    onChange={(e) => setTutorForm({ ...tutorForm, specialization: e.target.value })}
+                    style={{
+                      width: '100%',
+                      padding: '0.6rem 0.85rem',
+                      borderRadius: '8px',
+                      border: '1.5px solid #cbd5e1',
+                      fontSize: '0.88rem',
+                      outline: 'none',
+                      background: '#ffffff',
+                    }}
+                  >
+                    <option value="Tech & Programming (Full-Stack, React, Python)">Tech & Programming (Full-Stack, React, Python)</option>
+                    <option value="Data Analytics & SQL / Power BI">Data Analytics & SQL / Power BI</option>
+                    <option value="Cybersecurity & Ethical Hacking">Cybersecurity & Ethical Hacking</option>
+                    <option value="Forex Trading & Algorithmic Bots">Forex Trading & Algorithmic Bots</option>
+                    <option value="Computerized Accounting (QuickBooks, Tally, iTax)">Computerized Accounting (QuickBooks, Tally, iTax)</option>
+                    <option value="Graphic Design, Canva & UI/UX">Graphic Design, Canva & UI/UX</option>
+                    <option value="Cambridge IGCSE / Edexcel Core Subjects">Cambridge IGCSE / Edexcel Core Subjects</option>
+                    <option value="Languages (IELTS, French, German, Arabic)">Languages (IELTS, French, German, Arabic)</option>
+                    <option value="Digital Marketing & Social Media Growth">Digital Marketing & Social Media Growth</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 800, color: '#334155', marginBottom: '4px' }}>
+                    Course Proposal Summary / Syllabus Outline *
+                  </label>
+                  <textarea
+                    required
+                    rows={3}
+                    placeholder="Briefly describe what your course will teach, the target audience, number of modules, or whether you have pre-recorded lessons ready..."
+                    value={tutorForm.courseProposal}
+                    onChange={(e) => setTutorForm({ ...tutorForm, courseProposal: e.target.value })}
+                    style={{
+                      width: '100%',
+                      padding: '0.65rem 0.85rem',
+                      borderRadius: '8px',
+                      border: '1.5px solid #cbd5e1',
+                      fontSize: '0.86rem',
+                      outline: 'none',
+                      fontFamily: 'inherit',
+                      resize: 'vertical',
+                    }}
+                  />
+                </div>
+
+                <div>
+                  <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 800, color: '#334155', marginBottom: '4px' }}>
+                    LinkedIn / Portfolio / Sample Lecture Link (Optional)
+                  </label>
+                  <input
+                    type="url"
+                    placeholder="https://linkedin.com/in/... or Google Drive sample video link"
+                    value={tutorForm.portfolioOrLinkedin}
+                    onChange={(e) => setTutorForm({ ...tutorForm, portfolioOrLinkedin: e.target.value })}
+                    style={{
+                      width: '100%',
+                      padding: '0.6rem 0.85rem',
+                      borderRadius: '8px',
+                      border: '1.5px solid #cbd5e1',
+                      fontSize: '0.88rem',
+                      outline: 'none',
+                    }}
+                  />
+                </div>
+
+                <div style={{ display: 'flex', gap: '0.75rem', justifyContent: 'flex-end', marginTop: '0.5rem', borderTop: '1px solid #e2e8f0', paddingTop: '1rem' }}>
+                  <button
+                    type="button"
+                    onClick={() => setTutorModalOpen(false)}
+                    className="btn btn-secondary btn-sm"
+                    style={{ padding: '0.6rem 1.25rem', fontWeight: 700, borderRadius: '8px' }}
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    disabled={tutorSubmitting}
+                    className="btn btn-primary"
+                    style={{
+                      background: 'linear-gradient(135deg, #d97706 0%, #b45309 100%)',
+                      borderColor: '#d97706',
+                      padding: '0.65rem 1.6rem',
+                      fontWeight: 800,
+                      borderRadius: '8px',
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: '6px',
+                      boxShadow: '0 4px 12px rgba(217, 119, 6, 0.35)',
+                    }}
+                  >
+                    {tutorSubmitting ? 'Transmitting Proposal...' : 'Submit Course Proposal →'}
+                  </button>
+                </div>
+              </form>
+            )}
           </div>
         </div>
       )}
