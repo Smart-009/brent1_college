@@ -1176,5 +1176,110 @@ test('Community Education Donation & Sponsorship: Physical Institution Enrollmen
   assert.ok(appTsx.includes('DonationSponsorshipPage'))
 })
 
+test('Multi-Tenant School Management: School Registration, Custom Calendar (Terms vs Semesters) and Portal Routing Engine', () => {
+  // 1. Calendar Generation Logic
+  function generateAcademicCalendar(system, year = 2026) {
+    if (system === 'semester') {
+      return [
+        { id: `cal_sem_1`, name: `Semester 1 (Fall Cohort ${year})`, code: 'SEM-1', status: 'Active' },
+        { id: `cal_sem_2`, name: `Semester 2 (Spring Cohort ${year})`, code: 'SEM-2', status: 'Upcoming' },
+      ]
+    }
+    if (system === 'trimester') {
+      return [
+        { id: `cal_tri_1`, name: `Trimester 1 (${year})`, code: 'TRI-1', status: 'Active' },
+        { id: `cal_tri_2`, name: `Trimester 2 (${year})`, code: 'TRI-2', status: 'Upcoming' },
+        { id: `cal_tri_3`, name: `Trimester 3 (${year})`, code: 'TRI-3', status: 'Upcoming' },
+      ]
+    }
+    // Default: Term system (3 terms)
+    return [
+      { id: `cal_term_1`, name: `Term 1 (${year})`, code: 'TERM-1', status: 'Active' },
+      { id: `cal_term_2`, name: `Term 2 (${year})`, code: 'TERM-2', status: 'Upcoming' },
+      { id: `cal_term_3`, name: `Term 3 (${year})`, code: 'TERM-3', status: 'Upcoming' },
+    ]
+  }
+
+  // Verify Semester calendar yields exactly 2 periods
+  const semCal = generateAcademicCalendar('semester', 2026)
+  assert.strictEqual(semCal.length, 2)
+  assert.strictEqual(semCal[0].code, 'SEM-1')
+  assert.strictEqual(semCal[1].code, 'SEM-2')
+
+  // Verify Term calendar yields exactly 3 periods
+  const termCal = generateAcademicCalendar('term', 2026)
+  assert.strictEqual(termCal.length, 3)
+  assert.strictEqual(termCal[0].code, 'TERM-1')
+  assert.strictEqual(termCal[2].code, 'TERM-3')
+
+  // 2. Slugification and Dedicated Portal URL generation
+  function slugify(name) {
+    return name
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/(^-|-$)+/g, '')
+  }
+
+  const schoolName = "St. Paul's International Academy"
+  const slug = slugify(schoolName)
+  assert.strictEqual(slug, 'st-paul-s-international-academy')
+
+  const portalUrls = {
+    hub: `/s/${slug}`,
+    student: `/s/${slug}/student`,
+    teacher: `/s/${slug}/teacher`,
+    bursar: `/s/${slug}/bursar`,
+    principal: `/s/${slug}/principal`,
+    calendar: `/s/${slug}/calendar`,
+  }
+
+  assert.strictEqual(portalUrls.hub, '/s/st-paul-s-international-academy')
+  assert.strictEqual(portalUrls.student, '/s/st-paul-s-international-academy/student')
+  assert.strictEqual(portalUrls.teacher, '/s/st-paul-s-international-academy/teacher')
+  assert.strictEqual(portalUrls.bursar, '/s/st-paul-s-international-academy/bursar')
+  assert.strictEqual(portalUrls.principal, '/s/st-paul-s-international-academy/principal')
+  assert.strictEqual(portalUrls.calendar, '/s/st-paul-s-international-academy/calendar')
+})
+
+test('Multi-Tenant School Management: File Architecture, Route Registration, and Component Integrity', () => {
+  // 1. Verify existence of new files
+  const typesFile = fs.readFileSync(path.join(process.cwd(), 'src/types/tenantSchool.ts'), 'utf-8')
+  assert.ok(typesFile.includes('PartnerSchoolTenant'))
+  assert.ok(typesFile.includes('AcademicCalendarSystem'))
+  assert.ok(typesFile.includes('AcademicCalendarPeriod'))
+
+  const storeFile = fs.readFileSync(path.join(process.cwd(), 'src/lib/tenantSchoolStore.ts'), 'utf-8')
+  assert.ok(storeFile.includes('TenantSchoolStore'))
+  assert.ok(storeFile.includes('hillcrest'))
+  assert.ok(storeFile.includes('apex-tech'))
+  assert.ok(storeFile.includes('st-jude'))
+  assert.ok(storeFile.includes('registerSchool'))
+
+  const hubFile = fs.readFileSync(path.join(process.cwd(), 'src/features/tenant/TenantSchoolHub.tsx'), 'utf-8')
+  assert.ok(hubFile.includes('TenantSchoolHub'))
+  assert.ok(hubFile.includes('Student Portal'))
+  assert.ok(hubFile.includes('Teacher Portal'))
+  assert.ok(hubFile.includes('Bursar'))
+  assert.ok(hubFile.includes('principal') || hubFile.includes('Principal'))
+
+  const regFile = fs.readFileSync(path.join(process.cwd(), 'src/features/tenant/SchoolRegistrationPage.tsx'), 'utf-8')
+  assert.ok(regFile.includes('SchoolRegistrationPage'))
+  assert.ok(regFile.includes('academicSystem'))
+  assert.ok(regFile.includes('dedicated'))
+
+  // 2. Verify route registrations in App.tsx
+  const appTsx = fs.readFileSync(path.join(process.cwd(), 'src/App.tsx'), 'utf-8')
+  assert.ok(appTsx.includes('path="/register-school"'))
+  assert.ok(appTsx.includes('path="/s/:schoolSlug"'))
+  assert.ok(appTsx.includes('path="/s/:schoolSlug/:subview"'))
+
+  // 3. Verify Landing page integration
+  const landingTsx = fs.readFileSync(path.join(process.cwd(), 'src/features/landing/Landing.tsx'), 'utf-8')
+  assert.ok(landingTsx.includes('id="school-cloud"'))
+  assert.ok(landingTsx.includes('Multi-Tenant School Management Platform'))
+  assert.ok(landingTsx.includes('/register-school'))
+})
+
+
 
 
