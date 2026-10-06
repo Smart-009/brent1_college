@@ -62,7 +62,7 @@ In addition to internal diploma tracks, Éclat Institute provides an open instit
 ## Student Onboarding, Payments & Security
 - **Self-Service Accounts**: Students, tutors, and schools can create and manage portal accounts at `https://eclat.institute/login`.
 - **Payment Processing**: Direct integration with Paystack supporting international Visa, Mastercard, Verve, and Mobile Money.
-- **DRM & Integrity**: Content protection protocols prevent unauthorized ripping, backed by dedicated offline workstation archiving.
+- **DRM & Integrity**: Content protection protocols prevent unauthorized ripping, securing faculty intellectual property and proprietary lecture streams.
 
 ## Official Contact & Verification
 - **Official Website**: https://eclat.institute

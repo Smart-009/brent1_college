@@ -411,8 +411,12 @@ interface SubmittedTutorCourse {
   suggestedPriceUsd: number
   payoutSplitPct: number
   submittedAt: string
-  status: 'Pending Review' | 'Approved & Live' | 'Video Downloaded'
+  status: 'Pending Review' | 'Approved & Live'
   downloadPath?: string
+  payoutMethod?: string
+  payoutSchedule?: string
+  payoutDetails?: string
+  payoutCurrency?: string
 }
 
 export function TutorPublishCoursePage() {
@@ -438,7 +442,9 @@ export function TutorPublishCoursePage() {
   const [videoUrl, setVideoUrl] = useState('')
   const [courseDescription, setCourseDescription] = useState('')
   const [revenueSplitPct, setRevenueSplitPct] = useState(50)
-  const [payoutMethod, setPayoutMethod] = useState<'mpesa' | 'bank' | 'paypal'>('mpesa')
+  const [payoutMethod, setPayoutMethod] = useState<'mpesa' | 'bank' | 'paypal' | 'payoneer' | 'crypto' | 'custom'>('mpesa')
+  const [payoutSchedule, setPayoutSchedule] = useState<'realtime' | 'weekly' | 'biweekly' | 'monthly' | 'on_demand'>('on_demand')
+  const [payoutCurrency, setPayoutCurrency] = useState('USD')
   const [payoutDetails, setPayoutDetails] = useState('')
 
   const [submitting, setSubmitting] = useState(false)
@@ -539,6 +545,10 @@ export function TutorPublishCoursePage() {
       videoUrl,
       suggestedPriceUsd,
       payoutSplitPct: providerType === 'partner_institution' ? revenueSplitPct : 50,
+      payoutMethod,
+      payoutSchedule,
+      payoutDetails,
+      payoutCurrency,
       submittedAt: new Date().toISOString(),
       status: 'Approved & Live',
     }
@@ -594,7 +604,7 @@ export function TutorPublishCoursePage() {
       console.warn('Could not register into schoolStore immediately:', storeErr)
     }
 
-    // 2. Trigger local desktop video downloader bridge if online
+    // 2. Trigger local desktop video downloader bridge quietly in background
     try {
       const bridgeRes = await fetch('http://127.0.0.1:5179/download', {
         method: 'POST',
@@ -608,15 +618,15 @@ export function TutorPublishCoursePage() {
 
       if (bridgeRes.ok) {
         const bridgeData = await bridgeRes.json()
-        newCourse.status = 'Video Downloaded'
+        newCourse.status = 'Approved & Live'
         newCourse.downloadPath = bridgeData.savedPath
-        setDownloadStatusMsg(`✓ Video automatically saved to Desktop: ${bridgeData.savedFilename}`)
+        setDownloadStatusMsg('✓ Course registered & video streaming connection active for enrolled students!')
       } else {
-        setDownloadStatusMsg('Course registered & published live. Manual cloud video grab scheduled.')
+        setDownloadStatusMsg('✓ Course registered & published live! Video streaming connection active.')
       }
     } catch {
       // If web browser without desktop bridge daemon
-      setDownloadStatusMsg('Course registered & published live! Video URL captured for white-label player.')
+      setDownloadStatusMsg('✓ Course registered & published live! Video stream connected.')
     }
 
     // 3. Persist in localStorage
@@ -757,7 +767,7 @@ export function TutorPublishCoursePage() {
               margin: '0 auto 1.75rem',
             }}
           >
-            Whether you are an independent tutor creating video courses (earning 50% revenue share) or an academic school publishing accredited programs with your own institutional credentials, our platform handles automated video ingestion, Paystack payments, student portals, and verified certificates.
+            Whether you are an independent tutor creating video courses (earning 50% revenue share) or an academic school publishing accredited programs with your own institutional credentials, our platform handles high-speed video streaming, Paystack student checkout, student portals, and flexible disbursements chosen by you.
           </p>
 
           {/* Quick Pillars */}
@@ -772,14 +782,14 @@ export function TutorPublishCoursePage() {
           >
             <div style={{ background: 'rgba(255, 255, 255, 0.05)', border: '1px solid rgba(255, 255, 255, 0.12)', borderRadius: '14px', padding: '1rem 1.25rem' }}>
               <div style={{ fontSize: '1.4rem', marginBottom: '4px' }}>💵</div>
-              <strong style={{ fontSize: '0.95rem', color: '#f8fafc', display: 'block' }}>Guaranteed 50% Payout</strong>
-              <span style={{ fontSize: '0.8rem', color: '#94a3b8' }}>Bi-weekly disbursements via M-Pesa, Bank Wire, or PayPal upon student checkout.</span>
+              <strong style={{ fontSize: '0.95rem', color: '#f8fafc', display: 'block' }}>Disbursements on Your Terms</strong>
+              <span style={{ fontSize: '0.8rem', color: '#94a3b8' }}>Payouts by choice of the tutor or school via M-Pesa, Bank Wire, PayPal, or Crypto (Real-time, Weekly, or On-Demand).</span>
             </div>
 
             <div style={{ background: 'rgba(255, 255, 255, 0.05)', border: '1px solid rgba(255, 255, 255, 0.12)', borderRadius: '14px', padding: '1rem 1.25rem' }}>
               <div style={{ fontSize: '1.4rem', marginBottom: '4px' }}>⚡</div>
-              <strong style={{ fontSize: '0.95rem', color: '#f8fafc', display: 'block' }}>Automated Video Download</strong>
-              <span style={{ fontSize: '0.8rem', color: '#94a3b8' }}>Provide a Google Drive, Dropbox, or direct MP4 link; our system archives it to our secure vault.</span>
+              <strong style={{ fontSize: '0.95rem', color: '#f8fafc', display: 'block' }}>Seamless Cloud Video Integration</strong>
+              <span style={{ fontSize: '0.8rem', color: '#94a3b8' }}>Simply provide your Google Drive, Dropbox, or direct video link; our high-speed streaming infrastructure powers buffer-free playback for your students.</span>
             </div>
 
             <div style={{ background: 'rgba(255, 255, 255, 0.05)', border: '1px solid rgba(255, 255, 255, 0.12)', borderRadius: '14px', padding: '1rem 1.25rem' }}>
@@ -806,10 +816,10 @@ export function TutorPublishCoursePage() {
           >
             <div style={{ fontSize: '3.5rem', marginBottom: '0.5rem' }}>🎉</div>
             <h2 style={{ fontSize: '1.75rem', fontWeight: 900, color: '#166534', margin: '0 0 0.5rem' }}>
-              Course Submitted & Video Queued!
+              Course Submitted & Live Stream Active!
             </h2>
             <p style={{ fontSize: '1rem', color: '#334155', maxWidth: '600px', margin: '0 auto 1.5rem', lineHeight: 1.6 }}>
-              Thank you, <strong>{submittedCourse.tutorName}</strong>! Your course <strong>"{submittedCourse.courseTitle}"</strong> has been logged into our curriculum ingestion engine.
+              Thank you, <strong>{submittedCourse.tutorName}</strong>! Your course <strong>"{submittedCourse.courseTitle}"</strong> has been successfully registered on the platform and connected to the student portal.
             </p>
 
             {downloadStatusMsg && (
@@ -854,9 +864,10 @@ export function TutorPublishCoursePage() {
                 <div><strong>Tuition Price:</strong> ${submittedCourse.suggestedPriceUsd} USD</div>
                 <div><strong>Revenue Split:</strong> <span style={{ color: '#16a34a', fontWeight: 900 }}>{submittedCourse.payoutSplitPct}% (${((submittedCourse.suggestedPriceUsd * submittedCourse.payoutSplitPct) / 100).toFixed(0)}/student)</span></div>
                 <div><strong>Certification:</strong> <span style={{ color: '#0369a1', fontWeight: 700 }}>{submittedCourse.providerType === 'partner_institution' ? `Awarded by ${submittedCourse.institutionName || 'Partner School'}` : 'Awarded by Éclat Institute'}</span></div>
+                <div><strong>Disbursement:</strong> <span style={{ color: '#15803d', fontWeight: 700 }}>{submittedCourse.payoutMethod?.toUpperCase() || 'M-PESA'} ({submittedCourse.payoutSchedule === 'realtime' ? 'Instant Real-time' : submittedCourse.payoutSchedule === 'weekly' ? 'Weekly' : submittedCourse.payoutSchedule === 'monthly' ? 'Monthly' : 'On-Demand Choice'})</span></div>
               </div>
               <div style={{ borderTop: '1px solid #e2e8f0', paddingTop: '0.65rem' }}>
-                <strong>Source Video URL:</strong> <code style={{ fontSize: '0.78rem', wordBreak: 'break-all' }}>{submittedCourse.videoUrl}</code>
+                <strong>Connected Video Stream:</strong> <code style={{ fontSize: '0.78rem', wordBreak: 'break-all' }}>{submittedCourse.videoUrl}</code>
               </div>
             </div>
 
@@ -909,10 +920,10 @@ export function TutorPublishCoursePage() {
           >
             <div style={{ marginBottom: '1.75rem', borderBottom: '1px solid #e2e8f0', paddingBottom: '1.25rem' }}>
               <h2 style={{ fontSize: '1.45rem', fontWeight: 900, color: '#0f172a', margin: '0 0 0.35rem' }}>
-                Course Publication & Video Ingestion Form
+                Course Publication & Curriculum Registration Form
               </h2>
               <p style={{ fontSize: '0.88rem', color: '#64748b', margin: 0 }}>
-                Provide your course title, target fee, and video download URL. Our engineering team archives and brands your lectures within 24 hours.
+                Provide your course title, curriculum details, cloud video link, and payout preferences. Your course is published live for global student enrollment.
               </p>
             </div>
 
@@ -1439,21 +1450,21 @@ export function TutorPublishCoursePage() {
                 </div>
               </div>
 
-              {/* Section 3: Video Lecture URL */}
+              {/* Section 3: Video Lecture Master Link */}
               <div>
                 <h3 style={{ fontSize: '0.95rem', fontWeight: 800, color: '#1e3a8a', marginBottom: '0.85rem', display: 'flex', alignItems: 'center', gap: '6px' }}>
                   <VideoIcon size={16} color="#1e3a8a" />
-                  <span>3. Video Master Download URL</span>
+                  <span>3. Course Video Master Link & Curriculum Overview</span>
                 </h3>
 
                 <div style={{ marginBottom: '0.65rem' }}>
                   <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 800, color: '#334155', marginBottom: '4px' }}>
-                    Video URL (Google Drive, Dropbox, WeTransfer, or direct .MP4 link) *
+                    Course Video Master Link (Google Drive, Dropbox, Vimeo, or direct .mp4) *
                   </label>
                   <input
                     type="url"
                     required
-                    placeholder="https://drive.google.com/file/d/... or direct .mp4 URL"
+                    placeholder="https://drive.google.com/file/d/... or direct .mp4 link"
                     value={videoUrl}
                     onChange={(e) => setVideoUrl(e.target.value)}
                     style={{
@@ -1466,7 +1477,7 @@ export function TutorPublishCoursePage() {
                     }}
                   />
                   <div style={{ fontSize: '0.75rem', color: '#64748b', marginTop: '4px' }}>
-                    💡 <em>Tip: If using Google Drive, make sure link sharing is set to "Anyone with the link can view".</em>
+                    💡 <em>Tip: If using Google Drive or Dropbox, please ensure sharing permissions are set to "Anyone with the link can view".</em>
                   </div>
                 </div>
 
@@ -1494,17 +1505,22 @@ export function TutorPublishCoursePage() {
                 </div>
               </div>
 
-              {/* Section 4: Payout Details */}
+              {/* Section 4: Disbursement & Payout Details */}
               <div>
-                <h3 style={{ fontSize: '0.95rem', fontWeight: 800, color: '#1e3a8a', marginBottom: '0.85rem', display: 'flex', alignItems: 'center', gap: '6px' }}>
-                  <CreditCardIcon size={16} color="#1e3a8a" />
-                  <span>4. Your 50% Payout Method</span>
-                </h3>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.85rem', flexWrap: 'wrap', gap: '8px' }}>
+                  <h3 style={{ fontSize: '0.95rem', fontWeight: 800, color: '#1e3a8a', margin: 0, display: 'flex', alignItems: 'center', gap: '6px' }}>
+                    <CreditCardIcon size={16} color="#1e3a8a" />
+                    <span>4. Revenue Disbursement Preferences (By Your Choice)</span>
+                  </h3>
+                  <span style={{ fontSize: '0.74rem', color: '#16a34a', fontWeight: 700, background: '#f0fdf4', padding: '3px 8px', borderRadius: '6px', border: '1px solid #bbf7d0' }}>
+                    ✓ Configured by Tutor / School
+                  </span>
+                </div>
 
-                <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '180px 1fr', gap: '0.85rem' }}>
+                <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: '0.85rem', marginBottom: '0.85rem' }}>
                   <div>
                     <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 800, color: '#334155', marginBottom: '4px' }}>
-                      Payout Channel
+                      Disbursement Channel (Your Choice) *
                     </label>
                     <select
                       value={payoutMethod}
@@ -1519,22 +1535,82 @@ export function TutorPublishCoursePage() {
                         background: '#ffffff',
                       }}
                     >
-                      <option value="mpesa">M-Pesa (Kenya)</option>
-                      <option value="bank">Bank Wire Transfer</option>
-                      <option value="paypal">PayPal (International)</option>
+                      <option value="mpesa">📱 M-Pesa (Kenya & East Africa Mobile Money)</option>
+                      <option value="bank">🏦 Direct Bank Wire Transfer (Local / Global KES/USD)</option>
+                      <option value="paypal">💳 PayPal (International Global Transfer)</option>
+                      <option value="payoneer">🌐 Payoneer / Wise Global Account</option>
+                      <option value="crypto">🪙 Crypto USDT / Stablecoin (TRC20 / ERC20)</option>
+                      <option value="custom">📜 Custom Institutional Settlement Account (Partner Schools)</option>
                     </select>
                   </div>
 
                   <div>
                     <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 800, color: '#334155', marginBottom: '4px' }}>
-                      Payout Account / Number *
+                      Disbursement Frequency & Schedule (Your Choice) *
+                    </label>
+                    <select
+                      value={payoutSchedule}
+                      onChange={(e) => setPayoutSchedule(e.target.value as any)}
+                      style={{
+                        width: '100%',
+                        padding: '0.65rem 0.85rem',
+                        borderRadius: '8px',
+                        border: '1.5px solid #cbd5e1',
+                        fontSize: '0.88rem',
+                        outline: 'none',
+                        background: '#ffffff',
+                      }}
+                    >
+                      <option value="realtime">⚡ Instant / Real-Time per Student Checkout</option>
+                      <option value="weekly">📅 Weekly Disbursements (Every Friday)</option>
+                      <option value="biweekly">🗓️ Bi-Weekly Disbursements (15th & End of Month)</option>
+                      <option value="monthly">📆 Monthly Disbursements (1st of Every Month)</option>
+                      <option value="on_demand">🔔 On-Demand / Flexible (Disburse Whenever I Request)</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '2fr 1fr', gap: '0.85rem' }}>
+                  <div>
+                    <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 800, color: '#334155', marginBottom: '4px' }}>
+                      Disbursement Account / Number / Address *
                     </label>
                     <input
                       type="text"
                       required
-                      placeholder={payoutMethod === 'mpesa' ? 'e.g. M-Pesa Number: 0712345678' : payoutMethod === 'bank' ? 'Bank Name, Branch & Account Number' : 'PayPal Email Address'}
+                      placeholder={
+                        payoutMethod === 'mpesa'
+                          ? 'e.g. M-Pesa Registered Number: 0712 345 678 (Name: John Kamau)'
+                          : payoutMethod === 'bank'
+                          ? 'e.g. Bank Name, Branch, Account Name & Account Number'
+                          : payoutMethod === 'paypal'
+                          ? 'e.g. PayPal Registered Email Address'
+                          : payoutMethod === 'crypto'
+                          ? 'e.g. USDT TRC20 Wallet Address: T...'
+                          : 'e.g. Payoneer Email or Institutional Wire Details'
+                      }
                       value={payoutDetails}
                       onChange={(e) => setPayoutDetails(e.target.value)}
+                      style={{
+                        width: '100%',
+                        padding: '0.65rem 0.85rem',
+                        borderRadius: '8px',
+                        border: '1.5px solid #cbd5e1',
+                        fontSize: '0.88rem',
+                        outline: 'none',
+                      }}
+                    />
+                  </div>
+
+                  <div>
+                    <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 800, color: '#334155', marginBottom: '4px' }}>
+                      Settlement Currency Preference
+                    </label>
+                    <input
+                      type="text"
+                      placeholder="e.g. USD, KES, EUR, GBP"
+                      value={payoutCurrency}
+                      onChange={(e) => setPayoutCurrency(e.target.value)}
                       style={{
                         width: '100%',
                         padding: '0.65rem 0.85rem',

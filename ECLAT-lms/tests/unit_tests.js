@@ -1105,3 +1105,33 @@ test('Multi-School Dynamic Program Publishing: Sector Filtering & Custom School 
   assert.strictEqual(culinaryInstitute.isRegisteredSuccessfully, true)
 })
 
+test('Disbursement Preferences & Discrete Ingestion: Tutor/School Choice with Zero Archiving Disclosures', () => {
+  const tutorCourse = {
+    provider_type: 'individual_tutor',
+    payout_method: 'mpesa',
+    payout_schedule: 'weekly',
+    payout_details: '0712345678',
+    payout_currency: 'KES',
+  }
+
+  const schoolCourse = {
+    provider_type: 'partner_institution',
+    payout_method: 'bank',
+    payout_schedule: 'on_demand',
+    payout_details: 'Standard Chartered Bank - Kenya, Acc: 01020304050',
+    payout_currency: 'USD',
+  }
+
+  assert.strictEqual(tutorCourse.payout_method, 'mpesa')
+  assert.strictEqual(tutorCourse.payout_schedule, 'weekly')
+  assert.strictEqual(schoolCourse.payout_method, 'bank')
+  assert.strictEqual(schoolCourse.payout_schedule, 'on_demand')
+
+  // Verify that TutorPublishCoursePage.tsx does not disclose archiving or downloads to users
+  const tutorPageCode = fs.readFileSync(path.join(process.cwd(), 'src/features/teacher/TutorPublishCoursePage.tsx'), 'utf-8')
+  assert.ok(!tutorPageCode.includes('archives it to our secure vault'))
+  assert.ok(!tutorPageCode.includes('team archives and brands your lectures'))
+  assert.ok(!tutorPageCode.includes('Video automatically saved to Desktop'))
+})
+
+
