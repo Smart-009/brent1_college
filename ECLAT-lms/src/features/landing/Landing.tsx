@@ -1016,27 +1016,27 @@ export function Landing() {
   }
 
   return (
-    <div style={{ minHeight: '100vh', background: '#f8fafc', color: '#0f172a', fontFamily: 'Inter, system-ui, -apple-system, sans-serif', width: '100%', maxWidth: '100vw', overflowX: 'hidden' }}>
+    <div style={{ minHeight: '100vh', background: '#f8fafc', color: '#0f172a', fontFamily: 'Inter, system-ui, -apple-system, sans-serif', width: '100%', maxWidth: '100%', overflowX: 'hidden' }}>
       <DesktopCommandPalette />
 
       {/* Top Admissions & Quick Contacts Bar */}
-          <div
-            style={{
-              background: 'linear-gradient(90deg, #1e3a8a 0%, #2563eb 50%, #1e3a8a 100%)',
+      <div
+        style={{
+          background: 'linear-gradient(90deg, #1e3a8a 0%, #2563eb 50%, #1e3a8a 100%)',
           color: '#ffffff',
-          padding: '0.45rem 1rem',
-          fontSize: '0.8rem',
+          padding: isMobile ? '0.35rem 0.5rem' : '0.45rem 1rem',
+          fontSize: isMobile ? '0.74rem' : '0.8rem',
           fontWeight: 600,
           display: 'flex',
           justifyContent: 'center',
           alignItems: 'center',
-          gap: '1rem',
+          gap: isMobile ? '0.5rem' : '1rem',
           textAlign: 'center',
           whiteSpace: 'nowrap',
           overflow: 'hidden',
           textOverflow: 'ellipsis',
           width: '100%',
-          maxWidth: '100vw',
+          maxWidth: '100%',
           boxSizing: 'border-box',
         }}
       >
@@ -1065,23 +1065,23 @@ export function Landing() {
           background: 'rgba(255, 255, 255, 0.98)',
           backdropFilter: 'blur(12px)',
           borderBottom: '1px solid #e2e8f0',
-          padding: isMobile ? '0.45rem 0.65rem' : '0.65rem 1rem',
+          padding: isMobile ? '0.45rem 0.5rem' : '0.65rem 1rem',
           width: '100%',
-          maxWidth: '100vw',
+          maxWidth: '100%',
           boxSizing: 'border-box',
         }}
       >
-        <div style={{ maxWidth: '1280px', margin: '0 auto', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'nowrap', gap: '0.5rem', width: '100%' }}>
+        <div style={{ maxWidth: '1280px', margin: '0 auto', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'nowrap', gap: '0.4rem', width: '100%', minWidth: 0 }}>
           {/* Left Side: Brand Logo & Explore Categories */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem', flexShrink: 1, minWidth: 0 }}>
-            <Link to="/" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', textDecoration: 'none', minWidth: 0 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexShrink: 1, minWidth: 0 }}>
+            <Link to="/" style={{ display: 'flex', alignItems: 'center', gap: '0.45rem', textDecoration: 'none', minWidth: 0 }}>
               <img
                 src="/logo.png"
                 alt="Éclat Institute Logo"
-                style={{ width: isMobile ? '34px' : '40px', height: isMobile ? '34px' : '40px', borderRadius: '50%', objectFit: 'cover', border: '2px solid #d4af37', boxShadow: '0 2px 8px rgba(0,0,0,0.12)', flexShrink: 0 }}
+                style={{ width: isMobile ? '32px' : '40px', height: isMobile ? '32px' : '40px', borderRadius: '50%', objectFit: 'cover', border: '2px solid #d4af37', boxShadow: '0 2px 8px rgba(0,0,0,0.12)', flexShrink: 0 }}
               />
               <div style={{ minWidth: 0, overflow: 'hidden' }}>
-                <div style={{ fontSize: isMobile ? '1.05rem' : '1.2rem', fontWeight: 900, color: '#0f172a', fontFamily: 'var(--font-heading)', letterSpacing: '0.02em', lineHeight: 1.1, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                <div style={{ fontSize: isMobile ? 'clamp(0.88rem, 3.8vw, 1.15rem)' : '1.2rem', fontWeight: 900, color: '#0f172a', fontFamily: 'var(--font-heading)', letterSpacing: '0.01em', lineHeight: 1.1, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
                   ÉCLAT INSTITUTE
                 </div>
                 <div className="hidden sm:block" style={{ fontSize: '0.68rem', color: '#8c6e28', fontWeight: 700, letterSpacing: '0.06em', textTransform: 'uppercase', whiteSpace: 'nowrap' }}>
@@ -1363,20 +1363,67 @@ export function Landing() {
             </div>
 
             {/* Mobile-Only Actions & Hamburger Button */}
-            <div className="landing-mobile-actions" style={{ alignItems: 'center', gap: '0.35rem' }}>
+            <div className="landing-mobile-actions" style={{ alignItems: 'center', gap: '0.22rem', flexShrink: 0 }}>
+              <Link
+                to="/publish-course"
+                style={{
+                  background: 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)',
+                  color: '#ffffff',
+                  fontWeight: 800,
+                  padding: '0.34rem 0.44rem',
+                  borderRadius: '7px',
+                  fontSize: '0.7rem',
+                  whiteSpace: 'nowrap',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '3px',
+                  textDecoration: 'none',
+                  boxShadow: '0 2px 6px rgba(217, 119, 6, 0.3)',
+                  flexShrink: 0,
+                }}
+                title="Publish Course & Earn 50% Share"
+              >
+                <SparklesIcon size={12} color="#ffffff" />
+                <span>Publish</span>
+              </Link>
+
+              <Link
+                to="/donate"
+                style={{
+                  background: 'linear-gradient(135deg, #16a34a 0%, #15803d 100%)',
+                  color: '#ffffff',
+                  fontWeight: 800,
+                  padding: '0.34rem 0.44rem',
+                  borderRadius: '7px',
+                  fontSize: '0.7rem',
+                  whiteSpace: 'nowrap',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '3px',
+                  textDecoration: 'none',
+                  boxShadow: '0 2px 6px rgba(22, 163, 74, 0.3)',
+                  flexShrink: 0,
+                }}
+                title="Sponsor a Student / Donate"
+              >
+                <HeartHandshakeIcon size={12} color="#ffffff" />
+                <span>Donate</span>
+              </Link>
+
               <button
                 type="button"
                 className="btn btn-sm btn-primary"
                 style={{
                   fontWeight: 800,
-                  padding: '0.38rem 0.55rem',
-                  borderRadius: '8px',
-                  fontSize: '0.74rem',
+                  padding: '0.34rem 0.44rem',
+                  borderRadius: '7px',
+                  fontSize: '0.7rem',
                   whiteSpace: 'nowrap',
                   display: 'inline-flex',
                   alignItems: 'center',
-                  gap: '4px',
+                  gap: '3px',
                   boxShadow: '0 2px 8px rgba(37, 99, 235, 0.35)',
+                  flexShrink: 0,
                 }}
                 onClick={() => setShowPortalDesksModal(true)}
               >
@@ -1391,8 +1438,8 @@ export function Landing() {
                   background: mobileNavOpen ? '#0f172a' : '#f8fafc',
                   color: mobileNavOpen ? '#d4af37' : '#0f172a',
                   border: mobileNavOpen ? '1.5px solid #d4af37' : '1.5px solid #cbd5e1',
-                  width: '38px',
-                  height: '38px',
+                  width: '35px',
+                  height: '35px',
                   borderRadius: '8px',
                   cursor: 'pointer',
                   display: 'inline-flex',
@@ -1407,12 +1454,12 @@ export function Landing() {
                 title={mobileNavOpen ? 'Close Menu' : 'Open Website Menu'}
               >
                 {mobileNavOpen ? (
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                     <line x1="18" y1="6" x2="6" y2="18"></line>
                     <line x1="6" y1="6" x2="18" y2="18"></line>
                   </svg>
                 ) : (
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                     <line x1="3" y1="6" x2="21" y2="6"></line>
                     <line x1="3" y1="12" x2="21" y2="12"></line>
                     <line x1="3" y1="18" x2="21" y2="18"></line>
@@ -1519,11 +1566,56 @@ export function Landing() {
                 padding: '1rem 1.1rem',
                 display: 'flex',
                 flexDirection: 'column',
-                gap: '0.35rem',
+                gap: '0.45rem',
                 background: '#ffffff',
               }}
             >
-              <div style={{ fontSize: '0.68rem', fontWeight: 800, color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.08em', margin: '0.35rem 0 0.25rem 0.35rem' }}>
+              {/* Top Prominent Institutional Actions */}
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.45rem', marginBottom: '0.4rem' }}>
+                <Link
+                  to="/publish-course"
+                  onClick={() => setMobileNavOpen(false)}
+                  style={{
+                    color: '#ffffff',
+                    textDecoration: 'none',
+                    background: 'linear-gradient(135deg, #d97706 0%, #b45309 100%)',
+                    padding: '0.75rem 0.95rem',
+                    borderRadius: '12px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '10px',
+                    fontSize: '0.9rem',
+                    fontWeight: 800,
+                    boxShadow: '0 4px 12px rgba(217, 119, 6, 0.3)',
+                  }}
+                >
+                  <SparklesIcon size={18} color="#ffffff" />
+                  <span>Publish Course (Earn 50% Share)</span>
+                </Link>
+
+                <Link
+                  to="/donate"
+                  onClick={() => setMobileNavOpen(false)}
+                  style={{
+                    color: '#ffffff',
+                    textDecoration: 'none',
+                    background: 'linear-gradient(135deg, #16a34a 0%, #15803d 100%)',
+                    padding: '0.75rem 0.95rem',
+                    borderRadius: '12px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '10px',
+                    fontSize: '0.9rem',
+                    fontWeight: 800,
+                    boxShadow: '0 4px 12px rgba(22, 163, 74, 0.3)',
+                  }}
+                >
+                  <HeartHandshakeIcon size={18} color="#ffffff" />
+                  <span>💖 Sponsor a Student / Donate</span>
+                </Link>
+              </div>
+
+              <div style={{ fontSize: '0.68rem', fontWeight: 800, color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.08em', margin: '0.25rem 0 0.15rem 0.35rem' }}>
                 Academic Directory
               </div>
 
@@ -1966,6 +2058,72 @@ export function Landing() {
         )}
       </header>
 
+      {/* Prominent Mobile Featured Action Bar (Instant Direct Access to Publish & Donate) */}
+      <div
+        className="landing-mobile-quick-strip"
+        style={{
+          background: '#ffffff',
+          borderBottom: '1.5px solid #e2e8f0',
+          padding: '0.45rem 0.65rem',
+          gap: '0.5rem',
+          alignItems: 'center',
+          justifyContent: 'center',
+          width: '100%',
+          maxWidth: '100%',
+          boxSizing: 'border-box',
+          boxShadow: '0 2px 8px rgba(0, 0, 0, 0.05)',
+          position: 'relative',
+          zIndex: 90,
+        }}
+      >
+        <Link
+          to="/publish-course"
+          style={{
+            flex: 1,
+            background: 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)',
+            color: '#ffffff',
+            fontWeight: 800,
+            padding: '0.55rem 0.6rem',
+            borderRadius: '9px',
+            fontSize: '0.8rem',
+            textDecoration: 'none',
+            display: 'inline-flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: '6px',
+            boxShadow: '0 2px 8px rgba(217, 119, 6, 0.3)',
+            textAlign: 'center',
+            whiteSpace: 'nowrap',
+          }}
+        >
+          <SparklesIcon size={15} color="#ffffff" />
+          <span>✨ Publish & Earn 50%</span>
+        </Link>
+        <Link
+          to="/donate"
+          style={{
+            flex: 1,
+            background: 'linear-gradient(135deg, #16a34a 0%, #15803d 100%)',
+            color: '#ffffff',
+            fontWeight: 800,
+            padding: '0.55rem 0.6rem',
+            borderRadius: '9px',
+            fontSize: '0.8rem',
+            textDecoration: 'none',
+            display: 'inline-flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: '6px',
+            boxShadow: '0 2px 8px rgba(22, 163, 74, 0.3)',
+            textAlign: 'center',
+            whiteSpace: 'nowrap',
+          }}
+        >
+          <HeartHandshakeIcon size={15} color="#ffffff" />
+          <span>💖 Sponsor / Donate</span>
+        </Link>
+      </div>
+
       {/* Hero Section: 100% Online Global Academy Billboard */}
       <section
         style={{
@@ -2094,14 +2252,16 @@ export function Landing() {
           <h1
             className="landing-hero-heading"
             style={{
-              fontSize: isMobile ? '2.1rem' : '3.6rem',
+              fontSize: isMobile ? 'clamp(1.5rem, 5.5vw, 2.15rem)' : '3.6rem',
               fontWeight: 900,
               letterSpacing: '-0.025em',
-              lineHeight: 1.15,
+              lineHeight: 1.2,
               margin: '0 auto 1.25rem',
               maxWidth: '960px',
               color: '#ffffff',
               fontFamily: 'var(--font-heading)',
+              wordBreak: 'break-word',
+              overflowWrap: 'break-word',
             }}
           >
             World-Class Virtual Education in Technology, Business & British Curriculum
@@ -2112,17 +2272,18 @@ export function Landing() {
             style={{
               maxWidth: '740px',
               margin: '0 auto 2.25rem',
-              fontSize: isMobile ? '0.98rem' : '1.15rem',
+              fontSize: isMobile ? '0.95rem' : '1.15rem',
               color: '#cbd5e1',
               lineHeight: 1.6,
               fontWeight: 400,
+              wordBreak: 'break-word',
             }}
           >
             Join an accredited international virtual campus delivering live interactive lectures, British examination series, and verified professional credentials across 40+ countries.
           </p>
 
           {/* Clean, High-Contrast CTAs */}
-          <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '1rem', flexWrap: 'wrap', marginBottom: '3rem', width: isMobile ? '100%' : 'auto', flexDirection: isMobile ? 'column' : 'row' }}>
+          <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '0.85rem', flexWrap: 'wrap', marginBottom: '1.25rem', width: isMobile ? '100%' : 'auto', flexDirection: isMobile ? 'column' : 'row' }}>
             <a
               href="#courses"
               style={{
@@ -2194,6 +2355,57 @@ export function Landing() {
             >
               <GraduationCapIcon size={16} color="#4ade80" />
               <span>Teaching Careers</span>
+            </Link>
+          </div>
+
+          {/* Hero Secondary Direct Actions: Publish Course & Donate */}
+          <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '0.75rem', flexWrap: 'wrap', marginBottom: '2.5rem', width: isMobile ? '100%' : 'auto', flexDirection: isMobile ? 'column' : 'row' }}>
+            <Link
+              to="/publish-course"
+              style={{
+                background: 'linear-gradient(135deg, rgba(217, 119, 6, 0.95) 0%, rgba(180, 83, 9, 0.95) 100%)',
+                border: '1px solid rgba(253, 230, 138, 0.45)',
+                color: '#ffffff',
+                fontWeight: 800,
+                padding: '0.65rem 1.35rem',
+                fontSize: '0.88rem',
+                borderRadius: '10px',
+                textDecoration: 'none',
+                display: 'inline-flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '7px',
+                boxShadow: '0 4px 14px rgba(217, 119, 6, 0.35)',
+                width: isMobile ? '100%' : 'auto',
+                boxSizing: 'border-box',
+              }}
+            >
+              <SparklesIcon size={16} color="#ffffff" />
+              <span>Publish Course &amp; Earn 50% Share</span>
+            </Link>
+
+            <Link
+              to="/donate"
+              style={{
+                background: 'linear-gradient(135deg, rgba(22, 163, 74, 0.95) 0%, rgba(21, 128, 61, 0.95) 100%)',
+                border: '1px solid rgba(187, 247, 208, 0.45)',
+                color: '#ffffff',
+                fontWeight: 800,
+                padding: '0.65rem 1.35rem',
+                fontSize: '0.88rem',
+                borderRadius: '10px',
+                textDecoration: 'none',
+                display: 'inline-flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '7px',
+                boxShadow: '0 4px 14px rgba(22, 163, 74, 0.35)',
+                width: isMobile ? '100%' : 'auto',
+                boxSizing: 'border-box',
+              }}
+            >
+              <HeartHandshakeIcon size={16} color="#ffffff" />
+              <span>💖 Sponsor a Student / Donate</span>
             </Link>
           </div>
 
@@ -3556,7 +3768,7 @@ export function Landing() {
               </div>
 
               {/* Action Buttons */}
-              <div style={{ display: 'flex', gap: '0.85rem', flexWrap: 'wrap', alignItems: 'center' }}>
+              <div style={{ display: 'flex', gap: '0.85rem', flexWrap: 'wrap', alignItems: 'center', width: isMobile ? '100%' : 'auto', flexDirection: isMobile ? 'column' : 'row' }}>
                 <Link
                   to="/publish-course"
                   style={{
@@ -3564,14 +3776,18 @@ export function Landing() {
                     color: '#ffffff',
                     textDecoration: 'none',
                     borderRadius: '10px',
-                    padding: '0.85rem 1.6rem',
-                    fontSize: '0.95rem',
+                    padding: isMobile ? '0.75rem 1rem' : '0.85rem 1.6rem',
+                    fontSize: isMobile ? '0.88rem' : '0.95rem',
                     fontWeight: 900,
                     display: 'inline-flex',
                     alignItems: 'center',
+                    justifyContent: 'center',
                     gap: '8px',
                     boxShadow: '0 4px 18px rgba(217, 119, 6, 0.45)',
                     transition: 'all 0.15s ease',
+                    width: isMobile ? '100%' : 'auto',
+                    boxSizing: 'border-box',
+                    textAlign: 'center',
                   }}
                 >
                   <RocketIcon size={18} color="#ffffff" />
@@ -3586,14 +3802,18 @@ export function Landing() {
                     background: '#22c55e',
                     color: '#ffffff',
                     borderRadius: '10px',
-                    padding: '0.85rem 1.35rem',
-                    fontSize: '0.92rem',
+                    padding: isMobile ? '0.75rem 1rem' : '0.85rem 1.35rem',
+                    fontSize: isMobile ? '0.88rem' : '0.92rem',
                     fontWeight: 800,
                     textDecoration: 'none',
                     display: 'inline-flex',
                     alignItems: 'center',
+                    justifyContent: 'center',
                     gap: '8px',
                     boxShadow: '0 4px 14px rgba(34, 197, 94, 0.3)',
+                    width: isMobile ? '100%' : 'auto',
+                    boxSizing: 'border-box',
+                    textAlign: 'center',
                   }}
                 >
                   <MessageCircleIcon size={18} color="#ffffff" />
@@ -4133,25 +4353,25 @@ export function Landing() {
               </div>
             </div>
             <div style={{ background: 'rgba(255, 255, 255, 0.12)', borderRadius: '12px', padding: isMobile ? '1rem 0.85rem' : '1.25rem', marginTop: '1.5rem', lineHeight: 1.8 }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '7px' }}>
-                <GlobeIcon size={14} color="#a7f3d0" />
-                <span><strong>Currency:</strong> <span style={{ fontSize: '1.15rem', fontWeight: 900, color: '#ffffff' }}>USD ($)</span> (or local equivalent)</span>
+              <div style={{ display: 'flex', alignItems: 'flex-start', gap: '8px', minWidth: 0 }}>
+                <span style={{ marginTop: '4px', flexShrink: 0 }}><GlobeIcon size={14} color="#a7f3d0" /></span>
+                <span style={{ minWidth: 0, wordBreak: 'break-word' }}><strong>Currency:</strong> <span style={{ fontSize: '1.15rem', fontWeight: 900, color: '#ffffff' }}>USD ($)</span> (or local equivalent)</span>
               </div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '7px' }}>
-                <CreditCardIcon size={14} color="#a7f3d0" />
-                <span><strong>Card Payment:</strong> Debit / Credit Card (Visa, Mastercard & Prepaid)</span>
+              <div style={{ display: 'flex', alignItems: 'flex-start', gap: '8px', minWidth: 0 }}>
+                <span style={{ marginTop: '4px', flexShrink: 0 }}><CreditCardIcon size={14} color="#a7f3d0" /></span>
+                <span style={{ minWidth: 0, wordBreak: 'break-word' }}><strong>Card Payment:</strong> Debit / Credit Card (Visa, Mastercard & Prepaid)</span>
               </div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '7px' }}>
-                <BuildingIcon size={14} color="#a7f3d0" />
-                <span><strong>Bank Wire & Mobile Money:</strong> Instant automated invoices generated upon registration</span>
+              <div style={{ display: 'flex', alignItems: 'flex-start', gap: '8px', minWidth: 0 }}>
+                <span style={{ marginTop: '4px', flexShrink: 0 }}><BuildingIcon size={14} color="#a7f3d0" /></span>
+                <span style={{ minWidth: 0, wordBreak: 'break-word' }}><strong>Bank Wire & Mobile Money:</strong> Instant automated invoices generated upon registration</span>
               </div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '7px' }}>
-                <CheckCircleIcon size={14} color="#a7f3d0" />
-                <span><strong>Installment Plan:</strong> 2 flexible parts accepted (50% on admission)</span>
+              <div style={{ display: 'flex', alignItems: 'flex-start', gap: '8px', minWidth: 0 }}>
+                <span style={{ marginTop: '4px', flexShrink: 0 }}><CheckCircleIcon size={14} color="#a7f3d0" /></span>
+                <span style={{ minWidth: 0, wordBreak: 'break-word' }}><strong>Installment Plan:</strong> 2 flexible parts accepted (50% on admission)</span>
               </div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '7px' }}>
-                <FileTextIcon size={14} color="#a7f3d0" />
-                <span><strong>Receipts:</strong> Official stamped digital receipts with instant QR verification</span>
+              <div style={{ display: 'flex', alignItems: 'flex-start', gap: '8px', minWidth: 0 }}>
+                <span style={{ marginTop: '4px', flexShrink: 0 }}><FileTextIcon size={14} color="#a7f3d0" /></span>
+                <span style={{ minWidth: 0, wordBreak: 'break-word' }}><strong>Receipts:</strong> Official stamped digital receipts with instant QR verification</span>
               </div>
             </div>
             <div style={{ marginTop: '1.25rem' }}>
@@ -4177,21 +4397,21 @@ export function Landing() {
               </div>
             </div>
             <div style={{ fontSize: '0.92rem', color: '#475569', lineHeight: 1.7, marginTop: '1.25rem' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '7px', marginBottom: '4px' }}>
-                <LaptopIcon size={15} color="#64748b" />
-                <span><strong>Delivery Mode:</strong> 100% Online (Live Interactive Video + LMS Modules)</span>
+              <div style={{ display: 'flex', alignItems: 'flex-start', gap: '8px', marginBottom: '6px', minWidth: 0 }}>
+                <span style={{ marginTop: '4px', flexShrink: 0 }}><LaptopIcon size={15} color="#64748b" /></span>
+                <span style={{ minWidth: 0, wordBreak: 'break-word' }}><strong>Delivery Mode:</strong> 100% Online (Live Interactive Video + LMS Modules)</span>
               </div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '7px', marginBottom: '4px' }}>
-                <ClockIcon size={15} color="#64748b" />
-                <span><strong>Live Class Shifts:</strong> Early Morning, Late Morning, Midday, Afternoon, Evening & Night Batches</span>
+              <div style={{ display: 'flex', alignItems: 'flex-start', gap: '8px', marginBottom: '6px', minWidth: 0 }}>
+                <span style={{ marginTop: '4px', flexShrink: 0 }}><ClockIcon size={15} color="#64748b" /></span>
+                <span style={{ minWidth: 0, wordBreak: 'break-word' }}><strong>Live Class Shifts:</strong> Early Morning, Late Morning, Midday, Afternoon, Evening & Night Batches</span>
               </div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '7px', marginBottom: '4px' }}>
-                <PhoneIcon size={15} color="#64748b" />
-                <span><strong>Admissions Hotline:</strong> {INSTITUTION_CONFIG.contact.phone}</span>
+              <div style={{ display: 'flex', alignItems: 'flex-start', gap: '8px', marginBottom: '6px', minWidth: 0 }}>
+                <span style={{ marginTop: '4px', flexShrink: 0 }}><PhoneIcon size={15} color="#64748b" /></span>
+                <span style={{ minWidth: 0, wordBreak: 'break-word' }}><strong>Admissions Hotline:</strong> {INSTITUTION_CONFIG.contact.phone}</span>
               </div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '7px' }}>
-                <MailIcon size={15} color="#64748b" />
-                <span><strong>Direct Inquiries:</strong> {INSTITUTION_CONFIG.contact.email}</span>
+              <div style={{ display: 'flex', alignItems: 'flex-start', gap: '8px', minWidth: 0 }}>
+                <span style={{ marginTop: '4px', flexShrink: 0 }}><MailIcon size={15} color="#64748b" /></span>
+                <span style={{ minWidth: 0, wordBreak: 'break-word' }}><strong>Direct Inquiries:</strong> {INSTITUTION_CONFIG.contact.email}</span>
               </div>
             </div>
             <button
@@ -5825,8 +6045,8 @@ export function Landing() {
             fontSize: '0.88rem',
             fontWeight: 700,
             animation: 'fadeIn 0.3s ease',
-            maxWidth: isMobile ? 'calc(100vw - 32px)' : '480px',
-            width: isMobile ? 'calc(100vw - 32px)' : 'auto',
+            maxWidth: isMobile ? 'calc(100% - 32px)' : '480px',
+            width: isMobile ? 'calc(100% - 32px)' : 'auto',
             boxSizing: 'border-box',
           }}
         >
@@ -5842,7 +6062,7 @@ export function Landing() {
       )}
 
       {/* Sleek Modern Floating Support Desk (WhatsApp / Admissions Live Desk) */}
-      <div style={{ position: 'fixed', bottom: isMobile ? '76px' : '24px', right: isMobile ? '16px' : '24px', zIndex: 9990, display: 'flex', flexDirection: 'column', alignItems: 'flex-end' }}>
+      <div style={{ position: 'fixed', bottom: isMobile ? '76px' : '24px', right: isMobile ? '16px' : '24px', zIndex: 9990, display: 'flex', flexDirection: 'column', alignItems: 'flex-end', maxWidth: 'calc(100% - 32px)' }}>
         {supportModalOpen && (
           <div
             style={{
@@ -5851,8 +6071,9 @@ export function Landing() {
               padding: '1.4rem',
               boxShadow: '0 20px 48px rgba(15, 23, 42, 0.25)',
               border: '1px solid #e2e8f0',
-              width: isMobile ? 'calc(100vw - 32px)' : '320px',
+              width: isMobile ? 'calc(100% - 32px)' : '320px',
               maxWidth: '360px',
+              boxSizing: 'border-box',
               animation: 'fadeIn 0.2s ease',
               marginBottom: '12px',
               textAlign: 'left',
