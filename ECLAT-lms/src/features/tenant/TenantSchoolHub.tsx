@@ -542,43 +542,6 @@ export function TenantSchoolHub() {
               </span>
             </button>
 
-            {/* Dedicated Domain & Special Links Trigger */}
-            <button
-              type="button"
-              onClick={() => setShowDomainModal(true)}
-              style={{
-                background: `${accentColor}18`,
-                color: '#0f172a',
-                border: `1.5px solid ${accentColor}70`,
-                borderRadius: '8px',
-                padding: '0.35rem 0.75rem',
-                fontSize: '0.76rem',
-                fontWeight: 800,
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '6px',
-                cursor: 'pointer',
-                transition: 'all 0.15s ease',
-              }}
-              title="Manage Dedicated Subdomains, Special Links & Custom DNS"
-            >
-              <GlobeIcon size={14} color={primaryColor} />
-              <span>Special Links &amp; Domains</span>
-              <span
-                style={{
-                  background: '#ffffff',
-                  color: primaryColor,
-                  border: `1px solid ${primaryColor}40`,
-                  borderRadius: '4px',
-                  padding: '1px 5px',
-                  fontSize: '0.7rem',
-                  fontWeight: 800,
-                }}
-              >
-                {school.slug}.eclat.institute
-              </span>
-            </button>
-
             {/* Active Calendar Pill */}
             <div
               style={{
@@ -595,40 +558,33 @@ export function TenantSchoolHub() {
               }}
             >
               <CalendarIcon size={13} color={primaryColor} />
-              <span>{systemTermLabel} System: <strong>{school.active_period_name}</strong></span>
+              <span>{systemTermLabel}: <strong>{school.active_period_name}</strong></span>
             </div>
 
-            <Link
-              to="/register-school"
-              style={{
-                background: '#f1f5f9',
-                color: '#334155',
-                border: '1px solid #cbd5e1',
-                padding: '0.4rem 0.75rem',
-                borderRadius: '8px',
-                fontSize: '0.76rem',
-                fontWeight: 700,
-                textDecoration: 'none',
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '5px',
-              }}
-            >
-              <span>+ Register Another School</span>
-            </Link>
-
-            <Link
-              to="/"
-              style={{
-                color: '#64748b',
-                fontSize: '0.76rem',
-                fontWeight: 600,
-                textDecoration: 'none',
-                marginLeft: '0.25rem',
-              }}
-            >
-              Éclat Cloud ↗
-            </Link>
+            {/* Admin-Only Domain Setup Button */}
+            {activeRole === 'admin' && (
+              <button
+                type="button"
+                onClick={() => setShowDomainModal(true)}
+                style={{
+                  background: '#f8fafc',
+                  color: '#475569',
+                  border: '1px solid #cbd5e1',
+                  borderRadius: '8px',
+                  padding: '0.35rem 0.65rem',
+                  fontSize: '0.74rem',
+                  fontWeight: 700,
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '5px',
+                  cursor: 'pointer',
+                }}
+                title="Manage Custom Domain & DNS Settings"
+              >
+                <GlobeIcon size={13} color="#475569" />
+                <span>Domain &amp; DNS</span>
+              </button>
+            )}
           </div>
         </div>
 
@@ -762,93 +718,92 @@ export function TenantSchoolHub() {
         {/* VIEW 1: MAIN SCHOOL HUB (Directory of the 4 Portals with Direct URLs) */}
         {activeTab === 'hub' && (
           <div>
-            {/* Branded Billboard */}
+            {/* 1. Authentic School Institution Hero Banner */}
             <div
               style={{
-                background: `linear-gradient(135deg, ${primaryColor} 0%, #0f172a 100%)`,
+                background: '#ffffff',
                 borderRadius: '24px',
-                color: '#ffffff',
-                padding: 'clamp(2rem, 5vw, 3.5rem)',
+                border: '1.5px solid #e2e8f0',
+                padding: 'clamp(1.5rem, 3.5vw, 2.5rem)',
+                boxShadow: '0 4px 20px rgba(0, 0, 0, 0.04)',
+                marginBottom: '2rem',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                flexWrap: 'wrap',
+                gap: '1.5rem',
                 position: 'relative',
                 overflow: 'hidden',
-                boxShadow: `0 16px 40px ${primaryColor}30`,
-                marginBottom: '2.5rem',
               }}
             >
-              <div style={{ maxWidth: '820px', position: 'relative', zIndex: 2 }}>
-                <div style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', background: 'rgba(255,255,255,0.14)', borderRadius: '999px', padding: '0.35rem 0.95rem', fontSize: '0.8rem', fontWeight: 800, marginBottom: '1.25rem', letterSpacing: '0.04em' }}>
-                  <span>🏫 OFFICIAL DIGITAL CAMPUS &amp; SIMS PORTALS</span>
-                </div>
-                <h1 style={{ fontSize: 'clamp(1.75rem, 4vw, 2.75rem)', fontWeight: 900, lineHeight: 1.15, marginBottom: '0.75rem', fontFamily: 'var(--font-heading)' }}>
-                  {school.name}
-                </h1>
-                <p style={{ fontSize: '1.05rem', color: '#e2e8f0', lineHeight: 1.6, marginBottom: '1.75rem' }}>
-                  Welcome to the official online institution portal for students, faculty, bursars, and guardians. Powered by our dedicated white-label cloud with integrated {systemPluralLabel.toLowerCase()}, continuous assessment, and verified credentials.
-                </p>
+              {/* Subtle Institution Accent Stripe at Top */}
+              <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: '5px', background: `linear-gradient(90deg, ${primaryColor}, ${accentColor})` }} />
 
-                {/* Instant Share Links Bar */}
-                <div style={{ background: 'rgba(0,0,0,0.35)', backdropFilter: 'blur(10px)', borderRadius: '18px', padding: '1.1rem 1.35rem', border: '1px solid rgba(255,255,255,0.18)', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '0.85rem' }}>
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
-                    <div style={{ fontSize: '0.74rem', textTransform: 'uppercase', letterSpacing: '0.06em', color: accentColor, fontWeight: 800 }}>
-                      ⚡ Official Institution Subdomain &amp; Links
-                    </div>
-                    <div style={{ fontSize: '1.05rem', fontWeight: 900, color: '#ffffff', display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
-                      <span style={{ letterSpacing: '-0.01em' }}>{domainLinks.subdomainUrl}</span>
-                      <span style={{ fontSize: '0.68rem', background: '#22c55e', color: '#052e16', padding: '2px 8px', borderRadius: '999px', fontWeight: 800 }}>
-                        ● Live Subdomain
-                      </span>
-                    </div>
-                    <div style={{ fontSize: '0.78rem', color: '#94a3b8' }}>
-                      Universal Path: <span style={{ color: '#cbd5e1', fontWeight: 600 }}>{domainLinks.pathUrl}</span>
-                      {school.custom_domain && (
-                        <span> • Custom Domain: <strong style={{ color: '#38bdf8' }}>{school.custom_domain}</strong></span>
-                      )}
-                    </div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '1.25rem', flexWrap: 'wrap', flex: 1, minWidth: '280px' }}>
+                {/* Official Monogram / Crest Badge */}
+                <div
+                  style={{
+                    width: '68px',
+                    height: '68px',
+                    borderRadius: '18px',
+                    background: `linear-gradient(135deg, ${primaryColor} 0%, #0f172a 100%)`,
+                    color: '#ffffff',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    fontSize: '2rem',
+                    fontWeight: 900,
+                    boxShadow: `0 8px 20px ${primaryColor}30`,
+                    border: `2px solid ${accentColor}`,
+                    flexShrink: 0,
+                  }}
+                >
+                  {school.name.charAt(0)}
+                </div>
+
+                <div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap', marginBottom: '0.35rem' }}>
+                    <span style={{ fontSize: '0.72rem', fontWeight: 800, color: primaryColor, background: `${primaryColor}14`, padding: '2px 8px', borderRadius: '6px', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
+                      {school.curriculum_type}
+                    </span>
+                    <span style={{ fontSize: '0.72rem', fontWeight: 800, color: '#16a34a', background: '#dcfce7', padding: '2px 8px', borderRadius: '6px' }}>
+                      ● {systemTermLabel} Active: {school.active_period_name}
+                    </span>
                   </div>
 
-                  <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
-                    <button
-                      type="button"
-                      onClick={() => copyRawText(domainLinks.subdomainUrl, 'Official Subdomain')}
-                      style={{
-                        background: accentColor,
-                        color: '#0f172a',
-                        fontWeight: 800,
-                        border: 'none',
-                        borderRadius: '9px',
-                        padding: '0.5rem 0.95rem',
-                        fontSize: '0.78rem',
-                        cursor: 'pointer',
-                        display: 'inline-flex',
-                        alignItems: 'center',
-                        gap: '5px',
-                        boxShadow: '0 2px 8px rgba(0,0,0,0.2)',
-                      }}
-                    >
-                      <span>{copiedLink === 'Official Subdomain' ? '✅ Copied Subdomain!' : '📋 Copy Subdomain'}</span>
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => setShowDomainModal(true)}
-                      style={{
-                        background: 'rgba(255,255,255,0.15)',
-                        color: '#ffffff',
-                        fontWeight: 700,
-                        border: '1px solid rgba(255,255,255,0.3)',
-                        borderRadius: '9px',
-                        padding: '0.5rem 0.95rem',
-                        fontSize: '0.78rem',
-                        cursor: 'pointer',
-                        display: 'inline-flex',
-                        alignItems: 'center',
-                        gap: '5px',
-                      }}
-                    >
-                      <GlobeIcon size={14} color="#ffffff" />
-                      <span>Special Links &amp; DNS Setup</span>
-                    </button>
-                  </div>
+                  <h1 style={{ fontSize: 'clamp(1.6rem, 3.2vw, 2.2rem)', fontWeight: 900, color: '#0f172a', margin: '0 0 0.35rem', lineHeight: 1.2, fontFamily: 'var(--font-heading)' }}>
+                    {school.name}
+                  </h1>
+
+                  <p style={{ margin: 0, color: '#64748b', fontSize: '0.9rem', lineHeight: 1.5, maxWidth: '640px' }}>
+                    {school.motto} • Official Online Campus &amp; Student Information System.
+                  </p>
                 </div>
+              </div>
+
+              {/* Direct Quick Action: Switch Role / Sign In */}
+              <div style={{ display: 'flex', gap: '0.6rem', flexWrap: 'wrap', alignItems: 'center' }}>
+                <button
+                  type="button"
+                  onClick={() => setShowRoleSwitcherModal(true)}
+                  style={{
+                    background: primaryColor,
+                    color: '#ffffff',
+                    fontWeight: 800,
+                    padding: '0.7rem 1.25rem',
+                    borderRadius: '12px',
+                    border: 'none',
+                    cursor: 'pointer',
+                    fontSize: '0.85rem',
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '7px',
+                    boxShadow: `0 4px 14px ${primaryColor}40`,
+                  }}
+                >
+                  <LockIcon size={15} color="#ffffff" />
+                  <span>Authenticate / Switch Portal Desk</span>
+                </button>
               </div>
             </div>
 
@@ -887,330 +842,79 @@ export function TenantSchoolHub() {
               </div>
             </div>
 
-            {/* SPECIAL SCHOOL LINKS & DOMAIN MANAGEMENT CENTER */}
+            {/* Campus Noticeboard & Official Announcements */}
             <div
               style={{
                 background: '#ffffff',
-                borderRadius: '24px',
+                borderRadius: '20px',
                 border: '1.5px solid #e2e8f0',
-                padding: 'clamp(1.5rem, 3vw, 2.25rem)',
-                boxShadow: '0 8px 30px rgba(0,0,0,0.04)',
-                marginBottom: '3rem',
+                padding: '1.5rem 1.75rem',
+                boxShadow: '0 4px 16px rgba(0,0,0,0.03)',
+                marginBottom: '2.5rem',
               }}
             >
-              <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', flexWrap: 'wrap', gap: '1rem', marginBottom: '1.5rem' }}>
-                <div>
-                  <div style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', background: `${primaryColor}12`, color: primaryColor, borderRadius: '999px', padding: '0.3rem 0.85rem', fontSize: '0.78rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.04em', marginBottom: '0.5rem' }}>
-                    <GlobeIcon size={14} color={primaryColor} />
-                    <span>Special Links &amp; Domain Management</span>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1.1rem', borderBottom: '1px solid #f1f5f9', paddingBottom: '0.75rem', flexWrap: 'wrap', gap: '0.5rem' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <span style={{ fontSize: '1.25rem' }}>📢</span>
+                  <h3 style={{ fontSize: '1.1rem', fontWeight: 800, color: '#0f172a', margin: 0 }}>
+                    Campus Noticeboard &amp; Official Announcements
+                  </h3>
+                </div>
+                <span style={{ fontSize: '0.74rem', fontWeight: 700, color: '#64748b' }}>
+                  Session: {school.active_period_name}
+                </span>
+              </div>
+
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '1rem' }}>
+                <div style={{ background: '#f8fafc', borderRadius: '14px', padding: '1.1rem', border: '1px solid #e2e8f0' }}>
+                  <div style={{ fontSize: '0.72rem', fontWeight: 800, color: '#d97706', textTransform: 'uppercase', marginBottom: '4px' }}>
+                    Examination Registry
                   </div>
-                  <h2 style={{ fontSize: '1.5rem', fontWeight: 900, color: '#0f172a', margin: '0 0 0.35rem' }}>
-                    Branded Web Addresses &amp; Separate Portals for {school.name}
-                  </h2>
-                  <p style={{ color: '#64748b', fontSize: '0.92rem', margin: 0, maxWidth: '780px', lineHeight: 1.5 }}>
-                    Give your students, instructors, and accountants direct branded links to their respective dashboards. You have a dedicated Éclat Cloud subdomain and can also connect your school's official domain name via DNS CNAME.
+                  <div style={{ fontSize: '0.92rem', fontWeight: 800, color: '#0f172a', marginBottom: '4px' }}>
+                    {systemTermLabel} Continuous Assessment Schedule
+                  </div>
+                  <p style={{ margin: 0, fontSize: '0.82rem', color: '#64748b', lineHeight: 1.5 }}>
+                    Mid-term CAT examination timetables and practical assessment rosters have been published in the Student and Teacher portals.
                   </p>
                 </div>
 
-                <button
-                  type="button"
-                  onClick={() => setShowDomainModal(true)}
-                  style={{
-                    background: primaryColor,
-                    color: '#ffffff',
-                    fontWeight: 800,
-                    fontSize: '0.82rem',
-                    padding: '0.65rem 1.15rem',
-                    borderRadius: '10px',
-                    border: 'none',
-                    cursor: 'pointer',
-                    display: 'inline-flex',
-                    alignItems: 'center',
-                    gap: '6px',
-                  }}
-                >
-                  <SparklesIcon size={15} color="#ffffff" />
-                  <span>Domain Manager &amp; DNS Instructions</span>
-                </button>
-              </div>
-
-              {/* 3 Domain Cards Grid */}
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '1.25rem' }}>
-                {/* 1. Official Branded Subdomain */}
-                <div style={{ background: '#f8fafc', borderRadius: '18px', padding: '1.5rem', border: '1px solid #cbd5e1', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
-                  <div>
-                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.75rem' }}>
-                      <span style={{ fontSize: '0.74rem', fontWeight: 800, color: '#1d4ed8', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
-                        1. Dedicated Subdomain
-                      </span>
-                      <span style={{ fontSize: '0.7rem', fontWeight: 800, background: '#dcfce7', color: '#15803d', padding: '2px 8px', borderRadius: '999px' }}>
-                        ● SSL Active
-                      </span>
-                    </div>
-                    <div style={{ fontSize: '1.15rem', fontWeight: 900, color: '#0f172a', wordBreak: 'break-all', marginBottom: '0.5rem' }}>
-                      {domainLinks.subdomainUrl}
-                    </div>
-                    <p style={{ color: '#64748b', fontSize: '0.82rem', lineHeight: 1.5, marginBottom: '1rem' }}>
-                      Your school's reserved public subdomain on Éclat Cloud. Visitors arriving here automatically enter <strong>{school.name}</strong>'s customized portals.
-                    </p>
-
-                    {/* Role-Specific Portal Subdomain Links */}
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.45rem', marginBottom: '1rem' }}>
-                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: '#ffffff', padding: '0.45rem 0.75rem', borderRadius: '8px', border: '1px solid #e2e8f0', fontSize: '0.78rem' }}>
-                        <span>🎓 <strong>Student:</strong> .../student</span>
-                        <button
-                          type="button"
-                          onClick={() => copyRawText(domainLinks.portals.student.subdomain, 'Student Subdomain URL')}
-                          style={{ background: 'none', border: 'none', color: '#2563eb', fontWeight: 700, cursor: 'pointer', fontSize: '0.75rem' }}
-                        >
-                          {copiedLink === 'Student Subdomain URL' ? '✅ Copied' : 'Copy'}
-                        </button>
-                      </div>
-
-                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: '#ffffff', padding: '0.45rem 0.75rem', borderRadius: '8px', border: '1px solid #e2e8f0', fontSize: '0.78rem' }}>
-                        <span>👨‍🏫 <strong>Teacher:</strong> .../teacher</span>
-                        <button
-                          type="button"
-                          onClick={() => copyRawText(domainLinks.portals.teacher.subdomain, 'Teacher Subdomain URL')}
-                          style={{ background: 'none', border: 'none', color: '#2563eb', fontWeight: 700, cursor: 'pointer', fontSize: '0.75rem' }}
-                        >
-                          {copiedLink === 'Teacher Subdomain URL' ? '✅ Copied' : 'Copy'}
-                        </button>
-                      </div>
-
-                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: '#ffffff', padding: '0.45rem 0.75rem', borderRadius: '8px', border: '1px solid #e2e8f0', fontSize: '0.78rem' }}>
-                        <span>💼 <strong>Bursar:</strong> .../bursar</span>
-                        <button
-                          type="button"
-                          onClick={() => copyRawText(domainLinks.portals.bursar.subdomain, 'Bursar Subdomain URL')}
-                          style={{ background: 'none', border: 'none', color: '#2563eb', fontWeight: 700, cursor: 'pointer', fontSize: '0.75rem' }}
-                        >
-                          {copiedLink === 'Bursar Subdomain URL' ? '✅ Copied' : 'Copy'}
-                        </button>
-                      </div>
-
-                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: '#ffffff', padding: '0.45rem 0.75rem', borderRadius: '8px', border: '1px solid #e2e8f0', fontSize: '0.78rem' }}>
-                        <span>🏛️ <strong>Principal:</strong> .../principal</span>
-                        <button
-                          type="button"
-                          onClick={() => copyRawText(domainLinks.portals.principal.subdomain, 'Principal Subdomain URL')}
-                          style={{ background: 'none', border: 'none', color: '#2563eb', fontWeight: 700, cursor: 'pointer', fontSize: '0.75rem' }}
-                        >
-                          {copiedLink === 'Principal Subdomain URL' ? '✅ Copied' : 'Copy'}
-                        </button>
-                      </div>
-                    </div>
+                <div style={{ background: '#f8fafc', borderRadius: '14px', padding: '1.1rem', border: '1px solid #e2e8f0' }}>
+                  <div style={{ fontSize: '0.72rem', fontWeight: 800, color: '#16a34a', textTransform: 'uppercase', marginBottom: '4px' }}>
+                    Bursar's Office
                   </div>
-
-                  <div style={{ display: 'flex', gap: '0.5rem', marginTop: '0.5rem' }}>
-                    <button
-                      type="button"
-                      onClick={() => copyRawText(domainLinks.subdomainUrl, 'Official Subdomain')}
-                      style={{
-                        flex: 1,
-                        background: '#1d4ed8',
-                        color: '#ffffff',
-                        fontWeight: 800,
-                        padding: '0.6rem',
-                        borderRadius: '10px',
-                        border: 'none',
-                        cursor: 'pointer',
-                        fontSize: '0.8rem',
-                      }}
-                    >
-                      {copiedLink === 'Official Subdomain' ? '✅ Copied Subdomain' : '📋 Copy Subdomain Link'}
-                    </button>
+                  <div style={{ fontSize: '0.92rem', fontWeight: 800, color: '#0f172a', marginBottom: '4px' }}>
+                    Tuition Fee Statements &amp; Clearance
                   </div>
+                  <p style={{ margin: 0, fontSize: '0.82rem', color: '#64748b', lineHeight: 1.5 }}>
+                    Fee payment receipts and official bank deposit slips are validated at the Bursar Desk. Students can verify clearances online.
+                  </p>
                 </div>
 
-                {/* 2. Universal Zero-Config Path */}
-                <div style={{ background: '#f8fafc', borderRadius: '18px', padding: '1.5rem', border: '1px solid #cbd5e1', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
-                  <div>
-                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.75rem' }}>
-                      <span style={{ fontSize: '0.74rem', fontWeight: 800, color: '#475569', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
-                        2. Universal Path (Zero-Config)
-                      </span>
-                      <span style={{ fontSize: '0.7rem', fontWeight: 800, background: '#e0f2fe', color: '#0369a1', padding: '2px 8px', borderRadius: '999px' }}>
-                        Instant Access
-                      </span>
-                    </div>
-                    <div style={{ fontSize: '1.05rem', fontWeight: 900, color: '#0f172a', wordBreak: 'break-all', marginBottom: '0.5rem' }}>
-                      {domainLinks.pathUrl}
-                    </div>
-                    <p style={{ color: '#64748b', fontSize: '0.82rem', lineHeight: 1.5, marginBottom: '1rem' }}>
-                      Works everywhere immediately without any DNS configuration or propagation delay. Perfect for text messages, WhatsApp, and parent notices.
-                    </p>
-
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.45rem', marginBottom: '1rem' }}>
-                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: '#ffffff', padding: '0.45rem 0.75rem', borderRadius: '8px', border: '1px solid #e2e8f0', fontSize: '0.78rem' }}>
-                        <span>🎓 <strong>Student:</strong> /s/{school.slug}/student</span>
-                        <button
-                          type="button"
-                          onClick={() => copyToClipboard(`/s/${school.slug}/student`, 'Student Path')}
-                          style={{ background: 'none', border: 'none', color: '#475569', fontWeight: 700, cursor: 'pointer', fontSize: '0.75rem' }}
-                        >
-                          {copiedLink === 'Student Path' ? '✅ Copied' : 'Copy'}
-                        </button>
-                      </div>
-                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: '#ffffff', padding: '0.45rem 0.75rem', borderRadius: '8px', border: '1px solid #e2e8f0', fontSize: '0.78rem' }}>
-                        <span>👨‍🏫 <strong>Teacher:</strong> /s/{school.slug}/teacher</span>
-                        <button
-                          type="button"
-                          onClick={() => copyToClipboard(`/s/${school.slug}/teacher`, 'Teacher Path')}
-                          style={{ background: 'none', border: 'none', color: '#475569', fontWeight: 700, cursor: 'pointer', fontSize: '0.75rem' }}
-                        >
-                          {copiedLink === 'Teacher Path' ? '✅ Copied' : 'Copy'}
-                        </button>
-                      </div>
-                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: '#ffffff', padding: '0.45rem 0.75rem', borderRadius: '8px', border: '1px solid #e2e8f0', fontSize: '0.78rem' }}>
-                        <span>💼 <strong>Bursar:</strong> /s/{school.slug}/bursar</span>
-                        <button
-                          type="button"
-                          onClick={() => copyToClipboard(`/s/${school.slug}/bursar`, 'Bursar Path')}
-                          style={{ background: 'none', border: 'none', color: '#475569', fontWeight: 700, cursor: 'pointer', fontSize: '0.75rem' }}
-                        >
-                          {copiedLink === 'Bursar Path' ? '✅ Copied' : 'Copy'}
-                        </button>
-                      </div>
-                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: '#ffffff', padding: '0.45rem 0.75rem', borderRadius: '8px', border: '1px solid #e2e8f0', fontSize: '0.78rem' }}>
-                        <span>🏛️ <strong>Principal:</strong> /s/{school.slug}/principal</span>
-                        <button
-                          type="button"
-                          onClick={() => copyToClipboard(`/s/${school.slug}/principal`, 'Principal Path')}
-                          style={{ background: 'none', border: 'none', color: '#475569', fontWeight: 700, cursor: 'pointer', fontSize: '0.75rem' }}
-                        >
-                          {copiedLink === 'Principal Path' ? '✅ Copied' : 'Copy'}
-                        </button>
-                      </div>
-                    </div>
+                <div style={{ background: '#f8fafc', borderRadius: '14px', padding: '1.1rem', border: '1px solid #e2e8f0' }}>
+                  <div style={{ fontSize: '0.72rem', fontWeight: 800, color: '#2563eb', textTransform: 'uppercase', marginBottom: '4px' }}>
+                    Academic Faculty
                   </div>
-
-                  <button
-                    type="button"
-                    onClick={() => copyToClipboard(`/s/${school.slug}`, 'Universal Path')}
-                    style={{
-                      background: '#334155',
-                      color: '#ffffff',
-                      fontWeight: 800,
-                      padding: '0.6rem',
-                      borderRadius: '10px',
-                      border: 'none',
-                      cursor: 'pointer',
-                      fontSize: '0.8rem',
-                      marginTop: '0.5rem',
-                    }}
-                  >
-                    {copiedLink === 'Universal Path' ? '✅ Copied Path URL' : '📋 Copy Universal Path'}
-                  </button>
-                </div>
-
-                {/* 3. Custom School Domain (BYOD) */}
-                <div style={{ background: '#f8fafc', borderRadius: '18px', padding: '1.5rem', border: '1px solid #cbd5e1', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
-                  <div>
-                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.75rem' }}>
-                      <span style={{ fontSize: '0.74rem', fontWeight: 800, color: '#7c3aed', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
-                        3. Custom School Domain (BYOD)
-                      </span>
-                      <span style={{ fontSize: '0.7rem', fontWeight: 800, background: school.custom_domain ? '#dcfce7' : '#fef3c7', color: school.custom_domain ? '#15803d' : '#b45309', padding: '2px 8px', borderRadius: '999px' }}>
-                        {school.custom_domain ? '● Connected' : 'Optional'}
-                      </span>
-                    </div>
-
-                    <p style={{ color: '#64748b', fontSize: '0.82rem', lineHeight: 1.5, marginBottom: '0.85rem' }}>
-                      Connect your school's existing official web domain (e.g. <code>portal.{school.slug}.ac.ke</code> or <code>lms.{school.slug}.edu</code>).
-                    </p>
-
-                    <form onSubmit={handleSaveCustomDomain} style={{ marginBottom: '1rem' }}>
-                      <div style={{ display: 'flex', gap: '0.5rem' }}>
-                        <input
-                          type="text"
-                          value={customDomainInput}
-                          onChange={(e) => setCustomDomainInput(e.target.value)}
-                          placeholder="e.g. portal.myschool.edu"
-                          style={{
-                            flex: 1,
-                            padding: '0.55rem 0.75rem',
-                            borderRadius: '8px',
-                            border: '1px solid #cbd5e1',
-                            fontSize: '0.82rem',
-                            outline: 'none',
-                            fontFamily: 'monospace',
-                          }}
-                        />
-                        <button
-                          type="submit"
-                          style={{
-                            background: '#7c3aed',
-                            color: '#ffffff',
-                            fontWeight: 800,
-                            padding: '0.55rem 0.85rem',
-                            borderRadius: '8px',
-                            border: 'none',
-                            fontSize: '0.78rem',
-                            cursor: 'pointer',
-                            whiteSpace: 'nowrap',
-                          }}
-                        >
-                          Save
-                        </button>
-                      </div>
-                    </form>
-
-                    {customDomainMessage && (
-                      <div
-                        style={{
-                          background: customDomainMessage.type === 'success' ? '#f0fdf4' : '#fef2f2',
-                          color: customDomainMessage.type === 'success' ? '#15803d' : '#b91c1c',
-                          border: `1px solid ${customDomainMessage.type === 'success' ? '#86efac' : '#fca5a5'}`,
-                          borderRadius: '8px',
-                          padding: '0.5rem 0.75rem',
-                          fontSize: '0.78rem',
-                          fontWeight: 700,
-                          marginBottom: '0.75rem',
-                        }}
-                      >
-                        {customDomainMessage.text}
-                      </div>
-                    )}
-
-                    <div style={{ background: '#ffffff', borderRadius: '10px', padding: '0.85rem', border: '1px solid #e2e8f0', fontSize: '0.76rem', color: '#475569' }}>
-                      <div style={{ fontWeight: 800, color: '#0f172a', marginBottom: '0.35rem' }}>DNS CNAME Record Setup:</div>
-                      <div style={{ fontFamily: 'monospace', color: '#0f172a', background: '#f1f5f9', padding: '0.35rem 0.5rem', borderRadius: '6px', marginBottom: '0.35rem' }}>
-                        Type: <strong>CNAME</strong> | Name: <strong>portal</strong> | Value: <strong>eclat.institute</strong>
-                      </div>
-                      <span style={{ fontSize: '0.72rem', color: '#64748b' }}>
-                        Once configured, Éclat's domain router directs incoming requests straight to this school portal.
-                      </span>
-                    </div>
+                  <div style={{ fontSize: '0.92rem', fontWeight: 800, color: '#0f172a', marginBottom: '4px' }}>
+                    Study Guides &amp; Digital Lesson Materials
                   </div>
-
-                  {school.custom_domain && (
-                    <button
-                      type="button"
-                      onClick={() => copyRawText(`https://${school.custom_domain}`, 'Custom Domain URL')}
-                      style={{
-                        background: '#7c3aed',
-                        color: '#ffffff',
-                        fontWeight: 800,
-                        padding: '0.6rem',
-                        borderRadius: '10px',
-                        border: 'none',
-                        cursor: 'pointer',
-                        fontSize: '0.8rem',
-                        marginTop: '0.85rem',
-                      }}
-                    >
-                      {copiedLink === 'Custom Domain URL' ? '✅ Copied Custom Domain' : '📋 Copy Custom Domain URL'}
-                    </button>
-                  )}
+                  <p style={{ margin: 0, fontSize: '0.82rem', color: '#64748b', lineHeight: 1.5 }}>
+                    Subject instructors have uploaded downloadable lesson notes and past papers. Log in to the Student Portal to download.
+                  </p>
                 </div>
               </div>
             </div>
 
             {/* THE 4 DEDICATED SEPARATE PORTALS CARDS */}
-            <h2 style={{ fontSize: '1.4rem', fontWeight: 900, color: '#0f172a', marginBottom: '1.25rem' }}>
-              Dedicated Separate Portals for {school.name}
-            </h2>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1.25rem', flexWrap: 'wrap', gap: '0.5rem' }}>
+              <div>
+                <h2 style={{ fontSize: '1.35rem', fontWeight: 900, color: '#0f172a', margin: '0 0 0.25rem' }}>
+                  School Portals &amp; Role Workspaces
+                </h2>
+                <p style={{ margin: 0, color: '#64748b', fontSize: '0.86rem' }}>
+                  Select your assigned desk to access your personalized learning or administrative workspace:
+                </p>
+              </div>
+            </div>
 
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '1.5rem', marginBottom: '3rem' }}>
               {/* 1. Student Portal Card */}
@@ -1440,10 +1144,27 @@ export function TenantSchoolHub() {
               </div>
 
               <div style={{ fontSize: '0.78rem', color: '#94a3b8', textAlign: 'right' }}>
-                <div>White-Label Cloud Architecture</div>
-                <div style={{ fontWeight: 700, color: '#1d4ed8' }}>⚡ Powered by Éclat Institute Multi-Tenant Engine</div>
+                <div>Official School Information System (SIS)</div>
+                <div style={{ fontWeight: 700, color: '#64748b' }}>Secure Verified Campus Portal</div>
               </div>
             </div>
+
+            {/* Admin-Only Subtle Domain Management Trigger */}
+            {activeRole === 'admin' && (
+              <div style={{ marginTop: '1.25rem', background: '#ffffff', borderRadius: '14px', border: '1px dashed #cbd5e1', padding: '0.9rem 1.25rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '0.75rem' }}>
+                <div style={{ fontSize: '0.82rem', color: '#475569' }}>
+                  <strong>Admin Configuration:</strong> School Web Address: <span style={{ fontFamily: 'monospace', color: primaryColor, fontWeight: 700 }}>{domainLinks.subdomainUrl}</span>
+                  {school.custom_domain && <span> • Connected Domain: <strong style={{ color: '#7c3aed' }}>{school.custom_domain}</strong></span>}
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setShowDomainModal(true)}
+                  style={{ background: '#f1f5f9', border: '1px solid #cbd5e1', color: '#0f172a', fontWeight: 700, padding: '0.4rem 0.85rem', borderRadius: '8px', cursor: 'pointer', fontSize: '0.78rem' }}
+                >
+                  ⚙️ Configure DNS / Custom Domain
+                </button>
+              </div>
+            )}
           </div>
         )}
 
