@@ -706,7 +706,21 @@ export function Landing() {
   const filteredCourses = useMemo(() => {
     let list = coursesList
     if (activeCategory !== 'All') {
-      list = list.filter((c) => c.category === activeCategory)
+      if (activeCategory === 'IGCSE & British Curriculum') {
+        list = list.filter(
+          (c) =>
+            c.category === 'Home Schooling' ||
+            c.category === 'Tuition & Boosters' ||
+            c.category === 'Cambridge International (Years 9-11)' ||
+            c.category === 'Pearson Edexcel International (Years 9-11)' ||
+            c.category === 'IGCSE' ||
+            c.category?.toLowerCase().includes('igcse') ||
+            c.category?.toLowerCase().includes('cambridge') ||
+            c.category?.toLowerCase().includes('edexcel')
+        )
+      } else {
+        list = list.filter((c) => c.category === activeCategory)
+      }
     }
     if (searchQuery.trim()) {
       const q = searchQuery.toLowerCase().trim()
@@ -1050,6 +1064,7 @@ export function Landing() {
                 >
                   {[
                     { id: 'All', icon: SparklesIcon, label: 'All Online Programs', color: '#f59e0b' },
+                    { id: 'IGCSE & British Curriculum', icon: BritishShieldIcon, label: '🇬🇧 All IGCSE & British Programs', color: '#0284c7' },
                     { id: 'Home Schooling', icon: BookOpenIcon, label: '🏡 Home Schooling (Years 7-11)', color: '#16a34a' },
                     { id: 'Tuition & Boosters', icon: SparklesIcon, label: '📚 Private & Evening Tuition', color: '#d97706' },
                     { id: 'Cambridge International (Years 9-11)', icon: BritishShieldIcon, label: 'Cambridge Assessment (Years 9-11)', color: '#00247D' },
@@ -2660,6 +2675,21 @@ export function Landing() {
             }}>
               {[
                 { id: 'All', icon: SparklesIcon, label: 'All Programs', count: coursesList.length, color: '#f59e0b' },
+                {
+                  id: 'IGCSE & British Curriculum',
+                  icon: BritishShieldIcon,
+                  label: '🇬🇧 All IGCSE & British Programs',
+                  count: coursesList.filter(
+                    (c) =>
+                      c.category === 'Home Schooling' ||
+                      c.category === 'Tuition & Boosters' ||
+                      c.category === 'Cambridge International (Years 9-11)' ||
+                      c.category === 'Pearson Edexcel International (Years 9-11)' ||
+                      c.category === 'IGCSE' ||
+                      c.category?.toLowerCase().includes('igcse')
+                  ).length,
+                  color: '#0284c7',
+                },
                 { id: 'Home Schooling', icon: BookOpenIcon, label: '🏡 Home Schooling (Y7-11)', count: coursesList.filter((c) => c.category === 'Home Schooling').length, color: '#16a34a' },
                 { id: 'Tuition & Boosters', icon: SparklesIcon, label: '📚 Private Tuition & Clinics', count: coursesList.filter((c) => c.category === 'Tuition & Boosters').length, color: '#d97706' },
                 { id: 'Cambridge International (Years 9-11)', icon: BritishShieldIcon, label: 'Cambridge (Y9-11)', count: coursesList.filter((c) => c.category === 'Cambridge International (Years 9-11)').length, color: '#00247D' },
