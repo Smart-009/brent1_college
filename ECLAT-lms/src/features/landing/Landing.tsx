@@ -578,20 +578,7 @@ export function Landing() {
     seconds: 15,
   })
 
-  useEffect(() => {
-    let ticking = false
-    const handleScroll = () => {
-      if (!ticking) {
-        window.requestAnimationFrame(() => {
-          setShowScrollTop(window.scrollY > 350)
-          ticking = false
-        })
-        ticking = true
-      }
-    }
-    window.addEventListener('scroll', handleScroll, { passive: true })
-    return () => window.removeEventListener('scroll', handleScroll)
-  }, [])
+
 
   useEffect(() => {
     const timer = setInterval(() => {

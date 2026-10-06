@@ -218,6 +218,14 @@ export function HireEclatPage() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
+    try {
+      const existing = JSON.parse(localStorage.getItem('eclat_hire_inquiries') || '[]')
+      existing.unshift({
+        ...formData,
+        submittedAt: new Date().toISOString(),
+      })
+      localStorage.setItem('eclat_hire_inquiries', JSON.stringify(existing))
+    } catch {}
     setFormSubmitted(true)
   }
 
@@ -596,7 +604,7 @@ export function HireEclatPage() {
                   required
                   value={formData.name}
                   onChange={handleInputChange}
-                  placeholder="e.g. Dr. Daniel Mutua"
+                  placeholder="Enter your full name"
                   style={{ width: '100%', padding: '0.75rem 1rem', background: 'rgba(15, 23, 42, 0.7)', border: '1px solid rgba(255, 255, 255, 0.15)', borderRadius: '8px', color: '#ffffff', fontSize: '0.95rem' }}
                 />
               </div>
