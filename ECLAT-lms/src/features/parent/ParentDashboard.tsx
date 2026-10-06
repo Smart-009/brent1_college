@@ -54,8 +54,8 @@ export function ParentDashboard() {
           <p style={{ color: 'var(--color-text-secondary)', fontSize: '0.9rem', lineHeight: '1.6', margin: '0 0 1.5rem' }}>
             Once the Admissions Office enrolls your student into a practical short course cohort, their verified attendance, practical lab performance, course transcripts, and fee statements will appear here.
           </p>
-          <Link to="/secretary" className="btn btn-primary">
-            Go to Admissions Desk →
+          <Link to="/bursar" className="btn btn-primary">
+            Go to Admissions & Bursar Desk →
           </Link>
         </div>
       </div>
