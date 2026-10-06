@@ -24,6 +24,8 @@ import {
   FileTextIcon,
   CalendarIcon,
   AwardIcon,
+  CalculatorIcon,
+  BriefcaseIcon,
 } from '@/components/icons/AppIcons'
 
 interface TechService {
@@ -192,6 +194,45 @@ const TECH_SERVICES: TechService[] = [
     technologies: ['Advanced Excel & Power Query', 'Python Automation', 'Power BI', 'QuickBooks Online', 'AI Prompt Engineering'],
     bestFor: 'Corporate teams, banks, NGOs, government departments, and consulting firms.',
     timeline: 'Flexible 1-week bootcamps to 3-month corporate programs',
+  },
+  {
+    id: 'pos-accounting',
+    title: 'Business Automation, POS & Full Accounting Systems',
+    category: 'Enterprise Automation',
+    tagline: 'End-to-end retail & wholesale Point-of-Sale (POS), automated inventory tracking, and full GAAP/IFRS accounting management systems.',
+    badge: 'Enterprise Commerce',
+    icon: CalculatorIcon,
+    color: '#059669',
+    deliverables: [
+      'Multi-branch cloud & offline POS cashier terminals with receipt printing & barcode scanning',
+      'Automated real-time inventory management with low-stock alerts, purchase orders & supplier tracking',
+      'Full accounting engine: General Ledger, Chart of Accounts, Accounts Payable & Receivable (AP/AR)',
+      'Automated financial statement generation: Balance Sheet, Income Statement (P&L), and Cash Flow',
+      'Automated M-Pesa Daraja, bank reconciliation, KRA eTIMS / tax compliance integration',
+      'Automated recurring customer invoicing, statement dispatch & WhatsApp payment reminders',
+    ],
+    technologies: ['React 19', 'Electron POS', 'SQLite / PostgreSQL', 'M-Pesa Daraja API', 'eTIMS VSCU Integration', 'Thermal Printing SDK'],
+    bestFor: 'Retail supermarkets, pharmacies, hardware stores, distributors, restaurants, and service enterprises.',
+    timeline: '2 – 6 Weeks',
+  },
+  {
+    id: 'data-research-analytics',
+    title: 'Advanced Data Analysis, Statistical Modeling & Market Research',
+    category: 'Data & Analytics',
+    tagline: 'Comprehensive statistical analysis, survey research pipelines, regression modeling, and executive business intelligence.',
+    badge: 'Decision Science',
+    icon: DatabaseIcon,
+    color: '#2563eb',
+    deliverables: [
+      'Survey design, data collection workflows, and automated survey cleaning pipelines',
+      'Econometric regressions, ANOVA, hypothesis testing, factor analysis & structural equation modeling (SEM)',
+      'Academic, medical, and clinical biostatistics with publication-grade APA/IEEE report formatting',
+      'Customer churn modeling, cohort retention analysis, and revenue predictive forecasting',
+      'Custom real-time executive analytics dashboards with automated PDF digests',
+    ],
+    technologies: ['Python & Pandas', 'IBM SPSS Statistics', 'Stata', 'RStudio & Tidyverse', 'Power BI', 'Tableau', 'Metabase'],
+    bestFor: 'Academic researchers, graduate scholars, consulting firms, market research agencies, and executive teams.',
+    timeline: '1 – 3 Weeks',
   },
 ]
 

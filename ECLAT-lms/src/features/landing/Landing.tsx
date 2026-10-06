@@ -2313,7 +2313,7 @@ export function Landing() {
                   Hire Éclat Institute for Tech & Digital Services
                 </h3>
                 <p style={{ fontSize: '0.88rem', color: '#cbd5e1', lineHeight: 1.55, margin: 0 }}>
-                  Full-stack engineering, bespoke web & mobile applications, institutional LMS platforms, corporate staff training, and data analytics.
+                  Full-stack engineering, bespoke web & mobile apps, business automation, retail POS & full accounting systems, institutional LMS portals, advanced data analytics, and corporate upskilling.
                 </p>
               </div>
               <div style={{ marginTop: '1.25rem' }}>
