@@ -38,9 +38,7 @@ export function SchoolRegistrationPage() {
   const [slug, setSlug] = useState('')
   const [isSlugManual, setIsSlugManual] = useState(false)
   const [motto, setMotto] = useState('')
-  const [curriculumType, setCurriculumType] = useState<PartnerSchoolTenant['curriculum_type']>(
-    'General Academic & Multi-Disciplinary'
-  )
+  const [curriculumType, setCurriculumType] = useState<string>('')
   const [country, setCountry] = useState('Kenya')
   const [city, setCity] = useState('Nairobi')
   const [address, setAddress] = useState('')
@@ -134,7 +132,7 @@ export function SchoolRegistrationPage() {
         primary_color: primaryColor,
         accent_color: accentColor,
         academic_system: academicSystem,
-        curriculum_type: curriculumType,
+        curriculum_type: curriculumType.trim() || 'General Academic Framework',
         country: country.trim(),
         city: city.trim(),
         address: address.trim() || `${city.trim()}, ${country.trim()}`,
@@ -605,13 +603,21 @@ export function SchoolRegistrationPage() {
                 </div>
 
                 <div>
-                  <label htmlFor={`${formId}-curriculum`} style={{ display: 'block', fontSize: '0.85rem', fontWeight: 700, color: '#334155', marginBottom: '0.4rem' }}>
-                    Curriculum Framework
-                  </label>
-                  <select
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.4rem' }}>
+                    <label htmlFor={`${formId}-curriculum`} style={{ fontSize: '0.85rem', fontWeight: 700, color: '#334155' }}>
+                      Curriculum &amp; Academic Framework
+                    </label>
+                    <span style={{ fontSize: '0.72rem', color: '#64748b', fontWeight: 600 }}>
+                      Type custom or tap a suggestion
+                    </span>
+                  </div>
+                  <input
                     id={`${formId}-curriculum`}
+                    list={`${formId}-curriculum-list`}
+                    type="text"
+                    placeholder="e.g. CBC / National Curriculum, TVET, STEM Academy, Cambridge, IB, etc."
                     value={curriculumType}
-                    onChange={(e) => setCurriculumType(e.target.value as any)}
+                    onChange={(e) => setCurriculumType(e.target.value)}
                     style={{
                       width: '100%',
                       padding: '0.85rem 1rem',
@@ -621,16 +627,50 @@ export function SchoolRegistrationPage() {
                       outline: 'none',
                       background: '#ffffff',
                     }}
-                  >
-                    <option value="General Academic & Multi-Disciplinary">General Academic & Multi-Disciplinary (K-12 & Higher Ed)</option>
-                    <option value="National / CBC Curriculum">National / State Curriculum (e.g. CBC / KCSE / WAEC)</option>
-                    <option value="Vocational & TVET College">Vocational, Technical & TVET College</option>
-                    <option value="STEM & Technology Institute">STEM & Technology Academy</option>
-                    <option value="Business & Professional Academy">Business & Professional Academy</option>
-                    <option value="British Curriculum (CAIE & Edexcel)">British Curriculum (Cambridge CAIE & Edexcel)</option>
-                    <option value="American Curriculum">American Curriculum (AP / High School)</option>
-                    <option value="Custom International">Custom International Framework</option>
-                  </select>
+                  />
+                  <datalist id={`${formId}-curriculum-list`}>
+                    <option value="National / CBC Curriculum (K-12)" />
+                    <option value="Vocational, Technical &amp; TVET College" />
+                    <option value="General Academic &amp; Multi-Disciplinary" />
+                    <option value="STEM, Robotics &amp; Tech Academy" />
+                    <option value="Business, Accounting &amp; Professional Institute" />
+                    <option value="British Curriculum (Cambridge CAIE &amp; Edexcel)" />
+                    <option value="American Curriculum (AP &amp; High School)" />
+                    <option value="International Baccalaureate (IB)" />
+                    <option value="Montessori &amp; Early Childhood Academy" />
+                  </datalist>
+
+                  {/* Dynamic Quick Suggestion Badges */}
+                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px', marginTop: '0.55rem' }}>
+                    {[
+                      'National / CBC Curriculum',
+                      'Vocational & TVET College',
+                      'General Academic',
+                      'STEM & Tech Academy',
+                      'Business Institute',
+                      'British (CAIE/Edexcel)',
+                      'American (AP)',
+                    ].map((badge) => (
+                      <button
+                        key={badge}
+                        type="button"
+                        onClick={() => setCurriculumType(badge)}
+                        style={{
+                          background: curriculumType === badge ? '#eff6ff' : '#f8fafc',
+                          color: curriculumType === badge ? '#1d4ed8' : '#475569',
+                          border: curriculumType === badge ? '1px solid #93c5fd' : '1px solid #e2e8f0',
+                          padding: '0.22rem 0.55rem',
+                          borderRadius: '8px',
+                          fontSize: '0.73rem',
+                          fontWeight: 600,
+                          cursor: 'pointer',
+                          transition: 'all 0.15s ease',
+                        }}
+                      >
+                        + {badge}
+                      </button>
+                    ))}
+                  </div>
                 </div>
 
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
@@ -1184,7 +1224,7 @@ export function SchoolRegistrationPage() {
                       {name || 'Your School Name'}
                     </h4>
                     <span style={{ fontSize: '0.75rem', color: accentColor, fontWeight: 700 }}>
-                      {curriculumType}
+                      {curriculumType || 'Academic & Curriculum Framework'}
                     </span>
                   </div>
                 </div>
