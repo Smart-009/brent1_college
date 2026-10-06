@@ -685,8 +685,6 @@ export function Landing() {
   // Multi-Step Interactive Checkout & Mode of Payment State
   const [checkoutStep, setCheckoutStep] = useState<'details' | 'payment' | 'receipt'>('details')
   const [checkoutPaymentPlan, setCheckoutPaymentPlan] = useState<'full' | 'installment'>('full')
-  const [checkoutPaymentMode, setCheckoutPaymentMode] = useState<'card' | 'paybill' | 'kcb_wire'>('card')
-  const [checkoutRefCode, setCheckoutRefCode] = useState('')
   const [generatedAdmission, setGeneratedAdmission] = useState<{
     studentName: string
     admissionNumber: string
@@ -751,129 +749,105 @@ export function Landing() {
     const recNo = `EI-REC-${Math.random().toString(36).substring(2, 8).toUpperCase()}`
     const todayDate = new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })
 
-    const processFinalize = async (verifiedRef: string, modeLabel: string, isPending: boolean) => {
-      const activeRecNo = isPending
-        ? `EI-ACK-${Math.random().toString(36).substring(2, 8).toUpperCase()}`
-        : recNo
+    // Paystack is the exclusive payment gateway accepted by Éclat Institute
+    initializePaystackCheckout({
+      email: inquiryForm.email || 'admissions@eclat.institute',
+      amount: amountToPay,
+      currency: 'KES',
+      studentName: inquiryForm.name,
+      admissionNumber: admNo,
+      purpose: `Course Enrollment Tuition - ${selectedCourseObj.title}`,
+      invoiceId: `INV-${admNo}`,
+      onSuccess: async (reference) => {
+        const verifiedRef = `PAYSTACK-${reference}`
+        const modeLabel = 'Paystack Verified (M-Pesa / Card / Apple Pay)'
 
-      // 1. Record inquiry
-      await schoolStore.addInquiry({
-        id: `inq-${Date.now()}`,
-        visitor_name: inquiryForm.name,
-        phone: inquiryForm.phone,
-        email: inquiryForm.email,
-        purpose: 'New Admission Inquiry',
-        program_of_interest: inquiryForm.course,
-        notes: `Shift: ${inquiryForm.preferredShift}. Plan: ${checkoutPaymentPlan} ($${amountToPay}). Mode: ${modeLabel}. Ref: ${verifiedRef} [${isPending ? 'Pending Bursar Verification' : 'Paystack Verified Instant'}]`,
-        date: todayDate,
-        recorded_by: isPending ? 'Offline Admissions Desk' : 'Paystack Automated Gateway',
-        created_at: new Date().toISOString(),
-        status: 'Open',
-      })
-
-      // 2. Add enrolled student
-      await schoolStore.addStudent({
-        id: `std-${Date.now()}`,
-        admission_number: admNo,
-        full_name: inquiryForm.name,
-        gender: 'Male',
-        dob: '2000-01-01',
-        class_id: selectedCourseObj.id,
-        class_name: selectedCourseObj.title,
-        grade_level: 'Professional Certificate',
-        stream: '100% Online Cohort',
-        enrollment_date: todayDate,
-        admission_date: todayDate,
-        status: 'Active',
-        guardian: {
-          name: inquiryForm.name,
-          relationship: 'Guardian',
+        // 1. Record inquiry
+        await schoolStore.addInquiry({
+          id: `inq-${Date.now()}`,
+          visitor_name: inquiryForm.name,
           phone: inquiryForm.phone,
-          email: inquiryForm.email || `${inquiryForm.name.toLowerCase().replace(/\s+/g, '')}@student.${INSTITUTION_CONFIG.domain}`,
-        },
-        parent_phone: inquiryForm.phone,
-        emergency_contact: inquiryForm.phone,
-        fee_balance: balanceRemaining,
-        term_fee_total: fullFeeNum,
-        fee_cleared: isPending ? false : (balanceRemaining === 0),
-        attendance_rate: 0,
-        discipline_points: 100,
-        merits_count: 0,
-        demerits_count: 0,
-      })
+          email: inquiryForm.email,
+          purpose: 'New Admission Inquiry',
+          program_of_interest: inquiryForm.course,
+          notes: `Shift: ${inquiryForm.preferredShift}. Plan: ${checkoutPaymentPlan} ($${amountToPay}). Mode: ${modeLabel}. Ref: ${verifiedRef} [Paystack Verified Instant]`,
+          date: todayDate,
+          recorded_by: 'Paystack Automated Gateway',
+          created_at: new Date().toISOString(),
+          status: 'Open',
+        })
 
-      // 3. Add verified or provisional payment record
-      await schoolStore.recordPayment({
-        id: `rcpt-${Date.now()}`,
-        receipt_number: activeRecNo,
-        student_id: admNo,
-        student_name: inquiryForm.name,
-        admission_number: admNo,
-        amount: amountToPay,
-        amount_paid: amountToPay,
-        payment_method: isPending ? (checkoutPaymentMode === 'paybill' ? 'Paybill' : 'Bank Transfer') : 'Card',
-        reference_code: verifiedRef,
-        payment_date: todayDate,
-        paid_by: inquiryForm.name,
-        recorded_by: isPending ? 'Bursar Reconciliation Desk (Pending Verification)' : 'Paystack Automated Gateway',
-        balance_after: balanceRemaining,
-        balance_remaining: balanceRemaining,
-      })
+        // 2. Add enrolled student
+        await schoolStore.addStudent({
+          id: `std-${Date.now()}`,
+          admission_number: admNo,
+          full_name: inquiryForm.name,
+          gender: 'Male',
+          dob: '2000-01-01',
+          class_id: selectedCourseObj.id,
+          class_name: selectedCourseObj.title,
+          grade_level: 'Professional Certificate',
+          stream: '100% Online Cohort',
+          enrollment_date: todayDate,
+          admission_date: todayDate,
+          status: 'Active',
+          guardian: {
+            name: inquiryForm.name,
+            relationship: 'Guardian',
+            phone: inquiryForm.phone,
+            email: inquiryForm.email || `${inquiryForm.name.toLowerCase().replace(/\s+/g, '')}@student.${INSTITUTION_CONFIG.domain}`,
+          },
+          parent_phone: inquiryForm.phone,
+          emergency_contact: inquiryForm.phone,
+          fee_balance: balanceRemaining,
+          term_fee_total: fullFeeNum,
+          fee_cleared: balanceRemaining === 0,
+          attendance_rate: 0,
+          discipline_points: 100,
+          merits_count: 0,
+          demerits_count: 0,
+        })
 
-      // 4. Set generated admission pass
-      setGeneratedAdmission({
-        studentName: inquiryForm.name,
-        admissionNumber: admNo,
-        receiptNumber: activeRecNo,
-        courseTitle: selectedCourseObj.title,
-        amountPaid: amountToPay,
-        totalFee: fullFeeNum,
-        balanceRemaining,
-        paymentMode: modeLabel,
-        referenceCode: verifiedRef,
-        date: todayDate,
-        isPendingVerification: isPending,
-      })
+        // 3. Add verified payment record
+        await schoolStore.recordPayment({
+          id: `rcpt-${Date.now()}`,
+          receipt_number: recNo,
+          student_id: admNo,
+          student_name: inquiryForm.name,
+          admission_number: admNo,
+          amount: amountToPay,
+          amount_paid: amountToPay,
+          payment_method: 'Card',
+          reference_code: verifiedRef,
+          payment_date: todayDate,
+          paid_by: inquiryForm.name,
+          recorded_by: 'Paystack Automated Gateway',
+          balance_after: balanceRemaining,
+          balance_remaining: balanceRemaining,
+        })
 
-      setCheckoutStep('receipt')
-      showToast(
-        isPending
-          ? 'Payment details submitted for Bursar verification!'
-          : `Payment verified! Welcome to Éclat Institute, ${inquiryForm.name}!`
-      )
-    }
+        // 4. Set generated admission pass
+        setGeneratedAdmission({
+          studentName: inquiryForm.name,
+          admissionNumber: admNo,
+          receiptNumber: recNo,
+          courseTitle: selectedCourseObj.title,
+          amountPaid: amountToPay,
+          totalFee: fullFeeNum,
+          balanceRemaining,
+          paymentMode: modeLabel,
+          referenceCode: verifiedRef,
+          date: todayDate,
+          isPendingVerification: false,
+        })
 
-    if (checkoutPaymentMode === 'card') {
-      // Trigger real Paystack inline checkout modal!
-      initializePaystackCheckout({
-        email: inquiryForm.email || 'admissions@eclat.institute',
-        amount: amountToPay,
-        currency: 'KES',
-        studentName: inquiryForm.name,
-        admissionNumber: admNo,
-        purpose: `Course Enrollment Tuition - ${selectedCourseObj.title}`,
-        invoiceId: `INV-${admNo}`,
-        onSuccess: (reference) => {
-          processFinalize(`PAYSTACK-${reference}`, 'Paystack Verified (M-Pesa / Card)', false)
-        },
-        onClose: () => {
-          showToast('Payment cancelled or closed. You can proceed with Paystack whenever ready.')
-        },
-      })
-      return
-    }
-
-    // Otherwise manual offline reference (Paybill / Wire)
-    if (!checkoutRefCode.trim()) {
-      showToast('Please enter your transaction reference code from your bank slip or M-Pesa SMS.')
-      return
-    }
-
-    const manualModeLabel = checkoutPaymentMode === 'paybill'
-      ? `M-Pesa Paybill (${INSTITUTION_CONFIG.bank.paybillNumber} / ${INSTITUTION_CONFIG.bank.accountNumber})`
-      : `${INSTITUTION_CONFIG.bank.name} Direct Wire (${INSTITUTION_CONFIG.bank.accountNumber})`
-
-    processFinalize(checkoutRefCode.trim(), manualModeLabel, true)
+        setCheckoutStep('receipt')
+        showToast(`Payment verified! Welcome to Éclat Institute, ${inquiryForm.name}!`)
+      },
+      onClose: () => {
+        showToast('Paystack window closed. Please complete payment to issue your cleared admission receipt.')
+      },
+    })
   }
 
   const handleVerifyCert = (e: React.FormEvent) => {
@@ -3910,154 +3884,49 @@ export function Landing() {
                       </div>
 
 
-                      {/* Mode of Payment Selector */}
+                      {/* Exclusive Official Payment Gateway: Paystack */}
                       <div style={{ marginBottom: '1.25rem' }}>
-                        <label className="label" style={{ fontSize: '0.82rem', marginBottom: '0.5rem' }}>Choose Mode of Payment:</label>
-                        <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : 'repeat(3, 1fr)', gap: '0.5rem' }}>
-                          <button
-                            type="button"
-                            onClick={() => setCheckoutPaymentMode('card')}
-                            style={{
-                              padding: '0.65rem 0.5rem',
-                              border: `1.5px solid ${checkoutPaymentMode === 'card' ? '#059669' : '#cbd5e1'}`,
-                              background: checkoutPaymentMode === 'card' ? '#064e3b' : '#ffffff',
-                              color: checkoutPaymentMode === 'card' ? '#ffffff' : '#1e293b',
-                              borderRadius: '8px',
-                              fontWeight: 700,
-                              fontSize: '0.78rem',
-                              cursor: 'pointer',
-                              display: 'flex',
-                              flexDirection: 'column',
-                              alignItems: 'center',
-                              gap: '4px',
-                            }}
-                          >
-                            <CreditCardIcon size={20} color={checkoutPaymentMode === 'card' ? '#ffffff' : '#1e293b'} />
-                            <span>Paystack (Cards / M-Pesa)</span>
-                            <span style={{ fontSize: '0.62rem', background: checkoutPaymentMode === 'card' ? '#059669' : '#dcfce7', color: checkoutPaymentMode === 'card' ? '#ffffff' : '#166534', padding: '1px 5px', borderRadius: '4px', fontWeight: 800 }}>⚡ Instant Clearance</span>
-                          </button>
+                        <label className="label" style={{ fontSize: '0.82rem', marginBottom: '0.5rem' }}>Official Payment Channel (Sole Accepted Method):</label>
+                        <div style={{ background: '#f8fafc', border: '1.5px solid #86efac', borderRadius: '12px', padding: '1.15rem' }}>
+                          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.75rem', flexWrap: 'wrap', gap: '0.5rem' }}>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                              <div style={{ width: '32px', height: '32px', borderRadius: '8px', background: '#059669', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                                <CreditCardIcon size={18} color="#ffffff" />
+                              </div>
+                              <div>
+                                <strong style={{ fontSize: '0.95rem', color: '#166534' }}>Paystack Secured Gateway</strong>
+                                <div style={{ fontSize: '0.72rem', color: '#64748b' }}>M-Pesa STK Push • Visa • Mastercard • Apple Pay</div>
+                              </div>
+                            </div>
+                            <span style={{ fontSize: '0.74rem', color: '#15803d', fontWeight: 800, display: 'inline-flex', alignItems: 'center', gap: '4px', background: '#dcfce7', padding: '3px 10px', borderRadius: '999px', border: '1px solid #86efac' }}>
+                              <LockIcon size={12} color="#15803d" /> PCI-DSS Level 1 Encrypted
+                            </span>
+                          </div>
 
-                          <button
-                            type="button"
-                            onClick={() => setCheckoutPaymentMode('paybill')}
-                            style={{
-                              padding: '0.65rem 0.5rem',
-                              border: `1.5px solid ${checkoutPaymentMode === 'paybill' ? '#2563eb' : '#cbd5e1'}`,
-                              background: checkoutPaymentMode === 'paybill' ? '#1e3a8a' : '#ffffff',
-                              color: checkoutPaymentMode === 'paybill' ? '#ffffff' : '#1e293b',
-                              borderRadius: '8px',
-                              fontWeight: 700,
-                              fontSize: '0.78rem',
-                              cursor: 'pointer',
-                              display: 'flex',
-                              flexDirection: 'column',
-                              alignItems: 'center',
-                              gap: '4px',
-                            }}
-                          >
-                            <SmartphoneIcon size={20} color={checkoutPaymentMode === 'paybill' ? '#ffffff' : '#1e293b'} />
-                            <span>Manual M-Pesa Paybill</span>
-                            <span style={{ fontSize: '0.62rem', background: checkoutPaymentMode === 'paybill' ? '#2563eb' : '#f1f5f9', color: checkoutPaymentMode === 'paybill' ? '#ffffff' : '#64748b', padding: '1px 5px', borderRadius: '4px' }}>Bursar Verification</span>
-                          </button>
+                          <p style={{ margin: 0, fontSize: '0.83rem', color: '#334155', lineHeight: 1.55 }}>
+                            Éclat Institute processes all tuition fee payments exclusively through <strong>Paystack</strong>. 
+                            When you click below, Paystack's official secure payment interface will open to complete your transaction with instant clearance. 
+                            <strong>Offline cash or unverified manual deposits are strictly not accepted.</strong>
+                          </p>
 
-                          <button
-                            type="button"
-                            onClick={() => setCheckoutPaymentMode('kcb_wire')}
-                            style={{
-                              padding: '0.65rem 0.5rem',
-                              border: `1.5px solid ${checkoutPaymentMode === 'kcb_wire' ? '#2563eb' : '#cbd5e1'}`,
-                              background: checkoutPaymentMode === 'kcb_wire' ? '#1e3a8a' : '#ffffff',
-                              color: checkoutPaymentMode === 'kcb_wire' ? '#ffffff' : '#1e293b',
-                              borderRadius: '8px',
-                              fontWeight: 700,
-                              fontSize: '0.78rem',
-                              cursor: 'pointer',
-                              display: 'flex',
-                              flexDirection: 'column',
-                              alignItems: 'center',
-                              gap: '4px',
-                            }}
-                          >
-                            <BuildingIcon size={20} color={checkoutPaymentMode === 'kcb_wire' ? '#ffffff' : '#1e293b'} />
-                            <span>KCB Bank Wire</span>
-                            <span style={{ fontSize: '0.62rem', background: checkoutPaymentMode === 'kcb_wire' ? '#2563eb' : '#f1f5f9', color: checkoutPaymentMode === 'kcb_wire' ? '#ffffff' : '#64748b', padding: '1px 5px', borderRadius: '4px' }}>Bursar Verification</span>
-                          </button>
+                          <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : 'repeat(3, 1fr)', gap: '0.5rem', marginTop: '0.85rem', paddingTop: '0.85rem', borderTop: '1px solid #e2e8f0' }}>
+                            <div style={{ background: '#ffffff', border: '1px solid #e2e8f0', borderRadius: '8px', padding: '0.5rem 0.65rem', textAlign: 'center' }}>
+                              <SmartphoneIcon size={16} color="#16a34a" style={{ marginBottom: '2px' }} />
+                              <div style={{ fontSize: '0.75rem', fontWeight: 800, color: '#1e293b' }}>M-Pesa Express</div>
+                              <div style={{ fontSize: '0.68rem', color: '#64748b' }}>Instant STK prompt to phone</div>
+                            </div>
+                            <div style={{ background: '#ffffff', border: '1px solid #e2e8f0', borderRadius: '8px', padding: '0.5rem 0.65rem', textAlign: 'center' }}>
+                              <CreditCardIcon size={16} color="#2563eb" style={{ marginBottom: '2px' }} />
+                              <div style={{ fontSize: '0.75rem', fontWeight: 800, color: '#1e293b' }}>Debit / Credit Cards</div>
+                              <div style={{ fontSize: '0.68rem', color: '#64748b' }}>Visa & Mastercard 3D-Secure</div>
+                            </div>
+                            <div style={{ background: '#ffffff', border: '1px solid #e2e8f0', borderRadius: '8px', padding: '0.5rem 0.65rem', textAlign: 'center' }}>
+                              <ShieldCheckIcon size={16} color="#059669" style={{ marginBottom: '2px' }} />
+                              <div style={{ fontSize: '0.75rem', fontWeight: 800, color: '#1e293b' }}>Automated Clearance</div>
+                              <div style={{ fontSize: '0.68rem', color: '#64748b' }}>Immediate receipt & pass</div>
+                            </div>
+                          </div>
                         </div>
-                      </div>
-
-                      {/* Payment Mode Specific Body */}
-                      <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '10px', padding: '1rem', marginBottom: '1.25rem' }}>
-                        {checkoutPaymentMode === 'card' && (
-                          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', background: '#f0fdf4', border: '1.5px solid #86efac', borderRadius: '10px', padding: '1.1rem' }}>
-                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                              <strong style={{ fontSize: '0.9rem', color: '#166534', display: 'inline-flex', alignItems: 'center', gap: '7px' }}>
-                                <ShieldCheckIcon size={18} color="#16a34a" /> Paystack Secured Live Gateway
-                              </strong>
-                              <span style={{ fontSize: '0.72rem', color: '#15803d', fontWeight: 800, display: 'inline-flex', alignItems: 'center', gap: '4px', background: '#dcfce7', padding: '2px 8px', borderRadius: '999px' }}>
-                                <LockIcon size={12} color="#15803d" /> PCI-DSS Level 1 Encrypted
-                              </span>
-                            </div>
-                            <p style={{ margin: 0, fontSize: '0.82rem', color: '#334155', lineHeight: 1.5 }}>
-                              Pay tuition instantly using <strong>M-Pesa Mobile Prompt</strong>, <strong>Visa</strong>, <strong>Mastercard</strong>, or <strong>Apple Pay</strong>.
-                              When you click the green button below, Paystack's official secure checkout modal will launch. 
-                              Your official cleared tuition receipt is <strong>only issued after real bank/M-Pesa authorization</strong>. Fake or unauthenticated attempts are strictly declined.
-                            </p>
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flexWrap: 'wrap', paddingTop: '6px', borderTop: '1px solid #bbf7d0', fontSize: '0.74rem', color: '#15803d', fontWeight: 700 }}>
-                              <span>✓ Instant M-Pesa STK push</span>
-                              <span>✓ 3D-Secure card verification</span>
-                              <span>✓ Direct tuition reconciliation</span>
-                            </div>
-                          </div>
-                        )}
-
-                        {checkoutPaymentMode === 'paybill' && (
-                          <div style={{ fontSize: '0.82rem', color: '#334155' }}>
-                            <strong style={{ color: '#1e3a8a', fontSize: '0.88rem', display: 'inline-flex', alignItems: 'center', gap: '6px' }}><SmartphoneIcon size={16} color="#1e3a8a" /> M-Pesa Paybill Instructions:</strong>
-                            <ol style={{ paddingLeft: '1.25rem', margin: '0.35rem 0 0.75rem', lineHeight: 1.6 }}>
-                              <li>Open <strong>M-PESA → Lipa na M-PESA → Paybill</strong></li>
-                              <li>Enter Business No: <strong style={{ color: '#2563eb' }}>{INSTITUTION_CONFIG.bank.paybillNumber}</strong> *({INSTITUTION_CONFIG.bank.name})*</li>
-                              <li>Enter Account No: <strong style={{ color: '#2563eb' }}>{INSTITUTION_CONFIG.bank.accountNumber}</strong></li>
-                              <li>Enter Amount: <strong>${selectedAmount} USD</strong> (or local KES equivalent)</li>
-                            </ol>
-                            <div>
-                              <label className="label" style={{ fontSize: '0.78rem' }}>M-Pesa Transaction Reference Code</label>
-                              <input
-                                type="text"
-                                className="input"
-                                placeholder="e.g. SH78XQ29L"
-                                value={checkoutRefCode}
-                                onChange={(e) => setCheckoutRefCode(e.target.value)}
-                              />
-                            </div>
-                            <div style={{ marginTop: '0.65rem', background: '#fffbeb', border: '1px solid #fde68a', borderRadius: '6px', padding: '0.5rem 0.75rem', fontSize: '0.74rem', color: '#92400e' }}>
-                              <strong>⚠️ Notice:</strong> Offline payment submissions generate a <em>Provisional Submission Slip</em>. Your official cleared receipt is released after our Bursar verifies funds in our bank account.
-                            </div>
-                          </div>
-                        )}
-
-                        {checkoutPaymentMode === 'kcb_wire' && (
-                          <div style={{ fontSize: '0.82rem', color: '#334155' }}>
-                            <strong style={{ color: '#1e3a8a', fontSize: '0.88rem', display: 'inline-flex', alignItems: 'center', gap: '6px' }}><BuildingIcon size={16} color="#1e3a8a" /> Official {INSTITUTION_CONFIG.bank.name} Wire / Deposit Details:</strong>
-                            <div style={{ margin: '0.35rem 0 0.75rem', lineHeight: 1.6, background: '#ffffff', padding: '0.65rem', borderRadius: '6px', border: '1px solid #e2e8f0' }}>
-                              <div>• Bank: <strong>{INSTITUTION_CONFIG.bank.name}</strong></div>
-                              <div>• Account No: <strong style={{ color: '#2563eb', fontSize: '0.95rem' }}>{INSTITUTION_CONFIG.bank.accountNumber}</strong></div>
-                              <div>• Account Name: <strong>{INSTITUTION_CONFIG.bank.accountName}</strong></div>
-                            </div>
-                            <div>
-                              <label className="label" style={{ fontSize: '0.78rem' }}>Bank Slip / Wire Reference Code</label>
-                              <input
-                                type="text"
-                                className="input"
-                                placeholder="e.g. KCB-TRANS-9812"
-                                value={checkoutRefCode}
-                                onChange={(e) => setCheckoutRefCode(e.target.value)}
-                              />
-                            </div>
-                            <div style={{ marginTop: '0.65rem', background: '#fffbeb', border: '1px solid #fde68a', borderRadius: '6px', padding: '0.5rem 0.75rem', fontSize: '0.74rem', color: '#92400e' }}>
-                              <strong>⚠️ Notice:</strong> Offline payment submissions generate a <em>Provisional Submission Slip</em>. Your official cleared receipt is released after our Bursar verifies funds in our bank account.
-                            </div>
-                          </div>
-                        )}
                       </div>
 
                       {/* Action Buttons */}
@@ -4065,29 +3934,23 @@ export function Landing() {
                         <button type="button" className="btn btn-secondary btn-sm" onClick={() => setCheckoutStep('details')}>
                           ← Back to Details
                         </button>
-                        {checkoutPaymentMode === 'card' ? (
-                          <button
-                            type="submit"
-                            className="btn btn-primary"
-                            style={{
-                              fontWeight: 800,
-                              padding: '0.6rem 1.4rem',
-                              background: 'linear-gradient(135deg, #059669 0%, #047857 100%)',
-                              borderColor: '#059669',
-                              display: 'inline-flex',
-                              alignItems: 'center',
-                              gap: '8px',
-                              boxShadow: '0 4px 14px rgba(5, 150, 105, 0.35)',
-                            }}
-                          >
-                            <ShieldCheckIcon size={18} color="#ffffff" />
-                            <span>Pay ${selectedAmount} USD via Paystack (M-Pesa / Card) →</span>
-                          </button>
-                        ) : (
-                          <button type="submit" className="btn btn-primary" style={{ fontWeight: 800, padding: '0.6rem 1.25rem' }}>
-                            Submit Reference for Bursar Verification (${selectedAmount} USD) →
-                          </button>
-                        )}
+                        <button
+                          type="submit"
+                          className="btn btn-primary"
+                          style={{
+                            fontWeight: 800,
+                            padding: '0.65rem 1.6rem',
+                            background: 'linear-gradient(135deg, #059669 0%, #047857 100%)',
+                            borderColor: '#059669',
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            gap: '8px',
+                            boxShadow: '0 4px 14px rgba(5, 150, 105, 0.35)',
+                          }}
+                        >
+                          <ShieldCheckIcon size={18} color="#ffffff" />
+                          <span>Pay ${selectedAmount} USD via Paystack (M-Pesa / Card) →</span>
+                        </button>
                       </div>
                     </div>
                   )

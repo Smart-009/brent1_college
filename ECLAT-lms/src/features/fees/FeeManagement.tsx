@@ -539,29 +539,33 @@ export function FeeManagement() {
           </div>
         </div>
 
-        {/* Payment Channels Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-          <div className="card" style={{ padding: '1.5rem' }}>
-            <h3 style={{ fontSize: '1.1rem', fontWeight: 800, margin: '0 0 0.75rem', color: 'var(--color-primary)' }}>
-              💳 Pay via M-Pesa / {INSTITUTION_CONFIG.bank.name} Paybill
+        {/* Payment Channel: Paystack Exclusive */}
+        <div className="card mb-6" style={{ padding: '1.5rem', background: '#f8fafc', border: '1.5px solid #86efac' }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.75rem', flexWrap: 'wrap', gap: '0.5rem' }}>
+            <h3 style={{ fontSize: '1.1rem', fontWeight: 800, margin: 0, color: '#166534', display: 'flex', alignItems: 'center', gap: '8px' }}>
+              🔒 Official Fee Clearance Gateway: Paystack
             </h3>
-            <div style={{ fontSize: '0.88rem', color: 'var(--color-text-secondary)', lineHeight: '1.6', display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
-              <div><strong>1. Go to M-Pesa:</strong> Lipa na M-Pesa → Paybill</div>
-              <div><strong>2. Business Number:</strong> <span style={{ color: 'var(--color-primary)', fontWeight: 800 }}>{INSTITUTION_CONFIG.bank.paybillNumber}</span> ({INSTITUTION_CONFIG.bank.name})</div>
-              <div><strong>3. Account Number:</strong> <span style={{ color: 'var(--color-primary)', fontWeight: 800 }}>{INSTITUTION_CONFIG.bank.accountNumber}</span></div>
-              <div><strong>4. Account Name:</strong> {INSTITUTION_CONFIG.bank.accountName}</div>
-            </div>
+            <span style={{ fontSize: '0.75rem', background: '#dcfce7', color: '#15803d', fontWeight: 800, padding: '3px 10px', borderRadius: '999px', border: '1px solid #86efac' }}>
+              Sole Accepted Payment Channel
+            </span>
           </div>
-
-          <div className="card" style={{ padding: '1.5rem' }}>
-            <h3 style={{ fontSize: '1.1rem', fontWeight: 800, margin: '0 0 0.75rem', color: 'var(--color-primary)' }}>
-              🏦 International Bank Wire / Card
-            </h3>
-            <div style={{ fontSize: '0.88rem', color: 'var(--color-text-secondary)', lineHeight: '1.6', display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
-              <div><strong>Bank Name:</strong> {INSTITUTION_CONFIG.bank.name}</div>
-              <div><strong>Account Number:</strong> {INSTITUTION_CONFIG.bank.accountNumber}</div>
-              <div><strong>Branch:</strong> {INSTITUTION_CONFIG.bank.branch}</div>
-              <div><strong>Currency:</strong> {INSTITUTION_CONFIG.pricing.currencyCode} ({INSTITUTION_CONFIG.pricing.currencySymbol})</div>
+          <p style={{ fontSize: '0.86rem', color: '#334155', lineHeight: '1.6', margin: '0 0 0.85rem' }}>
+            Tuition fee clearance at {INSTITUTION_CONFIG.name} is conducted exclusively via <strong>Paystack</strong>. 
+            Click the blue <strong>"⚡ Pay Now with Paystack"</strong> button above to settle your balance using <strong>M-Pesa STK Push</strong>, <strong>Visa</strong>, <strong>Mastercard</strong>, or <strong>Apple Pay</strong>. 
+            Your receipts, exam clearance, and lesson access are unlocked automatically in real-time. Manual offline deposits, cash, or unverified transfers are strictly not accepted.
+          </p>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '0.75rem', paddingTop: '0.75rem', borderTop: '1px solid #e2e8f0' }}>
+            <div style={{ background: '#ffffff', border: '1px solid #e2e8f0', borderRadius: '8px', padding: '0.65rem 0.85rem' }}>
+              <strong style={{ color: '#166534', fontSize: '0.82rem', display: 'block' }}>📱 M-Pesa Express Prompt</strong>
+              <span style={{ fontSize: '0.75rem', color: '#64748b' }}>Enter your Safaricom number for instant STK PIN prompt</span>
+            </div>
+            <div style={{ background: '#ffffff', border: '1px solid #e2e8f0', borderRadius: '8px', padding: '0.65rem 0.85rem' }}>
+              <strong style={{ color: '#1e3a8a', fontSize: '0.82rem', display: 'block' }}>💳 Cards & Digital Wallets</strong>
+              <span style={{ fontSize: '0.75rem', color: '#64748b' }}>Visa, Mastercard, & Apple Pay with 3D Secure</span>
+            </div>
+            <div style={{ background: '#ffffff', border: '1px solid #e2e8f0', borderRadius: '8px', padding: '0.65rem 0.85rem' }}>
+              <strong style={{ color: '#059669', fontSize: '0.82rem', display: 'block' }}>⚡ Instant LMS Unlock</strong>
+              <span style={{ fontSize: '0.75rem', color: '#64748b' }}>Zero waiting time; classes & exams cleared instantly</span>
             </div>
           </div>
         </div>
@@ -1346,29 +1350,27 @@ export function FeeManagement() {
             </div>
           </div>
 
-          <div className="card" style={{ padding: '1.5rem', background: '#f8fafc' }}>
-            <h3 style={{ fontSize: '1.1rem', fontWeight: 700, marginBottom: '0.75rem', color: '#1e3a8a' }}>
-              🏦 Official Bank, Card & Paybill Payment Channels
-            </h3>
+          <div className="card" style={{ padding: '1.5rem', background: '#f8fafc', border: '1.5px solid #86efac' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.75rem', flexWrap: 'wrap', gap: '0.5rem' }}>
+              <h3 style={{ fontSize: '1.1rem', fontWeight: 800, margin: 0, color: '#166534' }}>
+                🔒 Official Institutional Gateway: Paystack
+              </h3>
+              <span style={{ fontSize: '0.75rem', background: '#dcfce7', color: '#15803d', fontWeight: 800, padding: '3px 10px', borderRadius: '999px', border: '1px solid #86efac' }}>
+                Sole Accepted Payment Method
+              </span>
+            </div>
             <div style={{ fontSize: '0.88rem', lineHeight: '1.7', color: '#334155' }}>
               <div style={{ marginBottom: '0.85rem', background: '#ffffff', padding: '0.85rem', borderRadius: '8px', border: '1px solid #e2e8f0' }}>
-                <strong>💳 1. Debit / Credit Card (Visa / Mastercard):</strong>
-                <div style={{ color: '#64748b', fontSize: '0.82rem' }}>Instant clearance in USD ($) via official student checkout portal.</div>
-              </div>
-              <div style={{ marginBottom: '0.85rem', background: '#ffffff', padding: '0.85rem', borderRadius: '8px', border: '1px solid #e2e8f0' }}>
-                <strong>🏦 2. {INSTITUTION_CONFIG.bank.name} Direct Wire / Deposit:</strong>
-                <div>• Bank: <strong>{INSTITUTION_CONFIG.bank.name}</strong></div>
-                <div>• Account No: <strong style={{ color: '#2563eb' }}>{INSTITUTION_CONFIG.bank.accountNumber}</strong></div>
-                <div>• Account Name: <strong>{INSTITUTION_CONFIG.bank.accountName}</strong></div>
+                <strong style={{ color: '#166534' }}>⚡ Paystack Automated Gateway (M-Pesa Express, Cards, Apple Pay):</strong>
+                <div style={{ color: '#64748b', fontSize: '0.82rem' }}>
+                  All student tuition fees, invoices, and exam clearances are processed exclusively via Paystack. Payments are reconciled instantly with automated digital receipts.
+                </div>
               </div>
               <div style={{ background: '#ffffff', padding: '0.85rem', borderRadius: '8px', border: '1px solid #e2e8f0' }}>
-                <strong>📱 3. M-Pesa Paybill (Via {INSTITUTION_CONFIG.bank.name}):</strong>
-                <ol style={{ paddingLeft: '1.25rem', margin: '0.25rem 0 0' }}>
-                  <li>Select <strong>Lipa na M-PESA → Paybill</strong></li>
-                  <li>Enter Business No: <strong>{INSTITUTION_CONFIG.bank.paybillNumber}</strong> ({INSTITUTION_CONFIG.bank.name})</li>
-                  <li>Enter Account No: <strong>{INSTITUTION_CONFIG.bank.accountNumber}</strong></li>
-                  <li>Reference / SMS: <strong>Student Admission ID</strong></li>
-                </ol>
+                <strong style={{ color: '#92400e' }}>⚠️ Direct Deposit / Cash Policy:</strong>
+                <div style={{ color: '#64748b', fontSize: '0.82rem' }}>
+                  Manual offline deposits, direct unlinked bank wires, or unverified SMS codes are not accepted. All payments must be initiated directly through the student portal or enrollment checkout.
+                </div>
               </div>
             </div>
           </div>
