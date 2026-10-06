@@ -8,6 +8,8 @@ import type {
   TenantGradeRecord,
   TenantLessonNote,
   TenantFeePayment,
+  TenantTimetableEntry,
+  TenantSessionUser,
 } from '@/types/tenantSchool'
 
 const STORAGE_KEY = 'eclat_partner_schools_tenants'
@@ -17,6 +19,8 @@ const PAYROLL_STORAGE_KEY = 'eclat_tenant_payroll'
 const GRADES_STORAGE_KEY = 'eclat_tenant_grades'
 const NOTES_STORAGE_KEY = 'eclat_tenant_lesson_notes'
 const PAYMENTS_STORAGE_KEY = 'eclat_tenant_fee_payments'
+const TIMETABLE_STORAGE_KEY = 'eclat_tenant_timetables'
+const SESSION_STORAGE_KEY_PREFIX = 'eclat_tenant_session_'
 
 // Default Seed Partner Schools to provide immediate working demos
 const INITIAL_PARTNER_SCHOOLS: PartnerSchoolTenant[] = [
@@ -542,6 +546,31 @@ class TenantSchoolStore {
 
     this.staff.unshift(newStaff)
     this.saveStaff()
+
+    // Automatically add to active monthly payroll register
+    if (this.payroll.length === 0) this.loadPayroll()
+    const curMonth = 'October 2026'
+    const newPayroll: TenantPayrollRecord = {
+      id: `pr_${Date.now()}_${Math.floor(Math.random() * 1000)}`,
+      school_slug: newStaff.school_slug,
+      month_period: curMonth,
+      staff_id: newStaff.id,
+      staff_name: newStaff.full_name,
+      role: newStaff.role,
+      department: newStaff.department,
+      base_salary: input.salary_base || 3000,
+      housing_allowance: input.salary_housing || 400,
+      transport_allowance: input.salary_transport || 200,
+      gross_salary: gross,
+      tax_deduction: input.salary_tax || Math.round(gross * 0.18),
+      pension_deduction: input.salary_pension || Math.round(gross * 0.06),
+      net_salary: net,
+      status: 'approved',
+      payment_method: 'Bank Wire',
+    }
+    this.payroll.unshift(newPayroll)
+    this.savePayroll()
+
     return newStaff
   }
 
@@ -607,6 +636,46 @@ class TenantSchoolStore {
 
     this.students.unshift(newStudent)
     this.saveStudents()
+
+    // Automatically record initial fee payment if any paid upon admission
+    if (newStudent.fee_paid > 0) {
+      this.recordFeePayment({
+        school_slug: newStudent.school_slug,
+        student_id: newStudent.id,
+        student_name: newStudent.full_name,
+        admission_number: newStudent.admission_number,
+        amount: newStudent.fee_paid,
+        period_name: 'Opening Term Registration & Tuition',
+        payment_method: 'Bank Wire',
+        recorded_by: 'Admissions Registrar',
+      })
+    }
+
+    // Auto-seed default subjects in gradebook for new student so Report Card works immediately
+    const defaultSubjects = [
+      'Pure Mathematics (0580)',
+      'First Language English (0500)',
+      'Computer Science (0478)',
+      'Physics (0625)',
+      'Chemistry (0620)',
+    ]
+    defaultSubjects.forEach((subj) => {
+      this.saveGradeRecord({
+        school_slug: newStudent.school_slug,
+        student_id: newStudent.id,
+        student_name: newStudent.full_name,
+        admission_number: newStudent.admission_number,
+        class_name: newStudent.grade_class,
+        subject_name: subj,
+        period_code: 'TERM-1',
+        cat1_score: 17,
+        cat2_score: 18,
+        exam_score: 52,
+        remarks: 'Enrolled candidate; demonstrated high aptitude and steady academic diligence.',
+        teacher_name: 'Subject Faculty Instructor',
+      })
+    })
+
     return newStudent
   }
 
@@ -934,6 +1003,133 @@ class TenantSchoolStore {
     }
 
     return newPayment
+  }
+
+  // ============================================================
+  // 7. CLASS & FACULTY TIMETABLE SCHEDULE
+  // ============================================================
+  private timetables: TenantTimetableEntry[] = []
+
+  private loadTimetables() {
+    if (typeof window === 'undefined') {
+      this.timetables = [...INITIAL_TIMETABLES]
+      return
+    }
+    try {
+      const stored = localStorage.getItem(TIMETABLE_STORAGE_KEY)
+      if (stored) {
+        const parsed = JSON.parse(stored)
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          this.timetables = parsed
+          return
+        }
+      }
+    } catch {}
+    this.timetables = [...INITIAL_TIMETABLES]
+    this.saveTimetables()
+  }
+
+  private saveTimetables() {
+    if (typeof window === 'undefined') return
+    try {
+      localStorage.setItem(TIMETABLE_STORAGE_KEY, JSON.stringify(this.timetables))
+    } catch {}
+  }
+
+  public getTimetableBySchool(slug: string, className?: string): TenantTimetableEntry[] {
+    if (this.timetables.length === 0) this.loadTimetables()
+    const clean = slug.toLowerCase()
+    let list = this.timetables.filter((t) => t.school_slug.toLowerCase() === clean)
+    if (className && className !== 'All') {
+      list = list.filter((t) => t.class_name.toLowerCase() === className.toLowerCase())
+    }
+    if (list.length === 0) {
+      list = this.generateDefaultTimetable(slug, className || 'General Cohort')
+    }
+    return list
+  }
+
+  private generateDefaultTimetable(slug: string, className: string): TenantTimetableEntry[] {
+    const days: ('Monday' | 'Tuesday' | 'Wednesday' | 'Thursday' | 'Friday')[] = [
+      'Monday',
+      'Tuesday',
+      'Wednesday',
+      'Thursday',
+      'Friday',
+    ]
+    const defaultPeriods = [
+      { num: 1, start: '08:00', end: '08:50', sub: 'Mathematics & Logic', teacher: 'Lead Instructor', room: 'Lecture Hall 1' },
+      { num: 2, start: '08:55', end: '09:45', sub: 'Language & Technical Writing', teacher: 'Department Faculty', room: 'Room 102' },
+      { num: 3, start: '10:00', end: '10:50', sub: 'Applied Technology & Computing', teacher: 'Lab Director', room: 'Computer Lab' },
+      { num: 4, start: '11:00', end: '11:50', sub: 'Core Sciences / Business Studies', teacher: 'Faculty Tutor', room: 'Room 201' },
+      { num: 5, start: '12:00', end: '12:50', sub: 'Practical Workshop & Case Study', teacher: 'Senior Tutor', room: 'Seminar Room' },
+      { num: 6, start: '14:00', end: '14:50', sub: 'Supervised Project & Research', teacher: 'Academic Mentor', room: 'Library / Lab' },
+    ]
+    const generated: TenantTimetableEntry[] = []
+    days.forEach((day, dIdx) => {
+      defaultPeriods.forEach((p) => {
+        generated.push({
+          id: `gen_tt_${slug}_${dIdx}_${p.num}`,
+          school_slug: slug,
+          class_name: className,
+          day_of_week: day,
+          period_number: p.num,
+          start_time: p.start,
+          end_time: p.end,
+          subject_name: p.sub,
+          teacher_name: p.teacher,
+          room: p.room,
+        })
+      })
+    })
+    return generated
+  }
+
+  public addTimetableEntry(entry: Omit<TenantTimetableEntry, 'id'>): TenantTimetableEntry {
+    if (this.timetables.length === 0) this.loadTimetables()
+    const newEntry: TenantTimetableEntry = {
+      ...entry,
+      id: `tt_${Date.now()}_${Math.floor(Math.random() * 1000)}`,
+    }
+    this.timetables.push(newEntry)
+    this.saveTimetables()
+    return newEntry
+  }
+
+  public deleteTimetableEntry(id: string): void {
+    if (this.timetables.length === 0) this.loadTimetables()
+    this.timetables = this.timetables.filter((t) => t.id !== id)
+    this.saveTimetables()
+  }
+
+  // ============================================================
+  // 8. ACTIVE TENANT USER SESSION MANAGEMENT
+  // ============================================================
+  public getActiveSession(slug: string): TenantSessionUser | null {
+    if (typeof window === 'undefined') return null
+    try {
+      const key = `${SESSION_STORAGE_KEY_PREFIX}${slug.toLowerCase()}`
+      const stored = sessionStorage.getItem(key) || localStorage.getItem(key)
+      if (stored) {
+        return JSON.parse(stored)
+      }
+    } catch {}
+    return null
+  }
+
+  public setActiveSession(slug: string, session: TenantSessionUser | null): void {
+    if (typeof window === 'undefined') return
+    const key = `${SESSION_STORAGE_KEY_PREFIX}${slug.toLowerCase()}`
+    try {
+      if (session) {
+        sessionStorage.setItem(key, JSON.stringify(session))
+        localStorage.setItem(key, JSON.stringify(session))
+      } else {
+        sessionStorage.removeItem(key)
+        localStorage.removeItem(key)
+      }
+      window.dispatchEvent(new CustomEvent('eclat-tenant-session-changed', { detail: { slug, session } }))
+    } catch {}
   }
 }
 
@@ -1409,6 +1605,47 @@ const INITIAL_PAYMENTS: TenantFeePayment[] = [
     date: '2026-01-16T11:45:00Z',
     recorded_by: 'Mr. Patrick Omondi, CPA',
   },
+]
+
+const INITIAL_TIMETABLES: TenantTimetableEntry[] = [
+  // Monday
+  { id: 'tt_hc_m1', school_slug: 'hillcrest', class_name: 'Grade 10 Cambridge', day_of_week: 'Monday', period_number: 1, start_time: '08:00', end_time: '08:50', subject_name: 'Pure Mathematics (0580)', teacher_name: 'Mr. Marcus Sterling, M.Sc', room: 'Room M-201' },
+  { id: 'tt_hc_m2', school_slug: 'hillcrest', class_name: 'Grade 10 Cambridge', day_of_week: 'Monday', period_number: 2, start_time: '08:55', end_time: '09:45', subject_name: 'First Language English (0500)', teacher_name: 'Mrs. Evelyn Davis, B.Ed', room: 'Room L-104' },
+  { id: 'tt_hc_m3', school_slug: 'hillcrest', class_name: 'Grade 10 Cambridge', day_of_week: 'Monday', period_number: 3, start_time: '09:50', end_time: '10:40', subject_name: 'Computer Science (0478)', teacher_name: 'Eng. Sarah Mwangi, B.Sc', room: 'Turing Lab 1' },
+  { id: 'tt_hc_m4', school_slug: 'hillcrest', class_name: 'Grade 10 Cambridge', day_of_week: 'Monday', period_number: 4, start_time: '11:10', end_time: '12:00', subject_name: 'Physics (0625)', teacher_name: 'Dr. Arthur Sterling, M.Ed', room: 'Newton Science Lab' },
+  { id: 'tt_hc_m5', school_slug: 'hillcrest', class_name: 'Grade 10 Cambridge', day_of_week: 'Monday', period_number: 5, start_time: '12:05', end_time: '12:55', subject_name: 'Chemistry (0620)', teacher_name: 'Mrs. Evelyn Davis, B.Ed', room: 'Faraday Chem Lab' },
+  { id: 'tt_hc_m6', school_slug: 'hillcrest', class_name: 'Grade 10 Cambridge', day_of_week: 'Monday', period_number: 6, start_time: '14:00', end_time: '14:50', subject_name: 'Business Studies (0450)', teacher_name: 'Mr. Patrick Omondi, CPA', room: 'Lecture Hall B' },
+
+  // Tuesday
+  { id: 'tt_hc_t1', school_slug: 'hillcrest', class_name: 'Grade 10 Cambridge', day_of_week: 'Tuesday', period_number: 1, start_time: '08:00', end_time: '08:50', subject_name: 'Computer Science (0478)', teacher_name: 'Eng. Sarah Mwangi, B.Sc', room: 'Turing Lab 1' },
+  { id: 'tt_hc_t2', school_slug: 'hillcrest', class_name: 'Grade 10 Cambridge', day_of_week: 'Tuesday', period_number: 2, start_time: '08:55', end_time: '09:45', subject_name: 'Pure Mathematics (0580)', teacher_name: 'Mr. Marcus Sterling, M.Sc', room: 'Room M-201' },
+  { id: 'tt_hc_t3', school_slug: 'hillcrest', class_name: 'Grade 10 Cambridge', day_of_week: 'Tuesday', period_number: 3, start_time: '09:50', end_time: '10:40', subject_name: 'Physics (0625)', teacher_name: 'Dr. Arthur Sterling, M.Ed', room: 'Newton Science Lab' },
+  { id: 'tt_hc_t4', school_slug: 'hillcrest', class_name: 'Grade 10 Cambridge', day_of_week: 'Tuesday', period_number: 4, start_time: '11:10', end_time: '12:00', subject_name: 'First Language English (0500)', teacher_name: 'Mrs. Evelyn Davis, B.Ed', room: 'Room L-104' },
+  { id: 'tt_hc_t5', school_slug: 'hillcrest', class_name: 'Grade 10 Cambridge', day_of_week: 'Tuesday', period_number: 5, start_time: '12:05', end_time: '12:55', subject_name: 'English Literature (0475)', teacher_name: 'Mrs. Evelyn Davis, B.Ed', room: 'Library Seminar 2' },
+  { id: 'tt_hc_t6', school_slug: 'hillcrest', class_name: 'Grade 10 Cambridge', day_of_week: 'Tuesday', period_number: 6, start_time: '14:00', end_time: '14:50', subject_name: 'Physical Education & Sports', teacher_name: 'Coach Kiprotich', room: 'Main Sports Field' },
+
+  // Wednesday
+  { id: 'tt_hc_w1', school_slug: 'hillcrest', class_name: 'Grade 10 Cambridge', day_of_week: 'Wednesday', period_number: 1, start_time: '08:00', end_time: '08:50', subject_name: 'Pure Mathematics (0580)', teacher_name: 'Mr. Marcus Sterling, M.Sc', room: 'Room M-201' },
+  { id: 'tt_hc_w2', school_slug: 'hillcrest', class_name: 'Grade 10 Cambridge', day_of_week: 'Wednesday', period_number: 2, start_time: '08:55', end_time: '09:45', subject_name: 'Chemistry (0620)', teacher_name: 'Mrs. Evelyn Davis, B.Ed', room: 'Faraday Chem Lab' },
+  { id: 'tt_hc_w3', school_slug: 'hillcrest', class_name: 'Grade 10 Cambridge', day_of_week: 'Wednesday', period_number: 3, start_time: '09:50', end_time: '10:40', subject_name: 'First Language English (0500)', teacher_name: 'Mrs. Evelyn Davis, B.Ed', room: 'Room L-104' },
+  { id: 'tt_hc_w4', school_slug: 'hillcrest', class_name: 'Grade 10 Cambridge', day_of_week: 'Wednesday', period_number: 4, start_time: '11:10', end_time: '12:00', subject_name: 'Additional Mathematics (0606)', teacher_name: 'Mr. Marcus Sterling, M.Sc', room: 'Room M-201' },
+  { id: 'tt_hc_w5', school_slug: 'hillcrest', class_name: 'Grade 10 Cambridge', day_of_week: 'Wednesday', period_number: 5, start_time: '12:05', end_time: '12:55', subject_name: 'Computer Science (0478)', teacher_name: 'Eng. Sarah Mwangi, B.Sc', room: 'Turing Lab 1' },
+  { id: 'tt_hc_w6', school_slug: 'hillcrest', class_name: 'Grade 10 Cambridge', day_of_week: 'Wednesday', period_number: 6, start_time: '14:00', end_time: '14:50', subject_name: 'Art & Design Studio', teacher_name: 'Ms. Clara Bell', room: 'Creative Arts Studio' },
+
+  // Thursday
+  { id: 'tt_hc_th1', school_slug: 'hillcrest', class_name: 'Grade 10 Cambridge', day_of_week: 'Thursday', period_number: 1, start_time: '08:00', end_time: '08:50', subject_name: 'Physics (0625)', teacher_name: 'Dr. Arthur Sterling, M.Ed', room: 'Newton Science Lab' },
+  { id: 'tt_hc_th2', school_slug: 'hillcrest', class_name: 'Grade 10 Cambridge', day_of_week: 'Thursday', period_number: 2, start_time: '08:55', end_time: '09:45', subject_name: 'Pure Mathematics (0580)', teacher_name: 'Mr. Marcus Sterling, M.Sc', room: 'Room M-201' },
+  { id: 'tt_hc_th3', school_slug: 'hillcrest', class_name: 'Grade 10 Cambridge', day_of_week: 'Thursday', period_number: 3, start_time: '09:50', end_time: '10:40', subject_name: 'Computer Science (0478)', teacher_name: 'Eng. Sarah Mwangi, B.Sc', room: 'Turing Lab 1' },
+  { id: 'tt_hc_th4', school_slug: 'hillcrest', class_name: 'Grade 10 Cambridge', day_of_week: 'Thursday', period_number: 4, start_time: '11:10', end_time: '12:00', subject_name: 'Chemistry (0620)', teacher_name: 'Mrs. Evelyn Davis, B.Ed', room: 'Faraday Chem Lab' },
+  { id: 'tt_hc_th5', school_slug: 'hillcrest', class_name: 'Grade 10 Cambridge', day_of_week: 'Thursday', period_number: 5, start_time: '12:05', end_time: '12:55', subject_name: 'First Language English (0500)', teacher_name: 'Mrs. Evelyn Davis, B.Ed', room: 'Room L-104' },
+  { id: 'tt_hc_th6', school_slug: 'hillcrest', class_name: 'Grade 10 Cambridge', day_of_week: 'Thursday', period_number: 6, start_time: '14:00', end_time: '14:50', subject_name: 'Global Perspectives & Research', teacher_name: 'Dr. Arthur Sterling, M.Ed', room: 'Lecture Hall A' },
+
+  // Friday
+  { id: 'tt_hc_f1', school_slug: 'hillcrest', class_name: 'Grade 10 Cambridge', day_of_week: 'Friday', period_number: 1, start_time: '08:00', end_time: '08:50', subject_name: 'Pure Mathematics (0580)', teacher_name: 'Mr. Marcus Sterling, M.Sc', room: 'Room M-201' },
+  { id: 'tt_hc_f2', school_slug: 'hillcrest', class_name: 'Grade 10 Cambridge', day_of_week: 'Friday', period_number: 2, start_time: '08:55', end_time: '09:45', subject_name: 'First Language English (0500)', teacher_name: 'Mrs. Evelyn Davis, B.Ed', room: 'Room L-104' },
+  { id: 'tt_hc_f3', school_slug: 'hillcrest', class_name: 'Grade 10 Cambridge', day_of_week: 'Friday', period_number: 3, start_time: '09:50', end_time: '10:40', subject_name: 'Computer Science (0478)', teacher_name: 'Eng. Sarah Mwangi, B.Sc', room: 'Turing Lab 1' },
+  { id: 'tt_hc_f4', school_slug: 'hillcrest', class_name: 'Grade 10 Cambridge', day_of_week: 'Friday', period_number: 4, start_time: '11:10', end_time: '12:00', subject_name: 'Physics & Lab Practical (0625)', teacher_name: 'Dr. Arthur Sterling, M.Ed', room: 'Newton Science Lab' },
+  { id: 'tt_hc_f5', school_slug: 'hillcrest', class_name: 'Grade 10 Cambridge', day_of_week: 'Friday', period_number: 5, start_time: '12:05', end_time: '12:55', subject_name: 'Weekly House Assembly & Ethics', teacher_name: 'Dr. Arthur Sterling, M.Ed', room: 'Great Hall' },
 ]
 
 export const tenantSchoolStore = new TenantSchoolStore()

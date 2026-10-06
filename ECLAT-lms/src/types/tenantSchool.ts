@@ -207,3 +207,30 @@ export interface TenantFeePayment {
   date: string
   recorded_by: string
 }
+
+export interface TenantTimetableEntry {
+  id: string
+  school_slug: string
+  class_name: string
+  day_of_week: 'Monday' | 'Tuesday' | 'Wednesday' | 'Thursday' | 'Friday'
+  period_number: number
+  start_time: string
+  end_time: string
+  subject_name: string
+  teacher_name: string
+  room: string
+}
+
+export interface TenantSessionUser {
+  id: string
+  school_slug: string
+  name: string
+  role: 'admin' | 'principal' | 'teacher' | 'bursar' | 'student' | 'public'
+  username: string
+  title?: string
+  department?: string
+  grade_class?: string
+  admission_number?: string
+  student_id?: string
+  staff_id?: string
+}
