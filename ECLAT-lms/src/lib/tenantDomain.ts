@@ -92,7 +92,7 @@ export function detectTenantFromHost(
 ): { school: PartnerSchoolTenant; matchedVia: 'subdomain' | 'custom_domain' } | null {
   if (!hostname) return null
 
-  const cleanHost = hostname.toLowerCase().trim()
+  const cleanHost = hostname.toLowerCase().trim().replace(/:\d+$/, '')
 
   // 1. Check custom mapped domain
   for (const school of schools) {
@@ -101,6 +101,7 @@ export function detectTenantFromHost(
         .toLowerCase()
         .replace(/^https?:\/\//, '')
         .replace(/\/.*$/, '')
+        .replace(/:\d+$/, '')
         .trim()
       if (cleanHost === cleanCustom) {
         return { school, matchedVia: 'custom_domain' }
@@ -124,7 +125,7 @@ export function detectTenantFromHost(
 
   // 3. Check *.eclat.institute
   if (cleanHost.endsWith('.eclat.institute')) {
-    const slug = cleanHost.replace('.eclat.institute', '')
+    const slug = cleanHost.slice(0, -'.eclat.institute'.length)
     const found = schools.find((s) => s.slug.toLowerCase() === slug)
     if (found) {
       return { school: found, matchedVia: 'subdomain' }
@@ -133,7 +134,7 @@ export function detectTenantFromHost(
 
   // 4. Check *.localhost (for local testing)
   if (cleanHost.endsWith('.localhost')) {
-    const slug = cleanHost.replace('.localhost', '')
+    const slug = cleanHost.slice(0, -'.localhost'.length)
     const found = schools.find((s) => s.slug.toLowerCase() === slug)
     if (found) {
       return { school: found, matchedVia: 'subdomain' }
