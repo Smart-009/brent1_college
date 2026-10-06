@@ -107,7 +107,7 @@ export function DonationSponsorshipPage() {
             ? 'Physical Institution Enrollment Placement'
             : sponsorshipTrack === 'vocational_bootcamp'
             ? 'Vocational & Tech Career Sponsorship'
-            : 'General Education & Less Fortunate Support Fund'
+            : 'General Education & Opportunity Fund'
         }`,
         onSuccess: (ref) => {
           setSubmitting(false)
@@ -267,7 +267,7 @@ export function DonationSponsorshipPage() {
               color: '#ffffff',
             }}
           >
-            Empower the Less Fortunate Through the Gift of Education
+            Empower Deserving Students Through the Gift of Education
           </h1>
 
           <p

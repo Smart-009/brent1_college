@@ -113,7 +113,7 @@ export function Navbar({ onToggleSidebar }: { onToggleSidebar: () => void }) {
             padding: '4px 10px',
             boxShadow: '0 2px 8px rgba(22, 163, 74, 0.35)',
           }}
-          title="Sponsor an Underprivileged Learner / Support Less Fortunate Students"
+          title="Sponsor an Underprivileged Learner / Support Deserving Students in Need"
         >
           <span>💖</span>
           <span>Sponsor / Donate</span>
