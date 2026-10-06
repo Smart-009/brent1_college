@@ -153,7 +153,7 @@ export function DonationSponsorshipPage() {
   }
 
   return (
-    <div style={{ minHeight: '100vh', background: '#f8fafc', color: '#0f172a', fontFamily: 'Inter, system-ui, -apple-system, sans-serif' }}>
+    <div style={{ minHeight: '100vh', background: '#f8fafc', color: '#0f172a', fontFamily: 'Inter, system-ui, -apple-system, sans-serif', width: '100%', maxWidth: '100vw', overflowX: 'hidden' }}>
       {/* Top Banner Navigation */}
       <header
         style={{
@@ -163,10 +163,13 @@ export function DonationSponsorshipPage() {
           background: 'rgba(255, 255, 255, 0.98)',
           backdropFilter: 'blur(12px)',
           borderBottom: '1px solid #e2e8f0',
-          padding: '0.65rem 1.25rem',
+          padding: '0.65rem 1rem',
+          width: '100%',
+          maxWidth: '100vw',
+          boxSizing: 'border-box',
         }}
       >
-        <div style={{ maxWidth: '1240px', margin: '0 auto', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <div style={{ maxWidth: '1240px', margin: '0 auto', display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%' }}>
           <Link to="/" style={{ display: 'flex', alignItems: 'center', gap: '0.65rem', textDecoration: 'none' }}>
             <img
               src="/logo.png"

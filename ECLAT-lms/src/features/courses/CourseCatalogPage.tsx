@@ -269,6 +269,9 @@ export function CourseCatalogPage() {
         color: '#0f172a',
         fontFamily: 'Inter, system-ui, -apple-system, sans-serif',
         paddingBottom: 'calc(80px + env(safe-area-inset-bottom, 0px))',
+        width: '100%',
+        maxWidth: '100vw',
+        overflowX: 'hidden',
       }}
     >
       <DesktopCommandPalette />
@@ -282,11 +285,14 @@ export function CourseCatalogPage() {
           background: 'rgba(255, 255, 255, 0.96)',
           backdropFilter: 'blur(20px)',
           borderBottom: '1px solid #e2e8f0',
-          padding: '0.85rem 1.25rem',
+          padding: '0.75rem 1rem',
           display: 'flex',
           justifyContent: 'space-between',
           alignItems: 'center',
           boxShadow: '0 1px 3px rgba(0, 0, 0, 0.05)',
+          width: '100%',
+          maxWidth: '100vw',
+          boxSizing: 'border-box',
         }}
       >
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>

@@ -643,19 +643,22 @@ export function TutorPublishCoursePage() {
   }
 
   return (
-    <div style={{ minHeight: '100vh', background: '#f8fafc', color: '#0f172a', fontFamily: 'inherit' }}>
+    <div style={{ minHeight: '100vh', background: '#f8fafc', color: '#0f172a', fontFamily: 'inherit', width: '100%', maxWidth: '100vw', overflowX: 'hidden' }}>
       {/* Header Bar */}
       <header
         style={{
           background: '#ffffff',
           borderBottom: '1px solid #e2e8f0',
-          padding: '0.85rem 1.5rem',
+          padding: '0.75rem 1rem',
           position: 'sticky',
           top: 0,
           zIndex: 40,
+          width: '100%',
+          maxWidth: '100vw',
+          boxSizing: 'border-box',
         }}
       >
-        <div style={{ maxWidth: '1200px', margin: '0 auto', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+        <div style={{ maxWidth: '1200px', margin: '0 auto', display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%' }}>
           <Link to="/" style={{ display: 'flex', alignItems: 'center', gap: '10px', textDecoration: 'none' }}>
             <img src="/logo.png" alt="Éclat" style={{ width: '36px', height: '36px', borderRadius: '50%', border: '1.5px solid #d4af37' }} />
             <div>

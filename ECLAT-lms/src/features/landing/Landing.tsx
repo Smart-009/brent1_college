@@ -388,7 +388,7 @@ const HERO_PROMO_SLIDES: PromoSlide[] = [
 ]
 
 export function Landing() {
-  const isMobile = useIsMobile(768)
+  const isMobile = useIsMobile(1024)
   const location = useLocation()
   const navigate = useNavigate()
 
@@ -1016,7 +1016,7 @@ export function Landing() {
   }
 
   return (
-    <div style={{ minHeight: '100vh', background: '#f8fafc', color: '#0f172a', fontFamily: 'Inter, system-ui, -apple-system, sans-serif' }}>
+    <div style={{ minHeight: '100vh', background: '#f8fafc', color: '#0f172a', fontFamily: 'Inter, system-ui, -apple-system, sans-serif', width: '100%', maxWidth: '100vw', overflowX: 'hidden' }}>
       <DesktopCommandPalette />
 
       {/* Top Admissions & Quick Contacts Bar */}
@@ -1035,6 +1035,9 @@ export function Landing() {
           whiteSpace: 'nowrap',
           overflow: 'hidden',
           textOverflow: 'ellipsis',
+          width: '100%',
+          maxWidth: '100vw',
+          boxSizing: 'border-box',
         }}
       >
           <span style={{ display: 'inline-flex', alignItems: 'center', gap: '0.4rem' }}>
@@ -1062,20 +1065,23 @@ export function Landing() {
           background: 'rgba(255, 255, 255, 0.98)',
           backdropFilter: 'blur(12px)',
           borderBottom: '1px solid #e2e8f0',
-          padding: '0.65rem 1rem',
+          padding: isMobile ? '0.45rem 0.65rem' : '0.65rem 1rem',
+          width: '100%',
+          maxWidth: '100vw',
+          boxSizing: 'border-box',
         }}
       >
-        <div style={{ maxWidth: '1280px', margin: '0 auto', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'nowrap', gap: '0.75rem' }}>
+        <div style={{ maxWidth: '1280px', margin: '0 auto', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'nowrap', gap: '0.5rem', width: '100%' }}>
           {/* Left Side: Brand Logo & Explore Categories */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', flexShrink: 0 }}>
-            <Link to="/" style={{ display: 'flex', alignItems: 'center', gap: '0.65rem', textDecoration: 'none' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem', flexShrink: 1, minWidth: 0 }}>
+            <Link to="/" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', textDecoration: 'none', minWidth: 0 }}>
               <img
                 src="/logo.png"
                 alt="Éclat Institute Logo"
-                style={{ width: '40px', height: '40px', borderRadius: '50%', objectFit: 'cover', border: '2px solid #d4af37', boxShadow: '0 2px 8px rgba(0,0,0,0.12)', flexShrink: 0 }}
+                style={{ width: isMobile ? '34px' : '40px', height: isMobile ? '34px' : '40px', borderRadius: '50%', objectFit: 'cover', border: '2px solid #d4af37', boxShadow: '0 2px 8px rgba(0,0,0,0.12)', flexShrink: 0 }}
               />
-              <div style={{ minWidth: 0 }}>
-                <div style={{ fontSize: '1.2rem', fontWeight: 900, color: '#0f172a', fontFamily: 'var(--font-heading)', letterSpacing: '0.02em', lineHeight: 1.1, whiteSpace: 'nowrap' }}>
+              <div style={{ minWidth: 0, overflow: 'hidden' }}>
+                <div style={{ fontSize: isMobile ? '1.05rem' : '1.2rem', fontWeight: 900, color: '#0f172a', fontFamily: 'var(--font-heading)', letterSpacing: '0.02em', lineHeight: 1.1, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
                   ÉCLAT INSTITUTE
                 </div>
                 <div className="hidden sm:block" style={{ fontSize: '0.68rem', color: '#8c6e28', fontWeight: 700, letterSpacing: '0.06em', textTransform: 'uppercase', whiteSpace: 'nowrap' }}>
@@ -1217,206 +1223,203 @@ export function Landing() {
           </div>
 
           {/* Right Side: Quick Action Links & Portals */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexShrink: 0 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', flexShrink: 0 }}>
             {/* Desktop-Only Navigation & Actions */}
-            {!isMobile && (
-              <>
-                <nav className="desktop-nav-links" style={{ fontSize: '0.88rem', fontWeight: 600, marginRight: '0.25rem', display: 'flex', gap: '1rem', alignItems: 'center' }}>
-                  <a href="#intakes-section" style={{ color: '#d97706', fontWeight: 800, textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: '5px' }}>
-                    <CalendarIcon size={14} color="#d97706" />
-                    <span>Intakes</span>
-                  </a>
-                  <Link to="/courses" style={{ color: '#0284c7', fontWeight: 800, textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: '5px' }}>
-                    <BritishShieldIcon size={15} />
-                    <span>Cambridge IGCSE</span>
-                  </Link>
-                  <Link to="/hire" style={{ color: '#2563eb', fontWeight: 800, textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: '5px' }}>
-                    <LaptopIcon size={14} color="#2563eb" />
-                    <span>Hire Us</span>
-                  </Link>
-                  <Link to="/careers" style={{ color: '#16a34a', fontWeight: 800, textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: '5px' }}>
-                    <GraduationCapIcon size={14} color="#16a34a" />
-                    <span>Careers</span>
-                  </Link>
-                  <Link
-                    to="/publish-course"
-                    style={{
-                      background: 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)',
-                      color: '#ffffff',
-                      textDecoration: 'none',
-                      fontWeight: 800,
-                      padding: '0.35rem 0.75rem',
-                      borderRadius: '8px',
-                      fontSize: '0.8rem',
-                      display: 'inline-flex',
-                      alignItems: 'center',
-                      gap: '5px',
-                      boxShadow: '0 2px 8px rgba(217, 119, 6, 0.3)',
-                    }}
-                    title="Publish a Course & Earn 50% Revenue Share"
-                  >
-                    <SparklesIcon size={13} color="#ffffff" />
-                    <span>Publish & Earn 50%</span>
-                  </Link>
-                  <Link
-                    to="/donate"
-                    style={{
-                      background: 'linear-gradient(135deg, #16a34a 0%, #15803d 100%)',
-                      color: '#ffffff',
-                      textDecoration: 'none',
-                      fontWeight: 800,
-                      padding: '0.35rem 0.75rem',
-                      borderRadius: '8px',
-                      fontSize: '0.8rem',
-                      display: 'inline-flex',
-                      alignItems: 'center',
-                      gap: '5px',
-                      boxShadow: '0 2px 8px rgba(22, 163, 74, 0.3)',
-                    }}
-                    title="Sponsor underprivileged students & donate to physical school enrollments"
-                  >
-                    <HeartHandshakeIcon size={13} color="#ffffff" />
-                    <span>Sponsor / Donate</span>
-                  </Link>
-                  <Link to="/library" style={{ color: '#2563eb', fontWeight: 800, textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: '5px' }}>
-                    <LibraryIcon size={14} color="#2563eb" />
-                    <span>E-Library</span>
-                  </Link>
-                  <a href="#calculator" style={{ color: '#334155', textDecoration: 'none' }}>Fees Inquiry</a>
-                  <a href="#about" style={{ color: '#334155', textDecoration: 'none' }}>About Us</a>
-                </nav>
-
-                <button
-                  type="button"
-                  className="btn btn-sm"
+            <div className="desktop-nav-container">
+              <nav className="desktop-nav-links" style={{ fontSize: '0.88rem', fontWeight: 600, marginRight: '0.25rem', display: 'flex', gap: '1rem', alignItems: 'center' }}>
+                <a href="#intakes-section" style={{ color: '#d97706', fontWeight: 800, textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: '5px' }}>
+                  <CalendarIcon size={14} color="#d97706" />
+                  <span>Intakes</span>
+                </a>
+                <Link to="/courses" style={{ color: '#0284c7', fontWeight: 800, textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: '5px' }}>
+                  <BritishShieldIcon size={15} />
+                  <span>Cambridge IGCSE</span>
+                </Link>
+                <Link to="/hire" style={{ color: '#2563eb', fontWeight: 800, textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: '5px' }}>
+                  <LaptopIcon size={14} color="#2563eb" />
+                  <span>Hire Us</span>
+                </Link>
+                <Link to="/careers" style={{ color: '#16a34a', fontWeight: 800, textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: '5px' }}>
+                  <GraduationCapIcon size={14} color="#16a34a" />
+                  <span>Careers</span>
+                </Link>
+                <Link
+                  to="/publish-course"
                   style={{
-                    background: '#16a34a',
+                    background: 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)',
                     color: '#ffffff',
-                    border: 'none',
-                    fontWeight: 700,
-                    padding: '0.45rem 0.75rem',
-                    borderRadius: '8px',
-                    boxShadow: '0 2px 6px rgba(22, 163, 74, 0.3)',
-                    alignItems: 'center',
-                    gap: '5px',
-                    fontSize: '0.78rem',
-                    whiteSpace: 'nowrap',
-                    cursor: 'pointer',
-                    display: 'inline-flex',
-                  }}
-                  onClick={() => {
-                    setAppModalTab('windows')
-                    setAppModalOpen(true)
-                  }}
-                  title="Install & Download Official Native Apps"
-                >
-                  <SmartphoneIcon size={14} color="#ffffff" />
-                  <span>Get Apps</span>
-                </button>
-
-                <button
-                  type="button"
-                  className="btn btn-sm"
-                  style={{
-                    background: '#eff6ff',
-                    color: '#1d4ed8',
-                    border: '1px solid #bfdbfe',
-                    fontWeight: 700,
-                    padding: '0.45rem 0.75rem',
-                    borderRadius: '8px',
-                    fontSize: '0.78rem',
-                    whiteSpace: 'nowrap',
-                    display: 'inline-flex',
-                    alignItems: 'center',
-                    gap: '4px',
-                  }}
-                  onClick={() => setInquiryModalOpen(true)}
-                >
-                  <RocketIcon size={13} color="#1d4ed8" />
-                  <span>Apply</span>
-                </button>
-
-                <button
-                  type="button"
-                  className="btn btn-sm btn-primary"
-                  style={{
-                    fontWeight: 700,
-                    padding: '0.45rem 0.85rem',
-                    borderRadius: '8px',
-                    boxShadow: '0 4px 10px rgba(30, 58, 138, 0.25)',
-                    fontSize: '0.78rem',
-                    whiteSpace: 'nowrap',
-                    display: 'inline-flex',
-                    alignItems: 'center',
-                    gap: '5px',
-                  }}
-                  onClick={() => setShowPortalDesksModal(true)}
-                >
-                  <LockIcon size={13} color="#ffffff" />
-                  <span>Portals</span>
-                </button>
-              </>
-            )}
-
-            {/* Mobile-Only Actions */}
-            {isMobile && (
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem' }}>
-                <button
-                  type="button"
-                  className="btn btn-sm btn-primary"
-                  style={{
+                    textDecoration: 'none',
                     fontWeight: 800,
-                    padding: '0.42rem 0.65rem',
+                    padding: '0.35rem 0.75rem',
                     borderRadius: '8px',
-                    fontSize: '0.78rem',
-                    whiteSpace: 'nowrap',
+                    fontSize: '0.8rem',
                     display: 'inline-flex',
                     alignItems: 'center',
                     gap: '5px',
-                    boxShadow: '0 2px 8px rgba(37, 99, 235, 0.35)',
+                    boxShadow: '0 2px 8px rgba(217, 119, 6, 0.3)',
                   }}
-                  onClick={() => setShowPortalDesksModal(true)}
+                  title="Publish a Course & Earn 50% Revenue Share"
                 >
-                  <LockIcon size={13} color="#ffffff" />
-                  <span>Portals</span>
-                </button>
-
-                <button
-                  type="button"
+                  <SparklesIcon size={13} color="#ffffff" />
+                  <span>Publish & Earn 50%</span>
+                </Link>
+                <Link
+                  to="/donate"
                   style={{
-                    background: mobileNavOpen ? '#0f172a' : '#f8fafc',
-                    color: mobileNavOpen ? '#d4af37' : '#0f172a',
-                    border: mobileNavOpen ? '1.5px solid #d4af37' : '1.5px solid #cbd5e1',
-                    width: '42px',
-                    height: '42px',
-                    borderRadius: '10px',
-                    cursor: 'pointer',
+                    background: 'linear-gradient(135deg, #16a34a 0%, #15803d 100%)',
+                    color: '#ffffff',
+                    textDecoration: 'none',
+                    fontWeight: 800,
+                    padding: '0.35rem 0.75rem',
+                    borderRadius: '8px',
+                    fontSize: '0.8rem',
                     display: 'inline-flex',
                     alignItems: 'center',
-                    justifyContent: 'center',
-                    transition: 'all 0.2s ease',
-                    boxShadow: '0 2px 8px rgba(0,0,0,0.08)',
-                    flexShrink: 0,
+                    gap: '5px',
+                    boxShadow: '0 2px 8px rgba(22, 163, 74, 0.3)',
                   }}
-                  onClick={() => setMobileNavOpen(!mobileNavOpen)}
-                  aria-label={mobileNavOpen ? 'Close Navigation Menu' : 'Open Navigation Menu'}
-                  title={mobileNavOpen ? 'Close Menu' : 'Open Website Menu'}
+                  title="Sponsor underprivileged students & donate to physical school enrollments"
                 >
-                  {mobileNavOpen ? (
-                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                      <line x1="18" y1="6" x2="6" y2="18"></line>
-                      <line x1="6" y1="6" x2="18" y2="18"></line>
-                    </svg>
-                  ) : (
-                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                      <line x1="3" y1="6" x2="21" y2="6"></line>
-                      <line x1="3" y1="12" x2="21" y2="12"></line>
-                      <line x1="3" y1="18" x2="21" y2="18"></line>
-                    </svg>
-                  )}
-                </button>
-              </div>
-            )}
+                  <HeartHandshakeIcon size={13} color="#ffffff" />
+                  <span>Sponsor / Donate</span>
+                </Link>
+                <Link to="/library" style={{ color: '#2563eb', fontWeight: 800, textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: '5px' }}>
+                  <LibraryIcon size={14} color="#2563eb" />
+                  <span>E-Library</span>
+                </Link>
+                <a href="#calculator" style={{ color: '#334155', textDecoration: 'none' }}>Fees Inquiry</a>
+                <a href="#about" style={{ color: '#334155', textDecoration: 'none' }}>About Us</a>
+              </nav>
+
+              <button
+                type="button"
+                className="btn btn-sm"
+                style={{
+                  background: '#16a34a',
+                  color: '#ffffff',
+                  border: 'none',
+                  fontWeight: 700,
+                  padding: '0.45rem 0.75rem',
+                  borderRadius: '8px',
+                  boxShadow: '0 2px 6px rgba(22, 163, 74, 0.3)',
+                  alignItems: 'center',
+                  gap: '5px',
+                  fontSize: '0.78rem',
+                  whiteSpace: 'nowrap',
+                  cursor: 'pointer',
+                  display: 'inline-flex',
+                }}
+                onClick={() => {
+                  setAppModalTab('windows')
+                  setAppModalOpen(true)
+                }}
+                title="Install & Download Official Native Apps"
+              >
+                <SmartphoneIcon size={14} color="#ffffff" />
+                <span>Get Apps</span>
+              </button>
+
+              <button
+                type="button"
+                className="btn btn-sm"
+                style={{
+                  background: '#eff6ff',
+                  color: '#1d4ed8',
+                  border: '1px solid #bfdbfe',
+                  fontWeight: 700,
+                  padding: '0.45rem 0.75rem',
+                  borderRadius: '8px',
+                  fontSize: '0.78rem',
+                  whiteSpace: 'nowrap',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '4px',
+                }}
+                onClick={() => setInquiryModalOpen(true)}
+              >
+                <RocketIcon size={13} color="#1d4ed8" />
+                <span>Apply</span>
+              </button>
+
+              <button
+                type="button"
+                className="btn btn-sm btn-primary"
+                style={{
+                  fontWeight: 700,
+                  padding: '0.45rem 0.85rem',
+                  borderRadius: '8px',
+                  boxShadow: '0 4px 10px rgba(30, 58, 138, 0.25)',
+                  fontSize: '0.78rem',
+                  whiteSpace: 'nowrap',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '5px',
+                }}
+                onClick={() => setShowPortalDesksModal(true)}
+              >
+                <LockIcon size={13} color="#ffffff" />
+                <span>Portals</span>
+              </button>
+            </div>
+
+            {/* Mobile-Only Actions & Hamburger Button */}
+            <div className="landing-mobile-actions" style={{ alignItems: 'center', gap: '0.35rem' }}>
+              <button
+                type="button"
+                className="btn btn-sm btn-primary"
+                style={{
+                  fontWeight: 800,
+                  padding: '0.38rem 0.55rem',
+                  borderRadius: '8px',
+                  fontSize: '0.74rem',
+                  whiteSpace: 'nowrap',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '4px',
+                  boxShadow: '0 2px 8px rgba(37, 99, 235, 0.35)',
+                }}
+                onClick={() => setShowPortalDesksModal(true)}
+              >
+                <LockIcon size={12} color="#ffffff" />
+                <span>Portals</span>
+              </button>
+
+              <button
+                type="button"
+                className="landing-mobile-menu-toggle"
+                style={{
+                  background: mobileNavOpen ? '#0f172a' : '#f8fafc',
+                  color: mobileNavOpen ? '#d4af37' : '#0f172a',
+                  border: mobileNavOpen ? '1.5px solid #d4af37' : '1.5px solid #cbd5e1',
+                  width: '38px',
+                  height: '38px',
+                  borderRadius: '8px',
+                  cursor: 'pointer',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  transition: 'all 0.2s ease',
+                  boxShadow: '0 2px 6px rgba(0,0,0,0.06)',
+                  flexShrink: 0,
+                }}
+                onClick={() => setMobileNavOpen(!mobileNavOpen)}
+                aria-label={mobileNavOpen ? 'Close Navigation Menu' : 'Open Navigation Menu'}
+                title={mobileNavOpen ? 'Close Menu' : 'Open Website Menu'}
+              >
+                {mobileNavOpen ? (
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                  </svg>
+                ) : (
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                    <line x1="3" y1="6" x2="21" y2="6"></line>
+                    <line x1="3" y1="12" x2="21" y2="12"></line>
+                    <line x1="3" y1="18" x2="21" y2="18"></line>
+                  </svg>
+                )}
+              </button>
+            </div>
           </div>
         </div>
 
@@ -2063,20 +2066,28 @@ export function Landing() {
             style={{
               display: 'inline-flex',
               alignItems: 'center',
+              justifyContent: 'center',
               gap: '0.5rem',
               background: 'rgba(255, 255, 255, 0.08)',
               border: '1px solid rgba(255, 255, 255, 0.18)',
               borderRadius: '999px',
-              padding: '0.4rem 1.25rem',
-              fontSize: '0.82rem',
+              padding: isMobile ? '0.35rem 0.85rem' : '0.4rem 1.25rem',
+              fontSize: isMobile ? '0.75rem' : '0.82rem',
               fontWeight: 700,
               color: '#93c5fd',
-              letterSpacing: '0.04em',
+              letterSpacing: '0.03em',
               marginBottom: '1.75rem',
+              maxWidth: '100%',
+              flexWrap: 'wrap',
+              textAlign: 'center',
+              lineHeight: 1.35,
+              boxSizing: 'border-box',
             }}
           >
             <BritishShieldIcon size={16} />
-            <span>CAMBRIDGE CAIE &amp; PEARSON EDEXCEL EXAM PATHWAYS (CENTRES KE042 &amp; EDX-98421)</span>
+            <span style={{ maxWidth: '100%', wordBreak: 'break-word', whiteSpace: 'normal' }}>
+              CAMBRIDGE CAIE &amp; PEARSON EDEXCEL EXAM PATHWAYS (CENTRES KE042 &amp; EDX-98421)
+            </span>
           </div>
 
           {/* Clean, Authoritative Headline */}

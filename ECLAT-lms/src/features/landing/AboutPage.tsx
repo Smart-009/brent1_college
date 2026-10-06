@@ -315,13 +315,14 @@ export function AboutPage() {
               className="btn btn-sm btn-primary"
               style={{
                 fontWeight: 800,
-                fontSize: '0.82rem',
-                padding: '0.5rem 1rem',
+                fontSize: '0.78rem',
+                padding: '0.45rem 0.75rem',
                 borderRadius: '8px',
                 textDecoration: 'none',
+                whiteSpace: 'nowrap',
               }}
             >
-              🔐 Student Portal
+              🔐 <span className="hidden sm:inline">Student </span>Portal
             </Link>
 
             {/* Mobile Hamburger Button */}

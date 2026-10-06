@@ -23,6 +23,10 @@ import {
   CheckIcon,
   ChevronRightIcon,
   FileTextIcon,
+  XIcon,
+  MenuIcon,
+  HomeIcon,
+  BuildingIcon,
 } from '@/components/icons/AppIcons'
 
 interface JobPosition {
@@ -204,6 +208,7 @@ const OPEN_POSITIONS: JobPosition[] = [
 ]
 
 export function CareersPage() {
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [selectedPosition, setSelectedPosition] = useState<string>('pos-igcse-stem')
   const [applicationSubmitted, setApplicationSubmitted] = useState(false)
   const [appData, setAppData] = useState({
@@ -249,19 +254,20 @@ export function CareersPage() {
   }
 
   return (
-    <div style={{ minHeight: '100vh', background: '#0b1120', color: '#f8fafc', fontFamily: 'system-ui, -apple-system, sans-serif' }}>
+    <div style={{ minHeight: '100vh', background: '#0b1120', color: '#f8fafc', fontFamily: 'system-ui, -apple-system, sans-serif', width: '100%', maxWidth: '100vw', overflowX: 'hidden' }}>
       {/* Header Navigation */}
-      <header style={{ borderBottom: '1px solid rgba(255, 255, 255, 0.08)', background: 'rgba(11, 17, 32, 0.95)', backdropFilter: 'blur(12px)', position: 'sticky', top: 0, zIndex: 50 }}>
-        <div style={{ maxWidth: '1280px', margin: '0 auto', padding: '0.85rem 1.5rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-          <Link to="/" style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', textDecoration: 'none', color: '#ffffff' }}>
-            <img src="/logo.png" alt="Éclat Institute Logo" style={{ width: '40px', height: '40px', borderRadius: '50%', border: '2px solid #3b82f6' }} />
-            <div>
-              <span style={{ fontSize: '1.15rem', fontWeight: 900, letterSpacing: '0.04em', color: '#ffffff', display: 'block' }}>ÉCLAT INSTITUTE</span>
-              <span style={{ fontSize: '0.7rem', color: '#38bdf8', fontWeight: 700, letterSpacing: '0.08em' }}>ACADEMIC FACULTY & CAREERS</span>
+      <header style={{ borderBottom: '1px solid rgba(255, 255, 255, 0.08)', background: 'rgba(11, 17, 32, 0.95)', backdropFilter: 'blur(12px)', position: 'sticky', top: 0, zIndex: 50, width: '100%', maxWidth: '100vw', boxSizing: 'border-box' }}>
+        <div style={{ maxWidth: '1280px', margin: '0 auto', padding: '0.75rem 1rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+          <Link to="/" style={{ display: 'flex', alignItems: 'center', gap: '0.65rem', textDecoration: 'none', color: '#ffffff', minWidth: 0 }}>
+            <img src="/logo.png" alt="Éclat Institute Logo" style={{ width: '38px', height: '38px', borderRadius: '50%', border: '2px solid #3b82f6', flexShrink: 0 }} />
+            <div style={{ minWidth: 0, overflow: 'hidden' }}>
+              <span style={{ fontSize: '1.1rem', fontWeight: 900, letterSpacing: '0.04em', color: '#ffffff', display: 'block', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>ÉCLAT INSTITUTE</span>
+              <span className="hidden sm:block" style={{ fontSize: '0.68rem', color: '#38bdf8', fontWeight: 700, letterSpacing: '0.08em', whiteSpace: 'nowrap' }}>ACADEMIC FACULTY & CAREERS</span>
             </div>
           </Link>
 
-          <nav style={{ display: 'flex', alignItems: 'center', gap: '1.25rem' }}>
+          {/* Desktop Navigation */}
+          <nav className="hidden md:flex" style={{ display: 'flex', alignItems: 'center', gap: '1.25rem' }}>
             <Link to="/" style={{ color: '#94a3b8', textDecoration: 'none', fontSize: '0.9rem', fontWeight: 600 }}>Home</Link>
             <Link to="/courses" style={{ color: '#94a3b8', textDecoration: 'none', fontSize: '0.9rem', fontWeight: 600 }}>Courses</Link>
             <Link to="/hire" style={{ color: '#94a3b8', textDecoration: 'none', fontSize: '0.9rem', fontWeight: 600 }}>Hire Us</Link>
@@ -282,15 +288,151 @@ export function CareersPage() {
               Apply as Teacher
             </a>
           </nav>
+
+          {/* Mobile Actions & Hamburger Button */}
+          <div className="flex md:hidden" style={{ alignItems: 'center', gap: '0.5rem' }}>
+            <a
+              href="#apply-form"
+              style={{
+                background: '#16a34a',
+                color: '#ffffff',
+                textDecoration: 'none',
+                padding: '0.4rem 0.75rem',
+                borderRadius: '8px',
+                fontSize: '0.75rem',
+                fontWeight: 700,
+                whiteSpace: 'nowrap',
+              }}
+            >
+              Apply
+            </a>
+            <button
+              type="button"
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              style={{
+                background: mobileMenuOpen ? '#1e293b' : '#0f172a',
+                color: '#ffffff',
+                border: '1.5px solid #334155',
+                width: '38px',
+                height: '38px',
+                borderRadius: '8px',
+                cursor: 'pointer',
+                display: 'inline-flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                flexShrink: 0,
+              }}
+              aria-label={mobileMenuOpen ? 'Close Navigation Menu' : 'Open Navigation Menu'}
+            >
+              {mobileMenuOpen ? <XIcon size={18} color="#ffffff" /> : <MenuIcon size={18} color="#ffffff" />}
+            </button>
+          </div>
         </div>
+
+        {/* Mobile Slide-Over Navigation Drawer Backdrop */}
+        {mobileMenuOpen && (
+          <div
+            onClick={() => setMobileMenuOpen(false)}
+            style={{
+              position: 'fixed',
+              top: 0,
+              left: 0,
+              right: 0,
+              bottom: 0,
+              background: 'rgba(5, 8, 15, 0.75)',
+              backdropFilter: 'blur(6px)',
+              zIndex: 9998,
+            }}
+          />
+        )}
+
+        {/* Mobile Slide-Over Drawer Panel */}
+        {mobileMenuOpen && (
+          <div
+            style={{
+              position: 'fixed',
+              top: 0,
+              right: 0,
+              bottom: 0,
+              width: 'min(300px, 85vw)',
+              background: '#0b1120',
+              borderLeft: '1px solid #1e293b',
+              boxShadow: '-10px 0 40px rgba(0, 0, 0, 0.5)',
+              zIndex: 9999,
+              display: 'flex',
+              flexDirection: 'column',
+              animation: 'slideInRight 0.25s cubic-bezier(0.16, 1, 0.3, 1)',
+            }}
+          >
+            <div style={{ padding: '1rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: '1px solid #1e293b' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <img src="/logo.png" alt="Éclat Logo" style={{ width: '32px', height: '32px', borderRadius: '50%', border: '1.5px solid #3b82f6' }} />
+                <div>
+                  <div style={{ fontSize: '0.95rem', fontWeight: 900, color: '#ffffff' }}>ÉCLAT INSTITUTE</div>
+                  <div style={{ fontSize: '0.62rem', color: '#38bdf8', fontWeight: 700 }}>ACADEMIC FACULTY</div>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => setMobileMenuOpen(false)}
+                style={{ background: '#1e293b', border: '1px solid #334155', color: '#ffffff', width: '32px', height: '32px', borderRadius: '8px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                aria-label="Close menu"
+              >
+                <XIcon size={18} color="#ffffff" />
+              </button>
+            </div>
+
+            <div style={{ flex: 1, padding: '1rem', display: 'flex', flexDirection: 'column', gap: '0.5rem', overflowY: 'auto' }}>
+              <Link to="/" onClick={() => setMobileMenuOpen(false)} style={{ color: '#f8fafc', textDecoration: 'none', padding: '0.65rem 0.85rem', borderRadius: '8px', display: 'flex', alignItems: 'center', gap: '10px', fontSize: '0.9rem', fontWeight: 600, background: '#131d31' }}>
+                <HomeIcon size={16} color="#34d399" />
+                <span>Home</span>
+              </Link>
+              <Link to="/courses" onClick={() => setMobileMenuOpen(false)} style={{ color: '#f8fafc', textDecoration: 'none', padding: '0.65rem 0.85rem', borderRadius: '8px', display: 'flex', alignItems: 'center', gap: '10px', fontSize: '0.9rem', fontWeight: 600, background: '#131d31' }}>
+                <BookOpenIcon size={16} color="#34d399" />
+                <span>Courses & Programs</span>
+              </Link>
+              <Link to="/careers" onClick={() => setMobileMenuOpen(false)} style={{ color: '#34d399', textDecoration: 'none', padding: '0.65rem 0.85rem', borderRadius: '8px', display: 'flex', alignItems: 'center', gap: '10px', fontSize: '0.9rem', fontWeight: 700, background: '#1e293b' }}>
+                <GraduationCapIcon size={16} color="#34d399" />
+                <span>Careers & Teaching</span>
+              </Link>
+              <Link to="/hire" onClick={() => setMobileMenuOpen(false)} style={{ color: '#f8fafc', textDecoration: 'none', padding: '0.65rem 0.85rem', borderRadius: '8px', display: 'flex', alignItems: 'center', gap: '10px', fontSize: '0.9rem', fontWeight: 600, background: '#131d31' }}>
+                <BriefcaseIcon size={16} color="#34d399" />
+                <span>Hire Us (Services)</span>
+              </Link>
+              <Link to="/about" onClick={() => setMobileMenuOpen(false)} style={{ color: '#f8fafc', textDecoration: 'none', padding: '0.65rem 0.85rem', borderRadius: '8px', display: 'flex', alignItems: 'center', gap: '10px', fontSize: '0.9rem', fontWeight: 600, background: '#131d31' }}>
+                <BuildingIcon size={16} color="#34d399" />
+                <span>About Us</span>
+              </Link>
+
+              <div style={{ marginTop: 'auto', paddingTop: '1rem', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                <a
+                  href="#apply-form"
+                  onClick={() => setMobileMenuOpen(false)}
+                  style={{ background: '#16a34a', color: '#ffffff', textDecoration: 'none', padding: '0.75rem', borderRadius: '8px', textAlign: 'center', fontWeight: 800, fontSize: '0.88rem' }}
+                >
+                  Apply as Teacher
+                </a>
+                <a
+                  href={`https://wa.me/${INSTITUTION_CONFIG.contact.phone.replace(/[^0-9]/g, '')}?text=Hello%20Éclat%20Dean!%20I%20am%20interested%20in%20joining%20the%20teaching%20faculty.`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  style={{ background: '#2563eb', color: '#ffffff', textDecoration: 'none', padding: '0.75rem', borderRadius: '8px', textAlign: 'center', fontWeight: 800, fontSize: '0.88rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}
+                >
+                  <MessageCircleIcon size={16} color="#ffffff" />
+                  <span>WhatsApp Dean</span>
+                </a>
+              </div>
+            </div>
+          </div>
+        )}
       </header>
 
       {/* Hero Section */}
       <section style={{ padding: '4.5rem 1.5rem 3.5rem', background: 'radial-gradient(ellipse at top, rgba(16, 185, 129, 0.15), transparent 70%)', textAlign: 'center' }}>
         <div style={{ maxWidth: '960px', margin: '0 auto' }}>
-          <div style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', background: 'rgba(16, 185, 129, 0.12)', border: '1px solid rgba(16, 185, 129, 0.4)', padding: '0.4rem 1rem', borderRadius: '999px', fontSize: '0.82rem', color: '#6ee7b7', fontWeight: 700, marginBottom: '1.5rem' }}>
+          <div style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', background: 'rgba(16, 185, 129, 0.12)', border: '1px solid rgba(16, 185, 129, 0.4)', padding: '0.4rem 1rem', borderRadius: '999px', fontSize: '0.82rem', color: '#6ee7b7', fontWeight: 700, marginBottom: '1.5rem', maxWidth: '100%', flexWrap: 'wrap', textAlign: 'center', lineHeight: 1.35, boxSizing: 'border-box' }}>
             <GraduationCapIcon size={16} color="#34d399" />
-            <span>GLOBAL TEACHING CALL: 2026/2027 ACADEMIC YEAR INTAKE</span>
+            <span style={{ maxWidth: '100%', wordBreak: 'break-word', whiteSpace: 'normal' }}>GLOBAL TEACHING CALL: 2026/2027 ACADEMIC YEAR INTAKE</span>
           </div>
 
           <h1 style={{ fontSize: 'clamp(2.2rem, 5vw, 3.8rem)', fontWeight: 900, lineHeight: 1.15, marginBottom: '1.25rem', letterSpacing: '-0.02em', background: 'linear-gradient(135deg, #ffffff 40%, #a7f3d0)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>

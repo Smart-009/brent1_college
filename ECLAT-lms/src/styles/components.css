@@ -865,31 +865,38 @@ tbody td { padding: var(--space-3) var(--space-4); color: var(--color-text-secon
    NATIVE MOBILE APP BAR & MOBILE SHELL ENHANCEMENTS
    ============================================================ */
 /* Responsive Header Navigation */
-.desktop-nav-links {
+.desktop-nav-links,
+.desktop-nav-container {
   display: flex !important;
   align-items: center;
   gap: 1.5rem;
 }
 
-.landing-mobile-menu-toggle {
+.landing-mobile-menu-toggle,
+.landing-mobile-actions,
+.mobile-nav-container {
   display: none !important;
 }
 
-@media (min-width: 992px) {
-  .mobile-bottom-nav {
+@media (min-width: 1025px) {
+  .landing-mobile-menu-toggle,
+  .landing-mobile-actions,
+  .mobile-nav-container {
     display: none !important;
   }
 }
 
-@media (max-width: 991px) {
-  .desktop-nav-links {
+@media (max-width: 1024px) {
+  .desktop-nav-links,
+  .desktop-nav-container {
     display: none !important;
   }
 
-  .landing-mobile-menu-toggle {
+  .landing-mobile-menu-toggle,
+  .landing-mobile-actions,
+  .mobile-nav-container {
     display: inline-flex !important;
     align-items: center;
-    gap: 6px;
   }
 
   .hide-on-mobile {
