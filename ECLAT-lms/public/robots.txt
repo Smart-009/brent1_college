@@ -2,6 +2,8 @@ User-agent: *
 Allow: /
 Disallow: /admin/
 Disallow: /api/
+Disallow: /privacy-policy
+Disallow: /privacy
 
 # AI Search Engine & Large Language Model Crawlers
 User-agent: Google-Extended

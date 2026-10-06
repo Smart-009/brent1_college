@@ -1,8 +1,24 @@
-﻿import { useNavigate } from 'react-router-dom'
+import { useEffect } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { INSTITUTION_CONFIG } from '@/config/institution'
 
 export function PrivacyPolicy() {
   const navigate = useNavigate()
+
+  useEffect(() => {
+    document.title = `Privacy Policy & Legal Compliance — ${INSTITUTION_CONFIG.name}`
+    let metaRobots = document.querySelector('meta[name="robots"]')
+    const originalRobots = metaRobots?.getAttribute('content') || 'index, follow'
+    if (metaRobots) {
+      metaRobots.setAttribute('content', 'noindex, follow')
+    }
+    return () => {
+      document.title = `${INSTITUTION_CONFIG.name} — 100% Online Virtual Campus | Business, IT & Data Science, Language, IGCSE`
+      if (metaRobots) {
+        metaRobots.setAttribute('content', originalRobots)
+      }
+    }
+  }, [])
 
   return (
     <div style={{ minHeight: '100vh', background: '#f8fafc', color: '#0f172a', fontFamily: 'Inter, system-ui, -apple-system, sans-serif' }}>

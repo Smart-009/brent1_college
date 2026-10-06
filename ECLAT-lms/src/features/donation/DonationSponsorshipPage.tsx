@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { initializePaystackCheckout } from '@/lib/paystack'
 import { INSTITUTION_CONFIG, getWhatsAppInquiryUrl } from '@/config/institution'
@@ -21,6 +21,10 @@ import {
 } from '@/components/icons/AppIcons'
 
 export function DonationSponsorshipPage() {
+  useEffect(() => {
+    document.title = `Sponsor a Student & Education Grants — ${INSTITUTION_CONFIG.name} Foundation`
+    window.scrollTo({ top: 0, behavior: 'smooth' })
+  }, [])
   const [donorName, setDonorName] = useState('')
   const [donorEmail, setDonorEmail] = useState('')
   const [donorPhone, setDonorPhone] = useState('')
