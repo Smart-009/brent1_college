@@ -11,6 +11,7 @@ import { INSTITUTION_CONFIG, getWhatsAppInquiryUrl } from '@/config/institution'
 import { OFFICIAL_COURSES, getDynamicCoursesList } from '@/config/officialCourses'
 import { IntakeAdvertsSection } from './IntakeAdvertsSection'
 import { CertificateGenerator, CertificateData, SAMPLE_CERTIFICATES } from '@/components/shared/CertificateGenerator'
+import { initializePaystackCheckout } from '@/lib/paystack'
 import type { Role } from '@/lib/database.types'
 import {
   HomeIcon,
@@ -685,12 +686,6 @@ export function Landing() {
   const [checkoutStep, setCheckoutStep] = useState<'details' | 'payment' | 'receipt'>('details')
   const [checkoutPaymentPlan, setCheckoutPaymentPlan] = useState<'full' | 'installment'>('full')
   const [checkoutPaymentMode, setCheckoutPaymentMode] = useState<'card' | 'paybill' | 'kcb_wire'>('card')
-  const [cardForm, setCardForm] = useState({
-    cardNumber: '',
-    cardExpiry: '',
-    cardCvv: '',
-    cardHolder: '',
-  })
   const [checkoutRefCode, setCheckoutRefCode] = useState('')
   const [generatedAdmission, setGeneratedAdmission] = useState<{
     studentName: string
@@ -703,6 +698,7 @@ export function Landing() {
     paymentMode: string
     referenceCode: string
     date: string
+    isPendingVerification?: boolean
   } | null>(null)
 
   const filteredCourses = useMemo(() => {
@@ -740,7 +736,6 @@ export function Landing() {
       showToast('Please provide your full name and phone number to proceed.')
       return
     }
-    setCardForm((prev) => ({ ...prev, cardHolder: prev.cardHolder || inquiryForm.name }))
     setCheckoutStep('payment')
   }
 
@@ -754,103 +749,131 @@ export function Landing() {
 
     const admNo = `EI-${new Date().getFullYear()}-${Math.floor(1000 + Math.random() * 9000)}`
     const recNo = `EI-REC-${Math.random().toString(36).substring(2, 8).toUpperCase()}`
-    const refCode =
-      checkoutPaymentMode === 'card'
-        ? `CARD-${Math.random().toString(36).substring(2, 8).toUpperCase()}`
-        : checkoutRefCode.trim() ||
-          (checkoutPaymentMode === 'paybill'
-            ? `MPESA-${Math.random().toString(36).substring(2, 8).toUpperCase()}`
-            : `KCB-DEP-${Math.random().toString(36).substring(2, 8).toUpperCase()}`)
-
-    const modeLabel =
-      checkoutPaymentMode === 'card'
-        ? 'Debit / Credit Card (Visa / Mastercard)'
-        : checkoutPaymentMode === 'paybill'
-        ? `M-Pesa Paybill (${INSTITUTION_CONFIG.bank.paybillNumber} / ${INSTITUTION_CONFIG.bank.accountNumber})`
-        : `${INSTITUTION_CONFIG.bank.name} Direct Wire (${INSTITUTION_CONFIG.bank.accountNumber})`
-
     const todayDate = new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })
 
-    // 1. Record inquiry
-    await schoolStore.addInquiry({
-      id: `inq-${Date.now()}`,
-      visitor_name: inquiryForm.name,
-      phone: inquiryForm.phone,
-      email: inquiryForm.email,
-      purpose: 'New Admission Inquiry',
-      program_of_interest: inquiryForm.course,
-      notes: `Shift: ${inquiryForm.preferredShift}. Plan: ${checkoutPaymentPlan} ($${amountToPay}). Mode: ${modeLabel}. Ref: ${refCode}`,
-      date: todayDate,
-      recorded_by: 'Online Admissions & Payment Desk',
-      created_at: new Date().toISOString(),
-      status: 'Open',
-    })
+    const processFinalize = async (verifiedRef: string, modeLabel: string, isPending: boolean) => {
+      const activeRecNo = isPending
+        ? `EI-ACK-${Math.random().toString(36).substring(2, 8).toUpperCase()}`
+        : recNo
 
-    // 2. Add enrolled student
-    await schoolStore.addStudent({
-      id: `std-${Date.now()}`,
-      admission_number: admNo,
-      full_name: inquiryForm.name,
-      gender: 'Male',
-      dob: '2000-01-01',
-      class_id: selectedCourseObj.id,
-      class_name: selectedCourseObj.title,
-      grade_level: 'Professional Certificate',
-      stream: '100% Online Cohort',
-      enrollment_date: todayDate,
-      admission_date: todayDate,
-      status: 'Active',
-      guardian: {
-        name: inquiryForm.name,
-        relationship: 'Guardian',
+      // 1. Record inquiry
+      await schoolStore.addInquiry({
+        id: `inq-${Date.now()}`,
+        visitor_name: inquiryForm.name,
         phone: inquiryForm.phone,
-        email: inquiryForm.email || `${inquiryForm.name.toLowerCase().replace(/\s+/g, '')}@student.${INSTITUTION_CONFIG.domain}`,
-      },
-      parent_phone: inquiryForm.phone,
-      emergency_contact: inquiryForm.phone,
-      fee_balance: balanceRemaining,
-      term_fee_total: fullFeeNum,
-      fee_cleared: balanceRemaining === 0,
-      attendance_rate: 0,
-      discipline_points: 100,
-      merits_count: 0,
-      demerits_count: 0,
-    })
+        email: inquiryForm.email,
+        purpose: 'New Admission Inquiry',
+        program_of_interest: inquiryForm.course,
+        notes: `Shift: ${inquiryForm.preferredShift}. Plan: ${checkoutPaymentPlan} ($${amountToPay}). Mode: ${modeLabel}. Ref: ${verifiedRef} [${isPending ? 'Pending Bursar Verification' : 'Paystack Verified Instant'}]`,
+        date: todayDate,
+        recorded_by: isPending ? 'Offline Admissions Desk' : 'Paystack Automated Gateway',
+        created_at: new Date().toISOString(),
+        status: 'Open',
+      })
 
-    // 3. Add receipt & credit account
-    await schoolStore.recordPayment({
-      id: `rcpt-${Date.now()}`,
-      receipt_number: recNo,
-      student_id: admNo,
-      student_name: inquiryForm.name,
-      admission_number: admNo,
-      amount: amountToPay,
-      amount_paid: amountToPay,
-      payment_method: checkoutPaymentMode === 'card' ? 'Card' : checkoutPaymentMode === 'paybill' ? 'Paybill' : 'Bank Transfer',
-      reference_code: refCode,
-      payment_date: todayDate,
-      paid_by: inquiryForm.name,
-      recorded_by: 'Online Admissions & Payment Gateway',
-      balance_after: balanceRemaining,
-      balance_remaining: balanceRemaining,
-    })
+      // 2. Add enrolled student
+      await schoolStore.addStudent({
+        id: `std-${Date.now()}`,
+        admission_number: admNo,
+        full_name: inquiryForm.name,
+        gender: 'Male',
+        dob: '2000-01-01',
+        class_id: selectedCourseObj.id,
+        class_name: selectedCourseObj.title,
+        grade_level: 'Professional Certificate',
+        stream: '100% Online Cohort',
+        enrollment_date: todayDate,
+        admission_date: todayDate,
+        status: 'Active',
+        guardian: {
+          name: inquiryForm.name,
+          relationship: 'Guardian',
+          phone: inquiryForm.phone,
+          email: inquiryForm.email || `${inquiryForm.name.toLowerCase().replace(/\s+/g, '')}@student.${INSTITUTION_CONFIG.domain}`,
+        },
+        parent_phone: inquiryForm.phone,
+        emergency_contact: inquiryForm.phone,
+        fee_balance: balanceRemaining,
+        term_fee_total: fullFeeNum,
+        fee_cleared: isPending ? false : (balanceRemaining === 0),
+        attendance_rate: 0,
+        discipline_points: 100,
+        merits_count: 0,
+        demerits_count: 0,
+      })
 
-    // 4. Set generated admission pass
-    setGeneratedAdmission({
-      studentName: inquiryForm.name,
-      admissionNumber: admNo,
-      receiptNumber: recNo,
-      courseTitle: selectedCourseObj.title,
-      amountPaid: amountToPay,
-      totalFee: fullFeeNum,
-      balanceRemaining,
-      paymentMode: modeLabel,
-      referenceCode: refCode,
-      date: todayDate,
-    })
+      // 3. Add verified or provisional payment record
+      await schoolStore.recordPayment({
+        id: `rcpt-${Date.now()}`,
+        receipt_number: activeRecNo,
+        student_id: admNo,
+        student_name: inquiryForm.name,
+        admission_number: admNo,
+        amount: amountToPay,
+        amount_paid: amountToPay,
+        payment_method: isPending ? (checkoutPaymentMode === 'paybill' ? 'Paybill' : 'Bank Transfer') : 'Card',
+        reference_code: verifiedRef,
+        payment_date: todayDate,
+        paid_by: inquiryForm.name,
+        recorded_by: isPending ? 'Bursar Reconciliation Desk (Pending Verification)' : 'Paystack Automated Gateway',
+        balance_after: balanceRemaining,
+        balance_remaining: balanceRemaining,
+      })
 
-    setCheckoutStep('receipt')
-    showToast(`Tuition verified! Welcome to Éclat Institute, ${inquiryForm.name}!`)
+      // 4. Set generated admission pass
+      setGeneratedAdmission({
+        studentName: inquiryForm.name,
+        admissionNumber: admNo,
+        receiptNumber: activeRecNo,
+        courseTitle: selectedCourseObj.title,
+        amountPaid: amountToPay,
+        totalFee: fullFeeNum,
+        balanceRemaining,
+        paymentMode: modeLabel,
+        referenceCode: verifiedRef,
+        date: todayDate,
+        isPendingVerification: isPending,
+      })
+
+      setCheckoutStep('receipt')
+      showToast(
+        isPending
+          ? 'Payment details submitted for Bursar verification!'
+          : `Payment verified! Welcome to Éclat Institute, ${inquiryForm.name}!`
+      )
+    }
+
+    if (checkoutPaymentMode === 'card') {
+      // Trigger real Paystack inline checkout modal!
+      initializePaystackCheckout({
+        email: inquiryForm.email || 'admissions@eclat.institute',
+        amount: amountToPay,
+        currency: 'KES',
+        studentName: inquiryForm.name,
+        admissionNumber: admNo,
+        purpose: `Course Enrollment Tuition - ${selectedCourseObj.title}`,
+        invoiceId: `INV-${admNo}`,
+        onSuccess: (reference) => {
+          processFinalize(`PAYSTACK-${reference}`, 'Paystack Verified (M-Pesa / Card)', false)
+        },
+        onClose: () => {
+          showToast('Payment cancelled or closed. You can proceed with Paystack whenever ready.')
+        },
+      })
+      return
+    }
+
+    // Otherwise manual offline reference (Paybill / Wire)
+    if (!checkoutRefCode.trim()) {
+      showToast('Please enter your transaction reference code from your bank slip or M-Pesa SMS.')
+      return
+    }
+
+    const manualModeLabel = checkoutPaymentMode === 'paybill'
+      ? `M-Pesa Paybill (${INSTITUTION_CONFIG.bank.paybillNumber} / ${INSTITUTION_CONFIG.bank.accountNumber})`
+      : `${INSTITUTION_CONFIG.bank.name} Direct Wire (${INSTITUTION_CONFIG.bank.accountNumber})`
+
+    processFinalize(checkoutRefCode.trim(), manualModeLabel, true)
   }
 
   const handleVerifyCert = (e: React.FormEvent) => {
@@ -3896,8 +3919,8 @@ export function Landing() {
                             onClick={() => setCheckoutPaymentMode('card')}
                             style={{
                               padding: '0.65rem 0.5rem',
-                              border: `1.5px solid ${checkoutPaymentMode === 'card' ? '#2563eb' : '#cbd5e1'}`,
-                              background: checkoutPaymentMode === 'card' ? '#1e3a8a' : '#ffffff',
+                              border: `1.5px solid ${checkoutPaymentMode === 'card' ? '#059669' : '#cbd5e1'}`,
+                              background: checkoutPaymentMode === 'card' ? '#064e3b' : '#ffffff',
                               color: checkoutPaymentMode === 'card' ? '#ffffff' : '#1e293b',
                               borderRadius: '8px',
                               fontWeight: 700,
@@ -3906,11 +3929,12 @@ export function Landing() {
                               display: 'flex',
                               flexDirection: 'column',
                               alignItems: 'center',
-                              gap: '6px',
+                              gap: '4px',
                             }}
                           >
                             <CreditCardIcon size={20} color={checkoutPaymentMode === 'card' ? '#ffffff' : '#1e293b'} />
-                            <span>Credit / Debit Card</span>
+                            <span>Paystack (Cards / M-Pesa)</span>
+                            <span style={{ fontSize: '0.62rem', background: checkoutPaymentMode === 'card' ? '#059669' : '#dcfce7', color: checkoutPaymentMode === 'card' ? '#ffffff' : '#166534', padding: '1px 5px', borderRadius: '4px', fontWeight: 800 }}>⚡ Instant Clearance</span>
                           </button>
 
                           <button
@@ -3928,11 +3952,12 @@ export function Landing() {
                               display: 'flex',
                               flexDirection: 'column',
                               alignItems: 'center',
-                              gap: '6px',
+                              gap: '4px',
                             }}
                           >
                             <SmartphoneIcon size={20} color={checkoutPaymentMode === 'paybill' ? '#ffffff' : '#1e293b'} />
-                            <span>M-Pesa Paybill</span>
+                            <span>Manual M-Pesa Paybill</span>
+                            <span style={{ fontSize: '0.62rem', background: checkoutPaymentMode === 'paybill' ? '#2563eb' : '#f1f5f9', color: checkoutPaymentMode === 'paybill' ? '#ffffff' : '#64748b', padding: '1px 5px', borderRadius: '4px' }}>Bursar Verification</span>
                           </button>
 
                           <button
@@ -3950,11 +3975,12 @@ export function Landing() {
                               display: 'flex',
                               flexDirection: 'column',
                               alignItems: 'center',
-                              gap: '6px',
+                              gap: '4px',
                             }}
                           >
                             <BuildingIcon size={20} color={checkoutPaymentMode === 'kcb_wire' ? '#ffffff' : '#1e293b'} />
                             <span>KCB Bank Wire</span>
+                            <span style={{ fontSize: '0.62rem', background: checkoutPaymentMode === 'kcb_wire' ? '#2563eb' : '#f1f5f9', color: checkoutPaymentMode === 'kcb_wire' ? '#ffffff' : '#64748b', padding: '1px 5px', borderRadius: '4px' }}>Bursar Verification</span>
                           </button>
                         </div>
                       </div>
@@ -3962,57 +3988,24 @@ export function Landing() {
                       {/* Payment Mode Specific Body */}
                       <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '10px', padding: '1rem', marginBottom: '1.25rem' }}>
                         {checkoutPaymentMode === 'card' && (
-                          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+                          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', background: '#f0fdf4', border: '1.5px solid #86efac', borderRadius: '10px', padding: '1.1rem' }}>
                             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                              <strong style={{ fontSize: '0.85rem', color: '#1e3a8a', display: 'inline-flex', alignItems: 'center', gap: '6px' }}><CreditCardIcon size={16} color="#1e3a8a" /> Visa / Mastercard Secure Checkout</strong>
-                              <span style={{ fontSize: '0.72rem', color: '#16a34a', fontWeight: 800, display: 'inline-flex', alignItems: 'center', gap: '4px' }}><LockIcon size={13} color="#16a34a" /> 256-Bit SSL Encrypted</span>
+                              <strong style={{ fontSize: '0.9rem', color: '#166534', display: 'inline-flex', alignItems: 'center', gap: '7px' }}>
+                                <ShieldCheckIcon size={18} color="#16a34a" /> Paystack Secured Live Gateway
+                              </strong>
+                              <span style={{ fontSize: '0.72rem', color: '#15803d', fontWeight: 800, display: 'inline-flex', alignItems: 'center', gap: '4px', background: '#dcfce7', padding: '2px 8px', borderRadius: '999px' }}>
+                                <LockIcon size={12} color="#15803d" /> PCI-DSS Level 1 Encrypted
+                              </span>
                             </div>
-                            <div>
-                              <label className="label" style={{ fontSize: '0.78rem' }}>Cardholder Name</label>
-                              <input
-                                type="text"
-                                required
-                                className="input"
-                                placeholder="Name as printed on card"
-                                value={cardForm.cardHolder || inquiryForm.name}
-                                onChange={(e) => setCardForm({ ...cardForm, cardHolder: e.target.value })}
-                              />
-                            </div>
-                            <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr 1fr', gap: '0.5rem' }}>
-                              <div>
-                                <label className="label" style={{ fontSize: '0.78rem' }}>Card Number</label>
-                                <input
-                                  type="text"
-                                  required
-                                  className="input"
-                                  placeholder="4000 1234 5678 9010"
-                                  value={cardForm.cardNumber}
-                                  onChange={(e) => setCardForm({ ...cardForm, cardNumber: e.target.value })}
-                                />
-                              </div>
-                              <div>
-                                <label className="label" style={{ fontSize: '0.78rem' }}>Expiry</label>
-                                <input
-                                  type="text"
-                                  required
-                                  className="input"
-                                  placeholder="MM/YY"
-                                  value={cardForm.cardExpiry}
-                                  onChange={(e) => setCardForm({ ...cardForm, cardExpiry: e.target.value })}
-                                />
-                              </div>
-                              <div>
-                                <label className="label" style={{ fontSize: '0.78rem' }}>CVC / CVV</label>
-                                <input
-                                  type="password"
-                                  maxLength={4}
-                                  required
-                                  className="input"
-                                  placeholder="123"
-                                  value={cardForm.cardCvv}
-                                  onChange={(e) => setCardForm({ ...cardForm, cardCvv: e.target.value })}
-                                />
-                              </div>
+                            <p style={{ margin: 0, fontSize: '0.82rem', color: '#334155', lineHeight: 1.5 }}>
+                              Pay tuition instantly using <strong>M-Pesa Mobile Prompt</strong>, <strong>Visa</strong>, <strong>Mastercard</strong>, or <strong>Apple Pay</strong>.
+                              When you click the green button below, Paystack's official secure checkout modal will launch. 
+                              Your official cleared tuition receipt is <strong>only issued after real bank/M-Pesa authorization</strong>. Fake or unauthenticated attempts are strictly declined.
+                            </p>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flexWrap: 'wrap', paddingTop: '6px', borderTop: '1px solid #bbf7d0', fontSize: '0.74rem', color: '#15803d', fontWeight: 700 }}>
+                              <span>✓ Instant M-Pesa STK push</span>
+                              <span>✓ 3D-Secure card verification</span>
+                              <span>✓ Direct tuition reconciliation</span>
                             </div>
                           </div>
                         )}
@@ -4036,6 +4029,9 @@ export function Landing() {
                                 onChange={(e) => setCheckoutRefCode(e.target.value)}
                               />
                             </div>
+                            <div style={{ marginTop: '0.65rem', background: '#fffbeb', border: '1px solid #fde68a', borderRadius: '6px', padding: '0.5rem 0.75rem', fontSize: '0.74rem', color: '#92400e' }}>
+                              <strong>⚠️ Notice:</strong> Offline payment submissions generate a <em>Provisional Submission Slip</em>. Your official cleared receipt is released after our Bursar verifies funds in our bank account.
+                            </div>
                           </div>
                         )}
 
@@ -4057,18 +4053,41 @@ export function Landing() {
                                 onChange={(e) => setCheckoutRefCode(e.target.value)}
                               />
                             </div>
+                            <div style={{ marginTop: '0.65rem', background: '#fffbeb', border: '1px solid #fde68a', borderRadius: '6px', padding: '0.5rem 0.75rem', fontSize: '0.74rem', color: '#92400e' }}>
+                              <strong>⚠️ Notice:</strong> Offline payment submissions generate a <em>Provisional Submission Slip</em>. Your official cleared receipt is released after our Bursar verifies funds in our bank account.
+                            </div>
                           </div>
                         )}
                       </div>
 
                       {/* Action Buttons */}
-                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderTop: '1px solid #e2e8f0', paddingTop: '1rem' }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderTop: '1px solid #e2e8f0', paddingTop: '1rem', flexWrap: 'wrap', gap: '0.5rem' }}>
                         <button type="button" className="btn btn-secondary btn-sm" onClick={() => setCheckoutStep('details')}>
                           ← Back to Details
                         </button>
-                        <button type="submit" className="btn btn-primary" style={{ fontWeight: 800, padding: '0.5rem 1.25rem' }}>
-                          Authorize & Issue Admission Pass (${selectedAmount} USD) →
-                        </button>
+                        {checkoutPaymentMode === 'card' ? (
+                          <button
+                            type="submit"
+                            className="btn btn-primary"
+                            style={{
+                              fontWeight: 800,
+                              padding: '0.6rem 1.4rem',
+                              background: 'linear-gradient(135deg, #059669 0%, #047857 100%)',
+                              borderColor: '#059669',
+                              display: 'inline-flex',
+                              alignItems: 'center',
+                              gap: '8px',
+                              boxShadow: '0 4px 14px rgba(5, 150, 105, 0.35)',
+                            }}
+                          >
+                            <ShieldCheckIcon size={18} color="#ffffff" />
+                            <span>Pay ${selectedAmount} USD via Paystack (M-Pesa / Card) →</span>
+                          </button>
+                        ) : (
+                          <button type="submit" className="btn btn-primary" style={{ fontWeight: 800, padding: '0.6rem 1.25rem' }}>
+                            Submit Reference for Bursar Verification (${selectedAmount} USD) →
+                          </button>
+                        )}
                       </div>
                     </div>
                   )
@@ -4076,24 +4095,39 @@ export function Landing() {
               </form>
             )}
 
-            {/* STEP 3: OFFICIAL STAMPED DIGITAL RECEIPT */}
+            {/* STEP 3: OFFICIAL STAMPED DIGITAL RECEIPT / PROVISIONAL SLIP */}
             {checkoutStep === 'receipt' && generatedAdmission && (
               <div>
-                <div style={{ background: '#ffffff', border: '2px solid #d4af37', borderRadius: '12px', padding: '1.5rem', boxShadow: '0 4px 12px rgba(0,0,0,0.06)', marginBottom: '1.25rem' }}>
+                <div
+                  style={{
+                    background: '#ffffff',
+                    border: `2px solid ${generatedAdmission.isPendingVerification ? '#f59e0b' : '#d4af37'}`,
+                    borderRadius: '12px',
+                    padding: '1.5rem',
+                    boxShadow: '0 4px 12px rgba(0,0,0,0.06)',
+                    marginBottom: '1.25rem',
+                  }}
+                >
                   {/* Receipt Header */}
-                  <div style={{ textAlign: 'center', borderBottom: '2px solid #1e3a8a', paddingBottom: '0.75rem', marginBottom: '1rem' }}>
-                    <img src="/logo.png" alt={INSTITUTION_CONFIG.name} style={{ width: '48px', height: '48px', borderRadius: '50%', border: '2px solid #d4af37' }} />
+                  <div style={{ textAlign: 'center', borderBottom: `2px solid ${generatedAdmission.isPendingVerification ? '#d97706' : '#1e3a8a'}`, paddingBottom: '0.75rem', marginBottom: '1rem' }}>
+                    <img src="/logo.png" alt={INSTITUTION_CONFIG.name} style={{ width: '48px', height: '48px', borderRadius: '50%', border: `2px solid ${generatedAdmission.isPendingVerification ? '#f59e0b' : '#d4af37'}` }} />
                     <h2 style={{ fontSize: '1.35rem', fontWeight: 900, color: '#1e3a8a', margin: '0.25rem 0 2px', letterSpacing: '0.02em', textTransform: 'uppercase' }}>{INSTITUTION_CONFIG.name}</h2>
                     <div style={{ fontSize: '0.72rem', color: '#64748b', fontWeight: 700 }}>{INSTITUTION_CONFIG.tagline} • {INSTITUTION_CONFIG.domain}</div>
-                    <div style={{ display: 'inline-block', background: '#dcfce7', color: '#166534', padding: '2px 10px', borderRadius: '999px', fontSize: '0.72rem', fontWeight: 800, marginTop: '4px' }}>
-                      OFFICIAL TUITION PAYMENT RECEIPT & ADMISSION PASS (ORIGINAL)
-                    </div>
+                    {generatedAdmission.isPendingVerification ? (
+                      <div style={{ display: 'inline-block', background: '#fef3c7', color: '#92400e', padding: '3px 12px', borderRadius: '999px', fontSize: '0.72rem', fontWeight: 800, marginTop: '5px' }}>
+                        PROVISIONAL TUITION SUBMISSION ACKNOWLEDGEMENT (PENDING BURSAR VERIFICATION)
+                      </div>
+                    ) : (
+                      <div style={{ display: 'inline-block', background: '#dcfce7', color: '#166534', padding: '3px 12px', borderRadius: '999px', fontSize: '0.72rem', fontWeight: 800, marginTop: '5px' }}>
+                        OFFICIAL TUITION PAYMENT RECEIPT & ADMISSION PASS (ORIGINAL)
+                      </div>
+                    )}
                   </div>
 
                   {/* Metadata Grid */}
                   <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem', fontSize: '0.82rem', marginBottom: '1rem', background: '#f8fafc', padding: '0.85rem', borderRadius: '8px', border: '1px solid #e2e8f0' }}>
                     <div>
-                      <div><strong>Receipt #:</strong> <span style={{ color: '#1e3a8a', fontWeight: 800 }}>{generatedAdmission.receiptNumber}</span></div>
+                      <div><strong>{generatedAdmission.isPendingVerification ? 'Submission Slip #:' : 'Receipt #:'}</strong> <span style={{ color: '#1e3a8a', fontWeight: 800 }}>{generatedAdmission.receiptNumber}</span></div>
                       <div><strong>Student Name:</strong> {generatedAdmission.studentName}</div>
                       <div><strong>Admission ID:</strong> <span style={{ fontWeight: 800, color: '#2563eb' }}>{generatedAdmission.admissionNumber}</span></div>
                     </div>
@@ -4105,22 +4139,40 @@ export function Landing() {
                   </div>
 
                   {/* Amount Paid Box */}
-                  <div style={{ background: '#f0fdf4', border: '1px solid #bbf7d0', borderRadius: '8px', padding: '0.85rem 1rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
+                  <div style={{ background: generatedAdmission.isPendingVerification ? '#fffbeb' : '#f0fdf4', border: `1px solid ${generatedAdmission.isPendingVerification ? '#fde68a' : '#bbf7d0'}`, borderRadius: '8px', padding: '0.85rem 1rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
                     <div>
-                      <div style={{ fontSize: '0.72rem', color: '#166534', fontWeight: 800, textTransform: 'uppercase' }}>TUITION AMOUNT PAID:</div>
-                      <div style={{ fontSize: '1.4rem', fontWeight: 900, color: '#16a34a' }}>${generatedAdmission.amountPaid} USD</div>
+                      <div style={{ fontSize: '0.72rem', color: generatedAdmission.isPendingVerification ? '#92400e' : '#166534', fontWeight: 800, textTransform: 'uppercase' }}>
+                        {generatedAdmission.isPendingVerification ? 'SUBMITTED AMOUNT:' : 'TUITION AMOUNT PAID:'}
+                      </div>
+                      <div style={{ fontSize: '1.4rem', fontWeight: 900, color: generatedAdmission.isPendingVerification ? '#d97706' : '#16a34a' }}>
+                        ${generatedAdmission.amountPaid} USD
+                      </div>
                     </div>
                     <div style={{ textAlign: 'right', fontSize: '0.8rem', color: '#475569' }}>
                       <div>Balance Due: <strong>${generatedAdmission.balanceRemaining} USD</strong></div>
-                      <div style={{ color: generatedAdmission.balanceRemaining === 0 ? '#16a34a' : '#ea580c', fontWeight: 800 }}>
-                        {generatedAdmission.balanceRemaining === 0 ? 'STATUS: FULLY CLEARED' : 'STATUS: 1ST INSTALLMENT CLEARED'}
+                      <div style={{ color: generatedAdmission.isPendingVerification ? '#d97706' : generatedAdmission.balanceRemaining === 0 ? '#16a34a' : '#ea580c', fontWeight: 800 }}>
+                        {generatedAdmission.isPendingVerification
+                          ? 'STATUS: PENDING BURSAR RECONCILIATION'
+                          : generatedAdmission.balanceRemaining === 0
+                          ? 'STATUS: FULLY CLEARED'
+                          : 'STATUS: 1ST INSTALLMENT CLEARED'}
                       </div>
                     </div>
                   </div>
 
                   {/* Digital Stamp */}
                   <div style={{ border: '1px dashed #94a3b8', borderRadius: '6px', padding: '0.5rem', textAlign: 'center', fontSize: '0.72rem', color: '#64748b' }}>
-                    <ShieldCheckIcon size={14} color="#16a34a" style={{ marginRight: '5px', verticalAlign: 'middle' }} />Verified Transaction Ref: <code>{generatedAdmission.referenceCode}</code> • {INSTITUTION_CONFIG.name} Directorate of Finance
+                    {generatedAdmission.isPendingVerification ? (
+                      <>
+                        <ClockIcon size={14} color="#d97706" style={{ marginRight: '5px', verticalAlign: 'middle' }} />
+                        Logged Reference Code: <code>{generatedAdmission.referenceCode}</code> • Accounts clearance pending bank statement verification.
+                      </>
+                    ) : (
+                      <>
+                        <ShieldCheckIcon size={14} color="#16a34a" style={{ marginRight: '5px', verticalAlign: 'middle' }} />
+                        Verified Paystack Transaction Ref: <code>{generatedAdmission.referenceCode}</code> • {INSTITUTION_CONFIG.name} Directorate of Finance
+                      </>
+                    )}
                   </div>
                 </div>
 
