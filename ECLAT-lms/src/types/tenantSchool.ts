@@ -16,6 +16,16 @@ export interface AcademicCalendarPeriod {
   fee_deadline?: string
 }
 
+export type SchoolCurriculumType =
+  | 'General Academic & Multi-Disciplinary'
+  | 'National / CBC Curriculum'
+  | 'Vocational & TVET College'
+  | 'STEM & Technology Institute'
+  | 'Business & Professional Academy'
+  | 'British Curriculum (CAIE & Edexcel)'
+  | 'American Curriculum'
+  | 'Custom International'
+
 export interface PartnerSchoolTenant {
   id: string
   name: string // e.g. "Hillcrest British International College"
@@ -27,7 +37,7 @@ export interface PartnerSchoolTenant {
   academic_system: AcademicCalendarSystem // 'term' (Term 1,2,3) vs 'semester' (Semester 1,2)
   academic_calendar: AcademicCalendarPeriod[]
   active_period_name: string // e.g. "Term 1, 2026" or "Semester 2, 2025/2026"
-  curriculum_type: 'British Curriculum (CAIE & Edexcel)' | 'American Curriculum' | 'National / CBC Curriculum' | 'Vocational & TVET College' | 'Custom International'
+  curriculum_type: SchoolCurriculumType | string
   country: string
   city: string
   address: string

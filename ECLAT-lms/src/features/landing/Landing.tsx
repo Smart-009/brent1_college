@@ -1148,17 +1148,13 @@ export function Landing() {
                 >
                   {[
                     { id: 'All', icon: SparklesIcon, label: 'All Online Programs', color: '#f59e0b' },
-                    { id: 'IGCSE & British Curriculum', icon: BritishShieldIcon, label: '🇬🇧 All IGCSE & British Programs', color: '#0284c7' },
-                    { id: 'Home Schooling', icon: BookOpenIcon, label: '🏡 Home Schooling (Years 7-11)', color: '#16a34a' },
-                    { id: 'Tuition & Boosters', icon: SparklesIcon, label: '📚 Private & Evening Tuition', color: '#d97706' },
-                    { id: 'Cambridge International (Years 9-11)', icon: BritishShieldIcon, label: 'Cambridge Assessment (Years 9-11)', color: '#00247D' },
-                    { id: 'Pearson Edexcel International (Years 9-11)', icon: BritishShieldIcon, label: 'Pearson Edexcel International (Years 9-11)', color: '#00247D' },
-                    { id: 'Data Science & Research', icon: DatabaseIcon, label: 'Data Science, R, SPSS & Stata', color: '#10b981' },
                     { id: 'Tech & Programming', icon: CodeIcon, label: 'Tech & Software Engineering', color: '#2563eb' },
-                    { id: 'Creative Arts & Design', icon: PaletteIcon, label: 'Creative Arts & UI/UX Design', color: '#ec4899' },
-                    { id: 'Languages & Communication', icon: GlobeIcon, label: 'World Languages & IELTS', color: '#06b6d4' },
+                    { id: 'Data Science & Research', icon: DatabaseIcon, label: 'Data Science, R, SPSS & Stata', color: '#10b981' },
+                    { id: 'Business Tech & Accounting', icon: CalculatorIcon, label: 'QuickBooks & Business Tech', color: '#059669' },
                     { id: 'Computer & Digital Skills', icon: LaptopIcon, label: 'Digital Literacy & Office Skills', color: '#6366f1' },
-                    { id: 'Business Tech & Accounting', icon: CalculatorIcon, label: 'QuickBooks & Tax Accounting', color: '#059669' },
+                    { id: 'Languages & Communication', icon: GlobeIcon, label: 'World Languages & IELTS', color: '#06b6d4' },
+                    { id: 'Creative Arts & Design', icon: PaletteIcon, label: 'Creative Arts & UI/UX Design', color: '#ec4899' },
+                    { id: 'IGCSE & British Curriculum', icon: BritishShieldIcon, label: '🇬🇧 British Curriculum (Cambridge & Edexcel)', color: '#00247D' },
                   ].map((cat) => {
                     const CatIcon = cat.icon
                     return (
@@ -1247,8 +1243,8 @@ export function Landing() {
                   <span>Intakes</span>
                 </a>
                 <Link to="/courses" style={{ color: '#0284c7', fontWeight: 800, textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: '5px' }}>
-                  <BritishShieldIcon size={15} />
-                  <span>Cambridge IGCSE</span>
+                  <BookOpenIcon size={14} color="#0284c7" />
+                  <span>All Programs</span>
                 </Link>
                 <Link to="/hire" style={{ color: '#2563eb', fontWeight: 800, textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: '5px' }}>
                   <LaptopIcon size={14} color="#2563eb" />
@@ -2286,9 +2282,9 @@ export function Landing() {
               boxSizing: 'border-box',
             }}
           >
-            <BritishShieldIcon size={16} />
+            <SparklesIcon size={16} color="#d4af37" />
             <span style={{ maxWidth: '100%', wordBreak: 'break-word', whiteSpace: 'normal' }}>
-              CAMBRIDGE CAIE &amp; PEARSON EDEXCEL EXAM PATHWAYS (CENTRES KE042 &amp; EDX-98421)
+              100% ONLINE VIRTUAL CAMPUS • TECH, BUSINESS, ACCREDITED PATHWAYS &amp; SCHOOL CLOUD
             </span>
           </div>
 
@@ -2308,7 +2304,7 @@ export function Landing() {
               overflowWrap: 'break-word',
             }}
           >
-            Learn In-Demand Tech, Business Automation &amp; British Curriculum Skills
+            Learn In-Demand Tech, Business Automation &amp; Professional Skills
           </h1>
 
           {/* Refined 2-sentence Subtitle */}
@@ -2323,7 +2319,7 @@ export function Landing() {
               wordBreak: 'break-word',
             }}
           >
-            Explore affordable on-demand video courses and live classes in business automation, POS &amp; accounting systems, data analysis, coding, and British exam series. Learn practical skills or teach and earn 50% revenue share.
+            Explore affordable on-demand video courses and live cohorts in software development, data science, POS accounting, and British examination series. Master career skills, manage your school on our cloud, or teach and earn 50% revenue share.
           </p>
 
           {/* Clean, High-Contrast CTAs */}
@@ -4441,7 +4437,7 @@ export function Landing() {
                 <ArrowRightIcon size={16} />
               </Link>
               <Link
-                to="/s/hillcrest"
+                to="/s/apex-tech"
                 style={{
                   background: 'rgba(255, 255, 255, 0.1)',
                   color: '#ffffff',
@@ -4454,7 +4450,7 @@ export function Landing() {
                   border: '1px solid rgba(255, 255, 255, 0.2)',
                 }}
               >
-                View Live Demo
+                View Demo School Hub
               </Link>
             </div>
           </div>

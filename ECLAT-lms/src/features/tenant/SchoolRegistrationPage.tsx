@@ -39,7 +39,7 @@ export function SchoolRegistrationPage() {
   const [isSlugManual, setIsSlugManual] = useState(false)
   const [motto, setMotto] = useState('')
   const [curriculumType, setCurriculumType] = useState<PartnerSchoolTenant['curriculum_type']>(
-    'British Curriculum (CAIE & Edexcel)'
+    'General Academic & Multi-Disciplinary'
   )
   const [country, setCountry] = useState('Kenya')
   const [city, setCity] = useState('Nairobi')
@@ -622,10 +622,13 @@ export function SchoolRegistrationPage() {
                       background: '#ffffff',
                     }}
                   >
-                    <option value="British Curriculum (CAIE & Edexcel)">British Curriculum (CAIE & Edexcel)</option>
+                    <option value="General Academic & Multi-Disciplinary">General Academic & Multi-Disciplinary (K-12 & Higher Ed)</option>
+                    <option value="National / CBC Curriculum">National / State Curriculum (e.g. CBC / KCSE / WAEC)</option>
+                    <option value="Vocational & TVET College">Vocational, Technical & TVET College</option>
+                    <option value="STEM & Technology Institute">STEM & Technology Academy</option>
+                    <option value="Business & Professional Academy">Business & Professional Academy</option>
+                    <option value="British Curriculum (CAIE & Edexcel)">British Curriculum (Cambridge CAIE & Edexcel)</option>
                     <option value="American Curriculum">American Curriculum (AP / High School)</option>
-                    <option value="National / CBC Curriculum">National / CBC Curriculum</option>
-                    <option value="Vocational & TVET College">Vocational & TVET College</option>
                     <option value="Custom International">Custom International Framework</option>
                   </select>
                 </div>
