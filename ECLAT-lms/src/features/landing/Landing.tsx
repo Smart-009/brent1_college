@@ -2135,8 +2135,8 @@ export function Landing() {
             <Link
               to="/hire"
               style={{
-                background: 'rgba(255, 255, 255, 0.08)',
-                border: '1px solid rgba(255, 255, 255, 0.25)',
+                background: 'rgba(15, 23, 42, 0.75)',
+                border: '1.5px solid rgba(255, 255, 255, 0.35)',
                 color: '#ffffff',
                 fontWeight: 700,
                 padding: '0.85rem 1.75rem',
@@ -2146,6 +2146,8 @@ export function Landing() {
                 display: 'inline-flex',
                 alignItems: 'center',
                 gap: '8px',
+                backdropFilter: 'blur(8px)',
+                boxShadow: '0 4px 14px rgba(0, 0, 0, 0.25)',
               }}
             >
               <LaptopIcon size={16} color="#60a5fa" />
@@ -2155,10 +2157,10 @@ export function Landing() {
             <Link
               to="/careers"
               style={{
-                background: 'rgba(22, 163, 74, 0.15)',
-                border: '1px solid rgba(34, 197, 94, 0.4)',
+                background: 'rgba(22, 163, 74, 0.25)',
+                border: '1.5px solid rgba(74, 222, 128, 0.5)',
                 color: '#4ade80',
-                fontWeight: 700,
+                fontWeight: 800,
                 padding: '0.85rem 1.5rem',
                 fontSize: '0.95rem',
                 borderRadius: '10px',
@@ -2166,6 +2168,8 @@ export function Landing() {
                 display: 'inline-flex',
                 alignItems: 'center',
                 gap: '8px',
+                backdropFilter: 'blur(8px)',
+                boxShadow: '0 4px 14px rgba(0, 0, 0, 0.2)',
               }}
             >
               <GraduationCapIcon size={16} color="#4ade80" />
@@ -3023,20 +3027,21 @@ export function Landing() {
                         )}
                       </div>
 
-                      <div style={{ display: 'flex', gap: '0.4rem' }}>
+                      <div style={{ display: 'flex', gap: '0.5rem' }}>
                         <button
                           type="button"
                           onClick={() => setSelectedCourseForModal(course)}
                           style={{
-                            background: '#ffffff',
-                            border: '1px solid #cbd5e1',
-                            color: '#334155',
-                            borderRadius: '6px',
-                            padding: '0.45rem 0.75rem',
+                            background: '#f8fafc',
+                            border: '1.5px solid #cbd5e1',
+                            color: '#0f172a',
+                            borderRadius: '8px',
+                            padding: '0.45rem 0.85rem',
                             fontSize: '0.78rem',
                             fontWeight: 700,
                             cursor: 'pointer',
                             whiteSpace: 'nowrap',
+                            boxShadow: '0 1px 3px rgba(0, 0, 0, 0.05)',
                           }}
                         >
                           Syllabus
@@ -3046,15 +3051,16 @@ export function Landing() {
                           type="button"
                           onClick={() => handleOpenCourseApplication(course)}
                           style={{
-                            background: '#1e3a8a',
-                            border: '1px solid #1e3a8a',
+                            background: '#1d4ed8',
+                            border: '1.5px solid #1d4ed8',
                             color: '#ffffff',
-                            borderRadius: '6px',
-                            padding: '0.45rem 0.95rem',
+                            borderRadius: '8px',
+                            padding: '0.45rem 1rem',
                             fontSize: '0.78rem',
                             fontWeight: 800,
                             cursor: 'pointer',
                             whiteSpace: 'nowrap',
+                            boxShadow: '0 2px 6px rgba(29, 78, 216, 0.3)',
                           }}
                         >
                           Enroll Now
@@ -3252,7 +3258,7 @@ export function Landing() {
                           </div>
                         </div>
 
-                        <div style={{ display: 'flex', gap: '0.35rem' }}>
+                        <div style={{ display: 'flex', gap: '0.45rem' }}>
                           <button
                             type="button"
                             onClick={(e) => {
@@ -3260,14 +3266,15 @@ export function Landing() {
                               setSelectedCourseForModal(course)
                             }}
                             style={{
-                              background: '#ffffff',
-                              border: '1px solid #cbd5e1',
-                              color: '#334155',
-                              borderRadius: '4px',
-                              padding: '0.35rem 0.55rem',
+                              background: '#f8fafc',
+                              border: '1.5px solid #cbd5e1',
+                              color: '#0f172a',
+                              borderRadius: '6px',
+                              padding: '0.35rem 0.65rem',
                               fontSize: '0.74rem',
                               fontWeight: 700,
                               cursor: 'pointer',
+                              boxShadow: '0 1px 2px rgba(0,0,0,0.05)',
                             }}
                           >
                             Details
@@ -3280,14 +3287,15 @@ export function Landing() {
                               handleOpenCourseApplication(course)
                             }}
                             style={{
-                              background: '#1e3a8a',
-                              border: '1px solid #1e3a8a',
+                              background: '#1d4ed8',
+                              border: '1.5px solid #1d4ed8',
                               color: '#ffffff',
-                              borderRadius: '4px',
-                              padding: '0.35rem 0.75rem',
+                              borderRadius: '6px',
+                              padding: '0.35rem 0.85rem',
                               fontSize: '0.74rem',
                               fontWeight: 800,
                               cursor: 'pointer',
+                              boxShadow: '0 2px 6px rgba(29, 78, 216, 0.3)',
                             }}
                           >
                             Enroll
@@ -3346,14 +3354,15 @@ export function Landing() {
                             onClick={() => handleOpenCourseApplication(course)}
                             style={{
                               width: '100%',
-                              background: '#1e3a8a',
+                              background: '#1d4ed8',
                               color: '#ffffff',
-                              border: 'none',
-                              borderRadius: '6px',
-                              padding: '0.6rem',
+                              border: '1.5px solid #1d4ed8',
+                              borderRadius: '8px',
+                              padding: '0.65rem',
                               fontWeight: 800,
-                              fontSize: '0.84rem',
+                              fontSize: '0.86rem',
                               cursor: 'pointer',
+                              boxShadow: '0 2px 8px rgba(29, 78, 216, 0.3)',
                             }}
                           >
                             Enroll Now — {course.feeUsd ? `$${course.feeUsd}` : (course.feeDisplay || course.fee || 'Inquire')}
@@ -3364,12 +3373,12 @@ export function Landing() {
                             style={{
                               width: '100%',
                               background: '#f8fafc',
-                              color: '#334155',
-                              border: '1px solid #cbd5e1',
-                              borderRadius: '6px',
-                              padding: '0.5rem',
+                              color: '#0f172a',
+                              border: '1.5px solid #cbd5e1',
+                              borderRadius: '8px',
+                              padding: '0.55rem',
                               fontWeight: 700,
-                              fontSize: '0.78rem',
+                              fontSize: '0.8rem',
                               cursor: 'pointer',
                             }}
                           >
@@ -3789,14 +3798,19 @@ export function Landing() {
 
                   <button
                     type="button"
-                    className="btn btn-outline"
+                    className="btn"
                     style={{
-                      fontWeight: 700,
-                      padding: '0.6rem',
+                      fontWeight: 800,
+                      padding: '0.65rem',
                       borderRadius: '8px',
-                      borderColor: 'rgba(255,255,255,0.25)',
+                      border: '1.5px solid rgba(255,255,255,0.45)',
+                      background: 'rgba(255,255,255,0.12)',
                       color: '#ffffff',
-                      fontSize: '0.82rem',
+                      fontSize: '0.84rem',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      cursor: 'pointer',
                     }}
                     onClick={() => handleOpenCourseApplication(selectedCalcCourse)}
                   >
@@ -3885,9 +3899,9 @@ export function Landing() {
                   }}
                   className="btn"
                   style={{
-                    background: 'rgba(255, 255, 255, 0.08)',
+                    background: 'rgba(255, 255, 255, 0.14)',
                     color: '#ffffff',
-                    border: '1px solid rgba(255, 255, 255, 0.2)',
+                    border: '1.5px solid rgba(255, 255, 255, 0.35)',
                     fontWeight: 700,
                     padding: '0.75rem',
                     borderRadius: '12px',
@@ -3898,6 +3912,7 @@ export function Landing() {
                     alignItems: 'center',
                     gap: '8px',
                     fontSize: '0.86rem',
+                    backdropFilter: 'blur(8px)',
                   }}
                 >
                   <SmartphoneIcon size={16} color="#ffffff" />

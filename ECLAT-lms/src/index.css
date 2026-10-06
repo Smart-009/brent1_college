@@ -47,8 +47,10 @@
     color-scheme: only light;
   }
 
-  /* Prevent any browser-injected dark backgrounds on inputs/selects/buttons */
-  html, body, input, textarea, select, button {
+  /* Prevent any browser-injected dark backgrounds on inputs/selects/textareas */
+  input:not([type="button"]):not([type="submit"]):not([type="reset"]),
+  textarea,
+  select {
     background-color: #ffffff !important;
     color: #0f172a !important;
   }

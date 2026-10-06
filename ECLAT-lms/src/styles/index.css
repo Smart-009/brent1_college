@@ -24,7 +24,9 @@ body {
     background-color: #f8fafc !important;
     color: #0f172a !important;
   }
-  input, textarea, select, button {
+  input:not([type="button"]):not([type="submit"]):not([type="reset"]),
+  textarea,
+  select {
     background-color: #ffffff !important;
     color: #0f172a !important;
   }
