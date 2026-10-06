@@ -86,6 +86,7 @@ interface CourseItem {
   careerOutcome: string
   skills: string[]
   icon: string
+  delivery_mode?: 'live_cohort' | 'self_paced'
   popular?: boolean
   bestseller?: boolean
   syllabus?: { week: string; topic: string; practicalLab: string }[]
@@ -99,17 +100,18 @@ const mapProgramToCourseItem = (c: any): CourseItem => ({
   tagColor: c.tagColor,
   duration: c.duration,
   schedule: c.schedule,
-  fee: 'Available upon request',
+  fee: c.feeDisplay || (c.feeUsd ? `$${c.feeUsd}` : 'Available upon request'),
   feeUsd: c.feeUsd,
   feeKes: c.feeKes,
   feeDisplay: c.feeDisplay,
-  originalFee: 'Available upon request',
+  originalFee: c.originalFeeUsd ? `$${c.originalFeeUsd}` : 'Available upon request',
   discountBadge: c.discountBadge,
   rating: c.rating,
   ratingCount: c.ratingCount,
   studentsEnrolled: c.studentsEnrolled,
   instructor: c.instructor,
-  installment: 'Inquire via WhatsApp for official fee details',
+  installment: c.installmentText || 'Flexible payments available via Paystack',
+  delivery_mode: c.delivery_mode,
   careerOutcome: c.careerOutcome,
   skills: c.skills,
   icon: c.icon,
@@ -766,19 +768,26 @@ export function Landing() {
   const handleCompleteEnrollmentAndPayment = async (e: React.FormEvent) => {
     e.preventDefault()
     const selectedCourseObj = coursesList.find((c) => c.title === inquiryForm.course) || coursesList[0]
-    const fullFeeNum = Number(selectedCourseObj?.fee?.replace(/[^0-9]/g, '')) || 75
-    const installmentFeeNum = Math.round(fullFeeNum / 2)
-    const amountToPay = checkoutPaymentPlan === 'full' ? fullFeeNum : installmentFeeNum
-    const balanceRemaining = fullFeeNum - amountToPay
-
+    
     const isLiveCohortCourse =
-      (selectedCourseObj as any)?.delivery_mode === 'live_cohort' ||
+      selectedCourseObj?.delivery_mode === 'live_cohort' ||
       selectedCourseObj?.schedule?.toLowerCase().includes('live') ||
       selectedCourseObj?.title?.toLowerCase().includes('cambridge') ||
       selectedCourseObj?.title?.toLowerCase().includes('diploma') ||
       selectedCourseObj?.title?.toLowerCase().includes('igcse')
 
     const courseDeliveryMode: 'live_cohort' | 'self_paced' = isLiveCohortCourse ? 'live_cohort' : 'self_paced'
+
+    // Dynamically retrieve feeUsd from official registry or admin override (self-paced video courses $19, live cohorts dynamic)
+    const fullFeeNum = typeof selectedCourseObj?.feeUsd === 'number' && selectedCourseObj.feeUsd > 0
+      ? selectedCourseObj.feeUsd
+      : courseDeliveryMode === 'self_paced'
+      ? 19
+      : (Number(selectedCourseObj?.fee?.replace(/[^0-9]/g, '')) || 45)
+
+    const installmentFeeNum = Math.round(fullFeeNum / 2)
+    const amountToPay = checkoutPaymentPlan === 'full' ? fullFeeNum : installmentFeeNum
+    const balanceRemaining = fullFeeNum - amountToPay
 
     // Only live classes should receive a formal matriculated admission number;
     // self-paced learners receive instant access with a learner pass code!
@@ -4618,10 +4627,16 @@ export function Landing() {
                 {/* Course Summary Box */}
                 {(() => {
                   const courseObj = coursesList.find((c) => c.title === inquiryForm.course) || coursesList[0]
-                  const fullAmount = Number(courseObj?.fee?.replace(/[^0-9]/g, '')) || 75
+                  const fullAmount = typeof courseObj?.feeUsd === 'number' && courseObj.feeUsd > 0
+                    ? courseObj.feeUsd
+                    : courseObj?.delivery_mode === 'self_paced'
+                    ? 19
+                    : (Number(courseObj?.fee?.replace(/[^0-9]/g, '')) || 45)
                   const instAmount = Math.round(fullAmount / 2)
                   const selectedAmount = checkoutPaymentPlan === 'full' ? fullAmount : instAmount
                   const remainingBal = fullAmount - selectedAmount
+                  const fullAmountKes = courseObj?.feeKes || Math.round(fullAmount * 130)
+                  const selectedAmountKes = Math.round(selectedAmount * 130)
 
                   return (
                     <div>
@@ -4647,10 +4662,10 @@ export function Landing() {
                                 <span>100% Cleared</span>
                               </span>
                             </div>
-                            <div style={{ fontSize: '0.88rem', fontWeight: 700, color: '#1e3a8a', marginTop: '4px' }}>
-                              Tuition quote provided by Bursar
+                            <div style={{ fontSize: '1rem', fontWeight: 900, color: '#1e3a8a', marginTop: '4px' }}>
+                              ${fullAmount} <span style={{ fontSize: '0.75rem', fontWeight: 600, color: '#64748b' }}>(KES {fullAmountKes.toLocaleString()})</span>
                             </div>
-                            <div style={{ fontSize: '0.74rem', color: '#64748b', marginTop: '2px' }}>Immediate 100% course clearance</div>
+                            <div style={{ fontSize: '0.74rem', color: '#64748b', marginTop: '2px' }}>Immediate 100% course clearance & lifetime access</div>
                           </div>
 
                           <div
@@ -4668,10 +4683,10 @@ export function Landing() {
                               <strong style={{ fontSize: '0.88rem', color: '#1e3a8a' }}>2-Part Installment</strong>
                               <span style={{ fontSize: '0.72rem', background: '#fef3c7', color: '#92400e', padding: '2px 6px', borderRadius: '4px', fontWeight: 800 }}>50% Deposit</span>
                             </div>
-                            <div style={{ fontSize: '0.88rem', fontWeight: 700, color: '#1e3a8a', marginTop: '4px' }}>
-                              50% intake · 50% mid-course
+                            <div style={{ fontSize: '1rem', fontWeight: 900, color: '#1e3a8a', marginTop: '4px' }}>
+                              ${instAmount} <span style={{ fontSize: '0.75rem', fontWeight: 600, color: '#64748b' }}>(KES {Math.round(fullAmountKes / 2).toLocaleString()})</span>
                             </div>
-                            <div style={{ fontSize: '0.74rem', color: '#64748b', marginTop: '2px' }}>Official fee schedule provided at bursar desk</div>
+                            <div style={{ fontSize: '0.74rem', color: '#64748b', marginTop: '2px' }}>50% now · balance before course completion</div>
                           </div>
                         </div>
                       </div>

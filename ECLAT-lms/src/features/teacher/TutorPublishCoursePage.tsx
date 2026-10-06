@@ -438,7 +438,7 @@ export function TutorPublishCoursePage() {
   const [customCategoryName, setCustomCategoryName] = useState<string>('')
   const [programName, setProgramName] = useState<string>('')
   const [storedDepartments, setStoredDepartments] = useState<string[]>([])
-  const [suggestedPriceUsd, setSuggestedPriceUsd] = useState(60)
+  const [suggestedPriceUsd, setSuggestedPriceUsd] = useState(19)
   const [videoUrl, setVideoUrl] = useState('')
   const [courseDescription, setCourseDescription] = useState('')
   const [revenueSplitPct, setRevenueSplitPct] = useState(50)
@@ -996,7 +996,10 @@ export function TutorPublishCoursePage() {
                 <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: '10px' }}>
                   <button
                     type="button"
-                    onClick={() => setDeliveryMode('self_paced')}
+                    onClick={() => {
+                      setDeliveryMode('self_paced')
+                      if (suggestedPriceUsd >= 40) setSuggestedPriceUsd(19)
+                    }}
                     style={{
                       padding: '0.85rem 1rem',
                       borderRadius: '10px',
@@ -1013,13 +1016,16 @@ export function TutorPublishCoursePage() {
                       <span>Self-Paced / On-Demand Video Course</span>
                     </div>
                     <div style={{ fontSize: '0.76rem', color: '#64748b', fontWeight: 500 }}>
-                      Instant streaming unlock upon checkout. No admission hurdles. Verified certificate upon module completion.
+                      Instant streaming unlock upon checkout. Standard accessible student pricing ($15 - $29). Verified certificate.
                     </div>
                   </button>
 
                   <button
                     type="button"
-                    onClick={() => setDeliveryMode('live_cohort')}
+                    onClick={() => {
+                      setDeliveryMode('live_cohort')
+                      if (suggestedPriceUsd < 40) setSuggestedPriceUsd(55)
+                    }}
                     style={{
                       padding: '0.85rem 1rem',
                       borderRadius: '10px',

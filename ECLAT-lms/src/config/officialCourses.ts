@@ -20,6 +20,7 @@ export interface CourseProgram {
   originalFeeUsd: number
   discountBadge: string
   installmentText: string
+  delivery_mode?: 'live_cohort' | 'self_paced'
   instructor: string
   schoolId?: string
   schoolName?: string
@@ -3017,13 +3018,17 @@ export const OFFICIAL_COURSES: CourseProgram[] = [
   },
 ]
 
-export function calculateDynamicFeeFields(feeUsd: number, originalBaseUsd?: number) {
-  const safeUsd = Math.max(1, Number(feeUsd) || 60)
+export function calculateDynamicFeeFields(feeUsd: number, originalBaseUsd?: number, deliveryMode?: 'live_cohort' | 'self_paced') {
+  // Video on-demand / self-paced courses are priced affordably ($15 - $29 standard Udemy range)
+  // Live cohorts with live tutor schedules range from $45 - $95
+  const isVideoCourse = deliveryMode === 'self_paced'
+  const fallbackUsd = isVideoCourse ? 19 : 45
+  const safeUsd = Math.max(1, Number(feeUsd) || fallbackUsd)
   const feeKes = Math.round(safeUsd * 130)
   const feeDisplay = `$${safeUsd} / KES ${feeKes.toLocaleString()}`
   const originalFeeUsd = originalBaseUsd && originalBaseUsd > safeUsd ? originalBaseUsd : Math.round(safeUsd * 2)
   const discountBadge = '50% OFF'
-  const installmentText = safeUsd <= 55
+  const installmentText = safeUsd <= 35
     ? `Single payment of $${safeUsd} (KES ${feeKes.toLocaleString()})`
     : `2 installments of $${Math.ceil(safeUsd / 2)} (KES ${Math.ceil(feeKes / 2).toLocaleString()})`
   return { feeUsd: safeUsd, feeKes, feeDisplay, originalFeeUsd, discountBadge, installmentText }
@@ -3031,7 +3036,7 @@ export function calculateDynamicFeeFields(feeUsd: number, originalBaseUsd?: numb
 
 export function getDynamicCoursesList(
   storeSubjects: Array<{ id: string; code: string; name: string; fee?: number; duration?: string; description?: string; category?: string; icon?: string; badge?: string; careers?: string[]; color_hex?: string; department_id?: string; department_name?: string }> = [],
-  storeUnits: Array<{ id: string; code: string; title: string; fee?: number; course_duration?: string; description?: string; department?: string; program?: string; teacher_name?: string; live_schedule_text?: string; syllabus_modules?: any[] }> = [],
+  storeUnits: Array<{ id: string; code: string; title: string; fee?: number; course_duration?: string; description?: string; department?: string; program?: string; teacher_name?: string; live_schedule_text?: string; syllabus_modules?: any[]; delivery_mode?: 'live_cohort' | 'self_paced' }> = [],
   customFees?: Record<string, number>
 ): CourseProgram[] {
   const activeCustomFees = customFees || (typeof window !== 'undefined' ? (() => {
@@ -3105,19 +3110,29 @@ export function getDynamicCoursesList(
 
     const customOverrideFee = activeCustomFees?.[base.id] ?? (matchedSub?.id ? activeCustomFees?.[matchedSub.id] : undefined) ?? (matchedUnit?.id ? activeCustomFees?.[matchedUnit.id] : undefined)
 
+    const deliveryMode: 'live_cohort' | 'self_paced' = 
+      (matchedUnit as any)?.delivery_mode || 
+      base.delivery_mode || 
+      (base.id.startsWith('c-homeschool') || base.id.startsWith('c-tuition') || base.id.startsWith('c-caie') || base.id.startsWith('c-edx') ? 'live_cohort' : 'self_paced')
+
+    // Video courses are priced affordably ($15 - $29 standard Udemy range)
+    // Live cohorts range from $45 - $95
+    const defaultDynamicBaseUsd = deliveryMode === 'self_paced' ? 19 : base.feeUsd
+
     const liveFeeUsd = (typeof customOverrideFee === 'number' && customOverrideFee >= 0)
       ? customOverrideFee
       : (typeof matchedSub?.fee === 'number' && matchedSub.fee > 0)
       ? matchedSub.fee
       : (typeof matchedUnit?.fee === 'number' && matchedUnit.fee > 0)
       ? matchedUnit.fee
-      : base.feeUsd
+      : defaultDynamicBaseUsd
 
-    const feeCalculations = calculateDynamicFeeFields(liveFeeUsd, base.originalFeeUsd)
+    const feeCalculations = calculateDynamicFeeFields(liveFeeUsd, base.originalFeeUsd, deliveryMode)
 
     programs.push({
       ...base,
       ...feeCalculations,
+      delivery_mode: deliveryMode,
       title: matchedSub?.name || matchedUnit?.title || base.title,
       duration: (matchedSub?.duration || matchedUnit?.course_duration || base.duration).replace(/4\s*Weeks?(\s*\(1\s*Month\))?|1\s*Month|6\s*Weeks?/gi, '8 Weeks (2 Months)'),
       careerOutcome: (matchedSub?.description && !matchedSub.description.startsWith('{')) ? matchedSub.description : base.careerOutcome,
@@ -3129,10 +3144,11 @@ export function getDynamicCoursesList(
   for (const sub of safeStoreSubjects) {
     if (usedSubjectIds.has(sub.id)) continue
     const customOverrideFee = activeCustomFees?.[sub.id]
+    const deliveryMode: 'live_cohort' | 'self_paced' = (sub as any).delivery_mode || 'live_cohort'
     const feeUsd = (typeof customOverrideFee === 'number' && customOverrideFee >= 0)
       ? customOverrideFee
-      : typeof sub.fee === 'number' && sub.fee > 0 ? sub.fee : 60
-    const feeCalculations = calculateDynamicFeeFields(feeUsd)
+      : typeof sub.fee === 'number' && sub.fee > 0 ? sub.fee : (deliveryMode === 'self_paced' ? 19 : 45)
+    const feeCalculations = calculateDynamicFeeFields(feeUsd, undefined, deliveryMode)
     programs.push({
       id: sub.id,
       title: sub.name,
@@ -3144,6 +3160,7 @@ export function getDynamicCoursesList(
       durationWeeks: 12,
       schedule: 'All Shifts: Early Morning, Late Morning, Midday, Afternoon, Evening & Night',
       ...feeCalculations,
+      delivery_mode: deliveryMode,
       instructor: 'Éclat Institute Certified Faculty',
       departmentId: sub.department_id || 'dept-general',
       departmentName: sub.department_name || 'Academic Faculty',
@@ -3170,10 +3187,11 @@ export function getDynamicCoursesList(
   for (const unit of safeStoreUnits) {
     if (usedUnitIds.has(unit.id)) continue
     const customOverrideFee = activeCustomFees?.[unit.id]
+    const deliveryMode: 'live_cohort' | 'self_paced' = unit.delivery_mode || (unit.live_schedule_text ? 'live_cohort' : 'self_paced')
     const feeUsd = (typeof customOverrideFee === 'number' && customOverrideFee >= 0)
       ? customOverrideFee
-      : typeof unit.fee === 'number' && unit.fee > 0 ? unit.fee : 60
-    const feeCalculations = calculateDynamicFeeFields(feeUsd)
+      : typeof unit.fee === 'number' && unit.fee > 0 ? unit.fee : (deliveryMode === 'self_paced' ? 19 : 45)
+    const feeCalculations = calculateDynamicFeeFields(feeUsd, undefined, deliveryMode)
     programs.push({
       id: unit.id,
       title: unit.title,
@@ -3181,15 +3199,16 @@ export function getDynamicCoursesList(
       category: 'Tech & Programming',
       tag: `${unit.program || unit.department || 'Online Course'}`,
       tagColor: '#0f172a',
-      duration: unit.course_duration || '3 Months Certificate',
-      durationWeeks: 12,
-      schedule: unit.live_schedule_text || 'All Shifts: Early Morning, Late Morning, Midday, Afternoon, Evening & Night',
+      duration: unit.course_duration || (deliveryMode === 'self_paced' ? 'Self-Paced (Lifetime Access)' : '8 Weeks Cohort'),
+      durationWeeks: 8,
+      schedule: unit.live_schedule_text || (deliveryMode === 'self_paced' ? 'Self-Paced • Instant Access' : 'All Shifts Available'),
       ...feeCalculations,
+      delivery_mode: deliveryMode,
       instructor: unit.teacher_name || 'Éclat Faculty Specialist',
       departmentId: 'dept-curriculum',
       departmentName: unit.department || 'Department of Technology',
       careerOutcome: (unit.description && !unit.description.startsWith('{')) ? unit.description : 'Certified Online Graduate',
-      skills: unit.syllabus_modules?.flatMap((m) => m.topics) || ['Live Interactive Virtual Classes', 'Verified E-Certificate'],
+      skills: unit.syllabus_modules?.flatMap((m) => m.topics) || ['Video Lectures & Code Alongs', 'Verified E-Certificate'],
       icon: 'palette',
       popular: true,
       rating: 4.9,
