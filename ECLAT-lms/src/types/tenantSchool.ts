@@ -49,6 +49,9 @@ export interface PartnerSchoolTenant {
   principal_name: string
   principal_title: string // e.g. "Principal", "Head of School", "Dean", "Director"
   principal_email: string
+  subscription_tier?: 'starter' | 'growth' | 'enterprise'
+  subscription_monthly_rate?: number // e.g. 29, 59, 99
+  subscription_billing_cycle?: 'monthly' | 'annually'
   stats: {
     students: number
     teachers: number
@@ -69,6 +72,8 @@ export interface PartnerSchoolTenant {
   is_verified: boolean
 }
 
+export type TenantRole = 'admin' | 'principal' | 'teacher' | 'bursar' | 'student' | 'public'
+
 export interface CreateTenantSchoolInput {
   name: string
   slug: string
@@ -87,4 +92,7 @@ export interface CreateTenantSchoolInput {
   principal_title?: string
   principal_email?: string
   custom_domain?: string
+  subscription_tier?: 'starter' | 'growth' | 'enterprise'
+  subscription_monthly_rate?: number
+  subscription_billing_cycle?: 'monthly' | 'annually'
 }

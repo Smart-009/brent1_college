@@ -57,6 +57,10 @@ export function SchoolRegistrationPage() {
   const [contactEmail, setContactEmail] = useState('')
   const [contactPhone, setContactPhone] = useState('')
 
+  // Subscription Plan & Rate
+  const [subscriptionTier, setSubscriptionTier] = useState<'starter' | 'growth' | 'enterprise'>('growth')
+  const [billingCycle, setBillingCycle] = useState<'monthly' | 'annually'>('monthly')
+
   // Validation errors
   const [error, setError] = useState<string | null>(null)
 
@@ -142,6 +146,9 @@ export function SchoolRegistrationPage() {
         principal_name: principalName.trim(),
         principal_title: principalTitle.trim() || 'Principal',
         principal_email: principalEmail.trim() || contactEmail.trim(),
+        subscription_tier: subscriptionTier,
+        subscription_monthly_rate: subscriptionTier === 'starter' ? 29 : subscriptionTier === 'growth' ? 59 : 99,
+        subscription_billing_cycle: billingCycle,
       })
 
       setRegisteredSchool(newSchool)
@@ -197,9 +204,23 @@ export function SchoolRegistrationPage() {
           <h1 style={{ fontSize: '1.85rem', fontWeight: 900, color: '#0f172a', marginBottom: '0.5rem', letterSpacing: '-0.02em' }}>
             {registeredSchool.name} is Live!
           </h1>
-          <p style={{ color: '#64748b', fontSize: '1rem', lineHeight: 1.6, marginBottom: '1.5rem' }}>
+          <p style={{ color: '#64748b', fontSize: '1rem', lineHeight: 1.6, marginBottom: '1.25rem' }}>
             Your institution management ecosystem has been created with custom branding, an official dedicated subdomain, and separate portal URLs for staff and students.
           </p>
+
+          {/* Active Subscription Plan Badge */}
+          <div style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', background: '#eff6ff', border: '1px solid #bfdbfe', borderRadius: '12px', padding: '0.45rem 1rem', marginBottom: '1.5rem', fontSize: '0.84rem' }}>
+            <span style={{ fontWeight: 800, color: '#1d4ed8' }}>
+              💎 {registeredSchool.subscription_tier ? registeredSchool.subscription_tier.toUpperCase() : 'GROWTH'} CAMPUS PLAN
+            </span>
+            <span style={{ color: '#64748b' }}>•</span>
+            <span style={{ fontWeight: 700, color: '#0f172a' }}>
+              ${registeredSchool.subscription_monthly_rate || 59}/month
+            </span>
+            <span style={{ background: '#dcfce7', color: '#15803d', padding: '2px 8px', borderRadius: '999px', fontSize: '0.72rem', fontWeight: 800 }}>
+              14-Day Free Trial Active
+            </span>
+          </div>
 
           {/* Primary Dedicated Subdomain Banner */}
           <div
@@ -1152,6 +1173,175 @@ export function SchoolRegistrationPage() {
                         outline: 'none',
                       }}
                     />
+                  </div>
+                </div>
+
+                {/* Subscription Tier & Monthly Rate Selector */}
+                <div style={{ marginTop: '0.75rem', background: '#f8fafc', padding: '1.25rem', borderRadius: '18px', border: '1px solid #e2e8f0' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '0.5rem', marginBottom: '0.75rem' }}>
+                    <div>
+                      <div style={{ fontSize: '0.74rem', fontWeight: 800, color: '#1d4ed8', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                        💎 Campus Cloud Subscription
+                      </div>
+                      <h4 style={{ margin: '2px 0 0', fontSize: '1.05rem', fontWeight: 800, color: '#0f172a' }}>
+                        Select Monthly Institutional Plan
+                      </h4>
+                    </div>
+
+                    {/* Billing Cycle Toggle */}
+                    <div style={{ display: 'inline-flex', background: '#e2e8f0', padding: '3px', borderRadius: '10px' }}>
+                      <button
+                        type="button"
+                        onClick={() => setBillingCycle('monthly')}
+                        style={{
+                          background: billingCycle === 'monthly' ? '#ffffff' : 'transparent',
+                          color: billingCycle === 'monthly' ? '#0f172a' : '#64748b',
+                          border: 'none',
+                          padding: '0.35rem 0.75rem',
+                          borderRadius: '8px',
+                          fontSize: '0.75rem',
+                          fontWeight: 800,
+                          cursor: 'pointer',
+                          boxShadow: billingCycle === 'monthly' ? '0 1px 3px rgba(0,0,0,0.1)' : 'none',
+                        }}
+                      >
+                        Monthly
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setBillingCycle('annually')}
+                        style={{
+                          background: billingCycle === 'annually' ? '#ffffff' : 'transparent',
+                          color: billingCycle === 'annually' ? '#0f172a' : '#64748b',
+                          border: 'none',
+                          padding: '0.35rem 0.75rem',
+                          borderRadius: '8px',
+                          fontSize: '0.75rem',
+                          fontWeight: 800,
+                          cursor: 'pointer',
+                          boxShadow: billingCycle === 'annually' ? '0 1px 3px rgba(0,0,0,0.1)' : 'none',
+                        }}
+                      >
+                        Annually (Save 17%)
+                      </button>
+                    </div>
+                  </div>
+
+                  <p style={{ fontSize: '0.8rem', color: '#64748b', margin: '0 0 1rem', lineHeight: 1.5 }}>
+                    Affordable institutional pricing designed for schools and academies. Includes <strong>14-day full access free trial</strong> before first billing.
+                  </p>
+
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '0.75rem' }}>
+                    {/* Tier 1: Starter */}
+                    <div
+                      role="button"
+                      tabIndex={0}
+                      onClick={() => setSubscriptionTier('starter')}
+                      onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setSubscriptionTier('starter') } }}
+                      style={{
+                        background: '#ffffff',
+                        border: subscriptionTier === 'starter' ? '2px solid #1d4ed8' : '1px solid #cbd5e1',
+                        borderRadius: '14px',
+                        padding: '1rem',
+                        cursor: 'pointer',
+                        position: 'relative',
+                        boxShadow: subscriptionTier === 'starter' ? '0 4px 12px rgba(29, 78, 216, 0.15)' : 'none',
+                        transition: 'all 0.15s ease',
+                      }}
+                    >
+                      <div style={{ fontSize: '0.76rem', fontWeight: 800, color: '#64748b' }}>STARTER CAMPUS</div>
+                      <div style={{ display: 'flex', alignItems: 'baseline', gap: '4px', margin: '4px 0' }}>
+                        <span style={{ fontSize: '1.45rem', fontWeight: 900, color: '#0f172a' }}>
+                          ${billingCycle === 'monthly' ? '29' : '24'}
+                        </span>
+                        <span style={{ fontSize: '0.75rem', color: '#64748b' }}>/ month</span>
+                      </div>
+                      <div style={{ fontSize: '0.75rem', color: '#16a34a', fontWeight: 700, marginBottom: '0.5rem' }}>
+                        Up to 150 Students
+                      </div>
+                      <ul style={{ margin: 0, paddingLeft: '1rem', fontSize: '0.72rem', color: '#475569', lineHeight: 1.5 }}>
+                        <li>Free [slug].eclat.institute link</li>
+                        <li>4 Role Portals (Admin, Teacher, Bursar, Student)</li>
+                        <li>Report cards &amp; fee receipts</li>
+                      </ul>
+                    </div>
+
+                    {/* Tier 2: Growth (Recommended) */}
+                    <div
+                      role="button"
+                      tabIndex={0}
+                      onClick={() => setSubscriptionTier('growth')}
+                      onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setSubscriptionTier('growth') } }}
+                      style={{
+                        background: subscriptionTier === 'growth' ? '#eff6ff' : '#ffffff',
+                        border: subscriptionTier === 'growth' ? '2px solid #1d4ed8' : '1px solid #cbd5e1',
+                        borderRadius: '14px',
+                        padding: '1rem',
+                        cursor: 'pointer',
+                        position: 'relative',
+                        boxShadow: subscriptionTier === 'growth' ? '0 6px 16px rgba(29, 78, 216, 0.2)' : 'none',
+                        transition: 'all 0.15s ease',
+                      }}
+                    >
+                      <div style={{ position: 'absolute', top: '-9px', right: '12px', background: '#1d4ed8', color: '#ffffff', fontSize: '0.65rem', fontWeight: 800, padding: '2px 8px', borderRadius: '999px', textTransform: 'uppercase' }}>
+                        ★ Most Popular
+                      </div>
+                      <div style={{ fontSize: '0.76rem', fontWeight: 800, color: '#1d4ed8' }}>GROWTH CAMPUS</div>
+                      <div style={{ display: 'flex', alignItems: 'baseline', gap: '4px', margin: '4px 0' }}>
+                        <span style={{ fontSize: '1.45rem', fontWeight: 900, color: '#0f172a' }}>
+                          ${billingCycle === 'monthly' ? '59' : '49'}
+                        </span>
+                        <span style={{ fontSize: '0.75rem', color: '#64748b' }}>/ month</span>
+                      </div>
+                      <div style={{ fontSize: '0.75rem', color: '#16a34a', fontWeight: 700, marginBottom: '0.5rem' }}>
+                        Up to 600 Students
+                      </div>
+                      <ul style={{ margin: 0, paddingLeft: '1rem', fontSize: '0.72rem', color: '#334155', lineHeight: 1.5 }}>
+                        <li>Custom Domain CNAME (BYOD)</li>
+                        <li>Automated fee arrears SMS/WhatsApp</li>
+                        <li>Biometric &amp; shift attendance</li>
+                        <li>Digital Principal seal on reports</li>
+                      </ul>
+                    </div>
+
+                    {/* Tier 3: Enterprise */}
+                    <div
+                      role="button"
+                      tabIndex={0}
+                      onClick={() => setSubscriptionTier('enterprise')}
+                      onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setSubscriptionTier('enterprise') } }}
+                      style={{
+                        background: '#ffffff',
+                        border: subscriptionTier === 'enterprise' ? '2px solid #7c3aed' : '1px solid #cbd5e1',
+                        borderRadius: '14px',
+                        padding: '1rem',
+                        cursor: 'pointer',
+                        position: 'relative',
+                        boxShadow: subscriptionTier === 'enterprise' ? '0 4px 12px rgba(124, 58, 237, 0.15)' : 'none',
+                        transition: 'all 0.15s ease',
+                      }}
+                    >
+                      <div style={{ fontSize: '0.76rem', fontWeight: 800, color: '#7c3aed' }}>ENTERPRISE</div>
+                      <div style={{ display: 'flex', alignItems: 'baseline', gap: '4px', margin: '4px 0' }}>
+                        <span style={{ fontSize: '1.45rem', fontWeight: 900, color: '#0f172a' }}>
+                          ${billingCycle === 'monthly' ? '99' : '82'}
+                        </span>
+                        <span style={{ fontSize: '0.75rem', color: '#64748b' }}>/ month</span>
+                      </div>
+                      <div style={{ fontSize: '0.75rem', color: '#16a34a', fontWeight: 700, marginBottom: '0.5rem' }}>
+                        Unlimited Students
+                      </div>
+                      <ul style={{ margin: 0, paddingLeft: '1rem', fontSize: '0.72rem', color: '#475569', lineHeight: 1.5 }}>
+                        <li>Multi-campus branch management</li>
+                        <li>Branded Android APK App</li>
+                        <li>Custom curricula grading systems</li>
+                        <li>24/7 dedicated support SLA</li>
+                      </ul>
+                    </div>
+                  </div>
+
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.74rem', color: '#059669', fontWeight: 700, marginTop: '0.85rem' }}>
+                    <span>🛡️ 14-Day Free Trial: Test all portals risk-free. Cancel or change tier anytime from the Principal Desk.</span>
                   </div>
                 </div>
 

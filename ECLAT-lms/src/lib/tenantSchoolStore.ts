@@ -66,6 +66,9 @@ const INITIAL_PARTNER_SCHOOLS: PartnerSchoolTenant[] = [
     },
     created_at: '2025-10-15T10:00:00Z',
     is_verified: true,
+    subscription_tier: 'enterprise',
+    subscription_monthly_rate: 99,
+    subscription_billing_cycle: 'monthly',
   },
   {
     id: 'sch_st_jude',
@@ -140,6 +143,9 @@ const INITIAL_PARTNER_SCHOOLS: PartnerSchoolTenant[] = [
     },
     created_at: '2025-11-01T09:00:00Z',
     is_verified: true,
+    subscription_tier: 'growth',
+    subscription_monthly_rate: 59,
+    subscription_billing_cycle: 'monthly',
   },
   {
     id: 'sch_hillcrest',
@@ -214,6 +220,9 @@ const INITIAL_PARTNER_SCHOOLS: PartnerSchoolTenant[] = [
     },
     created_at: '2025-09-01T08:00:00Z',
     is_verified: true,
+    subscription_tier: 'growth',
+    subscription_monthly_rate: 59,
+    subscription_billing_cycle: 'annually',
   },
 ]
 
@@ -397,6 +406,9 @@ class TenantSchoolStore {
       principal_email: input.principal_email?.trim() || input.contact_email.trim(),
       custom_domain: input.custom_domain?.trim() || undefined,
       subdomain: finalSlug,
+      subscription_tier: input.subscription_tier || 'growth',
+      subscription_monthly_rate: input.subscription_monthly_rate || (input.subscription_tier === 'starter' ? 29 : input.subscription_tier === 'enterprise' ? 99 : 59),
+      subscription_billing_cycle: input.subscription_billing_cycle || 'monthly',
       stats: {
         students: 120,
         teachers: 12,
@@ -442,6 +454,19 @@ class TenantSchoolStore {
     this.schools = this.schools.map((s) => (s.id === school.id ? updated : s))
     this.saveSchools()
     return updated
+  }
+
+  public updateSchoolSubscription(
+    slug: string,
+    tier: 'starter' | 'growth' | 'enterprise',
+    monthlyRate: number,
+    billingCycle: 'monthly' | 'annually'
+  ): PartnerSchoolTenant | null {
+    return this.updateSchoolBranding(slug, {
+      subscription_tier: tier,
+      subscription_monthly_rate: monthlyRate,
+      subscription_billing_cycle: billingCycle,
+    })
   }
 }
 

@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useParams, Link, useNavigate, useLocation } from 'react-router-dom'
+import { useAuth } from '@/hooks/useAuth'
 import { tenantSchoolStore } from '@/lib/tenantSchoolStore'
 import { getTenantDomainLinks } from '@/lib/tenantDomain'
 import type { TenantDomainLinks } from '@/lib/tenantDomain'
@@ -31,12 +32,43 @@ export function TenantSchoolHub() {
   const { schoolSlug, subview } = useParams<{ schoolSlug: string; subview?: string }>()
   const navigate = useNavigate()
   const location = useLocation()
+  const { profile } = useAuth()
   const [school, setSchool] = useState<PartnerSchoolTenant | null>(null)
   const [loading, setLoading] = useState(true)
   const [copiedLink, setCopiedLink] = useState<string | null>(null)
   const [showDomainModal, setShowDomainModal] = useState(false)
+  const [showRoleSwitcherModal, setShowRoleSwitcherModal] = useState(false)
+  const [showPricingModal, setShowPricingModal] = useState(false)
   const [customDomainInput, setCustomDomainInput] = useState('')
   const [customDomainMessage, setCustomDomainMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null)
+  const [pricingModalCycle, setPricingModalCycle] = useState<'monthly' | 'annually'>('monthly')
+
+  // LMS-Style Role-Based Scoping
+  // 'admin' = Full Access (Executive Principal)
+  // 'teacher' = Only Class Attendance, Gradebook, Notes
+  // 'bursar' = Only Fees, Invoices, Receipts
+  // 'student' = Only My Lessons, Attendance, Report Card
+  // 'public' = Guest / Visitor
+  const [activeRole, setActiveRole] = useState<'admin' | 'teacher' | 'bursar' | 'student' | 'public'>(() => {
+    if (profile?.role === 'admin') return 'admin'
+    if (profile?.role === 'teacher') return 'teacher'
+    if (profile?.role === 'bursar') return 'bursar'
+    if (profile?.role === 'student') return 'student'
+
+    if (typeof window !== 'undefined' && schoolSlug) {
+      const stored = sessionStorage.getItem(`eclat_school_role_${schoolSlug}`)
+      if (stored === 'admin' || stored === 'teacher' || stored === 'bursar' || stored === 'student' || stored === 'public') {
+        return stored as 'admin' | 'teacher' | 'bursar' | 'student' | 'public'
+      }
+    }
+
+    if (subview === 'student') return 'student'
+    if (subview === 'teacher') return 'teacher'
+    if (subview === 'bursar') return 'bursar'
+    if (subview === 'principal' || subview === 'admin') return 'admin'
+    return 'admin' // Default to admin for full administrative capability
+  })
+
   const [activeTab, setActiveTab] = useState<'hub' | 'calendar' | 'student' | 'teacher' | 'bursar' | 'principal'>(() => {
     if (subview === 'student') return 'student'
     if (subview === 'teacher') return 'teacher'
@@ -67,6 +99,53 @@ export function TenantSchoolHub() {
     else if (subview === 'calendar') setActiveTab('calendar')
     else setActiveTab('hub')
   }, [subview])
+
+  const handleSwitchRole = (newRole: 'admin' | 'teacher' | 'bursar' | 'student' | 'public') => {
+    setActiveRole(newRole)
+    if (typeof window !== 'undefined' && schoolSlug) {
+      sessionStorage.setItem(`eclat_school_role_${schoolSlug}`, newRole)
+    }
+    setShowRoleSwitcherModal(false)
+
+    if (newRole === 'student') {
+      setActiveTab('student')
+      navigate(`/s/${schoolSlug}/student`)
+    } else if (newRole === 'teacher') {
+      setActiveTab('teacher')
+      navigate(`/s/${schoolSlug}/teacher`)
+    } else if (newRole === 'bursar') {
+      setActiveTab('bursar')
+      navigate(`/s/${schoolSlug}/bursar`)
+    } else if (newRole === 'admin') {
+      setActiveTab('principal')
+      navigate(`/s/${schoolSlug}/principal`)
+    } else {
+      setActiveTab('hub')
+      navigate(`/s/${schoolSlug}`)
+    }
+  }
+
+  const handleSelectSubscriptionPlan = (tier: 'starter' | 'growth' | 'enterprise') => {
+    if (!school) return
+    const rate =
+      tier === 'starter'
+        ? pricingModalCycle === 'monthly' ? 29 : 24
+        : tier === 'growth'
+        ? pricingModalCycle === 'monthly' ? 59 : 49
+        : pricingModalCycle === 'monthly' ? 99 : 82
+
+    const updated = tenantSchoolStore.updateSchoolSubscription(
+      school.slug,
+      tier,
+      rate,
+      pricingModalCycle
+    )
+    if (updated) {
+      setSchool(updated)
+      setShowPricingModal(false)
+      alert(`Subscription plan updated: ${school.name} is now on the ${tier.toUpperCase()} Campus Plan ($${rate}/month).`)
+    }
+  }
 
   const copyToClipboard = (urlPath: string, label: string) => {
     const fullUrl = `${window.location.origin}${urlPath}`
@@ -169,6 +248,92 @@ export function TenantSchoolHub() {
   const systemPluralLabel = isSemester ? 'Semesters' : 'Terms'
   const domainLinks = getTenantDomainLinks(school)
 
+  const renderRestrictedCard = (deskName: string, explanation: string, allowedRolesText: string) => (
+    <div style={{ maxWidth: '680px', margin: '2.5rem auto', background: '#ffffff', borderRadius: '24px', padding: '2.5rem 2rem', border: '1px solid #e2e8f0', boxShadow: '0 12px 36px rgba(0,0,0,0.06)', textAlign: 'center' }}>
+      <div style={{ width: '64px', height: '64px', borderRadius: '50%', background: '#fef2f2', color: '#dc2626', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', marginBottom: '1.25rem', fontSize: '1.8rem' }}>
+        🔒
+      </div>
+      <div>
+        <span style={{ display: 'inline-block', background: '#fee2e2', color: '#991b1b', padding: '0.3rem 0.85rem', borderRadius: '999px', fontSize: '0.74rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '0.75rem' }}>
+          LMS Access Restricted
+        </span>
+      </div>
+      <h2 style={{ fontSize: '1.5rem', fontWeight: 900, color: '#0f172a', margin: '0 0 0.5rem' }}>
+        {deskName} is Scoped
+      </h2>
+      <p style={{ color: '#64748b', fontSize: '0.92rem', lineHeight: 1.6, maxWidth: '540px', margin: '0 auto 1.5rem' }}>
+        {explanation}
+      </p>
+
+      <div style={{ background: '#f8fafc', borderRadius: '16px', padding: '1rem 1.25rem', border: '1px solid #e2e8f0', marginBottom: '1.75rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '0.75rem', textAlign: 'left' }}>
+        <div>
+          <div style={{ fontSize: '0.72rem', color: '#64748b', textTransform: 'uppercase', fontWeight: 700 }}>Your Active Portal Role:</div>
+          <div style={{ fontSize: '0.92rem', fontWeight: 800, color: '#0f172a' }}>
+            {activeRole === 'admin' && '👑 Executive Admin (Full Access)'}
+            {activeRole === 'teacher' && '👨‍🏫 Teacher Portal'}
+            {activeRole === 'bursar' && '💼 Bursar Desk'}
+            {activeRole === 'student' && '🎓 Student Portal'}
+            {activeRole === 'public' && '🌐 Public Guest / Visitor'}
+          </div>
+        </div>
+        <div>
+          <div style={{ fontSize: '0.72rem', color: '#64748b', textTransform: 'uppercase', fontWeight: 700 }}>Authorized Access:</div>
+          <div style={{ fontSize: '0.84rem', fontWeight: 800, color: '#1d4ed8' }}>{allowedRolesText}</div>
+        </div>
+      </div>
+
+      <div style={{ display: 'flex', gap: '0.75rem', justifyContent: 'center', flexWrap: 'wrap' }}>
+        <button
+          type="button"
+          onClick={() => setShowRoleSwitcherModal(true)}
+          style={{
+            background: '#1d4ed8',
+            color: '#ffffff',
+            fontWeight: 800,
+            padding: '0.7rem 1.35rem',
+            borderRadius: '12px',
+            border: 'none',
+            cursor: 'pointer',
+            fontSize: '0.85rem',
+            boxShadow: '0 4px 12px rgba(29, 78, 216, 0.2)',
+          }}
+        >
+          ⇄ Switch or Authenticate Portal Role
+        </button>
+        <button
+          type="button"
+          onClick={() => {
+            if (activeRole === 'teacher') {
+              setActiveTab('teacher')
+              navigate(`/s/${school.slug}/teacher`)
+            } else if (activeRole === 'bursar') {
+              setActiveTab('bursar')
+              navigate(`/s/${school.slug}/bursar`)
+            } else if (activeRole === 'student') {
+              setActiveTab('student')
+              navigate(`/s/${school.slug}/student`)
+            } else {
+              setActiveTab('hub')
+              navigate(`/s/${school.slug}`)
+            }
+          }}
+          style={{
+            background: '#f1f5f9',
+            color: '#334155',
+            fontWeight: 700,
+            padding: '0.7rem 1.35rem',
+            borderRadius: '12px',
+            border: '1px solid #cbd5e1',
+            cursor: 'pointer',
+            fontSize: '0.85rem',
+          }}
+        >
+          Return to My Workspace
+        </button>
+      </div>
+    </div>
+  )
+
   return (
     <div style={{ minHeight: '100vh', background: '#f8fafc', color: '#0f172a', fontFamily: 'Inter, system-ui, sans-serif' }}>
       {/* 1. Custom Branded School Top Navigation Bar */}
@@ -215,6 +380,65 @@ export function TenantSchoolHub() {
 
           {/* Right: School Status & Switch Desks */}
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
+            {/* LMS Active Role Badge & Switcher */}
+            <button
+              type="button"
+              onClick={() => setShowRoleSwitcherModal(true)}
+              style={{
+                background:
+                  activeRole === 'admin'
+                    ? '#fef2f2'
+                    : activeRole === 'teacher'
+                    ? '#ecfdf5'
+                    : activeRole === 'bursar'
+                    ? '#fefce8'
+                    : activeRole === 'student'
+                    ? '#eff6ff'
+                    : '#f8fafc',
+                color:
+                  activeRole === 'admin'
+                    ? '#991b1b'
+                    : activeRole === 'teacher'
+                    ? '#065f46'
+                    : activeRole === 'bursar'
+                    ? '#854d0e'
+                    : activeRole === 'student'
+                    ? '#1e40af'
+                    : '#334155',
+                border: `1.5px solid ${
+                  activeRole === 'admin'
+                    ? '#fecaca'
+                    : activeRole === 'teacher'
+                    ? '#a7f3d0'
+                    : activeRole === 'bursar'
+                    ? '#fde047'
+                    : activeRole === 'student'
+                    ? '#bfdbfe'
+                    : '#cbd5e1'
+                }`,
+                borderRadius: '8px',
+                padding: '0.35rem 0.75rem',
+                fontSize: '0.76rem',
+                fontWeight: 800,
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '6px',
+                cursor: 'pointer',
+              }}
+              title="Click to Switch Portal Access Role (Admin, Teacher, Bursar, Student)"
+            >
+              <span>
+                {activeRole === 'admin' && '👑 Executive Admin (Full Access)'}
+                {activeRole === 'teacher' && '👨‍🏫 Teacher Portal Access'}
+                {activeRole === 'bursar' && '💼 Bursar Desk Access'}
+                {activeRole === 'student' && '🎓 Student Portal Access'}
+                {activeRole === 'public' && '🔐 Staff & Student Sign In'}
+              </span>
+              <span style={{ fontSize: '0.68rem', background: 'rgba(0,0,0,0.06)', padding: '1px 5px', borderRadius: '4px' }}>
+                ⇄ Switch
+              </span>
+            </button>
+
             {/* Dedicated Domain & Special Links Trigger */}
             <button
               type="button"
@@ -305,7 +529,7 @@ export function TenantSchoolHub() {
           </div>
         </div>
 
-        {/* School Navigation Sub-Tabs */}
+        {/* School Navigation Sub-Tabs Scoped to Active Role */}
         <div style={{ background: '#f8fafc', borderTop: '1px solid #e2e8f0', padding: '0 1rem' }}>
           <div style={{ maxWidth: '1280px', margin: '0 auto', display: 'flex', gap: '0.25rem', overflowX: 'auto', scrollbarWidth: 'none' }}>
             <button
@@ -342,74 +566,90 @@ export function TenantSchoolHub() {
             >
               🗓️ {systemTermLabel} Calendar &amp; Dates
             </button>
-            <button
-              type="button"
-              onClick={() => { setActiveTab('student'); navigate(`/s/${school.slug}/student`) }}
-              style={{
-                background: 'none',
-                border: 'none',
-                padding: '0.65rem 0.9rem',
-                fontSize: '0.82rem',
-                fontWeight: activeTab === 'student' ? 800 : 600,
-                color: activeTab === 'student' ? primaryColor : '#64748b',
-                borderBottom: activeTab === 'student' ? `2.5px solid ${primaryColor}` : '2.5px solid transparent',
-                cursor: 'pointer',
-                whiteSpace: 'nowrap',
-              }}
-            >
-              🎓 Student Portal
-            </button>
-            <button
-              type="button"
-              onClick={() => { setActiveTab('teacher'); navigate(`/s/${school.slug}/teacher`) }}
-              style={{
-                background: 'none',
-                border: 'none',
-                padding: '0.65rem 0.9rem',
-                fontSize: '0.82rem',
-                fontWeight: activeTab === 'teacher' ? 800 : 600,
-                color: activeTab === 'teacher' ? primaryColor : '#64748b',
-                borderBottom: activeTab === 'teacher' ? `2.5px solid ${primaryColor}` : '2.5px solid transparent',
-                cursor: 'pointer',
-                whiteSpace: 'nowrap',
-              }}
-            >
-              👨‍🏫 Teacher Portal
-            </button>
-            <button
-              type="button"
-              onClick={() => { setActiveTab('bursar'); navigate(`/s/${school.slug}/bursar`) }}
-              style={{
-                background: 'none',
-                border: 'none',
-                padding: '0.65rem 0.9rem',
-                fontSize: '0.82rem',
-                fontWeight: activeTab === 'bursar' ? 800 : 600,
-                color: activeTab === 'bursar' ? primaryColor : '#64748b',
-                borderBottom: activeTab === 'bursar' ? `2.5px solid ${primaryColor}` : '2.5px solid transparent',
-                cursor: 'pointer',
-                whiteSpace: 'nowrap',
-              }}
-            >
-              💼 Bursar &amp; Fees Desk
-            </button>
-            <button
-              type="button"
-              onClick={() => { setActiveTab('principal'); navigate(`/s/${school.slug}/principal`) }}
-              style={{
-                background: 'none',
-                border: 'none',
-                padding: '0.65rem 0.9rem',
-                fontSize: '0.82rem',
-                fontWeight: activeTab === 'principal' ? 800 : 600,
-                color: activeTab === 'principal' ? primaryColor : '#64748b',
-                borderBottom: activeTab === 'principal' ? `2.5px solid ${primaryColor}` : '2.5px solid transparent',
-                cursor: 'pointer',
-                whiteSpace: 'nowrap',
-              }}
-            >
-              🏛️ {school.principal_title} Desk
-            </button>
+
+            {/* Principal Desk: FULL ACCESS ONLY FOR ADMIN */}
+            {activeRole === 'admin' && (
+              <button
+                type="button"
+                onClick={() => { setActiveTab('principal'); navigate(`/s/${school.slug}/principal`) }}
+                style={{
+                  background: 'none',
+                  border: 'none',
+                  padding: '0.65rem 0.9rem',
+                  fontSize: '0.82rem',
+                  fontWeight: activeTab === 'principal' ? 800 : 600,
+                  color: activeTab === 'principal' ? primaryColor : '#64748b',
+                  borderBottom: activeTab === 'principal' ? `2.5px solid ${primaryColor}` : '2.5px solid transparent',
+                  cursor: 'pointer',
+                  whiteSpace: 'nowrap',
+                }}
+              >
+                🏛️ {school.principal_title} Desk (Executive Full Access)
+              </button>
+            )}
+
+            {/* Bursar Desk: Admin or Bursar */}
+            {(activeRole === 'admin' || activeRole === 'bursar') && (
+              <button
+                type="button"
+                onClick={() => { setActiveTab('bursar'); navigate(`/s/${school.slug}/bursar`) }}
+                style={{
+                  background: 'none',
+                  border: 'none',
+                  padding: '0.65rem 0.9rem',
+                  fontSize: '0.82rem',
+                  fontWeight: activeTab === 'bursar' ? 800 : 600,
+                  color: activeTab === 'bursar' ? primaryColor : '#64748b',
+                  borderBottom: activeTab === 'bursar' ? `2.5px solid ${primaryColor}` : '2.5px solid transparent',
+                  cursor: 'pointer',
+                  whiteSpace: 'nowrap',
+                }}
+              >
+                💼 Bursar &amp; Fees Desk
+              </button>
+            )}
+
+            {/* Teacher Portal: Admin or Teacher */}
+            {(activeRole === 'admin' || activeRole === 'teacher') && (
+              <button
+                type="button"
+                onClick={() => { setActiveTab('teacher'); navigate(`/s/${school.slug}/teacher`) }}
+                style={{
+                  background: 'none',
+                  border: 'none',
+                  padding: '0.65rem 0.9rem',
+                  fontSize: '0.82rem',
+                  fontWeight: activeTab === 'teacher' ? 800 : 600,
+                  color: activeTab === 'teacher' ? primaryColor : '#64748b',
+                  borderBottom: activeTab === 'teacher' ? `2.5px solid ${primaryColor}` : '2.5px solid transparent',
+                  cursor: 'pointer',
+                  whiteSpace: 'nowrap',
+                }}
+              >
+                👨‍🏫 Teacher Portal
+              </button>
+            )}
+
+            {/* Student Portal: Admin or Student */}
+            {(activeRole === 'admin' || activeRole === 'student') && (
+              <button
+                type="button"
+                onClick={() => { setActiveTab('student'); navigate(`/s/${school.slug}/student`) }}
+                style={{
+                  background: 'none',
+                  border: 'none',
+                  padding: '0.65rem 0.9rem',
+                  fontSize: '0.82rem',
+                  fontWeight: activeTab === 'student' ? 800 : 600,
+                  color: activeTab === 'student' ? primaryColor : '#64748b',
+                  borderBottom: activeTab === 'student' ? `2.5px solid ${primaryColor}` : '2.5px solid transparent',
+                  cursor: 'pointer',
+                  whiteSpace: 'nowrap',
+                }}
+              >
+                🎓 Student Portal
+              </button>
+            )}
           </div>
         </div>
       </header>
@@ -1201,283 +1441,359 @@ export function TenantSchoolHub() {
 
         {/* VIEW 3: SIMULATED BRANDED STUDENT PORTAL */}
         {activeTab === 'student' && (
-          <div style={{ maxWidth: '900px', margin: '0 auto' }}>
-            <div style={{ background: '#ffffff', borderRadius: '20px', padding: '2rem', border: '1px solid #e2e8f0', marginBottom: '2rem', boxShadow: '0 4px 16px rgba(0,0,0,0.04)' }}>
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '1rem', borderBottom: '1px solid #f1f5f9', paddingBottom: '1.25rem', marginBottom: '1.5rem' }}>
-                <div>
-                  <span style={{ fontSize: '0.75rem', fontWeight: 800, color: primaryColor, textTransform: 'uppercase', letterSpacing: '0.06em' }}>
-                    {school.name} STUDENT WORKSPACE
-                  </span>
-                  <h2 style={{ fontSize: '1.5rem', fontWeight: 900, margin: '4px 0 0', color: '#0f172a' }}>
-                    Welcome, Candidate Brian Kipchumba
-                  </h2>
-                  <div style={{ fontSize: '0.82rem', color: '#64748b' }}>
-                    Admission: <strong>{school.slug.toUpperCase()}-2026-0042</strong> • Class: <strong>Grade 11 / Year 11 Exam Cohort</strong>
-                  </div>
-                </div>
-                <div style={{ textAlign: 'right' }}>
-                  <div style={{ fontSize: '0.76rem', color: '#64748b' }}>Current Academic Session:</div>
-                  <div style={{ fontSize: '1rem', fontWeight: 800, color: primaryColor }}>{school.active_period_name}</div>
-                </div>
-              </div>
-
-              {/* Student Cards Grid */}
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '1rem', marginBottom: '1.5rem' }}>
-                <div style={{ background: '#f0fdf4', border: '1px solid #bbf7d0', borderRadius: '14px', padding: '1rem' }}>
-                  <div style={{ fontSize: '0.76rem', color: '#16a34a', fontWeight: 700 }}>ACADEMIC STATUS</div>
-                  <div style={{ fontSize: '1.2rem', fontWeight: 800, color: '#15803d', marginTop: '2px' }}>Fully Cleared ✅</div>
-                  <div style={{ fontSize: '0.76rem', color: '#4b5563', marginTop: '4px' }}>Eligible for all {school.active_period_name} assessments</div>
-                </div>
-
-                <div style={{ background: '#eff6ff', border: '1px solid #bfdbfe', borderRadius: '14px', padding: '1rem' }}>
-                  <div style={{ fontSize: '0.76rem', color: '#1d4ed8', fontWeight: 700 }}>ATTENDANCE RATE</div>
-                  <div style={{ fontSize: '1.2rem', fontWeight: 800, color: '#1e40af', marginTop: '2px' }}>96.4% Present</div>
-                  <div style={{ fontSize: '0.76rem', color: '#4b5563', marginTop: '4px' }}>Verified biometric &amp; class log records</div>
-                </div>
-
-                <div style={{ background: '#fffbeb', border: '1px solid #fde68a', borderRadius: '14px', padding: '1rem' }}>
-                  <div style={{ fontSize: '0.76rem', color: '#b45309', fontWeight: 700 }}>TUITION FEE BALANCE</div>
-                  <div style={{ fontSize: '1.2rem', fontWeight: 800, color: '#b45309', marginTop: '2px' }}>$0.00 (Cleared)</div>
-                  <div style={{ fontSize: '0.76rem', color: '#4b5563', marginTop: '4px' }}>Invoice Receipt #{school.slug.toUpperCase()}-RCP-941</div>
-                </div>
-              </div>
-
-              {/* Student Timetable Preview */}
-              <h3 style={{ fontSize: '1.1rem', fontWeight: 800, marginBottom: '0.75rem' }}>Active Course Modules ({systemTermLabel} Schedule)</h3>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-                {[
-                  { code: 'ENG-201', title: 'First Language English & Rhetoric', teacher: 'Mrs. Davis', time: '08:30 - 09:40 AM' },
-                  { code: 'MTH-301', title: 'Pure Mathematics & Calculus', teacher: 'Mr. Sterling', time: '10:00 - 11:10 AM' },
-                  { code: 'ICT-401', title: 'Computer Science, Algorithms & Python', teacher: 'Eng. Sarah', time: '11:30 - 12:40 PM' },
-                  { code: 'SCI-202', title: 'Advanced Physics Lab & Practical Science', teacher: 'Dr. Mwangi', time: '02:00 - 03:15 PM' },
-                ].map((c) => (
-                  <div key={c.code} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: '#f8fafc', padding: '0.85rem 1rem', borderRadius: '10px', border: '1px solid #e2e8f0', flexWrap: 'wrap', gap: '0.5rem' }}>
-                    <div>
-                      <strong style={{ color: primaryColor }}>{c.code}</strong> — <span style={{ fontWeight: 700 }}>{c.title}</span>
-                      <div style={{ fontSize: '0.78rem', color: '#64748b' }}>Instructor: {c.teacher}</div>
-                    </div>
-                    <span style={{ background: '#ffffff', border: '1px solid #cbd5e1', padding: '0.3rem 0.65rem', borderRadius: '6px', fontSize: '0.75rem', fontWeight: 700 }}>
-                      🕒 {c.time}
+          activeRole !== 'admin' && activeRole !== 'student' ? (
+            renderRestrictedCard(
+              'Student Learning Portal',
+              'This workspace contains personalized course modules, lecture notes, timetable periods, attendance tracking, and individual report card results. Access is strictly scoped to enrolled students and executive administrators.',
+              'Executive Admin, Student'
+            )
+          ) : (
+            <div style={{ maxWidth: '900px', margin: '0 auto' }}>
+              <div style={{ background: '#ffffff', borderRadius: '20px', padding: '2rem', border: '1px solid #e2e8f0', marginBottom: '2rem', boxShadow: '0 4px 16px rgba(0,0,0,0.04)' }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '1rem', borderBottom: '1px solid #f1f5f9', paddingBottom: '1.25rem', marginBottom: '1.5rem' }}>
+                  <div>
+                    <span style={{ fontSize: '0.75rem', fontWeight: 800, color: primaryColor, textTransform: 'uppercase', letterSpacing: '0.06em' }}>
+                      {school.name} STUDENT WORKSPACE
                     </span>
+                    <h2 style={{ fontSize: '1.5rem', fontWeight: 900, margin: '4px 0 0', color: '#0f172a' }}>
+                      Welcome, Candidate Brian Kipchumba
+                    </h2>
+                    <div style={{ fontSize: '0.82rem', color: '#64748b' }}>
+                      Admission: <strong>{school.slug.toUpperCase()}-2026-0042</strong> • Class: <strong>Grade 11 / Year 11 Exam Cohort</strong>
+                    </div>
                   </div>
-                ))}
+                  <div style={{ textAlign: 'right' }}>
+                    <div style={{ fontSize: '0.76rem', color: '#64748b' }}>Current Academic Session:</div>
+                    <div style={{ fontSize: '1rem', fontWeight: 800, color: primaryColor }}>{school.active_period_name}</div>
+                  </div>
+                </div>
+
+                {/* Student Cards Grid */}
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '1rem', marginBottom: '1.5rem' }}>
+                  <div style={{ background: '#f0fdf4', border: '1px solid #bbf7d0', borderRadius: '14px', padding: '1rem' }}>
+                    <div style={{ fontSize: '0.76rem', color: '#16a34a', fontWeight: 700 }}>ACADEMIC STATUS</div>
+                    <div style={{ fontSize: '1.2rem', fontWeight: 800, color: '#15803d', marginTop: '2px' }}>Fully Cleared ✅</div>
+                    <div style={{ fontSize: '0.76rem', color: '#4b5563', marginTop: '4px' }}>Eligible for all {school.active_period_name} assessments</div>
+                  </div>
+
+                  <div style={{ background: '#eff6ff', border: '1px solid #bfdbfe', borderRadius: '14px', padding: '1rem' }}>
+                    <div style={{ fontSize: '0.76rem', color: '#1d4ed8', fontWeight: 700 }}>ATTENDANCE RATE</div>
+                    <div style={{ fontSize: '1.2rem', fontWeight: 800, color: '#1e40af', marginTop: '2px' }}>96.4% Present</div>
+                    <div style={{ fontSize: '0.76rem', color: '#4b5563', marginTop: '4px' }}>Verified biometric &amp; class log records</div>
+                  </div>
+
+                  <div style={{ background: '#fffbeb', border: '1px solid #fde68a', borderRadius: '14px', padding: '1rem' }}>
+                    <div style={{ fontSize: '0.76rem', color: '#b45309', fontWeight: 700 }}>TUITION FEE BALANCE</div>
+                    <div style={{ fontSize: '1.2rem', fontWeight: 800, color: '#b45309', marginTop: '2px' }}>$0.00 (Cleared)</div>
+                    <div style={{ fontSize: '0.76rem', color: '#4b5563', marginTop: '4px' }}>Invoice Receipt #{school.slug.toUpperCase()}-RCP-941</div>
+                  </div>
+                </div>
+
+                {/* Student Timetable Preview */}
+                <h3 style={{ fontSize: '1.1rem', fontWeight: 800, marginBottom: '0.75rem' }}>Active Course Modules ({systemTermLabel} Schedule)</h3>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                  {[
+                    { code: 'ENG-201', title: 'First Language English & Rhetoric', teacher: 'Mrs. Davis', time: '08:30 - 09:40 AM' },
+                    { code: 'MTH-301', title: 'Pure Mathematics & Calculus', teacher: 'Mr. Sterling', time: '10:00 - 11:10 AM' },
+                    { code: 'ICT-401', title: 'Computer Science, Algorithms & Python', teacher: 'Eng. Sarah', time: '11:30 - 12:40 PM' },
+                    { code: 'SCI-202', title: 'Advanced Physics Lab & Practical Science', teacher: 'Dr. Mwangi', time: '02:00 - 03:15 PM' },
+                  ].map((c) => (
+                    <div key={c.code} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: '#f8fafc', padding: '0.85rem 1rem', borderRadius: '10px', border: '1px solid #e2e8f0', flexWrap: 'wrap', gap: '0.5rem' }}>
+                      <div>
+                        <strong style={{ color: primaryColor }}>{c.code}</strong> — <span style={{ fontWeight: 700 }}>{c.title}</span>
+                        <div style={{ fontSize: '0.78rem', color: '#64748b' }}>Instructor: {c.teacher}</div>
+                      </div>
+                      <span style={{ background: '#ffffff', border: '1px solid #cbd5e1', padding: '0.3rem 0.65rem', borderRadius: '6px', fontSize: '0.75rem', fontWeight: 700 }}>
+                        🕒 {c.time}
+                      </span>
+                    </div>
+                  ))}
+                </div>
               </div>
             </div>
-          </div>
+          )
         )}
 
         {/* VIEW 4: SIMULATED BRANDED TEACHER PORTAL */}
         {activeTab === 'teacher' && (
-          <div style={{ maxWidth: '900px', margin: '0 auto' }}>
-            <div style={{ background: '#ffffff', borderRadius: '20px', padding: '2rem', border: '1px solid #e2e8f0', marginBottom: '2rem', boxShadow: '0 4px 16px rgba(0,0,0,0.04)' }}>
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '1rem', borderBottom: '1px solid #f1f5f9', paddingBottom: '1.25rem', marginBottom: '1.5rem' }}>
-                <div>
-                  <span style={{ fontSize: '0.75rem', fontWeight: 800, color: '#059669', textTransform: 'uppercase', letterSpacing: '0.06em' }}>
-                    {school.name} FACULTY DESK
-                  </span>
-                  <h2 style={{ fontSize: '1.5rem', fontWeight: 900, margin: '4px 0 0', color: '#0f172a' }}>
-                    Teacher Desk — Continuous Gradebook
-                  </h2>
-                  <div style={{ fontSize: '0.82rem', color: '#64748b' }}>
-                    Faculty ID: <strong>FAC-{school.slug.toUpperCase()}-08</strong> • Active Teaching Shift: <strong>Morning Cohort</strong>
+          activeRole !== 'admin' && activeRole !== 'teacher' ? (
+            renderRestrictedCard(
+              'Teacher & Faculty Workspace',
+              'This workspace contains attendance registers, continuous assessment test (CAT) gradebooks, student examination marks entry, and curriculum materials. Only teaching faculty and executive administrators may enter.',
+              'Executive Admin, Teacher'
+            )
+          ) : (
+            <div style={{ maxWidth: '900px', margin: '0 auto' }}>
+              <div style={{ background: '#ffffff', borderRadius: '20px', padding: '2rem', border: '1px solid #e2e8f0', marginBottom: '2rem', boxShadow: '0 4px 16px rgba(0,0,0,0.04)' }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '1rem', borderBottom: '1px solid #f1f5f9', paddingBottom: '1.25rem', marginBottom: '1.5rem' }}>
+                  <div>
+                    <span style={{ fontSize: '0.75rem', fontWeight: 800, color: '#059669', textTransform: 'uppercase', letterSpacing: '0.06em' }}>
+                      {school.name} FACULTY DESK
+                    </span>
+                    <h2 style={{ fontSize: '1.5rem', fontWeight: 900, margin: '4px 0 0', color: '#0f172a' }}>
+                      Teacher Desk — Continuous Gradebook
+                    </h2>
+                    <div style={{ fontSize: '0.82rem', color: '#64748b' }}>
+                      Faculty ID: <strong>FAC-{school.slug.toUpperCase()}-08</strong> • Active Teaching Shift: <strong>Morning Cohort</strong>
+                    </div>
                   </div>
+                  <button
+                    type="button"
+                    onClick={() => alert(`Marking attendance for ${school.name}: 34 students logged present today!`)}
+                    style={{ background: '#059669', color: '#ffffff', fontWeight: 800, padding: '0.65rem 1.25rem', borderRadius: '10px', border: 'none', cursor: 'pointer', fontSize: '0.85rem' }}
+                  >
+                    ✓ Take Class Attendance
+                  </button>
                 </div>
-                <button
-                  type="button"
-                  onClick={() => alert(`Marking attendance for ${school.name}: 34 students logged present today!`)}
-                  style={{ background: '#059669', color: '#ffffff', fontWeight: 800, padding: '0.65rem 1.25rem', borderRadius: '10px', border: 'none', cursor: 'pointer', fontSize: '0.85rem' }}
-                >
-                  ✓ Take Class Attendance
-                </button>
-              </div>
 
-              <div style={{ background: '#ecfdf5', borderRadius: '12px', padding: '1rem', border: '1px solid #a7f3d0', marginBottom: '1.5rem', fontSize: '0.88rem', color: '#065f46' }}>
-                💡 <strong>Gradebook Notice:</strong> CAT 2 scores for <strong>{school.active_period_name}</strong> are due for submission to the {school.principal_title} Office before Friday 5:00 PM.
-              </div>
+                <div style={{ background: '#ecfdf5', borderRadius: '12px', padding: '1rem', border: '1px solid #a7f3d0', marginBottom: '1.5rem', fontSize: '0.88rem', color: '#065f46' }}>
+                  💡 <strong>Gradebook Notice:</strong> CAT 2 scores for <strong>{school.active_period_name}</strong> are due for submission to the {school.principal_title} Office before Friday 5:00 PM.
+                </div>
 
-              <h3 style={{ fontSize: '1.1rem', fontWeight: 800, marginBottom: '0.75rem' }}>Assigned Teaching Units</h3>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
-                {[
-                  { class: 'Form 3 Alpha', subject: 'Pure Mathematics', count: '38 Students', avg: '78.4% Mean' },
-                  { class: 'Year 10 Cambridge', subject: 'Computer Science (0478)', count: '24 Candidates', avg: '82.1% Mean' },
-                  { class: 'Diploma Year 1', subject: 'Database Management & SQL', count: '45 Trainees', avg: '75.6% Mean' },
-                ].map((item, idx) => (
-                  <div key={idx} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: '#f8fafc', padding: '1rem', borderRadius: '12px', border: '1px solid #e2e8f0', flexWrap: 'wrap', gap: '0.5rem' }}>
-                    <div>
-                      <strong style={{ fontSize: '0.98rem' }}>{item.class}</strong> — <span style={{ color: '#059669', fontWeight: 700 }}>{item.subject}</span>
-                      <div style={{ fontSize: '0.78rem', color: '#64748b' }}>{item.count} • Class Performance: {item.avg}</div>
+                <h3 style={{ fontSize: '1.1rem', fontWeight: 800, marginBottom: '0.75rem' }}>Assigned Teaching Units</h3>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+                  {[
+                    { class: 'Form 3 Alpha', subject: 'Pure Mathematics', count: '38 Students', avg: '78.4% Mean' },
+                    { class: 'Year 10 Cambridge', subject: 'Computer Science (0478)', count: '24 Candidates', avg: '82.1% Mean' },
+                    { class: 'Diploma Year 1', subject: 'Database Management & SQL', count: '45 Trainees', avg: '75.6% Mean' },
+                  ].map((item, idx) => (
+                    <div key={idx} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: '#f8fafc', padding: '1rem', borderRadius: '12px', border: '1px solid #e2e8f0', flexWrap: 'wrap', gap: '0.5rem' }}>
+                      <div>
+                        <strong style={{ fontSize: '0.98rem' }}>{item.class}</strong> — <span style={{ color: '#059669', fontWeight: 700 }}>{item.subject}</span>
+                        <div style={{ fontSize: '0.78rem', color: '#64748b' }}>{item.count} • Class Performance: {item.avg}</div>
+                      </div>
+                      <div style={{ display: 'flex', gap: '0.5rem' }}>
+                        <button type="button" onClick={() => alert(`Opening continuous gradebook for ${item.class}`)} style={{ background: '#ffffff', border: '1px solid #cbd5e1', padding: '0.45rem 0.85rem', borderRadius: '8px', fontSize: '0.78rem', fontWeight: 700, cursor: 'pointer' }}>
+                          📊 Gradebook
+                        </button>
+                        <button type="button" onClick={() => alert(`Opening lesson upload desk for ${item.subject}`)} style={{ background: '#059669', color: '#ffffff', border: 'none', padding: '0.45rem 0.85rem', borderRadius: '8px', fontSize: '0.78rem', fontWeight: 700, cursor: 'pointer' }}>
+                          📁 Upload Notes
+                        </button>
+                      </div>
                     </div>
-                    <div style={{ display: 'flex', gap: '0.5rem' }}>
-                      <button type="button" onClick={() => alert(`Opening continuous gradebook for ${item.class}`)} style={{ background: '#ffffff', border: '1px solid #cbd5e1', padding: '0.45rem 0.85rem', borderRadius: '8px', fontSize: '0.78rem', fontWeight: 700, cursor: 'pointer' }}>
-                        📊 Gradebook
-                      </button>
-                      <button type="button" onClick={() => alert(`Opening lesson upload desk for ${item.subject}`)} style={{ background: '#059669', color: '#ffffff', border: 'none', padding: '0.45rem 0.85rem', borderRadius: '8px', fontSize: '0.78rem', fontWeight: 700, cursor: 'pointer' }}>
-                        📁 Upload Notes
-                      </button>
-                    </div>
-                  </div>
-                ))}
+                  ))}
+                </div>
               </div>
             </div>
-          </div>
+          )
         )}
 
         {/* VIEW 5: SIMULATED BRANDED BURSAR DESK */}
         {activeTab === 'bursar' && (
-          <div style={{ maxWidth: '900px', margin: '0 auto' }}>
-            <div style={{ background: '#ffffff', borderRadius: '20px', padding: '2rem', border: '1px solid #e2e8f0', marginBottom: '2rem', boxShadow: '0 4px 16px rgba(0,0,0,0.04)' }}>
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '1rem', borderBottom: '1px solid #f1f5f9', paddingBottom: '1.25rem', marginBottom: '1.5rem' }}>
-                <div>
-                  <span style={{ fontSize: '0.75rem', fontWeight: 800, color: '#b45309', textTransform: 'uppercase', letterSpacing: '0.06em' }}>
-                    {school.name} FINANCE &amp; BURSAR DESK
-                  </span>
-                  <h2 style={{ fontSize: '1.5rem', fontWeight: 900, margin: '4px 0 0', color: '#0f172a' }}>
-                    Tuition Fees &amp; Revenue Ledger
-                  </h2>
-                  <div style={{ fontSize: '0.82rem', color: '#64748b' }}>
-                    Billing Cycle: <strong>{school.active_period_name}</strong> • Bank Account: <strong>{school.name} School Trust</strong>
-                  </div>
-                </div>
-                <button
-                  type="button"
-                  onClick={() => alert(`Invoice batch generated for ${school.name}: 120 digital invoices prepared for ${school.active_period_name}!`)}
-                  style={{ background: '#b45309', color: '#ffffff', fontWeight: 800, padding: '0.65rem 1.25rem', borderRadius: '10px', border: 'none', cursor: 'pointer', fontSize: '0.85rem' }}
-                >
-                  + Generate {systemTermLabel} Invoices
-                </button>
-              </div>
-
-              {/* Financial Metrics */}
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '1rem', marginBottom: '1.5rem' }}>
-                <div style={{ background: '#fefce8', border: '1px solid #fde047', borderRadius: '14px', padding: '1rem' }}>
-                  <div style={{ fontSize: '0.76rem', color: '#854d0e', fontWeight: 700 }}>PROJECTED {systemTermLabel.toUpperCase()} FEES</div>
-                  <div style={{ fontSize: '1.35rem', fontWeight: 900, color: '#713f12', marginTop: '2px' }}>$72,000.00</div>
-                  <div style={{ fontSize: '0.75rem', color: '#854d0e', marginTop: '2px' }}>Based on {school.stats.students} enrolled students</div>
-                </div>
-
-                <div style={{ background: '#ecfdf5', border: '1px solid #a7f3d0', borderRadius: '14px', padding: '1rem' }}>
-                  <div style={{ fontSize: '0.76rem', color: '#059669', fontWeight: 700 }}>COLLECTED REVENUE</div>
-                  <div style={{ fontSize: '1.35rem', fontWeight: 900, color: '#065f46', marginTop: '2px' }}>$61,400.00 (85.2%)</div>
-                  <div style={{ fontSize: '0.75rem', color: '#047857', marginTop: '2px' }}>Visa, Bank Wire &amp; Mobile Payments</div>
-                </div>
-
-                <div style={{ background: '#fef2f2', border: '1px solid #fecaca', borderRadius: '14px', padding: '1rem' }}>
-                  <div style={{ fontSize: '0.76rem', color: '#dc2626', fontWeight: 700 }}>OUTSTANDING ARREARS</div>
-                  <div style={{ fontSize: '1.35rem', fontWeight: 900, color: '#991b1b', marginTop: '2px' }}>$10,600.00 (14.8%)</div>
-                  <div style={{ fontSize: '0.75rem', color: '#dc2626', marginTop: '2px' }}>Automated reminder SMS queued</div>
-                </div>
-              </div>
-
-              {/* Recent Payment Receipts */}
-              <h3 style={{ fontSize: '1.1rem', fontWeight: 800, marginBottom: '0.75rem' }}>Recent Official Stamped Fee Receipts</h3>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-                {[
-                  { rcp: `RCP-${school.slug.toUpperCase()}-940`, student: 'Amina Hassan (Adm: 0021)', amount: '$600.00 (Full Term)', date: 'Today, 10:14 AM' },
-                  { rcp: `RCP-${school.slug.toUpperCase()}-939`, student: 'David Omondi (Adm: 0035)', amount: '$300.00 (Installment 1)', date: 'Yesterday, 03:40 PM' },
-                  { rcp: `RCP-${school.slug.toUpperCase()}-938`, student: 'Sophia Vance (Adm: 0014)', amount: '$600.00 (Full Term)', date: 'Oct 04, 2026' },
-                ].map((r) => (
-                  <div key={r.rcp} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: '#f8fafc', padding: '0.85rem 1rem', borderRadius: '10px', border: '1px solid #e2e8f0', flexWrap: 'wrap', gap: '0.5rem' }}>
-                    <div>
-                      <strong style={{ color: '#b45309' }}>{r.rcp}</strong> — <span style={{ fontWeight: 700 }}>{r.student}</span>
-                      <div style={{ fontSize: '0.78rem', color: '#64748b' }}>Date: {r.date}</div>
-                    </div>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                      <span style={{ fontWeight: 900, color: '#0f172a' }}>{r.amount}</span>
-                      <button type="button" onClick={() => alert(`Printing verified stamped receipt with QR for ${r.rcp}`)} style={{ background: '#ffffff', border: '1px solid #cbd5e1', padding: '0.35rem 0.65rem', borderRadius: '6px', fontSize: '0.75rem', fontWeight: 700, cursor: 'pointer' }}>
-                        🖨️ Print Receipt
-                      </button>
+          activeRole !== 'admin' && activeRole !== 'bursar' ? (
+            renderRestrictedCard(
+              'Bursar & Finance Office',
+              'This finance desk contains confidential institution revenue ledgers, student fee balances, tuition invoices, and receipt printing. Only bursars and executive administrators may enter.',
+              'Executive Admin, Bursar'
+            )
+          ) : (
+            <div style={{ maxWidth: '900px', margin: '0 auto' }}>
+              <div style={{ background: '#ffffff', borderRadius: '20px', padding: '2rem', border: '1px solid #e2e8f0', marginBottom: '2rem', boxShadow: '0 4px 16px rgba(0,0,0,0.04)' }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '1rem', borderBottom: '1px solid #f1f5f9', paddingBottom: '1.25rem', marginBottom: '1.5rem' }}>
+                  <div>
+                    <span style={{ fontSize: '0.75rem', fontWeight: 800, color: '#b45309', textTransform: 'uppercase', letterSpacing: '0.06em' }}>
+                      {school.name} FINANCE &amp; BURSAR DESK
+                    </span>
+                    <h2 style={{ fontSize: '1.5rem', fontWeight: 900, margin: '4px 0 0', color: '#0f172a' }}>
+                      Tuition Fees &amp; Revenue Ledger
+                    </h2>
+                    <div style={{ fontSize: '0.82rem', color: '#64748b' }}>
+                      Billing Cycle: <strong>{school.active_period_name}</strong> • Bank Account: <strong>{school.name} School Trust</strong>
                     </div>
                   </div>
-                ))}
+                  <button
+                    type="button"
+                    onClick={() => alert(`Invoice batch generated for ${school.name}: 120 digital invoices prepared for ${school.active_period_name}!`)}
+                    style={{ background: '#b45309', color: '#ffffff', fontWeight: 800, padding: '0.65rem 1.25rem', borderRadius: '10px', border: 'none', cursor: 'pointer', fontSize: '0.85rem' }}
+                  >
+                    + Generate {systemTermLabel} Invoices
+                  </button>
+                </div>
+
+                {/* Financial Metrics */}
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '1rem', marginBottom: '1.5rem' }}>
+                  <div style={{ background: '#fefce8', border: '1px solid #fde047', borderRadius: '14px', padding: '1rem' }}>
+                    <div style={{ fontSize: '0.76rem', color: '#854d0e', fontWeight: 700 }}>PROJECTED {systemTermLabel.toUpperCase()} FEES</div>
+                    <div style={{ fontSize: '1.35rem', fontWeight: 900, color: '#713f12', marginTop: '2px' }}>$72,000.00</div>
+                    <div style={{ fontSize: '0.75rem', color: '#854d0e', marginTop: '2px' }}>Based on {school.stats.students} enrolled students</div>
+                  </div>
+
+                  <div style={{ background: '#ecfdf5', border: '1px solid #a7f3d0', borderRadius: '14px', padding: '1rem' }}>
+                    <div style={{ fontSize: '0.76rem', color: '#059669', fontWeight: 700 }}>COLLECTED REVENUE</div>
+                    <div style={{ fontSize: '1.35rem', fontWeight: 900, color: '#065f46', marginTop: '2px' }}>$61,400.00 (85.2%)</div>
+                    <div style={{ fontSize: '0.75rem', color: '#047857', marginTop: '2px' }}>Visa, Bank Wire &amp; Mobile Payments</div>
+                  </div>
+
+                  <div style={{ background: '#fef2f2', border: '1px solid #fecaca', borderRadius: '14px', padding: '1rem' }}>
+                    <div style={{ fontSize: '0.76rem', color: '#dc2626', fontWeight: 700 }}>OUTSTANDING ARREARS</div>
+                    <div style={{ fontSize: '1.35rem', fontWeight: 900, color: '#991b1b', marginTop: '2px' }}>$10,600.00 (14.8%)</div>
+                    <div style={{ fontSize: '0.75rem', color: '#dc2626', marginTop: '2px' }}>Automated reminder SMS queued</div>
+                  </div>
+                </div>
+
+                {/* Recent Payment Receipts */}
+                <h3 style={{ fontSize: '1.1rem', fontWeight: 800, marginBottom: '0.75rem' }}>Recent Official Stamped Fee Receipts</h3>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                  {[
+                    { rcp: `RCP-${school.slug.toUpperCase()}-940`, student: 'Amina Hassan (Adm: 0021)', amount: '$600.00 (Full Term)', date: 'Today, 10:14 AM' },
+                    { rcp: `RCP-${school.slug.toUpperCase()}-939`, student: 'David Omondi (Adm: 0035)', amount: '$300.00 (Installment 1)', date: 'Yesterday, 03:40 PM' },
+                    { rcp: `RCP-${school.slug.toUpperCase()}-938`, student: 'Sophia Vance (Adm: 0014)', amount: '$600.00 (Full Term)', date: 'Oct 04, 2026' },
+                  ].map((r) => (
+                    <div key={r.rcp} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: '#f8fafc', padding: '0.85rem 1rem', borderRadius: '10px', border: '1px solid #e2e8f0', flexWrap: 'wrap', gap: '0.5rem' }}>
+                      <div>
+                        <strong style={{ color: '#b45309' }}>{r.rcp}</strong> — <span style={{ fontWeight: 700 }}>{r.student}</span>
+                        <div style={{ fontSize: '0.78rem', color: '#64748b' }}>Date: {r.date}</div>
+                      </div>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                        <span style={{ fontWeight: 900, color: '#0f172a' }}>{r.amount}</span>
+                        <button type="button" onClick={() => alert(`Printing verified stamped receipt with QR for ${r.rcp}`)} style={{ background: '#ffffff', border: '1px solid #cbd5e1', padding: '0.35rem 0.65rem', borderRadius: '6px', fontSize: '0.75rem', fontWeight: 700, cursor: 'pointer' }}>
+                          🖨️ Print Receipt
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
               </div>
             </div>
-          </div>
+          )
         )}
 
         {/* VIEW 6: SIMULATED BRANDED PRINCIPAL DESK */}
         {activeTab === 'principal' && (
-          <div style={{ maxWidth: '900px', margin: '0 auto' }}>
-            <div style={{ background: '#ffffff', borderRadius: '20px', padding: '2rem', border: '1px solid #e2e8f0', marginBottom: '2rem', boxShadow: '0 4px 16px rgba(0,0,0,0.04)' }}>
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '1rem', borderBottom: '1px solid #f1f5f9', paddingBottom: '1.25rem', marginBottom: '1.5rem' }}>
-                <div>
-                  <span style={{ fontSize: '0.75rem', fontWeight: 800, color: primaryColor, textTransform: 'uppercase', letterSpacing: '0.06em' }}>
-                    {school.name} EXECUTIVE LEADERSHIP
-                  </span>
-                  <h2 style={{ fontSize: '1.5rem', fontWeight: 900, margin: '4px 0 0', color: '#0f172a' }}>
-                    {school.principal_name} — {school.principal_title} Desk
-                  </h2>
-                  <div style={{ fontSize: '0.82rem', color: '#64748b' }}>
-                    Institutional Authority &amp; Examination Verification Office
+          activeRole !== 'admin' ? (
+            renderRestrictedCard(
+              `${school.principal_title} Executive Office`,
+              'Executive leadership tools, calendar system setup, institutional authority, staff directories, official transcript verification, and cloud LMS subscription management require Executive Administrator credentials.',
+              'Executive Admin Only'
+            )
+          ) : (
+            <div style={{ maxWidth: '900px', margin: '0 auto' }}>
+              <div style={{ background: '#ffffff', borderRadius: '20px', padding: '2rem', border: '1px solid #e2e8f0', marginBottom: '2rem', boxShadow: '0 4px 16px rgba(0,0,0,0.04)' }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '1rem', borderBottom: '1px solid #f1f5f9', paddingBottom: '1.25rem', marginBottom: '1.5rem' }}>
+                  <div>
+                    <span style={{ fontSize: '0.75rem', fontWeight: 800, color: primaryColor, textTransform: 'uppercase', letterSpacing: '0.06em' }}>
+                      {school.name} EXECUTIVE LEADERSHIP
+                    </span>
+                    <h2 style={{ fontSize: '1.5rem', fontWeight: 900, margin: '4px 0 0', color: '#0f172a' }}>
+                      {school.principal_name} — {school.principal_title} Desk
+                    </h2>
+                    <div style={{ fontSize: '0.82rem', color: '#64748b' }}>
+                      Institutional Authority &amp; Examination Verification Office
+                    </div>
                   </div>
-                </div>
-                <button
-                  type="button"
-                  onClick={() => alert(`Report card sign-off: All student transcripts for ${school.active_period_name} will bear the official digital seal and signature of ${school.principal_name}!`)}
-                  style={{ background: primaryColor, color: '#ffffff', fontWeight: 800, padding: '0.65rem 1.25rem', borderRadius: '10px', border: 'none', cursor: 'pointer', fontSize: '0.85rem' }}
-                >
-                  ✍️ Bulk Sign Report Cards
-                </button>
-              </div>
-
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '1rem', marginBottom: '1.75rem' }}>
-                <div style={{ background: '#f8fafc', padding: '1.25rem', borderRadius: '14px', border: '1px solid #e2e8f0' }}>
-                  <div style={{ fontWeight: 800, color: '#0f172a', marginBottom: '0.25rem' }}>Calendar Mode</div>
-                  <div style={{ color: primaryColor, fontWeight: 700, fontSize: '0.92rem' }}>
-                    {school.academic_system === 'semester' ? '2 Semesters (Higher Ed / College Mode)' : '3 Terms (British / Primary / Secondary Mode)'}
-                  </div>
-                  <div style={{ color: '#64748b', fontSize: '0.78rem', marginTop: '4px' }}>
-                    Active: {school.active_period_name}
-                  </div>
+                  <button
+                    type="button"
+                    onClick={() => alert(`Report card sign-off: All student transcripts for ${school.active_period_name} will bear the official digital seal and signature of ${school.principal_name}!`)}
+                    style={{ background: primaryColor, color: '#ffffff', fontWeight: 800, padding: '0.65rem 1.25rem', borderRadius: '10px', border: 'none', cursor: 'pointer', fontSize: '0.85rem' }}
+                  >
+                    ✍️ Bulk Sign Report Cards
+                  </button>
                 </div>
 
-                <div style={{ background: '#f8fafc', padding: '1.25rem', borderRadius: '14px', border: '1px solid #e2e8f0' }}>
-                  <div style={{ fontWeight: 800, color: '#0f172a', marginBottom: '0.25rem' }}>Curriculum Framework</div>
-                  <div style={{ color: '#0f172a', fontWeight: 700, fontSize: '0.92rem' }}>
-                    {school.curriculum_type}
+                {/* Cloud LMS Subscription Plan & Monthly Rate Card */}
+                <div style={{ background: 'linear-gradient(135deg, #f8fafc 0%, #eff6ff 100%)', borderRadius: '18px', padding: '1.5rem', border: '1.5px solid #bfdbfe', marginBottom: '1.75rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '1.25rem' }}>
+                  <div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '0.35rem' }}>
+                      <span style={{ fontSize: '0.72rem', fontWeight: 800, background: '#1d4ed8', color: '#ffffff', padding: '2px 8px', borderRadius: '999px', textTransform: 'uppercase' }}>
+                        Cloud LMS Subscription
+                      </span>
+                      <span style={{ fontSize: '0.76rem', color: '#059669', fontWeight: 800 }}>
+                        ● 14-Day Free Trial Active
+                      </span>
+                    </div>
+                    <h3 style={{ margin: '0 0 0.35rem', fontSize: '1.35rem', fontWeight: 900, color: '#0f172a' }}>
+                      {school.subscription_tier ? school.subscription_tier.charAt(0).toUpperCase() + school.subscription_tier.slice(1) : 'Growth'} Campus Plan
+                    </h3>
+                    <div style={{ fontSize: '0.85rem', color: '#475569', display: 'flex', gap: '0.85rem', flexWrap: 'wrap', alignItems: 'center' }}>
+                      <span>Rate: <strong style={{ color: '#0f172a' }}>${school.subscription_monthly_rate || 59} / month</strong></span>
+                      <span>•</span>
+                      <span>Billing: <strong style={{ color: '#0f172a' }}>{school.subscription_billing_cycle === 'annually' ? 'Annual (2 Months Free)' : 'Monthly'}</strong></span>
+                      <span>•</span>
+                      <span>Active Quota: <strong style={{ color: '#1d4ed8' }}>{school.stats.students} / {school.subscription_tier === 'starter' ? '150' : school.subscription_tier === 'enterprise' ? 'Unlimited' : '600'} Students</strong></span>
+                    </div>
                   </div>
-                  <div style={{ color: '#64748b', fontSize: '0.78rem', marginTop: '4px' }}>
-                    Accredited Center Registry &amp; Certificate Series
+
+                  <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
+                    <button
+                      type="button"
+                      onClick={() => setShowPricingModal(true)}
+                      style={{
+                        background: '#1d4ed8',
+                        color: '#ffffff',
+                        fontWeight: 800,
+                        padding: '0.65rem 1.25rem',
+                        borderRadius: '10px',
+                        border: 'none',
+                        cursor: 'pointer',
+                        fontSize: '0.85rem',
+                        boxShadow: '0 4px 12px rgba(29, 78, 216, 0.25)',
+                      }}
+                    >
+                      💎 View Pricing Guide &amp; Tiers
+                    </button>
                   </div>
                 </div>
 
-                <div style={{ background: '#f8fafc', padding: '1.25rem', borderRadius: '14px', border: '1px solid #e2e8f0' }}>
-                  <div style={{ fontWeight: 800, color: '#0f172a', marginBottom: '0.25rem' }}>Institutional Brand Color</div>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginTop: '4px' }}>
-                    <span style={{ width: '20px', height: '20px', borderRadius: '4px', background: primaryColor, border: '1px solid #cbd5e1' }} />
-                    <span style={{ fontWeight: 700, fontSize: '0.88rem' }}>{primaryColor}</span>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '1rem', marginBottom: '1.75rem' }}>
+                  <div style={{ background: '#f8fafc', padding: '1.25rem', borderRadius: '14px', border: '1px solid #e2e8f0' }}>
+                    <div style={{ fontWeight: 800, color: '#0f172a', marginBottom: '0.25rem' }}>Calendar Mode</div>
+                    <div style={{ color: primaryColor, fontWeight: 700, fontSize: '0.92rem' }}>
+                      {school.academic_system === 'semester' ? '2 Semesters (Higher Ed / College Mode)' : '3 Terms (British / Primary / Secondary Mode)'}
+                    </div>
+                    <div style={{ color: '#64748b', fontSize: '0.78rem', marginTop: '4px' }}>
+                      Active: {school.active_period_name}
+                    </div>
                   </div>
-                  <div style={{ color: '#64748b', fontSize: '0.78rem', marginTop: '4px' }}>
-                    Applied across student ID cards, invoices &amp; report cards
+
+                  <div style={{ background: '#f8fafc', padding: '1.25rem', borderRadius: '14px', border: '1px solid #e2e8f0' }}>
+                    <div style={{ fontWeight: 800, color: '#0f172a', marginBottom: '0.25rem' }}>Curriculum Framework</div>
+                    <div style={{ color: '#0f172a', fontWeight: 700, fontSize: '0.92rem' }}>
+                      {school.curriculum_type}
+                    </div>
+                    <div style={{ color: '#64748b', fontSize: '0.78rem', marginTop: '4px' }}>
+                      Accredited Center Registry &amp; Certificate Series
+                    </div>
+                  </div>
+
+                  <div style={{ background: '#f8fafc', padding: '1.25rem', borderRadius: '14px', border: '1px solid #e2e8f0' }}>
+                    <div style={{ fontWeight: 800, color: '#0f172a', marginBottom: '0.25rem' }}>Institutional Brand Color</div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginTop: '4px' }}>
+                      <span style={{ width: '20px', height: '20px', borderRadius: '4px', background: primaryColor, border: '1px solid #cbd5e1' }} />
+                      <span style={{ fontWeight: 700, fontSize: '0.88rem' }}>{primaryColor}</span>
+                    </div>
+                    <div style={{ color: '#64748b', fontSize: '0.78rem', marginTop: '4px' }}>
+                      Applied across student ID cards, invoices &amp; report cards
+                    </div>
                   </div>
                 </div>
-              </div>
 
-              <h3 style={{ fontSize: '1.1rem', fontWeight: 800, marginBottom: '0.75rem' }}>Institution Administration Actions</h3>
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '0.75rem' }}>
-                <button
-                  type="button"
-                  onClick={() => alert(`Broadcasting official school notice for ${school.name}...`)}
-                  style={{ background: '#ffffff', border: '1px solid #cbd5e1', padding: '0.85rem', borderRadius: '10px', textAlign: 'left', fontWeight: 700, fontSize: '0.85rem', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px' }}
-                >
-                  <span>📢 Broadcast School Circular</span>
-                </button>
-                <button
-                  type="button"
-                  onClick={() => alert(`Staff accounts: 34 active faculty profiles registered under ${school.name}`)}
-                  style={{ background: '#ffffff', border: '1px solid #cbd5e1', padding: '0.85rem', borderRadius: '10px', textAlign: 'left', fontWeight: 700, fontSize: '0.85rem', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px' }}
-                >
-                  <span>👥 Manage Staff Directory</span>
-                </button>
-                <button
-                  type="button"
-                  onClick={() => alert(`Printing official academic handbook for ${school.name}`)}
-                  style={{ background: '#ffffff', border: '1px solid #cbd5e1', padding: '0.85rem', borderRadius: '10px', textAlign: 'left', fontWeight: 700, fontSize: '0.85rem', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px' }}
-                >
-                  <span>📖 Institution Rules &amp; Policies</span>
-                </button>
+                <h3 style={{ fontSize: '1.1rem', fontWeight: 800, marginBottom: '0.75rem' }}>Institution Administration Actions</h3>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '0.75rem' }}>
+                  <button
+                    type="button"
+                    onClick={() => alert(`Broadcasting official school notice for ${school.name}...`)}
+                    style={{ background: '#ffffff', border: '1px solid #cbd5e1', padding: '0.85rem', borderRadius: '10px', textAlign: 'left', fontWeight: 700, fontSize: '0.85rem', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px' }}
+                  >
+                    <span>📢 Broadcast School Circular</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => alert(`Staff accounts: 34 active faculty profiles registered under ${school.name}`)}
+                    style={{ background: '#ffffff', border: '1px solid #cbd5e1', padding: '0.85rem', borderRadius: '10px', textAlign: 'left', fontWeight: 700, fontSize: '0.85rem', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px' }}
+                  >
+                    <span>👥 Manage Staff Directory</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => alert(`Printing official academic handbook for ${school.name}`)}
+                    style={{ background: '#ffffff', border: '1px solid #cbd5e1', padding: '0.85rem', borderRadius: '10px', textAlign: 'left', fontWeight: 700, fontSize: '0.85rem', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px' }}
+                  >
+                    <span>📖 Institution Rules &amp; Policies</span>
+                  </button>
+                </div>
               </div>
             </div>
-          </div>
+          )
         )}
       </main>
 
@@ -1811,6 +2127,591 @@ export function TenantSchoolHub() {
                 }}
               >
                 Done
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* 2. LMS ROLE SWITCHER MODAL */}
+      {showRoleSwitcherModal && (
+        <div
+          role="dialog"
+          aria-modal="true"
+          style={{
+            position: 'fixed',
+            inset: 0,
+            zIndex: 9999,
+            background: 'rgba(15, 23, 42, 0.72)',
+            backdropFilter: 'blur(6px)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            padding: '1rem',
+            overflowY: 'auto',
+          }}
+          onClick={(e) => {
+            if (e.target === e.currentTarget) setShowRoleSwitcherModal(false)
+          }}
+        >
+          <div
+            style={{
+              maxWidth: '640px',
+              width: '100%',
+              background: '#ffffff',
+              borderRadius: '24px',
+              boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.35)',
+              border: '1px solid #cbd5e1',
+              overflow: 'hidden',
+              animation: 'fadeIn 0.2s ease-out',
+            }}
+          >
+            {/* Modal Header */}
+            <div style={{ background: `linear-gradient(135deg, ${primaryColor} 0%, #0f172a 100%)`, color: '#ffffff', padding: '1.5rem 1.75rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+              <div>
+                <div style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', fontSize: '0.74rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.05em', color: accentColor, marginBottom: '0.25rem' }}>
+                  <span>🔐 Access Control &amp; Portal Permissions</span>
+                </div>
+                <h3 style={{ fontSize: '1.35rem', fontWeight: 900, margin: 0, color: '#ffffff' }}>
+                  Switch Portal Role for {school.name}
+                </h3>
+              </div>
+              <button
+                type="button"
+                onClick={() => setShowRoleSwitcherModal(false)}
+                style={{
+                  background: 'rgba(255,255,255,0.15)',
+                  border: 'none',
+                  color: '#ffffff',
+                  width: '36px',
+                  height: '36px',
+                  borderRadius: '50%',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  fontSize: '1.1rem',
+                  fontWeight: 900,
+                }}
+              >
+                ✕
+              </button>
+            </div>
+
+            {/* Modal Body */}
+            <div style={{ padding: '1.75rem', display: 'flex', flexDirection: 'column', gap: '0.85rem' }}>
+              <p style={{ margin: '0 0 0.5rem', color: '#64748b', fontSize: '0.85rem', lineHeight: 1.5 }}>
+                In Éclat LMS, each member only accesses their assigned tools. Select a role below to preview permission-scoped behavior:
+              </p>
+
+              {/* 1. Admin / Principal */}
+              <div
+                role="button"
+                tabIndex={0}
+                onClick={() => handleSwitchRole('admin')}
+                onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); handleSwitchRole('admin') } }}
+                style={{
+                  display: 'flex',
+                  alignItems: 'flex-start',
+                  justifyContent: 'space-between',
+                  padding: '1rem 1.25rem',
+                  borderRadius: '16px',
+                  border: activeRole === 'admin' ? '2px solid #dc2626' : '1px solid #e2e8f0',
+                  background: activeRole === 'admin' ? '#fef2f2' : '#ffffff',
+                  cursor: 'pointer',
+                  gap: '1rem',
+                  transition: 'all 0.15s ease',
+                }}
+              >
+                <div style={{ display: 'flex', gap: '0.85rem', alignItems: 'flex-start' }}>
+                  <span style={{ fontSize: '1.5rem' }}>👑</span>
+                  <div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                      <strong style={{ fontSize: '0.96rem', color: '#0f172a' }}>Executive Admin &amp; Principal</strong>
+                      <span style={{ fontSize: '0.68rem', fontWeight: 800, background: '#fee2e2', color: '#991b1b', padding: '1px 6px', borderRadius: '4px' }}>
+                        Full Access (All 6 Portals)
+                      </span>
+                    </div>
+                    <div style={{ fontSize: '0.8rem', color: '#64748b', marginTop: '2px', lineHeight: 1.4 }}>
+                      Unrestricted institutional authority across Principal Desk, Bursar finances, Teacher gradebooks, and Student records.
+                    </div>
+                  </div>
+                </div>
+                {activeRole === 'admin' && (
+                  <span style={{ fontSize: '0.74rem', fontWeight: 800, color: '#dc2626', background: '#fee2e2', padding: '3px 8px', borderRadius: '999px', whiteSpace: 'nowrap' }}>
+                    Active Role
+                  </span>
+                )}
+              </div>
+
+              {/* 2. Teacher */}
+              <div
+                role="button"
+                tabIndex={0}
+                onClick={() => handleSwitchRole('teacher')}
+                onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); handleSwitchRole('teacher') } }}
+                style={{
+                  display: 'flex',
+                  alignItems: 'flex-start',
+                  justifyContent: 'space-between',
+                  padding: '1rem 1.25rem',
+                  borderRadius: '16px',
+                  border: activeRole === 'teacher' ? '2px solid #059669' : '1px solid #e2e8f0',
+                  background: activeRole === 'teacher' ? '#ecfdf5' : '#ffffff',
+                  cursor: 'pointer',
+                  gap: '1rem',
+                  transition: 'all 0.15s ease',
+                }}
+              >
+                <div style={{ display: 'flex', gap: '0.85rem', alignItems: 'flex-start' }}>
+                  <span style={{ fontSize: '1.5rem' }}>👨‍🏫</span>
+                  <div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                      <strong style={{ fontSize: '0.96rem', color: '#0f172a' }}>Teacher / Faculty</strong>
+                      <span style={{ fontSize: '0.68rem', fontWeight: 800, background: '#d1fae5', color: '#065f46', padding: '1px 6px', borderRadius: '4px' }}>
+                        Scoped Access
+                      </span>
+                    </div>
+                    <div style={{ fontSize: '0.8rem', color: '#64748b', marginTop: '2px', lineHeight: 1.4 }}>
+                      Limited to class attendance, continuous assessment test (CAT) gradebooks, and notes uploads. Principal &amp; Bursar desks are locked.
+                    </div>
+                  </div>
+                </div>
+                {activeRole === 'teacher' && (
+                  <span style={{ fontSize: '0.74rem', fontWeight: 800, color: '#059669', background: '#d1fae5', padding: '3px 8px', borderRadius: '999px', whiteSpace: 'nowrap' }}>
+                    Active Role
+                  </span>
+                )}
+              </div>
+
+              {/* 3. Bursar */}
+              <div
+                role="button"
+                tabIndex={0}
+                onClick={() => handleSwitchRole('bursar')}
+                onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); handleSwitchRole('bursar') } }}
+                style={{
+                  display: 'flex',
+                  alignItems: 'flex-start',
+                  justifyContent: 'space-between',
+                  padding: '1rem 1.25rem',
+                  borderRadius: '16px',
+                  border: activeRole === 'bursar' ? '2px solid #b45309' : '1px solid #e2e8f0',
+                  background: activeRole === 'bursar' ? '#fefce8' : '#ffffff',
+                  cursor: 'pointer',
+                  gap: '1rem',
+                  transition: 'all 0.15s ease',
+                }}
+              >
+                <div style={{ display: 'flex', gap: '0.85rem', alignItems: 'flex-start' }}>
+                  <span style={{ fontSize: '1.5rem' }}>💼</span>
+                  <div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                      <strong style={{ fontSize: '0.96rem', color: '#0f172a' }}>Bursar &amp; Accounts Officer</strong>
+                      <span style={{ fontSize: '0.68rem', fontWeight: 800, background: '#fef3c7', color: '#92400e', padding: '1px 6px', borderRadius: '4px' }}>
+                        Scoped Access
+                      </span>
+                    </div>
+                    <div style={{ fontSize: '0.8rem', color: '#64748b', marginTop: '2px', lineHeight: 1.4 }}>
+                      Limited to tuition fee invoicing, receipts issuance, payment verification, and fee arrears ledgers.
+                    </div>
+                  </div>
+                </div>
+                {activeRole === 'bursar' && (
+                  <span style={{ fontSize: '0.74rem', fontWeight: 800, color: '#b45309', background: '#fef3c7', padding: '3px 8px', borderRadius: '999px', whiteSpace: 'nowrap' }}>
+                    Active Role
+                  </span>
+                )}
+              </div>
+
+              {/* 4. Student */}
+              <div
+                role="button"
+                tabIndex={0}
+                onClick={() => handleSwitchRole('student')}
+                onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); handleSwitchRole('student') } }}
+                style={{
+                  display: 'flex',
+                  alignItems: 'flex-start',
+                  justifyContent: 'space-between',
+                  padding: '1rem 1.25rem',
+                  borderRadius: '16px',
+                  border: activeRole === 'student' ? '2px solid #1d4ed8' : '1px solid #e2e8f0',
+                  background: activeRole === 'student' ? '#eff6ff' : '#ffffff',
+                  cursor: 'pointer',
+                  gap: '1rem',
+                  transition: 'all 0.15s ease',
+                }}
+              >
+                <div style={{ display: 'flex', gap: '0.85rem', alignItems: 'flex-start' }}>
+                  <span style={{ fontSize: '1.5rem' }}>🎓</span>
+                  <div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                      <strong style={{ fontSize: '0.96rem', color: '#0f172a' }}>Enrolled Student</strong>
+                      <span style={{ fontSize: '0.68rem', fontWeight: 800, background: '#dbeafe', color: '#1e40af', padding: '1px 6px', borderRadius: '4px' }}>
+                        Learner Access
+                      </span>
+                    </div>
+                    <div style={{ fontSize: '0.8rem', color: '#64748b', marginTop: '2px', lineHeight: 1.4 }}>
+                      Limited to personal learning modules, class schedules, attendance records, and verified term transcripts.
+                    </div>
+                  </div>
+                </div>
+                {activeRole === 'student' && (
+                  <span style={{ fontSize: '0.74rem', fontWeight: 800, color: '#1d4ed8', background: '#dbeafe', padding: '3px 8px', borderRadius: '999px', whiteSpace: 'nowrap' }}>
+                    Active Role
+                  </span>
+                )}
+              </div>
+
+              {/* 5. Public Guest */}
+              <div
+                role="button"
+                tabIndex={0}
+                onClick={() => handleSwitchRole('public')}
+                onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); handleSwitchRole('public') } }}
+                style={{
+                  display: 'flex',
+                  alignItems: 'flex-start',
+                  justifyContent: 'space-between',
+                  padding: '1rem 1.25rem',
+                  borderRadius: '16px',
+                  border: activeRole === 'public' ? '2px solid #475569' : '1px solid #e2e8f0',
+                  background: activeRole === 'public' ? '#f8fafc' : '#ffffff',
+                  cursor: 'pointer',
+                  gap: '1rem',
+                  transition: 'all 0.15s ease',
+                }}
+              >
+                <div style={{ display: 'flex', gap: '0.85rem', alignItems: 'flex-start' }}>
+                  <span style={{ fontSize: '1.5rem' }}>🌐</span>
+                  <div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                      <strong style={{ fontSize: '0.96rem', color: '#0f172a' }}>Public Guest / Visitor</strong>
+                    </div>
+                    <div style={{ fontSize: '0.8rem', color: '#64748b', marginTop: '2px', lineHeight: 1.4 }}>
+                      Public school hub overview and academic calendar dates only.
+                    </div>
+                  </div>
+                </div>
+                {activeRole === 'public' && (
+                  <span style={{ fontSize: '0.74rem', fontWeight: 800, color: '#475569', background: '#e2e8f0', padding: '3px 8px', borderRadius: '999px', whiteSpace: 'nowrap' }}>
+                    Active Role
+                  </span>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* 3. CLOUD LMS SUBSCRIPTION PRICING GUIDE MODAL */}
+      {showPricingModal && (
+        <div
+          role="dialog"
+          aria-modal="true"
+          style={{
+            position: 'fixed',
+            inset: 0,
+            zIndex: 9999,
+            background: 'rgba(15, 23, 42, 0.72)',
+            backdropFilter: 'blur(6px)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            padding: '1rem',
+            overflowY: 'auto',
+          }}
+          onClick={(e) => {
+            if (e.target === e.currentTarget) setShowPricingModal(false)
+          }}
+        >
+          <div
+            style={{
+              maxWidth: '850px',
+              width: '100%',
+              background: '#ffffff',
+              borderRadius: '24px',
+              boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.35)',
+              border: '1px solid #cbd5e1',
+              overflow: 'hidden',
+              animation: 'fadeIn 0.2s ease-out',
+            }}
+          >
+            {/* Modal Header */}
+            <div style={{ background: `linear-gradient(135deg, ${primaryColor} 0%, #0f172a 100%)`, color: '#ffffff', padding: '1.5rem 1.75rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+              <div>
+                <div style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', fontSize: '0.74rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.05em', color: accentColor, marginBottom: '0.25rem' }}>
+                  <span>💎 Institution Cloud SaaS Pricing</span>
+                </div>
+                <h3 style={{ fontSize: '1.35rem', fontWeight: 900, margin: 0, color: '#ffffff' }}>
+                  Éclat Cloud LMS Subscription Plans
+                </h3>
+              </div>
+              <button
+                type="button"
+                onClick={() => setShowPricingModal(false)}
+                style={{
+                  background: 'rgba(255,255,255,0.15)',
+                  border: 'none',
+                  color: '#ffffff',
+                  width: '36px',
+                  height: '36px',
+                  borderRadius: '50%',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  fontSize: '1.1rem',
+                  fontWeight: 900,
+                }}
+              >
+                ✕
+              </button>
+            </div>
+
+            {/* Modal Body */}
+            <div style={{ padding: '1.75rem', maxHeight: '75vh', overflowY: 'auto' }}>
+              {/* Billing Toggle & Trial Banner */}
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '1rem', marginBottom: '1.5rem' }}>
+                <div>
+                  <span style={{ fontSize: '0.78rem', color: '#16a34a', fontWeight: 800, background: '#dcfce7', padding: '3px 10px', borderRadius: '999px' }}>
+                    ● 14-Day Free Trial on All Plans • Zero Setup Fees
+                  </span>
+                </div>
+
+                <div style={{ display: 'inline-flex', background: '#e2e8f0', padding: '3px', borderRadius: '10px' }}>
+                  <button
+                    type="button"
+                    onClick={() => setPricingModalCycle('monthly')}
+                    style={{
+                      background: pricingModalCycle === 'monthly' ? '#ffffff' : 'transparent',
+                      color: pricingModalCycle === 'monthly' ? '#0f172a' : '#64748b',
+                      border: 'none',
+                      padding: '0.35rem 0.85rem',
+                      borderRadius: '8px',
+                      fontSize: '0.78rem',
+                      fontWeight: 800,
+                      cursor: 'pointer',
+                      boxShadow: pricingModalCycle === 'monthly' ? '0 1px 3px rgba(0,0,0,0.1)' : 'none',
+                    }}
+                  >
+                    Monthly Billing
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setPricingModalCycle('annually')}
+                    style={{
+                      background: pricingModalCycle === 'annually' ? '#ffffff' : 'transparent',
+                      color: pricingModalCycle === 'annually' ? '#0f172a' : '#64748b',
+                      border: 'none',
+                      padding: '0.35rem 0.85rem',
+                      borderRadius: '8px',
+                      fontSize: '0.78rem',
+                      fontWeight: 800,
+                      cursor: 'pointer',
+                      boxShadow: pricingModalCycle === 'annually' ? '0 1px 3px rgba(0,0,0,0.1)' : 'none',
+                    }}
+                  >
+                    Annual Billing (Save 17%)
+                  </button>
+                </div>
+              </div>
+
+              {/* 3 Pricing Cards Grid */}
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(230px, 1fr))', gap: '1rem', marginBottom: '1.5rem' }}>
+                {/* 1. Starter Campus */}
+                <div
+                  style={{
+                    background: '#ffffff',
+                    border: school.subscription_tier === 'starter' ? '2.5px solid #1d4ed8' : '1px solid #cbd5e1',
+                    borderRadius: '18px',
+                    padding: '1.25rem',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    justifyContent: 'space-between',
+                    boxShadow: school.subscription_tier === 'starter' ? '0 8px 24px rgba(29, 78, 216, 0.15)' : 'none',
+                    position: 'relative',
+                  }}
+                >
+                  <div>
+                    <div style={{ fontSize: '0.75rem', fontWeight: 800, color: '#64748b', textTransform: 'uppercase' }}>
+                      Starter Campus
+                    </div>
+                    <div style={{ display: 'flex', alignItems: 'baseline', gap: '4px', margin: '6px 0 2px' }}>
+                      <span style={{ fontSize: '1.75rem', fontWeight: 900, color: '#0f172a' }}>
+                        ${pricingModalCycle === 'monthly' ? '29' : '24'}
+                      </span>
+                      <span style={{ fontSize: '0.78rem', color: '#64748b' }}>/ month</span>
+                    </div>
+                    <div style={{ fontSize: '0.78rem', color: '#16a34a', fontWeight: 700, marginBottom: '0.75rem' }}>
+                      Up to 150 enrolled students
+                    </div>
+
+                    <ul style={{ margin: 0, paddingLeft: '1.1rem', fontSize: '0.76rem', color: '#475569', lineHeight: 1.6 }}>
+                      <li>Dedicated URL: {school.slug}.eclat.institute</li>
+                      <li>4 Role Portals (Admin, Teacher, Bursar, Student)</li>
+                      <li>Custom Term or Semester academic calendars</li>
+                      <li>Continuous gradebooks &amp; report cards</li>
+                      <li>Official tuition fee receipts with QR codes</li>
+                      <li>Full 14-day risk-free trial</li>
+                    </ul>
+                  </div>
+
+                  <div style={{ marginTop: '1.25rem' }}>
+                    {school.subscription_tier === 'starter' ? (
+                      <div style={{ background: '#eff6ff', color: '#1d4ed8', padding: '0.55rem', borderRadius: '10px', textAlign: 'center', fontWeight: 800, fontSize: '0.8rem' }}>
+                        ✓ Current Active Plan
+                      </div>
+                    ) : (
+                      <button
+                        type="button"
+                        onClick={() => handleSelectSubscriptionPlan('starter')}
+                        style={{ width: '100%', background: '#1d4ed8', color: '#ffffff', fontWeight: 800, padding: '0.6rem', borderRadius: '10px', border: 'none', cursor: 'pointer', fontSize: '0.82rem' }}
+                      >
+                        Switch to Starter ($29/mo)
+                      </button>
+                    )}
+                  </div>
+                </div>
+
+                {/* 2. Growth Campus (Most Popular) */}
+                <div
+                  style={{
+                    background: school.subscription_tier === 'growth' ? '#eff6ff' : '#ffffff',
+                    border: '2.5px solid #1d4ed8',
+                    borderRadius: '18px',
+                    padding: '1.25rem',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    justifyContent: 'space-between',
+                    boxShadow: '0 10px 30px rgba(29, 78, 216, 0.18)',
+                    position: 'relative',
+                  }}
+                >
+                  <div style={{ position: 'absolute', top: '-11px', right: '14px', background: '#1d4ed8', color: '#ffffff', fontSize: '0.68rem', fontWeight: 800, padding: '2px 10px', borderRadius: '999px', textTransform: 'uppercase' }}>
+                    ★ Most Popular
+                  </div>
+                  <div>
+                    <div style={{ fontSize: '0.75rem', fontWeight: 800, color: '#1d4ed8', textTransform: 'uppercase' }}>
+                      Growth Campus
+                    </div>
+                    <div style={{ display: 'flex', alignItems: 'baseline', gap: '4px', margin: '6px 0 2px' }}>
+                      <span style={{ fontSize: '1.75rem', fontWeight: 900, color: '#0f172a' }}>
+                        ${pricingModalCycle === 'monthly' ? '59' : '49'}
+                      </span>
+                      <span style={{ fontSize: '0.78rem', color: '#64748b' }}>/ month</span>
+                    </div>
+                    <div style={{ fontSize: '0.78rem', color: '#16a34a', fontWeight: 700, marginBottom: '0.75rem' }}>
+                      Up to 600 enrolled students
+                    </div>
+
+                    <ul style={{ margin: 0, paddingLeft: '1.1rem', fontSize: '0.76rem', color: '#1e293b', lineHeight: 1.6 }}>
+                      <li><strong>Custom Domain (BYOD)</strong> support with CNAME</li>
+                      <li>All Starter Campus capabilities</li>
+                      <li>Automated fee arrears SMS &amp; WhatsApp queue</li>
+                      <li>Biometric &amp; morning/afternoon shift attendance</li>
+                      <li>Bulk digital Principal seal on report cards</li>
+                      <li>Priority email and phone desk support</li>
+                    </ul>
+                  </div>
+
+                  <div style={{ marginTop: '1.25rem' }}>
+                    {school.subscription_tier === 'growth' ? (
+                      <div style={{ background: '#1d4ed8', color: '#ffffff', padding: '0.55rem', borderRadius: '10px', textAlign: 'center', fontWeight: 800, fontSize: '0.8rem' }}>
+                        ✓ Current Active Plan
+                      </div>
+                    ) : (
+                      <button
+                        type="button"
+                        onClick={() => handleSelectSubscriptionPlan('growth')}
+                        style={{ width: '100%', background: '#1d4ed8', color: '#ffffff', fontWeight: 800, padding: '0.6rem', borderRadius: '10px', border: 'none', cursor: 'pointer', fontSize: '0.82rem' }}
+                      >
+                        Switch to Growth ($59/mo)
+                      </button>
+                    )}
+                  </div>
+                </div>
+
+                {/* 3. Enterprise Campus */}
+                <div
+                  style={{
+                    background: '#ffffff',
+                    border: school.subscription_tier === 'enterprise' ? '2.5px solid #7c3aed' : '1px solid #cbd5e1',
+                    borderRadius: '18px',
+                    padding: '1.25rem',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    justifyContent: 'space-between',
+                    boxShadow: school.subscription_tier === 'enterprise' ? '0 8px 24px rgba(124, 58, 237, 0.15)' : 'none',
+                    position: 'relative',
+                  }}
+                >
+                  <div>
+                    <div style={{ fontSize: '0.75rem', fontWeight: 800, color: '#7c3aed', textTransform: 'uppercase' }}>
+                      Enterprise Campus
+                    </div>
+                    <div style={{ display: 'flex', alignItems: 'baseline', gap: '4px', margin: '6px 0 2px' }}>
+                      <span style={{ fontSize: '1.75rem', fontWeight: 900, color: '#0f172a' }}>
+                        ${pricingModalCycle === 'monthly' ? '99' : '82'}
+                      </span>
+                      <span style={{ fontSize: '0.78rem', color: '#64748b' }}>/ month</span>
+                    </div>
+                    <div style={{ fontSize: '0.78rem', color: '#16a34a', fontWeight: 700, marginBottom: '0.75rem' }}>
+                      Unlimited Students &amp; Multi-Campus
+                    </div>
+
+                    <ul style={{ margin: 0, paddingLeft: '1.1rem', fontSize: '0.76rem', color: '#475569', lineHeight: 1.6 }}>
+                      <li>Multi-campus branch network management</li>
+                      <li>White-label branded Android APK Mobile App</li>
+                      <li>Custom national &amp; international grading schemes</li>
+                      <li>Dedicated daily encrypted cloud backups</li>
+                      <li>99.9% high-availability SLA</li>
+                      <li>24/7 dedicated account manager</li>
+                    </ul>
+                  </div>
+
+                  <div style={{ marginTop: '1.25rem' }}>
+                    {school.subscription_tier === 'enterprise' ? (
+                      <div style={{ background: '#f5f3ff', color: '#7c3aed', padding: '0.55rem', borderRadius: '10px', textAlign: 'center', fontWeight: 800, fontSize: '0.8rem' }}>
+                        ✓ Current Active Plan
+                      </div>
+                    ) : (
+                      <button
+                        type="button"
+                        onClick={() => handleSelectSubscriptionPlan('enterprise')}
+                        style={{ width: '100%', background: '#7c3aed', color: '#ffffff', fontWeight: 800, padding: '0.6rem', borderRadius: '10px', border: 'none', cursor: 'pointer', fontSize: '0.82rem' }}
+                      >
+                        Switch to Enterprise ($99/mo)
+                      </button>
+                    )}
+                  </div>
+                </div>
+              </div>
+
+              {/* Pricing FAQ Card */}
+              <div style={{ background: '#f8fafc', borderRadius: '16px', padding: '1rem 1.25rem', border: '1px solid #e2e8f0', fontSize: '0.78rem', color: '#475569' }}>
+                <strong style={{ color: '#0f172a' }}>💳 Billing Guarantee:</strong> No credit card is charged during your 14-day evaluation window. You can change plans, pause, or cancel anytime from the Principal Desk. All data remains secure and exportable.
+              </div>
+            </div>
+
+            {/* Modal Footer */}
+            <div style={{ padding: '1rem 1.75rem', background: '#f8fafc', borderTop: '1px solid #e2e8f0', display: 'flex', justifyContent: 'flex-end' }}>
+              <button
+                type="button"
+                onClick={() => setShowPricingModal(false)}
+                style={{
+                  background: '#0f172a',
+                  color: '#ffffff',
+                  fontWeight: 800,
+                  fontSize: '0.84rem',
+                  padding: '0.55rem 1.25rem',
+                  borderRadius: '10px',
+                  border: 'none',
+                  cursor: 'pointer',
+                }}
+              >
+                Close Pricing Guide
               </button>
             </div>
           </div>

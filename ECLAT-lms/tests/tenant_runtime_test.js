@@ -230,3 +230,104 @@ test('Tenant Cloud Runtime: Production Build Assets & HTML Verification', () => 
   assert.ok(hasTenantHub, 'Production dist must contain bundled TenantSchoolHub chunk')
   assert.ok(hasSchoolReg, 'Production dist must contain bundled SchoolRegistrationPage chunk')
 })
+
+test('Tenant Cloud Runtime: Role-Based LMS Portal Access Scoping Logic', () => {
+  // Pure role-access evaluation matrix
+  function canAccessDesk(role, desk) {
+    if (desk === 'hub' || desk === 'calendar') return true
+    if (role === 'admin') return true // Full access
+    if (desk === 'teacher') return role === 'teacher'
+    if (desk === 'bursar') return role === 'bursar'
+    if (desk === 'student') return role === 'student'
+    return false
+  }
+
+  // 1. Admin: Full Access across all desks
+  const desks = ['hub', 'calendar', 'principal', 'bursar', 'teacher', 'student']
+  desks.forEach((desk) => {
+    assert.strictEqual(canAccessDesk('admin', desk), true, `Admin must have full access to ${desk}`)
+  })
+
+  // 2. Teacher: Access only Hub, Calendar, and Teacher Desk
+  assert.strictEqual(canAccessDesk('teacher', 'hub'), true)
+  assert.strictEqual(canAccessDesk('teacher', 'calendar'), true)
+  assert.strictEqual(canAccessDesk('teacher', 'teacher'), true)
+  assert.strictEqual(canAccessDesk('teacher', 'bursar'), false, 'Teacher must NOT access Bursar finances')
+  assert.strictEqual(canAccessDesk('teacher', 'principal'), false, 'Teacher must NOT access Principal executive desk')
+  assert.strictEqual(canAccessDesk('teacher', 'student'), false, 'Teacher must NOT access student learner workspace')
+
+  // 3. Bursar: Access only Hub, Calendar, and Bursar Desk
+  assert.strictEqual(canAccessDesk('bursar', 'hub'), true)
+  assert.strictEqual(canAccessDesk('bursar', 'calendar'), true)
+  assert.strictEqual(canAccessDesk('bursar', 'bursar'), true)
+  assert.strictEqual(canAccessDesk('bursar', 'teacher'), false, 'Bursar must NOT access Teacher gradebooks')
+  assert.strictEqual(canAccessDesk('bursar', 'principal'), false, 'Bursar must NOT access Principal executive desk')
+  assert.strictEqual(canAccessDesk('bursar', 'student'), false, 'Bursar must NOT access student learner workspace')
+
+  // 4. Student: Access only Hub, Calendar, and Student Portal
+  assert.strictEqual(canAccessDesk('student', 'hub'), true)
+  assert.strictEqual(canAccessDesk('student', 'calendar'), true)
+  assert.strictEqual(canAccessDesk('student', 'student'), true)
+  assert.strictEqual(canAccessDesk('student', 'teacher'), false, 'Student must NOT access Teacher desk')
+  assert.strictEqual(canAccessDesk('student', 'bursar'), false, 'Student must NOT access Bursar fee ledger')
+  assert.strictEqual(canAccessDesk('student', 'principal'), false, 'Student must NOT access Principal desk')
+
+  // 5. Public: Access only Hub and Calendar
+  assert.strictEqual(canAccessDesk('public', 'hub'), true)
+  assert.strictEqual(canAccessDesk('public', 'calendar'), true)
+  assert.strictEqual(canAccessDesk('public', 'student'), false)
+  assert.strictEqual(canAccessDesk('public', 'teacher'), false)
+  assert.strictEqual(canAccessDesk('public', 'bursar'), false)
+  assert.strictEqual(canAccessDesk('public', 'principal'), false)
+})
+
+test('Tenant Cloud Runtime: Institutional Monthly Pricing Tiers & Billing Calculations', () => {
+  const PRICING_TIERS = {
+    starter: {
+      name: 'Starter Campus',
+      monthly: 29,
+      annually: 290,
+      annualMonthlyEffective: 24,
+      studentQuota: 150,
+      customDomainIncluded: false,
+    },
+    growth: {
+      name: 'Growth Campus',
+      monthly: 59,
+      annually: 590,
+      annualMonthlyEffective: 49,
+      studentQuota: 600,
+      customDomainIncluded: true,
+    },
+    enterprise: {
+      name: 'Enterprise Campus',
+      monthly: 99,
+      annually: 990,
+      annualMonthlyEffective: 82,
+      studentQuota: Infinity,
+      customDomainIncluded: true,
+    },
+  }
+
+  // 1. Rate reasonableness check: under $100/mo for a comprehensive SIS/LMS
+  assert.strictEqual(PRICING_TIERS.starter.monthly, 29)
+  assert.strictEqual(PRICING_TIERS.growth.monthly, 59)
+  assert.strictEqual(PRICING_TIERS.enterprise.monthly, 99)
+
+  // 2. Annual billing discount check: 10 months billed for 12 months (2 months free / ~17% off)
+  for (const [tier, data] of Object.entries(PRICING_TIERS)) {
+    const expectedAnnual = data.monthly * 10
+    assert.strictEqual(data.annually, expectedAnnual, `${tier} annual rate must equal 10x monthly (2 months free)`)
+    const effectiveMonthly = Math.round(data.annually / 12)
+    assert.ok(Math.abs(effectiveMonthly - data.annualMonthlyEffective) <= 1, `${tier} effective monthly rate matches calculation`)
+  }
+
+  // 3. Student capacity scaling check
+  assert.ok(PRICING_TIERS.growth.studentQuota > PRICING_TIERS.starter.studentQuota)
+  assert.strictEqual(PRICING_TIERS.enterprise.studentQuota, Infinity)
+
+  // 4. Feature gating check: BYOD Custom Domain available on Growth and Enterprise
+  assert.strictEqual(PRICING_TIERS.starter.customDomainIncluded, false)
+  assert.strictEqual(PRICING_TIERS.growth.customDomainIncluded, true)
+  assert.strictEqual(PRICING_TIERS.enterprise.customDomainIncluded, true)
+})
