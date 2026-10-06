@@ -21,6 +21,8 @@ const TutorPublishCoursePage = lazy(() => import('@/features/teacher/TutorPublis
 const DonationSponsorshipPage = lazy(() => import('@/features/donation/DonationSponsorshipPage').then((m) => ({ default: m.DonationSponsorshipPage })))
 const Login = lazy(() => import('@/features/auth/Login').then((m) => ({ default: m.Login })))
 const ChangePassword = lazy(() => import('@/features/auth/ChangePassword').then((m) => ({ default: m.ChangePassword })))
+const TenantSchoolHub = lazy(() => import('@/features/tenant/TenantSchoolHub').then((m) => ({ default: m.TenantSchoolHub })))
+const SchoolRegistrationPage = lazy(() => import('@/features/tenant/SchoolRegistrationPage').then((m) => ({ default: m.SchoolRegistrationPage })))
 
 // Lazy-loaded Student Pages
 const StudentDashboard = lazy(() => import('@/features/student/StudentDashboard').then((m) => ({ default: m.StudentDashboard })))
@@ -150,6 +152,13 @@ export function App() {
         <Route path="/sponsor" element={<DonationSponsorshipPage />} />
         <Route path="/login" element={<Login />} />
         <Route path="/change-password" element={<ChangePassword />} />
+        {/* Multi-Tenant Partner School Ecosystem */}
+        <Route path="/register-school" element={<SchoolRegistrationPage />} />
+        <Route path="/schools/register" element={<SchoolRegistrationPage />} />
+        <Route path="/s/:schoolSlug" element={<TenantSchoolHub />} />
+        <Route path="/s/:schoolSlug/:subview" element={<TenantSchoolHub />} />
+        <Route path="/schools/:schoolSlug" element={<TenantSchoolHub />} />
+        <Route path="/schools/:schoolSlug/:subview" element={<TenantSchoolHub />} />
         {/* Open Public Routes with App Layout */}
         <Route element={<LayoutShell />}>
           <Route path="/library" element={<ResourceLibrary />} />

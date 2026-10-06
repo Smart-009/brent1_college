@@ -7,6 +7,7 @@ import { isElectronApp, isCapacitorApp, OFFICIAL_APKPURE_URL, OFFICIAL_APK_URL }
 import { DesktopCommandPalette } from '@/components/shared/DesktopCommandPalette'
 import { supabase } from '@/lib/supabase'
 import { schoolStore } from '@/lib/schoolData'
+import { tenantSchoolStore } from '@/lib/tenantSchoolStore'
 import { INSTITUTION_CONFIG, getWhatsAppInquiryUrl } from '@/config/institution'
 import { OFFICIAL_COURSES, getDynamicCoursesList } from '@/config/officialCourses'
 import { IntakeAdvertsSection } from './IntakeAdvertsSection'
@@ -674,6 +675,20 @@ export function Landing() {
   } | null>(null)
   const [previewCert, setPreviewCert] = useState<CertificateData | null>(null)
 
+  // Multi-Tenant Partner Schools Ecosystem
+  const [partnerSchools, setPartnerSchools] = useState(() => tenantSchoolStore.getSchools())
+  useEffect(() => {
+    const syncSchools = () => {
+      setPartnerSchools(tenantSchoolStore.getSchools())
+    }
+    window.addEventListener('eclat-tenant-schools-updated', syncSchools)
+    window.addEventListener('storage', syncSchools)
+    return () => {
+      window.removeEventListener('eclat-tenant-schools-updated', syncSchools)
+      window.removeEventListener('storage', syncSchools)
+    }
+  }, [])
+
   useEffect(() => {
     if (typeof window !== 'undefined') {
       const params = new URLSearchParams(window.location.search)
@@ -1244,6 +1259,14 @@ export function Landing() {
                   <span>Careers</span>
                 </Link>
                 <Link
+                  to="/register-school"
+                  style={{ color: '#7c3aed', fontWeight: 800, textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: '5px' }}
+                  title="White-label school management for partner schools, colleges & academies"
+                >
+                  <BuildingIcon size={14} color="#7c3aed" />
+                  <span>School Cloud</span>
+                </Link>
+                <Link
                   to="/publish-course"
                   style={{
                     background: 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)',
@@ -1612,6 +1635,27 @@ export function Landing() {
                 >
                   <HeartHandshakeIcon size={18} color="#ffffff" />
                   <span>💖 Sponsor a Student / Donate</span>
+                </Link>
+
+                <Link
+                  to="/register-school"
+                  onClick={() => setMobileNavOpen(false)}
+                  style={{
+                    color: '#ffffff',
+                    textDecoration: 'none',
+                    background: 'linear-gradient(135deg, #7c3aed 0%, #6d28d9 100%)',
+                    padding: '0.75rem 0.95rem',
+                    borderRadius: '12px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '10px',
+                    fontSize: '0.9rem',
+                    fontWeight: 800,
+                    boxShadow: '0 4px 12px rgba(124, 58, 237, 0.3)',
+                  }}
+                >
+                  <BuildingIcon size={18} color="#ffffff" />
+                  <span>🏫 School Cloud (Register Institution)</span>
                 </Link>
               </div>
 
@@ -3883,6 +3927,535 @@ export function Landing() {
                 <CheckCircleIcon size={16} color="#fbbf24" style={{ flexShrink: 0 }} />
                 <span>We welcome both pre-recorded video courses and live cohort instructors!</span>
               </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ============================================================ */}
+      {/* Éclat School Cloud — Multi-Tenant School Management Showcase */}
+      {/* ============================================================ */}
+      <section
+        id="school-cloud"
+        style={{
+          background: 'linear-gradient(180deg, #f8fafc 0%, #f1f5f9 100%)',
+          padding: isMobile ? '3rem 1rem' : '5rem 1.5rem',
+          borderTop: '1px solid #e2e8f0',
+          borderBottom: '1px solid #e2e8f0',
+        }}
+      >
+        <div style={{ maxWidth: '1240px', margin: '0 auto' }}>
+          {/* Header */}
+          <div style={{ textAlign: 'center', marginBottom: isMobile ? '2rem' : '3.5rem' }}>
+            <div
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '6px',
+                background: '#f5f3ff',
+                color: '#7c3aed',
+                border: '1px solid #ddd6fe',
+                padding: '0.35rem 0.95rem',
+                borderRadius: '999px',
+                fontSize: '0.8rem',
+                fontWeight: 800,
+                textTransform: 'uppercase',
+                letterSpacing: '0.06em',
+                marginBottom: '0.85rem',
+              }}
+            >
+              <BuildingIcon size={15} color="#7c3aed" />
+              <span>Multi-Tenant School Management Platform</span>
+            </div>
+
+            <h2
+              style={{
+                fontSize: isMobile ? '1.65rem' : '2.5rem',
+                fontWeight: 900,
+                color: '#0f172a',
+                lineHeight: 1.2,
+                letterSpacing: '-0.02em',
+                marginBottom: '0.85rem',
+              }}
+            >
+              Power Your School With Its Own Branded Digital Campus
+            </h2>
+            <p
+              style={{
+                fontSize: isMobile ? '0.92rem' : '1.05rem',
+                color: '#475569',
+                maxWidth: '780px',
+                margin: '0 auto',
+                lineHeight: 1.6,
+              }}
+            >
+              Other schools, colleges, and academies can now create an account on Éclat and receive a 
+              <strong> dedicated URL handle</strong> with separate, private portals for 
+              <strong> Students, Teachers, Bursars, and Principals</strong>. Customize your school crest, brand colors, 
+              and academic calendar (<strong>Terms vs. Semesters</strong>).
+            </p>
+          </div>
+
+          {/* Core Feature Pillars Grid */}
+          <div
+            style={{
+              display: 'grid',
+              gridTemplateColumns: isMobile ? '1fr' : 'repeat(4, 1fr)',
+              gap: '1.25rem',
+              marginBottom: '3rem',
+            }}
+          >
+            <div
+              style={{
+                background: '#ffffff',
+                padding: '1.5rem',
+                borderRadius: '18px',
+                border: '1px solid #e2e8f0',
+                boxShadow: '0 4px 12px rgba(0,0,0,0.03)',
+              }}
+            >
+              <div
+                style={{
+                  width: '44px',
+                  height: '44px',
+                  borderRadius: '12px',
+                  background: '#eff6ff',
+                  color: '#1d4ed8',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  marginBottom: '1rem',
+                }}
+              >
+                <GlobeIcon size={22} color="#1d4ed8" />
+              </div>
+              <h3 style={{ fontSize: '1rem', fontWeight: 800, color: '#0f172a', marginBottom: '0.35rem' }}>
+                Dedicated School URL
+              </h3>
+              <p style={{ fontSize: '0.82rem', color: '#64748b', lineHeight: 1.5, margin: 0 }}>
+                Your institution gets a custom portal slug (e.g. <code>/s/your-school</code>) separating your students and faculty from other schools.
+              </p>
+            </div>
+
+            <div
+              style={{
+                background: '#ffffff',
+                padding: '1.5rem',
+                borderRadius: '18px',
+                border: '1px solid #e2e8f0',
+                boxShadow: '0 4px 12px rgba(0,0,0,0.03)',
+              }}
+            >
+              <div
+                style={{
+                  width: '44px',
+                  height: '44px',
+                  borderRadius: '12px',
+                  background: '#ecfdf5',
+                  color: '#059669',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  marginBottom: '1rem',
+                }}
+              >
+                <UsersIcon size={22} color="#059669" />
+              </div>
+              <h3 style={{ fontSize: '1rem', fontWeight: 800, color: '#0f172a', marginBottom: '0.35rem' }}>
+                4 Specialized Portals
+              </h3>
+              <p style={{ fontSize: '0.82rem', color: '#64748b', lineHeight: 1.5, margin: 0 }}>
+                Tailored desks for Student learning, Teacher gradebook/attendance, Bursar fee collection, and Principal executive analytics.
+              </p>
+            </div>
+
+            <div
+              style={{
+                background: '#ffffff',
+                padding: '1.5rem',
+                borderRadius: '18px',
+                border: '1px solid #e2e8f0',
+                boxShadow: '0 4px 12px rgba(0,0,0,0.03)',
+              }}
+            >
+              <div
+                style={{
+                  width: '44px',
+                  height: '44px',
+                  borderRadius: '12px',
+                  background: '#fef3c7',
+                  color: '#d97706',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  marginBottom: '1rem',
+                }}
+              >
+                <CalendarIcon size={22} color="#d97706" />
+              </div>
+              <h3 style={{ fontSize: '1rem', fontWeight: 800, color: '#0f172a', marginBottom: '0.35rem' }}>
+                Terms or Semesters
+              </h3>
+              <p style={{ fontSize: '0.82rem', color: '#64748b', lineHeight: 1.5, margin: 0 }}>
+                Select whether your school operates on <strong>3 Terms</strong> or <strong>2 Semesters</strong>. Reports, exams, and fee schedules adapt instantly.
+              </p>
+            </div>
+
+            <div
+              style={{
+                background: '#ffffff',
+                padding: '1.5rem',
+                borderRadius: '18px',
+                border: '1px solid #e2e8f0',
+                boxShadow: '0 4px 12px rgba(0,0,0,0.03)',
+              }}
+            >
+              <div
+                style={{
+                  width: '44px',
+                  height: '44px',
+                  borderRadius: '12px',
+                  background: '#f5f3ff',
+                  color: '#7c3aed',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  marginBottom: '1rem',
+                }}
+              >
+                <PaletteIcon size={22} color="#7c3aed" />
+              </div>
+              <h3 style={{ fontSize: '1rem', fontWeight: 800, color: '#0f172a', marginBottom: '0.35rem' }}>
+                100% White-Label Branding
+              </h3>
+              <p style={{ fontSize: '0.82rem', color: '#64748b', lineHeight: 1.5, margin: 0 }}>
+                Embed your official school crest, emblem, motto, and custom institutional color palette across all public and private portal screens.
+              </p>
+            </div>
+          </div>
+
+          {/* Partner Schools Live Showcase Billboard */}
+          <div style={{ marginBottom: '3rem' }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1.25rem', flexWrap: 'wrap', gap: '0.75rem' }}>
+              <div>
+                <h3 style={{ fontSize: '1.25rem', fontWeight: 900, color: '#0f172a', margin: 0 }}>
+                  Explore Active Partner Schools & Live Portals
+                </h3>
+                <span style={{ fontSize: '0.82rem', color: '#64748b' }}>
+                  Click any partner institution to explore their custom branded student, teacher, bursar, and principal portals.
+                </span>
+              </div>
+
+              <Link
+                to="/register-school"
+                style={{
+                  background: '#1d4ed8',
+                  color: '#ffffff',
+                  fontSize: '0.85rem',
+                  fontWeight: 800,
+                  padding: '0.55rem 1.1rem',
+                  borderRadius: '10px',
+                  textDecoration: 'none',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '6px',
+                  boxShadow: '0 4px 12px rgba(29, 78, 216, 0.25)',
+                }}
+              >
+                <SparklesIcon size={14} color="#ffffff" />
+                <span>Register Your School Free</span>
+              </Link>
+            </div>
+
+            <div
+              style={{
+                display: 'grid',
+                gridTemplateColumns: isMobile ? '1fr' : 'repeat(auto-fit, minmax(340px, 1fr))',
+                gap: '1.5rem',
+              }}
+            >
+              {partnerSchools.slice(0, 3).map((school) => {
+                const isSemester = school.academic_system === 'semester'
+                return (
+                  <div
+                    key={school.id}
+                    style={{
+                      background: '#ffffff',
+                      borderRadius: '20px',
+                      border: '1px solid #e2e8f0',
+                      boxShadow: '0 8px 24px rgba(0,0,0,0.04)',
+                      overflow: 'hidden',
+                      display: 'flex',
+                      flexDirection: 'column',
+                    }}
+                  >
+                    {/* Header Strip with School Colors */}
+                    <div
+                      style={{
+                        background: `linear-gradient(135deg, ${school.primary_color} 0%, #0f172a 100%)`,
+                        padding: '1.5rem',
+                        color: '#ffffff',
+                        position: 'relative',
+                      }}
+                    >
+                      <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: '0.75rem' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                          <div
+                            style={{
+                              width: '46px',
+                              height: '46px',
+                              borderRadius: '12px',
+                              background: 'rgba(255, 255, 255, 0.15)',
+                              border: `1.5px solid ${school.accent_color || '#ffffff'}`,
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'center',
+                              fontSize: '1.4rem',
+                            }}
+                          >
+                            🏫
+                          </div>
+                          <div>
+                            <h4 style={{ margin: 0, fontSize: '1.1rem', fontWeight: 900, lineHeight: 1.25, color: '#ffffff' }}>
+                              {school.name}
+                            </h4>
+                            <span style={{ fontSize: '0.75rem', color: school.accent_color || '#fef08a', fontWeight: 700 }}>
+                              {school.curriculum_type}
+                            </span>
+                          </div>
+                        </div>
+
+                        <span
+                          style={{
+                            background: isSemester ? 'rgba(4, 120, 87, 0.85)' : 'rgba(217, 119, 6, 0.85)',
+                            color: '#ffffff',
+                            padding: '0.2rem 0.55rem',
+                            borderRadius: '6px',
+                            fontSize: '0.68rem',
+                            fontWeight: 800,
+                            textTransform: 'uppercase',
+                            letterSpacing: '0.04em',
+                            whiteSpace: 'nowrap',
+                          }}
+                        >
+                          {isSemester ? '2 Semesters' : '3 Terms'}
+                        </span>
+                      </div>
+
+                      <p
+                        style={{
+                          margin: '0.75rem 0 0',
+                          fontSize: '0.78rem',
+                          fontStyle: 'italic',
+                          opacity: 0.9,
+                          lineHeight: 1.4,
+                        }}
+                      >
+                        "{school.motto}"
+                      </p>
+                    </div>
+
+                    {/* School Body */}
+                    <div style={{ padding: '1.25rem', flex: 1, display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                      {/* URL Badge */}
+                      <div
+                        style={{
+                          background: '#f8fafc',
+                          padding: '0.65rem 0.85rem',
+                          borderRadius: '10px',
+                          border: '1px solid #e2e8f0',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'space-between',
+                          fontSize: '0.8rem',
+                        }}
+                      >
+                        <span style={{ color: '#64748b', fontWeight: 600 }}>Dedicated Portal URL:</span>
+                        <code style={{ fontWeight: 800, color: '#1d4ed8' }}>
+                          /s/{school.slug}
+                        </code>
+                      </div>
+
+                      {/* Quick Portal Jump Buttons */}
+                      <div>
+                        <span style={{ display: 'block', fontSize: '0.72rem', fontWeight: 800, color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.04em', marginBottom: '0.5rem' }}>
+                          Available Role Desks:
+                        </span>
+                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.45rem' }}>
+                          <Link
+                            to={`/s/${school.slug}/student`}
+                            style={{
+                              background: '#f0fdf4',
+                              color: '#15803d',
+                              border: '1px solid #bbf7d0',
+                              padding: '0.45rem 0.6rem',
+                              borderRadius: '8px',
+                              fontSize: '0.75rem',
+                              fontWeight: 700,
+                              textDecoration: 'none',
+                              textAlign: 'center',
+                            }}
+                          >
+                            🎓 Student Portal
+                          </Link>
+                          <Link
+                            to={`/s/${school.slug}/teacher`}
+                            style={{
+                              background: '#eff6ff',
+                              color: '#1e40af',
+                              border: '1px solid #bfdbfe',
+                              padding: '0.45rem 0.6rem',
+                              borderRadius: '8px',
+                              fontSize: '0.75rem',
+                              fontWeight: 700,
+                              textDecoration: 'none',
+                              textAlign: 'center',
+                            }}
+                          >
+                            👨‍🏫 Teacher Desk
+                          </Link>
+                          <Link
+                            to={`/s/${school.slug}/bursar`}
+                            style={{
+                              background: '#faf5ff',
+                              color: '#6b21a8',
+                              border: '1px solid #e9d5ff',
+                              padding: '0.45rem 0.6rem',
+                              borderRadius: '8px',
+                              fontSize: '0.75rem',
+                              fontWeight: 700,
+                              textDecoration: 'none',
+                              textAlign: 'center',
+                            }}
+                          >
+                            💳 Bursar Desk
+                          </Link>
+                          <Link
+                            to={`/s/${school.slug}/principal`}
+                            style={{
+                              background: '#fff1f2',
+                              color: '#be123c',
+                              border: '1px solid #fecdd3',
+                              padding: '0.45rem 0.6rem',
+                              borderRadius: '8px',
+                              fontSize: '0.75rem',
+                              fontWeight: 700,
+                              textDecoration: 'none',
+                              textAlign: 'center',
+                            }}
+                          >
+                            🛡️ Principal Desk
+                          </Link>
+                        </div>
+                      </div>
+
+                      {/* Main Visit Action */}
+                      <Link
+                        to={`/s/${school.slug}`}
+                        style={{
+                          marginTop: 'auto',
+                          background: school.primary_color,
+                          color: '#ffffff',
+                          fontWeight: 800,
+                          fontSize: '0.85rem',
+                          padding: '0.75rem',
+                          borderRadius: '12px',
+                          textDecoration: 'none',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          gap: '6px',
+                        }}
+                      >
+                        <span>Open {school.name.split(' ')[0]}'s Hub</span>
+                        <ArrowRightIcon size={14} />
+                      </Link>
+                    </div>
+                  </div>
+                )
+              })}
+            </div>
+          </div>
+
+          {/* Call to Action Banner for New Schools */}
+          <div
+            style={{
+              background: 'linear-gradient(135deg, #1e3a8a 0%, #0f172a 100%)',
+              color: '#ffffff',
+              borderRadius: '24px',
+              padding: isMobile ? '2rem 1.5rem' : '2.5rem 3rem',
+              display: 'flex',
+              flexDirection: isMobile ? 'column' : 'row',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              gap: '1.5rem',
+              boxShadow: '0 16px 36px rgba(15, 23, 42, 0.15)',
+            }}
+          >
+            <div>
+              <div
+                style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '6px',
+                  background: 'rgba(212, 175, 55, 0.2)',
+                  color: '#fbbf24',
+                  padding: '0.25rem 0.75rem',
+                  borderRadius: '999px',
+                  fontSize: '0.75rem',
+                  fontWeight: 800,
+                  textTransform: 'uppercase',
+                  marginBottom: '0.75rem',
+                }}
+              >
+                <SparklesIcon size={14} /> Instant Self-Service Setup
+              </div>
+              <h3 style={{ fontSize: isMobile ? '1.35rem' : '1.75rem', fontWeight: 900, margin: '0 0 0.5rem', color: '#ffffff' }}>
+                Ready to Bring Your Institution to the Cloud?
+              </h3>
+              <p style={{ margin: 0, fontSize: '0.9rem', color: '#94a3b8', maxWidth: '620px', lineHeight: 1.5 }}>
+                Create your school account in under 3 minutes. Pick your URL slug, choose your term/semester calendar, and immediately receive linkable portals for your students and teachers.
+              </p>
+            </div>
+
+            <div style={{ display: 'flex', flexDirection: isMobile ? 'column' : 'row', gap: '0.75rem', width: isMobile ? '100%' : 'auto' }}>
+              <Link
+                to="/register-school"
+                style={{
+                  background: 'linear-gradient(135deg, #d4af37 0%, #b8860b 100%)',
+                  color: '#0f172a',
+                  fontWeight: 900,
+                  fontSize: '0.95rem',
+                  padding: '0.9rem 1.6rem',
+                  borderRadius: '14px',
+                  textDecoration: 'none',
+                  textAlign: 'center',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '6px',
+                  boxShadow: '0 4px 14px rgba(212, 175, 55, 0.35)',
+                }}
+              >
+                <span>Register School Now</span>
+                <ArrowRightIcon size={16} />
+              </Link>
+              <Link
+                to="/s/hillcrest"
+                style={{
+                  background: 'rgba(255, 255, 255, 0.1)',
+                  color: '#ffffff',
+                  fontWeight: 700,
+                  fontSize: '0.95rem',
+                  padding: '0.9rem 1.4rem',
+                  borderRadius: '14px',
+                  textDecoration: 'none',
+                  textAlign: 'center',
+                  border: '1px solid rgba(255, 255, 255, 0.2)',
+                }}
+              >
+                View Live Demo
+              </Link>
             </div>
           </div>
         </div>
