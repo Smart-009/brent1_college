@@ -40,6 +40,7 @@ import {
   XIcon,
   ChevronLeftIcon,
   ChevronRightIcon,
+  ChevronDownIcon,
   MenuIcon,
   FlaskIcon,
   RocketIcon,
@@ -403,6 +404,30 @@ export function Landing() {
   const [showPortalDesksModal, setShowPortalDesksModal] = useState(false)
   const [mobileNavOpen, setMobileNavOpen] = useState(false)
   const [categoryDropdownOpen, setCategoryDropdownOpen] = useState(false)
+  const [academicsDropdownOpen, setAcademicsDropdownOpen] = useState(false)
+  const [servicesDropdownOpen, setServicesDropdownOpen] = useState(false)
+  const academicsDropdownRef = useRef<HTMLDivElement | null>(null)
+  const servicesDropdownRef = useRef<HTMLDivElement | null>(null)
+  const categoryDropdownRef = useRef<HTMLDivElement | null>(null)
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      const target = event.target as Node
+      if (academicsDropdownRef.current && !academicsDropdownRef.current.contains(target)) {
+        setAcademicsDropdownOpen(false)
+      }
+      if (servicesDropdownRef.current && !servicesDropdownRef.current.contains(target)) {
+        setServicesDropdownOpen(false)
+      }
+      if (categoryDropdownRef.current && !categoryDropdownRef.current.contains(target)) {
+        setCategoryDropdownOpen(false)
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside)
+    }
+  }, [])
   const [supportModalOpen, setSupportModalOpen] = useState(false)
   const [tutorModalOpen, setTutorModalOpen] = useState(false)
   const [tutorSubmitting, setTutorSubmitting] = useState(false)
@@ -814,7 +839,7 @@ export function Landing() {
 
     // Paystack is the exclusive payment gateway accepted by Éclat Institute
     initializePaystackCheckout({
-      email: inquiryForm.email || 'admissions@eclat.institute',
+      email: inquiryForm.email || INSTITUTION_CONFIG.contact.admissionsEmail,
       amount: amountToPay,
       currency: 'KES',
       studentName: inquiryForm.name,
@@ -1106,7 +1131,7 @@ export function Landing() {
             </Link>
 
             {/* Udemy-Style "Explore Categories" Dropdown (Desktop) */}
-            <div style={{ position: 'relative' }} className="hidden lg:block">
+            <div ref={categoryDropdownRef} style={{ position: 'relative' }} className="hidden lg:block">
               <button
                 type="button"
                 onClick={() => setCategoryDropdownOpen(!categoryDropdownOpen)}
@@ -1236,211 +1261,510 @@ export function Landing() {
           {/* Right Side: Quick Action Links & Portals */}
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', flexShrink: 0 }}>
             {/* Desktop-Only Navigation & Actions */}
+            {/* Desktop-Only Organized Navigation & Actions */}
             <div className="desktop-nav-container">
-              <nav className="desktop-nav-links" style={{ fontSize: '0.88rem', fontWeight: 600, marginRight: '0.25rem', display: 'flex', gap: '1rem', alignItems: 'center' }}>
-                <a href="#intakes-section" style={{ color: '#d97706', fontWeight: 800, textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: '5px' }}>
-                  <CalendarIcon size={14} color="#d97706" />
-                  <span>Intakes</span>
-                </a>
-                <Link to="/courses" style={{ color: '#0284c7', fontWeight: 800, textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: '5px' }}>
-                  <BookOpenIcon size={14} color="#0284c7" />
-                  <span>All Programs</span>
-                </Link>
-                <Link to="/hire" style={{ color: '#2563eb', fontWeight: 800, textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: '5px' }}>
-                  <LaptopIcon size={14} color="#2563eb" />
-                  <span>Hire Us</span>
-                </Link>
-                <Link to="/careers" style={{ color: '#16a34a', fontWeight: 800, textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: '5px' }}>
-                  <GraduationCapIcon size={14} color="#16a34a" />
-                  <span>Careers</span>
-                </Link>
+              <nav className="desktop-nav-links" style={{ fontSize: '0.88rem', fontWeight: 600, display: 'flex', gap: '0.65rem', alignItems: 'center' }}>
+                
+                {/* 1. Academic Curricula & Programs Dropdown */}
+                <div ref={academicsDropdownRef} style={{ position: 'relative' }}>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setAcademicsDropdownOpen(!academicsDropdownOpen)
+                      setServicesDropdownOpen(false)
+                    }}
+                    style={{
+                      background: academicsDropdownOpen ? '#eff6ff' : 'transparent',
+                      color: academicsDropdownOpen ? '#1d4ed8' : '#334155',
+                      border: 'none',
+                      padding: '0.45rem 0.65rem',
+                      borderRadius: '8px',
+                      fontWeight: 700,
+                      fontSize: '0.86rem',
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: '5px',
+                      cursor: 'pointer',
+                      transition: 'all 0.15s ease',
+                    }}
+                  >
+                    <BookOpenIcon size={15} color="#1d4ed8" />
+                    <span>Academics</span>
+                    <ChevronDownIcon
+                      size={13}
+                      color="#64748b"
+                      style={{
+                        transform: academicsDropdownOpen ? 'rotate(180deg)' : 'none',
+                        transition: 'transform 0.2s ease',
+                      }}
+                    />
+                  </button>
+
+                  {academicsDropdownOpen && (
+                    <div
+                      style={{
+                        position: 'absolute',
+                        top: 'calc(100% + 8px)',
+                        left: 0,
+                        width: '290px',
+                        background: '#ffffff',
+                        border: '1px solid #cbd5e1',
+                        borderRadius: '12px',
+                        boxShadow: '0 12px 32px rgba(0, 0, 0, 0.15)',
+                        padding: '0.5rem',
+                        zIndex: 200,
+                        animation: 'fadeIn 0.15s ease',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        gap: '2px',
+                      }}
+                    >
+                      <Link
+                        to="/courses"
+                        onClick={() => setAcademicsDropdownOpen(false)}
+                        style={{
+                          textDecoration: 'none',
+                          padding: '0.6rem 0.75rem',
+                          borderRadius: '8px',
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '10px',
+                          color: '#0f172a',
+                          background: 'transparent',
+                          transition: 'background 0.15s',
+                        }}
+                        onMouseEnter={(e) => (e.currentTarget.style.background = '#eff6ff')}
+                        onMouseLeave={(e) => (e.currentTarget.style.background = 'transparent')}
+                      >
+                        <div style={{ width: '28px', height: '28px', borderRadius: '6px', background: '#eff6ff', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                          <BookOpenIcon size={15} color="#1d4ed8" />
+                        </div>
+                        <div>
+                          <div style={{ fontSize: '0.86rem', fontWeight: 700, color: '#0f172a' }}>All Programs & Diplomas</div>
+                          <div style={{ fontSize: '0.72rem', color: '#64748b' }}>IT, Data Science, Business & Languages</div>
+                        </div>
+                      </Link>
+
+                      <Link
+                        to="/courses?cat=IGCSE"
+                        onClick={() => setAcademicsDropdownOpen(false)}
+                        style={{
+                          textDecoration: 'none',
+                          padding: '0.6rem 0.75rem',
+                          borderRadius: '8px',
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '10px',
+                          color: '#0f172a',
+                          background: 'transparent',
+                          transition: 'background 0.15s',
+                        }}
+                        onMouseEnter={(e) => (e.currentTarget.style.background = '#fefce8')}
+                        onMouseLeave={(e) => (e.currentTarget.style.background = 'transparent')}
+                      >
+                        <div style={{ width: '28px', height: '28px', borderRadius: '6px', background: '#fefce8', border: '1px solid #fef08a', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                          <BritishShieldIcon size={15} />
+                        </div>
+                        <div>
+                          <div style={{ fontSize: '0.86rem', fontWeight: 800, color: '#92400e' }}>British Curriculum & IGCSE</div>
+                          <div style={{ fontSize: '0.72rem', color: '#64748b' }}>Cambridge KE042 & Pearson Edexcel</div>
+                        </div>
+                      </Link>
+
+                      <a
+                        href="#intakes-section"
+                        onClick={() => setAcademicsDropdownOpen(false)}
+                        style={{
+                          textDecoration: 'none',
+                          padding: '0.6rem 0.75rem',
+                          borderRadius: '8px',
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '10px',
+                          color: '#0f172a',
+                          background: 'transparent',
+                          transition: 'background 0.15s',
+                        }}
+                        onMouseEnter={(e) => (e.currentTarget.style.background = '#fffbeb')}
+                        onMouseLeave={(e) => (e.currentTarget.style.background = 'transparent')}
+                      >
+                        <div style={{ width: '28px', height: '28px', borderRadius: '6px', background: '#fffbeb', border: '1px solid #fde68a', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                          <CalendarIcon size={15} color="#d97706" />
+                        </div>
+                        <div>
+                          <div style={{ fontSize: '0.86rem', fontWeight: 700, color: '#b45309' }}>Intakes & Cohorts</div>
+                          <div style={{ fontSize: '0.72rem', color: '#64748b' }}>Admissions and start dates</div>
+                        </div>
+                      </a>
+
+                      <Link
+                        to="/timetable"
+                        onClick={() => setAcademicsDropdownOpen(false)}
+                        style={{
+                          textDecoration: 'none',
+                          padding: '0.6rem 0.75rem',
+                          borderRadius: '8px',
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '10px',
+                          color: '#0f172a',
+                          background: 'transparent',
+                          transition: 'background 0.15s',
+                        }}
+                        onMouseEnter={(e) => (e.currentTarget.style.background = '#f1f5f9')}
+                        onMouseLeave={(e) => (e.currentTarget.style.background = 'transparent')}
+                      >
+                        <div style={{ width: '28px', height: '28px', borderRadius: '6px', background: '#f8fafc', border: '1px solid #e2e8f0', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                          <ClockIcon size={15} color="#475569" />
+                        </div>
+                        <div>
+                          <div style={{ fontSize: '0.86rem', fontWeight: 700, color: '#0f172a' }}>Virtual Timetable</div>
+                          <div style={{ fontSize: '0.72rem', color: '#64748b' }}>Live lecture schedule & slots</div>
+                        </div>
+                      </Link>
+                    </div>
+                  )}
+                </div>
+
+                {/* 2. Institutional Services & Cloud Dropdown */}
+                <div ref={servicesDropdownRef} style={{ position: 'relative' }}>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setServicesDropdownOpen(!servicesDropdownOpen)
+                      setAcademicsDropdownOpen(false)
+                    }}
+                    style={{
+                      background: servicesDropdownOpen ? '#f5f3ff' : 'transparent',
+                      color: servicesDropdownOpen ? '#7c3aed' : '#334155',
+                      border: 'none',
+                      padding: '0.45rem 0.65rem',
+                      borderRadius: '8px',
+                      fontWeight: 700,
+                      fontSize: '0.86rem',
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: '5px',
+                      cursor: 'pointer',
+                      transition: 'all 0.15s ease',
+                    }}
+                  >
+                    <BuildingIcon size={15} color="#7c3aed" />
+                    <span>Cloud & Services</span>
+                    <ChevronDownIcon
+                      size={13}
+                      color="#64748b"
+                      style={{
+                        transform: servicesDropdownOpen ? 'rotate(180deg)' : 'none',
+                        transition: 'transform 0.2s ease',
+                      }}
+                    />
+                  </button>
+
+                  {servicesDropdownOpen && (
+                    <div
+                      style={{
+                        position: 'absolute',
+                        top: 'calc(100% + 8px)',
+                        left: 0,
+                        width: '320px',
+                        background: '#ffffff',
+                        border: '1px solid #cbd5e1',
+                        borderRadius: '12px',
+                        boxShadow: '0 12px 32px rgba(0, 0, 0, 0.15)',
+                        padding: '0.5rem',
+                        zIndex: 200,
+                        animation: 'fadeIn 0.15s ease',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        gap: '2px',
+                      }}
+                    >
+                      <Link
+                        to="/register-school"
+                        onClick={() => setServicesDropdownOpen(false)}
+                        style={{
+                          textDecoration: 'none',
+                          padding: '0.65rem 0.75rem',
+                          borderRadius: '8px',
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '10px',
+                          color: '#0f172a',
+                          background: 'transparent',
+                          transition: 'background 0.15s',
+                        }}
+                        onMouseEnter={(e) => (e.currentTarget.style.background = '#f5f3ff')}
+                        onMouseLeave={(e) => (e.currentTarget.style.background = 'transparent')}
+                      >
+                        <div style={{ width: '30px', height: '30px', borderRadius: '8px', background: 'linear-gradient(135deg, #8b5cf6, #6d28d9)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                          <BuildingIcon size={16} color="#ffffff" />
+                        </div>
+                        <div>
+                          <div style={{ fontSize: '0.86rem', fontWeight: 800, color: '#6d28d9', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                            <span>School Cloud SIS & LMS</span>
+                            <span style={{ fontSize: '0.62rem', background: '#ede9fe', color: '#6d28d9', padding: '1px 5px', borderRadius: '4px', fontWeight: 800 }}>SaaS</span>
+                          </div>
+                          <div style={{ fontSize: '0.72rem', color: '#64748b' }}>Turnkey portals for partner schools & academies</div>
+                        </div>
+                      </Link>
+
+                      <Link
+                        to="/publish-course"
+                        onClick={() => setServicesDropdownOpen(false)}
+                        style={{
+                          textDecoration: 'none',
+                          padding: '0.65rem 0.75rem',
+                          borderRadius: '8px',
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '10px',
+                          color: '#0f172a',
+                          background: 'transparent',
+                          transition: 'background 0.15s',
+                        }}
+                        onMouseEnter={(e) => (e.currentTarget.style.background = '#fffbeb')}
+                        onMouseLeave={(e) => (e.currentTarget.style.background = 'transparent')}
+                      >
+                        <div style={{ width: '30px', height: '30px', borderRadius: '8px', background: 'linear-gradient(135deg, #f59e0b, #d97706)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                          <SparklesIcon size={16} color="#ffffff" />
+                        </div>
+                        <div>
+                          <div style={{ fontSize: '0.86rem', fontWeight: 800, color: '#b45309', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                            <span>Publish Course & Monetize</span>
+                            <span style={{ fontSize: '0.62rem', background: '#fef3c7', color: '#b45309', padding: '1px 5px', borderRadius: '4px', fontWeight: 800 }}>50% Share</span>
+                          </div>
+                          <div style={{ fontSize: '0.72rem', color: '#64748b' }}>Host your courses & earn recurring revenue</div>
+                        </div>
+                      </Link>
+
+                      <Link
+                        to="/hire"
+                        onClick={() => setServicesDropdownOpen(false)}
+                        style={{
+                          textDecoration: 'none',
+                          padding: '0.65rem 0.75rem',
+                          borderRadius: '8px',
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '10px',
+                          color: '#0f172a',
+                          background: 'transparent',
+                          transition: 'background 0.15s',
+                        }}
+                        onMouseEnter={(e) => (e.currentTarget.style.background = '#eff6ff')}
+                        onMouseLeave={(e) => (e.currentTarget.style.background = 'transparent')}
+                      >
+                        <div style={{ width: '30px', height: '30px', borderRadius: '8px', background: 'linear-gradient(135deg, #3b82f6, #1d4ed8)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                          <LaptopIcon size={16} color="#ffffff" />
+                        </div>
+                        <div>
+                          <div style={{ fontSize: '0.86rem', fontWeight: 700, color: '#1d4ed8' }}>Hire Éclat Tech Services</div>
+                          <div style={{ fontSize: '0.72rem', color: '#64748b' }}>Custom web development, apps & data analytics</div>
+                        </div>
+                      </Link>
+
+                      <Link
+                        to="/careers"
+                        onClick={() => setServicesDropdownOpen(false)}
+                        style={{
+                          textDecoration: 'none',
+                          padding: '0.65rem 0.75rem',
+                          borderRadius: '8px',
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '10px',
+                          color: '#0f172a',
+                          background: 'transparent',
+                          transition: 'background 0.15s',
+                        }}
+                        onMouseEnter={(e) => (e.currentTarget.style.background = '#f0fdf4')}
+                        onMouseLeave={(e) => (e.currentTarget.style.background = 'transparent')}
+                      >
+                        <div style={{ width: '30px', height: '30px', borderRadius: '8px', background: 'linear-gradient(135deg, #22c55e, #15803d)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                          <GraduationCapIcon size={16} color="#ffffff" />
+                        </div>
+                        <div>
+                          <div style={{ fontSize: '0.86rem', fontWeight: 700, color: '#15803d' }}>Careers & Faculty</div>
+                          <div style={{ fontSize: '0.72rem', color: '#64748b' }}>Join our online teaching & operations team</div>
+                        </div>
+                      </Link>
+
+                      <Link
+                        to="/donate"
+                        onClick={() => setServicesDropdownOpen(false)}
+                        style={{
+                          textDecoration: 'none',
+                          padding: '0.65rem 0.75rem',
+                          borderRadius: '8px',
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '10px',
+                          color: '#0f172a',
+                          background: 'transparent',
+                          transition: 'background 0.15s',
+                        }}
+                        onMouseEnter={(e) => (e.currentTarget.style.background = '#ecfdf5')}
+                        onMouseLeave={(e) => (e.currentTarget.style.background = 'transparent')}
+                      >
+                        <div style={{ width: '30px', height: '30px', borderRadius: '8px', background: 'linear-gradient(135deg, #10b981, #047857)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                          <HeartHandshakeIcon size={16} color="#ffffff" />
+                        </div>
+                        <div>
+                          <div style={{ fontSize: '0.86rem', fontWeight: 700, color: '#047857' }}>Sponsor a Student / Donate</div>
+                          <div style={{ fontSize: '0.72rem', color: '#64748b' }}>Empower underprivileged learners & classrooms</div>
+                        </div>
+                      </Link>
+                    </div>
+                  )}
+                </div>
+
+                {/* 3. E-Library Direct Link */}
                 <Link
-                  to="/register-school"
-                  style={{ color: '#7c3aed', fontWeight: 800, textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: '5px' }}
-                  title="White-label school management for partner schools, colleges & academies"
-                >
-                  <BuildingIcon size={14} color="#7c3aed" />
-                  <span>School Cloud</span>
-                </Link>
-                <Link
-                  to="/publish-course"
+                  to="/library"
                   style={{
-                    background: 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)',
-                    color: '#ffffff',
+                    color: '#2563eb',
+                    fontWeight: 700,
                     textDecoration: 'none',
-                    fontWeight: 800,
-                    padding: '0.35rem 0.75rem',
-                    borderRadius: '8px',
-                    fontSize: '0.8rem',
                     display: 'inline-flex',
                     alignItems: 'center',
                     gap: '5px',
-                    boxShadow: '0 2px 8px rgba(217, 119, 6, 0.3)',
-                  }}
-                  title="Publish a Course & Earn 50% Revenue Share"
-                >
-                  <SparklesIcon size={13} color="#ffffff" />
-                  <span>Publish & Earn 50%</span>
-                </Link>
-                <Link
-                  to="/donate"
-                  style={{
-                    background: 'linear-gradient(135deg, #16a34a 0%, #15803d 100%)',
-                    color: '#ffffff',
-                    textDecoration: 'none',
-                    fontWeight: 800,
-                    padding: '0.35rem 0.75rem',
+                    padding: '0.45rem 0.65rem',
                     borderRadius: '8px',
-                    fontSize: '0.8rem',
-                    display: 'inline-flex',
-                    alignItems: 'center',
-                    gap: '5px',
-                    boxShadow: '0 2px 8px rgba(22, 163, 74, 0.3)',
+                    transition: 'background 0.15s',
                   }}
-                  title="Sponsor underprivileged students & donate to physical school enrollments"
+                  onMouseEnter={(e) => (e.currentTarget.style.background = '#eff6ff')}
+                  onMouseLeave={(e) => (e.currentTarget.style.background = 'transparent')}
                 >
-                  <HeartHandshakeIcon size={13} color="#ffffff" />
-                  <span>Sponsor / Donate</span>
-                </Link>
-                <Link to="/library" style={{ color: '#2563eb', fontWeight: 800, textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: '5px' }}>
-                  <LibraryIcon size={14} color="#2563eb" />
+                  <LibraryIcon size={15} color="#2563eb" />
                   <span>E-Library</span>
                 </Link>
-                <a href="#calculator" style={{ color: '#334155', textDecoration: 'none' }}>Fees Inquiry</a>
-                <a href="#about" style={{ color: '#334155', textDecoration: 'none' }}>About Us</a>
+
+                {/* 4. Tuition Fees */}
+                <a
+                  href="#calculator"
+                  style={{
+                    color: '#475569',
+                    fontWeight: 600,
+                    textDecoration: 'none',
+                    padding: '0.45rem 0.55rem',
+                    borderRadius: '8px',
+                    transition: 'background 0.15s',
+                  }}
+                  onMouseEnter={(e) => (e.currentTarget.style.background = '#f8fafc')}
+                  onMouseLeave={(e) => (e.currentTarget.style.background = 'transparent')}
+                >
+                  Fees
+                </a>
+
+                {/* 5. About */}
+                <a
+                  href="#about"
+                  style={{
+                    color: '#475569',
+                    fontWeight: 600,
+                    textDecoration: 'none',
+                    padding: '0.45rem 0.55rem',
+                    borderRadius: '8px',
+                    transition: 'background 0.15s',
+                  }}
+                  onMouseEnter={(e) => (e.currentTarget.style.background = '#f8fafc')}
+                  onMouseLeave={(e) => (e.currentTarget.style.background = 'transparent')}
+                >
+                  About
+                </a>
               </nav>
 
-              <button
-                type="button"
-                className="btn btn-sm"
-                style={{
-                  background: '#16a34a',
-                  color: '#ffffff',
-                  border: 'none',
-                  fontWeight: 700,
-                  padding: '0.45rem 0.75rem',
-                  borderRadius: '8px',
-                  boxShadow: '0 2px 6px rgba(22, 163, 74, 0.3)',
-                  alignItems: 'center',
-                  gap: '5px',
-                  fontSize: '0.78rem',
-                  whiteSpace: 'nowrap',
-                  cursor: 'pointer',
-                  display: 'inline-flex',
-                }}
-                onClick={() => {
-                  setAppModalTab('windows')
-                  setAppModalOpen(true)
-                }}
-                title="Install & Download Official Native Apps"
-              >
-                <SmartphoneIcon size={14} color="#ffffff" />
-                <span>Get Apps</span>
-              </button>
+              {/* Action Buttons: Get Apps, Apply, Portals */}
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem', marginLeft: '0.25rem' }}>
+                <button
+                  type="button"
+                  className="btn btn-sm"
+                  style={{
+                    background: '#16a34a',
+                    color: '#ffffff',
+                    border: 'none',
+                    fontWeight: 700,
+                    padding: '0.45rem 0.75rem',
+                    borderRadius: '8px',
+                    boxShadow: '0 2px 6px rgba(22, 163, 74, 0.3)',
+                    alignItems: 'center',
+                    gap: '5px',
+                    fontSize: '0.78rem',
+                    whiteSpace: 'nowrap',
+                    cursor: 'pointer',
+                    display: 'inline-flex',
+                  }}
+                  onClick={() => {
+                    setAppModalTab('windows')
+                    setAppModalOpen(true)
+                  }}
+                  title="Download Official Native Apps (Windows & Android)"
+                >
+                  <SmartphoneIcon size={14} color="#ffffff" />
+                  <span>Get Apps</span>
+                </button>
 
+                <button
+                  type="button"
+                  className="btn btn-sm"
+                  style={{
+                    background: '#eff6ff',
+                    color: '#1d4ed8',
+                    border: '1px solid #bfdbfe',
+                    fontWeight: 700,
+                    padding: '0.45rem 0.75rem',
+                    borderRadius: '8px',
+                    fontSize: '0.78rem',
+                    whiteSpace: 'nowrap',
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '4px',
+                    cursor: 'pointer',
+                  }}
+                  onClick={() => setInquiryModalOpen(true)}
+                >
+                  <RocketIcon size={13} color="#1d4ed8" />
+                  <span>Apply</span>
+                </button>
+
+                <button
+                  type="button"
+                  className="btn btn-sm btn-primary"
+                  style={{
+                    fontWeight: 700,
+                    padding: '0.45rem 0.85rem',
+                    borderRadius: '8px',
+                    boxShadow: '0 4px 10px rgba(30, 58, 138, 0.25)',
+                    fontSize: '0.78rem',
+                    whiteSpace: 'nowrap',
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '5px',
+                    cursor: 'pointer',
+                  }}
+                  onClick={() => setShowPortalDesksModal(true)}
+                >
+                  <LockIcon size={13} color="#ffffff" />
+                  <span>Portals</span>
+                </button>
+              </div>
+            </div>
+
+            {/* Mobile-Only Actions & Hamburger Button */}
+            <div className="landing-mobile-actions" style={{ alignItems: 'center', gap: '0.35rem', flexShrink: 0 }}>
               <button
                 type="button"
-                className="btn btn-sm"
+                className="btn btn-sm btn-primary"
                 style={{
-                  background: '#eff6ff',
-                  color: '#1d4ed8',
-                  border: '1px solid #bfdbfe',
-                  fontWeight: 700,
-                  padding: '0.45rem 0.75rem',
+                  fontWeight: 800,
+                  padding: '0.38rem 0.65rem',
                   borderRadius: '8px',
-                  fontSize: '0.78rem',
+                  fontSize: '0.75rem',
                   whiteSpace: 'nowrap',
                   display: 'inline-flex',
                   alignItems: 'center',
                   gap: '4px',
-                }}
-                onClick={() => setInquiryModalOpen(true)}
-              >
-                <RocketIcon size={13} color="#1d4ed8" />
-                <span>Apply</span>
-              </button>
-
-              <button
-                type="button"
-                className="btn btn-sm btn-primary"
-                style={{
-                  fontWeight: 700,
-                  padding: '0.45rem 0.85rem',
-                  borderRadius: '8px',
-                  boxShadow: '0 4px 10px rgba(30, 58, 138, 0.25)',
-                  fontSize: '0.78rem',
-                  whiteSpace: 'nowrap',
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  gap: '5px',
-                }}
-                onClick={() => setShowPortalDesksModal(true)}
-              >
-                <LockIcon size={13} color="#ffffff" />
-                <span>Portals</span>
-              </button>
-            </div>
-
-            {/* Mobile-Only Actions & Hamburger Button */}
-            <div className="landing-mobile-actions" style={{ alignItems: 'center', gap: '0.22rem', flexShrink: 0 }}>
-              <Link
-                to="/publish-course"
-                style={{
-                  background: 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)',
-                  color: '#ffffff',
-                  fontWeight: 800,
-                  padding: '0.34rem 0.44rem',
-                  borderRadius: '7px',
-                  fontSize: '0.7rem',
-                  whiteSpace: 'nowrap',
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  gap: '3px',
-                  textDecoration: 'none',
-                  boxShadow: '0 2px 6px rgba(217, 119, 6, 0.3)',
-                  flexShrink: 0,
-                }}
-                title="Publish Course & Earn 50% Share"
-              >
-                <SparklesIcon size={12} color="#ffffff" />
-                <span>Publish</span>
-              </Link>
-
-              <Link
-                to="/donate"
-                style={{
-                  background: 'linear-gradient(135deg, #16a34a 0%, #15803d 100%)',
-                  color: '#ffffff',
-                  fontWeight: 800,
-                  padding: '0.34rem 0.44rem',
-                  borderRadius: '7px',
-                  fontSize: '0.7rem',
-                  whiteSpace: 'nowrap',
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  gap: '3px',
-                  textDecoration: 'none',
-                  boxShadow: '0 2px 6px rgba(22, 163, 74, 0.3)',
-                  flexShrink: 0,
-                }}
-                title="Sponsor a Student / Donate"
-              >
-                <HeartHandshakeIcon size={12} color="#ffffff" />
-                <span>Donate</span>
-              </Link>
-
-              <button
-                type="button"
-                className="btn btn-sm btn-primary"
-                style={{
-                  fontWeight: 800,
-                  padding: '0.34rem 0.44rem',
-                  borderRadius: '7px',
-                  fontSize: '0.7rem',
-                  whiteSpace: 'nowrap',
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  gap: '3px',
                   boxShadow: '0 2px 8px rgba(37, 99, 235, 0.35)',
                   flexShrink: 0,
                 }}
@@ -1582,431 +1906,331 @@ export function Landing() {
                 flex: 1,
                 overflowY: 'auto',
                 WebkitOverflowScrolling: 'touch',
-                padding: '1rem 1.1rem',
+                padding: '1rem',
                 display: 'flex',
                 flexDirection: 'column',
-                gap: '0.45rem',
+                gap: '0.9rem',
                 background: '#ffffff',
               }}
             >
-              {/* Top Prominent Institutional Actions */}
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.45rem', marginBottom: '0.4rem' }}>
-                <Link
-                  to="/publish-course"
-                  onClick={() => setMobileNavOpen(false)}
-                  style={{
-                    color: '#ffffff',
-                    textDecoration: 'none',
-                    background: 'linear-gradient(135deg, #d97706 0%, #b45309 100%)',
-                    padding: '0.75rem 0.95rem',
-                    borderRadius: '12px',
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '10px',
-                    fontSize: '0.9rem',
-                    fontWeight: 800,
-                    boxShadow: '0 4px 12px rgba(217, 119, 6, 0.3)',
-                  }}
-                >
-                  <SparklesIcon size={18} color="#ffffff" />
-                  <span>Publish Course (Earn 50% Share)</span>
-                </Link>
+              {/* Category 1: Academic Programs & Curricula */}
+              <div>
+                <div style={{ fontSize: '0.68rem', fontWeight: 800, color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: '0.35rem', paddingLeft: '0.2rem' }}>
+                  Academics & Curricula
+                </div>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.3rem' }}>
+                  <Link
+                    to="/"
+                    onClick={() => {
+                      setMobileNavOpen(false)
+                      window.scrollTo({ top: 0, behavior: 'smooth' })
+                    }}
+                    style={{
+                      color: '#0f172a',
+                      textDecoration: 'none',
+                      padding: '0.6rem 0.75rem',
+                      borderRadius: '8px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '9px',
+                      fontSize: '0.88rem',
+                      fontWeight: 700,
+                      background: '#f8fafc',
+                    }}
+                  >
+                    <HomeIcon size={16} color="#0f172a" />
+                    <span>Home Campus</span>
+                  </Link>
 
-                <Link
-                  to="/donate"
-                  onClick={() => setMobileNavOpen(false)}
-                  style={{
-                    color: '#ffffff',
-                    textDecoration: 'none',
-                    background: 'linear-gradient(135deg, #16a34a 0%, #15803d 100%)',
-                    padding: '0.75rem 0.95rem',
-                    borderRadius: '12px',
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '10px',
-                    fontSize: '0.9rem',
-                    fontWeight: 800,
-                    boxShadow: '0 4px 12px rgba(22, 163, 74, 0.3)',
-                  }}
-                >
-                  <HeartHandshakeIcon size={18} color="#ffffff" />
-                  <span>💖 Sponsor a Student / Donate</span>
-                </Link>
+                  <Link
+                    to="/courses"
+                    onClick={() => setMobileNavOpen(false)}
+                    style={{
+                      color: '#1d4ed8',
+                      textDecoration: 'none',
+                      padding: '0.6rem 0.75rem',
+                      borderRadius: '8px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '9px',
+                      fontSize: '0.88rem',
+                      fontWeight: 700,
+                      background: '#eff6ff',
+                    }}
+                  >
+                    <BookOpenIcon size={16} color="#1d4ed8" />
+                    <span>All Academic Programs</span>
+                  </Link>
 
-                <Link
-                  to="/register-school"
-                  onClick={() => setMobileNavOpen(false)}
-                  style={{
-                    color: '#ffffff',
-                    textDecoration: 'none',
-                    background: 'linear-gradient(135deg, #7c3aed 0%, #6d28d9 100%)',
-                    padding: '0.75rem 0.95rem',
-                    borderRadius: '12px',
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '10px',
-                    fontSize: '0.9rem',
-                    fontWeight: 800,
-                    boxShadow: '0 4px 12px rgba(124, 58, 237, 0.3)',
-                  }}
-                >
-                  <BuildingIcon size={18} color="#ffffff" />
-                  <span>🏫 School Cloud (Register Institution)</span>
-                </Link>
+                  <Link
+                    to="/courses?cat=IGCSE"
+                    onClick={() => setMobileNavOpen(false)}
+                    style={{
+                      color: '#92400e',
+                      textDecoration: 'none',
+                      padding: '0.6rem 0.75rem',
+                      borderRadius: '8px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '9px',
+                      fontSize: '0.88rem',
+                      fontWeight: 800,
+                      background: '#fefce8',
+                      border: '1px solid #fef08a',
+                    }}
+                  >
+                    <BritishShieldIcon size={16} />
+                    <span>British Curriculum & IGCSE</span>
+                  </Link>
+
+                  <a
+                    href="#intakes-section"
+                    onClick={() => setMobileNavOpen(false)}
+                    style={{
+                      color: '#b45309',
+                      textDecoration: 'none',
+                      padding: '0.6rem 0.75rem',
+                      borderRadius: '8px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '9px',
+                      fontSize: '0.88rem',
+                      fontWeight: 700,
+                      background: '#fffbeb',
+                    }}
+                  >
+                    <CalendarIcon size={16} color="#d97706" />
+                    <span>Intakes & Cohorts</span>
+                  </a>
+
+                  <Link
+                    to="/timetable"
+                    onClick={() => setMobileNavOpen(false)}
+                    style={{
+                      color: '#334155',
+                      textDecoration: 'none',
+                      padding: '0.6rem 0.75rem',
+                      borderRadius: '8px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '9px',
+                      fontSize: '0.88rem',
+                      fontWeight: 600,
+                      background: '#f8fafc',
+                    }}
+                  >
+                    <ClockIcon size={16} color="#64748b" />
+                    <span>Virtual Timetable</span>
+                  </Link>
+                </div>
               </div>
 
-              <div style={{ fontSize: '0.68rem', fontWeight: 800, color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.08em', margin: '0.25rem 0 0.15rem 0.35rem' }}>
-                Academic Directory
+              {/* Category 2: School Cloud & Services */}
+              <div>
+                <div style={{ fontSize: '0.68rem', fontWeight: 800, color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: '0.35rem', paddingLeft: '0.2rem' }}>
+                  Cloud & Services
+                </div>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.3rem' }}>
+                  <Link
+                    to="/register-school"
+                    onClick={() => setMobileNavOpen(false)}
+                    style={{
+                      color: '#6d28d9',
+                      textDecoration: 'none',
+                      padding: '0.6rem 0.75rem',
+                      borderRadius: '8px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '9px',
+                      fontSize: '0.88rem',
+                      fontWeight: 800,
+                      background: '#f5f3ff',
+                      border: '1px solid #ddd6fe',
+                    }}
+                  >
+                    <BuildingIcon size={16} color="#7c3aed" />
+                    <span>School Cloud SIS & LMS (SaaS)</span>
+                  </Link>
+
+                  <Link
+                    to="/publish-course"
+                    onClick={() => setMobileNavOpen(false)}
+                    style={{
+                      color: '#92400e',
+                      textDecoration: 'none',
+                      padding: '0.6rem 0.75rem',
+                      borderRadius: '8px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '9px',
+                      fontSize: '0.88rem',
+                      fontWeight: 800,
+                      background: '#fffbeb',
+                      border: '1px solid #fde68a',
+                    }}
+                  >
+                    <SparklesIcon size={16} color="#d97706" />
+                    <span>Publish Course (Earn 50% Share)</span>
+                  </Link>
+
+                  <Link
+                    to="/hire"
+                    onClick={() => setMobileNavOpen(false)}
+                    style={{
+                      color: '#1d4ed8',
+                      textDecoration: 'none',
+                      padding: '0.6rem 0.75rem',
+                      borderRadius: '8px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '9px',
+                      fontSize: '0.88rem',
+                      fontWeight: 700,
+                      background: '#eff6ff',
+                    }}
+                  >
+                    <LaptopIcon size={16} color="#1d4ed8" />
+                    <span>Hire Éclat (Tech Services)</span>
+                  </Link>
+
+                  <Link
+                    to="/careers"
+                    onClick={() => setMobileNavOpen(false)}
+                    style={{
+                      color: '#15803d',
+                      textDecoration: 'none',
+                      padding: '0.6rem 0.75rem',
+                      borderRadius: '8px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '9px',
+                      fontSize: '0.88rem',
+                      fontWeight: 700,
+                      background: '#f0fdf4',
+                    }}
+                  >
+                    <GraduationCapIcon size={16} color="#15803d" />
+                    <span>Careers & Faculty</span>
+                  </Link>
+
+                  <Link
+                    to="/donate"
+                    onClick={() => setMobileNavOpen(false)}
+                    style={{
+                      color: '#047857',
+                      textDecoration: 'none',
+                      padding: '0.6rem 0.75rem',
+                      borderRadius: '8px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '9px',
+                      fontSize: '0.88rem',
+                      fontWeight: 800,
+                      background: '#ecfdf5',
+                      border: '1px solid #a7f3d0',
+                    }}
+                  >
+                    <HeartHandshakeIcon size={16} color="#059669" />
+                    <span>Sponsor a Student / Donate</span>
+                  </Link>
+                </div>
               </div>
 
-              <Link
-                to="/"
-                onClick={() => {
-                  setMobileNavOpen(false)
-                  window.scrollTo({ top: 0, behavior: 'smooth' })
-                }}
-                style={{
-                  color: '#0f172a',
-                  textDecoration: 'none',
-                  padding: '0.65rem 0.8rem',
-                  borderRadius: '10px',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '10px',
-                  fontSize: '0.9rem',
-                  fontWeight: 700,
-                  background: '#f8fafc',
-                  border: '1px solid #e2e8f0',
-                }}
-              >
-                <HomeIcon size={18} color="#0f172a" />
-                <span>Home</span>
-              </Link>
+              {/* Category 3: Student Hub & Info */}
+              <div>
+                <div style={{ fontSize: '0.68rem', fontWeight: 800, color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: '0.35rem', paddingLeft: '0.2rem' }}>
+                  Student Hub
+                </div>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.3rem' }}>
+                  <Link
+                    to="/library"
+                    onClick={() => setMobileNavOpen(false)}
+                    style={{
+                      color: '#2563eb',
+                      textDecoration: 'none',
+                      padding: '0.6rem 0.75rem',
+                      borderRadius: '8px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '9px',
+                      fontSize: '0.88rem',
+                      fontWeight: 700,
+                      background: '#eff6ff',
+                    }}
+                  >
+                    <LibraryIcon size={16} color="#2563eb" />
+                    <span>Free E-Library & Past Papers</span>
+                  </Link>
 
-              <Link
-                to="/courses"
-                onClick={() => setMobileNavOpen(false)}
-                style={{
-                  color: '#1d4ed8',
-                  textDecoration: 'none',
-                  padding: '0.65rem 0.8rem',
-                  borderRadius: '10px',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '10px',
-                  fontSize: '0.9rem',
-                  fontWeight: 800,
-                  background: '#eff6ff',
-                  border: '1px solid #bfdbfe',
-                }}
-              >
-                <BuildingIcon size={18} color="#1d4ed8" />
-                <span>All Academic Faculties</span>
-              </Link>
+                  <a
+                    href="#calculator"
+                    onClick={() => setMobileNavOpen(false)}
+                    style={{
+                      color: '#334155',
+                      textDecoration: 'none',
+                      padding: '0.6rem 0.75rem',
+                      borderRadius: '8px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '9px',
+                      fontSize: '0.88rem',
+                      fontWeight: 600,
+                      background: '#f8fafc',
+                    }}
+                  >
+                    <CreditCardIcon size={16} color="#64748b" />
+                    <span>Tuition Fees Calculator</span>
+                  </a>
 
-              <Link
-                to="/courses?cat=School+of+Business"
-                onClick={() => setMobileNavOpen(false)}
-                style={{
-                  color: '#059669',
-                  textDecoration: 'none',
-                  padding: '0.6rem 0.8rem',
-                  borderRadius: '10px',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '10px',
-                  fontSize: '0.85rem',
-                  fontWeight: 700,
-                  background: '#ecfdf5',
-                  border: '1px solid #a7f3d0',
-                }}
-              >
-                <BriefcaseIcon size={18} color="#059669" />
-                <span>School of Business</span>
-              </Link>
+                  <a
+                    href="#about"
+                    onClick={() => setMobileNavOpen(false)}
+                    style={{
+                      color: '#334155',
+                      textDecoration: 'none',
+                      padding: '0.6rem 0.75rem',
+                      borderRadius: '8px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '9px',
+                      fontSize: '0.88rem',
+                      fontWeight: 600,
+                      background: '#f8fafc',
+                    }}
+                  >
+                    <BuildingIcon size={16} color="#64748b" />
+                    <span>About Éclat Institute</span>
+                  </a>
 
-              <Link
-                to="/courses?cat=School+of+IT+and+Data+Science"
-                onClick={() => setMobileNavOpen(false)}
-                style={{
-                  color: '#0284c7',
-                  textDecoration: 'none',
-                  padding: '0.6rem 0.8rem',
-                  borderRadius: '10px',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '10px',
-                  fontSize: '0.85rem',
-                  fontWeight: 700,
-                  background: '#f0f9ff',
-                  border: '1px solid #bae6fd',
-                }}
-              >
-                <CodeIcon size={18} color="#0284c7" />
-                <span>School of IT and Data Science</span>
-              </Link>
-
-              <Link
-                to="/courses?cat=School+of+Language"
-                onClick={() => setMobileNavOpen(false)}
-                style={{
-                  color: '#b45309',
-                  textDecoration: 'none',
-                  padding: '0.6rem 0.8rem',
-                  borderRadius: '10px',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '10px',
-                  fontSize: '0.85rem',
-                  fontWeight: 700,
-                  background: '#fffbeb',
-                  border: '1px solid #fde68a',
-                }}
-              >
-                <GlobeIcon size={18} color="#b45309" />
-                <span>School of Language</span>
-              </Link>
-
-              <Link
-                to="/courses?cat=IGCSE"
-                onClick={() => setMobileNavOpen(false)}
-                style={{
-                  color: '#b45309',
-                  textDecoration: 'none',
-                  padding: '0.65rem 0.8rem',
-                  borderRadius: '10px',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '10px',
-                  fontSize: '0.88rem',
-                  fontWeight: 800,
-                  background: '#fefce8',
-                  border: '1px solid #fef08a',
-                }}
-              >
-                <BritishShieldIcon size={18} />
-                <span>IGCSE (Cambridge KE042 & Edexcel)</span>
-              </Link>
-
-              <a
-                href="#intakes-section"
-                onClick={() => setMobileNavOpen(false)}
-                style={{
-                  color: '#b45309',
-                  textDecoration: 'none',
-                  padding: '0.65rem 0.8rem',
-                  borderRadius: '10px',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '10px',
-                  fontSize: '0.88rem',
-                  fontWeight: 700,
-                  background: '#fefce8',
-                  border: '1px solid #fef08a',
-                }}
-              >
-                <CalendarIcon size={18} color="#b45309" />
-                <span>Upcoming Intakes & Admissions</span>
-              </a>
-
-              <Link
-                to="/library"
-                onClick={() => setMobileNavOpen(false)}
-                style={{
-                  color: '#0f172a',
-                  textDecoration: 'none',
-                  padding: '0.65rem 0.8rem',
-                  borderRadius: '10px',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '10px',
-                  fontSize: '0.88rem',
-                  fontWeight: 700,
-                  background: '#f8fafc',
-                  border: '1px solid #e2e8f0',
-                }}
-              >
-                <LibraryIcon size={18} color="#0f172a" />
-                <span>Free E-Library & Past Papers</span>
-              </Link>
-
-              <a
-                href="#calculator"
-                onClick={() => setMobileNavOpen(false)}
-                style={{
-                  color: '#0f172a',
-                  textDecoration: 'none',
-                  padding: '0.65rem 0.8rem',
-                  borderRadius: '10px',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '10px',
-                  fontSize: '0.88rem',
-                  fontWeight: 700,
-                  background: '#f8fafc',
-                  border: '1px solid #e2e8f0',
-                }}
-              >
-                <CreditCardIcon size={18} color="#0f172a" />
-                <span>Tuition Fees Inquiry</span>
-              </a>
-
-              <Link
-                to="/timetable"
-                onClick={() => setMobileNavOpen(false)}
-                style={{
-                  color: '#0f172a',
-                  textDecoration: 'none',
-                  padding: '0.65rem 0.8rem',
-                  borderRadius: '10px',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '10px',
-                  fontSize: '0.88rem',
-                  fontWeight: 700,
-                  background: '#f8fafc',
-                  border: '1px solid #e2e8f0',
-                }}
-              >
-                <ClockIcon size={18} color="#0f172a" />
-                <span>Virtual Class Timetable</span>
-              </Link>
-
-              <Link
-                to="/hire"
-                onClick={() => setMobileNavOpen(false)}
-                style={{
-                  color: '#1d4ed8',
-                  textDecoration: 'none',
-                  padding: '0.65rem 0.8rem',
-                  borderRadius: '10px',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '10px',
-                  fontSize: '0.88rem',
-                  fontWeight: 700,
-                  background: '#eff6ff',
-                  border: '1px solid #bfdbfe',
-                }}
-              >
-                <LaptopIcon size={18} color="#1d4ed8" />
-                <span>Hire Éclat (Tech Services)</span>
-              </Link>
-
-              <Link
-                to="/careers"
-                onClick={() => setMobileNavOpen(false)}
-                style={{
-                  color: '#15803d',
-                  textDecoration: 'none',
-                  padding: '0.65rem 0.8rem',
-                  borderRadius: '10px',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '10px',
-                  fontSize: '0.88rem',
-                  fontWeight: 700,
-                  background: '#f0fdf4',
-                  border: '1px solid #bbf7d0',
-                }}
-              >
-                <GraduationCapIcon size={18} color="#15803d" />
-                <span>Careers & Teaching Positions</span>
-              </Link>
-
-              <Link
-                to="/publish-course"
-                onClick={() => setMobileNavOpen(false)}
-                style={{
-                  color: '#92400e',
-                  textDecoration: 'none',
-                  background: '#fef3c7',
-                  border: '1.5px solid #fde68a',
-                  padding: '0.65rem 0.8rem',
-                  borderRadius: '10px',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '10px',
-                  fontSize: '0.88rem',
-                  fontWeight: 800,
-                  width: '100%',
-                }}
-              >
-                <SparklesIcon size={18} color="#d97706" />
-                <span>Publish Course (Earn 50% Share)</span>
-              </Link>
-
-              <Link
-                to="/donate"
-                onClick={() => setMobileNavOpen(false)}
-                style={{
-                  color: '#166534',
-                  textDecoration: 'none',
-                  background: '#f0fdf4',
-                  border: '1.5px solid #86efac',
-                  padding: '0.65rem 0.8rem',
-                  borderRadius: '10px',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '10px',
-                  fontSize: '0.88rem',
-                  fontWeight: 800,
-                  width: '100%',
-                }}
-              >
-                <HeartHandshakeIcon size={18} color="#16a34a" />
-                <span>💖 Sponsor a Student / Donate</span>
-              </Link>
-
-              <Link
-                to="/about"
-                onClick={() => setMobileNavOpen(false)}
-                style={{
-                  color: '#0f172a',
-                  textDecoration: 'none',
-                  padding: '0.65rem 0.8rem',
-                  borderRadius: '10px',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '10px',
-                  fontSize: '0.88rem',
-                  fontWeight: 700,
-                  background: '#f8fafc',
-                  border: '1px solid #e2e8f0',
-                }}
-              >
-                <BuildingIcon size={18} color="#0f172a" />
-                <span>About Éclat Institute</span>
-              </Link>
-
-              {/* Native Apps Download */}
-              <button
-                type="button"
-                onClick={() => {
-                  setAppModalTab('android')
-                  setAppModalOpen(true)
-                  setMobileNavOpen(false)
-                }}
-                style={{
-                  width: '100%',
-                  textAlign: 'left',
-                  background: '#f0fdf4',
-                  color: '#15803d',
-                  border: '1px solid #bbf7d0',
-                  padding: '0.65rem 0.8rem',
-                  borderRadius: '10px',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '10px',
-                  fontWeight: 700,
-                  cursor: 'pointer',
-                  fontSize: '0.88rem',
-                  marginTop: '0.25rem',
-                }}
-              >
-                <SmartphoneIcon size={18} color="#15803d" />
-                <span>Download Native App (APK)</span>
-              </button>
+                  {/* Native Apps Download */}
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setAppModalTab('windows')
+                      setAppModalOpen(true)
+                      setMobileNavOpen(false)
+                    }}
+                    style={{
+                      width: '100%',
+                      textAlign: 'left',
+                      background: '#f0fdf4',
+                      color: '#15803d',
+                      border: '1px solid #bbf7d0',
+                      padding: '0.6rem 0.75rem',
+                      borderRadius: '8px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '9px',
+                      fontWeight: 700,
+                      cursor: 'pointer',
+                      fontSize: '0.88rem',
+                    }}
+                  >
+                    <SmartphoneIcon size={16} color="#15803d" />
+                    <span>Download Native Apps (Win & APK)</span>
+                  </button>
+                </div>
+              </div>
             </div>
 
             {/* Drawer Footer Actions */}

@@ -1,6 +1,7 @@
 // ============================================================
 // Éclat Institute — Utility Functions
 // ============================================================
+import { INSTITUTION_CONFIG } from '@/config/institution'
 
 /** Extract YouTube video ID from any YouTube URL format */
 export function extractYouTubeId(url: string): string | null {
@@ -125,7 +126,7 @@ export function truncate(text: string, maxLength: number): string {
 /** Create a synthetic email from an admission number */
 export function admissionToEmail(admissionNumber: string): string {
   const clean = admissionNumber.toLowerCase().replace(/[^a-z0-9]/g, '')
-  return `${clean}@eclatinstitute.internal`
+  return `${clean}@${INSTITUTION_CONFIG.auth.internalEmailDomain || 'eclatinstitute.internal'}`
 }
 
 /** Get initials from a full name */

@@ -287,6 +287,25 @@ export function ChevronRightIcon({ size = 20, color = 'currentColor', strokeWidt
   )
 }
 
+// ⌵ Chevron Down Icon
+export function ChevronDownIcon({ size = 20, color = 'currentColor', strokeWidth = 2, ...props }: IconProps) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" {...props}>
+      <polyline points="6 9 12 15 18 9" />
+    </svg>
+  )
+}
+
+// ˄ Chevron Up Icon
+export function ChevronUpIcon({ size = 20, color = 'currentColor', strokeWidth = 2, ...props }: IconProps) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" {...props}>
+      <polyline points="18 15 12 9 6 15" />
+    </svg>
+  )
+}
+
+
 // ☰ Menu / Hamburger Icon
 export function MenuIcon({ size = 20, color = 'currentColor', strokeWidth = 2, ...props }: IconProps) {
   return (
