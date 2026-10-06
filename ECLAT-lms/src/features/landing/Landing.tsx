@@ -2264,13 +2264,13 @@ export function Landing() {
               overflowWrap: 'break-word',
             }}
           >
-            World-Class Virtual Education in Technology, Business & British Curriculum
+            Learn In-Demand Tech, Business Automation &amp; British Curriculum Skills
           </h1>
 
           {/* Refined 2-sentence Subtitle */}
           <p
             style={{
-              maxWidth: '740px',
+              maxWidth: '780px',
               margin: '0 auto 2.25rem',
               fontSize: isMobile ? '0.95rem' : '1.15rem',
               color: '#cbd5e1',
@@ -2279,7 +2279,7 @@ export function Landing() {
               wordBreak: 'break-word',
             }}
           >
-            Join an accredited international virtual campus delivering live interactive lectures, British examination series, and verified professional credentials across 40+ countries.
+            Explore affordable on-demand video courses and live classes in business automation, POS &amp; accounting systems, data analysis, coding, and British exam series. Learn practical skills or teach and earn 50% revenue share.
           </p>
 
           {/* Clean, High-Contrast CTAs */}
