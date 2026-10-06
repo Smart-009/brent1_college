@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import { Link } from 'react-router-dom'
 import { useIsMobile } from '@/hooks/useMediaQuery'
 import { INSTITUTION_CONFIG, getWhatsAppInquiryUrl } from '@/config/institution'
@@ -20,6 +20,379 @@ import {
   UserIcon,
 } from '@/components/icons/AppIcons'
 import { schoolStore } from '@/lib/schoolData'
+
+export interface DepartmentOption {
+  name: string
+  sectorId: string
+  suggestedPrograms: string[]
+}
+
+export const ACADEMIC_SECTORS = [
+  { id: 'all', name: 'All Faculties & Programs', icon: '🏛️' },
+  { id: 'health', name: 'Health & Medical Sciences', icon: '🩺' },
+  { id: 'aviation', name: 'Aviation & Drone Tech', icon: '✈️' },
+  { id: 'tech', name: 'Technology & Computing', icon: '💻' },
+  { id: 'business', name: 'Business & Finance', icon: '💼' },
+  { id: 'culinary', name: 'Culinary Arts & Hospitality', icon: '🍳' },
+  { id: 'law', name: 'Law & Governance', icon: '⚖️' },
+  { id: 'engineering', name: 'Engineering & Technical Trades', icon: '🛠️' },
+  { id: 'secondary', name: 'Secondary Curricula (IGCSE / IB)', icon: '🎓' },
+  { id: 'arts', name: 'Media, Film & Graphic Design', icon: '🎨' },
+  { id: 'languages', name: 'Languages & World Linguistics', icon: '🗣️' },
+  { id: 'agriculture', name: 'Agriculture & Environment', icon: '🌾' },
+  { id: 'music', name: 'Music & Audio Engineering', icon: '🎼' },
+]
+
+export const SECTOR_DEPARTMENTS: DepartmentOption[] = [
+  // Health & Medical Sciences
+  {
+    name: 'School of Nursing & Midwifery',
+    sectorId: 'health',
+    suggestedPrograms: [
+      'Diploma in Registered Nursing (KRCHN)',
+      'Critical Care & Neonatal Nursing',
+      'Midwifery & Maternal Health',
+      'Patient Care Nursing Assistant',
+    ],
+  },
+  {
+    name: 'Department of Clinical Medicine & Surgery',
+    sectorId: 'health',
+    suggestedPrograms: [
+      'Clinical Medicine & Community Health',
+      'Emergency Medical Technician (EMT)',
+      'Basic Surgical Skills Masterclass',
+      'Health Services Administration',
+    ],
+  },
+  {
+    name: 'Pharmacy & Pharmacology',
+    sectorId: 'health',
+    suggestedPrograms: [
+      'Pharmacy Assistant Certificate',
+      'Clinical Pharmacology',
+      'Pharmaceutical Inventory & Dispensing',
+    ],
+  },
+  {
+    name: 'Public Health, Biostatistics & Epidemiology',
+    sectorId: 'health',
+    suggestedPrograms: [
+      'Public Health Surveillance',
+      'Biostatistics with R in Health Sciences',
+      'Infectious Disease Epidemiology & Control',
+    ],
+  },
+
+  // Aviation, Aerospace & Drone Operations
+  {
+    name: 'Flight Academy & Pilot Ground School',
+    sectorId: 'aviation',
+    suggestedPrograms: [
+      'Private Pilot License (PPL) Theory',
+      'Commercial Pilot License (CPL) Navigation',
+      'Instrument Rating (IR) & Aviation Meteorology',
+      'Multi-Engine Flight Dynamics',
+    ],
+  },
+  {
+    name: 'Unmanned Aircraft Systems (Drone Academy)',
+    sectorId: 'aviation',
+    suggestedPrograms: [
+      'Commercial Drone Pilot (KCAA / FAA Part 107)',
+      'Drone Aerial Mapping & Surveying (GIS)',
+      'Agricultural Drone Spraying & Crop Scouting',
+      'Drone Thermal Inspection & Search & Rescue',
+    ],
+  },
+  {
+    name: 'Aviation Safety & Air Traffic Management',
+    sectorId: 'aviation',
+    suggestedPrograms: [
+      'Aviation Safety Management Systems (SMS)',
+      'Air Traffic Services (ATS) Fundamentals',
+      'Airport Ground Operations & Ramp Safety',
+    ],
+  },
+
+  // Technology, Computing & AI
+  {
+    name: 'Tech & Software Engineering',
+    sectorId: 'tech',
+    suggestedPrograms: [
+      'Masterclass in React 19 & Next.js Full-Stack',
+      'Python Backend & REST API Engineering',
+      'Mobile App Development (Flutter & React Native)',
+      'Go & Microservices Architecture',
+    ],
+  },
+  {
+    name: 'Data Science, Machine Learning & AI',
+    sectorId: 'tech',
+    suggestedPrograms: [
+      'Advanced Data Science with Python & Pandas',
+      'Machine Learning & Neural Networks',
+      'Generative AI & LLM Engineering',
+      'Applied Econometrics with Stata & RStudio',
+    ],
+  },
+  {
+    name: 'Cybersecurity & Cloud Defense',
+    sectorId: 'tech',
+    suggestedPrograms: [
+      'Certified Ethical Hacking (CEH Track)',
+      'SOC Analyst Level 1 Operations',
+      'AWS & Cloud Security Architecture',
+      'Penetration Testing & Network Defense',
+    ],
+  },
+  {
+    name: 'UI/UX Product Design & Wireframing',
+    sectorId: 'tech',
+    suggestedPrograms: [
+      'Figma Design Systems & Interactive Prototypes',
+      'Mobile App UI/UX Design',
+      'User Research & Human-Centered Design',
+    ],
+  },
+
+  // Business, Finance & Management
+  {
+    name: 'Business Tech, Accounting & FP&A',
+    sectorId: 'business',
+    suggestedPrograms: [
+      'Financial Modeling & Valuation Analyst (FMVA®)',
+      'Corporate FP&A & Management Accounting (CMA® Track)',
+      'Computerized Accounting with QuickBooks Pro & iTax',
+      'Corporate Financial Auditing & Taxation',
+    ],
+  },
+  {
+    name: 'Project Management & Agile Operations',
+    sectorId: 'business',
+    suggestedPrograms: [
+      'Executive Project Management Professional (PMP®)',
+      'Agile Scrum Master Certification',
+      'Lean Six Sigma Green Belt (LSSGB®)',
+      'Enterprise Business Analysis (CBAP®)',
+    ],
+  },
+  {
+    name: 'Forex & Quantitative Bots',
+    sectorId: 'business',
+    suggestedPrograms: [
+      'Professional Forex Trading & Price Action (FX Mastery)',
+      'Algorithmic Trading & MT5 Python Bots',
+      'Institutional Order Blocks & Currency Risk Management',
+    ],
+  },
+  {
+    name: 'Supply Chain, Logistics & HR Leadership',
+    sectorId: 'business',
+    suggestedPrograms: [
+      'Global Supply Chain Strategy (CSCP®)',
+      'Strategic HR Leadership & People Analytics (SHRM-CP®)',
+      'Procurement, Logistics & Contract Negotiations',
+    ],
+  },
+
+  // Culinary Arts & Hospitality
+  {
+    name: 'Culinary Arts & Chef Academy',
+    sectorId: 'culinary',
+    suggestedPrograms: [
+      'Diploma in Professional Culinary Arts',
+      'Classical French & Continental Cooking',
+      'Commercial Food Preparation & Knife Skills',
+      'Modern Gourmet Plating & Menu Design',
+    ],
+  },
+  {
+    name: 'Pastry, Bakery & Cake Decorating',
+    sectorId: 'culinary',
+    suggestedPrograms: [
+      'Artisan Bread & French Pastry Baking',
+      'Wedding Cake Design & Sugarcraft',
+      'Chocolate Confectionery & Dessert Plating',
+    ],
+  },
+  {
+    name: 'Hospitality & Hotel Operations',
+    sectorId: 'culinary',
+    suggestedPrograms: [
+      'Hotel Front Office & Room Division Management',
+      'HACCP Food Safety & Kitchen Hygiene Standards',
+      'Food & Beverage Service & Mixology',
+    ],
+  },
+
+  // Law & Governance
+  {
+    name: 'Commercial & Corporate Law',
+    sectorId: 'law',
+    suggestedPrograms: [
+      'Corporate Contract Drafting & Negotiation',
+      'Fintech & Cryptocurrency Regulatory Compliance',
+      'Intellectual Property Law & Trademarks',
+      'Company Law & Corporate Governance',
+    ],
+  },
+  {
+    name: 'Criminology & Forensic Investigation',
+    sectorId: 'law',
+    suggestedPrograms: [
+      'Forensic Investigation & Evidence Analysis',
+      'Criminal Law & Police Criminology',
+      'Cybercrime Law & Digital Forensics',
+    ],
+  },
+  {
+    name: 'Paralegal Studies & Dispute Resolution',
+    sectorId: 'law',
+    suggestedPrograms: [
+      'Certified Paralegal & Court Practice',
+      'Alternative Dispute Resolution (ADR & Commercial Mediation)',
+      'Human Rights Advocacy & Public Policy',
+    ],
+  },
+
+  // Engineering & Technical Trades
+  {
+    name: 'Electrical Engineering & Solar Systems',
+    sectorId: 'engineering',
+    suggestedPrograms: [
+      'Solar PV Design & Installation (T1/T2)',
+      'Electrical Wireman & Industrial Wiring',
+      'Power Systems & Substation Fundamentals',
+      'PLC Automation & Industrial Controls',
+    ],
+  },
+  {
+    name: 'Mechanical & Automotive Technology',
+    sectorId: 'engineering',
+    suggestedPrograms: [
+      'Auto Diagnostics, Engine ECU & Hybrid Tech',
+      'AutoCAD 2D/3D & SolidWorks Mechanical CAD',
+      'HVAC & Commercial Air Conditioning Repair',
+    ],
+  },
+  {
+    name: 'Civil Engineering & Construction',
+    sectorId: 'engineering',
+    suggestedPrograms: [
+      'Architectural Drafting & Structural Detailing',
+      'Quantity Surveying & Cost Estimation',
+      'Plumbing Engineering & Pipe Systems',
+    ],
+  },
+
+  // Secondary Curricula (IGCSE / IB / AP)
+  {
+    name: 'Cambridge Assessment International Education (CAIE)',
+    sectorId: 'secondary',
+    suggestedPrograms: [
+      'Cambridge IGCSE Mathematics 0580',
+      'Cambridge IGCSE Physics 0625',
+      'Cambridge IGCSE Chemistry 0620',
+      'Cambridge IGCSE Biology 0610',
+      'Cambridge IGCSE Computer Science 0478',
+      'Cambridge IGCSE Business Studies 0450',
+    ],
+  },
+  {
+    name: 'Pearson Edexcel International GCSE',
+    sectorId: 'secondary',
+    suggestedPrograms: [
+      'Edexcel International GCSE Math A (4MA1)',
+      'Edexcel IGCSE Physics (4PH1)',
+      'Edexcel IGCSE Chemistry (4CH1)',
+      'Edexcel IGCSE Economics (4EC1)',
+    ],
+  },
+  {
+    name: 'International Baccalaureate (IB) & AP',
+    sectorId: 'secondary',
+    suggestedPrograms: [
+      'IB Chemistry & Physics HL/SL',
+      'IB Mathematics Analysis & Approaches',
+      'AP Computer Science Principles',
+      'AP Calculus AB/BC',
+    ],
+  },
+
+  // Arts, Design & Media
+  {
+    name: 'Film Production, Cinematography & Video',
+    sectorId: 'arts',
+    suggestedPrograms: [
+      'Cinematography & Camera Techniques',
+      'Video Editing & Davinci Resolve Color Grading',
+      'Screenwriting & Storyboarding',
+      'Documentary Film Production',
+    ],
+  },
+  {
+    name: 'Graphic Design, 3D & Digital Media',
+    sectorId: 'arts',
+    suggestedPrograms: [
+      'Adobe Creative Suite (Photoshop & Illustrator)',
+      'Brand Identity & Logo Design',
+      'Blender 3D Modeling & Animation',
+    ],
+  },
+
+  // Languages & Linguistics
+  {
+    name: 'English Fluency & Academic IELTS',
+    sectorId: 'languages',
+    suggestedPrograms: [
+      'IELTS Academic Preparation (Band 8.0+)',
+      'IELTS General Training for Immigration',
+      'Business English & Executive Communication',
+    ],
+  },
+  {
+    name: 'World Languages (German, French, Arabic, Spanish)',
+    sectorId: 'languages',
+    suggestedPrograms: [
+      'German Language Mastery (Goethe A1-B2)',
+      'French Language (DELF A1-B2)',
+      'Modern Standard Arabic for Professionals',
+      'Swahili for Researchers & Diplomats',
+    ],
+  },
+
+  // Agriculture & Environment
+  {
+    name: 'Agribusiness & Crop Science',
+    sectorId: 'agriculture',
+    suggestedPrograms: [
+      'Commercial Agribusiness & Crop Production',
+      'Greenhouse Farming & Modern Irrigation',
+      'Poultry & Dairy Farm Management',
+    ],
+  },
+  {
+    name: 'Environmental Science & GIS',
+    sectorId: 'agriculture',
+    suggestedPrograms: [
+      'GIS Mapping with ArcGIS & QGIS',
+      'Environmental Impact Assessment (EIA)',
+      'Climate Change & Carbon Credit Projects',
+    ],
+  },
+
+  // Music & Audio
+  {
+    name: 'Music Production & Audio Engineering',
+    sectorId: 'music',
+    suggestedPrograms: [
+      'Music Production with FL Studio & Logic Pro',
+      'Audio Mixing & Studio Mastering',
+      'Live Sound & Acoustic Engineering',
+    ],
+  },
+]
 
 interface SubmittedTutorCourse {
   id: string
@@ -55,7 +428,12 @@ export function TutorPublishCoursePage() {
   const [email, setEmail] = useState('')
   const [phone, setPhone] = useState('')
   const [courseTitle, setCourseTitle] = useState('')
-  const [category, setCategory] = useState('Tech & Programming')
+  const [category, setCategory] = useState('Tech & Software Engineering')
+  const [selectedSector, setSelectedSector] = useState<string>('all')
+  const [isCustomCategory, setIsCustomCategory] = useState<boolean>(false)
+  const [customCategoryName, setCustomCategoryName] = useState<string>('')
+  const [programName, setProgramName] = useState<string>('')
+  const [storedDepartments, setStoredDepartments] = useState<string[]>([])
   const [suggestedPriceUsd, setSuggestedPriceUsd] = useState(60)
   const [videoUrl, setVideoUrl] = useState('')
   const [courseDescription, setCourseDescription] = useState('')
@@ -68,7 +446,7 @@ export function TutorPublishCoursePage() {
   const [bridgeStatus, setBridgeStatus] = useState<{ online: boolean; dir?: string }>({ online: false })
   const [downloadStatusMsg, setDownloadStatusMsg] = useState<string | null>(null)
 
-  // Check if local desktop bridge is running
+  // Check if local desktop bridge is running & read existing school departments
   useEffect(() => {
     fetch('http://127.0.0.1:5179/status')
       .then((res) => res.json())
@@ -80,7 +458,30 @@ export function TutorPublishCoursePage() {
       .catch(() => {
         setBridgeStatus({ online: false })
       })
+
+    try {
+      const depts = schoolStore.getDepartments()
+      if (depts && depts.length > 0) {
+        setStoredDepartments(depts.map((d) => d.name))
+      }
+    } catch {}
   }, [])
+
+  // Dynamically compute department options based on selected sector + stored custom departments
+  const filteredDepartments = useMemo(() => {
+    let list = SECTOR_DEPARTMENTS
+    if (selectedSector !== 'all') {
+      list = list.filter((d) => d.sectorId === selectedSector)
+    }
+    const sectorDeptNames = list.map((d) => d.name)
+    const combined = Array.from(new Set([...sectorDeptNames, ...storedDepartments]))
+    return combined
+  }, [selectedSector, storedDepartments])
+
+  // Look up currently selected department's suggested programs
+  const currentSectorDept = useMemo(() => {
+    return SECTOR_DEPARTMENTS.find((d) => d.name === category)
+  }, [category])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -89,6 +490,38 @@ export function TutorPublishCoursePage() {
 
     const finalTutorOrSchoolName =
       providerType === 'partner_institution' ? (institutionName.trim() || tutorName) : tutorName
+
+    const finalDepartmentName = (
+      isCustomCategory ? customCategoryName.trim() : category.trim()
+    ) || 'General Academic Studies'
+
+    const finalProgramName = (
+      programName.trim() || courseTitle.trim()
+    ) || courseTitle.trim()
+
+    // 0. Auto-register dynamic department into schoolStore if it doesn't already exist
+    try {
+      const existingDepts = schoolStore.getDepartments()
+      const alreadyExists = existingDepts.some(
+        (d) => d.name.toLowerCase() === finalDepartmentName.toLowerCase()
+      )
+      if (!alreadyExists) {
+        await schoolStore.addDepartment({
+          id: `dept-${Date.now()}`,
+          name: finalDepartmentName,
+          code: finalDepartmentName.split(/\s+/).map((w) => w[0]).join('').slice(0, 5).toUpperCase() || 'DEPT',
+          description: `Dynamic department registered by ${providerType === 'partner_institution' ? (institutionName.trim() || 'Partner School') : finalTutorOrSchoolName}.`,
+          hod_name: providerType === 'partner_institution' ? (institutionSignatory.trim() || 'Academic Dean') : finalTutorOrSchoolName,
+          hod_email: email.trim() || 'info.eclatinstitute@gmail.com',
+          programs: [finalProgramName],
+          school_id: 'school-eclat',
+          school_name: providerType === 'partner_institution' ? (institutionName.trim() || 'Partner School') : 'Éclat Institute',
+          created_at: new Date().toISOString(),
+        })
+      }
+    } catch (deptErr) {
+      console.warn('Could not register dynamic department:', deptErr)
+    }
 
     const newCourse: SubmittedTutorCourse = {
       id: `tc-${Date.now()}`,
@@ -101,7 +534,7 @@ export function TutorPublishCoursePage() {
       email,
       phone,
       courseTitle,
-      category,
+      category: finalDepartmentName,
       courseDescription,
       videoUrl,
       suggestedPriceUsd,
@@ -118,8 +551,8 @@ export function TutorPublishCoursePage() {
         id: newUnitId,
         code: courseCode,
         title: courseTitle,
-        department: category,
-        program: courseTitle,
+        department: finalDepartmentName,
+        program: finalProgramName,
         course_duration: deliveryMode === 'live_cohort' ? '12 Weeks Cohort' : 'Self-Paced (Lifetime Access)',
         credit_hours: 40,
         teacher_id: `tch-${Date.now()}`,
@@ -739,12 +1172,85 @@ export function TutorPublishCoursePage() {
 
               {/* Section 2: Course Information */}
               <div>
-                <h3 style={{ fontSize: '0.95rem', fontWeight: 800, color: '#1e3a8a', marginBottom: '0.85rem', display: 'flex', alignItems: 'center', gap: '6px' }}>
-                  <FileTextIcon size={16} color="#1e3a8a" />
-                  <span>2. Course Syllabus & Pricing</span>
-                </h3>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.85rem', flexWrap: 'wrap', gap: '8px' }}>
+                  <h3 style={{ fontSize: '0.95rem', fontWeight: 800, color: '#1e3a8a', margin: 0, display: 'flex', alignItems: 'center', gap: '6px' }}>
+                    <FileTextIcon size={16} color="#1e3a8a" />
+                    <span>2. Course Syllabus & Academic Program Track</span>
+                  </h3>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setIsCustomCategory(!isCustomCategory)
+                        if (!isCustomCategory && !customCategoryName) {
+                          setCustomCategoryName(category !== '__custom__' ? category : '')
+                        }
+                      }}
+                      style={{
+                        background: isCustomCategory ? '#eff6ff' : '#f8fafc',
+                        border: isCustomCategory ? '1.5px solid #2563eb' : '1px solid #cbd5e1',
+                        color: isCustomCategory ? '#1e40af' : '#475569',
+                        padding: '0.35rem 0.75rem',
+                        borderRadius: '6px',
+                        fontSize: '0.78rem',
+                        fontWeight: 700,
+                        cursor: 'pointer',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '5px',
+                      }}
+                    >
+                      {isCustomCategory ? '📋 Choose From Presets' : '✏️ Enter Custom School Program'}
+                    </button>
+                  </div>
+                </div>
 
-                <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '2fr 1fr 1fr', gap: '0.85rem', marginBottom: '0.85rem' }}>
+                {/* Academic Discipline / School Sector Filter Ribbon */}
+                <div style={{ marginBottom: '1rem', background: '#f8fafc', padding: '0.75rem', borderRadius: '10px', border: '1px solid #e2e8f0' }}>
+                  <div style={{ fontSize: '0.74rem', fontWeight: 800, color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.04em', marginBottom: '6px' }}>
+                    Select Academic Faculty Sector (Filters Programs Below):
+                  </div>
+                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
+                    {ACADEMIC_SECTORS.map((sec) => {
+                      const isActive = selectedSector === sec.id
+                      return (
+                        <button
+                          key={sec.id}
+                          type="button"
+                          onClick={() => {
+                            setSelectedSector(sec.id)
+                            if (sec.id !== 'all') {
+                              const match = SECTOR_DEPARTMENTS.find((d) => d.sectorId === sec.id)
+                              if (match) {
+                                setCategory(match.name)
+                                setIsCustomCategory(false)
+                              }
+                            }
+                          }}
+                          style={{
+                            background: isActive ? '#1e3a8a' : '#ffffff',
+                            color: isActive ? '#ffffff' : '#334155',
+                            border: isActive ? '1.5px solid #1e3a8a' : '1px solid #cbd5e1',
+                            padding: '0.3rem 0.65rem',
+                            borderRadius: '6px',
+                            fontSize: '0.76rem',
+                            fontWeight: isActive ? 800 : 600,
+                            cursor: 'pointer',
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '4px',
+                            transition: 'all 0.15s ease',
+                          }}
+                        >
+                          <span>{sec.icon}</span>
+                          <span>{sec.name}</span>
+                        </button>
+                      )
+                    })}
+                  </div>
+                </div>
+
+                <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '2fr 1.5fr 1fr', gap: '0.85rem', marginBottom: '0.85rem' }}>
                   <div>
                     <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 800, color: '#334155', marginBottom: '4px' }}>
                       Course Title *
@@ -752,7 +1258,11 @@ export function TutorPublishCoursePage() {
                     <input
                       type="text"
                       required
-                      placeholder="e.g. Masterclass in React 19 & Next.js Full-Stack"
+                      placeholder={
+                        isCustomCategory
+                          ? 'e.g. Diploma in Registered Nursing, or Private Pilot Ground School'
+                          : 'e.g. Masterclass in React 19 & Next.js Full-Stack'
+                      }
                       value={courseTitle}
                       onChange={(e) => setCourseTitle(e.target.value)}
                       style={{
@@ -767,31 +1277,57 @@ export function TutorPublishCoursePage() {
                   </div>
 
                   <div>
-                    <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 800, color: '#334155', marginBottom: '4px' }}>
-                      Department Category
-                    </label>
-                    <select
-                      value={category}
-                      onChange={(e) => setCategory(e.target.value)}
-                      style={{
-                        width: '100%',
-                        padding: '0.65rem 0.85rem',
-                        borderRadius: '8px',
-                        border: '1.5px solid #cbd5e1',
-                        fontSize: '0.88rem',
-                        outline: 'none',
-                        background: '#ffffff',
-                      }}
-                    >
-                      <option value="Tech & Programming">Tech & Programming</option>
-                      <option value="Data Science & Research">Data Science & Research</option>
-                      <option value="Cybersecurity">Cybersecurity</option>
-                      <option value="Business Tech & Accounting">Business Tech & Accounting</option>
-                      <option value="Forex & Quantitative Bots">Forex & Quantitative Bots</option>
-                      <option value="Creative Arts & Graphic Design">Creative Arts & Graphic Design</option>
-                      <option value="Cambridge IGCSE & Checkpoint">Cambridge IGCSE & Checkpoint</option>
-                      <option value="Languages & Communication">Languages & Communication</option>
-                    </select>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '4px' }}>
+                      <label style={{ fontSize: '0.8rem', fontWeight: 800, color: '#334155' }}>
+                        {isCustomCategory ? 'Custom School Department *' : 'Department Category *'}
+                      </label>
+                    </div>
+
+                    {isCustomCategory ? (
+                      <input
+                        type="text"
+                        required
+                        placeholder="e.g. School of Nursing, or Aviation Academy"
+                        value={customCategoryName}
+                        onChange={(e) => setCustomCategoryName(e.target.value)}
+                        style={{
+                          width: '100%',
+                          padding: '0.65rem 0.85rem',
+                          borderRadius: '8px',
+                          border: '2px solid #2563eb',
+                          fontSize: '0.88rem',
+                          outline: 'none',
+                          background: '#ffffff',
+                        }}
+                      />
+                    ) : (
+                      <select
+                        value={category}
+                        onChange={(e) => {
+                          if (e.target.value === '__custom__') {
+                            setIsCustomCategory(true)
+                          } else {
+                            setCategory(e.target.value)
+                          }
+                        }}
+                        style={{
+                          width: '100%',
+                          padding: '0.65rem 0.85rem',
+                          borderRadius: '8px',
+                          border: '1.5px solid #cbd5e1',
+                          fontSize: '0.88rem',
+                          outline: 'none',
+                          background: '#ffffff',
+                        }}
+                      >
+                        {filteredDepartments.map((deptName) => (
+                          <option key={deptName} value={deptName}>
+                            {deptName}
+                          </option>
+                        ))}
+                        <option value="__custom__">✨ + Enter Custom Department / Program...</option>
+                      </select>
+                    )}
                   </div>
 
                   <div>
@@ -817,6 +1353,62 @@ export function TutorPublishCoursePage() {
                     />
                   </div>
                 </div>
+
+                {/* Dynamic Program Suggestions / Track Name */}
+                {isCustomCategory ? (
+                  <div style={{ marginBottom: '0.85rem', background: '#eff6ff', padding: '0.75rem 1rem', borderRadius: '8px', border: '1px solid #bfdbfe' }}>
+                    <label style={{ display: 'block', fontSize: '0.78rem', fontWeight: 800, color: '#1e40af', marginBottom: '4px' }}>
+                      Specific Program Track / Awarding Qualification (Optional):
+                    </label>
+                    <input
+                      type="text"
+                      placeholder="e.g. Diploma in Registered Community Health Nursing, or FAA Instrument Rating"
+                      value={programName}
+                      onChange={(e) => setProgramName(e.target.value)}
+                      style={{
+                        width: '100%',
+                        padding: '0.55rem 0.85rem',
+                        borderRadius: '6px',
+                        border: '1px solid #93c5fd',
+                        fontSize: '0.85rem',
+                        background: '#ffffff',
+                        outline: 'none',
+                      }}
+                    />
+                  </div>
+                ) : currentSectorDept?.suggestedPrograms && currentSectorDept.suggestedPrograms.length > 0 ? (
+                  <div style={{ marginBottom: '0.85rem', background: '#f8fafc', padding: '0.65rem 0.85rem', borderRadius: '8px', border: '1px solid #e2e8f0' }}>
+                    <div style={{ fontSize: '0.74rem', color: '#64748b', fontWeight: 700, marginBottom: '6px' }}>
+                      Click any program below to quickly autofill:
+                    </div>
+                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
+                      {currentSectorDept.suggestedPrograms.map((prog, idx) => (
+                        <button
+                          key={idx}
+                          type="button"
+                          onClick={() => {
+                            setProgramName(prog)
+                            if (!courseTitle || courseTitle === 'Masterclass in React 19 & Next.js Full-Stack') {
+                              setCourseTitle(prog)
+                            }
+                          }}
+                          style={{
+                            background: programName === prog ? '#dbeafe' : '#ffffff',
+                            color: programName === prog ? '#1e40af' : '#475569',
+                            border: programName === prog ? '1px solid #3b82f6' : '1px solid #cbd5e1',
+                            borderRadius: '4px',
+                            padding: '3px 8px',
+                            fontSize: '0.75rem',
+                            fontWeight: 600,
+                            cursor: 'pointer',
+                          }}
+                        >
+                          + {prog}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                ) : null}
 
                 {/* 50% Share Calculator Preview Box */}
                 <div

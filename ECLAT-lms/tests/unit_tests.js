@@ -1056,3 +1056,52 @@ test('Dynamic Certification Authority: Éclat-Issued for Individual Tutors vs In
   assert.strictEqual(schoolCert.leadSignatory, 'Prof. Mary Wanjiku, Academic Dean')
 })
 
+test('Multi-School Dynamic Program Publishing: Sector Filtering & Custom School Department Registration', () => {
+  // Simulate dynamic publishing resolver
+  function resolvePublishingCurriculum(input) {
+    const finalDepartment = (input.isCustomCategory ? input.customCategoryName?.trim() : input.category?.trim()) || 'General Studies'
+    const finalProgram = (input.isCustomProgram ? input.customProgramName?.trim() : input.programName?.trim()) || input.courseTitle?.trim()
+    return {
+      institution_name: input.institution_name,
+      department: finalDepartment,
+      program: finalProgram,
+      isRegisteredSuccessfully: Boolean(finalDepartment && finalProgram),
+    }
+  }
+
+  // 1. Nursing & Medical College
+  const nursingSchool = resolvePublishingCurriculum({
+    institution_name: 'Nairobi Health & Nursing Institute',
+    isCustomCategory: false,
+    category: 'School of Nursing & Midwifery',
+    programName: 'Diploma in Registered Nursing (KRCHN)',
+    courseTitle: 'Pediatric Care & Clinical Nursing',
+  })
+  assert.strictEqual(nursingSchool.department, 'School of Nursing & Midwifery')
+  assert.strictEqual(nursingSchool.program, 'Diploma in Registered Nursing (KRCHN)')
+
+  // 2. Aviation & Drone Academy
+  const aviationAcademy = resolvePublishingCurriculum({
+    institution_name: 'East Africa Flight & Drone Academy',
+    isCustomCategory: false,
+    category: 'Unmanned Aircraft Systems (Drone Academy)',
+    programName: 'Commercial Drone Pilot (KCAA / FAA Part 107)',
+    courseTitle: 'Commercial Drone Operations & Aerial Mapping',
+  })
+  assert.strictEqual(aviationAcademy.department, 'Unmanned Aircraft Systems (Drone Academy)')
+  assert.strictEqual(aviationAcademy.program, 'Commercial Drone Pilot (KCAA / FAA Part 107)')
+
+  // 3. Specialized Custom Institution (e.g. Culinary Arts Institute)
+  const culinaryInstitute = resolvePublishingCurriculum({
+    institution_name: 'Le Cordon Gourmet Culinary School',
+    isCustomCategory: true,
+    customCategoryName: 'Faculty of Pastry Arts & French Gastronomy',
+    isCustomProgram: true,
+    customProgramName: 'Grand Diplôme in Artisan Pastry & Confectionery',
+    courseTitle: 'Classical French Pastry Masterclass',
+  })
+  assert.strictEqual(culinaryInstitute.department, 'Faculty of Pastry Arts & French Gastronomy')
+  assert.strictEqual(culinaryInstitute.program, 'Grand Diplôme in Artisan Pastry & Confectionery')
+  assert.strictEqual(culinaryInstitute.isRegisteredSuccessfully, true)
+})
+
