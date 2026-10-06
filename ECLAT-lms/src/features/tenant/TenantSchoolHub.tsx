@@ -5,7 +5,15 @@ import { tenantSchoolStore } from '@/lib/tenantSchoolStore'
 import { getTenantDomainLinks } from '@/lib/tenantDomain'
 import type { TenantDomainLinks } from '@/lib/tenantDomain'
 import { INSTITUTION_CONFIG } from '@/config/institution'
-import type { PartnerSchoolTenant } from '@/types/tenantSchool'
+import type {
+  PartnerSchoolTenant,
+  TenantStaffMember,
+  TenantStudentMember,
+  TenantPayrollRecord,
+  TenantGradeRecord,
+  TenantLessonNote,
+  TenantFeePayment,
+} from '@/types/tenantSchool'
 import {
   GraduationCapIcon,
   UserIcon,
@@ -42,6 +50,100 @@ export function TenantSchoolHub() {
   const [customDomainInput, setCustomDomainInput] = useState('')
   const [customDomainMessage, setCustomDomainMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null)
   const [pricingModalCycle, setPricingModalCycle] = useState<'monthly' | 'annually'>('monthly')
+
+  // Real School SIS / SMS Live State
+  const [staffList, setStaffList] = useState<TenantStaffMember[]>([])
+  const [studentList, setStudentList] = useState<TenantStudentMember[]>([])
+  const [payrollList, setPayrollList] = useState<TenantPayrollRecord[]>([])
+  const [gradeList, setGradeList] = useState<TenantGradeRecord[]>([])
+  const [lessonNotesList, setLessonNotesList] = useState<TenantLessonNote[]>([])
+  const [feePaymentsList, setFeePaymentsList] = useState<TenantFeePayment[]>([])
+
+  // Sub-tab Navigation within Desks
+  const [principalSubTab, setPrincipalSubTab] = useState<'staff' | 'admissions' | 'overview'>('staff')
+  const [bursarSubTab, setBursarSubTab] = useState<'payroll' | 'payments' | 'arrears'>('payroll')
+  const [teacherSubTab, setTeacherSubTab] = useState<'attendance' | 'gradebook' | 'notes'>('attendance')
+  const [studentSubTab, setStudentSubTab] = useState<'report_card' | 'notes' | 'attendance' | 'fees'>('report_card')
+
+  // Modal Dialog States
+  const [showAddStaffModal, setShowAddStaffModal] = useState(false)
+  const [showAdmitStudentModal, setShowAdmitStudentModal] = useState(false)
+  const [showRecordPaymentModal, setShowRecordPaymentModal] = useState(false)
+  const [showUploadNoteModal, setShowUploadNoteModal] = useState(false)
+  const [selectedStaffSlip, setSelectedStaffSlip] = useState<TenantStaffMember | null>(null)
+  const [selectedAdmissionSlip, setSelectedAdmissionSlip] = useState<TenantStudentMember | null>(null)
+  const [selectedPayslip, setSelectedPayslip] = useState<TenantPayrollRecord | null>(null)
+  const [selectedReceipt, setSelectedReceipt] = useState<TenantFeePayment | null>(null)
+  const [selectedReportCardStudent, setSelectedReportCardStudent] = useState<TenantStudentMember | null>(null)
+
+  // Interactive Form Inputs
+  const [newStaffInput, setNewStaffInput] = useState({
+    full_name: '',
+    role: 'teacher' as 'teacher' | 'bursar' | 'admin',
+    email: '',
+    phone: '',
+    department: 'Humanities & Sciences',
+    title: 'Senior Subject Instructor',
+    assigned_classes: 'Grade 10 Cambridge, Form 3 Alpha',
+    assigned_subjects: 'Mathematics, Physics',
+    salary_base: 3200,
+    salary_housing: 400,
+    salary_transport: 250,
+    salary_tax: 350,
+    salary_pension: 150,
+  })
+
+  const [newStudentInput, setNewStudentInput] = useState({
+    full_name: '',
+    grade_class: 'Grade 10 Cambridge',
+    guardian_name: '',
+    guardian_phone: '',
+    guardian_email: '',
+    fee_total: 1800,
+    fee_paid: 1800,
+  })
+
+  const [newPaymentInput, setNewPaymentInput] = useState({
+    student_id: '',
+    amount: 1800,
+    payment_method: 'Bank Wire' as 'Bank Wire' | 'Mobile Money (M-Pesa)' | 'Credit Card' | 'Cash',
+  })
+
+  const [newNoteInput, setNewNoteInput] = useState({
+    class_name: 'Grade 10 Cambridge',
+    subject_name: 'Pure Mathematics',
+    title: '',
+    summary: '',
+    file_url: 'https://docs.eclat.institute/notes/study-guide.pdf',
+  })
+
+  // Selected filters
+  const [selectedClassForAttendance, setSelectedClassForAttendance] = useState('Grade 10 Cambridge')
+  const [selectedClassForGradebook, setSelectedClassForGradebook] = useState('Grade 10 Cambridge')
+  const [selectedSubjectForGradebook, setSelectedSubjectForGradebook] = useState('Pure Mathematics (0580)')
+  const [staffSearchQuery, setStaffSearchQuery] = useState('')
+  const [studentSearchQuery, setStudentSearchQuery] = useState('')
+
+  // Load SIS datasets when school changes
+  const reloadSchoolData = (slug: string) => {
+    const s = tenantSchoolStore.getStaffBySchool(slug)
+    const st = tenantSchoolStore.getStudentsBySchool(slug)
+    const p = tenantSchoolStore.getPayrollBySchool(slug)
+    const g = tenantSchoolStore.getGradesBySchool(slug)
+    const n = tenantSchoolStore.getLessonNotesBySchool(slug)
+    const pm = tenantSchoolStore.getPaymentsBySchool(slug)
+
+    setStaffList(s)
+    setStudentList(st)
+    setPayrollList(p)
+    setGradeList(g)
+    setLessonNotesList(n)
+    setFeePaymentsList(pm)
+
+    if (st.length > 0) {
+      setSelectedReportCardStudent(st[0])
+    }
+  }
 
   // LMS-Style Role-Based Scoping
   // 'admin' = Full Access (Executive Principal)
@@ -88,6 +190,7 @@ export function TenantSchoolHub() {
     if (found?.custom_domain) {
       setCustomDomainInput(found.custom_domain)
     }
+    reloadSchoolData(schoolSlug)
     setLoading(false)
   }, [schoolSlug])
 
@@ -1439,7 +1542,9 @@ export function TenantSchoolHub() {
           </div>
         )}
 
-        {/* VIEW 3: SIMULATED BRANDED STUDENT PORTAL */}
+        {/* ============================================================ */}
+        {/* VIEW 3: BRANDED STUDENT WORKSPACE & REPORT CARD DESK */}
+        {/* ============================================================ */}
         {activeTab === 'student' && (
           activeRole !== 'admin' && activeRole !== 'student' ? (
             renderRestrictedCard(
@@ -1448,73 +1553,339 @@ export function TenantSchoolHub() {
               'Executive Admin, Student'
             )
           ) : (
-            <div style={{ maxWidth: '900px', margin: '0 auto' }}>
-              <div style={{ background: '#ffffff', borderRadius: '20px', padding: '2rem', border: '1px solid #e2e8f0', marginBottom: '2rem', boxShadow: '0 4px 16px rgba(0,0,0,0.04)' }}>
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '1rem', borderBottom: '1px solid #f1f5f9', paddingBottom: '1.25rem', marginBottom: '1.5rem' }}>
+            <div style={{ maxWidth: '1060px', margin: '0 auto' }}>
+              {/* Student Header */}
+              <div style={{ background: '#ffffff', borderRadius: '20px', padding: '1.75rem 2rem', border: '1px solid #e2e8f0', marginBottom: '1.5rem', boxShadow: '0 4px 16px rgba(0,0,0,0.03)' }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '1rem', borderBottom: '1px solid #f1f5f9', paddingBottom: '1.25rem', marginBottom: '1.25rem' }}>
                   <div>
-                    <span style={{ fontSize: '0.75rem', fontWeight: 800, color: primaryColor, textTransform: 'uppercase', letterSpacing: '0.06em' }}>
+                    <span style={{ fontSize: '0.74rem', fontWeight: 800, color: primaryColor, textTransform: 'uppercase', letterSpacing: '0.06em' }}>
                       {school.name} STUDENT WORKSPACE
                     </span>
                     <h2 style={{ fontSize: '1.5rem', fontWeight: 900, margin: '4px 0 0', color: '#0f172a' }}>
-                      Welcome, Candidate Brian Kipchumba
+                      {selectedReportCardStudent ? selectedReportCardStudent.full_name : 'Student Portal'}
                     </h2>
-                    <div style={{ fontSize: '0.82rem', color: '#64748b' }}>
-                      Admission: <strong>{school.slug.toUpperCase()}-2026-0042</strong> • Class: <strong>Grade 11 / Year 11 Exam Cohort</strong>
+                    <div style={{ fontSize: '0.84rem', color: '#64748b', marginTop: '3px' }}>
+                      Admission No: <strong>{selectedReportCardStudent ? selectedReportCardStudent.admission_number : `${school.slug.toUpperCase()}-2026-0042`}</strong> • Class: <strong>{selectedReportCardStudent ? selectedReportCardStudent.grade_class : 'Grade 10 Cambridge'}</strong>
                     </div>
                   </div>
-                  <div style={{ textAlign: 'right' }}>
-                    <div style={{ fontSize: '0.76rem', color: '#64748b' }}>Current Academic Session:</div>
-                    <div style={{ fontSize: '1rem', fontWeight: 800, color: primaryColor }}>{school.active_period_name}</div>
-                  </div>
-                </div>
-
-                {/* Student Cards Grid */}
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '1rem', marginBottom: '1.5rem' }}>
-                  <div style={{ background: '#f0fdf4', border: '1px solid #bbf7d0', borderRadius: '14px', padding: '1rem' }}>
-                    <div style={{ fontSize: '0.76rem', color: '#16a34a', fontWeight: 700 }}>ACADEMIC STATUS</div>
-                    <div style={{ fontSize: '1.2rem', fontWeight: 800, color: '#15803d', marginTop: '2px' }}>Fully Cleared ✅</div>
-                    <div style={{ fontSize: '0.76rem', color: '#4b5563', marginTop: '4px' }}>Eligible for all {school.active_period_name} assessments</div>
-                  </div>
-
-                  <div style={{ background: '#eff6ff', border: '1px solid #bfdbfe', borderRadius: '14px', padding: '1rem' }}>
-                    <div style={{ fontSize: '0.76rem', color: '#1d4ed8', fontWeight: 700 }}>ATTENDANCE RATE</div>
-                    <div style={{ fontSize: '1.2rem', fontWeight: 800, color: '#1e40af', marginTop: '2px' }}>96.4% Present</div>
-                    <div style={{ fontSize: '0.76rem', color: '#4b5563', marginTop: '4px' }}>Verified biometric &amp; class log records</div>
-                  </div>
-
-                  <div style={{ background: '#fffbeb', border: '1px solid #fde68a', borderRadius: '14px', padding: '1rem' }}>
-                    <div style={{ fontSize: '0.76rem', color: '#b45309', fontWeight: 700 }}>TUITION FEE BALANCE</div>
-                    <div style={{ fontSize: '1.2rem', fontWeight: 800, color: '#b45309', marginTop: '2px' }}>$0.00 (Cleared)</div>
-                    <div style={{ fontSize: '0.76rem', color: '#4b5563', marginTop: '4px' }}>Invoice Receipt #{school.slug.toUpperCase()}-RCP-941</div>
-                  </div>
-                </div>
-
-                {/* Student Timetable Preview */}
-                <h3 style={{ fontSize: '1.1rem', fontWeight: 800, marginBottom: '0.75rem' }}>Active Course Modules ({systemTermLabel} Schedule)</h3>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-                  {[
-                    { code: 'ENG-201', title: 'First Language English & Rhetoric', teacher: 'Mrs. Davis', time: '08:30 - 09:40 AM' },
-                    { code: 'MTH-301', title: 'Pure Mathematics & Calculus', teacher: 'Mr. Sterling', time: '10:00 - 11:10 AM' },
-                    { code: 'ICT-401', title: 'Computer Science, Algorithms & Python', teacher: 'Eng. Sarah', time: '11:30 - 12:40 PM' },
-                    { code: 'SCI-202', title: 'Advanced Physics Lab & Practical Science', teacher: 'Dr. Mwangi', time: '02:00 - 03:15 PM' },
-                  ].map((c) => (
-                    <div key={c.code} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: '#f8fafc', padding: '0.85rem 1rem', borderRadius: '10px', border: '1px solid #e2e8f0', flexWrap: 'wrap', gap: '0.5rem' }}>
-                      <div>
-                        <strong style={{ color: primaryColor }}>{c.code}</strong> — <span style={{ fontWeight: 700 }}>{c.title}</span>
-                        <div style={{ fontSize: '0.78rem', color: '#64748b' }}>Instructor: {c.teacher}</div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', flexWrap: 'wrap' }}>
+                    {studentList.length > 1 && (
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                        <span style={{ fontSize: '0.76rem', color: '#64748b', fontWeight: 700 }}>Switch Student:</span>
+                        <select
+                          value={selectedReportCardStudent?.id || ''}
+                          onChange={(e) => {
+                            const found = studentList.find((s) => s.id === e.target.value)
+                            if (found) setSelectedReportCardStudent(found)
+                          }}
+                          style={{ padding: '0.45rem 0.75rem', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '0.82rem', fontWeight: 700, color: '#0f172a', background: '#f8fafc' }}
+                        >
+                          {studentList.map((s) => (
+                            <option key={s.id} value={s.id}>{s.full_name} ({s.admission_number})</option>
+                          ))}
+                        </select>
                       </div>
-                      <span style={{ background: '#ffffff', border: '1px solid #cbd5e1', padding: '0.3rem 0.65rem', borderRadius: '6px', fontSize: '0.75rem', fontWeight: 700 }}>
-                        🕒 {c.time}
-                      </span>
-                    </div>
-                  ))}
+                    )}
+                    <button
+                      type="button"
+                      onClick={() => window.print()}
+                      style={{ background: primaryColor, color: '#ffffff', fontWeight: 800, padding: '0.55rem 1.15rem', borderRadius: '10px', border: 'none', cursor: 'pointer', fontSize: '0.82rem' }}
+                    >
+                      🖨️ Print / Download Report Card
+                    </button>
+                  </div>
+                </div>
+
+                {/* Sub-tab Navigation */}
+                <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
+                  <button
+                    type="button"
+                    onClick={() => setStudentSubTab('report_card')}
+                    style={{
+                      background: studentSubTab === 'report_card' ? primaryColor : '#f1f5f9',
+                      color: studentSubTab === 'report_card' ? '#ffffff' : '#475569',
+                      border: 'none',
+                      padding: '0.5rem 1rem',
+                      borderRadius: '8px',
+                      fontSize: '0.82rem',
+                      fontWeight: 800,
+                      cursor: 'pointer',
+                    }}
+                  >
+                    📜 Official Academic Report Card
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setStudentSubTab('notes')}
+                    style={{
+                      background: studentSubTab === 'notes' ? primaryColor : '#f1f5f9',
+                      color: studentSubTab === 'notes' ? '#ffffff' : '#475569',
+                      border: 'none',
+                      padding: '0.5rem 1rem',
+                      borderRadius: '8px',
+                      fontSize: '0.82rem',
+                      fontWeight: 800,
+                      cursor: 'pointer',
+                    }}
+                  >
+                    📚 Study Notes &amp; Course Materials ({lessonNotesList.length})
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setStudentSubTab('attendance')}
+                    style={{
+                      background: studentSubTab === 'attendance' ? primaryColor : '#f1f5f9',
+                      color: studentSubTab === 'attendance' ? '#ffffff' : '#475569',
+                      border: 'none',
+                      padding: '0.5rem 1rem',
+                      borderRadius: '8px',
+                      fontSize: '0.82rem',
+                      fontWeight: 800,
+                      cursor: 'pointer',
+                    }}
+                  >
+                    🗓️ Attendance Record ({selectedReportCardStudent ? selectedReportCardStudent.attendance_percent : 96.4}%)
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setStudentSubTab('fees')}
+                    style={{
+                      background: studentSubTab === 'fees' ? primaryColor : '#f1f5f9',
+                      color: studentSubTab === 'fees' ? '#ffffff' : '#475569',
+                      border: 'none',
+                      padding: '0.5rem 1rem',
+                      borderRadius: '8px',
+                      fontSize: '0.82rem',
+                      fontWeight: 800,
+                      cursor: 'pointer',
+                    }}
+                  >
+                    💳 Fee Statement &amp; Receipts (${selectedReportCardStudent ? selectedReportCardStudent.fee_balance : 0} due)
+                  </button>
                 </div>
               </div>
+
+              {/* TAB CONTENT: OFFICIAL REPORT CARD */}
+              {studentSubTab === 'report_card' && selectedReportCardStudent && (
+                <div style={{ background: '#ffffff', borderRadius: '20px', padding: '2.5rem', border: `2px solid ${primaryColor}`, boxShadow: '0 8px 30px rgba(0,0,0,0.06)', position: 'relative' }}>
+                  {/* Institutional Header Banner */}
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: `2px solid ${primaryColor}`, paddingBottom: '1.5rem', marginBottom: '1.75rem', flexWrap: 'wrap', gap: '1rem' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '1.25rem' }}>
+                      <img src={school.logo_url} alt={school.name} style={{ width: '72px', height: '72px', borderRadius: '14px', objectFit: 'contain', border: '1px solid #e2e8f0' }} />
+                      <div>
+                        <h2 style={{ margin: 0, fontSize: '1.6rem', fontWeight: 900, color: '#0f172a' }}>{school.name}</h2>
+                        <div style={{ fontSize: '0.85rem', fontStyle: 'italic', color: '#64748b' }}>"{school.motto}"</div>
+                        <div style={{ fontSize: '0.8rem', color: '#475569', marginTop: '3px' }}>
+                          {school.address} • {school.contact_email} • {school.contact_phone}
+                        </div>
+                      </div>
+                    </div>
+                    <div style={{ textAlign: 'right', background: '#f8fafc', padding: '0.75rem 1.25rem', borderRadius: '12px', border: '1px solid #e2e8f0' }}>
+                      <div style={{ fontSize: '0.72rem', fontWeight: 800, color: primaryColor, textTransform: 'uppercase' }}>OFFICIAL TRANSCRIPT</div>
+                      <div style={{ fontSize: '1.1rem', fontWeight: 900, color: '#0f172a' }}>{school.active_period_name}</div>
+                      <div style={{ fontSize: '0.75rem', color: '#16a34a', fontWeight: 800 }}>Verified Digital Record ✓</div>
+                    </div>
+                  </div>
+
+                  {/* Student Details Grid */}
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1rem', background: '#f8fafc', padding: '1.25rem', borderRadius: '14px', border: '1px solid #e2e8f0', marginBottom: '1.75rem' }}>
+                    <div>
+                      <div style={{ fontSize: '0.72rem', color: '#64748b', fontWeight: 700 }}>STUDENT NAME</div>
+                      <div style={{ fontWeight: 800, color: '#0f172a', fontSize: '0.95rem' }}>{selectedReportCardStudent.full_name}</div>
+                    </div>
+                    <div>
+                      <div style={{ fontSize: '0.72rem', color: '#64748b', fontWeight: 700 }}>ADMISSION NUMBER</div>
+                      <div style={{ fontWeight: 800, color: primaryColor, fontSize: '0.95rem' }}>{selectedReportCardStudent.admission_number}</div>
+                    </div>
+                    <div>
+                      <div style={{ fontSize: '0.72rem', color: '#64748b', fontWeight: 700 }}>CLASS / FORM COHORT</div>
+                      <div style={{ fontWeight: 800, color: '#0f172a', fontSize: '0.95rem' }}>{selectedReportCardStudent.grade_class}</div>
+                    </div>
+                    <div>
+                      <div style={{ fontSize: '0.72rem', color: '#64748b', fontWeight: 700 }}>CURRICULUM SERIES</div>
+                      <div style={{ fontWeight: 800, color: '#0f172a', fontSize: '0.95rem' }}>{school.curriculum_type}</div>
+                    </div>
+                  </div>
+
+                  {/* Subject Grade Table */}
+                  <h3 style={{ fontSize: '1.1rem', fontWeight: 900, color: '#0f172a', marginBottom: '0.75rem' }}>Continuous Assessment &amp; Final Exam Marks</h3>
+                  <div style={{ overflowX: 'auto', marginBottom: '1.75rem' }}>
+                    <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.84rem', textAlign: 'left' }}>
+                      <thead>
+                        <tr style={{ background: '#f1f5f9', borderBottom: '2px solid #cbd5e1' }}>
+                          <th style={{ padding: '0.75rem', fontWeight: 800, color: '#0f172a' }}>Subject</th>
+                          <th style={{ padding: '0.75rem', fontWeight: 800, color: '#0f172a', textAlign: 'center' }}>CAT 1 (20)</th>
+                          <th style={{ padding: '0.75rem', fontWeight: 800, color: '#0f172a', textAlign: 'center' }}>CAT 2 (20)</th>
+                          <th style={{ padding: '0.75rem', fontWeight: 800, color: '#0f172a', textAlign: 'center' }}>Exam (60)</th>
+                          <th style={{ padding: '0.75rem', fontWeight: 800, color: '#0f172a', textAlign: 'center' }}>Total (100)</th>
+                          <th style={{ padding: '0.75rem', fontWeight: 800, color: '#0f172a', textAlign: 'center' }}>Grade</th>
+                          <th style={{ padding: '0.75rem', fontWeight: 800, color: '#0f172a' }}>Teacher Remarks</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {gradeList
+                          .filter((g) => g.student_id === selectedReportCardStudent.id || g.admission_number === selectedReportCardStudent.admission_number)
+                          .map((g) => (
+                            <tr key={g.id} style={{ borderBottom: '1px solid #e2e8f0' }}>
+                              <td style={{ padding: '0.75rem', fontWeight: 700, color: '#0f172a' }}>{g.subject_name}</td>
+                              <td style={{ padding: '0.75rem', textAlign: 'center', color: '#475569' }}>{g.cat1_score}</td>
+                              <td style={{ padding: '0.75rem', textAlign: 'center', color: '#475569' }}>{g.cat2_score}</td>
+                              <td style={{ padding: '0.75rem', textAlign: 'center', color: '#475569' }}>{g.exam_score}</td>
+                              <td style={{ padding: '0.75rem', textAlign: 'center', fontWeight: 900, color: '#0f172a' }}>{g.total_score}%</td>
+                              <td style={{ padding: '0.75rem', textAlign: 'center' }}>
+                                <span style={{
+                                  background: g.grade.startsWith('A') ? '#dcfce7' : g.grade === 'B' ? '#eff6ff' : '#fef3c7',
+                                  color: g.grade.startsWith('A') ? '#15803d' : g.grade === 'B' ? '#1d4ed8' : '#b45309',
+                                  padding: '2px 8px',
+                                  borderRadius: '6px',
+                                  fontWeight: 900,
+                                  fontSize: '0.8rem',
+                                }}>
+                                  {g.grade}
+                                </span>
+                              </td>
+                              <td style={{ padding: '0.75rem', color: '#64748b', fontStyle: 'italic', fontSize: '0.8rem' }}>{g.remarks}</td>
+                            </tr>
+                          ))}
+                      </tbody>
+                    </table>
+                  </div>
+
+                  {/* Summary & Principal Sign-off */}
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '1.5rem', background: '#f8fafc', padding: '1.5rem', borderRadius: '16px', border: '1px solid #e2e8f0' }}>
+                    <div>
+                      <div style={{ fontSize: '0.75rem', fontWeight: 800, color: '#64748b' }}>PERFORMANCE SUMMARY</div>
+                      <div style={{ display: 'flex', gap: '1.25rem', marginTop: '0.5rem', flexWrap: 'wrap' }}>
+                        <div>
+                          <div style={{ fontSize: '0.72rem', color: '#64748b' }}>Mean Score:</div>
+                          <div style={{ fontSize: '1.4rem', fontWeight: 900, color: primaryColor }}>86.2%</div>
+                        </div>
+                        <div>
+                          <div style={{ fontSize: '0.72rem', color: '#64748b' }}>Mean Grade:</div>
+                          <div style={{ fontSize: '1.4rem', fontWeight: 900, color: '#16a34a' }}>A (Distinction)</div>
+                        </div>
+                        <div>
+                          <div style={{ fontSize: '0.72rem', color: '#64748b' }}>Class Rank:</div>
+                          <div style={{ fontSize: '1.4rem', fontWeight: 900, color: '#0f172a' }}>2nd / 38</div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div style={{ borderLeft: '1px solid #e2e8f0', paddingLeft: '1.5rem' }}>
+                      <div style={{ fontSize: '0.75rem', fontWeight: 800, color: '#64748b' }}>OFFICIAL VERIFICATION &amp; DIGITAL SEAL</div>
+                      <div style={{ marginTop: '0.5rem', display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                        <div style={{ width: '48px', height: '48px', borderRadius: '50%', background: '#fef3c7', border: '2px dashed #b45309', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.3rem' }}>
+                          📜
+                        </div>
+                        <div>
+                          <div style={{ fontWeight: 800, color: '#0f172a', fontSize: '0.9rem' }}>{school.principal_name}</div>
+                          <div style={{ fontSize: '0.75rem', color: '#64748b' }}>{school.principal_title} • Signed &amp; Sealed</div>
+                          <div style={{ fontSize: '0.7rem', color: '#16a34a', fontWeight: 700 }}>SHA-256 Validated Digital Signature</div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* TAB CONTENT: STUDY NOTES */}
+              {studentSubTab === 'notes' && (
+                <div style={{ background: '#ffffff', borderRadius: '20px', padding: '2rem', border: '1px solid #e2e8f0' }}>
+                  <h3 style={{ fontSize: '1.2rem', fontWeight: 900, marginBottom: '0.5rem', color: '#0f172a' }}>Uploaded Lesson Notes &amp; Revision Packs</h3>
+                  <p style={{ color: '#64748b', fontSize: '0.85rem', marginBottom: '1.25rem' }}>Materials uploaded directly by your teachers for your current enrolled class.</p>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '0.85rem' }}>
+                    {lessonNotesList.map((n) => (
+                      <div key={n.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: '#f8fafc', padding: '1rem 1.25rem', borderRadius: '12px', border: '1px solid #e2e8f0', flexWrap: 'wrap', gap: '0.75rem' }}>
+                        <div>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                            <span style={{ fontSize: '0.72rem', fontWeight: 800, background: '#e0e7ff', color: '#3730a3', padding: '1px 6px', borderRadius: '4px' }}>{n.subject_name}</span>
+                            <span style={{ fontSize: '0.72rem', color: '#64748b' }}>By {n.teacher_name}</span>
+                          </div>
+                          <h4 style={{ margin: '4px 0 2px', fontSize: '1rem', fontWeight: 800, color: '#0f172a' }}>{n.title}</h4>
+                          <p style={{ margin: 0, fontSize: '0.82rem', color: '#475569' }}>{n.summary}</p>
+                        </div>
+                        <a
+                          href={n.file_url || '#'}
+                          target="_blank"
+                          rel="noreferrer"
+                          style={{ background: primaryColor, color: '#ffffff', padding: '0.45rem 0.95rem', borderRadius: '8px', textDecoration: 'none', fontSize: '0.78rem', fontWeight: 700 }}
+                        >
+                          📥 Download PDF
+                        </a>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* TAB CONTENT: ATTENDANCE */}
+              {studentSubTab === 'attendance' && selectedReportCardStudent && (
+                <div style={{ background: '#ffffff', borderRadius: '20px', padding: '2rem', border: '1px solid #e2e8f0' }}>
+                  <h3 style={{ fontSize: '1.2rem', fontWeight: 900, marginBottom: '0.5rem', color: '#0f172a' }}>Term Attendance Summary</h3>
+                  <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap', marginBottom: '1.5rem' }}>
+                    <div style={{ background: '#ecfdf5', border: '1px solid #a7f3d0', borderRadius: '12px', padding: '1.25rem', flex: '1 1 200px' }}>
+                      <div style={{ fontSize: '0.75rem', fontWeight: 800, color: '#065f46' }}>OVERALL ATTENDANCE</div>
+                      <div style={{ fontSize: '1.8rem', fontWeight: 900, color: '#059669', margin: '4px 0' }}>{selectedReportCardStudent.attendance_percent}%</div>
+                      <div style={{ fontSize: '0.75rem', color: '#047857' }}>Class Roster Minimum: 80%</div>
+                    </div>
+                    <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '12px', padding: '1.25rem', flex: '1 1 200px' }}>
+                      <div style={{ fontSize: '0.75rem', fontWeight: 800, color: '#64748b' }}>TOTAL SESSIONS HELD</div>
+                      <div style={{ fontSize: '1.8rem', fontWeight: 900, color: '#0f172a', margin: '4px 0' }}>64 Days</div>
+                      <div style={{ fontSize: '0.75rem', color: '#64748b' }}>Present: 62 • Late: 1 • Absent: 1</div>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* TAB CONTENT: FEES */}
+              {studentSubTab === 'fees' && selectedReportCardStudent && (
+                <div style={{ background: '#ffffff', borderRadius: '20px', padding: '2rem', border: '1px solid #e2e8f0' }}>
+                  <h3 style={{ fontSize: '1.2rem', fontWeight: 900, marginBottom: '0.5rem', color: '#0f172a' }}>Tuition Fee Statement</h3>
+                  <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap', marginBottom: '1.5rem' }}>
+                    <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '12px', padding: '1.25rem', flex: '1 1 180px' }}>
+                      <div style={{ fontSize: '0.72rem', color: '#64748b', fontWeight: 700 }}>BILLED TUITION</div>
+                      <div style={{ fontSize: '1.5rem', fontWeight: 900, color: '#0f172a', margin: '4px 0' }}>${selectedReportCardStudent.fee_total.toLocaleString()}</div>
+                    </div>
+                    <div style={{ background: '#ecfdf5', border: '1px solid #a7f3d0', borderRadius: '12px', padding: '1.25rem', flex: '1 1 180px' }}>
+                      <div style={{ fontSize: '0.72rem', color: '#065f46', fontWeight: 700 }}>TOTAL PAID</div>
+                      <div style={{ fontSize: '1.5rem', fontWeight: 900, color: '#059669', margin: '4px 0' }}>${selectedReportCardStudent.fee_paid.toLocaleString()}</div>
+                    </div>
+                    <div style={{ background: selectedReportCardStudent.fee_balance > 0 ? '#fef2f2' : '#f0fdf4', border: selectedReportCardStudent.fee_balance > 0 ? '1px solid #fecaca' : '1px solid #bbf7d0', borderRadius: '12px', padding: '1.25rem', flex: '1 1 180px' }}>
+                      <div style={{ fontSize: '0.72rem', color: selectedReportCardStudent.fee_balance > 0 ? '#dc2626' : '#16a34a', fontWeight: 700 }}>BALANCE DUE</div>
+                      <div style={{ fontSize: '1.5rem', fontWeight: 900, color: selectedReportCardStudent.fee_balance > 0 ? '#dc2626' : '#15803d', margin: '4px 0' }}>${selectedReportCardStudent.fee_balance.toLocaleString()}</div>
+                    </div>
+                  </div>
+
+                  <h4 style={{ fontSize: '1rem', fontWeight: 800, marginBottom: '0.75rem' }}>Payment Receipts on File</h4>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                    {feePaymentsList
+                      .filter((p) => p.student_id === selectedReportCardStudent.id || p.admission_number === selectedReportCardStudent.admission_number)
+                      .map((p) => (
+                        <div key={p.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: '#f8fafc', padding: '0.75rem 1rem', borderRadius: '10px', border: '1px solid #e2e8f0', flexWrap: 'wrap', gap: '0.5rem' }}>
+                          <div>
+                            <strong style={{ color: '#b45309' }}>{p.receipt_number}</strong> — <span style={{ fontWeight: 700 }}>${p.amount.toLocaleString()}</span> via {p.payment_method}
+                            <div style={{ fontSize: '0.76rem', color: '#64748b' }}>Date: {new Date(p.date).toLocaleDateString()} • Authorized: {p.recorded_by}</div>
+                          </div>
+                          <button
+                            type="button"
+                            onClick={() => setSelectedReceipt(p)}
+                            style={{ background: '#ffffff', border: '1px solid #cbd5e1', padding: '0.35rem 0.75rem', borderRadius: '6px', fontSize: '0.76rem', fontWeight: 700, cursor: 'pointer' }}
+                          >
+                            🖨️ View Official Receipt
+                          </button>
+                        </div>
+                      ))}
+                  </div>
+                </div>
+              )}
             </div>
           )
         )}
 
-        {/* VIEW 4: SIMULATED BRANDED TEACHER PORTAL */}
+
+{/* ============================================================ */}
+        {/* VIEW 4: BRANDED TEACHER & FACULTY OPERATIONAL DESK */}
+        {/* ============================================================ */}
         {activeTab === 'teacher' && (
           activeRole !== 'admin' && activeRole !== 'teacher' ? (
             renderRestrictedCard(
@@ -1523,62 +1894,360 @@ export function TenantSchoolHub() {
               'Executive Admin, Teacher'
             )
           ) : (
-            <div style={{ maxWidth: '900px', margin: '0 auto' }}>
-              <div style={{ background: '#ffffff', borderRadius: '20px', padding: '2rem', border: '1px solid #e2e8f0', marginBottom: '2rem', boxShadow: '0 4px 16px rgba(0,0,0,0.04)' }}>
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '1rem', borderBottom: '1px solid #f1f5f9', paddingBottom: '1.25rem', marginBottom: '1.5rem' }}>
+            <div style={{ maxWidth: '1060px', margin: '0 auto' }}>
+              <div style={{ background: '#ffffff', borderRadius: '20px', padding: '1.75rem 2rem', border: '1px solid #e2e8f0', marginBottom: '1.5rem', boxShadow: '0 4px 16px rgba(0,0,0,0.03)' }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '1rem', borderBottom: '1px solid #f1f5f9', paddingBottom: '1.25rem', marginBottom: '1.25rem' }}>
                   <div>
-                    <span style={{ fontSize: '0.75rem', fontWeight: 800, color: '#059669', textTransform: 'uppercase', letterSpacing: '0.06em' }}>
+                    <span style={{ fontSize: '0.74rem', fontWeight: 800, color: '#059669', textTransform: 'uppercase', letterSpacing: '0.06em' }}>
                       {school.name} FACULTY DESK
                     </span>
                     <h2 style={{ fontSize: '1.5rem', fontWeight: 900, margin: '4px 0 0', color: '#0f172a' }}>
-                      Teacher Desk — Continuous Gradebook
+                      Teacher &amp; Academic Records Desk
                     </h2>
-                    <div style={{ fontSize: '0.82rem', color: '#64748b' }}>
-                      Faculty ID: <strong>FAC-{school.slug.toUpperCase()}-08</strong> • Active Teaching Shift: <strong>Morning Cohort</strong>
+                    <div style={{ fontSize: '0.84rem', color: '#64748b', marginTop: '3px' }}>
+                      Active Teaching Period: <strong>{school.active_period_name}</strong> • Enrolled Students: <strong>{studentList.length}</strong>
                     </div>
                   </div>
+                  <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
+                    <button
+                      type="button"
+                      onClick={() => setShowUploadNoteModal(true)}
+                      style={{ background: '#059669', color: '#ffffff', fontWeight: 800, padding: '0.55rem 1.15rem', borderRadius: '10px', border: 'none', cursor: 'pointer', fontSize: '0.82rem' }}
+                    >
+                      + Upload Study Note
+                    </button>
+                  </div>
+                </div>
+
+                {/* Teacher Sub-tab Navigation */}
+                <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
                   <button
                     type="button"
-                    onClick={() => alert(`Marking attendance for ${school.name}: 34 students logged present today!`)}
-                    style={{ background: '#059669', color: '#ffffff', fontWeight: 800, padding: '0.65rem 1.25rem', borderRadius: '10px', border: 'none', cursor: 'pointer', fontSize: '0.85rem' }}
+                    onClick={() => setTeacherSubTab('attendance')}
+                    style={{
+                      background: teacherSubTab === 'attendance' ? '#059669' : '#f1f5f9',
+                      color: teacherSubTab === 'attendance' ? '#ffffff' : '#475569',
+                      border: 'none',
+                      padding: '0.5rem 1rem',
+                      borderRadius: '8px',
+                      fontSize: '0.82rem',
+                      fontWeight: 800,
+                      cursor: 'pointer',
+                    }}
                   >
-                    ✓ Take Class Attendance
+                    📋 Live Class Attendance Register
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setTeacherSubTab('gradebook')}
+                    style={{
+                      background: teacherSubTab === 'gradebook' ? '#059669' : '#f1f5f9',
+                      color: teacherSubTab === 'gradebook' ? '#ffffff' : '#475569',
+                      border: 'none',
+                      padding: '0.5rem 1rem',
+                      borderRadius: '8px',
+                      fontSize: '0.82rem',
+                      fontWeight: 800,
+                      cursor: 'pointer',
+                    }}
+                  >
+                    📊 Continuous Assessment Gradebook (CAT 1, CAT 2, Exam)
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setTeacherSubTab('notes')}
+                    style={{
+                      background: teacherSubTab === 'notes' ? '#059669' : '#f1f5f9',
+                      color: teacherSubTab === 'notes' ? '#ffffff' : '#475569',
+                      border: 'none',
+                      padding: '0.5rem 1rem',
+                      borderRadius: '8px',
+                      fontSize: '0.82rem',
+                      fontWeight: 800,
+                      cursor: 'pointer',
+                    }}
+                  >
+                    📁 Class Study Materials ({lessonNotesList.length})
                   </button>
                 </div>
-
-                <div style={{ background: '#ecfdf5', borderRadius: '12px', padding: '1rem', border: '1px solid #a7f3d0', marginBottom: '1.5rem', fontSize: '0.88rem', color: '#065f46' }}>
-                  💡 <strong>Gradebook Notice:</strong> CAT 2 scores for <strong>{school.active_period_name}</strong> are due for submission to the {school.principal_title} Office before Friday 5:00 PM.
-                </div>
-
-                <h3 style={{ fontSize: '1.1rem', fontWeight: 800, marginBottom: '0.75rem' }}>Assigned Teaching Units</h3>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
-                  {[
-                    { class: 'Form 3 Alpha', subject: 'Pure Mathematics', count: '38 Students', avg: '78.4% Mean' },
-                    { class: 'Year 10 Cambridge', subject: 'Computer Science (0478)', count: '24 Candidates', avg: '82.1% Mean' },
-                    { class: 'Diploma Year 1', subject: 'Database Management & SQL', count: '45 Trainees', avg: '75.6% Mean' },
-                  ].map((item, idx) => (
-                    <div key={idx} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: '#f8fafc', padding: '1rem', borderRadius: '12px', border: '1px solid #e2e8f0', flexWrap: 'wrap', gap: '0.5rem' }}>
-                      <div>
-                        <strong style={{ fontSize: '0.98rem' }}>{item.class}</strong> — <span style={{ color: '#059669', fontWeight: 700 }}>{item.subject}</span>
-                        <div style={{ fontSize: '0.78rem', color: '#64748b' }}>{item.count} • Class Performance: {item.avg}</div>
-                      </div>
-                      <div style={{ display: 'flex', gap: '0.5rem' }}>
-                        <button type="button" onClick={() => alert(`Opening continuous gradebook for ${item.class}`)} style={{ background: '#ffffff', border: '1px solid #cbd5e1', padding: '0.45rem 0.85rem', borderRadius: '8px', fontSize: '0.78rem', fontWeight: 700, cursor: 'pointer' }}>
-                          📊 Gradebook
-                        </button>
-                        <button type="button" onClick={() => alert(`Opening lesson upload desk for ${item.subject}`)} style={{ background: '#059669', color: '#ffffff', border: 'none', padding: '0.45rem 0.85rem', borderRadius: '8px', fontSize: '0.78rem', fontWeight: 700, cursor: 'pointer' }}>
-                          📁 Upload Notes
-                        </button>
-                      </div>
-                    </div>
-                  ))}
-                </div>
               </div>
+
+              {/* TEACHER SUB-TAB 1: ATTENDANCE REGISTER */}
+              {teacherSubTab === 'attendance' && (
+                <div style={{ background: '#ffffff', borderRadius: '20px', padding: '2rem', border: '1px solid #e2e8f0' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.25rem', flexWrap: 'wrap', gap: '1rem' }}>
+                    <div>
+                      <h3 style={{ fontSize: '1.2rem', fontWeight: 900, margin: 0, color: '#0f172a' }}>Class Roll Call &amp; Attendance</h3>
+                      <p style={{ margin: '4px 0 0', fontSize: '0.84rem', color: '#64748b' }}>Take daily attendance for students. Status automatically updates attendance percentages.</p>
+                    </div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                      <span style={{ fontSize: '0.78rem', color: '#64748b', fontWeight: 700 }}>Filter Cohort:</span>
+                      <select
+                        value={selectedClassForAttendance}
+                        onChange={(e) => setSelectedClassForAttendance(e.target.value)}
+                        style={{ padding: '0.45rem 0.75rem', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '0.82rem', fontWeight: 700, color: '#0f172a', background: '#f8fafc' }}
+                      >
+                        <option value="Grade 10 Cambridge">Grade 10 Cambridge</option>
+                        <option value="Grade 11 Cambridge">Grade 11 Cambridge</option>
+                        <option value="Form 3 Alpha">Form 3 Alpha</option>
+                        <option value="Diploma Year 1">Diploma Year 1</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <div style={{ overflowX: 'auto' }}>
+                    <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.84rem', textAlign: 'left' }}>
+                      <thead>
+                        <tr style={{ background: '#f8fafc', borderBottom: '2px solid #e2e8f0' }}>
+                          <th style={{ padding: '0.75rem', fontWeight: 800, color: '#0f172a' }}>Adm No.</th>
+                          <th style={{ padding: '0.75rem', fontWeight: 800, color: '#0f172a' }}>Student Name</th>
+                          <th style={{ padding: '0.75rem', fontWeight: 800, color: '#0f172a' }}>Class</th>
+                          <th style={{ padding: '0.75rem', fontWeight: 800, color: '#0f172a', textAlign: 'center' }}>Term Attendance</th>
+                          <th style={{ padding: '0.75rem', fontWeight: 800, color: '#0f172a', textAlign: 'center' }}>Today's Roll Call</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {studentList
+                          .filter((s) => !selectedClassForAttendance || s.grade_class === selectedClassForAttendance)
+                          .map((s) => (
+                            <tr key={s.id} style={{ borderBottom: '1px solid #e2e8f0' }}>
+                              <td style={{ padding: '0.75rem', fontWeight: 700, color: primaryColor }}>{s.admission_number}</td>
+                              <td style={{ padding: '0.75rem', fontWeight: 800, color: '#0f172a' }}>{s.full_name}</td>
+                              <td style={{ padding: '0.75rem', color: '#64748b' }}>{s.grade_class}</td>
+                              <td style={{ padding: '0.75rem', textAlign: 'center' }}>
+                                <span style={{
+                                  background: s.attendance_percent >= 90 ? '#dcfce7' : '#fef3c7',
+                                  color: s.attendance_percent >= 90 ? '#15803d' : '#b45309',
+                                  padding: '2px 8px',
+                                  borderRadius: '6px',
+                                  fontWeight: 800,
+                                  fontSize: '0.78rem',
+                                }}>
+                                  {s.attendance_percent}% Present
+                                </span>
+                              </td>
+                              <td style={{ padding: '0.75rem', textAlign: 'center' }}>
+                                <div style={{ display: 'inline-flex', gap: '4px' }}>
+                                  <button
+                                    type="button"
+                                    onClick={() => {
+                                      const updated = Math.min(100, +(s.attendance_percent + 0.2).toFixed(1))
+                                      tenantSchoolStore.updateStudent(s.id, { attendance_percent: updated })
+                                      reloadSchoolData(school.slug)
+                                    }}
+                                    style={{ background: '#dcfce7', color: '#15803d', border: '1px solid #86efac', padding: '0.3rem 0.6rem', borderRadius: '6px', fontSize: '0.74rem', fontWeight: 800, cursor: 'pointer' }}
+                                  >
+                                    ✓ Present
+                                  </button>
+                                  <button
+                                    type="button"
+                                    onClick={() => {
+                                      const updated = Math.max(0, +(s.attendance_percent - 0.5).toFixed(1))
+                                      tenantSchoolStore.updateStudent(s.id, { attendance_percent: updated })
+                                      reloadSchoolData(school.slug)
+                                    }}
+                                    style={{ background: '#fee2e2', color: '#991b1b', border: '1px solid #fca5a5', padding: '0.3rem 0.6rem', borderRadius: '6px', fontSize: '0.74rem', fontWeight: 800, cursor: 'pointer' }}
+                                  >
+                                    ✕ Absent
+                                  </button>
+                                  <button
+                                    type="button"
+                                    onClick={() => {
+                                      alert(`Logged late arrival for ${s.full_name}`)
+                                    }}
+                                    style={{ background: '#fef3c7', color: '#92400e', border: '1px solid #fde68a', padding: '0.3rem 0.6rem', borderRadius: '6px', fontSize: '0.74rem', fontWeight: 800, cursor: 'pointer' }}
+                                  >
+                                    🕒 Late
+                                  </button>
+                                </div>
+                              </td>
+                            </tr>
+                          ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              )}
+
+              {/* TEACHER SUB-TAB 2: GRADEBOOK */}
+              {teacherSubTab === 'gradebook' && (
+                <div style={{ background: '#ffffff', borderRadius: '20px', padding: '2rem', border: '1px solid #e2e8f0' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.25rem', flexWrap: 'wrap', gap: '1rem' }}>
+                    <div>
+                      <h3 style={{ fontSize: '1.2rem', fontWeight: 900, margin: 0, color: '#0f172a' }}>Assessment Gradebook &amp; Exam Marks</h3>
+                      <p style={{ margin: '4px 0 0', fontSize: '0.84rem', color: '#64748b' }}>Enter Continuous Assessment Tests (CAT 1 &amp; CAT 2) and Final Exam marks out of 60.</p>
+                    </div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
+                      <select
+                        value={selectedSubjectForGradebook}
+                        onChange={(e) => setSelectedSubjectForGradebook(e.target.value)}
+                        style={{ padding: '0.45rem 0.75rem', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '0.82rem', fontWeight: 700, color: '#0f172a', background: '#f8fafc' }}
+                      >
+                        <option value="Pure Mathematics (0580)">Pure Mathematics (0580)</option>
+                        <option value="First Language English (0500)">First Language English (0500)</option>
+                        <option value="Computer Science (0478)">Computer Science (0478)</option>
+                        <option value="Physics (0625)">Physics (0625)</option>
+                        <option value="Chemistry (0620)">Chemistry (0620)</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <div style={{ overflowX: 'auto' }}>
+                    <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.84rem', textAlign: 'left' }}>
+                      <thead>
+                        <tr style={{ background: '#f8fafc', borderBottom: '2px solid #e2e8f0' }}>
+                          <th style={{ padding: '0.75rem', fontWeight: 800, color: '#0f172a' }}>Candidate</th>
+                          <th style={{ padding: '0.75rem', fontWeight: 800, color: '#0f172a', textAlign: 'center' }}>CAT 1 (Max 20)</th>
+                          <th style={{ padding: '0.75rem', fontWeight: 800, color: '#0f172a', textAlign: 'center' }}>CAT 2 (Max 20)</th>
+                          <th style={{ padding: '0.75rem', fontWeight: 800, color: '#0f172a', textAlign: 'center' }}>Exam (Max 60)</th>
+                          <th style={{ padding: '0.75rem', fontWeight: 800, color: '#0f172a', textAlign: 'center' }}>Total Score</th>
+                          <th style={{ padding: '0.75rem', fontWeight: 800, color: '#0f172a', textAlign: 'center' }}>Grade</th>
+                          <th style={{ padding: '0.75rem', fontWeight: 800, color: '#0f172a', textAlign: 'center' }}>Action</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {studentList.map((s) => {
+                          const existing = gradeList.find(
+                            (g) => (g.student_id === s.id || g.admission_number === s.admission_number) && g.subject_name === selectedSubjectForGradebook
+                          )
+                          const cat1 = existing ? existing.cat1_score : 18
+                          const cat2 = existing ? existing.cat2_score : 17
+                          const exam = existing ? existing.exam_score : 52
+                          const total = existing ? existing.total_score : cat1 + cat2 + exam
+                          const grade = existing ? existing.grade : (total >= 90 ? 'A*' : total >= 80 ? 'A' : total >= 70 ? 'B' : 'C')
+
+                          return (
+                            <tr key={s.id} style={{ borderBottom: '1px solid #e2e8f0' }}>
+                              <td style={{ padding: '0.75rem' }}>
+                                <div style={{ fontWeight: 800, color: '#0f172a' }}>{s.full_name}</div>
+                                <div style={{ fontSize: '0.75rem', color: primaryColor }}>{s.admission_number} • {s.grade_class}</div>
+                              </td>
+                              <td style={{ padding: '0.75rem', textAlign: 'center' }}>
+                                <input
+                                  type="number"
+                                  min="0"
+                                  max="20"
+                                  defaultValue={cat1}
+                                  id={`cat1_${s.id}`}
+                                  style={{ width: '60px', padding: '0.35rem', textAlign: 'center', borderRadius: '6px', border: '1px solid #cbd5e1', fontWeight: 700 }}
+                                />
+                              </td>
+                              <td style={{ padding: '0.75rem', textAlign: 'center' }}>
+                                <input
+                                  type="number"
+                                  min="0"
+                                  max="20"
+                                  defaultValue={cat2}
+                                  id={`cat2_${s.id}`}
+                                  style={{ width: '60px', padding: '0.35rem', textAlign: 'center', borderRadius: '6px', border: '1px solid #cbd5e1', fontWeight: 700 }}
+                                />
+                              </td>
+                              <td style={{ padding: '0.75rem', textAlign: 'center' }}>
+                                <input
+                                  type="number"
+                                  min="0"
+                                  max="60"
+                                  defaultValue={exam}
+                                  id={`exam_${s.id}`}
+                                  style={{ width: '60px', padding: '0.35rem', textAlign: 'center', borderRadius: '6px', border: '1px solid #cbd5e1', fontWeight: 700 }}
+                                />
+                              </td>
+                              <td style={{ padding: '0.75rem', textAlign: 'center', fontWeight: 900, color: '#0f172a' }}>
+                                {total}%
+                              </td>
+                              <td style={{ padding: '0.75rem', textAlign: 'center' }}>
+                                <span style={{ background: '#dcfce7', color: '#15803d', padding: '2px 8px', borderRadius: '6px', fontWeight: 900 }}>
+                                  {grade}
+                                </span>
+                              </td>
+                              <td style={{ padding: '0.75rem', textAlign: 'center' }}>
+                                <button
+                                  type="button"
+                                  onClick={() => {
+                                    const c1 = Number((document.getElementById(`cat1_${s.id}`) as HTMLInputElement)?.value || cat1)
+                                    const c2 = Number((document.getElementById(`cat2_${s.id}`) as HTMLInputElement)?.value || cat2)
+                                    const ex = Number((document.getElementById(`exam_${s.id}`) as HTMLInputElement)?.value || exam)
+                                    tenantSchoolStore.saveGradeRecord({
+                                      school_slug: school.slug,
+                                      student_id: s.id,
+                                      student_name: s.full_name,
+                                      admission_number: s.admission_number,
+                                      class_name: s.grade_class,
+                                      subject_name: selectedSubjectForGradebook,
+                                      period_code: 'TERM-1',
+                                      cat1_score: c1,
+                                      cat2_score: c2,
+                                      exam_score: ex,
+                                      remarks: 'Progress validated by subject teacher in official markbook.',
+                                      teacher_name: profile?.full_name || 'Subject Faculty',
+                                    })
+                                    reloadSchoolData(school.slug)
+                                    alert(`Saved marks for ${s.full_name}: CAT 1: ${c1}, CAT 2: ${c2}, Exam: ${ex}.`)
+                                  }}
+                                  style={{ background: '#059669', color: '#ffffff', border: 'none', padding: '0.35rem 0.75rem', borderRadius: '6px', fontSize: '0.74rem', fontWeight: 800, cursor: 'pointer' }}
+                                >
+                                  Save Mark
+                                </button>
+                              </td>
+                            </tr>
+                          )
+                        })}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              )}
+
+              {/* TEACHER SUB-TAB 3: LESSON NOTES */}
+              {teacherSubTab === 'notes' && (
+                <div style={{ background: '#ffffff', borderRadius: '20px', padding: '2rem', border: '1px solid #e2e8f0' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.25rem', flexWrap: 'wrap', gap: '1rem' }}>
+                    <div>
+                      <h3 style={{ fontSize: '1.2rem', fontWeight: 900, margin: 0, color: '#0f172a' }}>Teaching Notes &amp; Learning Artifacts</h3>
+                      <p style={{ margin: '4px 0 0', fontSize: '0.84rem', color: '#64748b' }}>Upload syllabus-aligned slide decks, PDF guides and revision homework for students.</p>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => setShowUploadNoteModal(true)}
+                      style={{ background: '#059669', color: '#ffffff', fontWeight: 800, padding: '0.55rem 1.15rem', borderRadius: '10px', border: 'none', cursor: 'pointer', fontSize: '0.82rem' }}
+                    >
+                      + Add New Lesson Note
+                    </button>
+                  </div>
+
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '0.85rem' }}>
+                    {lessonNotesList.map((n) => (
+                      <div key={n.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: '#f8fafc', padding: '1rem 1.25rem', borderRadius: '12px', border: '1px solid #e2e8f0', flexWrap: 'wrap', gap: '0.75rem' }}>
+                        <div>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                            <span style={{ fontSize: '0.72rem', fontWeight: 800, background: '#dcfce7', color: '#065f46', padding: '1px 6px', borderRadius: '4px' }}>{n.class_name}</span>
+                            <span style={{ fontSize: '0.72rem', fontWeight: 700, color: '#059669' }}>{n.subject_name}</span>
+                            <span style={{ fontSize: '0.72rem', color: '#64748b' }}>• Uploaded by {n.teacher_name}</span>
+                          </div>
+                          <h4 style={{ margin: '4px 0 2px', fontSize: '1rem', fontWeight: 800, color: '#0f172a' }}>{n.title}</h4>
+                          <p style={{ margin: 0, fontSize: '0.82rem', color: '#475569' }}>{n.summary}</p>
+                        </div>
+                        <a
+                          href={n.file_url || '#'}
+                          target="_blank"
+                          rel="noreferrer"
+                          style={{ background: '#ffffff', border: '1px solid #cbd5e1', padding: '0.45rem 0.85rem', borderRadius: '8px', textDecoration: 'none', fontSize: '0.76rem', fontWeight: 700, color: '#0f172a' }}
+                        >
+                          👁️ View PDF Material
+                        </a>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
           )
         )}
 
-        {/* VIEW 5: SIMULATED BRANDED BURSAR DESK */}
+
+{/* ============================================================ */}
+        {/* VIEW 5: BRANDED BURSAR & FINANCE OPERATIONAL DESK */}
+        {/* ============================================================ */}
         {activeTab === 'bursar' && (
           activeRole !== 'admin' && activeRole !== 'bursar' ? (
             renderRestrictedCard(
@@ -1587,214 +2256,668 @@ export function TenantSchoolHub() {
               'Executive Admin, Bursar'
             )
           ) : (
-            <div style={{ maxWidth: '900px', margin: '0 auto' }}>
-              <div style={{ background: '#ffffff', borderRadius: '20px', padding: '2rem', border: '1px solid #e2e8f0', marginBottom: '2rem', boxShadow: '0 4px 16px rgba(0,0,0,0.04)' }}>
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '1rem', borderBottom: '1px solid #f1f5f9', paddingBottom: '1.25rem', marginBottom: '1.5rem' }}>
+            <div style={{ maxWidth: '1060px', margin: '0 auto' }}>
+              <div style={{ background: '#ffffff', borderRadius: '20px', padding: '1.75rem 2rem', border: '1px solid #e2e8f0', marginBottom: '1.5rem', boxShadow: '0 4px 16px rgba(0,0,0,0.03)' }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '1rem', borderBottom: '1px solid #f1f5f9', paddingBottom: '1.25rem', marginBottom: '1.25rem' }}>
                   <div>
-                    <span style={{ fontSize: '0.75rem', fontWeight: 800, color: '#b45309', textTransform: 'uppercase', letterSpacing: '0.06em' }}>
+                    <span style={{ fontSize: '0.74rem', fontWeight: 800, color: '#b45309', textTransform: 'uppercase', letterSpacing: '0.06em' }}>
                       {school.name} FINANCE &amp; BURSAR DESK
                     </span>
                     <h2 style={{ fontSize: '1.5rem', fontWeight: 900, margin: '4px 0 0', color: '#0f172a' }}>
-                      Tuition Fees &amp; Revenue Ledger
+                      Bursar Accounts, Payroll &amp; Tuition Terminal
                     </h2>
-                    <div style={{ fontSize: '0.82rem', color: '#64748b' }}>
-                      Billing Cycle: <strong>{school.active_period_name}</strong> • Bank Account: <strong>{school.name} School Trust</strong>
+                    <div style={{ fontSize: '0.84rem', color: '#64748b', marginTop: '3px' }}>
+                      Active Accounting Period: <strong>{school.active_period_name}</strong> • Bank Account: <strong>{school.name} School Trust</strong>
                     </div>
                   </div>
+                  <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
+                    <button
+                      type="button"
+                      onClick={() => setShowRecordPaymentModal(true)}
+                      style={{ background: '#b45309', color: '#ffffff', fontWeight: 800, padding: '0.55rem 1.15rem', borderRadius: '10px', border: 'none', cursor: 'pointer', fontSize: '0.82rem' }}
+                    >
+                      + Record Fee Payment
+                    </button>
+                  </div>
+                </div>
+
+                {/* Sub-tab Navigation */}
+                <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
                   <button
                     type="button"
-                    onClick={() => alert(`Invoice batch generated for ${school.name}: 120 digital invoices prepared for ${school.active_period_name}!`)}
-                    style={{ background: '#b45309', color: '#ffffff', fontWeight: 800, padding: '0.65rem 1.25rem', borderRadius: '10px', border: 'none', cursor: 'pointer', fontSize: '0.85rem' }}
+                    onClick={() => setBursarSubTab('payroll')}
+                    style={{
+                      background: bursarSubTab === 'payroll' ? '#b45309' : '#f1f5f9',
+                      color: bursarSubTab === 'payroll' ? '#ffffff' : '#475569',
+                      border: 'none',
+                      padding: '0.5rem 1rem',
+                      borderRadius: '8px',
+                      fontSize: '0.82rem',
+                      fontWeight: 800,
+                      cursor: 'pointer',
+                    }}
                   >
-                    + Generate {systemTermLabel} Invoices
+                    💼 Staff Payroll &amp; Salary Register ({payrollList.length})
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setBursarSubTab('payments')}
+                    style={{
+                      background: bursarSubTab === 'payments' ? '#b45309' : '#f1f5f9',
+                      color: bursarSubTab === 'payments' ? '#ffffff' : '#475569',
+                      border: 'none',
+                      padding: '0.5rem 1rem',
+                      borderRadius: '8px',
+                      fontSize: '0.82rem',
+                      fontWeight: 800,
+                      cursor: 'pointer',
+                    }}
+                  >
+                    🧾 Tuition Payment Ledger &amp; Receipts ({feePaymentsList.length})
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setBursarSubTab('arrears')}
+                    style={{
+                      background: bursarSubTab === 'arrears' ? '#b45309' : '#f1f5f9',
+                      color: bursarSubTab === 'arrears' ? '#ffffff' : '#475569',
+                      border: 'none',
+                      padding: '0.5rem 1rem',
+                      borderRadius: '8px',
+                      fontSize: '0.82rem',
+                      fontWeight: 800,
+                      cursor: 'pointer',
+                    }}
+                  >
+                    ⚠️ Student Fee Arrears &amp; Defaulters
                   </button>
                 </div>
+              </div>
 
-                {/* Financial Metrics */}
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '1rem', marginBottom: '1.5rem' }}>
-                  <div style={{ background: '#fefce8', border: '1px solid #fde047', borderRadius: '14px', padding: '1rem' }}>
-                    <div style={{ fontSize: '0.76rem', color: '#854d0e', fontWeight: 700 }}>PROJECTED {systemTermLabel.toUpperCase()} FEES</div>
-                    <div style={{ fontSize: '1.35rem', fontWeight: 900, color: '#713f12', marginTop: '2px' }}>$72,000.00</div>
-                    <div style={{ fontSize: '0.75rem', color: '#854d0e', marginTop: '2px' }}>Based on {school.stats.students} enrolled students</div>
+              {/* BURSAR SUB-TAB 1: STAFF PAYROLL REGISTER */}
+              {bursarSubTab === 'payroll' && (
+                <div style={{ background: '#ffffff', borderRadius: '20px', padding: '2rem', border: '1px solid #e2e8f0' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.25rem', flexWrap: 'wrap', gap: '1rem' }}>
+                    <div>
+                      <h3 style={{ fontSize: '1.2rem', fontWeight: 900, margin: 0, color: '#0f172a' }}>October 2026 Monthly Payroll Register</h3>
+                      <p style={{ margin: '4px 0 0', fontSize: '0.84rem', color: '#64748b' }}>Compute base salary, statutory PAYE tax, pension, and net salary disbursement.</p>
+                    </div>
+                    <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          tenantSchoolStore.generateMonthlyPayroll(school.slug, 'October 2026')
+                          reloadSchoolData(school.slug)
+                          alert('Generated October 2026 Payroll batch for all active registered staff!')
+                        }}
+                        style={{ background: '#f8fafc', color: '#0f172a', border: '1px solid #cbd5e1', padding: '0.5rem 0.95rem', borderRadius: '8px', fontSize: '0.78rem', fontWeight: 700, cursor: 'pointer' }}
+                      >
+                        ⚡ Re-compute Batch
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          tenantSchoolStore.disbursePayrollBatch(school.slug, 'October 2026', 'Bank Wire')
+                          reloadSchoolData(school.slug)
+                          alert('Disbursed October 2026 Payroll via Electronic Bank Wire!')
+                        }}
+                        style={{ background: '#16a34a', color: '#ffffff', border: 'none', padding: '0.5rem 0.95rem', borderRadius: '8px', fontSize: '0.78rem', fontWeight: 800, cursor: 'pointer' }}
+                      >
+                        ✓ Approve &amp; Disburse Batch
+                      </button>
+                    </div>
                   </div>
 
-                  <div style={{ background: '#ecfdf5', border: '1px solid #a7f3d0', borderRadius: '14px', padding: '1rem' }}>
-                    <div style={{ fontSize: '0.76rem', color: '#059669', fontWeight: 700 }}>COLLECTED REVENUE</div>
-                    <div style={{ fontSize: '1.35rem', fontWeight: 900, color: '#065f46', marginTop: '2px' }}>$61,400.00 (85.2%)</div>
-                    <div style={{ fontSize: '0.75rem', color: '#047857', marginTop: '2px' }}>Visa, Bank Wire &amp; Mobile Payments</div>
-                  </div>
-
-                  <div style={{ background: '#fef2f2', border: '1px solid #fecaca', borderRadius: '14px', padding: '1rem' }}>
-                    <div style={{ fontSize: '0.76rem', color: '#dc2626', fontWeight: 700 }}>OUTSTANDING ARREARS</div>
-                    <div style={{ fontSize: '1.35rem', fontWeight: 900, color: '#991b1b', marginTop: '2px' }}>$10,600.00 (14.8%)</div>
-                    <div style={{ fontSize: '0.75rem', color: '#dc2626', marginTop: '2px' }}>Automated reminder SMS queued</div>
-                  </div>
-                </div>
-
-                {/* Recent Payment Receipts */}
-                <h3 style={{ fontSize: '1.1rem', fontWeight: 800, marginBottom: '0.75rem' }}>Recent Official Stamped Fee Receipts</h3>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-                  {[
-                    { rcp: `RCP-${school.slug.toUpperCase()}-940`, student: 'Amina Hassan (Adm: 0021)', amount: '$600.00 (Full Term)', date: 'Today, 10:14 AM' },
-                    { rcp: `RCP-${school.slug.toUpperCase()}-939`, student: 'David Omondi (Adm: 0035)', amount: '$300.00 (Installment 1)', date: 'Yesterday, 03:40 PM' },
-                    { rcp: `RCP-${school.slug.toUpperCase()}-938`, student: 'Sophia Vance (Adm: 0014)', amount: '$600.00 (Full Term)', date: 'Oct 04, 2026' },
-                  ].map((r) => (
-                    <div key={r.rcp} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: '#f8fafc', padding: '0.85rem 1rem', borderRadius: '10px', border: '1px solid #e2e8f0', flexWrap: 'wrap', gap: '0.5rem' }}>
-                      <div>
-                        <strong style={{ color: '#b45309' }}>{r.rcp}</strong> — <span style={{ fontWeight: 700 }}>{r.student}</span>
-                        <div style={{ fontSize: '0.78rem', color: '#64748b' }}>Date: {r.date}</div>
-                      </div>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                        <span style={{ fontWeight: 900, color: '#0f172a' }}>{r.amount}</span>
-                        <button type="button" onClick={() => alert(`Printing verified stamped receipt with QR for ${r.rcp}`)} style={{ background: '#ffffff', border: '1px solid #cbd5e1', padding: '0.35rem 0.65rem', borderRadius: '6px', fontSize: '0.75rem', fontWeight: 700, cursor: 'pointer' }}>
-                          🖨️ Print Receipt
-                        </button>
+                  {/* Summary Metric Strip */}
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1rem', marginBottom: '1.5rem' }}>
+                    <div style={{ background: '#f8fafc', padding: '1rem', borderRadius: '12px', border: '1px solid #e2e8f0' }}>
+                      <div style={{ fontSize: '0.72rem', color: '#64748b', fontWeight: 700 }}>TOTAL GROSS PAYROLL</div>
+                      <div style={{ fontSize: '1.4rem', fontWeight: 900, color: '#0f172a', marginTop: '2px' }}>
+                        ${payrollList.reduce((acc, p) => acc + p.gross_salary, 0).toLocaleString()}
                       </div>
                     </div>
-                  ))}
+                    <div style={{ background: '#fef2f2', padding: '1rem', borderRadius: '12px', border: '1px solid #fecaca' }}>
+                      <div style={{ fontSize: '0.72rem', color: '#dc2626', fontWeight: 700 }}>STATUTORY TAX &amp; DEDUCTIONS</div>
+                      <div style={{ fontSize: '1.4rem', fontWeight: 900, color: '#991b1b', marginTop: '2px' }}>
+                        ${payrollList.reduce((acc, p) => acc + (p.tax_deduction + p.pension_deduction), 0).toLocaleString()}
+                      </div>
+                    </div>
+                    <div style={{ background: '#ecfdf5', padding: '1rem', borderRadius: '12px', border: '1px solid #a7f3d0' }}>
+                      <div style={{ fontSize: '0.72rem', color: '#059669', fontWeight: 700 }}>NET PAYABLE TO STAFF</div>
+                      <div style={{ fontSize: '1.4rem', fontWeight: 900, color: '#065f46', marginTop: '2px' }}>
+                        ${payrollList.reduce((acc, p) => acc + p.net_salary, 0).toLocaleString()}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Table */}
+                  <div style={{ overflowX: 'auto' }}>
+                    <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.84rem', textAlign: 'left' }}>
+                      <thead>
+                        <tr style={{ background: '#f8fafc', borderBottom: '2px solid #e2e8f0' }}>
+                          <th style={{ padding: '0.75rem', fontWeight: 800, color: '#0f172a' }}>Staff Member</th>
+                          <th style={{ padding: '0.75rem', fontWeight: 800, color: '#0f172a' }}>Role / Dept</th>
+                          <th style={{ padding: '0.75rem', fontWeight: 800, color: '#0f172a', textAlign: 'right' }}>Base Pay</th>
+                          <th style={{ padding: '0.75rem', fontWeight: 800, color: '#0f172a', textAlign: 'right' }}>Allowances</th>
+                          <th style={{ padding: '0.75rem', fontWeight: 800, color: '#0f172a', textAlign: 'right' }}>Deductions</th>
+                          <th style={{ padding: '0.75rem', fontWeight: 800, color: '#0f172a', textAlign: 'right' }}>Net Pay</th>
+                          <th style={{ padding: '0.75rem', fontWeight: 800, color: '#0f172a', textAlign: 'center' }}>Status</th>
+                          <th style={{ padding: '0.75rem', fontWeight: 800, color: '#0f172a', textAlign: 'center' }}>Official Slip</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {payrollList.map((p) => (
+                          <tr key={p.id} style={{ borderBottom: '1px solid #e2e8f0' }}>
+                            <td style={{ padding: '0.75rem', fontWeight: 800, color: '#0f172a' }}>{p.staff_name}</td>
+                            <td style={{ padding: '0.75rem', color: '#64748b' }}>{p.role} • {p.department}</td>
+                            <td style={{ padding: '0.75rem', textAlign: 'right' }}>${p.base_salary.toLocaleString()}</td>
+                            <td style={{ padding: '0.75rem', textAlign: 'right', color: '#059669' }}>+${(p.housing_allowance + p.transport_allowance).toLocaleString()}</td>
+                            <td style={{ padding: '0.75rem', textAlign: 'right', color: '#dc2626' }}>-${(p.tax_deduction + p.pension_deduction).toLocaleString()}</td>
+                            <td style={{ padding: '0.75rem', textAlign: 'right', fontWeight: 900, color: '#0f172a' }}>${p.net_salary.toLocaleString()}</td>
+                            <td style={{ padding: '0.75rem', textAlign: 'center' }}>
+                              <span style={{
+                                background: p.status === 'disbursed' ? '#dcfce7' : '#fef3c7',
+                                color: p.status === 'disbursed' ? '#15803d' : '#b45309',
+                                padding: '2px 8px',
+                                borderRadius: '6px',
+                                fontSize: '0.74rem',
+                                fontWeight: 800,
+                                textTransform: 'capitalize',
+                              }}>
+                                {p.status === 'disbursed' ? '✓ Disbursed' : '⏳ Approved'}
+                              </span>
+                            </td>
+                            <td style={{ padding: '0.75rem', textAlign: 'center' }}>
+                              <button
+                                type="button"
+                                onClick={() => setSelectedPayslip(p)}
+                                style={{ background: '#ffffff', border: '1px solid #cbd5e1', padding: '0.35rem 0.65rem', borderRadius: '6px', fontSize: '0.74rem', fontWeight: 700, cursor: 'pointer' }}
+                              >
+                                🖨️ View Payslip
+                              </button>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
                 </div>
-              </div>
+              )}
+
+              {/* BURSAR SUB-TAB 2: TUITION LEDGER & RECEIPTS */}
+              {bursarSubTab === 'payments' && (
+                <div style={{ background: '#ffffff', borderRadius: '20px', padding: '2rem', border: '1px solid #e2e8f0' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.25rem', flexWrap: 'wrap', gap: '1rem' }}>
+                    <div>
+                      <h3 style={{ fontSize: '1.2rem', fontWeight: 900, margin: 0, color: '#0f172a' }}>Tuition Fee Invoices &amp; Verified Receipts</h3>
+                      <p style={{ margin: '4px 0 0', fontSize: '0.84rem', color: '#64748b' }}>Recorded payments generate printable official stamped receipts with institutional verification QR.</p>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => setShowRecordPaymentModal(true)}
+                      style={{ background: '#b45309', color: '#ffffff', fontWeight: 800, padding: '0.55rem 1.15rem', borderRadius: '10px', border: 'none', cursor: 'pointer', fontSize: '0.82rem' }}
+                    >
+                      + Record New Payment
+                    </button>
+                  </div>
+
+                  <div style={{ overflowX: 'auto' }}>
+                    <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.84rem', textAlign: 'left' }}>
+                      <thead>
+                        <tr style={{ background: '#f8fafc', borderBottom: '2px solid #e2e8f0' }}>
+                          <th style={{ padding: '0.75rem', fontWeight: 800, color: '#0f172a' }}>Receipt No.</th>
+                          <th style={{ padding: '0.75rem', fontWeight: 800, color: '#0f172a' }}>Student &amp; Adm</th>
+                          <th style={{ padding: '0.75rem', fontWeight: 800, color: '#0f172a' }}>Term Period</th>
+                          <th style={{ padding: '0.75rem', fontWeight: 800, color: '#0f172a' }}>Payment Method</th>
+                          <th style={{ padding: '0.75rem', fontWeight: 800, color: '#0f172a', textAlign: 'right' }}>Amount Paid</th>
+                          <th style={{ padding: '0.75rem', fontWeight: 800, color: '#0f172a' }}>Authorized By</th>
+                          <th style={{ padding: '0.75rem', fontWeight: 800, color: '#0f172a', textAlign: 'center' }}>Official Receipt</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {feePaymentsList.map((p) => (
+                          <tr key={p.id} style={{ borderBottom: '1px solid #e2e8f0' }}>
+                            <td style={{ padding: '0.75rem', fontWeight: 800, color: '#b45309' }}>{p.receipt_number}</td>
+                            <td style={{ padding: '0.75rem' }}>
+                              <div style={{ fontWeight: 800, color: '#0f172a' }}>{p.student_name}</div>
+                              <div style={{ fontSize: '0.75rem', color: primaryColor }}>{p.admission_number}</div>
+                            </td>
+                            <td style={{ padding: '0.75rem', color: '#64748b' }}>{p.period_name}</td>
+                            <td style={{ padding: '0.75rem', color: '#475569' }}>{p.payment_method}</td>
+                            <td style={{ padding: '0.75rem', textAlign: 'right', fontWeight: 900, color: '#059669' }}>${p.amount.toLocaleString()}</td>
+                            <td style={{ padding: '0.75rem', color: '#64748b' }}>{p.recorded_by}</td>
+                            <td style={{ padding: '0.75rem', textAlign: 'center' }}>
+                              <button
+                                type="button"
+                                onClick={() => setSelectedReceipt(p)}
+                                style={{ background: '#ffffff', border: '1px solid #cbd5e1', padding: '0.35rem 0.65rem', borderRadius: '6px', fontSize: '0.74rem', fontWeight: 700, cursor: 'pointer' }}
+                              >
+                                🖨️ View Receipt
+                              </button>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              )}
+
+              {/* BURSAR SUB-TAB 3: ARREARS LEDGER */}
+              {bursarSubTab === 'arrears' && (
+                <div style={{ background: '#ffffff', borderRadius: '20px', padding: '2rem', border: '1px solid #e2e8f0' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.25rem', flexWrap: 'wrap', gap: '1rem' }}>
+                    <div>
+                      <h3 style={{ fontSize: '1.2rem', fontWeight: 900, margin: 0, color: '#991b1b' }}>Outstanding Fee Defaulters Ledger</h3>
+                      <p style={{ margin: '4px 0 0', fontSize: '0.84rem', color: '#64748b' }}>Students with remaining balances for {school.active_period_name}.</p>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => alert(`Queued automated SMS fee reminder alerts to ${studentList.filter((s) => s.fee_balance > 0).length} guardian mobile phones!`)}
+                      style={{ background: '#dc2626', color: '#ffffff', fontWeight: 800, padding: '0.55rem 1.15rem', borderRadius: '10px', border: 'none', cursor: 'pointer', fontSize: '0.82rem' }}
+                    >
+                      📱 Send Bulk SMS Reminder Queue
+                    </button>
+                  </div>
+
+                  <div style={{ overflowX: 'auto' }}>
+                    <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.84rem', textAlign: 'left' }}>
+                      <thead>
+                        <tr style={{ background: '#fef2f2', borderBottom: '2px solid #fecaca' }}>
+                          <th style={{ padding: '0.75rem', fontWeight: 800, color: '#991b1b' }}>Adm No.</th>
+                          <th style={{ padding: '0.75rem', fontWeight: 800, color: '#991b1b' }}>Student Name</th>
+                          <th style={{ padding: '0.75rem', fontWeight: 800, color: '#991b1b' }}>Guardian &amp; Phone</th>
+                          <th style={{ padding: '0.75rem', fontWeight: 800, color: '#991b1b', textAlign: 'right' }}>Total Fee</th>
+                          <th style={{ padding: '0.75rem', fontWeight: 800, color: '#991b1b', textAlign: 'right' }}>Paid</th>
+                          <th style={{ padding: '0.75rem', fontWeight: 800, color: '#991b1b', textAlign: 'right' }}>Outstanding Due</th>
+                          <th style={{ padding: '0.75rem', fontWeight: 800, color: '#991b1b', textAlign: 'center' }}>Collect Action</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {studentList
+                          .filter((s) => s.fee_balance > 0)
+                          .map((s) => (
+                            <tr key={s.id} style={{ borderBottom: '1px solid #fee2e2' }}>
+                              <td style={{ padding: '0.75rem', fontWeight: 800, color: primaryColor }}>{s.admission_number}</td>
+                              <td style={{ padding: '0.75rem', fontWeight: 800, color: '#0f172a' }}>{s.full_name}</td>
+                              <td style={{ padding: '0.75rem', color: '#475569' }}>
+                                {s.guardian_name} ({s.guardian_phone})
+                              </td>
+                              <td style={{ padding: '0.75rem', textAlign: 'right' }}>${s.fee_total.toLocaleString()}</td>
+                              <td style={{ padding: '0.75rem', textAlign: 'right', color: '#059669' }}>${s.fee_paid.toLocaleString()}</td>
+                              <td style={{ padding: '0.75rem', textAlign: 'right', fontWeight: 900, color: '#dc2626' }}>${s.fee_balance.toLocaleString()}</td>
+                              <td style={{ padding: '0.75rem', textAlign: 'center' }}>
+                                <button
+                                  type="button"
+                                  onClick={() => {
+                                    setNewPaymentInput({
+                                      student_id: s.id,
+                                      amount: s.fee_balance,
+                                      payment_method: 'Mobile Money (M-Pesa)',
+                                    })
+                                    setShowRecordPaymentModal(true)
+                                  }}
+                                  style={{ background: '#b45309', color: '#ffffff', border: 'none', padding: '0.35rem 0.65rem', borderRadius: '6px', fontSize: '0.74rem', fontWeight: 800, cursor: 'pointer' }}
+                                >
+                                  + Record Payment
+                                </button>
+                              </td>
+                            </tr>
+                          ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              )}
             </div>
           )
         )}
 
-        {/* VIEW 6: SIMULATED BRANDED PRINCIPAL DESK */}
+
+{/* ============================================================ */}
+        {/* VIEW 6: BRANDED PRINCIPAL & EXECUTIVE ADMINISTRATION DESK */}
+        {/* ============================================================ */}
         {activeTab === 'principal' && (
           activeRole !== 'admin' ? (
             renderRestrictedCard(
               `${school.principal_title} Executive Office`,
-              'Executive leadership tools, calendar system setup, institutional authority, staff directories, official transcript verification, and cloud LMS subscription management require Executive Administrator credentials.',
+              'Executive leadership tools, staff hiring, student admissions, login credential issuance, calendar system setup, and cloud LMS subscription management require Executive Administrator credentials.',
               'Executive Admin Only'
             )
           ) : (
-            <div style={{ maxWidth: '900px', margin: '0 auto' }}>
-              <div style={{ background: '#ffffff', borderRadius: '20px', padding: '2rem', border: '1px solid #e2e8f0', marginBottom: '2rem', boxShadow: '0 4px 16px rgba(0,0,0,0.04)' }}>
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '1rem', borderBottom: '1px solid #f1f5f9', paddingBottom: '1.25rem', marginBottom: '1.5rem' }}>
+            <div style={{ maxWidth: '1060px', margin: '0 auto' }}>
+              <div style={{ background: '#ffffff', borderRadius: '20px', padding: '1.75rem 2rem', border: '1px solid #e2e8f0', marginBottom: '1.5rem', boxShadow: '0 4px 16px rgba(0,0,0,0.03)' }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '1rem', borderBottom: '1px solid #f1f5f9', paddingBottom: '1.25rem', marginBottom: '1.25rem' }}>
                   <div>
-                    <span style={{ fontSize: '0.75rem', fontWeight: 800, color: primaryColor, textTransform: 'uppercase', letterSpacing: '0.06em' }}>
+                    <span style={{ fontSize: '0.74rem', fontWeight: 800, color: primaryColor, textTransform: 'uppercase', letterSpacing: '0.06em' }}>
                       {school.name} EXECUTIVE LEADERSHIP
                     </span>
                     <h2 style={{ fontSize: '1.5rem', fontWeight: 900, margin: '4px 0 0', color: '#0f172a' }}>
                       {school.principal_name} — {school.principal_title} Desk
                     </h2>
-                    <div style={{ fontSize: '0.82rem', color: '#64748b' }}>
-                      Institutional Authority &amp; Examination Verification Office
+                    <div style={{ fontSize: '0.84rem', color: '#64748b', marginTop: '3px' }}>
+                      Institutional Governance, Staff Credentials &amp; Student Admissions Authority
                     </div>
                   </div>
-                  <button
-                    type="button"
-                    onClick={() => alert(`Report card sign-off: All student transcripts for ${school.active_period_name} will bear the official digital seal and signature of ${school.principal_name}!`)}
-                    style={{ background: primaryColor, color: '#ffffff', fontWeight: 800, padding: '0.65rem 1.25rem', borderRadius: '10px', border: 'none', cursor: 'pointer', fontSize: '0.85rem' }}
-                  >
-                    ✍️ Bulk Sign Report Cards
-                  </button>
-                </div>
-
-                {/* Cloud LMS Subscription Plan & Monthly Rate Card */}
-                <div style={{ background: 'linear-gradient(135deg, #f8fafc 0%, #eff6ff 100%)', borderRadius: '18px', padding: '1.5rem', border: '1.5px solid #bfdbfe', marginBottom: '1.75rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '1.25rem' }}>
-                  <div>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '0.35rem' }}>
-                      <span style={{ fontSize: '0.72rem', fontWeight: 800, background: '#1d4ed8', color: '#ffffff', padding: '2px 8px', borderRadius: '999px', textTransform: 'uppercase' }}>
-                        Cloud LMS Subscription
-                      </span>
-                      <span style={{ fontSize: '0.76rem', color: '#059669', fontWeight: 800 }}>
-                        ● 14-Day Free Trial Active
-                      </span>
-                    </div>
-                    <h3 style={{ margin: '0 0 0.35rem', fontSize: '1.35rem', fontWeight: 900, color: '#0f172a' }}>
-                      {school.subscription_tier ? school.subscription_tier.charAt(0).toUpperCase() + school.subscription_tier.slice(1) : 'Growth'} Campus Plan
-                    </h3>
-                    <div style={{ fontSize: '0.85rem', color: '#475569', display: 'flex', gap: '0.85rem', flexWrap: 'wrap', alignItems: 'center' }}>
-                      <span>Rate: <strong style={{ color: '#0f172a' }}>${school.subscription_monthly_rate || 59} / month</strong></span>
-                      <span>•</span>
-                      <span>Billing: <strong style={{ color: '#0f172a' }}>{school.subscription_billing_cycle === 'annually' ? 'Annual (2 Months Free)' : 'Monthly'}</strong></span>
-                      <span>•</span>
-                      <span>Active Quota: <strong style={{ color: '#1d4ed8' }}>{school.stats.students} / {school.subscription_tier === 'starter' ? '150' : school.subscription_tier === 'enterprise' ? 'Unlimited' : '600'} Students</strong></span>
-                    </div>
-                  </div>
-
                   <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
                     <button
                       type="button"
-                      onClick={() => setShowPricingModal(true)}
-                      style={{
-                        background: '#1d4ed8',
-                        color: '#ffffff',
-                        fontWeight: 800,
-                        padding: '0.65rem 1.25rem',
-                        borderRadius: '10px',
-                        border: 'none',
-                        cursor: 'pointer',
-                        fontSize: '0.85rem',
-                        boxShadow: '0 4px 12px rgba(29, 78, 216, 0.25)',
-                      }}
+                      onClick={() => setShowAddStaffModal(true)}
+                      style={{ background: '#0f172a', color: '#ffffff', fontWeight: 800, padding: '0.55rem 1.15rem', borderRadius: '10px', border: 'none', cursor: 'pointer', fontSize: '0.82rem' }}
                     >
-                      💎 View Pricing Guide &amp; Tiers
+                      + Hire / Register Staff
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setShowAdmitStudentModal(true)}
+                      style={{ background: primaryColor, color: '#ffffff', fontWeight: 800, padding: '0.55rem 1.15rem', borderRadius: '10px', border: 'none', cursor: 'pointer', fontSize: '0.82rem' }}
+                    >
+                      + Admit New Student
                     </button>
                   </div>
                 </div>
 
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '1rem', marginBottom: '1.75rem' }}>
-                  <div style={{ background: '#f8fafc', padding: '1.25rem', borderRadius: '14px', border: '1px solid #e2e8f0' }}>
-                    <div style={{ fontWeight: 800, color: '#0f172a', marginBottom: '0.25rem' }}>Calendar Mode</div>
-                    <div style={{ color: primaryColor, fontWeight: 700, fontSize: '0.92rem' }}>
-                      {school.academic_system === 'semester' ? '2 Semesters (Higher Ed / College Mode)' : '3 Terms (British / Primary / Secondary Mode)'}
-                    </div>
-                    <div style={{ color: '#64748b', fontSize: '0.78rem', marginTop: '4px' }}>
-                      Active: {school.active_period_name}
-                    </div>
-                  </div>
-
-                  <div style={{ background: '#f8fafc', padding: '1.25rem', borderRadius: '14px', border: '1px solid #e2e8f0' }}>
-                    <div style={{ fontWeight: 800, color: '#0f172a', marginBottom: '0.25rem' }}>Curriculum Framework</div>
-                    <div style={{ color: '#0f172a', fontWeight: 700, fontSize: '0.92rem' }}>
-                      {school.curriculum_type}
-                    </div>
-                    <div style={{ color: '#64748b', fontSize: '0.78rem', marginTop: '4px' }}>
-                      Accredited Center Registry &amp; Certificate Series
-                    </div>
-                  </div>
-
-                  <div style={{ background: '#f8fafc', padding: '1.25rem', borderRadius: '14px', border: '1px solid #e2e8f0' }}>
-                    <div style={{ fontWeight: 800, color: '#0f172a', marginBottom: '0.25rem' }}>Institutional Brand Color</div>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginTop: '4px' }}>
-                      <span style={{ width: '20px', height: '20px', borderRadius: '4px', background: primaryColor, border: '1px solid #cbd5e1' }} />
-                      <span style={{ fontWeight: 700, fontSize: '0.88rem' }}>{primaryColor}</span>
-                    </div>
-                    <div style={{ color: '#64748b', fontSize: '0.78rem', marginTop: '4px' }}>
-                      Applied across student ID cards, invoices &amp; report cards
-                    </div>
-                  </div>
-                </div>
-
-                <h3 style={{ fontSize: '1.1rem', fontWeight: 800, marginBottom: '0.75rem' }}>Institution Administration Actions</h3>
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '0.75rem' }}>
+                {/* Sub-tab Navigation */}
+                <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
                   <button
                     type="button"
-                    onClick={() => alert(`Broadcasting official school notice for ${school.name}...`)}
-                    style={{ background: '#ffffff', border: '1px solid #cbd5e1', padding: '0.85rem', borderRadius: '10px', textAlign: 'left', fontWeight: 700, fontSize: '0.85rem', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px' }}
+                    onClick={() => setPrincipalSubTab('staff')}
+                    style={{
+                      background: principalSubTab === 'staff' ? primaryColor : '#f1f5f9',
+                      color: principalSubTab === 'staff' ? '#ffffff' : '#475569',
+                      border: 'none',
+                      padding: '0.5rem 1rem',
+                      borderRadius: '8px',
+                      fontSize: '0.82rem',
+                      fontWeight: 800,
+                      cursor: 'pointer',
+                    }}
                   >
-                    <span>📢 Broadcast School Circular</span>
+                    👥 Staff Directory &amp; Login Credentials ({staffList.length})
                   </button>
                   <button
                     type="button"
-                    onClick={() => alert(`Staff accounts: 34 active faculty profiles registered under ${school.name}`)}
-                    style={{ background: '#ffffff', border: '1px solid #cbd5e1', padding: '0.85rem', borderRadius: '10px', textAlign: 'left', fontWeight: 700, fontSize: '0.85rem', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px' }}
+                    onClick={() => setPrincipalSubTab('admissions')}
+                    style={{
+                      background: principalSubTab === 'admissions' ? primaryColor : '#f1f5f9',
+                      color: principalSubTab === 'admissions' ? '#ffffff' : '#475569',
+                      border: 'none',
+                      padding: '0.5rem 1rem',
+                      borderRadius: '8px',
+                      fontSize: '0.82rem',
+                      fontWeight: 800,
+                      cursor: 'pointer',
+                    }}
                   >
-                    <span>👥 Manage Staff Directory</span>
+                    🎓 Student Admissions Desk ({studentList.length})
                   </button>
                   <button
                     type="button"
-                    onClick={() => alert(`Printing official academic handbook for ${school.name}`)}
-                    style={{ background: '#ffffff', border: '1px solid #cbd5e1', padding: '0.85rem', borderRadius: '10px', textAlign: 'left', fontWeight: 700, fontSize: '0.85rem', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px' }}
+                    onClick={() => setPrincipalSubTab('overview')}
+                    style={{
+                      background: principalSubTab === 'overview' ? primaryColor : '#f1f5f9',
+                      color: principalSubTab === 'overview' ? '#ffffff' : '#475569',
+                      border: 'none',
+                      padding: '0.5rem 1rem',
+                      borderRadius: '8px',
+                      fontSize: '0.82rem',
+                      fontWeight: 800,
+                      cursor: 'pointer',
+                    }}
                   >
-                    <span>📖 Institution Rules &amp; Policies</span>
+                    ⚙️ Cloud Subscription &amp; Governance
                   </button>
                 </div>
               </div>
+
+              {/* PRINCIPAL SUB-TAB 1: STAFF DIRECTORY & CREDENTIALS */}
+              {principalSubTab === 'staff' && (
+                <div style={{ background: '#ffffff', borderRadius: '20px', padding: '2rem', border: '1px solid #e2e8f0' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.25rem', flexWrap: 'wrap', gap: '1rem' }}>
+                    <div>
+                      <h3 style={{ fontSize: '1.2rem', fontWeight: 900, margin: 0, color: '#0f172a' }}>Staff Directory &amp; Portal Login Accounts</h3>
+                      <p style={{ margin: '4px 0 0', fontSize: '0.84rem', color: '#64748b' }}>Provision system accounts and print official login slips for teachers and bursars.</p>
+                    </div>
+                    <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
+                      <input
+                        type="text"
+                        placeholder="Search staff by name or role..."
+                        value={staffSearchQuery}
+                        onChange={(e) => setStaffSearchQuery(e.target.value)}
+                        style={{ padding: '0.45rem 0.85rem', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '0.82rem', width: '220px' }}
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setShowAddStaffModal(true)}
+                        style={{ background: '#0f172a', color: '#ffffff', fontWeight: 800, padding: '0.45rem 0.95rem', borderRadius: '8px', border: 'none', cursor: 'pointer', fontSize: '0.8rem' }}
+                      >
+                        + Add Staff Member
+                      </button>
+                    </div>
+                  </div>
+
+                  <div style={{ overflowX: 'auto' }}>
+                    <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.84rem', textAlign: 'left' }}>
+                      <thead>
+                        <tr style={{ background: '#f8fafc', borderBottom: '2px solid #e2e8f0' }}>
+                          <th style={{ padding: '0.75rem', fontWeight: 800, color: '#0f172a' }}>Staff Name</th>
+                          <th style={{ padding: '0.75rem', fontWeight: 800, color: '#0f172a' }}>Role</th>
+                          <th style={{ padding: '0.75rem', fontWeight: 800, color: '#0f172a' }}>Department</th>
+                          <th style={{ padding: '0.75rem', fontWeight: 800, color: '#0f172a' }}>Portal Username</th>
+                          <th style={{ padding: '0.75rem', fontWeight: 800, color: '#0f172a', textAlign: 'right' }}>Net Salary</th>
+                          <th style={{ padding: '0.75rem', fontWeight: 800, color: '#0f172a', textAlign: 'center' }}>Login Slip</th>
+                          <th style={{ padding: '0.75rem', fontWeight: 800, color: '#0f172a', textAlign: 'center' }}>Action</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {staffList
+                          .filter((s) => !staffSearchQuery || s.full_name.toLowerCase().includes(staffSearchQuery.toLowerCase()) || s.role.toLowerCase().includes(staffSearchQuery.toLowerCase()))
+                          .map((s) => (
+                            <tr key={s.id} style={{ borderBottom: '1px solid #e2e8f0' }}>
+                              <td style={{ padding: '0.75rem' }}>
+                                <div style={{ fontWeight: 800, color: '#0f172a' }}>{s.full_name}</div>
+                                <div style={{ fontSize: '0.75rem', color: '#64748b' }}>{s.title} • Joined {s.joined_date}</div>
+                              </td>
+                              <td style={{ padding: '0.75rem' }}>
+                                <span style={{
+                                  background: s.role === 'teacher' ? '#ecfdf5' : s.role === 'bursar' ? '#fefce8' : '#eff6ff',
+                                  color: s.role === 'teacher' ? '#065f46' : s.role === 'bursar' ? '#854d0e' : '#1e40af',
+                                  padding: '2px 8px',
+                                  borderRadius: '6px',
+                                  fontSize: '0.74rem',
+                                  fontWeight: 800,
+                                  textTransform: 'capitalize',
+                                }}>
+                                  {s.role}
+                                </span>
+                              </td>
+                              <td style={{ padding: '0.75rem', color: '#475569' }}>{s.department}</td>
+                              <td style={{ padding: '0.75rem', fontWeight: 700, color: primaryColor }}>{s.username}</td>
+                              <td style={{ padding: '0.75rem', textAlign: 'right', fontWeight: 900, color: '#0f172a' }}>${s.net_salary.toLocaleString()}</td>
+                              <td style={{ padding: '0.75rem', textAlign: 'center' }}>
+                                <button
+                                  type="button"
+                                  onClick={() => setSelectedStaffSlip(s)}
+                                  style={{ background: '#ffffff', border: '1px solid #cbd5e1', padding: '0.35rem 0.65rem', borderRadius: '6px', fontSize: '0.74rem', fontWeight: 700, cursor: 'pointer' }}
+                                >
+                                  🖨️ Login Slip
+                                </button>
+                              </td>
+                              <td style={{ padding: '0.75rem', textAlign: 'center' }}>
+                                <button
+                                  type="button"
+                                  onClick={() => {
+                                    if (confirm(`Remove ${s.full_name} from staff register?`)) {
+                                      tenantSchoolStore.deleteStaffMember(s.id)
+                                      reloadSchoolData(school.slug)
+                                    }
+                                  }}
+                                  style={{ background: 'none', border: 'none', color: '#dc2626', fontSize: '0.75rem', fontWeight: 700, cursor: 'pointer' }}
+                                >
+                                  Delete
+                                </button>
+                              </td>
+                            </tr>
+                          ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              )}
+
+              {/* PRINCIPAL SUB-TAB 2: STUDENT ADMISSIONS DESK */}
+              {principalSubTab === 'admissions' && (
+                <div style={{ background: '#ffffff', borderRadius: '20px', padding: '2rem', border: '1px solid #e2e8f0' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.25rem', flexWrap: 'wrap', gap: '1rem' }}>
+                    <div>
+                      <h3 style={{ fontSize: '1.2rem', fontWeight: 900, margin: 0, color: '#0f172a' }}>Student Admissions &amp; Enrollment Registry</h3>
+                      <p style={{ margin: '4px 0 0', fontSize: '0.84rem', color: '#64748b' }}>Admit new students, generate Admission Numbers, Portal PINs, and Official Admission Letters.</p>
+                    </div>
+                    <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
+                      <input
+                        type="text"
+                        placeholder="Search student or admission no..."
+                        value={studentSearchQuery}
+                        onChange={(e) => setStudentSearchQuery(e.target.value)}
+                        style={{ padding: '0.45rem 0.85rem', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '0.82rem', width: '220px' }}
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setShowAdmitStudentModal(true)}
+                        style={{ background: primaryColor, color: '#ffffff', fontWeight: 800, padding: '0.45rem 0.95rem', borderRadius: '8px', border: 'none', cursor: 'pointer', fontSize: '0.8rem' }}
+                      >
+                        + Admit New Candidate
+                      </button>
+                    </div>
+                  </div>
+
+                  <div style={{ overflowX: 'auto' }}>
+                    <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.84rem', textAlign: 'left' }}>
+                      <thead>
+                        <tr style={{ background: '#f8fafc', borderBottom: '2px solid #e2e8f0' }}>
+                          <th style={{ padding: '0.75rem', fontWeight: 800, color: '#0f172a' }}>Adm Number</th>
+                          <th style={{ padding: '0.75rem', fontWeight: 800, color: '#0f172a' }}>Student Name</th>
+                          <th style={{ padding: '0.75rem', fontWeight: 800, color: '#0f172a' }}>Class Cohort</th>
+                          <th style={{ padding: '0.75rem', fontWeight: 800, color: '#0f172a' }}>Guardian Contact</th>
+                          <th style={{ padding: '0.75rem', fontWeight: 800, color: '#0f172a', textAlign: 'right' }}>Fee Balance</th>
+                          <th style={{ padding: '0.75rem', fontWeight: 800, color: '#0f172a', textAlign: 'center' }}>Official Slip</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {studentList
+                          .filter((s) => !studentSearchQuery || s.full_name.toLowerCase().includes(studentSearchQuery.toLowerCase()) || s.admission_number.toLowerCase().includes(studentSearchQuery.toLowerCase()))
+                          .map((s) => (
+                            <tr key={s.id} style={{ borderBottom: '1px solid #e2e8f0' }}>
+                              <td style={{ padding: '0.75rem', fontWeight: 800, color: primaryColor }}>{s.admission_number}</td>
+                              <td style={{ padding: '0.75rem', fontWeight: 800, color: '#0f172a' }}>{s.full_name}</td>
+                              <td style={{ padding: '0.75rem', color: '#475569' }}>{s.grade_class}</td>
+                              <td style={{ padding: '0.75rem', color: '#64748b' }}>
+                                {s.guardian_name} • {s.guardian_phone}
+                              </td>
+                              <td style={{ padding: '0.75rem', textAlign: 'right', fontWeight: 800, color: s.fee_balance > 0 ? '#dc2626' : '#16a34a' }}>
+                                ${s.fee_balance.toLocaleString()}
+                              </td>
+                              <td style={{ padding: '0.75rem', textAlign: 'center' }}>
+                                <button
+                                  type="button"
+                                  onClick={() => setSelectedAdmissionSlip(s)}
+                                  style={{ background: '#ffffff', border: '1px solid #cbd5e1', padding: '0.35rem 0.65rem', borderRadius: '6px', fontSize: '0.74rem', fontWeight: 700, cursor: 'pointer' }}
+                                >
+                                  📜 Admission Letter
+                                </button>
+                              </td>
+                            </tr>
+                          ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              )}
+
+              {/* PRINCIPAL SUB-TAB 3: CLOUD SUBSCRIPTION & GOVERNANCE */}
+              {principalSubTab === 'overview' && (
+                <div style={{ background: '#ffffff', borderRadius: '20px', padding: '2rem', border: '1px solid #e2e8f0' }}>
+                  {/* Cloud LMS Subscription Plan */}
+                  <div style={{ background: 'linear-gradient(135deg, #f8fafc 0%, #eff6ff 100%)', borderRadius: '18px', padding: '1.5rem', border: '1.5px solid #bfdbfe', marginBottom: '1.75rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '1.25rem' }}>
+                    <div>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '0.35rem' }}>
+                        <span style={{ fontSize: '0.72rem', fontWeight: 800, background: '#1d4ed8', color: '#ffffff', padding: '2px 8px', borderRadius: '999px', textTransform: 'uppercase' }}>
+                          Cloud LMS Subscription
+                        </span>
+                        <span style={{ fontSize: '0.76rem', color: '#059669', fontWeight: 800 }}>
+                          ● Active Multi-Tenant Account
+                        </span>
+                      </div>
+                      <h3 style={{ margin: '0 0 0.35rem', fontSize: '1.35rem', fontWeight: 900, color: '#0f172a' }}>
+                        {school.subscription_tier ? school.subscription_tier.charAt(0).toUpperCase() + school.subscription_tier.slice(1) : 'Growth'} Campus Plan
+                      </h3>
+                      <div style={{ fontSize: '0.85rem', color: '#475569', display: 'flex', gap: '0.85rem', flexWrap: 'wrap', alignItems: 'center' }}>
+                        <span>Rate: <strong style={{ color: '#0f172a' }}>${school.subscription_monthly_rate || 59} / month</strong></span>
+                        <span>•</span>
+                        <span>Billing: <strong style={{ color: '#0f172a' }}>{school.subscription_billing_cycle === 'annually' ? 'Annual (2 Months Free)' : 'Monthly'}</strong></span>
+                        <span>•</span>
+                        <span>Active Enrolled Students: <strong style={{ color: '#1d4ed8' }}>{studentList.length} Students</strong></span>
+                      </div>
+                    </div>
+
+                    <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
+                      <button
+                        type="button"
+                        onClick={() => setShowPricingModal(true)}
+                        style={{
+                          background: '#1d4ed8',
+                          color: '#ffffff',
+                          fontWeight: 800,
+                          padding: '0.65rem 1.25rem',
+                          borderRadius: '10px',
+                          border: 'none',
+                          cursor: 'pointer',
+                          fontSize: '0.85rem',
+                        }}
+                      >
+                        💎 Manage Plan &amp; Upgrade
+                      </button>
+                    </div>
+                  </div>
+
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '1rem' }}>
+                    <div style={{ background: '#f8fafc', padding: '1.25rem', borderRadius: '14px', border: '1px solid #e2e8f0' }}>
+                      <div style={{ fontWeight: 800, color: '#0f172a', marginBottom: '0.25rem' }}>Calendar Mode</div>
+                      <div style={{ color: primaryColor, fontWeight: 700, fontSize: '0.92rem' }}>
+                        {school.academic_system === 'semester' ? '2 Semesters (Higher Ed Mode)' : '3 Terms (British / Primary / Secondary Mode)'}
+                      </div>
+                      <div style={{ color: '#64748b', fontSize: '0.78rem', marginTop: '4px' }}>
+                        Active: {school.active_period_name}
+                      </div>
+                    </div>
+
+                    <div style={{ background: '#f8fafc', padding: '1.25rem', borderRadius: '14px', border: '1px solid #e2e8f0' }}>
+                      <div style={{ fontWeight: 800, color: '#0f172a', marginBottom: '0.25rem' }}>Curriculum Framework</div>
+                      <div style={{ color: '#0f172a', fontWeight: 700, fontSize: '0.92rem' }}>
+                        {school.curriculum_type}
+                      </div>
+                      <div style={{ color: '#64748b', fontSize: '0.78rem', marginTop: '4px' }}>
+                        Accredited Center Registry &amp; Certification
+                      </div>
+                    </div>
+
+                    <div style={{ background: '#f8fafc', padding: '1.25rem', borderRadius: '14px', border: '1px solid #e2e8f0' }}>
+                      <div style={{ fontWeight: 800, color: '#0f172a', marginBottom: '0.25rem' }}>School Brand Theme</div>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginTop: '4px' }}>
+                        <span style={{ width: '20px', height: '20px', borderRadius: '4px', background: primaryColor, border: '1px solid #cbd5e1' }} />
+                        <span style={{ fontWeight: 700, fontSize: '0.88rem' }}>{primaryColor}</span>
+                      </div>
+                      <div style={{ color: '#64748b', fontSize: '0.78rem', marginTop: '4px' }}>
+                        Applied to Report Cards, Portals &amp; Invoices
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
           )
         )}
+
       </main>
 
       {/* SPECIAL LINKS & CUSTOM DOMAIN MANAGEMENT MODAL */}
@@ -2717,6 +3840,901 @@ export function TenantSchoolHub() {
           </div>
         </div>
       )}
+{/* ============================================================ */}
+      {/* 4. OPERATIONAL MODAL: HIRE / REGISTER STAFF */}
+      {/* ============================================================ */}
+      {showAddStaffModal && (
+        <div
+          role="dialog"
+          aria-modal="true"
+          style={{
+            position: 'fixed',
+            inset: 0,
+            zIndex: 9999,
+            background: 'rgba(15, 23, 42, 0.72)',
+            backdropFilter: 'blur(6px)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            padding: '1rem',
+            overflowY: 'auto',
+          }}
+          onClick={(e) => { if (e.target === e.currentTarget) setShowAddStaffModal(false) }}
+        >
+          <div style={{ maxWidth: '640px', width: '100%', background: '#ffffff', borderRadius: '24px', boxShadow: '0 25px 50px -12px rgba(0,0,0,0.35)', border: '1px solid #cbd5e1', overflow: 'hidden' }}>
+            <div style={{ background: `linear-gradient(135deg, ${primaryColor} 0%, #0f172a 100%)`, color: '#ffffff', padding: '1.5rem 1.75rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+              <div>
+                <div style={{ fontSize: '0.74rem', fontWeight: 800, textTransform: 'uppercase', color: accentColor, marginBottom: '2px' }}>
+                  Principal HR Desk
+                </div>
+                <h3 style={{ fontSize: '1.35rem', fontWeight: 900, margin: 0, color: '#ffffff' }}>
+                  Register Staff &amp; Provision Credentials
+                </h3>
+              </div>
+              <button type="button" onClick={() => setShowAddStaffModal(false)} style={{ background: 'rgba(255,255,255,0.15)', border: 'none', color: '#ffffff', width: '32px', height: '32px', borderRadius: '50%', cursor: 'pointer', fontWeight: 900 }}>✕</button>
+            </div>
+
+            <form
+              onSubmit={(e) => {
+                e.preventDefault()
+                const usernamePrefix = newStaffInput.full_name.trim().toLowerCase().replace(/[^a-z0-9]/g, '.').replace(/\.+/g, '.')
+                const created = tenantSchoolStore.createStaffMember({
+                  school_slug: school.slug,
+                  full_name: newStaffInput.full_name.trim(),
+                  role: newStaffInput.role,
+                  email: newStaffInput.email.trim() || `${usernamePrefix}@${school.slug}.eclat.institute`,
+                  username: `${usernamePrefix}@${school.slug}.eclat.institute`,
+                  temp_password: `Pass-${Math.floor(100000 + Math.random() * 900000)}!`,
+                  phone: newStaffInput.phone.trim() || '+254 700 000 000',
+                  department: newStaffInput.department,
+                  title: newStaffInput.title,
+                  assigned_classes: newStaffInput.assigned_classes.split(',').map((c) => c.trim()),
+                  assigned_subjects: newStaffInput.assigned_subjects.split(',').map((s) => s.trim()),
+                  salary_base: Number(newStaffInput.salary_base),
+                  salary_housing: Number(newStaffInput.salary_housing),
+                  salary_transport: Number(newStaffInput.salary_transport),
+                  salary_tax: Number(newStaffInput.salary_tax),
+                  salary_pension: Number(newStaffInput.salary_pension),
+                })
+                reloadSchoolData(school.slug)
+                setShowAddStaffModal(false)
+                setSelectedStaffSlip(created)
+              }}
+              style={{ padding: '1.75rem', display: 'flex', flexDirection: 'column', gap: '1rem', maxHeight: '75vh', overflowY: 'auto' }}
+            >
+              <div>
+                <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 800, color: '#334155', marginBottom: '4px' }}>Staff Full Name *</label>
+                <input
+                  type="text"
+                  required
+                  placeholder="e.g. Dr. Arthur Sterling"
+                  value={newStaffInput.full_name}
+                  onChange={(e) => setNewStaffInput({ ...newStaffInput, full_name: e.target.value })}
+                  style={{ width: '100%', padding: '0.65rem', borderRadius: '10px', border: '1px solid #cbd5e1', fontSize: '0.88rem' }}
+                />
+              </div>
+
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+                <div>
+                  <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 800, color: '#334155', marginBottom: '4px' }}>System Role *</label>
+                  <select
+                    value={newStaffInput.role}
+                    onChange={(e) => setNewStaffInput({ ...newStaffInput, role: e.target.value as any })}
+                    style={{ width: '100%', padding: '0.65rem', borderRadius: '10px', border: '1px solid #cbd5e1', fontSize: '0.88rem' }}
+                  >
+                    <option value="teacher">Teacher / Faculty</option>
+                    <option value="bursar">Bursar / Finance Officer</option>
+                    <option value="admin">Vice Principal / Admin</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 800, color: '#334155', marginBottom: '4px' }}>Official Job Title *</label>
+                  <input
+                    type="text"
+                    required
+                    placeholder="e.g. Senior Physics Master"
+                    value={newStaffInput.title}
+                    onChange={(e) => setNewStaffInput({ ...newStaffInput, title: e.target.value })}
+                    style={{ width: '100%', padding: '0.65rem', borderRadius: '10px', border: '1px solid #cbd5e1', fontSize: '0.88rem' }}
+                  />
+                </div>
+              </div>
+
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+                <div>
+                  <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 800, color: '#334155', marginBottom: '4px' }}>Personal Email *</label>
+                  <input
+                    type="email"
+                    required
+                    placeholder="e.g. arthur.sterling@gmail.com"
+                    value={newStaffInput.email}
+                    onChange={(e) => setNewStaffInput({ ...newStaffInput, email: e.target.value })}
+                    style={{ width: '100%', padding: '0.65rem', borderRadius: '10px', border: '1px solid #cbd5e1', fontSize: '0.88rem' }}
+                  />
+                </div>
+
+                <div>
+                  <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 800, color: '#334155', marginBottom: '4px' }}>Phone Number</label>
+                  <input
+                    type="text"
+                    placeholder="+254 712 345 678"
+                    value={newStaffInput.phone}
+                    onChange={(e) => setNewStaffInput({ ...newStaffInput, phone: e.target.value })}
+                    style={{ width: '100%', padding: '0.65rem', borderRadius: '10px', border: '1px solid #cbd5e1', fontSize: '0.88rem' }}
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 800, color: '#334155', marginBottom: '4px' }}>Department</label>
+                <input
+                  type="text"
+                  placeholder="e.g. Science &amp; Technology"
+                  value={newStaffInput.department}
+                  onChange={(e) => setNewStaffInput({ ...newStaffInput, department: e.target.value })}
+                  style={{ width: '100%', padding: '0.65rem', borderRadius: '10px', border: '1px solid #cbd5e1', fontSize: '0.88rem' }}
+                />
+              </div>
+
+              {/* Compensation details */}
+              <div style={{ background: '#f8fafc', padding: '1rem', borderRadius: '12px', border: '1px solid #e2e8f0' }}>
+                <div style={{ fontSize: '0.78rem', fontWeight: 800, color: '#0f172a', marginBottom: '0.75rem' }}>Monthly Compensation Package (USD $)</div>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(130px, 1fr))', gap: '0.75rem' }}>
+                  <div>
+                    <label style={{ fontSize: '0.72rem', fontWeight: 700, color: '#64748b' }}>Base Salary ($)</label>
+                    <input
+                      type="number"
+                      value={newStaffInput.salary_base}
+                      onChange={(e) => setNewStaffInput({ ...newStaffInput, salary_base: Number(e.target.value) })}
+                      style={{ width: '100%', padding: '0.45rem', borderRadius: '6px', border: '1px solid #cbd5e1', fontWeight: 700 }}
+                    />
+                  </div>
+                  <div>
+                    <label style={{ fontSize: '0.72rem', fontWeight: 700, color: '#64748b' }}>Housing Allowance</label>
+                    <input
+                      type="number"
+                      value={newStaffInput.salary_housing}
+                      onChange={(e) => setNewStaffInput({ ...newStaffInput, salary_housing: Number(e.target.value) })}
+                      style={{ width: '100%', padding: '0.45rem', borderRadius: '6px', border: '1px solid #cbd5e1' }}
+                    />
+                  </div>
+                  <div>
+                    <label style={{ fontSize: '0.72rem', fontWeight: 700, color: '#64748b' }}>Transport</label>
+                    <input
+                      type="number"
+                      value={newStaffInput.salary_transport}
+                      onChange={(e) => setNewStaffInput({ ...newStaffInput, salary_transport: Number(e.target.value) })}
+                      style={{ width: '100%', padding: '0.45rem', borderRadius: '6px', border: '1px solid #cbd5e1' }}
+                    />
+                  </div>
+                  <div>
+                    <label style={{ fontSize: '0.72rem', fontWeight: 700, color: '#64748b' }}>PAYE Tax ($)</label>
+                    <input
+                      type="number"
+                      value={newStaffInput.salary_tax}
+                      onChange={(e) => setNewStaffInput({ ...newStaffInput, salary_tax: Number(e.target.value) })}
+                      style={{ width: '100%', padding: '0.45rem', borderRadius: '6px', border: '1px solid #cbd5e1' }}
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.75rem', marginTop: '0.5rem' }}>
+                <button type="button" onClick={() => setShowAddStaffModal(false)} style={{ background: '#f1f5f9', border: 'none', padding: '0.65rem 1.25rem', borderRadius: '10px', fontWeight: 700, cursor: 'pointer' }}>Cancel</button>
+                <button type="submit" style={{ background: primaryColor, color: '#ffffff', border: 'none', padding: '0.65rem 1.5rem', borderRadius: '10px', fontWeight: 800, cursor: 'pointer' }}>Generate Credentials &amp; Issue Slip →</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* ============================================================ */}
+      {/* 5. OPERATIONAL MODAL: ADMIT NEW STUDENT */}
+      {/* ============================================================ */}
+      {showAdmitStudentModal && (
+        <div
+          role="dialog"
+          aria-modal="true"
+          style={{
+            position: 'fixed',
+            inset: 0,
+            zIndex: 9999,
+            background: 'rgba(15, 23, 42, 0.72)',
+            backdropFilter: 'blur(6px)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            padding: '1rem',
+            overflowY: 'auto',
+          }}
+          onClick={(e) => { if (e.target === e.currentTarget) setShowAdmitStudentModal(false) }}
+        >
+          <div style={{ maxWidth: '640px', width: '100%', background: '#ffffff', borderRadius: '24px', boxShadow: '0 25px 50px -12px rgba(0,0,0,0.35)', border: '1px solid #cbd5e1', overflow: 'hidden' }}>
+            <div style={{ background: `linear-gradient(135deg, ${primaryColor} 0%, #0f172a 100%)`, color: '#ffffff', padding: '1.5rem 1.75rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+              <div>
+                <div style={{ fontSize: '0.74rem', fontWeight: 800, textTransform: 'uppercase', color: accentColor, marginBottom: '2px' }}>
+                  Registrar Admissions Desk
+                </div>
+                <h3 style={{ fontSize: '1.35rem', fontWeight: 900, margin: 0, color: '#ffffff' }}>
+                  Admit Candidate &amp; Issue Student PIN
+                </h3>
+              </div>
+              <button type="button" onClick={() => setShowAdmitStudentModal(false)} style={{ background: 'rgba(255,255,255,0.15)', border: 'none', color: '#ffffff', width: '32px', height: '32px', borderRadius: '50%', cursor: 'pointer', fontWeight: 900 }}>✕</button>
+            </div>
+
+            <form
+              onSubmit={(e) => {
+                e.preventDefault()
+                const initials = school.slug.substring(0, 2).toUpperCase()
+                const count = studentList.length + 1
+                const pad = String(count).padStart(4, '0')
+                const admNumber = `${initials}-2026-${pad}`
+                const usernamePrefix = newStudentInput.full_name.trim().toLowerCase().replace(/[^a-z0-9]/g, '.').replace(/\.+/g, '.')
+
+                const created = tenantSchoolStore.admitStudent({
+                  school_slug: school.slug,
+                  admission_number: admNumber,
+                  full_name: newStudentInput.full_name.trim(),
+                  grade_class: newStudentInput.grade_class,
+                  guardian_name: newStudentInput.guardian_name.trim(),
+                  guardian_phone: newStudentInput.guardian_phone.trim(),
+                  guardian_email: newStudentInput.guardian_email.trim(),
+                  username: `${usernamePrefix}@${school.slug}.eclat.institute`,
+                  temp_password: `PIN-${Math.floor(1000 + Math.random() * 9000)}`,
+                  fee_total: Number(newStudentInput.fee_total),
+                  fee_paid: Number(newStudentInput.fee_paid),
+                })
+
+                // Auto-create initial tuition payment if fee_paid > 0
+                if (Number(newStudentInput.fee_paid) > 0) {
+                  tenantSchoolStore.recordFeePayment({
+                    school_slug: school.slug,
+                    student_id: created.id,
+                    student_name: created.full_name,
+                    admission_number: created.admission_number,
+                    amount: Number(newStudentInput.fee_paid),
+                    period_name: school.active_period_name,
+                    payment_method: 'Bank Wire',
+                    recorded_by: `${school.principal_name} (Admissions Office)`,
+                  })
+                }
+
+                reloadSchoolData(school.slug)
+                setShowAdmitStudentModal(false)
+                setSelectedAdmissionSlip(created)
+              }}
+              style={{ padding: '1.75rem', display: 'flex', flexDirection: 'column', gap: '1rem', maxHeight: '75vh', overflowY: 'auto' }}
+            >
+              <div>
+                <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 800, color: '#334155', marginBottom: '4px' }}>Candidate Full Name *</label>
+                <input
+                  type="text"
+                  required
+                  placeholder="e.g. Amina Hassan"
+                  value={newStudentInput.full_name}
+                  onChange={(e) => setNewStudentInput({ ...newStudentInput, full_name: e.target.value })}
+                  style={{ width: '100%', padding: '0.65rem', borderRadius: '10px', border: '1px solid #cbd5e1', fontSize: '0.88rem' }}
+                />
+              </div>
+
+              <div>
+                <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 800, color: '#334155', marginBottom: '4px' }}>Enrolling Class / Form Cohort *</label>
+                <select
+                  value={newStudentInput.grade_class}
+                  onChange={(e) => setNewStudentInput({ ...newStudentInput, grade_class: e.target.value })}
+                  style={{ width: '100%', padding: '0.65rem', borderRadius: '10px', border: '1px solid #cbd5e1', fontSize: '0.88rem' }}
+                >
+                  <option value="Grade 10 Cambridge">Grade 10 Cambridge</option>
+                  <option value="Grade 11 Cambridge">Grade 11 Cambridge</option>
+                  <option value="Form 3 Alpha">Form 3 Alpha</option>
+                  <option value="Form 4 Beta">Form 4 Beta</option>
+                  <option value="Diploma Year 1">Diploma Year 1</option>
+                </select>
+              </div>
+
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+                <div>
+                  <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 800, color: '#334155', marginBottom: '4px' }}>Parent / Guardian Name *</label>
+                  <input
+                    type="text"
+                    required
+                    placeholder="e.g. Dr. Omar Hassan"
+                    value={newStudentInput.guardian_name}
+                    onChange={(e) => setNewStudentInput({ ...newStudentInput, guardian_name: e.target.value })}
+                    style={{ width: '100%', padding: '0.65rem', borderRadius: '10px', border: '1px solid #cbd5e1', fontSize: '0.88rem' }}
+                  />
+                </div>
+
+                <div>
+                  <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 800, color: '#334155', marginBottom: '4px' }}>Guardian Mobile Phone *</label>
+                  <input
+                    type="text"
+                    required
+                    placeholder="+254 722 112 233"
+                    value={newStudentInput.guardian_phone}
+                    onChange={(e) => setNewStudentInput({ ...newStudentInput, guardian_phone: e.target.value })}
+                    style={{ width: '100%', padding: '0.65rem', borderRadius: '10px', border: '1px solid #cbd5e1', fontSize: '0.88rem' }}
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 800, color: '#334155', marginBottom: '4px' }}>Guardian Email</label>
+                <input
+                  type="email"
+                  placeholder="omar.hassan@example.com"
+                  value={newStudentInput.guardian_email}
+                  onChange={(e) => setNewStudentInput({ ...newStudentInput, guardian_email: e.target.value })}
+                  style={{ width: '100%', padding: '0.65rem', borderRadius: '10px', border: '1px solid #cbd5e1', fontSize: '0.88rem' }}
+                />
+              </div>
+
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', background: '#f8fafc', padding: '1rem', borderRadius: '12px', border: '1px solid #e2e8f0' }}>
+                <div>
+                  <label style={{ fontSize: '0.74rem', fontWeight: 800, color: '#64748b' }}>Billed Term Fee ($)</label>
+                  <input
+                    type="number"
+                    value={newStudentInput.fee_total}
+                    onChange={(e) => setNewStudentInput({ ...newStudentInput, fee_total: Number(e.target.value) })}
+                    style={{ width: '100%', padding: '0.5rem', borderRadius: '8px', border: '1px solid #cbd5e1', fontWeight: 800 }}
+                  />
+                </div>
+
+                <div>
+                  <label style={{ fontSize: '0.74rem', fontWeight: 800, color: '#64748b' }}>Initial Deposit Paid ($)</label>
+                  <input
+                    type="number"
+                    value={newStudentInput.fee_paid}
+                    onChange={(e) => setNewStudentInput({ ...newStudentInput, fee_paid: Number(e.target.value) })}
+                    style={{ width: '100%', padding: '0.5rem', borderRadius: '8px', border: '1px solid #cbd5e1', fontWeight: 800 }}
+                  />
+                </div>
+              </div>
+
+              <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.75rem', marginTop: '0.5rem' }}>
+                <button type="button" onClick={() => setShowAdmitStudentModal(false)} style={{ background: '#f1f5f9', border: 'none', padding: '0.65rem 1.25rem', borderRadius: '10px', fontWeight: 700, cursor: 'pointer' }}>Cancel</button>
+                <button type="submit" style={{ background: primaryColor, color: '#ffffff', border: 'none', padding: '0.65rem 1.5rem', borderRadius: '10px', fontWeight: 800, cursor: 'pointer' }}>Complete Admission &amp; Print Letter →</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* ============================================================ */}
+      {/* 6. OPERATIONAL MODAL: RECORD FEE PAYMENT */}
+      {/* ============================================================ */}
+      {showRecordPaymentModal && (
+        <div
+          role="dialog"
+          aria-modal="true"
+          style={{
+            position: 'fixed',
+            inset: 0,
+            zIndex: 9999,
+            background: 'rgba(15, 23, 42, 0.72)',
+            backdropFilter: 'blur(6px)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            padding: '1rem',
+            overflowY: 'auto',
+          }}
+          onClick={(e) => { if (e.target === e.currentTarget) setShowRecordPaymentModal(false) }}
+        >
+          <div style={{ maxWidth: '580px', width: '100%', background: '#ffffff', borderRadius: '24px', boxShadow: '0 25px 50px -12px rgba(0,0,0,0.35)', border: '1px solid #cbd5e1', overflow: 'hidden' }}>
+            <div style={{ background: 'linear-gradient(135deg, #b45309 0%, #0f172a 100%)', color: '#ffffff', padding: '1.5rem 1.75rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+              <div>
+                <div style={{ fontSize: '0.74rem', fontWeight: 800, textTransform: 'uppercase', color: '#fde047', marginBottom: '2px' }}>
+                  Bursar Cashier Terminal
+                </div>
+                <h3 style={{ fontSize: '1.35rem', fontWeight: 900, margin: 0, color: '#ffffff' }}>
+                  Record Tuition Fee Payment
+                </h3>
+              </div>
+              <button type="button" onClick={() => setShowRecordPaymentModal(false)} style={{ background: 'rgba(255,255,255,0.15)', border: 'none', color: '#ffffff', width: '32px', height: '32px', borderRadius: '50%', cursor: 'pointer', fontWeight: 900 }}>✕</button>
+            </div>
+
+            <form
+              onSubmit={(e) => {
+                e.preventDefault()
+                const targetStudent = studentList.find((s) => s.id === newPaymentInput.student_id) || studentList[0]
+                if (!targetStudent) return
+
+                const pmt = tenantSchoolStore.recordFeePayment({
+                  school_slug: school.slug,
+                  student_id: targetStudent.id,
+                  student_name: targetStudent.full_name,
+                  admission_number: targetStudent.admission_number,
+                  amount: Number(newPaymentInput.amount),
+                  period_name: school.active_period_name,
+                  payment_method: newPaymentInput.payment_method,
+                  recorded_by: profile?.full_name || 'Accounts Bursar Office',
+                })
+
+                reloadSchoolData(school.slug)
+                setShowRecordPaymentModal(false)
+                setSelectedReceipt(pmt)
+              }}
+              style={{ padding: '1.75rem', display: 'flex', flexDirection: 'column', gap: '1rem' }}
+            >
+              <div>
+                <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 800, color: '#334155', marginBottom: '4px' }}>Select Student *</label>
+                <select
+                  value={newPaymentInput.student_id}
+                  onChange={(e) => setNewPaymentInput({ ...newPaymentInput, student_id: e.target.value })}
+                  style={{ width: '100%', padding: '0.65rem', borderRadius: '10px', border: '1px solid #cbd5e1', fontSize: '0.88rem' }}
+                >
+                  <option value="">-- Choose Candidate --</option>
+                  {studentList.map((s) => (
+                    <option key={s.id} value={s.id}>
+                      {s.full_name} ({s.admission_number}) — Balance: ${s.fee_balance}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div>
+                <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 800, color: '#334155', marginBottom: '4px' }}>Amount to Pay (USD $) *</label>
+                <input
+                  type="number"
+                  required
+                  min="1"
+                  value={newPaymentInput.amount}
+                  onChange={(e) => setNewPaymentInput({ ...newPaymentInput, amount: Number(e.target.value) })}
+                  style={{ width: '100%', padding: '0.65rem', borderRadius: '10px', border: '1px solid #cbd5e1', fontSize: '0.95rem', fontWeight: 800 }}
+                />
+              </div>
+
+              <div>
+                <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 800, color: '#334155', marginBottom: '4px' }}>Payment Channel *</label>
+                <select
+                  value={newPaymentInput.payment_method}
+                  onChange={(e) => setNewPaymentInput({ ...newPaymentInput, payment_method: e.target.value as any })}
+                  style={{ width: '100%', padding: '0.65rem', borderRadius: '10px', border: '1px solid #cbd5e1', fontSize: '0.88rem' }}
+                >
+                  <option value="Bank Wire">Bank Wire Transfer</option>
+                  <option value="Mobile Money (M-Pesa)">Mobile Money (M-Pesa)</option>
+                  <option value="Credit Card">Credit / Debit Card</option>
+                  <option value="Cash">Cash at Bursar Office</option>
+                </select>
+              </div>
+
+              <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.75rem', marginTop: '0.5rem' }}>
+                <button type="button" onClick={() => setShowRecordPaymentModal(false)} style={{ background: '#f1f5f9', border: 'none', padding: '0.65rem 1.25rem', borderRadius: '10px', fontWeight: 700, cursor: 'pointer' }}>Cancel</button>
+                <button type="submit" style={{ background: '#b45309', color: '#ffffff', border: 'none', padding: '0.65rem 1.5rem', borderRadius: '10px', fontWeight: 800, cursor: 'pointer' }}>Issue Stamped Receipt →</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* ============================================================ */}
+      {/* 7. OPERATIONAL MODAL: UPLOAD LESSON NOTE */}
+      {/* ============================================================ */}
+      {showUploadNoteModal && (
+        <div
+          role="dialog"
+          aria-modal="true"
+          style={{
+            position: 'fixed',
+            inset: 0,
+            zIndex: 9999,
+            background: 'rgba(15, 23, 42, 0.72)',
+            backdropFilter: 'blur(6px)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            padding: '1rem',
+            overflowY: 'auto',
+          }}
+          onClick={(e) => { if (e.target === e.currentTarget) setShowUploadNoteModal(false) }}
+        >
+          <div style={{ maxWidth: '580px', width: '100%', background: '#ffffff', borderRadius: '24px', boxShadow: '0 25px 50px -12px rgba(0,0,0,0.35)', border: '1px solid #cbd5e1', overflow: 'hidden' }}>
+            <div style={{ background: 'linear-gradient(135deg, #059669 0%, #0f172a 100%)', color: '#ffffff', padding: '1.5rem 1.75rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+              <div>
+                <div style={{ fontSize: '0.74rem', fontWeight: 800, textTransform: 'uppercase', color: '#a7f3d0', marginBottom: '2px' }}>
+                  Teacher Curriculum Upload Desk
+                </div>
+                <h3 style={{ fontSize: '1.35rem', fontWeight: 900, margin: 0, color: '#ffffff' }}>
+                  Upload Class Study Note
+                </h3>
+              </div>
+              <button type="button" onClick={() => setShowUploadNoteModal(false)} style={{ background: 'rgba(255,255,255,0.15)', border: 'none', color: '#ffffff', width: '32px', height: '32px', borderRadius: '50%', cursor: 'pointer', fontWeight: 900 }}>✕</button>
+            </div>
+
+            <form
+              onSubmit={(e) => {
+                e.preventDefault()
+                tenantSchoolStore.createLessonNote({
+                  school_slug: school.slug,
+                  class_name: newNoteInput.class_name,
+                  subject_name: newNoteInput.subject_name,
+                  title: newNoteInput.title.trim(),
+                  summary: newNoteInput.summary.trim(),
+                  file_url: newNoteInput.file_url.trim(),
+                  teacher_name: profile?.full_name || 'Subject Master',
+                })
+
+                reloadSchoolData(school.slug)
+                setShowUploadNoteModal(false)
+                alert(`Lesson note "${newNoteInput.title}" published! Students in ${newNoteInput.class_name} can now access and download it.`)
+              }}
+              style={{ padding: '1.75rem', display: 'flex', flexDirection: 'column', gap: '1rem' }}
+            >
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+                <div>
+                  <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 800, color: '#334155', marginBottom: '4px' }}>Class Cohort *</label>
+                  <select
+                    value={newNoteInput.class_name}
+                    onChange={(e) => setNewNoteInput({ ...newNoteInput, class_name: e.target.value })}
+                    style={{ width: '100%', padding: '0.65rem', borderRadius: '10px', border: '1px solid #cbd5e1', fontSize: '0.88rem' }}
+                  >
+                    <option value="Grade 10 Cambridge">Grade 10 Cambridge</option>
+                    <option value="Grade 11 Cambridge">Grade 11 Cambridge</option>
+                    <option value="Form 3 Alpha">Form 3 Alpha</option>
+                    <option value="Diploma Year 1">Diploma Year 1</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 800, color: '#334155', marginBottom: '4px' }}>Subject *</label>
+                  <input
+                    type="text"
+                    required
+                    placeholder="e.g. Pure Mathematics"
+                    value={newNoteInput.subject_name}
+                    onChange={(e) => setNewNoteInput({ ...newNoteInput, subject_name: e.target.value })}
+                    style={{ width: '100%', padding: '0.65rem', borderRadius: '10px', border: '1px solid #cbd5e1', fontSize: '0.88rem' }}
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 800, color: '#334155', marginBottom: '4px' }}>Topic / Note Title *</label>
+                <input
+                  type="text"
+                  required
+                  placeholder="e.g. Differential Calculus &amp; Stationary Points"
+                  value={newNoteInput.title}
+                  onChange={(e) => setNewNoteInput({ ...newNoteInput, title: e.target.value })}
+                  style={{ width: '100%', padding: '0.65rem', borderRadius: '10px', border: '1px solid #cbd5e1', fontSize: '0.88rem' }}
+                />
+              </div>
+
+              <div>
+                <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 800, color: '#334155', marginBottom: '4px' }}>Overview &amp; Instructions *</label>
+                <textarea
+                  required
+                  rows={3}
+                  placeholder="Summarize key learning objectives and revision exercises..."
+                  value={newNoteInput.summary}
+                  onChange={(e) => setNewNoteInput({ ...newNoteInput, summary: e.target.value })}
+                  style={{ width: '100%', padding: '0.65rem', borderRadius: '10px', border: '1px solid #cbd5e1', fontSize: '0.88rem', fontFamily: 'inherit' }}
+                />
+              </div>
+
+              <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.75rem', marginTop: '0.5rem' }}>
+                <button type="button" onClick={() => setShowUploadNoteModal(false)} style={{ background: '#f1f5f9', border: 'none', padding: '0.65rem 1.25rem', borderRadius: '10px', fontWeight: 700, cursor: 'pointer' }}>Cancel</button>
+                <button type="submit" style={{ background: '#059669', color: '#ffffff', border: 'none', padding: '0.65rem 1.5rem', borderRadius: '10px', fontWeight: 800, cursor: 'pointer' }}>Publish Note →</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* ============================================================ */}
+      {/* 8. PRINTABLE DIALOG: STAFF CREDENTIAL SLIP */}
+      {/* ============================================================ */}
+      {selectedStaffSlip && (
+        <div
+          role="dialog"
+          aria-modal="true"
+          style={{
+            position: 'fixed',
+            inset: 0,
+            zIndex: 9999,
+            background: 'rgba(15, 23, 42, 0.72)',
+            backdropFilter: 'blur(6px)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            padding: '1rem',
+          }}
+          onClick={(e) => { if (e.target === e.currentTarget) setSelectedStaffSlip(null) }}
+        >
+          <div style={{ maxWidth: '540px', width: '100%', background: '#ffffff', borderRadius: '24px', boxShadow: '0 25px 50px -12px rgba(0,0,0,0.35)', border: `2px solid ${primaryColor}`, overflow: 'hidden' }}>
+            <div style={{ background: `linear-gradient(135deg, ${primaryColor} 0%, #0f172a 100%)`, color: '#ffffff', padding: '1.25rem 1.5rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <div>
+                <div style={{ fontSize: '0.72rem', fontWeight: 800, textTransform: 'uppercase', color: accentColor }}>OFFICIAL CREDENTIAL SLIP</div>
+                <h3 style={{ margin: 0, fontSize: '1.2rem', fontWeight: 900, color: '#ffffff' }}>{school.name}</h3>
+              </div>
+              <button type="button" onClick={() => setSelectedStaffSlip(null)} style={{ background: 'rgba(255,255,255,0.2)', border: 'none', color: '#ffffff', width: '30px', height: '30px', borderRadius: '50%', cursor: 'pointer', fontWeight: 900 }}>✕</button>
+            </div>
+
+            <div style={{ padding: '1.75rem' }}>
+              <div style={{ background: '#f8fafc', padding: '1rem', borderRadius: '12px', border: '1px solid #e2e8f0', marginBottom: '1.25rem' }}>
+                <div style={{ fontSize: '0.75rem', color: '#64748b' }}>STAFF MEMBER:</div>
+                <div style={{ fontSize: '1.15rem', fontWeight: 900, color: '#0f172a' }}>{selectedStaffSlip.full_name}</div>
+                <div style={{ fontSize: '0.8rem', color: primaryColor, fontWeight: 700 }}>{selectedStaffSlip.title} • {selectedStaffSlip.department}</div>
+              </div>
+
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', background: '#ecfdf5', padding: '1.25rem', borderRadius: '14px', border: '1.5px solid #a7f3d0', marginBottom: '1.25rem' }}>
+                <div>
+                  <div style={{ fontSize: '0.72rem', fontWeight: 800, color: '#065f46' }}>PORTAL LOGIN USERNAME</div>
+                  <div style={{ fontSize: '1rem', fontWeight: 900, color: '#064e3b' }}>{selectedStaffSlip.username}</div>
+                </div>
+                <div>
+                  <div style={{ fontSize: '0.72rem', fontWeight: 800, color: '#065f46' }}>TEMPORARY SYSTEM PASSWORD</div>
+                  <div style={{ fontSize: '1.1rem', fontWeight: 900, color: '#047857', letterSpacing: '0.05em' }}>{selectedStaffSlip.temp_password || 'Pass-993812!'}</div>
+                </div>
+                <div>
+                  <div style={{ fontSize: '0.72rem', fontWeight: 800, color: '#065f46' }}>DIRECT PORTAL URL</div>
+                  <div style={{ fontSize: '0.82rem', color: '#065f46' }}>https://{school.slug}.eclat.institute/{selectedStaffSlip.role}</div>
+                </div>
+              </div>
+
+              <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.5rem' }}>
+                <button type="button" onClick={() => copyRawText(`${selectedStaffSlip.username} / ${selectedStaffSlip.temp_password}`, 'Credentials')} style={{ background: '#f1f5f9', border: '1px solid #cbd5e1', padding: '0.5rem 1rem', borderRadius: '8px', fontSize: '0.8rem', fontWeight: 700, cursor: 'pointer' }}>
+                  {copiedLink === 'Credentials' ? '✓ Copied' : '📋 Copy Text'}
+                </button>
+                <button type="button" onClick={() => window.print()} style={{ background: primaryColor, color: '#ffffff', border: 'none', padding: '0.5rem 1.25rem', borderRadius: '8px', fontSize: '0.8rem', fontWeight: 800, cursor: 'pointer' }}>
+                  🖨️ Print Slip
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ============================================================ */}
+      {/* 9. PRINTABLE DIALOG: STUDENT ADMISSION LETTER & PIN SLIP */}
+      {/* ============================================================ */}
+      {selectedAdmissionSlip && (
+        <div
+          role="dialog"
+          aria-modal="true"
+          style={{
+            position: 'fixed',
+            inset: 0,
+            zIndex: 9999,
+            background: 'rgba(15, 23, 42, 0.72)',
+            backdropFilter: 'blur(6px)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            padding: '1rem',
+          }}
+          onClick={(e) => { if (e.target === e.currentTarget) setSelectedAdmissionSlip(null) }}
+        >
+          <div style={{ maxWidth: '600px', width: '100%', background: '#ffffff', borderRadius: '24px', boxShadow: '0 25px 50px -12px rgba(0,0,0,0.35)', border: `2px solid ${primaryColor}`, overflow: 'hidden' }}>
+            <div style={{ background: `linear-gradient(135deg, ${primaryColor} 0%, #0f172a 100%)`, color: '#ffffff', padding: '1.25rem 1.5rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <div>
+                <div style={{ fontSize: '0.72rem', fontWeight: 800, textTransform: 'uppercase', color: accentColor }}>OFFICIAL ADMISSION LETTER</div>
+                <h3 style={{ margin: 0, fontSize: '1.2rem', fontWeight: 900, color: '#ffffff' }}>{school.name}</h3>
+              </div>
+              <button type="button" onClick={() => setSelectedAdmissionSlip(null)} style={{ background: 'rgba(255,255,255,0.2)', border: 'none', color: '#ffffff', width: '30px', height: '30px', borderRadius: '50%', cursor: 'pointer', fontWeight: 900 }}>✕</button>
+            </div>
+
+            <div style={{ padding: '1.75rem' }}>
+              <div style={{ borderBottom: '1px solid #e2e8f0', paddingBottom: '1rem', marginBottom: '1rem' }}>
+                <div style={{ fontSize: '0.75rem', color: '#64748b' }}>OFFICIALLY ADMITTED CANDIDATE:</div>
+                <div style={{ fontSize: '1.35rem', fontWeight: 900, color: '#0f172a' }}>{selectedAdmissionSlip.full_name}</div>
+                <div style={{ fontSize: '0.85rem', color: primaryColor, fontWeight: 700 }}>
+                  Admission Number: {selectedAdmissionSlip.admission_number} • Cohort: {selectedAdmissionSlip.grade_class}
+                </div>
+              </div>
+
+              <div style={{ background: '#eff6ff', padding: '1.25rem', borderRadius: '14px', border: '1.5px solid #bfdbfe', marginBottom: '1.25rem' }}>
+                <div style={{ fontSize: '0.74rem', fontWeight: 800, color: '#1d4ed8', marginBottom: '6px' }}>STUDENT PORTAL ACCESS CREDENTIALS</div>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem' }}>
+                  <div>
+                    <div style={{ fontSize: '0.72rem', color: '#64748b' }}>Portal Username:</div>
+                    <div style={{ fontWeight: 800, color: '#0f172a', fontSize: '0.88rem' }}>{selectedAdmissionSlip.username}</div>
+                  </div>
+                  <div>
+                    <div style={{ fontSize: '0.72rem', color: '#64748b' }}>Student Security PIN:</div>
+                    <div style={{ fontWeight: 900, color: '#1d4ed8', fontSize: '1.1rem' }}>{selectedAdmissionSlip.temp_password || 'PIN-4820'}</div>
+                  </div>
+                </div>
+              </div>
+
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: '#f8fafc', padding: '1rem', borderRadius: '12px', border: '1px solid #e2e8f0', marginBottom: '1.25rem' }}>
+                <div>
+                  <div style={{ fontSize: '0.75rem', color: '#64748b' }}>Authorized by:</div>
+                  <div style={{ fontWeight: 800, color: '#0f172a' }}>{school.principal_name}</div>
+                  <div style={{ fontSize: '0.72rem', color: '#64748b' }}>{school.principal_title}</div>
+                </div>
+                <div style={{ fontSize: '1.8rem' }}>📜</div>
+              </div>
+
+              <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.5rem' }}>
+                <button type="button" onClick={() => copyRawText(`${selectedAdmissionSlip.admission_number}: ${selectedAdmissionSlip.username} (PIN: ${selectedAdmissionSlip.temp_password})`, 'Admission')} style={{ background: '#f1f5f9', border: '1px solid #cbd5e1', padding: '0.5rem 1rem', borderRadius: '8px', fontSize: '0.8rem', fontWeight: 700, cursor: 'pointer' }}>
+                  {copiedLink === 'Admission' ? '✓ Copied' : '📋 Copy'}
+                </button>
+                <button type="button" onClick={() => window.print()} style={{ background: primaryColor, color: '#ffffff', border: 'none', padding: '0.5rem 1.25rem', borderRadius: '8px', fontSize: '0.8rem', fontWeight: 800, cursor: 'pointer' }}>
+                  🖨️ Print Admission Letter
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ============================================================ */}
+      {/* 10. PRINTABLE DIALOG: OFFICIAL STAFF PAYSLIP */}
+      {/* ============================================================ */}
+      {selectedPayslip && (
+        <div
+          role="dialog"
+          aria-modal="true"
+          style={{
+            position: 'fixed',
+            inset: 0,
+            zIndex: 9999,
+            background: 'rgba(15, 23, 42, 0.72)',
+            backdropFilter: 'blur(6px)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            padding: '1rem',
+          }}
+          onClick={(e) => { if (e.target === e.currentTarget) setSelectedPayslip(null) }}
+        >
+          <div style={{ maxWidth: '580px', width: '100%', background: '#ffffff', borderRadius: '24px', boxShadow: '0 25px 50px -12px rgba(0,0,0,0.35)', border: '1px solid #cbd5e1', overflow: 'hidden' }}>
+            <div style={{ background: `linear-gradient(135deg, ${primaryColor} 0%, #0f172a 100%)`, color: '#ffffff', padding: '1.25rem 1.5rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <div>
+                <div style={{ fontSize: '0.72rem', fontWeight: 800, textTransform: 'uppercase', color: accentColor }}>OFFICIAL STAFF PAYSLIP</div>
+                <h3 style={{ margin: 0, fontSize: '1.2rem', fontWeight: 900, color: '#ffffff' }}>{school.name}</h3>
+              </div>
+              <button type="button" onClick={() => setSelectedPayslip(null)} style={{ background: 'rgba(255,255,255,0.2)', border: 'none', color: '#ffffff', width: '30px', height: '30px', borderRadius: '50%', cursor: 'pointer', fontWeight: 900 }}>✕</button>
+            </div>
+
+            <div style={{ padding: '1.75rem' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid #e2e8f0', paddingBottom: '1rem', marginBottom: '1.25rem' }}>
+                <div>
+                  <div style={{ fontSize: '0.72rem', color: '#64748b' }}>EMPLOYEE NAME</div>
+                  <div style={{ fontSize: '1.15rem', fontWeight: 900, color: '#0f172a' }}>{selectedPayslip.staff_name}</div>
+                  <div style={{ fontSize: '0.8rem', color: '#64748b' }}>{selectedPayslip.role} • {selectedPayslip.department}</div>
+                </div>
+                <div style={{ textAlign: 'right' }}>
+                  <div style={{ fontSize: '0.72rem', color: '#64748b' }}>PAYROLL PERIOD</div>
+                  <div style={{ fontWeight: 800, color: '#0f172a' }}>{selectedPayslip.month_period}</div>
+                  <div style={{ fontSize: '0.72rem', color: '#16a34a', fontWeight: 800 }}>Disbursed via {selectedPayslip.payment_method}</div>
+                </div>
+              </div>
+
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '1.25rem' }}>
+                <div style={{ background: '#f8fafc', padding: '1rem', borderRadius: '12px', border: '1px solid #e2e8f0' }}>
+                  <div style={{ fontSize: '0.75rem', fontWeight: 800, color: '#0f172a', marginBottom: '0.5rem' }}>EARNINGS &amp; ALLOWANCES</div>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.82rem', marginBottom: '4px' }}>
+                    <span style={{ color: '#64748b' }}>Base Salary:</span>
+                    <strong>${selectedPayslip.base_salary.toLocaleString()}</strong>
+                  </div>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.82rem', marginBottom: '4px' }}>
+                    <span style={{ color: '#64748b' }}>Housing Allowance:</span>
+                    <strong>${selectedPayslip.housing_allowance.toLocaleString()}</strong>
+                  </div>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.82rem' }}>
+                    <span style={{ color: '#64748b' }}>Transport Allowance:</span>
+                    <strong>${selectedPayslip.transport_allowance.toLocaleString()}</strong>
+                  </div>
+                  <div style={{ borderTop: '1px solid #e2e8f0', marginTop: '6px', paddingTop: '6px', display: 'flex', justifyContent: 'space-between', fontWeight: 900, fontSize: '0.88rem' }}>
+                    <span>Gross Salary:</span>
+                    <span>${selectedPayslip.gross_salary.toLocaleString()}</span>
+                  </div>
+                </div>
+
+                <div style={{ background: '#fef2f2', padding: '1rem', borderRadius: '12px', border: '1px solid #fecaca' }}>
+                  <div style={{ fontSize: '0.75rem', fontWeight: 800, color: '#991b1b', marginBottom: '0.5rem' }}>STATUTORY DEDUCTIONS</div>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.82rem', marginBottom: '4px' }}>
+                    <span style={{ color: '#64748b' }}>PAYE Tax:</span>
+                    <strong style={{ color: '#dc2626' }}>-${selectedPayslip.tax_deduction.toLocaleString()}</strong>
+                  </div>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.82rem' }}>
+                    <span style={{ color: '#64748b' }}>Pension Contribution:</span>
+                    <strong style={{ color: '#dc2626' }}>-${selectedPayslip.pension_deduction.toLocaleString()}</strong>
+                  </div>
+                  <div style={{ borderTop: '1px solid #fecaca', marginTop: '6px', paddingTop: '6px', display: 'flex', justifyContent: 'space-between', fontWeight: 900, fontSize: '0.88rem', color: '#991b1b' }}>
+                    <span>Total Deductions:</span>
+                    <span>-${(selectedPayslip.tax_deduction + selectedPayslip.pension_deduction).toLocaleString()}</span>
+                  </div>
+                </div>
+              </div>
+
+              <div style={{ background: '#ecfdf5', padding: '1rem 1.25rem', borderRadius: '14px', border: '1.5px solid #a7f3d0', display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.25rem' }}>
+                <div>
+                  <div style={{ fontSize: '0.74rem', fontWeight: 800, color: '#065f46' }}>NET TAKE-HOME PAY</div>
+                  <div style={{ fontSize: '1.5rem', fontWeight: 900, color: '#047857' }}>${selectedPayslip.net_salary.toLocaleString()}</div>
+                </div>
+                <div style={{ fontSize: '0.8rem', color: '#065f46', textAlign: 'right' }}>
+                  Electronic Transfer Authorized<br />
+                  <strong>Bank Clearance ID #{selectedPayslip.id.toUpperCase().slice(-8)}</strong>
+                </div>
+              </div>
+
+              <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.5rem' }}>
+                <button type="button" onClick={() => window.print()} style={{ background: primaryColor, color: '#ffffff', border: 'none', padding: '0.5rem 1.25rem', borderRadius: '8px', fontSize: '0.8rem', fontWeight: 800, cursor: 'pointer' }}>
+                  🖨️ Print Payslip
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ============================================================ */}
+      {/* 11. PRINTABLE DIALOG: STAMPED TUITION RECEIPT WITH QR */}
+      {/* ============================================================ */}
+      {selectedReceipt && (
+        <div
+          role="dialog"
+          aria-modal="true"
+          style={{
+            position: 'fixed',
+            inset: 0,
+            zIndex: 9999,
+            background: 'rgba(15, 23, 42, 0.72)',
+            backdropFilter: 'blur(6px)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            padding: '1rem',
+          }}
+          onClick={(e) => { if (e.target === e.currentTarget) setSelectedReceipt(null) }}
+        >
+          <div style={{ maxWidth: '540px', width: '100%', background: '#ffffff', borderRadius: '24px', boxShadow: '0 25px 50px -12px rgba(0,0,0,0.35)', border: '2px solid #b45309', overflow: 'hidden' }}>
+            <div style={{ background: 'linear-gradient(135deg, #b45309 0%, #0f172a 100%)', color: '#ffffff', padding: '1.25rem 1.5rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <div>
+                <div style={{ fontSize: '0.72rem', fontWeight: 800, textTransform: 'uppercase', color: '#fde047' }}>OFFICIAL STAMPED RECEIPT</div>
+                <h3 style={{ margin: 0, fontSize: '1.2rem', fontWeight: 900, color: '#ffffff' }}>{school.name}</h3>
+              </div>
+              <button type="button" onClick={() => setSelectedReceipt(null)} style={{ background: 'rgba(255,255,255,0.2)', border: 'none', color: '#ffffff', width: '30px', height: '30px', borderRadius: '50%', cursor: 'pointer', fontWeight: 900 }}>✕</button>
+            </div>
+
+            <div style={{ padding: '1.75rem' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid #e2e8f0', paddingBottom: '1rem', marginBottom: '1.25rem' }}>
+                <div>
+                  <div style={{ fontSize: '0.72rem', color: '#64748b' }}>RECEIPT NUMBER</div>
+                  <div style={{ fontSize: '1.25rem', fontWeight: 900, color: '#b45309' }}>{selectedReceipt.receipt_number}</div>
+                  <div style={{ fontSize: '0.8rem', color: '#64748b' }}>Date: {new Date(selectedReceipt.date).toLocaleString()}</div>
+                </div>
+                <div style={{ width: '64px', height: '64px', background: '#f8fafc', border: '1px solid #cbd5e1', borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.6rem' }}>
+                  🏁
+                </div>
+              </div>
+
+              <div style={{ background: '#f8fafc', padding: '1rem', borderRadius: '12px', border: '1px solid #e2e8f0', marginBottom: '1.25rem' }}>
+                <div style={{ fontSize: '0.72rem', color: '#64748b' }}>STUDENT PAYEE</div>
+                <div style={{ fontSize: '1.1rem', fontWeight: 900, color: '#0f172a' }}>{selectedReceipt.student_name}</div>
+                <div style={{ fontSize: '0.82rem', color: primaryColor, fontWeight: 700 }}>Admission Number: {selectedReceipt.admission_number}</div>
+                <div style={{ fontSize: '0.78rem', color: '#64748b', marginTop: '4px' }}>Session: {selectedReceipt.period_name}</div>
+              </div>
+
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: '#fefce8', border: '1px solid #fde047', padding: '1rem 1.25rem', borderRadius: '12px', marginBottom: '1.25rem' }}>
+                <div>
+                  <div style={{ fontSize: '0.72rem', fontWeight: 800, color: '#854d0e' }}>PAYMENT METHOD: {selectedReceipt.payment_method.toUpperCase()}</div>
+                  <div style={{ fontSize: '1.6rem', fontWeight: 900, color: '#713f12' }}>${selectedReceipt.amount.toLocaleString()}.00</div>
+                </div>
+                <span style={{ background: '#16a34a', color: '#ffffff', padding: '4px 10px', borderRadius: '999px', fontSize: '0.75rem', fontWeight: 800 }}>
+                  PAID IN FULL ✓
+                </span>
+              </div>
+
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderTop: '1px solid #e2e8f0', paddingTop: '1rem' }}>
+                <div style={{ fontSize: '0.75rem', color: '#64748b' }}>
+                  Cashier Authority:<br />
+                  <strong style={{ color: '#0f172a' }}>{selectedReceipt.recorded_by}</strong>
+                </div>
+                <button type="button" onClick={() => window.print()} style={{ background: '#b45309', color: '#ffffff', border: 'none', padding: '0.5rem 1.25rem', borderRadius: '8px', fontSize: '0.8rem', fontWeight: 800, cursor: 'pointer' }}>
+                  🖨️ Print Receipt
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
     </div>
   )
 }

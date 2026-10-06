@@ -96,3 +96,114 @@ export interface CreateTenantSchoolInput {
   subscription_monthly_rate?: number
   subscription_billing_cycle?: 'monthly' | 'annually'
 }
+
+// ============================================================
+// Real School Management (SIS / LMS) Domain Models
+// ============================================================
+
+export interface TenantStaffMember {
+  id: string
+  school_slug: string
+  full_name: string
+  role: 'teacher' | 'bursar' | 'admin' | 'principal'
+  email: string
+  username: string
+  temp_password?: string
+  phone: string
+  department: string
+  title: string
+  assigned_classes: string[]
+  assigned_subjects: string[]
+  salary_base: number
+  salary_housing: number
+  salary_transport: number
+  salary_tax: number
+  salary_pension: number
+  net_salary: number
+  status: 'active' | 'suspended'
+  joined_date: string
+}
+
+export interface TenantStudentMember {
+  id: string
+  school_slug: string
+  admission_number: string // e.g. "HC-2026-0042"
+  full_name: string
+  grade_class: string     // e.g. "Grade 10 Cambridge", "Form 3 Alpha"
+  guardian_name: string
+  guardian_phone: string
+  guardian_email: string
+  username: string
+  temp_password?: string
+  fee_total: number
+  fee_paid: number
+  fee_balance: number
+  attendance_percent: number
+  status: 'active' | 'graduated' | 'suspended'
+  admission_date: string
+}
+
+export interface TenantPayrollRecord {
+  id: string
+  school_slug: string
+  month_period: string // e.g. "October 2026"
+  staff_id: string
+  staff_name: string
+  role: string
+  department: string
+  base_salary: number
+  housing_allowance: number
+  transport_allowance: number
+  gross_salary: number
+  tax_deduction: number
+  pension_deduction: number
+  net_salary: number
+  status: 'draft' | 'approved' | 'disbursed'
+  disbursed_at?: string
+  payment_method: 'Bank Wire' | 'Mobile Money' | 'Cheque'
+}
+
+export interface TenantGradeRecord {
+  id: string
+  school_slug: string
+  student_id: string
+  student_name: string
+  admission_number: string
+  class_name: string
+  subject_name: string
+  period_code: string // e.g. "TERM-1" or "SEM-1"
+  cat1_score: number  // out of 20
+  cat2_score: number  // out of 20
+  exam_score: number  // out of 60
+  total_score: number // out of 100
+  grade: string       // 'A*', 'A', 'B', 'C', 'D', 'E'
+  remarks: string
+  teacher_name: string
+  updated_at: string
+}
+
+export interface TenantLessonNote {
+  id: string
+  school_slug: string
+  class_name: string
+  subject_name: string
+  title: string
+  summary: string
+  file_url?: string
+  teacher_name: string
+  created_at: string
+}
+
+export interface TenantFeePayment {
+  id: string
+  school_slug: string
+  receipt_number: string
+  student_id: string
+  student_name: string
+  admission_number: string
+  amount: number
+  period_name: string
+  payment_method: 'Bank Wire' | 'Mobile Money (M-Pesa)' | 'Credit Card' | 'Cash'
+  date: string
+  recorded_by: string
+}
