@@ -1409,10 +1409,10 @@ export function Landing() {
                 <img
                   src="/logo.png"
                   alt="Éclat Institute Logo"
-                  style={{ width: '32px', height: '32px', borderRadius: '50%', border: '1.5px solid #1d4ed8' }}
+                  style={{ width: '34px', height: '34px', borderRadius: '50%', border: '2px solid #A51D24', boxShadow: '0 2px 6px rgba(165, 29, 36, 0.2)' }}
                 />
                 <div>
-                  <div style={{ fontSize: '0.95rem', fontWeight: 900, color: '#1e3a8a', fontFamily: 'var(--font-heading)', lineHeight: 1.1 }}>
+                  <div style={{ fontSize: '0.95rem', fontWeight: 900, color: '#A51D24', fontFamily: 'var(--font-heading)', lineHeight: 1.1 }}>
                     ÉCLAT INSTITUTE
                   </div>
                   <div style={{ fontSize: '0.62rem', color: '#64748b', fontWeight: 600 }}>

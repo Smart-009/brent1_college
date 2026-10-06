@@ -315,7 +315,7 @@ export function DonationSponsorshipPage() {
 
       {/* Main Content Area */}
       <main style={{ maxWidth: '1180px', margin: '-2.5rem auto 4rem', padding: '0 1rem', position: 'relative', zIndex: 10 }}>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '2rem', alignItems: 'start' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 280px), 1fr))', gap: '2rem', alignItems: 'start' }}>
           {/* Left Column: Donation Form or Receipt */}
           <div
             style={{
