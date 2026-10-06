@@ -56,16 +56,23 @@ export async function initializePaystackCheckout(options: PaystackPaymentOptions
     return
   }
 
-  const currency = options.currency || INSTITUTION_CONFIG.paystack?.currency || 'KES'
-  
-  // If currency is KES and amount is in USD (e.g. 60 USD), approximate conversion or use direct amount
+  // If user selected USD or merchant currency is KES, convert USD to KES for Paystack Kenya processing
+  let targetCurrency = options.currency || INSTITUTION_CONFIG.paystack?.currency || 'KES'
   let chargedAmount = options.amount
-  if (currency === 'KES' && options.amount < 500) {
-    // Treat small amount (e.g., 60) as USD and convert to KES (~130 KES per USD)
+  let exchangeRateNote = ''
+
+  if (targetCurrency === 'USD') {
+    // Paystack Kenya requires KES processing. Automatically convert USD at prevailing rate (~130 KES / USD)
+    const convertedKes = Math.round(options.amount * 130)
+    exchangeRateNote = `Converted from $${options.amount} USD @ 130 KES/USD = KES ${convertedKes.toLocaleString()}`
+    chargedAmount = convertedKes
+    targetCurrency = 'KES'
+  } else if (targetCurrency === 'KES' && options.amount < 500) {
+    // Treat small amount (e.g., 60) as USD input and convert to KES (~130 KES per USD)
     chargedAmount = Math.round(options.amount * 130)
   }
 
-  // Paystack expects amount in minor units (e.g. cents / kobo: multiply by 100)
+  // Paystack expects amount in minor units (cents / cents / kobo: multiply by 100)
   const minorAmount = Math.round(chargedAmount * 100)
 
   const paymentRef = `ECLAT-${Date.now()}-${Math.floor(1000 + Math.random() * 9000)}`
@@ -74,10 +81,15 @@ export async function initializePaystackCheckout(options: PaystackPaymentOptions
     key: publicKey,
     email: options.email,
     amount: minorAmount,
-    currency: currency,
+    currency: targetCurrency,
     ref: paymentRef,
     metadata: {
       custom_fields: [
+        {
+          display_name: 'Original Currency & Amount',
+          variable_name: 'original_charge',
+          value: exchangeRateNote || `${targetCurrency} ${chargedAmount}`,
+        },
         {
           display_name: 'Student Name',
           variable_name: 'student_name',

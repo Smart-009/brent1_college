@@ -135,8 +135,8 @@ export const IGCSEStatementOfResultsModal: FC<IGCSEStatementOfResultsProps> = ({
               </div>
               <p style={{ margin: '0.25rem 0 0', fontSize: '0.78rem', color: '#64748b' }}>
                 {isEdexcel
-                  ? 'Official Pearson Edexcel Examination Venue (Centre EDX-98421)'
-                  : 'Official Cambridge International Examination Venue (Centre KE042)'}
+                  ? 'Candidate Sitting via Accredited Partner Examination Centre (Centre EDX-98421)'
+                  : 'Candidate Sitting via Accredited Partner Examination Centre (Centre KE042)'}
               </p>
             </div>
 
@@ -242,7 +242,7 @@ export const IGCSEStatementOfResultsModal: FC<IGCSEStatementOfResultsProps> = ({
                     PEARSON EDEXCEL INTERNATIONAL GCSE (9-1) COHORT SERIES
                   </strong>
                   <div style={{ fontSize: '0.78rem', color: '#991b1b' }}>
-                    Candidate completed linear numerical 9-1 qualification examinations under Pearson Edexcel Center EDX-98421.
+                    Candidate completed linear numerical 9-1 qualification examinations sitting via Pearson Edexcel Center EDX-98421.
                   </div>
                 </div>
               </div>

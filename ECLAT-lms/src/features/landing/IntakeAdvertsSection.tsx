@@ -1,4 +1,4 @@
-﻿import { useState, useEffect, useMemo } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import { Link } from 'react-router-dom'
 import { intakeStore } from '@/lib/intakeStore'
 import { formatDate } from '@/lib/utils'
@@ -593,13 +593,13 @@ export function IntakeAdvertsSection() {
               </div>
               <div>
                 <div style={{ fontSize: '0.74rem', fontWeight: 900, color: '#0369a1', textTransform: 'uppercase', letterSpacing: '0.06em' }}>
-                  UK Exam Centre KE042 &amp; Pearson EDX-98421 &bull; Integrated Cohorts
+                  Candidate Exam Centres KE042 &amp; Pearson EDX-98421 &bull; Integrated Cohorts
                 </div>
                 <h3 style={{ margin: '2px 0 4px', fontSize: isMobile ? '1.15rem' : '1.35rem', fontWeight: 900, color: '#0f172a' }}>
                   British International Curriculum &amp; IGCSE Hub (Years 9, 10 &amp; 11)
                 </h3>
                 <p style={{ margin: 0, fontSize: '0.84rem', color: '#334155', lineHeight: 1.5 }}>
-                  <strong style={{ color: '#0369a1' }}>We do not teach separate subjects in IGCSE — we teach all subjects together.</strong> Students enrol into cohesive cohorts (Year 9 Checkpoint, Year 10 IGCSE, or Year 11 Exam Series) where Mathematics, Pure Sciences (Physics, Chemistry, Biology), English, Computer Science, and Humanities are seamlessly taught together under a unified daily timetable with official Cambridge (KE042) &amp; Edexcel (EDX-98421) exam center candidacy.
+                  <strong style={{ color: '#0369a1' }}>We do not teach separate subjects in IGCSE — we teach all subjects together.</strong> Students enrol into cohesive cohorts (Year 9 Checkpoint, Year 10 IGCSE, or Year 11 Exam Series) where Mathematics, Pure Sciences (Physics, Chemistry, Biology), English, Computer Science, and Humanities are seamlessly taught together under a unified daily timetable with guaranteed candidate examination registration and placement at Cambridge (KE042) &amp; Edexcel (EDX-98421) exam centres.
                 </p>
               </div>
             </div>

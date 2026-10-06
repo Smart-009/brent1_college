@@ -1998,7 +1998,7 @@ export function Landing() {
             }}
           >
             <BritishShieldIcon size={16} />
-            <span>CAMBRIDGE CAIE CENTER KE042 • PEARSON EDEXCEL CENTER EDX-98421</span>
+            <span>CAMBRIDGE CAIE &amp; PEARSON EDEXCEL EXAM PATHWAYS (CENTRES KE042 &amp; EDX-98421)</span>
           </div>
 
           {/* Clean, Authoritative Headline */}
