@@ -2122,7 +2122,7 @@ export function Landing() {
           </p>
 
           {/* Clean, High-Contrast CTAs */}
-          <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '1rem', flexWrap: 'wrap', marginBottom: '3rem' }}>
+          <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '1rem', flexWrap: 'wrap', marginBottom: '3rem', width: isMobile ? '100%' : 'auto', flexDirection: isMobile ? 'column' : 'row' }}>
             <a
               href="#courses"
               style={{
@@ -2135,8 +2135,11 @@ export function Landing() {
                 textDecoration: 'none',
                 display: 'inline-flex',
                 alignItems: 'center',
+                justifyContent: 'center',
                 gap: '8px',
                 boxShadow: '0 8px 24px rgba(37, 99, 235, 0.35)',
+                width: isMobile ? '100%' : 'auto',
+                boxSizing: 'border-box',
               }}
             >
               <span>Explore Programs & Courses</span>
@@ -2156,9 +2159,12 @@ export function Landing() {
                 textDecoration: 'none',
                 display: 'inline-flex',
                 alignItems: 'center',
+                justifyContent: 'center',
                 gap: '8px',
                 backdropFilter: 'blur(8px)',
                 boxShadow: '0 4px 14px rgba(0, 0, 0, 0.25)',
+                width: isMobile ? '100%' : 'auto',
+                boxSizing: 'border-box',
               }}
             >
               <LaptopIcon size={16} color="#60a5fa" />
@@ -2178,9 +2184,12 @@ export function Landing() {
                 textDecoration: 'none',
                 display: 'inline-flex',
                 alignItems: 'center',
+                justifyContent: 'center',
                 gap: '8px',
                 backdropFilter: 'blur(8px)',
                 boxShadow: '0 4px 14px rgba(0, 0, 0, 0.2)',
+                width: isMobile ? '100%' : 'auto',
+                boxSizing: 'border-box',
               }}
             >
               <GraduationCapIcon size={16} color="#4ade80" />
@@ -2417,7 +2426,7 @@ export function Landing() {
       </section>
 
       {/* Highlights & Value Metrics Section */}
-      <section style={{ background: '#f8fafc', padding: '2.5rem 1.5rem', borderBottom: '1px solid #e2e8f0' }}>
+      <section style={{ background: '#f8fafc', padding: isMobile ? '2rem 1rem' : '2.5rem 1.5rem', borderBottom: '1px solid #e2e8f0' }}>
         <div style={{ maxWidth: '1240px', margin: '0 auto' }}>
 
           {/* Live Intake Countdown Alert */}
@@ -2476,7 +2485,7 @@ export function Landing() {
           <div
             style={{
               display: 'grid',
-              gridTemplateColumns: isMobile ? 'repeat(2, 1fr)' : 'repeat(auto-fit, minmax(200px, 1fr))',
+              gridTemplateColumns: isMobile ? '1fr' : 'repeat(auto-fit, minmax(200px, 1fr))',
               gap: isMobile ? '1rem 0.75rem' : '1.5rem',
               background: '#ffffff',
               border: '1px solid #e2e8f0',
@@ -3708,7 +3717,7 @@ export function Landing() {
                 </div>
 
                 <label className="label">2. Select Preferred Payment Structure</label>
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem', marginBottom: '1.25rem' }}>
+                <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: '0.75rem', marginBottom: '1.25rem' }}>
                   <button
                     type="button"
                     style={{
@@ -4563,7 +4572,7 @@ export function Landing() {
                     />
                   </div>
 
-                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '0.75rem' }}>
+                  <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : 'repeat(auto-fit, minmax(180px, 1fr))', gap: '0.75rem' }}>
                     <div>
                       <label className="label" style={{ fontSize: '0.82rem' }}>Phone / WhatsApp Number *</label>
                       <input
@@ -4588,7 +4597,7 @@ export function Landing() {
                     </div>
                   </div>
 
-                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '0.75rem' }}>
+                  <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : 'repeat(auto-fit, minmax(180px, 1fr))', gap: '0.75rem' }}>
                     <div>
                       <label className="label" style={{ fontSize: '0.82rem' }}>Program of Interest *</label>
                       <select
@@ -4830,8 +4839,8 @@ export function Landing() {
                   </div>
 
                   {/* Metadata Grid */}
-                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem', fontSize: '0.82rem', marginBottom: '1rem', background: '#f8fafc', padding: '0.85rem', borderRadius: '8px', border: '1px solid #e2e8f0' }}>
-                    <div>
+                  <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: '0.75rem', fontSize: '0.82rem', marginBottom: '1rem', background: '#f8fafc', padding: '0.85rem', borderRadius: '8px', border: '1px solid #e2e8f0' }}>
+                    <div style={{ wordBreak: 'break-word' }}>
                       <div><strong>Receipt / Ref #:</strong> <span style={{ color: '#1e3a8a', fontWeight: 800 }}>{generatedAdmission.receiptNumber}</span></div>
                       <div><strong>Student Name:</strong> {generatedAdmission.studentName}</div>
                       {generatedAdmission.deliveryMode === 'live_cohort' ? (
@@ -4840,7 +4849,7 @@ export function Landing() {
                         <div><strong>Track Type:</strong> <span style={{ fontWeight: 800, color: '#16a34a' }}>Self-Paced (Instant Video Access)</span></div>
                       )}
                     </div>
-                    <div>
+                    <div style={{ wordBreak: 'break-word' }}>
                       <div><strong>Date:</strong> {generatedAdmission.date}</div>
                       <div><strong>Course:</strong> {generatedAdmission.courseTitle}</div>
                       <div><strong>Certification:</strong> <span style={{ color: '#0369a1', fontWeight: 700 }}>{generatedAdmission.providerType === 'partner_institution' ? `Issued by ${generatedAdmission.institutionName || 'Partner School'}` : 'Issued by Éclat Institute'}</span></div>
@@ -4848,7 +4857,7 @@ export function Landing() {
                   </div>
 
                   {/* Amount Paid Box */}
-                  <div style={{ background: generatedAdmission.isPendingVerification ? '#fffbeb' : '#f0fdf4', border: `1px solid ${generatedAdmission.isPendingVerification ? '#fde68a' : '#bbf7d0'}`, borderRadius: '8px', padding: '0.85rem 1rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
+                  <div style={{ background: generatedAdmission.isPendingVerification ? '#fffbeb' : '#f0fdf4', border: `1px solid ${generatedAdmission.isPendingVerification ? '#fde68a' : '#bbf7d0'}`, borderRadius: '8px', padding: '0.85rem 1rem', display: 'flex', flexDirection: isMobile ? 'column' : 'row', justifyContent: 'space-between', alignItems: isMobile ? 'flex-start' : 'center', gap: isMobile ? '0.75rem' : '0', marginBottom: '1rem' }}>
                     <div>
                       <div style={{ fontSize: '0.72rem', color: generatedAdmission.isPendingVerification ? '#92400e' : '#166534', fontWeight: 800, textTransform: 'uppercase' }}>
                         TUITION AMOUNT PAID (PAYSTACK VERIFIED):
@@ -4857,7 +4866,7 @@ export function Landing() {
                         ${generatedAdmission.amountPaid} USD
                       </div>
                     </div>
-                    <div style={{ textAlign: 'right', fontSize: '0.8rem', color: '#475569' }}>
+                    <div style={{ textAlign: isMobile ? 'left' : 'right', fontSize: '0.8rem', color: '#475569' }}>
                       <div>Balance Due: <strong>${generatedAdmission.balanceRemaining} USD</strong></div>
                       <div style={{ color: generatedAdmission.balanceRemaining === 0 ? '#16a34a' : '#ea580c', fontWeight: 800 }}>
                         {generatedAdmission.balanceRemaining === 0 ? 'STATUS: FULLY CLEARED' : 'STATUS: 1ST INSTALLMENT CLEARED'}
@@ -4966,7 +4975,7 @@ export function Landing() {
             </div>
 
             {/* Platform Segmented Switcher (Native Platforms) */}
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.4rem', marginBottom: '1.25rem', background: '#f1f5f9', padding: '0.35rem', borderRadius: '14px' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: '0.4rem', marginBottom: '1.25rem', background: '#f1f5f9', padding: '0.35rem', borderRadius: '14px' }}>
               <button
                 type="button"
                 onClick={() => setAppModalTab('android')}
@@ -5119,7 +5128,7 @@ export function Landing() {
                     Dedicated learning workstation for Windows with full-screen lecture viewing, fast note-taking, and digital library reader.
                   </p>
 
-                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.5rem', marginBottom: '1.15rem' }}>
+                  <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: '0.5rem', marginBottom: '1.15rem' }}>
                     <div style={{ background: '#ffffff', padding: '0.6rem 0.75rem', borderRadius: '10px', border: '1px solid #dbeafe', fontSize: '0.78rem', color: '#1e40af', display: 'flex', alignItems: 'center', gap: '6px', fontWeight: 600 }}>
                       <LaptopIcon size={16} color="#1e40af" />
                       <span>Desktop Study Hub</span>
@@ -5329,7 +5338,7 @@ export function Landing() {
             </div>
 
             {/* Course Meta Grid */}
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '0.75rem', marginBottom: '1.25rem', background: '#f8fafc', padding: '1rem', borderRadius: '12px', border: '1px solid #e2e8f0' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : 'repeat(auto-fit, minmax(180px, 1fr))', gap: '0.75rem', marginBottom: '1.25rem', background: '#f8fafc', padding: isMobile ? '0.75rem' : '1rem', borderRadius: '12px', border: '1px solid #e2e8f0' }}>
               <div>
                 <div style={{ fontSize: '0.72rem', color: '#64748b', fontWeight: 700, textTransform: 'uppercase' }}>Duration & Shift</div>
                 <div style={{ fontWeight: 800, color: '#0f172a', marginTop: '2px', fontSize: '0.9rem', display: 'flex', alignItems: 'center', gap: '4px' }}>
@@ -5799,22 +5808,26 @@ export function Landing() {
         <div
           style={{
             position: 'fixed',
-            bottom: '24px',
+            bottom: isMobile ? '76px' : '24px',
             left: '50%',
             transform: 'translateX(-50%)',
             background: '#1e3a8a',
             color: '#ffffff',
             border: '1px solid #3b82f6',
             borderRadius: '12px',
-            padding: '12px 24px',
+            padding: '12px 20px',
             boxShadow: '0 12px 32px rgba(0, 0, 0, 0.35)',
-            zIndex: 999,
+            zIndex: 9999,
             display: 'flex',
             alignItems: 'center',
+            justifyContent: 'space-between',
             gap: '10px',
-            fontSize: '0.9rem',
+            fontSize: '0.88rem',
             fontWeight: 700,
             animation: 'fadeIn 0.3s ease',
+            maxWidth: isMobile ? 'calc(100vw - 32px)' : '480px',
+            width: isMobile ? 'calc(100vw - 32px)' : 'auto',
+            boxSizing: 'border-box',
           }}
         >
           <span>{toastMessage}</span>
@@ -5829,7 +5842,7 @@ export function Landing() {
       )}
 
       {/* Sleek Modern Floating Support Desk (WhatsApp / Admissions Live Desk) */}
-      <div style={{ position: 'fixed', bottom: '24px', right: isMobile ? '16px' : '24px', zIndex: 9990, display: 'flex', flexDirection: 'column', alignItems: 'flex-end' }}>
+      <div style={{ position: 'fixed', bottom: isMobile ? '76px' : '24px', right: isMobile ? '16px' : '24px', zIndex: 9990, display: 'flex', flexDirection: 'column', alignItems: 'flex-end' }}>
         {supportModalOpen && (
           <div
             style={{

@@ -424,7 +424,7 @@ export function CertificateGenerator({
         </div>
 
         {/* Scrollable Document Container */}
-        <div style={{ padding: '1.75rem', display: 'flex', justifyContent: 'center' }}>
+        <div style={{ padding: '1.25rem 0.75rem', display: 'flex', justifyContent: 'center', overflowX: 'auto', WebkitOverflowScrolling: 'touch', maxWidth: '100%' }}>
           {/* ============================================================
               MASTER CONFERRED CERTIFICATE CANVAS (PRINT & VIEW ENGINE)
               Dimensions formatted for standard A4 landscape (1.414 aspect)
