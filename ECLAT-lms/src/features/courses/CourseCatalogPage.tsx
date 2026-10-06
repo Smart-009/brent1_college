@@ -71,7 +71,11 @@ const buildCatalogCourses = (): CourseItem[] => {
         !c.id?.startsWith('__ECLAT_') &&
         !c.title?.startsWith('__ECLAT_') &&
         !c.careerOutcome?.startsWith('{') &&
-        !c.careerOutcome?.includes('{"key"')
+        !c.careerOutcome?.includes('{"key"') &&
+        // Guard against empty / ghost courses without syllabus
+        Array.isArray(c.syllabus) &&
+        c.syllabus.length > 0 &&
+        Boolean(c.title && c.title.trim().length > 3)
     )
     .map((c) => ({
       id: c.id,

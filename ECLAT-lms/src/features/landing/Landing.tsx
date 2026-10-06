@@ -60,6 +60,8 @@ import {
   CourseIcon,
   ArrowRightIcon,
   HeartHandshakeIcon,
+  LayoutGridIcon,
+  LayoutListIcon,
 } from '@/components/icons/AppIcons'
 
 interface CourseItem {
@@ -611,7 +613,11 @@ export function Landing() {
           !c.id?.startsWith('__ECLAT_') &&
           !c.title?.startsWith('__ECLAT_') &&
           !c.careerOutcome?.startsWith('{') &&
-          !c.careerOutcome?.includes('{"key"')
+          !c.careerOutcome?.includes('{"key"') &&
+          // Guard against empty / ghost placeholder courses that have no curriculum or syllabus content
+          Array.isArray(c.syllabus) &&
+          c.syllabus.length > 0 &&
+          Boolean(c.title && c.title.trim().length > 3)
       )
       .map(mapProgramToCourseItem)
   }
@@ -651,6 +657,8 @@ export function Landing() {
   }, [])
 
   // Interactive Enhancements State
+  const [courseViewMode, setCourseViewMode] = useState<'grid' | 'list'>('grid')
+  const [hoveredCourseId, setHoveredCourseId] = useState<string | null>(null)
   const [calcCourseId, setCalcCourseId] = useState<string>('c-comp')
   const [calcPlan, setCalcPlan] = useState<'full' | 'installments'>('full')
   const [certQuery, setCertQuery] = useState<string>('')
@@ -2791,8 +2799,70 @@ export function Landing() {
               })}
             </div>
 
-            <div style={{ fontSize: '0.85rem', color: '#64748b', fontWeight: 600 }}>
-              Showing <strong style={{ color: '#0f172a' }}>{filteredCourses.length}</strong> program{filteredCourses.length === 1 ? '' : 's'}
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '1rem', flexWrap: 'wrap', width: '100%', marginTop: '0.5rem' }}>
+              <div style={{ fontSize: '0.88rem', color: '#64748b', fontWeight: 600 }}>
+                Showing <strong style={{ color: '#0f172a' }}>{filteredCourses.length}</strong> accredited program{filteredCourses.length === 1 ? '' : 's'}
+              </div>
+
+              {/* View Switcher: Compact Grid vs Normal List */}
+              <div
+                style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  background: '#f1f5f9',
+                  padding: '3px',
+                  borderRadius: '8px',
+                  border: '1px solid #e2e8f0',
+                  gap: '2px',
+                }}
+              >
+                <button
+                  type="button"
+                  onClick={() => setCourseViewMode('grid')}
+                  title="Grid View (Udemy Compact Cards)"
+                  style={{
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '6px',
+                    padding: '5px 12px',
+                    fontSize: '0.78rem',
+                    fontWeight: 700,
+                    borderRadius: '6px',
+                    border: 'none',
+                    background: courseViewMode === 'grid' ? '#ffffff' : 'transparent',
+                    color: courseViewMode === 'grid' ? '#0f172a' : '#64748b',
+                    boxShadow: courseViewMode === 'grid' ? '0 1px 3px rgba(0,0,0,0.1)' : 'none',
+                    cursor: 'pointer',
+                    transition: 'all 0.15s ease',
+                  }}
+                >
+                  <LayoutGridIcon size={14} color={courseViewMode === 'grid' ? '#0f172a' : '#64748b'} />
+                  <span>Card Grid</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setCourseViewMode('list')}
+                  title="Compact List View (Zero Fatigue)"
+                  style={{
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '6px',
+                    padding: '5px 12px',
+                    fontSize: '0.78rem',
+                    fontWeight: 700,
+                    borderRadius: '6px',
+                    border: 'none',
+                    background: courseViewMode === 'list' ? '#ffffff' : 'transparent',
+                    color: courseViewMode === 'list' ? '#0f172a' : '#64748b',
+                    boxShadow: courseViewMode === 'list' ? '0 1px 3px rgba(0,0,0,0.1)' : 'none',
+                    cursor: 'pointer',
+                    transition: 'all 0.15s ease',
+                  }}
+                >
+                  <LayoutListIcon size={14} color={courseViewMode === 'list' ? '#0f172a' : '#64748b'} />
+                  <span>Compact List</span>
+                </button>
+              </div>
             </div>
           </div>
 
@@ -2816,209 +2886,494 @@ export function Landing() {
             </div>
           )}
 
-          {/* Courses Grid */}
-          <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : 'repeat(auto-fit, minmax(320px, 1fr))', gap: isMobile ? '1.25rem' : '2rem' }}>
-            {filteredCourses.map((course) => (
-              <div
-                key={course.id}
-                id={course.id}
-                style={{
-                  background: '#ffffff',
-                  border: '1px solid #e2e8f0',
-                  borderRadius: '12px',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  overflow: 'hidden',
-                  position: 'relative',
-                  boxShadow: '0 1px 3px rgba(0, 0, 0, 0.05)',
-                  transition: 'all 0.2s cubic-bezier(0.16, 1, 0.3, 1)',
-                  cursor: 'pointer',
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.transform = 'translateY(-3px)'
-                  e.currentTarget.style.boxShadow = '0 12px 24px -4px rgba(0, 0, 0, 0.08), 0 4px 8px -2px rgba(0, 0, 0, 0.04)'
-                  e.currentTarget.style.borderColor = '#cbd5e1'
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.transform = 'translateY(0)'
-                  e.currentTarget.style.boxShadow = '0 1px 3px rgba(0, 0, 0, 0.05)'
-                  e.currentTarget.style.borderColor = '#e2e8f0'
-                }}
-              >
-                {/* 16:9 Clean Aspect Ratio Card Banner */}
-                <div
-                  style={{
-                    position: 'relative',
-                    aspectRatio: '16 / 9',
-                    width: '100%',
-                    background: `linear-gradient(135deg, ${(course.tagColor || '#1e3a8a')}20 0%, ${(course.tagColor || '#1e3a8a')}08 100%)`,
-                    borderBottom: '1px solid #f1f5f9',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    overflow: 'hidden',
-                  }}
-                >
+          {/* =========================================================================
+              VIEW MODE 1: COMPACT LIST VIEW (Normal list instead of whole card to avoid fatigue)
+             ========================================================================= */}
+          {courseViewMode === 'list' && filteredCourses.length > 0 && (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+              {filteredCourses.map((course) => {
+                const isHovered = hoveredCourseId === course.id
+                return (
                   <div
+                    key={course.id}
+                    id={course.id}
+                    onMouseEnter={() => setHoveredCourseId(course.id)}
+                    onMouseLeave={() => setHoveredCourseId(null)}
                     style={{
-                      width: '56px',
-                      height: '56px',
-                      borderRadius: '14px',
                       background: '#ffffff',
-                      border: '1px solid #e2e8f0',
+                      border: isHovered ? '1px solid #94a3b8' : '1px solid #e2e8f0',
+                      borderRadius: '10px',
+                      padding: isMobile ? '0.85rem' : '0.85rem 1.25rem',
                       display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      boxShadow: '0 4px 12px rgba(0,0,0,0.06)',
+                      flexDirection: isMobile ? 'column' : 'row',
+                      alignItems: isMobile ? 'flex-start' : 'center',
+                      justifyContent: 'space-between',
+                      gap: '1rem',
+                      boxShadow: isHovered ? '0 4px 12px rgba(0, 0, 0, 0.06)' : '0 1px 2px rgba(0, 0, 0, 0.03)',
+                      transition: 'all 0.15s ease',
                     }}
                   >
-                    <CourseIcon courseId={course.id} iconKey={course.icon} size={30} />
-                  </div>
-
-                  {/* Top-Right Pill */}
-                  <div style={{ position: 'absolute', top: '10px', right: '10px', display: 'flex', gap: '6px' }}>
-                    {course.bestseller ? (
-                      <span
+                    {/* Left: Thumbnail + Title & Metadata */}
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', flex: 1, minWidth: 0 }}>
+                      <div
                         style={{
-                          background: '#fef3c7',
-                          color: '#92400e',
-                          fontWeight: 800,
-                          fontSize: '0.68rem',
-                          padding: '3px 8px',
-                          borderRadius: '4px',
-                          textTransform: 'uppercase',
-                          letterSpacing: '0.04em',
-                          border: '1px solid #fde68a',
-                        }}
-                      >
-                        Bestseller
-                      </span>
-                    ) : (
-                      <span
-                        style={{
-                          background: '#ffffff',
-                          color: '#475569',
-                          fontWeight: 700,
-                          fontSize: '0.68rem',
-                          padding: '3px 8px',
-                          borderRadius: '4px',
+                          width: isMobile ? '48px' : '64px',
+                          height: isMobile ? '48px' : '64px',
+                          borderRadius: '8px',
+                          background: `linear-gradient(135deg, ${(course.tagColor || '#1e3a8a')}20 0%, ${(course.tagColor || '#1e3a8a')}08 100%)`,
                           border: '1px solid #e2e8f0',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          flexShrink: 0,
                         }}
                       >
-                        Live Online
-                      </span>
-                    )}
-                  </div>
-                </div>
+                        <CourseIcon courseId={course.id} iconKey={course.icon} size={isMobile ? 22 : 28} />
+                      </div>
 
-                {/* Card Body */}
-                <div style={{ padding: '1.25rem', flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
-                  <div>
-                    {/* Course Title (clean 2-line clamp) */}
-                    <h3
+                      <div style={{ minWidth: 0, flex: 1 }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap', marginBottom: '3px' }}>
+                          <span
+                            style={{
+                              fontSize: '0.7rem',
+                              fontWeight: 800,
+                              color: course.tagColor || '#1e3a8a',
+                              textTransform: 'uppercase',
+                              letterSpacing: '0.04em',
+                            }}
+                          >
+                            {course.category}
+                          </span>
+                          {course.bestseller && (
+                            <span
+                              style={{
+                                background: '#fef3c7',
+                                color: '#92400e',
+                                fontWeight: 800,
+                                fontSize: '0.65rem',
+                                padding: '1px 6px',
+                                borderRadius: '4px',
+                                textTransform: 'uppercase',
+                                border: '1px solid #fde68a',
+                              }}
+                            >
+                              Bestseller
+                            </span>
+                          )}
+                        </div>
+
+                        <h3
+                          style={{
+                            fontSize: isMobile ? '0.94rem' : '1.02rem',
+                            fontWeight: 800,
+                            color: '#0f172a',
+                            margin: '0 0 3px',
+                            whiteSpace: isMobile ? 'normal' : 'nowrap',
+                            overflow: 'hidden',
+                            textOverflow: 'ellipsis',
+                          }}
+                        >
+                          {course.title}
+                        </h3>
+
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '10px', fontSize: '0.78rem', color: '#64748b', flexWrap: 'wrap' }}>
+                          <span style={{ color: '#475569', fontWeight: 600 }}>{course.instructor || 'Éclat Senior Faculty'}</span>
+                          <span>•</span>
+                          <span style={{ display: 'inline-flex', alignItems: 'center', gap: '3px', color: '#b45309', fontWeight: 800 }}>
+                            ★ {(course.rating || 4.9).toFixed(1)} <span style={{ color: '#94a3b8', fontWeight: 500 }}>({(course.ratingCount || 1240).toLocaleString()})</span>
+                          </span>
+                          <span>•</span>
+                          <span style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+                            <ClockIcon size={12} color="#64748b" /> {course.duration || '8 Weeks'}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Right: Fee & Action Buttons */}
+                    <div
                       style={{
-                        fontSize: '1.05rem',
-                        fontWeight: 800,
-                        color: '#0f172a',
-                        margin: '0 0 0.35rem',
-                        lineHeight: 1.35,
-                        fontFamily: 'var(--font-heading)',
-                        minHeight: '2.7rem',
-                        display: '-webkit-box',
-                        WebkitLineClamp: 2,
-                        WebkitBoxOrient: 'vertical',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: isMobile ? 'space-between' : 'flex-end',
+                        gap: '1rem',
+                        width: isMobile ? '100%' : 'auto',
+                        borderTop: isMobile ? '1px solid #f1f5f9' : 'none',
+                        paddingTop: isMobile ? '0.65rem' : 0,
+                        flexShrink: 0,
+                      }}
+                    >
+                      <div style={{ textAlign: isMobile ? 'left' : 'right' }}>
+                        <div style={{ fontSize: '1.15rem', fontWeight: 900, color: '#0f172a' }}>
+                          {course.feeUsd ? `$${course.feeUsd}` : (course.feeDisplay || course.fee || 'Inquire')}
+                        </div>
+                        {course.originalFee && course.originalFee !== 'Available upon request' && (
+                          <div style={{ fontSize: '0.75rem', color: '#94a3b8', textDecoration: 'line-through' }}>
+                            {course.originalFee}
+                          </div>
+                        )}
+                      </div>
+
+                      <div style={{ display: 'flex', gap: '0.4rem' }}>
+                        <button
+                          type="button"
+                          onClick={() => setSelectedCourseForModal(course)}
+                          style={{
+                            background: '#ffffff',
+                            border: '1px solid #cbd5e1',
+                            color: '#334155',
+                            borderRadius: '6px',
+                            padding: '0.45rem 0.75rem',
+                            fontSize: '0.78rem',
+                            fontWeight: 700,
+                            cursor: 'pointer',
+                            whiteSpace: 'nowrap',
+                          }}
+                        >
+                          Syllabus
+                        </button>
+
+                        <button
+                          type="button"
+                          onClick={() => handleOpenCourseApplication(course)}
+                          style={{
+                            background: '#1e3a8a',
+                            border: '1px solid #1e3a8a',
+                            color: '#ffffff',
+                            borderRadius: '6px',
+                            padding: '0.45rem 0.95rem',
+                            fontSize: '0.78rem',
+                            fontWeight: 800,
+                            cursor: 'pointer',
+                            whiteSpace: 'nowrap',
+                          }}
+                        >
+                          Enroll Now
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                )
+              })}
+            </div>
+          )}
+
+          {/* =========================================================================
+              VIEW MODE 2: UDEMY-STYLE COMPACT CARDS WITH HOVER PREVIEW POPOVER
+             ========================================================================= */}
+          {courseViewMode === 'grid' && filteredCourses.length > 0 && (
+            <div
+              style={{
+                display: 'grid',
+                gridTemplateColumns: isMobile ? '1fr' : 'repeat(auto-fill, minmax(260px, 1fr))',
+                gap: '1.25rem',
+              }}
+            >
+              {filteredCourses.map((course) => {
+                const isHovered = hoveredCourseId === course.id
+                return (
+                  <div
+                    key={course.id}
+                    id={course.id}
+                    onMouseEnter={() => setHoveredCourseId(course.id)}
+                    onMouseLeave={() => setHoveredCourseId(null)}
+                    style={{
+                      background: '#ffffff',
+                      border: '1px solid #e2e8f0',
+                      borderRadius: '8px',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      overflow: 'visible', // allow popover if desktop
+                      position: 'relative',
+                      boxShadow: isHovered ? '0 10px 25px -5px rgba(0, 0, 0, 0.1)' : '0 1px 3px rgba(0, 0, 0, 0.04)',
+                      transition: 'all 0.2s cubic-bezier(0.16, 1, 0.3, 1)',
+                      cursor: 'pointer',
+                    }}
+                  >
+                    {/* 16:9 Crisp Course Header Thumbnail Banner */}
+                    <div
+                      onClick={() => setSelectedCourseForModal(course)}
+                      style={{
+                        position: 'relative',
+                        aspectRatio: '16 / 9',
+                        width: '100%',
+                        background: `linear-gradient(135deg, ${(course.tagColor || '#1e3a8a')}25 0%, ${(course.tagColor || '#1e3a8a')}0a 100%)`,
+                        borderTopLeftRadius: '8px',
+                        borderTopRightRadius: '8px',
+                        borderBottom: '1px solid #f1f5f9',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
                         overflow: 'hidden',
                       }}
                     >
-                      {course.title}
-                    </h3>
-
-                    {/* Instructor / Faculty */}
-                    <div style={{ fontSize: '0.78rem', color: '#64748b', marginBottom: '0.65rem' }}>
-                      {course.instructor || 'Éclat Senior Faculty & Certified Lead'}
-                    </div>
-
-                    {/* Rating & Social Proof */}
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '0.85rem' }}>
-                      <span style={{ color: '#b45309', fontSize: '0.88rem', fontWeight: 900 }}>{(course.rating || 4.9).toFixed(1)}</span>
-                      <div style={{ display: 'inline-flex', alignItems: 'center', gap: '2px' }}>
-                        {[...Array(5)].map((_, starIdx) => (
-                          <StarIcon key={starIdx} size={13} color="#f59e0b" fill="#f59e0b" />
-                        ))}
-                      </div>
-                      <span style={{ color: '#64748b', fontSize: '0.76rem' }}>({(course.ratingCount || 1240).toLocaleString()})</span>
-                    </div>
-
-                    {/* Metadata line */}
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.78rem', color: '#64748b', marginBottom: '1rem' }}>
-                      <span style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
-                        <ClockIcon size={12} color="#64748b" /> {course.duration || '8 Weeks'}
-                      </span>
-                      <span>•</span>
-                      <span>Live Virtual Cohort</span>
-                      <span>•</span>
-                      <span>Verified Certificate</span>
-                    </div>
-                  </div>
-
-                  {/* Clean Action Footer */}
-                  <div
-                    style={{
-                      borderTop: '1px solid #f1f5f9',
-                      paddingTop: '0.85rem',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'space-between',
-                      gap: '0.75rem',
-                    }}
-                  >
-                    <div>
-                      <div style={{ fontSize: '0.68rem', color: '#64748b', textTransform: 'uppercase', fontWeight: 700 }}>Tuition</div>
-                      <div style={{ fontSize: '1.1rem', fontWeight: 900, color: '#0f172a' }}>
-                        {course.feeUsd ? `$${course.feeUsd}` : (course.feeDisplay || course.fee || 'Inquire')}
-                      </div>
-                    </div>
-
-                    <div style={{ display: 'flex', gap: '0.4rem' }}>
-                      <button
-                        type="button"
-                        onClick={() => setSelectedCourseForModal(course)}
+                      <div
                         style={{
+                          width: '52px',
+                          height: '52px',
+                          borderRadius: '12px',
                           background: '#ffffff',
-                          border: '1px solid #cbd5e1',
-                          color: '#334155',
-                          borderRadius: '6px',
-                          padding: '0.5rem 0.75rem',
-                          fontSize: '0.8rem',
-                          fontWeight: 700,
-                          cursor: 'pointer',
+                          border: '1px solid #e2e8f0',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          boxShadow: '0 4px 10px rgba(0,0,0,0.06)',
                         }}
                       >
-                        Syllabus
-                      </button>
+                        <CourseIcon courseId={course.id} iconKey={course.icon} size={28} />
+                      </div>
 
-                      <button
-                        type="button"
-                        onClick={() => handleOpenCourseApplication(course)}
+                      {/* Top-Right Badge */}
+                      <div style={{ position: 'absolute', top: '8px', right: '8px' }}>
+                        {course.bestseller ? (
+                          <span
+                            style={{
+                              background: '#fef3c7',
+                              color: '#92400e',
+                              fontWeight: 800,
+                              fontSize: '0.65rem',
+                              padding: '2px 7px',
+                              borderRadius: '4px',
+                              textTransform: 'uppercase',
+                              letterSpacing: '0.04em',
+                              border: '1px solid #fde68a',
+                            }}
+                          >
+                            Bestseller
+                          </span>
+                        ) : (
+                          <span
+                            style={{
+                              background: '#ffffff',
+                              color: '#475569',
+                              fontWeight: 700,
+                              fontSize: '0.65rem',
+                              padding: '2px 7px',
+                              borderRadius: '4px',
+                              border: '1px solid #e2e8f0',
+                            }}
+                          >
+                            Live Online
+                          </span>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Udemy-Style Compact Body (Title, Instructor, Rating, Price) */}
+                    <div
+                      style={{
+                        padding: '0.85rem 1rem',
+                        flex: 1,
+                        display: 'flex',
+                        flexDirection: 'column',
+                        justifyContent: 'space-between',
+                      }}
+                    >
+                      <div>
+                        {/* Course Title (2-line clamp) */}
+                        <h3
+                          onClick={() => setSelectedCourseForModal(course)}
+                          title={course.title}
+                          style={{
+                            fontSize: '0.94rem',
+                            fontWeight: 800,
+                            color: '#0f172a',
+                            margin: '0 0 0.3rem',
+                            lineHeight: 1.35,
+                            fontFamily: 'var(--font-heading)',
+                            height: '2.6rem',
+                            display: '-webkit-box',
+                            WebkitLineClamp: 2,
+                            WebkitBoxOrient: 'vertical',
+                            overflow: 'hidden',
+                          }}
+                        >
+                          {course.title}
+                        </h3>
+
+                        {/* Instructor line */}
+                        <div
+                          style={{
+                            fontSize: '0.74rem',
+                            color: '#64748b',
+                            marginBottom: '0.45rem',
+                            whiteSpace: 'nowrap',
+                            overflow: 'hidden',
+                            textOverflow: 'ellipsis',
+                          }}
+                        >
+                          {course.instructor || 'Éclat Senior Faculty'}
+                        </div>
+
+                        {/* Rating row with stars */}
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '5px', marginBottom: '0.45rem' }}>
+                          <span style={{ color: '#b45309', fontSize: '0.82rem', fontWeight: 900 }}>
+                            {(course.rating || 4.9).toFixed(1)}
+                          </span>
+                          <div style={{ display: 'inline-flex', alignItems: 'center', gap: '1.5px' }}>
+                            {[...Array(5)].map((_, starIdx) => (
+                              <StarIcon key={starIdx} size={11} color="#f59e0b" fill="#f59e0b" />
+                            ))}
+                          </div>
+                          <span style={{ color: '#94a3b8', fontSize: '0.72rem' }}>
+                            ({(course.ratingCount || 1240).toLocaleString()})
+                          </span>
+                        </div>
+
+                        {/* Duration pill */}
+                        <div style={{ fontSize: '0.72rem', color: '#64748b', marginBottom: '0.5rem', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                          <ClockIcon size={11} color="#64748b" /> {course.duration || '8 Weeks'}
+                        </div>
+                      </div>
+
+                      {/* Pricing row & Action buttons */}
+                      <div
                         style={{
-                          background: '#1e3a8a',
-                          border: '1px solid #1e3a8a',
-                          color: '#ffffff',
-                          borderRadius: '6px',
-                          padding: '0.5rem 0.95rem',
-                          fontSize: '0.8rem',
-                          fontWeight: 800,
-                          cursor: 'pointer',
+                          borderTop: '1px solid #f1f5f9',
+                          paddingTop: '0.65rem',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'space-between',
+                          gap: '0.5rem',
                         }}
                       >
-                        Enroll Now
-                      </button>
+                        <div>
+                          <div style={{ fontSize: '1.05rem', fontWeight: 900, color: '#0f172a' }}>
+                            {course.feeUsd ? `$${course.feeUsd}` : (course.feeDisplay || course.fee || 'Inquire')}
+                          </div>
+                        </div>
+
+                        <div style={{ display: 'flex', gap: '0.35rem' }}>
+                          <button
+                            type="button"
+                            onClick={(e) => {
+                              e.stopPropagation()
+                              setSelectedCourseForModal(course)
+                            }}
+                            style={{
+                              background: '#ffffff',
+                              border: '1px solid #cbd5e1',
+                              color: '#334155',
+                              borderRadius: '4px',
+                              padding: '0.35rem 0.55rem',
+                              fontSize: '0.74rem',
+                              fontWeight: 700,
+                              cursor: 'pointer',
+                            }}
+                          >
+                            Details
+                          </button>
+
+                          <button
+                            type="button"
+                            onClick={(e) => {
+                              e.stopPropagation()
+                              handleOpenCourseApplication(course)
+                            }}
+                            style={{
+                              background: '#1e3a8a',
+                              border: '1px solid #1e3a8a',
+                              color: '#ffffff',
+                              borderRadius: '4px',
+                              padding: '0.35rem 0.75rem',
+                              fontSize: '0.74rem',
+                              fontWeight: 800,
+                              cursor: 'pointer',
+                            }}
+                          >
+                            Enroll
+                          </button>
+                        </div>
+                      </div>
                     </div>
+
+                    {/* Udemy-Style Floating Hover Preview Popover (Desktop only) */}
+                    {!isMobile && isHovered && (
+                      <div
+                        style={{
+                          position: 'absolute',
+                          top: '-10px',
+                          left: '102%',
+                          width: '320px',
+                          background: '#ffffff',
+                          borderRadius: '10px',
+                          boxShadow: '0 20px 40px rgba(0, 0, 0, 0.18), 0 4px 12px rgba(0, 0, 0, 0.08)',
+                          border: '1px solid #cbd5e1',
+                          padding: '1.25rem',
+                          zIndex: 100,
+                          pointerEvents: 'auto',
+                          animation: 'fadeIn 0.15s ease',
+                        }}
+                      >
+                        <h4 style={{ fontSize: '1rem', fontWeight: 800, color: '#0f172a', margin: '0 0 0.4rem', lineHeight: 1.3 }}>
+                          {course.title}
+                        </h4>
+
+                        <div style={{ fontSize: '0.72rem', color: '#16a34a', fontWeight: 700, marginBottom: '0.4rem' }}>
+                          ✓ Updated 2026 • Verified Éclat Curriculum
+                        </div>
+
+                        <div style={{ fontSize: '0.76rem', color: '#64748b', marginBottom: '0.75rem' }}>
+                          {course.duration} • All Shifts Available • Certified Faculty
+                        </div>
+
+                        {/* What you'll learn checklist */}
+                        <div style={{ fontSize: '0.78rem', fontWeight: 800, color: '#334155', marginBottom: '0.5rem' }}>
+                          What you'll learn:
+                        </div>
+                        <ul style={{ margin: '0 0 1rem', padding: 0, listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                          {(course.skills || []).slice(0, 3).map((skill, sIdx) => (
+                            <li key={sIdx} style={{ display: 'flex', alignItems: 'flex-start', gap: '6px', fontSize: '0.76rem', color: '#475569', lineHeight: 1.35 }}>
+                              <span style={{ color: '#16a34a', flexShrink: 0, fontWeight: 900 }}>✓</span>
+                              <span>{skill}</span>
+                            </li>
+                          ))}
+                        </ul>
+
+                        {/* CTA Buttons in Popover */}
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                          <button
+                            type="button"
+                            onClick={() => handleOpenCourseApplication(course)}
+                            style={{
+                              width: '100%',
+                              background: '#1e3a8a',
+                              color: '#ffffff',
+                              border: 'none',
+                              borderRadius: '6px',
+                              padding: '0.6rem',
+                              fontWeight: 800,
+                              fontSize: '0.84rem',
+                              cursor: 'pointer',
+                            }}
+                          >
+                            Enroll Now — {course.feeUsd ? `$${course.feeUsd}` : (course.feeDisplay || course.fee || 'Inquire')}
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => setSelectedCourseForModal(course)}
+                            style={{
+                              width: '100%',
+                              background: '#f8fafc',
+                              color: '#334155',
+                              border: '1px solid #cbd5e1',
+                              borderRadius: '6px',
+                              padding: '0.5rem',
+                              fontWeight: 700,
+                              fontSize: '0.78rem',
+                              cursor: 'pointer',
+                            }}
+                          >
+                            View Full Syllabus Modules
+                          </button>
+                        </div>
+                      </div>
+                    )}
                   </div>
-                </div>
-              </div>
-            ))}
-          </div>
+                )
+              })}
+            </div>
+          )}
         </div>
       </section>
 
