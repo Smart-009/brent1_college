@@ -1151,28 +1151,26 @@ export function Landing() {
                     <GraduationCapIcon size={14} color="#16a34a" />
                     <span>Careers</span>
                   </Link>
-                  <button
-                    type="button"
-                    onClick={() => setTutorModalOpen(true)}
+                  <Link
+                    to="/publish-course"
                     style={{
                       background: 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)',
                       color: '#ffffff',
-                      border: 'none',
+                      textDecoration: 'none',
                       fontWeight: 800,
-                      padding: '0.35rem 0.65rem',
+                      padding: '0.35rem 0.75rem',
                       borderRadius: '8px',
                       fontSize: '0.8rem',
-                      cursor: 'pointer',
                       display: 'inline-flex',
                       alignItems: 'center',
                       gap: '5px',
                       boxShadow: '0 2px 8px rgba(217, 119, 6, 0.3)',
                     }}
-                    title="Develop & Teach a Course at Éclat Institute"
+                    title="Publish a Course & Earn 50% Revenue Share"
                   >
                     <SparklesIcon size={13} color="#ffffff" />
-                    <span>Teach / Create Course</span>
-                  </button>
+                    <span>Publish & Earn 50%</span>
+                  </Link>
                   <Link to="/library" style={{ color: '#2563eb', fontWeight: 800, textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: '5px' }}>
                     <LibraryIcon size={14} color="#2563eb" />
                     <span>E-Library</span>
@@ -1674,14 +1672,12 @@ export function Landing() {
                 <span>Careers & Teaching Positions</span>
               </Link>
 
-              <button
-                type="button"
-                onClick={() => {
-                  setMobileNavOpen(false)
-                  setTutorModalOpen(true)
-                }}
+              <Link
+                to="/publish-course"
+                onClick={() => setMobileNavOpen(false)}
                 style={{
                   color: '#92400e',
+                  textDecoration: 'none',
                   background: '#fef3c7',
                   border: '1.5px solid #fde68a',
                   padding: '0.65rem 0.8rem',
@@ -1691,14 +1687,12 @@ export function Landing() {
                   gap: '10px',
                   fontSize: '0.88rem',
                   fontWeight: 800,
-                  cursor: 'pointer',
-                  textAlign: 'left',
                   width: '100%',
                 }}
               >
                 <SparklesIcon size={18} color="#d97706" />
-                <span>Teach with Us / Develop Course</span>
-              </button>
+                <span>Publish Course (Earn 50% Share)</span>
+              </Link>
 
               <Link
                 to="/about"
@@ -3043,18 +3037,16 @@ export function Landing() {
 
               {/* Action Buttons */}
               <div style={{ display: 'flex', gap: '0.85rem', flexWrap: 'wrap', alignItems: 'center' }}>
-                <button
-                  type="button"
-                  onClick={() => setTutorModalOpen(true)}
+                <Link
+                  to="/publish-course"
                   style={{
                     background: 'linear-gradient(135deg, #d97706 0%, #b45309 100%)',
                     color: '#ffffff',
-                    border: 'none',
+                    textDecoration: 'none',
                     borderRadius: '10px',
                     padding: '0.85rem 1.6rem',
                     fontSize: '0.95rem',
                     fontWeight: 900,
-                    cursor: 'pointer',
                     display: 'inline-flex',
                     alignItems: 'center',
                     gap: '8px',
@@ -3063,8 +3055,8 @@ export function Landing() {
                   }}
                 >
                   <RocketIcon size={18} color="#ffffff" />
-                  <span>Apply as Course Creator / Tutor →</span>
-                </button>
+                  <span>Publish Course & Earn 50% Share →</span>
+                </Link>
 
                 <a
                   href={getWhatsAppInquiryUrl('Hello Eclat Academic Directorate! I am a tutor/course creator interested in developing courses with Éclat Institute.')}
