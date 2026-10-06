@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react'
 import { useParams, Link, useNavigate, useLocation } from 'react-router-dom'
 import { tenantSchoolStore } from '@/lib/tenantSchoolStore'
+import { getTenantDomainLinks } from '@/lib/tenantDomain'
+import type { TenantDomainLinks } from '@/lib/tenantDomain'
 import { INSTITUTION_CONFIG } from '@/config/institution'
 import type { PartnerSchoolTenant } from '@/types/tenantSchool'
 import {
@@ -32,6 +34,9 @@ export function TenantSchoolHub() {
   const [school, setSchool] = useState<PartnerSchoolTenant | null>(null)
   const [loading, setLoading] = useState(true)
   const [copiedLink, setCopiedLink] = useState<string | null>(null)
+  const [showDomainModal, setShowDomainModal] = useState(false)
+  const [customDomainInput, setCustomDomainInput] = useState('')
+  const [customDomainMessage, setCustomDomainMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null)
   const [activeTab, setActiveTab] = useState<'hub' | 'calendar' | 'student' | 'teacher' | 'bursar' | 'principal'>(() => {
     if (subview === 'student') return 'student'
     if (subview === 'teacher') return 'teacher'
@@ -48,6 +53,9 @@ export function TenantSchoolHub() {
     }
     const found = tenantSchoolStore.getSchoolBySlug(schoolSlug)
     setSchool(found)
+    if (found?.custom_domain) {
+      setCustomDomainInput(found.custom_domain)
+    }
     setLoading(false)
   }, [schoolSlug])
 
@@ -65,6 +73,29 @@ export function TenantSchoolHub() {
     navigator.clipboard.writeText(fullUrl)
     setCopiedLink(label)
     setTimeout(() => setCopiedLink(null), 2500)
+  }
+
+  const copyRawText = (text: string, label: string) => {
+    navigator.clipboard.writeText(text)
+    setCopiedLink(label)
+    setTimeout(() => setCopiedLink(null), 2500)
+  }
+
+  const handleSaveCustomDomain = (e?: React.FormEvent) => {
+    if (e) e.preventDefault()
+    if (!school) return
+    const cleaned = customDomainInput.trim().replace(/^https?:\/\//i, '').replace(/\/.*$/, '').toLowerCase()
+    const updated = tenantSchoolStore.updateSchoolCustomDomain(school.slug, cleaned)
+    if (updated) {
+      setSchool(updated)
+      setCustomDomainMessage({
+        type: 'success',
+        text: cleaned
+          ? `Custom domain "${cleaned}" linked! Point your DNS CNAME to "eclat.institute".`
+          : 'Custom domain cleared successfully.',
+      })
+      setTimeout(() => setCustomDomainMessage(null), 4500)
+    }
   }
 
   if (loading) {
@@ -136,6 +167,7 @@ export function TenantSchoolHub() {
   const isSemester = school.academic_system === 'semester'
   const systemTermLabel = isSemester ? 'Semester' : 'Term'
   const systemPluralLabel = isSemester ? 'Semesters' : 'Terms'
+  const domainLinks = getTenantDomainLinks(school)
 
   return (
     <div style={{ minHeight: '100vh', background: '#f8fafc', color: '#0f172a', fontFamily: 'Inter, system-ui, sans-serif' }}>
@@ -183,6 +215,43 @@ export function TenantSchoolHub() {
 
           {/* Right: School Status & Switch Desks */}
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
+            {/* Dedicated Domain & Special Links Trigger */}
+            <button
+              type="button"
+              onClick={() => setShowDomainModal(true)}
+              style={{
+                background: `${accentColor}18`,
+                color: '#0f172a',
+                border: `1.5px solid ${accentColor}70`,
+                borderRadius: '8px',
+                padding: '0.35rem 0.75rem',
+                fontSize: '0.76rem',
+                fontWeight: 800,
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '6px',
+                cursor: 'pointer',
+                transition: 'all 0.15s ease',
+              }}
+              title="Manage Dedicated Subdomains, Special Links & Custom DNS"
+            >
+              <GlobeIcon size={14} color={primaryColor} />
+              <span>Special Links &amp; Domains</span>
+              <span
+                style={{
+                  background: '#ffffff',
+                  color: primaryColor,
+                  border: `1px solid ${primaryColor}40`,
+                  borderRadius: '4px',
+                  padding: '1px 5px',
+                  fontSize: '0.7rem',
+                  fontWeight: 800,
+                }}
+              >
+                {school.slug}.eclat.institute
+              </span>
+            </button>
+
             {/* Active Calendar Pill */}
             <div
               style={{
@@ -375,30 +444,67 @@ export function TenantSchoolHub() {
                 </p>
 
                 {/* Instant Share Links Bar */}
-                <div style={{ background: 'rgba(0,0,0,0.3)', backdropFilter: 'blur(8px)', borderRadius: '16px', padding: '1rem 1.25rem', border: '1px solid rgba(255,255,255,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '0.75rem' }}>
-                  <div style={{ fontSize: '0.85rem' }}>
-                    <span style={{ color: '#94a3b8' }}>Dedicated School URL: </span>
-                    <strong style={{ color: '#ffffff', wordBreak: 'break-all' }}>{window.location.origin}/s/{school.slug}</strong>
+                <div style={{ background: 'rgba(0,0,0,0.35)', backdropFilter: 'blur(10px)', borderRadius: '18px', padding: '1.1rem 1.35rem', border: '1px solid rgba(255,255,255,0.18)', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '0.85rem' }}>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                    <div style={{ fontSize: '0.74rem', textTransform: 'uppercase', letterSpacing: '0.06em', color: accentColor, fontWeight: 800 }}>
+                      ⚡ Official Institution Subdomain &amp; Links
+                    </div>
+                    <div style={{ fontSize: '1.05rem', fontWeight: 900, color: '#ffffff', display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
+                      <span style={{ letterSpacing: '-0.01em' }}>{domainLinks.subdomainUrl}</span>
+                      <span style={{ fontSize: '0.68rem', background: '#22c55e', color: '#052e16', padding: '2px 8px', borderRadius: '999px', fontWeight: 800 }}>
+                        ● Live Subdomain
+                      </span>
+                    </div>
+                    <div style={{ fontSize: '0.78rem', color: '#94a3b8' }}>
+                      Universal Path: <span style={{ color: '#cbd5e1', fontWeight: 600 }}>{domainLinks.pathUrl}</span>
+                      {school.custom_domain && (
+                        <span> • Custom Domain: <strong style={{ color: '#38bdf8' }}>{school.custom_domain}</strong></span>
+                      )}
+                    </div>
                   </div>
-                  <button
-                    type="button"
-                    onClick={() => copyToClipboard(`/s/${school.slug}`, 'Main School URL')}
-                    style={{
-                      background: accentColor,
-                      color: '#0f172a',
-                      fontWeight: 800,
-                      border: 'none',
-                      borderRadius: '8px',
-                      padding: '0.45rem 0.95rem',
-                      fontSize: '0.78rem',
-                      cursor: 'pointer',
-                      display: 'inline-flex',
-                      alignItems: 'center',
-                      gap: '5px',
-                    }}
-                  >
-                    <span>{copiedLink === 'Main School URL' ? '✅ Copied!' : '📋 Copy School Link'}</span>
-                  </button>
+
+                  <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
+                    <button
+                      type="button"
+                      onClick={() => copyRawText(domainLinks.subdomainUrl, 'Official Subdomain')}
+                      style={{
+                        background: accentColor,
+                        color: '#0f172a',
+                        fontWeight: 800,
+                        border: 'none',
+                        borderRadius: '9px',
+                        padding: '0.5rem 0.95rem',
+                        fontSize: '0.78rem',
+                        cursor: 'pointer',
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: '5px',
+                        boxShadow: '0 2px 8px rgba(0,0,0,0.2)',
+                      }}
+                    >
+                      <span>{copiedLink === 'Official Subdomain' ? '✅ Copied Subdomain!' : '📋 Copy Subdomain'}</span>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setShowDomainModal(true)}
+                      style={{
+                        background: 'rgba(255,255,255,0.15)',
+                        color: '#ffffff',
+                        fontWeight: 700,
+                        border: '1px solid rgba(255,255,255,0.3)',
+                        borderRadius: '9px',
+                        padding: '0.5rem 0.95rem',
+                        fontSize: '0.78rem',
+                        cursor: 'pointer',
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: '5px',
+                      }}
+                    >
+                      <GlobeIcon size={14} color="#ffffff" />
+                      <span>Special Links &amp; DNS Setup</span>
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>
@@ -435,6 +541,326 @@ export function TenantSchoolHub() {
                   {school.principal_name}
                 </div>
                 <div style={{ fontSize: '0.76rem', color: primaryColor, marginTop: '2px', fontWeight: 700 }}>{school.principal_title}</div>
+              </div>
+            </div>
+
+            {/* SPECIAL SCHOOL LINKS & DOMAIN MANAGEMENT CENTER */}
+            <div
+              style={{
+                background: '#ffffff',
+                borderRadius: '24px',
+                border: '1.5px solid #e2e8f0',
+                padding: 'clamp(1.5rem, 3vw, 2.25rem)',
+                boxShadow: '0 8px 30px rgba(0,0,0,0.04)',
+                marginBottom: '3rem',
+              }}
+            >
+              <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', flexWrap: 'wrap', gap: '1rem', marginBottom: '1.5rem' }}>
+                <div>
+                  <div style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', background: `${primaryColor}12`, color: primaryColor, borderRadius: '999px', padding: '0.3rem 0.85rem', fontSize: '0.78rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.04em', marginBottom: '0.5rem' }}>
+                    <GlobeIcon size={14} color={primaryColor} />
+                    <span>Special Links &amp; Domain Management</span>
+                  </div>
+                  <h2 style={{ fontSize: '1.5rem', fontWeight: 900, color: '#0f172a', margin: '0 0 0.35rem' }}>
+                    Branded Web Addresses &amp; Separate Portals for {school.name}
+                  </h2>
+                  <p style={{ color: '#64748b', fontSize: '0.92rem', margin: 0, maxWidth: '780px', lineHeight: 1.5 }}>
+                    Give your students, instructors, and accountants direct branded links to their respective dashboards. You have a dedicated Éclat Cloud subdomain and can also connect your school's official domain name via DNS CNAME.
+                  </p>
+                </div>
+
+                <button
+                  type="button"
+                  onClick={() => setShowDomainModal(true)}
+                  style={{
+                    background: primaryColor,
+                    color: '#ffffff',
+                    fontWeight: 800,
+                    fontSize: '0.82rem',
+                    padding: '0.65rem 1.15rem',
+                    borderRadius: '10px',
+                    border: 'none',
+                    cursor: 'pointer',
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '6px',
+                  }}
+                >
+                  <SparklesIcon size={15} color="#ffffff" />
+                  <span>Domain Manager &amp; DNS Instructions</span>
+                </button>
+              </div>
+
+              {/* 3 Domain Cards Grid */}
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '1.25rem' }}>
+                {/* 1. Official Branded Subdomain */}
+                <div style={{ background: '#f8fafc', borderRadius: '18px', padding: '1.5rem', border: '1px solid #cbd5e1', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+                  <div>
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.75rem' }}>
+                      <span style={{ fontSize: '0.74rem', fontWeight: 800, color: '#1d4ed8', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                        1. Dedicated Subdomain
+                      </span>
+                      <span style={{ fontSize: '0.7rem', fontWeight: 800, background: '#dcfce7', color: '#15803d', padding: '2px 8px', borderRadius: '999px' }}>
+                        ● SSL Active
+                      </span>
+                    </div>
+                    <div style={{ fontSize: '1.15rem', fontWeight: 900, color: '#0f172a', wordBreak: 'break-all', marginBottom: '0.5rem' }}>
+                      {domainLinks.subdomainUrl}
+                    </div>
+                    <p style={{ color: '#64748b', fontSize: '0.82rem', lineHeight: 1.5, marginBottom: '1rem' }}>
+                      Your school's reserved public subdomain on Éclat Cloud. Visitors arriving here automatically enter <strong>{school.name}</strong>'s customized portals.
+                    </p>
+
+                    {/* Role-Specific Portal Subdomain Links */}
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.45rem', marginBottom: '1rem' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: '#ffffff', padding: '0.45rem 0.75rem', borderRadius: '8px', border: '1px solid #e2e8f0', fontSize: '0.78rem' }}>
+                        <span>🎓 <strong>Student:</strong> .../student</span>
+                        <button
+                          type="button"
+                          onClick={() => copyRawText(domainLinks.portals.student.subdomain, 'Student Subdomain URL')}
+                          style={{ background: 'none', border: 'none', color: '#2563eb', fontWeight: 700, cursor: 'pointer', fontSize: '0.75rem' }}
+                        >
+                          {copiedLink === 'Student Subdomain URL' ? '✅ Copied' : 'Copy'}
+                        </button>
+                      </div>
+
+                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: '#ffffff', padding: '0.45rem 0.75rem', borderRadius: '8px', border: '1px solid #e2e8f0', fontSize: '0.78rem' }}>
+                        <span>👨‍🏫 <strong>Teacher:</strong> .../teacher</span>
+                        <button
+                          type="button"
+                          onClick={() => copyRawText(domainLinks.portals.teacher.subdomain, 'Teacher Subdomain URL')}
+                          style={{ background: 'none', border: 'none', color: '#2563eb', fontWeight: 700, cursor: 'pointer', fontSize: '0.75rem' }}
+                        >
+                          {copiedLink === 'Teacher Subdomain URL' ? '✅ Copied' : 'Copy'}
+                        </button>
+                      </div>
+
+                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: '#ffffff', padding: '0.45rem 0.75rem', borderRadius: '8px', border: '1px solid #e2e8f0', fontSize: '0.78rem' }}>
+                        <span>💼 <strong>Bursar:</strong> .../bursar</span>
+                        <button
+                          type="button"
+                          onClick={() => copyRawText(domainLinks.portals.bursar.subdomain, 'Bursar Subdomain URL')}
+                          style={{ background: 'none', border: 'none', color: '#2563eb', fontWeight: 700, cursor: 'pointer', fontSize: '0.75rem' }}
+                        >
+                          {copiedLink === 'Bursar Subdomain URL' ? '✅ Copied' : 'Copy'}
+                        </button>
+                      </div>
+
+                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: '#ffffff', padding: '0.45rem 0.75rem', borderRadius: '8px', border: '1px solid #e2e8f0', fontSize: '0.78rem' }}>
+                        <span>🏛️ <strong>Principal:</strong> .../principal</span>
+                        <button
+                          type="button"
+                          onClick={() => copyRawText(domainLinks.portals.principal.subdomain, 'Principal Subdomain URL')}
+                          style={{ background: 'none', border: 'none', color: '#2563eb', fontWeight: 700, cursor: 'pointer', fontSize: '0.75rem' }}
+                        >
+                          {copiedLink === 'Principal Subdomain URL' ? '✅ Copied' : 'Copy'}
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div style={{ display: 'flex', gap: '0.5rem', marginTop: '0.5rem' }}>
+                    <button
+                      type="button"
+                      onClick={() => copyRawText(domainLinks.subdomainUrl, 'Official Subdomain')}
+                      style={{
+                        flex: 1,
+                        background: '#1d4ed8',
+                        color: '#ffffff',
+                        fontWeight: 800,
+                        padding: '0.6rem',
+                        borderRadius: '10px',
+                        border: 'none',
+                        cursor: 'pointer',
+                        fontSize: '0.8rem',
+                      }}
+                    >
+                      {copiedLink === 'Official Subdomain' ? '✅ Copied Subdomain' : '📋 Copy Subdomain Link'}
+                    </button>
+                  </div>
+                </div>
+
+                {/* 2. Universal Zero-Config Path */}
+                <div style={{ background: '#f8fafc', borderRadius: '18px', padding: '1.5rem', border: '1px solid #cbd5e1', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+                  <div>
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.75rem' }}>
+                      <span style={{ fontSize: '0.74rem', fontWeight: 800, color: '#475569', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                        2. Universal Path (Zero-Config)
+                      </span>
+                      <span style={{ fontSize: '0.7rem', fontWeight: 800, background: '#e0f2fe', color: '#0369a1', padding: '2px 8px', borderRadius: '999px' }}>
+                        Instant Access
+                      </span>
+                    </div>
+                    <div style={{ fontSize: '1.05rem', fontWeight: 900, color: '#0f172a', wordBreak: 'break-all', marginBottom: '0.5rem' }}>
+                      {domainLinks.pathUrl}
+                    </div>
+                    <p style={{ color: '#64748b', fontSize: '0.82rem', lineHeight: 1.5, marginBottom: '1rem' }}>
+                      Works everywhere immediately without any DNS configuration or propagation delay. Perfect for text messages, WhatsApp, and parent notices.
+                    </p>
+
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.45rem', marginBottom: '1rem' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: '#ffffff', padding: '0.45rem 0.75rem', borderRadius: '8px', border: '1px solid #e2e8f0', fontSize: '0.78rem' }}>
+                        <span>🎓 <strong>Student:</strong> /s/{school.slug}/student</span>
+                        <button
+                          type="button"
+                          onClick={() => copyToClipboard(`/s/${school.slug}/student`, 'Student Path')}
+                          style={{ background: 'none', border: 'none', color: '#475569', fontWeight: 700, cursor: 'pointer', fontSize: '0.75rem' }}
+                        >
+                          {copiedLink === 'Student Path' ? '✅ Copied' : 'Copy'}
+                        </button>
+                      </div>
+                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: '#ffffff', padding: '0.45rem 0.75rem', borderRadius: '8px', border: '1px solid #e2e8f0', fontSize: '0.78rem' }}>
+                        <span>👨‍🏫 <strong>Teacher:</strong> /s/{school.slug}/teacher</span>
+                        <button
+                          type="button"
+                          onClick={() => copyToClipboard(`/s/${school.slug}/teacher`, 'Teacher Path')}
+                          style={{ background: 'none', border: 'none', color: '#475569', fontWeight: 700, cursor: 'pointer', fontSize: '0.75rem' }}
+                        >
+                          {copiedLink === 'Teacher Path' ? '✅ Copied' : 'Copy'}
+                        </button>
+                      </div>
+                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: '#ffffff', padding: '0.45rem 0.75rem', borderRadius: '8px', border: '1px solid #e2e8f0', fontSize: '0.78rem' }}>
+                        <span>💼 <strong>Bursar:</strong> /s/{school.slug}/bursar</span>
+                        <button
+                          type="button"
+                          onClick={() => copyToClipboard(`/s/${school.slug}/bursar`, 'Bursar Path')}
+                          style={{ background: 'none', border: 'none', color: '#475569', fontWeight: 700, cursor: 'pointer', fontSize: '0.75rem' }}
+                        >
+                          {copiedLink === 'Bursar Path' ? '✅ Copied' : 'Copy'}
+                        </button>
+                      </div>
+                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: '#ffffff', padding: '0.45rem 0.75rem', borderRadius: '8px', border: '1px solid #e2e8f0', fontSize: '0.78rem' }}>
+                        <span>🏛️ <strong>Principal:</strong> /s/{school.slug}/principal</span>
+                        <button
+                          type="button"
+                          onClick={() => copyToClipboard(`/s/${school.slug}/principal`, 'Principal Path')}
+                          style={{ background: 'none', border: 'none', color: '#475569', fontWeight: 700, cursor: 'pointer', fontSize: '0.75rem' }}
+                        >
+                          {copiedLink === 'Principal Path' ? '✅ Copied' : 'Copy'}
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+
+                  <button
+                    type="button"
+                    onClick={() => copyToClipboard(`/s/${school.slug}`, 'Universal Path')}
+                    style={{
+                      background: '#334155',
+                      color: '#ffffff',
+                      fontWeight: 800,
+                      padding: '0.6rem',
+                      borderRadius: '10px',
+                      border: 'none',
+                      cursor: 'pointer',
+                      fontSize: '0.8rem',
+                      marginTop: '0.5rem',
+                    }}
+                  >
+                    {copiedLink === 'Universal Path' ? '✅ Copied Path URL' : '📋 Copy Universal Path'}
+                  </button>
+                </div>
+
+                {/* 3. Custom School Domain (BYOD) */}
+                <div style={{ background: '#f8fafc', borderRadius: '18px', padding: '1.5rem', border: '1px solid #cbd5e1', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+                  <div>
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.75rem' }}>
+                      <span style={{ fontSize: '0.74rem', fontWeight: 800, color: '#7c3aed', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                        3. Custom School Domain (BYOD)
+                      </span>
+                      <span style={{ fontSize: '0.7rem', fontWeight: 800, background: school.custom_domain ? '#dcfce7' : '#fef3c7', color: school.custom_domain ? '#15803d' : '#b45309', padding: '2px 8px', borderRadius: '999px' }}>
+                        {school.custom_domain ? '● Connected' : 'Optional'}
+                      </span>
+                    </div>
+
+                    <p style={{ color: '#64748b', fontSize: '0.82rem', lineHeight: 1.5, marginBottom: '0.85rem' }}>
+                      Connect your school's existing official web domain (e.g. <code>portal.{school.slug}.ac.ke</code> or <code>lms.{school.slug}.edu</code>).
+                    </p>
+
+                    <form onSubmit={handleSaveCustomDomain} style={{ marginBottom: '1rem' }}>
+                      <div style={{ display: 'flex', gap: '0.5rem' }}>
+                        <input
+                          type="text"
+                          value={customDomainInput}
+                          onChange={(e) => setCustomDomainInput(e.target.value)}
+                          placeholder="e.g. portal.myschool.edu"
+                          style={{
+                            flex: 1,
+                            padding: '0.55rem 0.75rem',
+                            borderRadius: '8px',
+                            border: '1px solid #cbd5e1',
+                            fontSize: '0.82rem',
+                            outline: 'none',
+                            fontFamily: 'monospace',
+                          }}
+                        />
+                        <button
+                          type="submit"
+                          style={{
+                            background: '#7c3aed',
+                            color: '#ffffff',
+                            fontWeight: 800,
+                            padding: '0.55rem 0.85rem',
+                            borderRadius: '8px',
+                            border: 'none',
+                            fontSize: '0.78rem',
+                            cursor: 'pointer',
+                            whiteSpace: 'nowrap',
+                          }}
+                        >
+                          Save
+                        </button>
+                      </div>
+                    </form>
+
+                    {customDomainMessage && (
+                      <div
+                        style={{
+                          background: customDomainMessage.type === 'success' ? '#f0fdf4' : '#fef2f2',
+                          color: customDomainMessage.type === 'success' ? '#15803d' : '#b91c1c',
+                          border: `1px solid ${customDomainMessage.type === 'success' ? '#86efac' : '#fca5a5'}`,
+                          borderRadius: '8px',
+                          padding: '0.5rem 0.75rem',
+                          fontSize: '0.78rem',
+                          fontWeight: 700,
+                          marginBottom: '0.75rem',
+                        }}
+                      >
+                        {customDomainMessage.text}
+                      </div>
+                    )}
+
+                    <div style={{ background: '#ffffff', borderRadius: '10px', padding: '0.85rem', border: '1px solid #e2e8f0', fontSize: '0.76rem', color: '#475569' }}>
+                      <div style={{ fontWeight: 800, color: '#0f172a', marginBottom: '0.35rem' }}>DNS CNAME Record Setup:</div>
+                      <div style={{ fontFamily: 'monospace', color: '#0f172a', background: '#f1f5f9', padding: '0.35rem 0.5rem', borderRadius: '6px', marginBottom: '0.35rem' }}>
+                        Type: <strong>CNAME</strong> | Name: <strong>portal</strong> | Value: <strong>eclat.institute</strong>
+                      </div>
+                      <span style={{ fontSize: '0.72rem', color: '#64748b' }}>
+                        Once configured, Éclat's domain router directs incoming requests straight to this school portal.
+                      </span>
+                    </div>
+                  </div>
+
+                  {school.custom_domain && (
+                    <button
+                      type="button"
+                      onClick={() => copyRawText(`https://${school.custom_domain}`, 'Custom Domain URL')}
+                      style={{
+                        background: '#7c3aed',
+                        color: '#ffffff',
+                        fontWeight: 800,
+                        padding: '0.6rem',
+                        borderRadius: '10px',
+                        border: 'none',
+                        cursor: 'pointer',
+                        fontSize: '0.8rem',
+                        marginTop: '0.85rem',
+                      }}
+                    >
+                      {copiedLink === 'Custom Domain URL' ? '✅ Copied Custom Domain' : '📋 Copy Custom Domain URL'}
+                    </button>
+                  )}
+                </div>
               </div>
             </div>
 
@@ -1054,6 +1480,342 @@ export function TenantSchoolHub() {
           </div>
         )}
       </main>
+
+      {/* SPECIAL LINKS & CUSTOM DOMAIN MANAGEMENT MODAL */}
+      {showDomainModal && (
+        <div
+          role="dialog"
+          aria-modal="true"
+          style={{
+            position: 'fixed',
+            inset: 0,
+            zIndex: 9999,
+            background: 'rgba(15, 23, 42, 0.72)',
+            backdropFilter: 'blur(6px)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            padding: '1rem',
+            overflowY: 'auto',
+          }}
+          onClick={(e) => {
+            if (e.target === e.currentTarget) setShowDomainModal(false)
+          }}
+        >
+          <div
+            style={{
+              maxWidth: '680px',
+              width: '100%',
+              background: '#ffffff',
+              borderRadius: '24px',
+              boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.35)',
+              border: '1px solid #cbd5e1',
+              overflow: 'hidden',
+              animation: 'fadeIn 0.2s ease-out',
+            }}
+          >
+            {/* Modal Header */}
+            <div style={{ background: `linear-gradient(135deg, ${primaryColor} 0%, #0f172a 100%)`, color: '#ffffff', padding: '1.5rem 1.75rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+              <div>
+                <div style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', fontSize: '0.74rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.05em', color: accentColor, marginBottom: '0.25rem' }}>
+                  <GlobeIcon size={13} color={accentColor} />
+                  <span>Domain &amp; Access Links Configuration</span>
+                </div>
+                <h3 style={{ fontSize: '1.35rem', fontWeight: 900, margin: 0, color: '#ffffff' }}>
+                  Special Links for {school.name}
+                </h3>
+              </div>
+              <button
+                type="button"
+                onClick={() => setShowDomainModal(false)}
+                style={{
+                  background: 'rgba(255,255,255,0.15)',
+                  border: 'none',
+                  color: '#ffffff',
+                  width: '36px',
+                  height: '36px',
+                  borderRadius: '50%',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  fontSize: '1.1rem',
+                  fontWeight: 900,
+                }}
+              >
+                ✕
+              </button>
+            </div>
+
+            {/* Modal Body */}
+            <div style={{ padding: '1.75rem', maxHeight: '75vh', overflowY: 'auto' }}>
+              {/* Notification Banner */}
+              {customDomainMessage && (
+                <div
+                  style={{
+                    background: customDomainMessage.type === 'success' ? '#f0fdf4' : '#fef2f2',
+                    color: customDomainMessage.type === 'success' ? '#15803d' : '#b91c1c',
+                    border: `1px solid ${customDomainMessage.type === 'success' ? '#86efac' : '#fca5a5'}`,
+                    borderRadius: '12px',
+                    padding: '0.75rem 1rem',
+                    fontSize: '0.82rem',
+                    fontWeight: 700,
+                    marginBottom: '1.25rem',
+                  }}
+                >
+                  {customDomainMessage.text}
+                </div>
+              )}
+
+              {/* 1. Official Subdomain Section */}
+              <div style={{ background: '#f8fafc', borderRadius: '16px', padding: '1.25rem', border: '1px solid #e2e8f0', marginBottom: '1.25rem' }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
+                  <span style={{ fontSize: '0.76rem', fontWeight: 800, color: '#1d4ed8', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
+                    1. Dedicated School Subdomain
+                  </span>
+                  <span style={{ fontSize: '0.68rem', fontWeight: 800, background: '#dcfce7', color: '#15803d', padding: '2px 8px', borderRadius: '999px' }}>
+                    ● Active SSL Subdomain
+                  </span>
+                </div>
+                <div style={{ fontSize: '1.1rem', fontWeight: 900, color: '#0f172a', wordBreak: 'break-all', marginBottom: '0.5rem' }}>
+                  {domainLinks.subdomainUrl}
+                </div>
+                <p style={{ color: '#64748b', fontSize: '0.8rem', lineHeight: 1.5, marginBottom: '0.85rem' }}>
+                  Share this address with students and staff. You can also provide them with their specific dashboard links directly:
+                </p>
+
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '0.5rem' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: '#ffffff', padding: '0.5rem 0.75rem', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '0.78rem' }}>
+                    <span>🎓 <strong>Student:</strong> .../student</span>
+                    <button
+                      type="button"
+                      onClick={() => copyRawText(domainLinks.portals.student.subdomain, 'Modal Student Link')}
+                      style={{ background: 'none', border: 'none', color: '#2563eb', fontWeight: 700, cursor: 'pointer' }}
+                    >
+                      {copiedLink === 'Modal Student Link' ? '✅ Copied' : 'Copy'}
+                    </button>
+                  </div>
+
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: '#ffffff', padding: '0.5rem 0.75rem', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '0.78rem' }}>
+                    <span>👨‍🏫 <strong>Teacher:</strong> .../teacher</span>
+                    <button
+                      type="button"
+                      onClick={() => copyRawText(domainLinks.portals.teacher.subdomain, 'Modal Teacher Link')}
+                      style={{ background: 'none', border: 'none', color: '#2563eb', fontWeight: 700, cursor: 'pointer' }}
+                    >
+                      {copiedLink === 'Modal Teacher Link' ? '✅ Copied' : 'Copy'}
+                    </button>
+                  </div>
+
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: '#ffffff', padding: '0.5rem 0.75rem', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '0.78rem' }}>
+                    <span>💼 <strong>Bursar:</strong> .../bursar</span>
+                    <button
+                      type="button"
+                      onClick={() => copyRawText(domainLinks.portals.bursar.subdomain, 'Modal Bursar Link')}
+                      style={{ background: 'none', border: 'none', color: '#2563eb', fontWeight: 700, cursor: 'pointer' }}
+                    >
+                      {copiedLink === 'Modal Bursar Link' ? '✅ Copied' : 'Copy'}
+                    </button>
+                  </div>
+
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: '#ffffff', padding: '0.5rem 0.75rem', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '0.78rem' }}>
+                    <span>🏛️ <strong>Principal:</strong> .../principal</span>
+                    <button
+                      type="button"
+                      onClick={() => copyRawText(domainLinks.portals.principal.subdomain, 'Modal Principal Link')}
+                      style={{ background: 'none', border: 'none', color: '#2563eb', fontWeight: 700, cursor: 'pointer' }}
+                    >
+                      {copiedLink === 'Modal Principal Link' ? '✅ Copied' : 'Copy'}
+                    </button>
+                  </div>
+
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: '#ffffff', padding: '0.5rem 0.75rem', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '0.78rem' }}>
+                    <span>🗓️ <strong>Calendar:</strong> .../calendar</span>
+                    <button
+                      type="button"
+                      onClick={() => copyRawText(domainLinks.portals.calendar.subdomain, 'Modal Calendar Link')}
+                      style={{ background: 'none', border: 'none', color: '#2563eb', fontWeight: 700, cursor: 'pointer' }}
+                    >
+                      {copiedLink === 'Modal Calendar Link' ? '✅ Copied' : 'Copy'}
+                    </button>
+                  </div>
+                </div>
+
+                <button
+                  type="button"
+                  onClick={() => copyRawText(domainLinks.subdomainUrl, 'Official Subdomain Modal')}
+                  style={{
+                    width: '100%',
+                    background: '#1d4ed8',
+                    color: '#ffffff',
+                    fontWeight: 800,
+                    padding: '0.65rem',
+                    borderRadius: '10px',
+                    border: 'none',
+                    cursor: 'pointer',
+                    fontSize: '0.82rem',
+                    marginTop: '0.85rem',
+                  }}
+                >
+                  {copiedLink === 'Official Subdomain Modal' ? '✅ Copied Subdomain URL' : '📋 Copy Primary Subdomain'}
+                </button>
+              </div>
+
+              {/* 2. Universal Path Section */}
+              <div style={{ background: '#f8fafc', borderRadius: '16px', padding: '1.25rem', border: '1px solid #e2e8f0', marginBottom: '1.25rem' }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
+                  <span style={{ fontSize: '0.76rem', fontWeight: 800, color: '#475569', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
+                    2. Universal Path (Zero-Config Fallback)
+                  </span>
+                  <span style={{ fontSize: '0.68rem', fontWeight: 800, background: '#e0f2fe', color: '#0369a1', padding: '2px 8px', borderRadius: '999px' }}>
+                    Works Everywhere
+                  </span>
+                </div>
+                <div style={{ fontSize: '1rem', fontWeight: 900, color: '#0f172a', wordBreak: 'break-all', marginBottom: '0.5rem' }}>
+                  {domainLinks.pathUrl}
+                </div>
+                <p style={{ color: '#64748b', fontSize: '0.8rem', lineHeight: 1.5, margin: '0 0 0.75rem' }}>
+                  Direct URL path that works immediately on all devices, web browsers, and platforms without waiting for custom DNS propagation.
+                </p>
+                <button
+                  type="button"
+                  onClick={() => copyToClipboard(`/s/${school.slug}`, 'Universal Path Modal')}
+                  style={{
+                    background: '#334155',
+                    color: '#ffffff',
+                    fontWeight: 800,
+                    padding: '0.55rem 1rem',
+                    borderRadius: '8px',
+                    border: 'none',
+                    cursor: 'pointer',
+                    fontSize: '0.8rem',
+                  }}
+                >
+                  {copiedLink === 'Universal Path Modal' ? '✅ Copied Universal Path' : '📋 Copy Universal Path'}
+                </button>
+              </div>
+
+              {/* 3. Custom Domain (BYOD) Section */}
+              <div style={{ background: '#faf5ff', borderRadius: '16px', padding: '1.25rem', border: '1px solid #e9d5ff' }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
+                  <span style={{ fontSize: '0.76rem', fontWeight: 800, color: '#7c3aed', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
+                    3. Connect Custom Domain (BYOD)
+                  </span>
+                  <span style={{ fontSize: '0.68rem', fontWeight: 800, background: school.custom_domain ? '#dcfce7' : '#fef3c7', color: school.custom_domain ? '#15803d' : '#b45309', padding: '2px 8px', borderRadius: '999px' }}>
+                    {school.custom_domain ? `Connected: ${school.custom_domain}` : 'Optional'}
+                  </span>
+                </div>
+                <p style={{ color: '#64748b', fontSize: '0.8rem', lineHeight: 1.5, marginBottom: '0.85rem' }}>
+                  Point your institution's custom subdomain (e.g. <code>portal.{school.slug}.ac.ke</code> or <code>lms.{school.slug}.edu</code>) to Éclat Cloud.
+                </p>
+
+                <form onSubmit={handleSaveCustomDomain} style={{ display: 'flex', gap: '0.5rem', marginBottom: '1rem' }}>
+                  <input
+                    type="text"
+                    value={customDomainInput}
+                    onChange={(e) => setCustomDomainInput(e.target.value)}
+                    placeholder="e.g. portal.myschool.edu"
+                    style={{
+                      flex: 1,
+                      padding: '0.6rem 0.85rem',
+                      borderRadius: '8px',
+                      border: '1px solid #cbd5e1',
+                      fontSize: '0.84rem',
+                      fontFamily: 'monospace',
+                    }}
+                  />
+                  <button
+                    type="submit"
+                    style={{
+                      background: '#7c3aed',
+                      color: '#ffffff',
+                      fontWeight: 800,
+                      padding: '0.6rem 1.15rem',
+                      borderRadius: '8px',
+                      border: 'none',
+                      fontSize: '0.82rem',
+                      cursor: 'pointer',
+                    }}
+                  >
+                    Save Domain
+                  </button>
+                  {school.custom_domain && (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setCustomDomainInput('')
+                        tenantSchoolStore.updateSchoolCustomDomain(school.slug, '')
+                        setSchool(tenantSchoolStore.getSchoolBySlug(school.slug))
+                        setCustomDomainMessage({ type: 'success', text: 'Custom domain cleared.' })
+                      }}
+                      style={{
+                        background: '#f1f5f9',
+                        color: '#64748b',
+                        fontWeight: 700,
+                        padding: '0.6rem 0.85rem',
+                        borderRadius: '8px',
+                        border: '1px solid #cbd5e1',
+                        fontSize: '0.8rem',
+                        cursor: 'pointer',
+                      }}
+                    >
+                      Clear
+                    </button>
+                  )}
+                </form>
+
+                {/* DNS Table */}
+                <div style={{ background: '#ffffff', borderRadius: '12px', padding: '1rem', border: '1px solid #e2e8f0', fontSize: '0.78rem' }}>
+                  <div style={{ fontWeight: 800, color: '#0f172a', marginBottom: '0.5rem' }}>
+                    DNS Setup Instructions:
+                  </div>
+                  <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', marginBottom: '0.5rem' }}>
+                    <thead>
+                      <tr style={{ background: '#f8fafc', color: '#475569' }}>
+                        <th style={{ padding: '0.4rem 0.6rem', border: '1px solid #e2e8f0' }}>Type</th>
+                        <th style={{ padding: '0.4rem 0.6rem', border: '1px solid #e2e8f0' }}>Host / Name</th>
+                        <th style={{ padding: '0.4rem 0.6rem', border: '1px solid #e2e8f0' }}>Points To / Value</th>
+                        <th style={{ padding: '0.4rem 0.6rem', border: '1px solid #e2e8f0' }}>TTL</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td style={{ padding: '0.4rem 0.6rem', border: '1px solid #e2e8f0', fontWeight: 800 }}>CNAME</td>
+                        <td style={{ padding: '0.4rem 0.6rem', border: '1px solid #e2e8f0', fontFamily: 'monospace' }}>portal</td>
+                        <td style={{ padding: '0.4rem 0.6rem', border: '1px solid #e2e8f0', fontFamily: 'monospace', fontWeight: 800, color: '#2563eb' }}>eclat.institute</td>
+                        <td style={{ padding: '0.4rem 0.6rem', border: '1px solid #e2e8f0' }}>3600 (Auto)</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                  <p style={{ margin: 0, color: '#64748b', fontSize: '0.74rem', lineHeight: 1.5 }}>
+                    After adding the CNAME record in your domain registrar (GoDaddy, Cloudflare, Namecheap, etc.), requests for your custom domain will automatically load {school.name}'s dedicated portals.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {/* Modal Footer */}
+            <div style={{ padding: '1rem 1.75rem', background: '#f8fafc', borderTop: '1px solid #e2e8f0', display: 'flex', justifyContent: 'flex-end' }}>
+              <button
+                type="button"
+                onClick={() => setShowDomainModal(false)}
+                style={{
+                  background: '#0f172a',
+                  color: '#ffffff',
+                  fontWeight: 800,
+                  fontSize: '0.84rem',
+                  padding: '0.55rem 1.25rem',
+                  borderRadius: '10px',
+                  border: 'none',
+                  cursor: 'pointer',
+                }}
+              >
+                Done
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }

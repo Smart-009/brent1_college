@@ -395,6 +395,8 @@ class TenantSchoolStore {
       principal_name: input.principal_name.trim(),
       principal_title: input.principal_title?.trim() || 'Principal / Head of School',
       principal_email: input.principal_email?.trim() || input.contact_email.trim(),
+      custom_domain: input.custom_domain?.trim() || undefined,
+      subdomain: finalSlug,
       stats: {
         students: 120,
         teachers: 12,
@@ -418,6 +420,15 @@ class TenantSchoolStore {
     this.schools.unshift(newSchool)
     this.saveSchools()
     return newSchool
+  }
+
+  public updateSchoolCustomDomain(
+    slug: string,
+    customDomain: string
+  ): PartnerSchoolTenant | null {
+    return this.updateSchoolBranding(slug, {
+      custom_domain: customDomain.trim() || undefined,
+    })
   }
 
   public updateSchoolBranding(

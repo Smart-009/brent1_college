@@ -1,9 +1,11 @@
 import { lazy, Suspense, useEffect, useState } from 'react'
-import { Routes, Route, Navigate } from 'react-router-dom'
+import { Routes, Route, Navigate, useLocation, useNavigate } from 'react-router-dom'
 import type { ReactElement } from 'react'
 import { useAuth } from '@/hooks/useAuth'
 import { schoolStore } from '@/lib/schoolData'
 import { initOTAUpdater } from '@/lib/otaUpdater'
+import { tenantSchoolStore } from '@/lib/tenantSchoolStore'
+import { detectTenantFromHost } from '@/lib/tenantDomain'
 import { LayoutShell } from '@/components/layout/LayoutShell'
 import { LoadingScreen, AppOpeningSplashScreen } from '@/components/ui/Spinner'
 import { PullToRefresh } from '@/components/shared/PullToRefresh'
@@ -89,10 +91,20 @@ function RequireAuth({ children, allowedRoles }: { children: ReactElement; allow
   return children
 }
 
-/** Clean Platform-Aware Entry Router */
+/** Clean Platform-Aware Entry Router with Subdomain & Custom Domain Auto-Detection */
 function RootEntryRouter() {
   const { profile, loading } = useAuth()
   if (loading) return <LoadingScreen message="Opening learning workstation..." />
+
+  // 1. Check if visited via Tenant Subdomain (e.g., hillcrest.eclat.institute or apex-tech.localhost) or Custom Domain
+  if (typeof window !== 'undefined') {
+    const detected = detectTenantFromHost(window.location.hostname, tenantSchoolStore.getSchools())
+    if (detected) {
+      return <Navigate to={`/s/${detected.school.slug}`} replace />
+    }
+  }
+
+  // 2. Native App routing
   if (isNativeApp()) {
     if (profile) {
       if (profile.role === 'admin') return <Navigate to="/admin" replace />
@@ -103,7 +115,37 @@ function RootEntryRouter() {
     }
     return <Navigate to="/login" replace />
   }
+
+  // 3. Web Homepage
   return <Landing />
+}
+
+/** Proactive Subdomain Router: Directs sub-routes on tenant subdomains (e.g. hillcrest.eclat.institute/student -> /s/hillcrest/student) */
+function TenantSubdomainWatcher() {
+  const location = useLocation()
+  const navigate = useNavigate()
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return
+    const detected = detectTenantFromHost(window.location.hostname, tenantSchoolStore.getSchools())
+    if (!detected) return
+
+    const path = location.pathname.toLowerCase()
+    // Do not redirect if already on a scoped /s/ or /schools/ route
+    if (path.startsWith('/s/') || path.startsWith('/schools/')) return
+
+    const knownSubviews = ['student', 'teacher', 'bursar', 'principal', 'admin', 'calendar']
+    const matched = knownSubviews.find((v) => path === `/${v}` || path.startsWith(`/${v}/`))
+
+    if (matched) {
+      const normalizedView = matched === 'admin' ? 'principal' : matched
+      navigate(`/s/${detected.school.slug}/${normalizedView}`, { replace: true })
+    } else if (path === '/' || path === '') {
+      navigate(`/s/${detected.school.slug}`, { replace: true })
+    }
+  }, [location.pathname, navigate])
+
+  return null
 }
 
 export function App() {
@@ -133,6 +175,7 @@ export function App() {
       {showOpeningSplash && (
         <AppOpeningSplashScreen onFinished={() => setShowOpeningSplash(false)} />
       )}
+      <TenantSubdomainWatcher />
       <PullToRefresh />
       <ConcurrentSessionAlertModal />
       <Routes>

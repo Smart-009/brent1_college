@@ -44,6 +44,8 @@ export interface PartnerSchoolTenant {
   contact_email: string
   contact_phone: string
   website?: string
+  custom_domain?: string // e.g. "portal.hillcrest.edu" or "lms.apextech.ac.ke"
+  subdomain?: string     // e.g. "hillcrest" -> "hillcrest.eclat.institute"
   principal_name: string
   principal_title: string // e.g. "Principal", "Head of School", "Dean", "Director"
   principal_email: string
@@ -84,4 +86,5 @@ export interface CreateTenantSchoolInput {
   principal_name: string
   principal_title?: string
   principal_email?: string
+  custom_domain?: string
 }

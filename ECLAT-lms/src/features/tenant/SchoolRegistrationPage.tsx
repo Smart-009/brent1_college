@@ -1,6 +1,7 @@
 import { useState, useId } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { tenantSchoolStore } from '@/lib/tenantSchoolStore'
+import { getTenantDomainLinks } from '@/lib/tenantDomain'
 import type { AcademicCalendarSystem, PartnerSchoolTenant } from '@/types/tenantSchool'
 import {
   GraduationCapIcon,
@@ -155,6 +156,7 @@ export function SchoolRegistrationPage() {
   if (registeredSchool) {
     const hubUrl = `/s/${registeredSchool.slug}`
     const fullOrigin = typeof window !== 'undefined' ? window.location.origin : 'https://eclat.institute'
+    const domainLinks = getTenantDomainLinks(registeredSchool)
 
     return (
       <div style={{ minHeight: '100vh', background: '#f8fafc', padding: '3rem 1.5rem', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -195,53 +197,86 @@ export function SchoolRegistrationPage() {
           <h1 style={{ fontSize: '1.85rem', fontWeight: 900, color: '#0f172a', marginBottom: '0.5rem', letterSpacing: '-0.02em' }}>
             {registeredSchool.name} is Live!
           </h1>
-          <p style={{ color: '#64748b', fontSize: '1rem', lineHeight: 1.6, marginBottom: '2rem' }}>
-            Your institution management ecosystem has been created with custom branding and separate dedicated portal URLs for your staff and students.
+          <p style={{ color: '#64748b', fontSize: '1rem', lineHeight: 1.6, marginBottom: '1.5rem' }}>
+            Your institution management ecosystem has been created with custom branding, an official dedicated subdomain, and separate portal URLs for staff and students.
           </p>
 
-          {/* Quick URL Cards */}
-          <div style={{ background: '#f8fafc', borderRadius: '20px', padding: '1.25rem', border: '1px solid #e2e8f0', textAlign: 'left', marginBottom: '2rem' }}>
-            <h4 style={{ fontSize: '0.85rem', fontWeight: 800, color: '#475569', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '0.85rem' }}>
-              Your School Dedicated URLs:
+          {/* Primary Dedicated Subdomain Banner */}
+          <div
+            style={{
+              background: `linear-gradient(135deg, ${registeredSchool.primary_color} 0%, #0f172a 100%)`,
+              borderRadius: '18px',
+              color: '#ffffff',
+              padding: '1.25rem 1.5rem',
+              textAlign: 'left',
+              marginBottom: '1.75rem',
+              boxShadow: `0 8px 24px ${registeredSchool.primary_color}30`,
+            }}
+          >
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.35rem', flexWrap: 'wrap', gap: '0.5rem' }}>
+              <span style={{ fontSize: '0.74rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.06em', color: registeredSchool.accent_color }}>
+                ⚡ Dedicated Institution Subdomain
+              </span>
+              <span style={{ fontSize: '0.68rem', background: '#22c55e', color: '#052e16', padding: '2px 8px', borderRadius: '999px', fontWeight: 800 }}>
+                ● Active SSL
+              </span>
+            </div>
+            <div style={{ fontSize: '1.2rem', fontWeight: 900, wordBreak: 'break-all', marginBottom: '0.35rem' }}>
+              {domainLinks.subdomainUrl}
+            </div>
+            <div style={{ fontSize: '0.78rem', color: '#cbd5e1' }}>
+              Universal Path: <span style={{ color: '#ffffff', fontWeight: 700 }}>{domainLinks.pathUrl}</span>
+            </div>
+          </div>
+
+          {/* Quick Portal Direct Links */}
+          <div style={{ background: '#f8fafc', borderRadius: '20px', padding: '1.25rem', border: '1px solid #e2e8f0', textAlign: 'left', marginBottom: '1.5rem' }}>
+            <h4 style={{ fontSize: '0.82rem', fontWeight: 800, color: '#475569', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '0.85rem' }}>
+              Direct Role Portal Access Addresses:
             </h4>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '0.75rem' }}>
               <div style={{ background: '#ffffff', padding: '0.85rem 1rem', borderRadius: '12px', border: '1px solid #e2e8f0' }}>
-                <span style={{ fontSize: '0.75rem', fontWeight: 700, color: '#64748b', textTransform: 'uppercase' }}>🏫 School Main Hub</span>
-                <p style={{ margin: '0.2rem 0 0', fontWeight: 700, color: '#0f172a', fontSize: '0.85rem', wordBreak: 'break-all' }}>
-                  {fullOrigin}/s/{registeredSchool.slug}
+                <span style={{ fontSize: '0.74rem', fontWeight: 700, color: '#64748b', textTransform: 'uppercase' }}>🏫 Main School Hub</span>
+                <p style={{ margin: '0.2rem 0 0', fontWeight: 800, color: '#0f172a', fontSize: '0.84rem', wordBreak: 'break-all' }}>
+                  {domainLinks.portals.hub.subdomain}
                 </p>
               </div>
               <div style={{ background: '#ffffff', padding: '0.85rem 1rem', borderRadius: '12px', border: '1px solid #e2e8f0' }}>
-                <span style={{ fontSize: '0.75rem', fontWeight: 700, color: '#64748b', textTransform: 'uppercase' }}>🎓 Student Portal</span>
-                <p style={{ margin: '0.2rem 0 0', fontWeight: 700, color: '#0f172a', fontSize: '0.85rem', wordBreak: 'break-all' }}>
-                  {fullOrigin}/s/{registeredSchool.slug}/student
+                <span style={{ fontSize: '0.74rem', fontWeight: 700, color: '#64748b', textTransform: 'uppercase' }}>🎓 Student Learning Portal</span>
+                <p style={{ margin: '0.2rem 0 0', fontWeight: 800, color: '#1d4ed8', fontSize: '0.84rem', wordBreak: 'break-all' }}>
+                  {domainLinks.portals.student.subdomain}
                 </p>
               </div>
               <div style={{ background: '#ffffff', padding: '0.85rem 1rem', borderRadius: '12px', border: '1px solid #e2e8f0' }}>
-                <span style={{ fontSize: '0.75rem', fontWeight: 700, color: '#64748b', textTransform: 'uppercase' }}>👨‍🏫 Teacher Portal</span>
-                <p style={{ margin: '0.2rem 0 0', fontWeight: 700, color: '#0f172a', fontSize: '0.85rem', wordBreak: 'break-all' }}>
-                  {fullOrigin}/s/{registeredSchool.slug}/teacher
+                <span style={{ fontSize: '0.74rem', fontWeight: 700, color: '#64748b', textTransform: 'uppercase' }}>👨‍🏫 Teacher Portal</span>
+                <p style={{ margin: '0.2rem 0 0', fontWeight: 800, color: '#0f172a', fontSize: '0.84rem', wordBreak: 'break-all' }}>
+                  {domainLinks.portals.teacher.subdomain}
                 </p>
               </div>
               <div style={{ background: '#ffffff', padding: '0.85rem 1rem', borderRadius: '12px', border: '1px solid #e2e8f0' }}>
-                <span style={{ fontSize: '0.75rem', fontWeight: 700, color: '#64748b', textTransform: 'uppercase' }}>💳 Bursar & Accounts Desk</span>
-                <p style={{ margin: '0.2rem 0 0', fontWeight: 700, color: '#0f172a', fontSize: '0.85rem', wordBreak: 'break-all' }}>
-                  {fullOrigin}/s/{registeredSchool.slug}/bursar
+                <span style={{ fontSize: '0.74rem', fontWeight: 700, color: '#64748b', textTransform: 'uppercase' }}>💳 Bursar & Accounts Desk</span>
+                <p style={{ margin: '0.2rem 0 0', fontWeight: 800, color: '#0f172a', fontSize: '0.84rem', wordBreak: 'break-all' }}>
+                  {domainLinks.portals.bursar.subdomain}
                 </p>
               </div>
               <div style={{ background: '#ffffff', padding: '0.85rem 1rem', borderRadius: '12px', border: '1px solid #e2e8f0' }}>
-                <span style={{ fontSize: '0.75rem', fontWeight: 700, color: '#64748b', textTransform: 'uppercase' }}>🛡️ Principal Executive Desk</span>
-                <p style={{ margin: '0.2rem 0 0', fontWeight: 700, color: '#0f172a', fontSize: '0.85rem', wordBreak: 'break-all' }}>
-                  {fullOrigin}/s/{registeredSchool.slug}/principal
+                <span style={{ fontSize: '0.74rem', fontWeight: 700, color: '#64748b', textTransform: 'uppercase' }}>🛡️ Principal Executive Desk</span>
+                <p style={{ margin: '0.2rem 0 0', fontWeight: 800, color: '#0f172a', fontSize: '0.84rem', wordBreak: 'break-all' }}>
+                  {domainLinks.portals.principal.subdomain}
                 </p>
               </div>
               <div style={{ background: '#ffffff', padding: '0.85rem 1rem', borderRadius: '12px', border: '1px solid #e2e8f0' }}>
-                <span style={{ fontSize: '0.75rem', fontWeight: 700, color: '#64748b', textTransform: 'uppercase' }}>📅 Academic Calendar ({registeredSchool.academic_system.toUpperCase()})</span>
-                <p style={{ margin: '0.2rem 0 0', fontWeight: 700, color: '#0f172a', fontSize: '0.85rem', wordBreak: 'break-all' }}>
-                  {fullOrigin}/s/{registeredSchool.slug}/calendar
+                <span style={{ fontSize: '0.74rem', fontWeight: 700, color: '#64748b', textTransform: 'uppercase' }}>📅 Academic Calendar ({registeredSchool.academic_system.toUpperCase()})</span>
+                <p style={{ margin: '0.2rem 0 0', fontWeight: 800, color: '#0f172a', fontSize: '0.84rem', wordBreak: 'break-all' }}>
+                  {domainLinks.portals.calendar.subdomain}
                 </p>
               </div>
             </div>
+          </div>
+
+          {/* Custom Domain Tip */}
+          <div style={{ background: '#faf5ff', borderRadius: '14px', padding: '0.85rem 1.15rem', border: '1px solid #e9d5ff', textAlign: 'left', marginBottom: '1.75rem', fontSize: '0.8rem', color: '#581c87' }}>
+            <span style={{ fontWeight: 800 }}>🌐 Custom Domain Option:</span> You can also map your school's official domain (e.g. <code>portal.{registeredSchool.slug}.ac.ke</code>) from your School Hub with a simple DNS CNAME.
           </div>
 
           <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>

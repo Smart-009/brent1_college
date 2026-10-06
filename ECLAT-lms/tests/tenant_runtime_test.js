@@ -131,6 +131,88 @@ test('Tenant Cloud Runtime: Multi-Tenant Dedicated URL Resolution', () => {
   assert.strictEqual(apexUrls.bursarDeskUrl, 'https://eclat.institute/s/apex-tech/bursar')
 })
 
+test('Tenant Cloud Runtime: Subdomain & Custom Domain Host Detection Logic', () => {
+  const mockSchools = [
+    { slug: 'hillcrest', name: 'Hillcrest College', custom_domain: 'portal.hillcrest.edu' },
+    { slug: 'apex-tech', name: 'Apex Tech', custom_domain: null },
+    { slug: 'st-jude', name: 'St. Jude Academy', custom_domain: 'lms.stjude.ac.ke' },
+  ]
+
+  function detectTenant(hostname, schools) {
+    if (!hostname) return null
+    const cleanHost = hostname.toLowerCase().trim()
+
+    // 1. Check custom domain
+    for (const school of schools) {
+      if (school.custom_domain) {
+        const cleanCustom = school.custom_domain
+          .toLowerCase()
+          .replace(/^https?:\/\//, '')
+          .replace(/\/.*$/, '')
+          .trim()
+        if (cleanHost === cleanCustom) {
+          return { school, matchedVia: 'custom_domain' }
+        }
+      }
+    }
+
+    // 2. Non-tenant base hosts
+    const nonTenantHosts = [
+      'eclat.institute',
+      'www.eclat.institute',
+      'localhost',
+      '127.0.0.1',
+      '0.0.0.0',
+    ]
+    if (nonTenantHosts.includes(cleanHost)) {
+      return null
+    }
+
+    // 3. Subdomain *.eclat.institute
+    if (cleanHost.endsWith('.eclat.institute')) {
+      const slug = cleanHost.replace('.eclat.institute', '')
+      const found = schools.find((s) => s.slug.toLowerCase() === slug)
+      if (found) return { school: found, matchedVia: 'subdomain' }
+    }
+
+    // 4. Localhost *.localhost
+    if (cleanHost.endsWith('.localhost')) {
+      const slug = cleanHost.replace('.localhost', '')
+      const found = schools.find((s) => s.slug.toLowerCase() === slug)
+      if (found) return { school: found, matchedVia: 'subdomain' }
+    }
+
+    return null
+  }
+
+  // Subdomain tests
+  const sub1 = detectTenant('hillcrest.eclat.institute', mockSchools)
+  assert.ok(sub1)
+  assert.strictEqual(sub1.school.slug, 'hillcrest')
+  assert.strictEqual(sub1.matchedVia, 'subdomain')
+
+  const sub2 = detectTenant('apex-tech.localhost', mockSchools)
+  assert.ok(sub2)
+  assert.strictEqual(sub2.school.slug, 'apex-tech')
+  assert.strictEqual(sub2.matchedVia, 'subdomain')
+
+  // Custom domain tests
+  const cust1 = detectTenant('portal.hillcrest.edu', mockSchools)
+  assert.ok(cust1)
+  assert.strictEqual(cust1.school.slug, 'hillcrest')
+  assert.strictEqual(cust1.matchedVia, 'custom_domain')
+
+  const cust2 = detectTenant('lms.stjude.ac.ke', mockSchools)
+  assert.ok(cust2)
+  assert.strictEqual(cust2.school.slug, 'st-jude')
+  assert.strictEqual(cust2.matchedVia, 'custom_domain')
+
+  // Root / Base domain must NOT trigger tenant
+  assert.strictEqual(detectTenant('eclat.institute', mockSchools), null)
+  assert.strictEqual(detectTenant('www.eclat.institute', mockSchools), null)
+  assert.strictEqual(detectTenant('localhost', mockSchools), null)
+})
+
 test('Tenant Cloud Runtime: Production Build Assets & HTML Verification', () => {
   const distDir = path.join(process.cwd(), 'dist')
   assert.ok(fs.existsSync(distDir), 'Dist folder must exist')
