@@ -1,8 +1,10 @@
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
+import { useIsMobile } from '@/hooks/useMediaQuery'
 import { INSTITUTION_CONFIG, getWhatsAppInquiryUrl } from '@/config/institution'
 
 export function AboutPage() {
+  const isMobile = useIsMobile()
   const navigate = useNavigate()
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [activeTab, setActiveTab] = useState<'mission' | 'methodology' | 'accreditation' | 'leadership'>('mission')
@@ -888,8 +890,8 @@ export function AboutPage() {
             <div
               style={{
                 display: 'grid',
-                gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))',
-                gap: '2rem',
+                gridTemplateColumns: isMobile ? '1fr' : 'repeat(auto-fit, minmax(280px, 1fr))',
+                gap: isMobile ? '1.25rem' : '2rem',
                 marginBottom: '3.5rem',
               }}
             >
@@ -1090,10 +1092,10 @@ export function AboutPage() {
                 background: 'linear-gradient(145deg, #eff6ff, #ffffff)',
                 border: '1.5px solid #bfdbfe',
                 borderRadius: '24px',
-                padding: '3rem 2rem',
+                padding: isMobile ? '2rem 1.25rem' : '3rem 2rem',
                 display: 'grid',
-                gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
-                gap: '2.5rem',
+                gridTemplateColumns: isMobile ? '1fr' : 'repeat(auto-fit, minmax(280px, 1fr))',
+                gap: isMobile ? '1.5rem' : '2.5rem',
                 alignItems: 'center',
                 boxShadow: '0 10px 30px rgba(29, 78, 216, 0.08)',
               }}
@@ -1262,7 +1264,7 @@ export function AboutPage() {
             </p>
           </div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(340px, 1fr))', gap: '2rem' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : 'repeat(auto-fit, minmax(280px, 1fr))', gap: isMobile ? '1.25rem' : '2rem' }}>
             {faculties.map((fac) => (
               <div
                 key={fac.id}

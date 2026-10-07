@@ -1,6 +1,7 @@
-﻿import { useState } from 'react'
+import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useAuth } from '@/hooks/useAuth'
+import { useIsMobile } from '@/hooks/useMediaQuery'
 import { schoolStore } from '@/lib/schoolData'
 import { INSTITUTION_CONFIG } from '@/config/institution'
 import { PageWrapper } from '@/components/layout/PageWrapper'
@@ -109,6 +110,7 @@ const IGCSE_SUBJECTS: IGCSEPortalSubject[] = [
 ]
 
 export function IGCSEPortal() {
+  const isMobile = useIsMobile()
   const { profile } = useAuth()
   const [activeTab, setActiveTab] = useState<'overview' | 'syllabus' | 'results' | 'timetable'>('overview')
   const [searchCandidate, setSearchCandidate] = useState(profile?.admission_number || '')
@@ -262,7 +264,7 @@ export function IGCSEPortal() {
 
       {/* TAB 1: OVERVIEW */}
       {activeTab === 'overview' && (
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '1.5rem', marginBottom: '2rem' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : 'repeat(auto-fit, minmax(280px, 1fr))', gap: isMobile ? '1.25rem' : '1.5rem', marginBottom: '2rem' }}>
           {/* Quick Access Card 1: Statement of Results */}
           <div
             className="card"
@@ -493,7 +495,7 @@ export function IGCSEPortal() {
       {/* TAB 3: SYLLABUS & SUBJECTS */}
       {activeTab === 'syllabus' && (
         <div style={{ marginBottom: '2.5rem' }}>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: '1.25rem' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : 'repeat(auto-fill, minmax(280px, 1fr))', gap: '1.25rem' }}>
             {IGCSE_SUBJECTS.map((sub) => (
               <div
                 key={sub.code}

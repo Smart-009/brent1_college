@@ -1,5 +1,6 @@
 import { useState, useId } from 'react'
 import { Link } from 'react-router-dom'
+import { useIsMobile } from '@/hooks/useMediaQuery'
 import { INSTITUTION_CONFIG, getWhatsAppInquiryUrl } from '@/config/institution'
 import {
   CodeIcon,
@@ -241,6 +242,7 @@ const TECH_SERVICES: TechService[] = [
 ]
 
 export function HireEclatPage() {
+  const isMobile = useIsMobile()
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [selectedService, setSelectedService] = useState<string>('fullstack-web')
   const [formSubmitted, setFormSubmitted] = useState(false)
@@ -554,7 +556,7 @@ export function HireEclatPage() {
           </p>
         </div>
 
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(340px, 1fr))', gap: '1.75rem' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : 'repeat(auto-fit, minmax(280px, 1fr))', gap: isMobile ? '1.25rem' : '1.75rem' }}>
           {TECH_SERVICES.map((service) => {
             const Icon = service.icon
             return (

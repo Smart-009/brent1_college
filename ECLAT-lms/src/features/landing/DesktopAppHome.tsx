@@ -375,7 +375,7 @@ export function DesktopAppHome({ courses: _courses, onSelectCourse: _onSelectCou
             </button>
           </div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '1.25rem' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '1.25rem' }}>
             {schoolStore.getCourseUnits().slice(0, 6).map((u) => (
               <div
                 key={u.id}

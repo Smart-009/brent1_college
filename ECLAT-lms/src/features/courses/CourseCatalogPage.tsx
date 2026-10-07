@@ -1,6 +1,7 @@
 import { useState, useMemo, useEffect } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
 import { useAuthContext } from '@/features/auth/AuthContext'
+import { useIsMobile } from '@/hooks/useMediaQuery'
 import { MobileAppBottomNav } from '@/components/layout/MobileAppBottomNav'
 import { DesktopCommandPalette } from '@/components/shared/DesktopCommandPalette'
 import { getWhatsAppInquiryUrl, INSTITUTION_CONFIG, INSTITUTIONAL_SCHOOLS } from '@/config/institution'
@@ -118,6 +119,7 @@ const YEAR_LEVELS = [
 ]
 
 export function CourseCatalogPage() {
+  const isMobile = useIsMobile()
   const { profile } = useAuthContext()
   const [searchParams] = useSearchParams()
   const intakeParam = searchParams.get('intake')
@@ -1182,7 +1184,7 @@ export function CourseCatalogPage() {
             </p>
           </div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(340px, 1fr))', gap: '1.5rem' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : 'repeat(auto-fill, minmax(280px, 1fr))', gap: isMobile ? '1rem' : '1.5rem' }}>
             {INSTITUTIONAL_SCHOOLS.map((school) => (
               <div
                 key={school.id}
@@ -1310,7 +1312,7 @@ export function CourseCatalogPage() {
             Showing <strong style={{ color: '#0f172a' }}>{filteredCourses.length}</strong> program{filteredCourses.length === 1 ? '' : 's'}
           </div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: '1.25rem' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : 'repeat(auto-fill, minmax(280px, 1fr))', gap: '1.25rem' }}>
             {filteredCourses.map((course) => (
               <div
                 key={course.id}

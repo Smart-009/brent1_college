@@ -1,5 +1,6 @@
 import { useState, useId } from 'react'
 import { Link } from 'react-router-dom'
+import { useIsMobile } from '@/hooks/useMediaQuery'
 import { INSTITUTION_CONFIG, getWhatsAppInquiryUrl } from '@/config/institution'
 import {
   GraduationCapIcon,
@@ -208,6 +209,7 @@ const OPEN_POSITIONS: JobPosition[] = [
 ]
 
 export function CareersPage() {
+  const isMobile = useIsMobile()
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [selectedPosition, setSelectedPosition] = useState<string>('pos-igcse-stem')
   const [applicationSubmitted, setApplicationSubmitted] = useState(false)
@@ -428,36 +430,39 @@ export function CareersPage() {
       </header>
 
       {/* Hero Section */}
-      <section style={{ padding: '4.5rem 1.5rem 3.5rem', background: 'radial-gradient(ellipse at top, rgba(16, 185, 129, 0.15), transparent 70%)', textAlign: 'center' }}>
-        <div style={{ maxWidth: '960px', margin: '0 auto' }}>
-          <div style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', background: 'rgba(16, 185, 129, 0.12)', border: '1px solid rgba(16, 185, 129, 0.4)', padding: '0.4rem 1rem', borderRadius: '999px', fontSize: '0.82rem', color: '#6ee7b7', fontWeight: 700, marginBottom: '1.5rem', maxWidth: '100%', flexWrap: 'wrap', textAlign: 'center', lineHeight: 1.35, boxSizing: 'border-box' }}>
-            <GraduationCapIcon size={16} color="#34d399" />
+      <section style={{ padding: isMobile ? '3rem 1rem 2.5rem' : '4.5rem 1.5rem 3.5rem', background: 'radial-gradient(ellipse at top, rgba(16, 185, 129, 0.15), transparent 70%)', textAlign: 'center', width: '100%', boxSizing: 'border-box' }}>
+        <div style={{ maxWidth: '960px', margin: '0 auto', width: '100%', boxSizing: 'border-box' }}>
+          <div style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', background: 'rgba(16, 185, 129, 0.12)', border: '1px solid rgba(16, 185, 129, 0.4)', padding: '0.4rem 1rem', borderRadius: '999px', fontSize: isMobile ? '0.72rem' : '0.82rem', color: '#6ee7b7', fontWeight: 700, marginBottom: '1.25rem', maxWidth: '100%', flexWrap: 'wrap', textAlign: 'center', lineHeight: 1.35, boxSizing: 'border-box' }}>
+            <GraduationCapIcon size={15} color="#34d399" />
             <span style={{ maxWidth: '100%', wordBreak: 'break-word', whiteSpace: 'normal' }}>GLOBAL TEACHING CALL: 2026/2027 ACADEMIC YEAR INTAKE</span>
           </div>
 
-          <h1 style={{ fontSize: 'clamp(2.2rem, 5vw, 3.8rem)', fontWeight: 900, lineHeight: 1.15, marginBottom: '1.25rem', letterSpacing: '-0.02em', background: 'linear-gradient(135deg, #ffffff 40%, #a7f3d0)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
+          <h1 style={{ fontSize: isMobile ? 'clamp(1.75rem, 6.5vw, 2.3rem)' : 'clamp(2.2rem, 5vw, 3.8rem)', fontWeight: 900, lineHeight: 1.15, marginBottom: '1.25rem', letterSpacing: '-0.02em', background: 'linear-gradient(135deg, #ffffff 40%, #a7f3d0)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', wordBreak: 'break-word' }}>
             Teach at Éclat Institute — Inspire Global Minds from Anywhere
           </h1>
 
-          <p style={{ fontSize: '1.15rem', color: '#94a3b8', maxWidth: '780px', margin: '0 auto 2.5rem', lineHeight: 1.65 }}>
+          <p style={{ fontSize: isMobile ? '0.95rem' : '1.15rem', color: '#94a3b8', maxWidth: '780px', margin: '0 auto 2rem', lineHeight: 1.65, wordBreak: 'break-word' }}>
             Join a forward-thinking virtual faculty educating ambitious students across Kenya, East Africa, the UK, the Middle East, and beyond. We are currently recruiting passionate educators in Cambridge IGCSE, Software Engineering, Data Science, World Languages, and Business Finance.
           </p>
 
-          <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center', flexWrap: 'wrap' }}>
+          <div style={{ display: 'flex', gap: '0.75rem', justifyContent: 'center', flexWrap: 'wrap', width: '100%' }}>
             <a
               href="#positions"
               style={{
                 background: '#16a34a',
                 color: '#ffffff',
-                padding: '0.85rem 1.75rem',
+                padding: isMobile ? '0.75rem 1.25rem' : '0.85rem 1.75rem',
                 borderRadius: '10px',
                 fontWeight: 800,
-                fontSize: '1rem',
+                fontSize: isMobile ? '0.9rem' : '1rem',
                 textDecoration: 'none',
                 display: 'inline-flex',
                 alignItems: 'center',
+                justifyContent: 'center',
                 gap: '8px',
                 boxShadow: '0 10px 25px rgba(22, 163, 74, 0.4)',
+                width: isMobile ? '100%' : 'auto',
+                boxSizing: 'border-box',
               }}
             >
               <span>Explore Open Positions</span>
@@ -469,11 +474,14 @@ export function CareersPage() {
                 background: 'rgba(255, 255, 255, 0.08)',
                 border: '1px solid rgba(255, 255, 255, 0.2)',
                 color: '#ffffff',
-                padding: '0.85rem 1.75rem',
+                padding: isMobile ? '0.75rem 1.25rem' : '0.85rem 1.75rem',
                 borderRadius: '10px',
                 fontWeight: 800,
-                fontSize: '1rem',
+                fontSize: isMobile ? '0.9rem' : '1rem',
                 textDecoration: 'none',
+                textAlign: 'center',
+                width: isMobile ? '100%' : 'auto',
+                boxSizing: 'border-box',
               }}
             >
               Direct Application Form
@@ -481,42 +489,42 @@ export function CareersPage() {
           </div>
 
           {/* Faculty Benefits Grid */}
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '1.25rem', marginTop: '3.5rem', textAlign: 'left' }}>
-            <div style={{ padding: '1.25rem', background: 'rgba(255, 255, 255, 0.03)', border: '1px solid rgba(255, 255, 255, 0.08)', borderRadius: '12px' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : 'repeat(auto-fit, minmax(220px, 1fr))', gap: isMobile ? '0.85rem' : '1.25rem', marginTop: isMobile ? '2.5rem' : '3.5rem', textAlign: 'left', width: '100%', boxSizing: 'border-box' }}>
+            <div style={{ padding: isMobile ? '1rem' : '1.25rem', background: 'rgba(255, 255, 255, 0.03)', border: '1px solid rgba(255, 255, 255, 0.08)', borderRadius: '12px', boxSizing: 'border-box' }}>
               <div style={{ width: '38px', height: '38px', borderRadius: '10px', background: 'rgba(34, 197, 94, 0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '0.75rem' }}>
                 <LaptopIcon size={20} color="#22c55e" />
               </div>
-              <h4 style={{ fontSize: '1rem', fontWeight: 800, color: '#ffffff', marginBottom: '0.35rem' }}>100% Virtual & Remote</h4>
+              <h4 style={{ fontSize: '0.95rem', fontWeight: 800, color: '#ffffff', marginBottom: '0.35rem' }}>100% Virtual &amp; Remote</h4>
               <p style={{ fontSize: '0.82rem', color: '#94a3b8', lineHeight: 1.5, margin: 0 }}>
                 Deliver lectures from your home or office. Zero commute time with automated attendance and class links.
               </p>
             </div>
 
-            <div style={{ padding: '1.25rem', background: 'rgba(255, 255, 255, 0.03)', border: '1px solid rgba(255, 255, 255, 0.08)', borderRadius: '12px' }}>
+            <div style={{ padding: isMobile ? '1rem' : '1.25rem', background: 'rgba(255, 255, 255, 0.03)', border: '1px solid rgba(255, 255, 255, 0.08)', borderRadius: '12px', boxSizing: 'border-box' }}>
               <div style={{ width: '38px', height: '38px', borderRadius: '10px', background: 'rgba(59, 130, 246, 0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '0.75rem' }}>
                 <ClockIcon size={20} color="#3b82f6" />
               </div>
-              <h4 style={{ fontSize: '1rem', fontWeight: 800, color: '#ffffff', marginBottom: '0.35rem' }}>Flexible Batch Schedules</h4>
+              <h4 style={{ fontSize: '0.95rem', fontWeight: 800, color: '#ffffff', marginBottom: '0.35rem' }}>Flexible Batch Schedules</h4>
               <p style={{ fontSize: '0.82rem', color: '#94a3b8', lineHeight: 1.5, margin: 0 }}>
                 Morning, afternoon, evening, and weekend batches tailored to fit alongside your current commitments.
               </p>
             </div>
 
-            <div style={{ padding: '1.25rem', background: 'rgba(255, 255, 255, 0.03)', border: '1px solid rgba(255, 255, 255, 0.08)', borderRadius: '12px' }}>
+            <div style={{ padding: isMobile ? '1rem' : '1.25rem', background: 'rgba(255, 255, 255, 0.03)', border: '1px solid rgba(255, 255, 255, 0.08)', borderRadius: '12px', boxSizing: 'border-box' }}>
               <div style={{ width: '38px', height: '38px', borderRadius: '10px', background: 'rgba(245, 158, 11, 0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '0.75rem' }}>
                 <AwardIcon size={20} color="#f59e0b" />
               </div>
-              <h4 style={{ fontSize: '1rem', fontWeight: 800, color: '#ffffff', marginBottom: '0.35rem' }}>Prompt, Guaranteed Pay</h4>
+              <h4 style={{ fontSize: '0.95rem', fontWeight: 800, color: '#ffffff', marginBottom: '0.35rem' }}>Prompt, Guaranteed Pay</h4>
               <p style={{ fontSize: '0.82rem', color: '#94a3b8', lineHeight: 1.5, margin: 0 }}>
-                Reliable biometric & digital hourly stipend disbursements in USD or local currency, without delays.
+                Reliable biometric &amp; digital hourly stipend disbursements in USD or local currency, without delays.
               </p>
             </div>
 
-            <div style={{ padding: '1.25rem', background: 'rgba(255, 255, 255, 0.03)', border: '1px solid rgba(255, 255, 255, 0.08)', borderRadius: '12px' }}>
+            <div style={{ padding: isMobile ? '1rem' : '1.25rem', background: 'rgba(255, 255, 255, 0.03)', border: '1px solid rgba(255, 255, 255, 0.08)', borderRadius: '12px', boxSizing: 'border-box' }}>
               <div style={{ width: '38px', height: '38px', borderRadius: '10px', background: 'rgba(168, 85, 247, 0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '0.75rem' }}>
                 <UsersIcon size={20} color="#a855f7" />
               </div>
-              <h4 style={{ fontSize: '1rem', fontWeight: 800, color: '#ffffff', marginBottom: '0.35rem' }}>Dedicated Academic Tooling</h4>
+              <h4 style={{ fontSize: '0.95rem', fontWeight: 800, color: '#ffffff', marginBottom: '0.35rem' }}>Dedicated Academic Tooling</h4>
               <p style={{ fontSize: '0.82rem', color: '#94a3b8', lineHeight: 1.5, margin: 0 }}>
                 Access our proprietary cloud LMS, digital gradebook, curriculum question banks, and licensed Google Workspace.
               </p>
@@ -526,17 +534,17 @@ export function CareersPage() {
       </section>
 
       {/* Open Positions List */}
-      <section id="positions" style={{ maxWidth: '1280px', margin: '0 auto', padding: '4rem 1.5rem' }}>
-        <div style={{ textAlign: 'center', marginBottom: '3rem' }}>
-          <h2 style={{ fontSize: '2.2rem', fontWeight: 900, marginBottom: '0.5rem', letterSpacing: '-0.01em' }}>
+      <section id="positions" style={{ maxWidth: '1280px', margin: '0 auto', padding: isMobile ? '2.5rem 1rem' : '4rem 1.5rem', width: '100%', boxSizing: 'border-box' }}>
+        <div style={{ textAlign: 'center', marginBottom: isMobile ? '2rem' : '3rem' }}>
+          <h2 style={{ fontSize: isMobile ? '1.65rem' : '2.2rem', fontWeight: 900, marginBottom: '0.5rem', letterSpacing: '-0.01em', wordBreak: 'break-word' }}>
             Current Open Faculty Positions
           </h2>
-          <p style={{ color: '#94a3b8', fontSize: '1.05rem', maxWidth: '650px', margin: '0 auto' }}>
+          <p style={{ color: '#94a3b8', fontSize: isMobile ? '0.92rem' : '1.05rem', maxWidth: '650px', margin: '0 auto', lineHeight: 1.5, wordBreak: 'break-word' }}>
             Select a position to view qualifications, curriculum syllabi, and application criteria.
           </p>
         </div>
 
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '1.75rem' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: isMobile ? '1.25rem' : '1.75rem', width: '100%', boxSizing: 'border-box' }}>
           {OPEN_POSITIONS.map((pos) => {
             const Icon = pos.icon
             const isSelected = selectedPosition === pos.id
@@ -547,30 +555,34 @@ export function CareersPage() {
                 style={{
                   background: isSelected ? 'rgba(30, 41, 59, 0.8)' : 'rgba(255, 255, 255, 0.02)',
                   border: isSelected ? `2px solid ${pos.badgeColor}` : '1px solid rgba(255, 255, 255, 0.08)',
-                  borderRadius: '16px',
-                  padding: '2rem',
+                  borderRadius: isMobile ? '14px' : '16px',
+                  padding: isMobile ? '1.25rem 0.85rem' : '2rem',
                   transition: 'all 0.2s',
+                  width: '100%',
+                  maxWidth: '100%',
+                  boxSizing: 'border-box',
+                  overflow: 'hidden',
                 }}
               >
-                <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between', alignItems: 'flex-start', gap: '1rem', marginBottom: '1.25rem' }}>
-                  <div style={{ display: 'flex', alignItems: 'flex-start', gap: '1rem' }}>
-                    <div style={{ width: '48px', height: '48px', borderRadius: '12px', background: `${pos.badgeColor}20`, border: `1px solid ${pos.badgeColor}40`, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                      <Icon size={24} color={pos.badgeColor} />
+                <div style={{ display: 'flex', flexDirection: isMobile ? 'column' : 'row', justifyContent: 'space-between', alignItems: isMobile ? 'stretch' : 'flex-start', gap: '1rem', marginBottom: '1.25rem', width: '100%', boxSizing: 'border-box' }}>
+                  <div style={{ display: 'flex', alignItems: 'flex-start', gap: isMobile ? '0.75rem' : '1rem', minWidth: 0, flex: 1, width: '100%', boxSizing: 'border-box' }}>
+                    <div style={{ width: isMobile ? '40px' : '48px', height: isMobile ? '40px' : '48px', borderRadius: '12px', background: `${pos.badgeColor}20`, border: `1px solid ${pos.badgeColor}40`, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                      <Icon size={isMobile ? 20 : 24} color={pos.badgeColor} />
                     </div>
-                    <div>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem', flexWrap: 'wrap', marginBottom: '0.35rem' }}>
-                        <span style={{ fontSize: '0.78rem', color: '#64748b', fontWeight: 700 }}>REF: {pos.referenceCode}</span>
-                        <span style={{ fontSize: '0.75rem', fontWeight: 800, padding: '0.2rem 0.6rem', borderRadius: '999px', background: `${pos.badgeColor}15`, color: pos.badgeColor, border: `1px solid ${pos.badgeColor}35` }}>
+                    <div style={{ minWidth: 0, flex: 1, width: '100%', boxSizing: 'border-box' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem', flexWrap: 'wrap', marginBottom: '0.35rem' }}>
+                        <span style={{ fontSize: '0.72rem', color: '#64748b', fontWeight: 700 }}>REF: {pos.referenceCode}</span>
+                        <span style={{ fontSize: '0.7rem', fontWeight: 800, padding: '0.15rem 0.5rem', borderRadius: '999px', background: `${pos.badgeColor}15`, color: pos.badgeColor, border: `1px solid ${pos.badgeColor}35` }}>
                           {pos.badge}
                         </span>
-                        <span style={{ fontSize: '0.75rem', fontWeight: 700, padding: '0.2rem 0.6rem', borderRadius: '999px', background: 'rgba(255, 255, 255, 0.08)', color: '#cbd5e1' }}>
+                        <span style={{ fontSize: '0.7rem', fontWeight: 700, padding: '0.15rem 0.5rem', borderRadius: '999px', background: 'rgba(255, 255, 255, 0.08)', color: '#cbd5e1' }}>
                           {pos.workType}
                         </span>
                       </div>
-                      <h3 style={{ fontSize: '1.4rem', fontWeight: 900, color: '#ffffff', margin: 0 }}>
+                      <h3 style={{ fontSize: isMobile ? '1.15rem' : '1.4rem', fontWeight: 900, color: '#ffffff', margin: 0, lineHeight: 1.25, wordBreak: 'break-word' }}>
                         {pos.title}
                       </h3>
-                      <div style={{ fontSize: '0.85rem', color: '#94a3b8', marginTop: '0.25rem' }}>
+                      <div style={{ fontSize: '0.8rem', color: '#94a3b8', marginTop: '0.25rem', wordBreak: 'break-word' }}>
                         {pos.faculty} • <span style={{ color: '#38bdf8' }}>{pos.department}</span>
                       </div>
                     </div>
@@ -586,14 +598,18 @@ export function CareersPage() {
                       background: '#16a34a',
                       color: '#ffffff',
                       textDecoration: 'none',
-                      padding: '0.65rem 1.4rem',
+                      padding: isMobile ? '0.65rem 1rem' : '0.65rem 1.4rem',
                       borderRadius: '8px',
-                      fontSize: '0.9rem',
+                      fontSize: '0.88rem',
                       fontWeight: 800,
                       display: 'inline-flex',
                       alignItems: 'center',
+                      justifyContent: 'center',
                       gap: '6px',
                       boxShadow: '0 4px 12px rgba(22, 163, 74, 0.3)',
+                      width: isMobile ? '100%' : 'auto',
+                      boxSizing: 'border-box',
+                      flexShrink: 0,
                     }}
                   >
                     <span>Apply for Position</span>
@@ -601,46 +617,60 @@ export function CareersPage() {
                   </a>
                 </div>
 
-                <p style={{ fontSize: '0.95rem', color: '#cbd5e1', lineHeight: 1.6, marginBottom: '1.5rem' }}>
+                <p style={{ fontSize: isMobile ? '0.88rem' : '0.95rem', color: '#cbd5e1', lineHeight: 1.6, marginBottom: '1.25rem', wordBreak: 'break-word', overflowWrap: 'anywhere' }}>
                   {pos.summary}
                 </p>
 
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '1.5rem', marginBottom: '1.5rem', background: 'rgba(0, 0, 0, 0.25)', padding: '1.25rem', borderRadius: '12px' }}>
-                  <div>
-                    <h5 style={{ fontSize: '0.85rem', fontWeight: 800, color: '#38bdf8', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '0.65rem' }}>
+                <div
+                  style={{
+                    display: 'grid',
+                    gridTemplateColumns: isMobile ? '1fr' : 'repeat(auto-fit, minmax(280px, 1fr))',
+                    gap: isMobile ? '1.25rem' : '1.5rem',
+                    marginBottom: '1.25rem',
+                    background: 'rgba(0, 0, 0, 0.25)',
+                    padding: isMobile ? '1rem 0.85rem' : '1.25rem',
+                    borderRadius: '12px',
+                    boxSizing: 'border-box',
+                    width: '100%',
+                    maxWidth: '100%',
+                    overflow: 'hidden',
+                  }}
+                >
+                  <div style={{ minWidth: 0, width: '100%', boxSizing: 'border-box' }}>
+                    <h5 style={{ fontSize: '0.82rem', fontWeight: 800, color: '#38bdf8', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '0.65rem' }}>
                       Key Responsibilities
                     </h5>
-                    <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                    <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '0.6rem', width: '100%', boxSizing: 'border-box' }}>
                       {pos.responsibilities.map((r, i) => (
-                        <li key={i} style={{ display: 'flex', alignItems: 'flex-start', gap: '0.5rem', fontSize: '0.85rem', color: '#cbd5e1', lineHeight: 1.45 }}>
+                        <li key={i} style={{ display: 'flex', alignItems: 'flex-start', gap: '0.55rem', fontSize: isMobile ? '0.82rem' : '0.85rem', color: '#cbd5e1', lineHeight: 1.45, width: '100%', minWidth: 0, boxSizing: 'border-box' }}>
                           <CheckCircleIcon size={14} color="#38bdf8" style={{ flexShrink: 0, marginTop: '2px' }} />
-                          <span>{r}</span>
+                          <span style={{ minWidth: 0, flex: 1, wordBreak: 'break-word', overflowWrap: 'anywhere' }}>{r}</span>
                         </li>
                       ))}
                     </ul>
                   </div>
 
-                  <div>
-                    <h5 style={{ fontSize: '0.85rem', fontWeight: 800, color: '#4ade80', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '0.65rem' }}>
-                      Minimum Requirements & Profile
+                  <div style={{ minWidth: 0, width: '100%', boxSizing: 'border-box' }}>
+                    <h5 style={{ fontSize: '0.82rem', fontWeight: 800, color: '#4ade80', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '0.65rem' }}>
+                      Minimum Requirements &amp; Profile
                     </h5>
-                    <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                    <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '0.6rem', width: '100%', boxSizing: 'border-box' }}>
                       {pos.requirements.map((req, i) => (
-                        <li key={i} style={{ display: 'flex', alignItems: 'flex-start', gap: '0.5rem', fontSize: '0.85rem', color: '#cbd5e1', lineHeight: 1.45 }}>
+                        <li key={i} style={{ display: 'flex', alignItems: 'flex-start', gap: '0.55rem', fontSize: isMobile ? '0.82rem' : '0.85rem', color: '#cbd5e1', lineHeight: 1.45, width: '100%', minWidth: 0, boxSizing: 'border-box' }}>
                           <CheckIcon size={14} color="#4ade80" style={{ flexShrink: 0, marginTop: '2px' }} />
-                          <span>{req}</span>
+                          <span style={{ minWidth: 0, flex: 1, wordBreak: 'break-word', overflowWrap: 'anywhere' }}>{req}</span>
                         </li>
                       ))}
                     </ul>
                   </div>
                 </div>
 
-                <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between', alignItems: 'center', gap: '0.75rem', paddingTop: '1rem', borderTop: '1px solid rgba(255, 255, 255, 0.08)', fontSize: '0.88rem' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#94a3b8' }}>
-                    <AwardIcon size={16} color="#f59e0b" />
-                    <span>Compensation: <strong style={{ color: '#ffffff' }}>{pos.compensation}</strong></span>
+                <div style={{ display: 'flex', flexDirection: isMobile ? 'column' : 'row', justifyContent: 'space-between', alignItems: isMobile ? 'flex-start' : 'center', gap: '0.75rem', paddingTop: '1rem', borderTop: '1px solid rgba(255, 255, 255, 0.08)', fontSize: isMobile ? '0.82rem' : '0.88rem', width: '100%', boxSizing: 'border-box' }}>
+                  <div style={{ display: 'flex', alignItems: 'flex-start', gap: '8px', color: '#94a3b8', minWidth: 0, flex: 1 }}>
+                    <AwardIcon size={16} color="#f59e0b" style={{ flexShrink: 0, marginTop: '2px' }} />
+                    <span style={{ wordBreak: 'break-word' }}>Compensation: <strong style={{ color: '#ffffff' }}>{pos.compensation}</strong></span>
                   </div>
-                  <div style={{ color: '#38bdf8', fontWeight: 700 }}>
+                  <div style={{ color: '#38bdf8', fontWeight: 700, whiteSpace: 'nowrap' }}>
                     Status: {pos.urgency}
                   </div>
                 </div>
@@ -651,32 +681,32 @@ export function CareersPage() {
       </section>
 
       {/* Online Teacher Application Form */}
-      <section id="apply-form" style={{ maxWidth: '860px', margin: '0 auto', padding: '4rem 1.5rem' }}>
-        <div style={{ background: 'linear-gradient(180deg, rgba(30, 41, 59, 0.7), rgba(15, 23, 42, 0.9))', border: '1px solid rgba(34, 197, 94, 0.3)', borderRadius: '20px', padding: '2.5rem 2rem', boxShadow: '0 20px 50px rgba(0, 0, 0, 0.5)' }}>
-          <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
+      <section id="apply-form" style={{ maxWidth: '860px', margin: '0 auto', padding: isMobile ? '2.5rem 1rem' : '4rem 1.5rem', width: '100%', boxSizing: 'border-box' }}>
+        <div style={{ background: 'linear-gradient(180deg, rgba(30, 41, 59, 0.7), rgba(15, 23, 42, 0.9))', border: '1px solid rgba(34, 197, 94, 0.3)', borderRadius: isMobile ? '16px' : '20px', padding: isMobile ? '1.5rem 1rem' : '2.5rem 2rem', boxShadow: '0 20px 50px rgba(0, 0, 0, 0.5)', width: '100%', boxSizing: 'border-box' }}>
+          <div style={{ textAlign: 'center', marginBottom: isMobile ? '1.5rem' : '2rem' }}>
             <span style={{ fontSize: '0.8rem', fontWeight: 800, color: '#4ade80', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
               Official Academic Application Portal
             </span>
-            <h2 style={{ fontSize: '2rem', fontWeight: 900, marginTop: '0.35rem', marginBottom: '0.5rem', color: '#ffffff' }}>
+            <h2 style={{ fontSize: isMobile ? '1.5rem' : '2rem', fontWeight: 900, marginTop: '0.35rem', marginBottom: '0.5rem', color: '#ffffff', wordBreak: 'break-word' }}>
               Submit Your Teaching Application
             </h2>
-            <p style={{ color: '#94a3b8', fontSize: '0.95rem' }}>
+            <p style={{ color: '#94a3b8', fontSize: isMobile ? '0.88rem' : '0.95rem', lineHeight: 1.5 }}>
               We review faculty credentials within 48 hours and invite shortlisted teachers for a 20-minute virtual micro-teaching demo.
             </p>
           </div>
 
           {applicationSubmitted ? (
-            <div style={{ textAlign: 'center', padding: '3rem 1.5rem', background: 'rgba(34, 197, 94, 0.1)', border: '1px solid #22c55e', borderRadius: '14px' }}>
+            <div style={{ textAlign: 'center', padding: isMobile ? '2rem 1rem' : '3rem 1.5rem', background: 'rgba(34, 197, 94, 0.1)', border: '1px solid #22c55e', borderRadius: '14px', boxSizing: 'border-box' }}>
               <div style={{ width: '56px', height: '56px', borderRadius: '50%', background: '#22c55e', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 1.25rem' }}>
                 <CheckIcon size={28} color="#ffffff" />
               </div>
-              <h3 style={{ fontSize: '1.5rem', fontWeight: 900, color: '#ffffff', marginBottom: '0.5rem' }}>
+              <h3 style={{ fontSize: isMobile ? '1.3rem' : '1.5rem', fontWeight: 900, color: '#ffffff', marginBottom: '0.5rem' }}>
                 Application Submitted Successfully!
               </h3>
-              <p style={{ color: '#cbd5e1', fontSize: '0.95rem', maxWidth: '520px', margin: '0 auto 1.5rem', lineHeight: 1.6 }}>
+              <p style={{ color: '#cbd5e1', fontSize: isMobile ? '0.88rem' : '0.95rem', maxWidth: '520px', margin: '0 auto 1.5rem', lineHeight: 1.6 }}>
                 Thank you, <strong>{appData.fullName}</strong>. The Academic Dean & Faculty Recruitment Committee has received your credentials. We will contact you at <strong>{appData.email}</strong> regarding the online teaching interview.
               </p>
-              <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center', flexWrap: 'wrap' }}>
+              <div style={{ display: 'flex', gap: '0.75rem', justifyContent: 'center', flexWrap: 'wrap' }}>
                 <a
                   href={getWhatsAppApplicationUrl()}
                   target="_blank"
@@ -684,13 +714,17 @@ export function CareersPage() {
                   style={{
                     background: '#16a34a',
                     color: '#ffffff',
-                    padding: '0.75rem 1.5rem',
+                    padding: isMobile ? '0.7rem 1.1rem' : '0.75rem 1.5rem',
                     borderRadius: '8px',
                     fontWeight: 700,
                     textDecoration: 'none',
                     display: 'inline-flex',
                     alignItems: 'center',
+                    justifyContent: 'center',
                     gap: '6px',
+                    width: isMobile ? '100%' : 'auto',
+                    boxSizing: 'border-box',
+                    fontSize: isMobile ? '0.88rem' : '0.95rem',
                   }}
                 >
                   <MessageCircleIcon size={16} />
@@ -703,10 +737,13 @@ export function CareersPage() {
                     background: 'rgba(255, 255, 255, 0.1)',
                     color: '#ffffff',
                     border: 'none',
-                    padding: '0.75rem 1.5rem',
+                    padding: isMobile ? '0.7rem 1.1rem' : '0.75rem 1.5rem',
                     borderRadius: '8px',
                     fontWeight: 700,
                     cursor: 'pointer',
+                    width: isMobile ? '100%' : 'auto',
+                    boxSizing: 'border-box',
+                    fontSize: isMobile ? '0.88rem' : '0.95rem',
                   }}
                 >
                   Apply for Another Position
@@ -714,7 +751,7 @@ export function CareersPage() {
               </div>
             </div>
           ) : (
-            <form onSubmit={handleSubmit} style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '1.25rem' }}>
+            <form onSubmit={handleSubmit} style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : 'repeat(auto-fit, minmax(280px, 1fr))', gap: '1.25rem', width: '100%', boxSizing: 'border-box' }}>
               <div>
                 <label htmlFor={`${formId}-fullName`} style={{ display: 'block', fontSize: '0.85rem', fontWeight: 700, color: '#cbd5e1', marginBottom: '0.4rem' }}>
                   Full Name *
@@ -727,7 +764,7 @@ export function CareersPage() {
                   value={appData.fullName}
                   onChange={handleInputChange}
                   placeholder="e.g. Samuel Maina, MSc"
-                  style={{ width: '100%', padding: '0.75rem 1rem', background: 'rgba(15, 23, 42, 0.7)', border: '1px solid rgba(255, 255, 255, 0.15)', borderRadius: '8px', color: '#ffffff', fontSize: '0.95rem' }}
+                  style={{ width: '100%', maxWidth: '100%', boxSizing: 'border-box', padding: '0.75rem 1rem', background: 'rgba(15, 23, 42, 0.7)', border: '1px solid rgba(255, 255, 255, 0.15)', borderRadius: '8px', color: '#ffffff', fontSize: '0.95rem' }}
                 />
               </div>
 
@@ -743,7 +780,7 @@ export function CareersPage() {
                   value={appData.email}
                   onChange={handleInputChange}
                   placeholder="teacher@example.com"
-                  style={{ width: '100%', padding: '0.75rem 1rem', background: 'rgba(15, 23, 42, 0.7)', border: '1px solid rgba(255, 255, 255, 0.15)', borderRadius: '8px', color: '#ffffff', fontSize: '0.95rem' }}
+                  style={{ width: '100%', maxWidth: '100%', boxSizing: 'border-box', padding: '0.75rem 1rem', background: 'rgba(15, 23, 42, 0.7)', border: '1px solid rgba(255, 255, 255, 0.15)', borderRadius: '8px', color: '#ffffff', fontSize: '0.95rem' }}
                 />
               </div>
 
@@ -759,7 +796,7 @@ export function CareersPage() {
                   value={appData.phone}
                   onChange={handleInputChange}
                   placeholder="+254 7XX XXX XXX"
-                  style={{ width: '100%', padding: '0.75rem 1rem', background: 'rgba(15, 23, 42, 0.7)', border: '1px solid rgba(255, 255, 255, 0.15)', borderRadius: '8px', color: '#ffffff', fontSize: '0.95rem' }}
+                  style={{ width: '100%', maxWidth: '100%', boxSizing: 'border-box', padding: '0.75rem 1rem', background: 'rgba(15, 23, 42, 0.7)', border: '1px solid rgba(255, 255, 255, 0.15)', borderRadius: '8px', color: '#ffffff', fontSize: '0.95rem' }}
                 />
               </div>
 
@@ -775,7 +812,7 @@ export function CareersPage() {
                   value={appData.country}
                   onChange={handleInputChange}
                   placeholder="e.g. Kenya / Nigeria / UK / UAE"
-                  style={{ width: '100%', padding: '0.75rem 1rem', background: 'rgba(15, 23, 42, 0.7)', border: '1px solid rgba(255, 255, 255, 0.15)', borderRadius: '8px', color: '#ffffff', fontSize: '0.95rem' }}
+                  style={{ width: '100%', maxWidth: '100%', boxSizing: 'border-box', padding: '0.75rem 1rem', background: 'rgba(15, 23, 42, 0.7)', border: '1px solid rgba(255, 255, 255, 0.15)', borderRadius: '8px', color: '#ffffff', fontSize: '0.95rem' }}
                 />
               </div>
 
@@ -788,7 +825,7 @@ export function CareersPage() {
                   name="positionId"
                   value={appData.positionId}
                   onChange={handleInputChange}
-                  style={{ width: '100%', padding: '0.75rem 1rem', background: '#0f172a', border: '1px solid rgba(255, 255, 255, 0.15)', borderRadius: '8px', color: '#ffffff', fontSize: '0.95rem' }}
+                  style={{ width: '100%', maxWidth: '100%', boxSizing: 'border-box', padding: '0.75rem 1rem', background: '#0f172a', border: '1px solid rgba(255, 255, 255, 0.15)', borderRadius: '8px', color: '#ffffff', fontSize: isMobile ? '0.88rem' : '0.95rem' }}
                 >
                   {OPEN_POSITIONS.map((p) => (
                     <option key={p.id} value={p.id}>
@@ -807,7 +844,7 @@ export function CareersPage() {
                   name="experienceYears"
                   value={appData.experienceYears}
                   onChange={handleInputChange}
-                  style={{ width: '100%', padding: '0.75rem 1rem', background: '#0f172a', border: '1px solid rgba(255, 255, 255, 0.15)', borderRadius: '8px', color: '#ffffff', fontSize: '0.95rem' }}
+                  style={{ width: '100%', maxWidth: '100%', boxSizing: 'border-box', padding: '0.75rem 1rem', background: '#0f172a', border: '1px solid rgba(255, 255, 255, 0.15)', borderRadius: '8px', color: '#ffffff', fontSize: isMobile ? '0.88rem' : '0.95rem' }}
                 >
                   <option value="1 - 2 Years">1 – 2 Years (Associate Instructor)</option>
                   <option value="3 - 5 Years">3 – 5 Years (Senior Lecturer)</option>
@@ -825,7 +862,7 @@ export function CareersPage() {
                   name="highestQualification"
                   value={appData.highestQualification}
                   onChange={handleInputChange}
-                  style={{ width: '100%', padding: '0.75rem 1rem', background: '#0f172a', border: '1px solid rgba(255, 255, 255, 0.15)', borderRadius: '8px', color: '#ffffff', fontSize: '0.95rem' }}
+                  style={{ width: '100%', maxWidth: '100%', boxSizing: 'border-box', padding: '0.75rem 1rem', background: '#0f172a', border: '1px solid rgba(255, 255, 255, 0.15)', borderRadius: '8px', color: '#ffffff', fontSize: isMobile ? '0.88rem' : '0.95rem' }}
                 >
                   <option value="Bachelor’s Degree">Bachelor’s Degree (BSc, BEd, BA)</option>
                   <option value="Master’s Degree">Master’s Degree (MSc, MEd, MA, MBA)</option>
@@ -847,13 +884,13 @@ export function CareersPage() {
                   value={appData.portfolioUrl}
                   onChange={handleInputChange}
                   placeholder="https://linkedin.com/in/yourname or Google Drive CV Link"
-                  style={{ width: '100%', padding: '0.75rem 1rem', background: 'rgba(15, 23, 42, 0.7)', border: '1px solid rgba(255, 255, 255, 0.15)', borderRadius: '8px', color: '#ffffff', fontSize: '0.95rem' }}
+                  style={{ width: '100%', maxWidth: '100%', boxSizing: 'border-box', padding: '0.75rem 1rem', background: 'rgba(15, 23, 42, 0.7)', border: '1px solid rgba(255, 255, 255, 0.15)', borderRadius: '8px', color: '#ffffff', fontSize: '0.95rem' }}
                 />
               </div>
 
               <div style={{ gridColumn: '1 / -1' }}>
                 <label htmlFor={`${formId}-philosophy`} style={{ display: 'block', fontSize: '0.85rem', fontWeight: 700, color: '#cbd5e1', marginBottom: '0.4rem' }}>
-                  Brief Teaching Philosophy & Subject Specialization *
+                  Brief Teaching Philosophy &amp; Subject Specialization *
                 </label>
                 <textarea
                   id={`${formId}-philosophy`}
@@ -863,7 +900,7 @@ export function CareersPage() {
                   value={appData.teachingPhilosophy}
                   onChange={handleInputChange}
                   placeholder="Briefly describe your approach to virtual student engagement, exam preparation methodology, and your key strengths in this subject..."
-                  style={{ width: '100%', padding: '0.75rem 1rem', background: 'rgba(15, 23, 42, 0.7)', border: '1px solid rgba(255, 255, 255, 0.15)', borderRadius: '8px', color: '#ffffff', fontSize: '0.95rem', resize: 'vertical' }}
+                  style={{ width: '100%', maxWidth: '100%', boxSizing: 'border-box', padding: '0.75rem 1rem', background: 'rgba(15, 23, 42, 0.7)', border: '1px solid rgba(255, 255, 255, 0.15)', borderRadius: '8px', color: '#ffffff', fontSize: '0.95rem', resize: 'vertical' }}
                 />
               </div>
 
@@ -875,12 +912,13 @@ export function CareersPage() {
                     background: 'linear-gradient(135deg, #16a34a, #15803d)',
                     color: '#ffffff',
                     border: 'none',
-                    padding: '0.95rem 1.5rem',
+                    padding: isMobile ? '0.85rem 1.25rem' : '0.95rem 1.5rem',
                     borderRadius: '10px',
-                    fontSize: '1.05rem',
+                    fontSize: isMobile ? '0.98rem' : '1.05rem',
                     fontWeight: 800,
                     cursor: 'pointer',
                     boxShadow: '0 10px 25px rgba(22, 163, 74, 0.4)',
+                    boxSizing: 'border-box',
                   }}
                 >
                   Submit Teacher Application
@@ -892,35 +930,35 @@ export function CareersPage() {
       </section>
 
       {/* Recruitment FAQs */}
-      <section style={{ maxWidth: '960px', margin: '0 auto', padding: '0 1.5rem 4rem' }}>
-        <h3 style={{ fontSize: '1.5rem', fontWeight: 900, textAlign: 'center', marginBottom: '2rem', color: '#ffffff' }}>
+      <section style={{ maxWidth: '960px', margin: '0 auto', padding: isMobile ? '0 1rem 3rem' : '0 1.5rem 4rem', width: '100%', boxSizing: 'border-box' }}>
+        <h3 style={{ fontSize: isMobile ? '1.3rem' : '1.5rem', fontWeight: 900, textAlign: 'center', marginBottom: isMobile ? '1.5rem' : '2rem', color: '#ffffff', wordBreak: 'break-word' }}>
           Frequently Asked Questions for Teacher Applicants
         </h3>
 
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-          <div style={{ padding: '1.25rem', background: 'rgba(255, 255, 255, 0.03)', border: '1px solid rgba(255, 255, 255, 0.08)', borderRadius: '12px' }}>
-            <h5 style={{ fontSize: '1rem', fontWeight: 800, color: '#38bdf8', marginBottom: '0.35rem' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', width: '100%', boxSizing: 'border-box' }}>
+          <div style={{ padding: isMobile ? '1rem' : '1.25rem', background: 'rgba(255, 255, 255, 0.03)', border: '1px solid rgba(255, 255, 255, 0.08)', borderRadius: '12px', boxSizing: 'border-box' }}>
+            <h5 style={{ fontSize: '0.95rem', fontWeight: 800, color: '#38bdf8', marginBottom: '0.35rem', lineHeight: 1.35, wordBreak: 'break-word' }}>
               Do I need to be located in Kenya to teach at Éclat Institute?
             </h5>
-            <p style={{ fontSize: '0.88rem', color: '#94a3b8', lineHeight: 1.6, margin: 0 }}>
+            <p style={{ fontSize: isMobile ? '0.84rem' : '0.88rem', color: '#94a3b8', lineHeight: 1.6, margin: 0, wordBreak: 'break-word' }}>
               No! Éclat Institute is a 100% virtual campus. We employ educators residing in Kenya, the United Kingdom, Egypt, Germany, Nigeria, the UAE, and across the globe. You only need a stable internet connection, an HD webcam/microphone, and subject expertise.
             </p>
           </div>
 
-          <div style={{ padding: '1.25rem', background: 'rgba(255, 255, 255, 0.03)', border: '1px solid rgba(255, 255, 255, 0.08)', borderRadius: '12px' }}>
-            <h5 style={{ fontSize: '1rem', fontWeight: 800, color: '#38bdf8', marginBottom: '0.35rem' }}>
+          <div style={{ padding: isMobile ? '1rem' : '1.25rem', background: 'rgba(255, 255, 255, 0.03)', border: '1px solid rgba(255, 255, 255, 0.08)', borderRadius: '12px', boxSizing: 'border-box' }}>
+            <h5 style={{ fontSize: '0.95rem', fontWeight: 800, color: '#38bdf8', marginBottom: '0.35rem', lineHeight: 1.35, wordBreak: 'break-word' }}>
               How does scheduling work? Can I teach part-time alongside another job?
             </h5>
-            <p style={{ fontSize: '0.88rem', color: '#94a3b8', lineHeight: 1.6, margin: 0 }}>
+            <p style={{ fontSize: isMobile ? '0.84rem' : '0.88rem', color: '#94a3b8', lineHeight: 1.6, margin: 0, wordBreak: 'break-word' }}>
               Yes. Many of our faculty members are working software engineers, university professors, or secondary school educators. We have early morning (6:00 AM – 8:00 AM), evening (6:00 PM – 9:00 PM), and intensive weekend batches.
             </p>
           </div>
 
-          <div style={{ padding: '1.25rem', background: 'rgba(255, 255, 255, 0.03)', border: '1px solid rgba(255, 255, 255, 0.08)', borderRadius: '12px' }}>
-            <h5 style={{ fontSize: '1rem', fontWeight: 800, color: '#38bdf8', marginBottom: '0.35rem' }}>
+          <div style={{ padding: isMobile ? '1rem' : '1.25rem', background: 'rgba(255, 255, 255, 0.03)', border: '1px solid rgba(255, 255, 255, 0.08)', borderRadius: '12px', boxSizing: 'border-box' }}>
+            <h5 style={{ fontSize: '0.95rem', fontWeight: 800, color: '#38bdf8', marginBottom: '0.35rem', lineHeight: 1.35, wordBreak: 'break-word' }}>
               What tools and software does Éclat provide for teachers?
             </h5>
-            <p style={{ fontSize: '0.88rem', color: '#94a3b8', lineHeight: 1.6, margin: 0 }}>
+            <p style={{ fontSize: isMobile ? '0.84rem' : '0.88rem', color: '#94a3b8', lineHeight: 1.6, margin: 0, wordBreak: 'break-word' }}>
               Teachers receive official `@eclatinstitute.internal` email credentials, access to our customized Teacher Workstation Dashboard, Google Workspace for Education with Meet recordings, past paper repository access, and live tech support.
             </p>
           </div>
@@ -928,13 +966,13 @@ export function CareersPage() {
       </section>
 
       {/* Footer */}
-      <footer style={{ borderTop: '1px solid rgba(255, 255, 255, 0.08)', background: '#070a14', padding: '3rem 1.5rem 2rem', color: '#64748b', fontSize: '0.85rem' }}>
-        <div style={{ maxWidth: '1280px', margin: '0 auto', display: 'flex', flexDirection: 'column', gap: '1.5rem', alignItems: 'center', textAlign: 'center' }}>
+      <footer style={{ borderTop: '1px solid rgba(255, 255, 255, 0.08)', background: '#070a14', padding: isMobile ? '2.5rem 1rem 1.5rem' : '3rem 1.5rem 2rem', color: '#64748b', fontSize: '0.85rem', width: '100%', boxSizing: 'border-box' }}>
+        <div style={{ maxWidth: '1280px', margin: '0 auto', display: 'flex', flexDirection: 'column', gap: '1.5rem', alignItems: 'center', textAlign: 'center', width: '100%', boxSizing: 'border-box' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
             <img src="/logo.png" alt="Éclat Institute" style={{ width: '32px', height: '32px', borderRadius: '50%' }} />
             <span style={{ color: '#ffffff', fontWeight: 800, fontSize: '1rem' }}>Éclat Institute Academic Board</span>
           </div>
-          <div style={{ display: 'flex', gap: '1.5rem', flexWrap: 'wrap', justifyContent: 'center' }}>
+          <div style={{ display: 'flex', gap: isMobile ? '1rem' : '1.5rem', flexWrap: 'wrap', justifyContent: 'center' }}>
             <Link to="/" style={{ color: '#94a3b8', textDecoration: 'none' }}>Home</Link>
             <Link to="/courses" style={{ color: '#94a3b8', textDecoration: 'none' }}>Courses</Link>
             <Link to="/hire" style={{ color: '#94a3b8', textDecoration: 'none' }}>Hire Us (Tech Services)</Link>
