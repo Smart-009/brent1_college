@@ -1273,11 +1273,16 @@ test('Multi-Tenant School Management: File Architecture, Route Registration, and
   assert.ok(appTsx.includes('path="/s/:schoolSlug"'))
   assert.ok(appTsx.includes('path="/s/:schoolSlug/:subview"'))
 
-  // 3. Verify Landing page integration
+  // 3. Verify Landing page separation (School Cloud SaaS advertisements removed from Institute homepage)
   const landingTsx = fs.readFileSync(path.join(process.cwd(), 'src/features/landing/Landing.tsx'), 'utf-8')
-  assert.ok(landingTsx.includes('id="school-cloud"'))
-  assert.ok(landingTsx.includes('Multi-Tenant School Management Platform'))
-  assert.ok(landingTsx.includes('/register-school'))
+  assert.strictEqual(landingTsx.includes('id="school-cloud"'), false, 'School Cloud section must be removed from Institute landing')
+  assert.strictEqual(landingTsx.includes('Multi-Tenant School Management Platform'), false, 'School Cloud advertising headline must be removed')
+
+  // 4. Verify standalone School Cloud project directory
+  const schoolCloudDir = path.join(process.cwd(), '../ECLAT-school-cloud')
+  assert.ok(fs.existsSync(schoolCloudDir), 'ECLAT-school-cloud directory must exist')
+  assert.ok(fs.existsSync(path.join(schoolCloudDir, 'package.json')), 'ECLAT-school-cloud package.json must exist')
+  assert.ok(fs.existsSync(path.join(schoolCloudDir, 'README.md')), 'ECLAT-school-cloud README.md must exist')
 })
 
 
