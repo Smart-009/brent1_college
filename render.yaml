@@ -1,0 +1,12 @@
+services:
+  - type: web
+    name: volt-quant-engine
+    env: docker
+    dockerfilePath: Dockerfile
+    plan: free
+    region: frankfurt
+    envVars:
+      - key: JWT_SECRET
+        generateValue: true
+      - key: ENVIRONMENT
+        value: production

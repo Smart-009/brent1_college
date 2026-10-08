@@ -37,3 +37,5 @@ trading_bot/
 brent-lms/trading_bot/
 *.py[cod]
 __pycache__/
+*.sqlite
+quant_engine/scratch/
