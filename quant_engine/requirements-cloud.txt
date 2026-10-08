@@ -13,7 +13,7 @@ PyYAML>=6.0.1
 numpy>=1.26.0,<2.0.0
 pandas>=2.2.0
 scipy>=1.13.0
-pandas-ta>=0.3.14b0
+pandas-ta
 
 # Networking & Feeds
 websockets>=12.0

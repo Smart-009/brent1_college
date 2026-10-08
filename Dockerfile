@@ -11,7 +11,10 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 # Copy requirements
 COPY quant_engine/requirements-cloud.txt requirements.txt
 
-# Install dependencies (ultra-lean for fast builds under 512MB RAM)
+# Upgrade pip & build tools
+RUN pip install --no-cache-dir --upgrade pip setuptools wheel
+
+# Install dependencies
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Copy source code
