@@ -16,6 +16,7 @@ RUN pip install --no-cache-dir --upgrade pip setuptools wheel
 
 # Install dependencies
 RUN pip install --no-cache-dir -r requirements.txt
+RUN pip install --no-cache-dir --pre pandas-ta --no-deps
 
 # Copy source code
 COPY quant_engine /app/quant_engine
