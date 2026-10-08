@@ -4,6 +4,10 @@
   "scripts": {
     "dev": "npm --prefix ECLAT-lms run dev",
     "build": "npm --prefix ECLAT-lms run build",
-    "preview": "npm --prefix ECLAT-lms run preview"
+    "preview": "npm --prefix ECLAT-lms run preview",
+    "quant:mobile": "npm --prefix quant-engine-mobile run dev",
+    "quant:build": "npm --prefix quant-engine-mobile run build",
+    "quant:cap:sync": "npm --prefix quant-engine-mobile run cap:sync",
+    "quant:android": "npm --prefix quant-engine-mobile run android:open"
   }
 }

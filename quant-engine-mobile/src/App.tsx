@@ -69,6 +69,7 @@ const MainApp: React.FC = () => {
         refreshing={refreshing}
         currencyMode={currencyMode}
         onToggleCurrency={setCurrencyMode}
+        onNavigateToBroker={() => setCurrentTab('broker')}
       />
 
       <main className="flex-1 overflow-y-auto">

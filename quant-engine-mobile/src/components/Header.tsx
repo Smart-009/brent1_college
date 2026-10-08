@@ -8,16 +8,40 @@ interface HeaderProps {
   refreshing?: boolean;
   currencyMode?: 'USD' | 'KES';
   onToggleCurrency?: (mode: 'USD' | 'KES') => void;
+  onNavigateToBroker?: () => void;
 }
 
 export const Header: React.FC<HeaderProps> = ({ 
   onRefresh, 
   refreshing, 
   currencyMode = 'USD', 
-  onToggleCurrency 
+  onToggleCurrency,
+  onNavigateToBroker
 }) => {
   const { user, logout } = useAuth();
   const [latency, setLatency] = useState<number>(14);
+  const [brokerConnected, setBrokerConnected] = useState<boolean>(false);
+  const [brokerName, setBrokerName] = useState<string>('');
+
+  useEffect(() => {
+    // Check broker status
+    const checkBroker = async () => {
+      try {
+        const s = await api.getMT5Status();
+        if (s && s.connected) {
+          setBrokerConnected(true);
+          setBrokerName(s.broker || 'MT5');
+        } else {
+          setBrokerConnected(false);
+        }
+      } catch {
+        setBrokerConnected(false);
+      }
+    };
+    checkBroker();
+    const interval = setInterval(checkBroker, 6000);
+    return () => clearInterval(interval);
+  }, []);
 
   useEffect(() => {
     // Periodic random jitter to reflect realistic live WS latency (10-22ms)
@@ -54,8 +78,22 @@ export const Header: React.FC<HeaderProps> = ({
         </div>
       </div>
 
-      {/* Right Control Strip: Currency Toggle & Sync */}
+      {/* Center/Right Control Strip: Broker Link, Currency Toggle & Sync */}
       <div className="flex items-center gap-1.5">
+        {onNavigateToBroker && (
+          <button
+            onClick={onNavigateToBroker}
+            className={`px-2 py-1 text-[10px] font-bold rounded-lg border transition active:scale-95 flex items-center gap-1 ${
+              brokerConnected
+                ? 'bg-[#0ecb81]/15 text-[#0ecb81] border-[#0ecb81]/30'
+                : 'bg-[#f0b90b]/15 text-[#f0b90b] border-[#f0b90b]/30 hover:bg-[#f0b90b]/25'
+            }`}
+          >
+            <span className={`w-1.5 h-1.5 rounded-full ${brokerConnected ? 'bg-[#0ecb81] animate-pulse' : 'bg-[#f0b90b]'}`}></span>
+            <span>{brokerConnected ? brokerName : '+ Link Broker'}</span>
+          </button>
+        )}
+
         {onToggleCurrency && (
           <div className="flex items-center p-0.5 bg-[#121824] rounded-lg border border-white/[0.08]">
             <button
