@@ -479,7 +479,7 @@ export function NativeAppHome({ courses, onSelectCourse }: { courses: CourseItem
                     {course.tag}
                   </span>
                   <a
-                    href={getWhatsAppInquiryUrl(`Hello Brent College Admissions, I would like to make a Fees Inquiry for ${course.title}.`)}
+                    href={getWhatsAppInquiryUrl(`Hello ${INSTITUTION_CONFIG.name} Admissions, I would like to make a Fees Inquiry for ${course.title}.`)}
                     target="_blank"
                     rel="noopener noreferrer"
                     onClick={(e) => e.stopPropagation()}

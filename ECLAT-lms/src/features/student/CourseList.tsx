@@ -279,7 +279,7 @@ export function CourseList() {
                       </span>
                     ) : (
                       <a
-                        href={getWhatsAppInquiryUrl(`Hello Brent College Accounts, I would like to make a Fees Inquiry for the unit: ${unit.title} (${unit.code}).`)}
+                        href={getWhatsAppInquiryUrl(`Hello ${INSTITUTION_CONFIG.name} Accounts, I would like to make a Fees Inquiry for the unit: ${unit.title} (${unit.code}).`)}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="badge"

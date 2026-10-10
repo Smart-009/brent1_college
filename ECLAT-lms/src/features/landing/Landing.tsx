@@ -4271,7 +4271,7 @@ export function Landing() {
 
                 <div style={{ marginTop: '1.5rem', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
                   <a
-                    href={getWhatsAppInquiryUrl(`Hello Brent College Admissions! I would like to make a Fees Inquiry for ${selectedCalcCourse.title} (${calcPlan === 'full' ? 'Full Payment' : 'Installment Plan'}).`)}
+                    href={getWhatsAppInquiryUrl(`Hello ${INSTITUTION_CONFIG.name} Admissions! I would like to make a Fees Inquiry for ${selectedCalcCourse.title} (${calcPlan === 'full' ? 'Full Payment' : 'Installment Plan'}).`)}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="btn"
@@ -5883,7 +5883,7 @@ export function Landing() {
                 <div style={{ fontSize: '0.72rem', color: '#64748b', fontWeight: 700, textTransform: 'uppercase' }}>Tuition & Fees</div>
                 <div style={{ marginTop: '4px' }}>
                   <a
-                    href={getWhatsAppInquiryUrl(`Hello Brent College Admissions! I would like to make a Fees Inquiry for ${selectedCourseForModal.title}.`)}
+                    href={getWhatsAppInquiryUrl(`Hello ${INSTITUTION_CONFIG.name} Admissions! I would like to make a Fees Inquiry for ${selectedCourseForModal.title}.`)}
                     target="_blank"
                     rel="noopener noreferrer"
                     style={{

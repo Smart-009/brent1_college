@@ -1285,6 +1285,44 @@ test('Multi-Tenant School Management: File Architecture, Route Registration, and
   assert.ok(fs.existsSync(path.join(schoolCloudDir, 'README.md')), 'ECLAT-school-cloud README.md must exist')
 })
 
+// ============================================================
+// 17. PORTAL ARCHITECTURE & COMPONENT INTEGRITY TESTS
+// ============================================================
+test('Portal Integrity: Photography Registry & Photo Fallback Resolver', () => {
+  const courseImagesFile = fs.readFileSync(path.join(process.cwd(), 'src/config/courseImages.ts'), 'utf-8')
+  assert.ok(courseImagesFile.includes('COURSE_IMAGES'), 'COURSE_IMAGES registry must be exported')
+  assert.ok(courseImagesFile.includes('getCoursePhoto'), 'getCoursePhoto fallback helper must be exported')
+  assert.ok(courseImagesFile.includes('c-coding'), 'c-coding image must be defined')
+  assert.ok(courseImagesFile.includes('c-python'), 'c-python image must be defined')
+  assert.ok(courseImagesFile.includes('c-cyber'), 'c-cyber image must be defined')
+  assert.ok(courseImagesFile.includes('c-spss-r'), 'c-spss-r image must be defined')
+  assert.ok(courseImagesFile.includes('c-accounting'), 'c-accounting image must be defined')
+})
+
+test('Portal Integrity: Student, Teacher, and Parent Portal Visual Upgrade', () => {
+  const studentCourseList = fs.readFileSync(path.join(process.cwd(), 'src/features/student/CourseList.tsx'), 'utf-8')
+  assert.ok(studentCourseList.includes('getCoursePhoto'), 'Student CourseList must resolve course photography')
+  assert.ok(studentCourseList.includes('INSTITUTION_CONFIG.name'), 'Student CourseList must use dynamic institution branding')
+  assert.strictEqual(studentCourseList.includes('Brent College'), false, 'Obsolete Brent College references must be eliminated from CourseList')
+
+  const teacherMyCourses = fs.readFileSync(path.join(process.cwd(), 'src/features/teacher/MyCourses.tsx'), 'utf-8')
+  assert.ok(teacherMyCourses.includes('getCoursePhoto'), 'Teacher MyCourses must resolve course photography')
+  assert.ok(teacherMyCourses.includes('Unit Photo Banner'), 'Teacher MyCourses must render unit photo banners')
+
+  const parentDashboard = fs.readFileSync(path.join(process.cwd(), 'src/features/parent/ParentDashboard.tsx'), 'utf-8')
+  assert.ok(parentDashboard.includes('getCoursePhoto'), 'ParentDashboard must resolve course photography')
+  assert.ok(parentDashboard.includes('Enrolled Course Units & Learning Modules'), 'ParentDashboard must render enrolled units showcase')
+})
+
+test('Portal Integrity: Clean Institution Branding across Landing and Native App', () => {
+  const landingFile = fs.readFileSync(path.join(process.cwd(), 'src/features/landing/Landing.tsx'), 'utf-8')
+  assert.strictEqual(landingFile.includes('Hello Brent College Admissions'), false, 'Obsolete Brent College inquiry URLs must be eliminated')
+
+  const nativeAppFile = fs.readFileSync(path.join(process.cwd(), 'src/features/landing/NativeAppHome.tsx'), 'utf-8')
+  assert.strictEqual(nativeAppFile.includes('Hello Brent College Admissions'), false, 'NativeAppHome must not have obsolete Brent College inquiry URLs')
+})
+
+
 
 
 
