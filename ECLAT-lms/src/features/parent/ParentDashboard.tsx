@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { schoolStore, schoolEventBus } from '@/lib/schoolData'
 import type { ReportCard, StudentRecord } from '@/types/school'
 import { ReportCardGenerator } from '@/features/exams/ReportCardGenerator'
+import { getCoursePhoto } from '@/config/courseImages'
 import { Link } from 'react-router-dom'
 
 export function ParentDashboard() {
@@ -195,6 +196,79 @@ export function ParentDashboard() {
             <div style={{ fontSize: '0.75rem', color: '#16a34a', marginTop: '0.2rem' }}>
               ⭐ {activeWard.merits_count} Merit Awards
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* Ward Enrolled Units & Coursework Progress */}
+      {activeWard && (
+        <div className="card mb-6" style={{ padding: '1.5rem' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.25rem' }}>
+            <div>
+              <h3 style={{ margin: 0, fontSize: '1.15rem', fontWeight: 800, color: 'var(--color-primary)' }}>
+                📚 Enrolled Course Units & Learning Modules
+              </h3>
+              <p style={{ margin: '0.2rem 0 0', fontSize: '0.82rem', color: 'var(--color-text-secondary)' }}>
+                Curriculum syllabus breakdown, lecture contact hours, and practical lab assignments for {activeWard.full_name}.
+              </p>
+            </div>
+            <span className="badge badge-primary" style={{ fontWeight: 700 }}>
+              {schoolStore.getCourseUnits().slice(0, 4).length} Active Units
+            </span>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            {schoolStore.getCourseUnits().slice(0, 4).map((unit) => (
+              <div
+                key={unit.id}
+                style={{
+                  border: '1px solid var(--color-border)',
+                  borderRadius: '12px',
+                  overflow: 'hidden',
+                  background: 'var(--color-bg-secondary)',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  justifyContent: 'space-between',
+                }}
+              >
+                <div style={{ position: 'relative', width: '100%', height: '110px', background: '#0f172a' }}>
+                  <img
+                    src={getCoursePhoto(unit.id, unit.department, unit.title)}
+                    alt={unit.title}
+                    loading="lazy"
+                    style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
+                  />
+                  <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, rgba(15,23,42,0.65) 0%, transparent 60%)' }} />
+                  <span
+                    className="badge badge-primary"
+                    style={{ position: 'absolute', top: '8px', left: '8px', fontWeight: 800, fontSize: '0.68rem', background: 'rgba(30, 58, 138, 0.9)' }}
+                  >
+                    {unit.code}
+                  </span>
+                  <span
+                    className="badge badge-success"
+                    style={{ position: 'absolute', top: '8px', right: '8px', fontWeight: 700, fontSize: '0.68rem' }}
+                  >
+                    Active
+                  </span>
+                </div>
+
+                <div style={{ padding: '0.85rem', flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+                  <div>
+                    <h4 style={{ margin: '0 0 0.35rem', fontSize: '0.9rem', fontWeight: 700, color: 'var(--color-text-primary)' }}>
+                      {unit.title}
+                    </h4>
+                    <div style={{ fontSize: '0.75rem', color: 'var(--color-text-secondary)', marginBottom: '0.5rem' }}>
+                      👨‍🏫 {unit.teacher_name || 'Assigned Faculty'}
+                    </div>
+                  </div>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderTop: '1px solid var(--color-border)', paddingTop: '0.5rem', fontSize: '0.75rem' }}>
+                    <span style={{ color: 'var(--color-primary)', fontWeight: 700 }}>{unit.credit_hours} Credits</span>
+                    <span style={{ color: '#16a34a', fontWeight: 600 }}>✓ On Track</span>
+                  </div>
+                </div>
+              </div>
+            ))}
           </div>
         </div>
       )}

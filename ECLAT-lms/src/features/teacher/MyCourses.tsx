@@ -4,6 +4,7 @@ import { useAuth } from '@/hooks/useAuth'
 import { PageWrapper } from '@/components/layout/PageWrapper'
 import { Button } from '@/components/ui/Button'
 import { schoolStore } from '@/lib/schoolData'
+import { getCoursePhoto } from '@/config/courseImages'
 import type { CourseUnit } from '@/types/school'
 
 export function MyCourses() {
@@ -82,20 +83,36 @@ export function MyCourses() {
           {courseUnits.map((unit) => {
             const isPub = unit.is_published !== false
             return (
-            <div key={unit.id} className="card" style={{ padding: '1.5rem', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
-              <div>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '0.75rem' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                    <span className="badge badge-primary" style={{ fontWeight: 800 }}>
-                      {unit.code}
-                    </span>
-                    <span className="badge badge-info">{unit.credit_hours} Credits</span>
-                    <span className={`badge ${isPub ? 'badge-success' : 'badge-warning'}`}>
-                      {isPub ? 'Published' : 'Draft'}
-                    </span>
-                  </div>
-                  {isAdmin && (
-                    <div style={{ display: 'flex', gap: '0.35rem' }}>
+            <div key={unit.id} className="card" style={{ padding: 0, overflow: 'hidden', borderRadius: '16px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', boxShadow: '0 4px 14px rgba(0,0,0,0.04)' }}>
+              {/* Unit Photo Banner */}
+              <div style={{ position: 'relative', width: '100%', height: '140px', background: '#0f172a', overflow: 'hidden' }}>
+                <img
+                  src={getCoursePhoto(unit.id, unit.department, unit.title)}
+                  alt={unit.title}
+                  loading="lazy"
+                  style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
+                />
+                <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, rgba(15,23,42,0.65) 0%, transparent 60%)' }} />
+                <div style={{ position: 'absolute', top: '10px', left: '10px', display: 'flex', gap: '6px' }}>
+                  <span className="badge badge-primary" style={{ fontWeight: 800, background: 'rgba(30, 58, 138, 0.9)', backdropFilter: 'blur(4px)', color: '#ffffff' }}>
+                    {unit.code}
+                  </span>
+                  <span className="badge badge-info" style={{ background: 'rgba(255, 255, 255, 0.9)', color: '#0f172a', fontWeight: 700 }}>
+                    {unit.credit_hours} Credits
+                  </span>
+                </div>
+                <div style={{ position: 'absolute', top: '10px', right: '10px' }}>
+                  <span className={`badge ${isPub ? 'badge-success' : 'badge-warning'}`} style={{ boxShadow: '0 2px 6px rgba(0,0,0,0.2)' }}>
+                    {isPub ? 'Published' : 'Draft'}
+                  </span>
+                </div>
+              </div>
+
+              <div style={{ padding: '1.25rem', flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+                <div>
+                  <div style={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center', marginBottom: '0.5rem' }}>
+                    {isAdmin && (
+                      <div style={{ display: 'flex', gap: '0.35rem' }}>
                       <button
                         type="button"
                         style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: '0.85rem' }}
@@ -156,21 +173,22 @@ export function MyCourses() {
                 </div>
               </div>
 
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderTop: '1px solid var(--color-border)', paddingTop: '0.75rem', marginTop: '0.5rem' }}>
-                <span style={{ fontSize: '0.8rem', color: 'var(--color-text-secondary)' }}>
-                  🎥 {unit.lessons?.length || 0} Video Lessons
-                </span>
-                <div style={{ display: 'flex', gap: '0.5rem' }}>
-                  <button
-                    type="button"
-                    className="btn btn-secondary btn-sm"
-                    onClick={() => setSelectedUnit(unit)}
-                  >
-                    👁️ View Syllabus
-                  </button>
-                  <Link to={`/teacher/lesson/new?courseId=${unit.id}`} className="btn btn-primary btn-sm">
-                    + Add Lesson
-                  </Link>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderTop: '1px solid var(--color-border)', paddingTop: '0.75rem', marginTop: '1rem' }}>
+                  <span style={{ fontSize: '0.8rem', color: 'var(--color-text-secondary)' }}>
+                    🎥 {unit.lessons?.length || 0} Video Lessons
+                  </span>
+                  <div style={{ display: 'flex', gap: '0.5rem' }}>
+                    <button
+                      type="button"
+                      className="btn btn-secondary btn-sm"
+                      onClick={() => setSelectedUnit(unit)}
+                    >
+                      👁️ View Syllabus
+                    </button>
+                    <Link to={`/teacher/lesson/new?courseId=${unit.id}`} className="btn btn-primary btn-sm">
+                      + Add Lesson
+                    </Link>
+                  </div>
                 </div>
               </div>
             </div>

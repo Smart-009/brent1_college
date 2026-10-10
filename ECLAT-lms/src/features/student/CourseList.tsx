@@ -5,6 +5,7 @@ import { PageWrapper } from '@/components/layout/PageWrapper'
 import { schoolStore, schoolEventBus } from '@/lib/schoolData'
 import { UnitRegistrationSlip } from '@/components/shared/UnitRegistrationSlip'
 import { INSTITUTION_CONFIG, getWhatsAppInquiryUrl } from '@/config/institution'
+import { getCoursePhoto } from '@/config/courseImages'
 import { initializePaystackCheckout } from '@/lib/paystack'
 import type { CourseUnit } from '@/types/school'
 
@@ -224,19 +225,54 @@ export function CourseList() {
                 key={unit.id}
                 className="card"
                 style={{
-                  padding: '1.5rem',
+                  padding: 0,
+                  overflow: 'hidden',
                   display: 'flex',
                   flexDirection: 'column',
                   justifyContent: 'space-between',
-                  border: isEnrolled ? '1.5px solid rgba(37, 99, 235, 0.25)' : '1px solid var(--color-border)',
+                  borderRadius: '16px',
+                  border: isEnrolled ? '1.5px solid rgba(37, 99, 235, 0.4)' : '1px solid var(--color-border)',
+                  boxShadow: '0 4px 14px rgba(0,0,0,0.04)',
                 }}
               >
-                <div>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem' }}>
-                    <div style={{ display: 'flex', gap: '0.4rem', alignItems: 'center' }}>
-                      <span className="badge badge-primary" style={{ fontWeight: 800 }}>{unit.code}</span>
-                      <span className="badge badge-info">{unit.credit_hours} Credits</span>
-                    </div>
+                {/* Course Photo Banner */}
+                <div style={{ position: 'relative', width: '100%', height: '140px', background: '#0f172a', overflow: 'hidden' }}>
+                  <img
+                    src={getCoursePhoto(unit.id, unit.department, unit.title)}
+                    alt={unit.title}
+                    loading="lazy"
+                    style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
+                  />
+                  <div
+                    style={{
+                      position: 'absolute',
+                      inset: 0,
+                      background: 'linear-gradient(to top, rgba(15,23,42,0.6) 0%, transparent 60%)',
+                    }}
+                  />
+                  <div style={{ position: 'absolute', top: '10px', left: '10px', display: 'flex', gap: '6px' }}>
+                    <span className="badge badge-primary" style={{ fontWeight: 800, background: 'rgba(30, 58, 138, 0.9)', backdropFilter: 'blur(4px)', color: '#ffffff' }}>
+                      {unit.code}
+                    </span>
+                    <span className="badge badge-info" style={{ background: 'rgba(255, 255, 255, 0.9)', color: '#0f172a', fontWeight: 700 }}>
+                      {unit.credit_hours} Credits
+                    </span>
+                  </div>
+                  <div style={{ position: 'absolute', top: '10px', right: '10px' }}>
+                    {isEnrolled ? (
+                      <span className="badge badge-success" style={{ fontWeight: 700, boxShadow: '0 2px 6px rgba(0,0,0,0.2)' }}>
+                        ✓ Enrolled
+                      </span>
+                    ) : (
+                      <span className="badge" style={{ background: 'rgba(255,255,255,0.95)', color: '#1d4ed8', fontWeight: 800 }}>
+                        {feeDisplay}
+                      </span>
+                    )}
+                  </div>
+                </div>
+
+                <div style={{ padding: '1.25rem', flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+                  <div>
                     {isEnrolled ? (
                       <span className="badge badge-success" style={{ fontWeight: 700 }}>
                         ✓ Enrolled
@@ -282,30 +318,30 @@ export function CourseList() {
                       ))}
                     </div>
                   </div>
-                </div>
 
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderTop: '1px solid var(--color-border)', paddingTop: '0.75rem' }}>
-                  <span style={{ fontSize: '0.8rem', color: 'var(--color-text-secondary)' }}>
-                    🎥 {unit.lessons?.length || 0} Lessons & Labs
-                  </span>
-                  {isEnrolled ? (
-                    <button
-                      type="button"
-                      className="btn btn-primary btn-sm"
-                      onClick={() => setSelectedUnit(unit)}
-                    >
-                      🚀 Open Course Unit
-                    </button>
-                  ) : (
-                    <button
-                      type="button"
-                      className="btn btn-sm"
-                      style={{ background: '#16a34a', color: '#ffffff', fontWeight: 800 }}
-                      onClick={() => setEnrollUnit(unit)}
-                    >
-                      💳 Enroll in Unit
-                    </button>
-                  )}
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderTop: '1px solid var(--color-border)', paddingTop: '0.75rem', marginTop: '1rem' }}>
+                    <span style={{ fontSize: '0.8rem', color: 'var(--color-text-secondary)' }}>
+                      🎥 {unit.lessons?.length || 0} Lessons & Labs
+                    </span>
+                    {isEnrolled ? (
+                      <button
+                        type="button"
+                        className="btn btn-primary btn-sm"
+                        onClick={() => setSelectedUnit(unit)}
+                      >
+                        🚀 Open Course Unit
+                      </button>
+                    ) : (
+                      <button
+                        type="button"
+                        className="btn btn-sm"
+                        style={{ background: '#16a34a', color: '#ffffff', fontWeight: 800 }}
+                        onClick={() => setEnrollUnit(unit)}
+                      >
+                        💳 Enroll in Unit
+                      </button>
+                    )}
+                  </div>
                 </div>
               </div>
             )
