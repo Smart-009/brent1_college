@@ -9,6 +9,7 @@ import { supabase } from '@/lib/supabase'
 import { schoolStore } from '@/lib/schoolData'
 import { INSTITUTION_CONFIG, getWhatsAppInquiryUrl } from '@/config/institution'
 import { OFFICIAL_COURSES, getDynamicCoursesList } from '@/config/officialCourses'
+import { getCoursePhoto } from '@/config/courseImages'
 import { IntakeAdvertsSection } from './IntakeAdvertsSection'
 import { CertificateGenerator, CertificateData, SAMPLE_CERTIFICATES } from '@/components/shared/CertificateGenerator'
 import { initializePaystackCheckout } from '@/lib/paystack'
@@ -87,6 +88,7 @@ interface CourseItem {
   careerOutcome: string
   skills: string[]
   icon: string
+  imageUrl?: string
   delivery_mode?: 'live_cohort' | 'self_paced'
   popular?: boolean
   bestseller?: boolean
@@ -116,6 +118,7 @@ const mapProgramToCourseItem = (c: any): CourseItem => ({
   careerOutcome: c.careerOutcome,
   skills: c.skills,
   icon: c.icon,
+  imageUrl: getCoursePhoto(c.id, c.category, c.title),
   popular: c.popular,
   bestseller: c.bestseller,
   syllabus: c.syllabus,
@@ -3362,18 +3365,43 @@ export function Landing() {
                     <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', flex: 1, minWidth: 0 }}>
                       <div
                         style={{
-                          width: isMobile ? '48px' : '64px',
-                          height: isMobile ? '48px' : '64px',
+                          width: isMobile ? '56px' : '72px',
+                          height: isMobile ? '56px' : '72px',
                           borderRadius: '8px',
-                          background: `linear-gradient(135deg, ${(course.tagColor || '#1e3a8a')}20 0%, ${(course.tagColor || '#1e3a8a')}08 100%)`,
+                          background: '#0f172a',
                           border: '1px solid #e2e8f0',
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'center',
+                          overflow: 'hidden',
+                          position: 'relative',
                           flexShrink: 0,
                         }}
                       >
-                        <CourseIcon courseId={course.id} iconKey={course.icon} size={isMobile ? 22 : 28} />
+                        <img
+                          src={course.imageUrl || getCoursePhoto(course.id, course.category, course.title)}
+                          alt={course.title}
+                          loading="lazy"
+                          style={{
+                            width: '100%',
+                            height: '100%',
+                            objectFit: 'cover',
+                            display: 'block',
+                          }}
+                        />
+                        <div
+                          style={{
+                            position: 'absolute',
+                            bottom: '2px',
+                            right: '2px',
+                            background: 'rgba(255,255,255,0.92)',
+                            borderRadius: '4px',
+                            padding: '2px',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            boxShadow: '0 1px 3px rgba(0,0,0,0.2)',
+                          }}
+                        >
+                          <CourseIcon courseId={course.id} iconKey={course.icon} size={isMobile ? 12 : 14} />
+                        </div>
                       </div>
 
                       <div style={{ minWidth: 0, flex: 1 }}>
@@ -3537,37 +3565,64 @@ export function Landing() {
                       cursor: 'pointer',
                     }}
                   >
-                    {/* 16:9 Crisp Course Header Thumbnail Banner */}
+                    {/* 16:9 Crisp Course Header Thumbnail Banner with Realistic Photo */}
                     <div
                       onClick={() => setSelectedCourseForModal(course)}
                       style={{
                         position: 'relative',
                         aspectRatio: '16 / 9',
                         width: '100%',
-                        background: `linear-gradient(135deg, ${(course.tagColor || '#1e3a8a')}25 0%, ${(course.tagColor || '#1e3a8a')}0a 100%)`,
+                        background: '#0f172a',
                         borderTopLeftRadius: '8px',
                         borderTopRightRadius: '8px',
                         borderBottom: '1px solid #f1f5f9',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
                         overflow: 'hidden',
                       }}
                     >
+                      <img
+                        src={course.imageUrl || getCoursePhoto(course.id, course.category, course.title)}
+                        alt={course.title}
+                        loading="lazy"
+                        style={{
+                          width: '100%',
+                          height: '100%',
+                          objectFit: 'cover',
+                          display: 'block',
+                          transition: 'transform 0.4s ease',
+                          transform: isHovered ? 'scale(1.05)' : 'scale(1)',
+                        }}
+                        onError={(e) => {
+                          // Fallback to stylized gradient banner if image fails
+                          ;(e.target as HTMLImageElement).style.display = 'none'
+                        }}
+                      />
                       <div
                         style={{
-                          width: '52px',
-                          height: '52px',
-                          borderRadius: '12px',
-                          background: '#ffffff',
-                          border: '1px solid #e2e8f0',
+                          position: 'absolute',
+                          inset: 0,
+                          background: 'linear-gradient(to top, rgba(15, 23, 42, 0.4) 0%, rgba(15, 23, 42, 0.05) 50%, rgba(0, 0, 0, 0.1) 100%)',
+                          pointerEvents: 'none',
+                        }}
+                      />
+
+                      {/* Floating Micro Icon Pill at bottom-left */}
+                      <div
+                        style={{
+                          position: 'absolute',
+                          bottom: '8px',
+                          left: '8px',
+                          width: '32px',
+                          height: '32px',
+                          borderRadius: '8px',
+                          background: 'rgba(255, 255, 255, 0.95)',
+                          backdropFilter: 'blur(6px)',
                           display: 'flex',
                           alignItems: 'center',
                           justifyContent: 'center',
-                          boxShadow: '0 4px 10px rgba(0,0,0,0.06)',
+                          boxShadow: '0 2px 8px rgba(0,0,0,0.18)',
                         }}
                       >
-                        <CourseIcon courseId={course.id} iconKey={course.icon} size={28} />
+                        <CourseIcon courseId={course.id} iconKey={course.icon} size={18} />
                       </div>
 
                       {/* Top-Right Badge */}
@@ -3579,11 +3634,12 @@ export function Landing() {
                               color: '#92400e',
                               fontWeight: 800,
                               fontSize: '0.65rem',
-                              padding: '2px 7px',
+                              padding: '3px 8px',
                               borderRadius: '4px',
                               textTransform: 'uppercase',
                               letterSpacing: '0.04em',
                               border: '1px solid #fde68a',
+                              boxShadow: '0 2px 6px rgba(0,0,0,0.15)',
                             }}
                           >
                             Bestseller
@@ -3591,13 +3647,14 @@ export function Landing() {
                         ) : (
                           <span
                             style={{
-                              background: '#ffffff',
-                              color: '#475569',
+                              background: 'rgba(255, 255, 255, 0.92)',
+                              color: '#1e293b',
                               fontWeight: 700,
                               fontSize: '0.65rem',
-                              padding: '2px 7px',
+                              padding: '3px 8px',
                               borderRadius: '4px',
                               border: '1px solid #e2e8f0',
+                              boxShadow: '0 2px 6px rgba(0,0,0,0.12)',
                             }}
                           >
                             Live Online
@@ -5706,24 +5763,80 @@ export function Landing() {
               border: '1px solid #cbd5e1',
             }}
           >
-            {/* Modal Header */}
-            <div className="modal-header" style={{ padding: 0, paddingBottom: '1rem', marginBottom: '1.25rem', borderBottom: '1px solid #e2e8f0', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '1rem', background: '#ffffff', color: '#0f172a' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.85rem', flex: 1, minWidth: 0 }}>
+            {/* Modal Hero Banner Photo */}
+            <div
+              style={{
+                width: '100%',
+                height: '160px',
+                borderRadius: '12px',
+                overflow: 'hidden',
+                position: 'relative',
+                marginBottom: '1rem',
+                background: '#0f172a',
+              }}
+            >
+              <img
+                src={selectedCourseForModal.imageUrl || getCoursePhoto(selectedCourseForModal.id, selectedCourseForModal.category, selectedCourseForModal.title)}
+                alt={selectedCourseForModal.title}
+                style={{
+                  width: '100%',
+                  height: '100%',
+                  objectFit: 'cover',
+                  display: 'block',
+                }}
+              />
+              <div
+                style={{
+                  position: 'absolute',
+                  inset: 0,
+                  background: 'linear-gradient(to top, rgba(15,23,42,0.75) 0%, rgba(15,23,42,0.15) 100%)',
+                }}
+              />
+              <div
+                style={{
+                  position: 'absolute',
+                  bottom: '12px',
+                  left: '12px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '8px',
+                }}
+              >
                 <div
                   style={{
-                    width: '46px',
-                    height: '46px',
-                    borderRadius: '12px',
-                    background: '#f8fafc',
-                    border: '1px solid #cbd5e1',
+                    width: '38px',
+                    height: '38px',
+                    borderRadius: '10px',
+                    background: 'rgba(255,255,255,0.95)',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
-                    flexShrink: 0,
+                    boxShadow: '0 2px 8px rgba(0,0,0,0.2)',
                   }}
                 >
-                  <CourseIcon courseId={selectedCourseForModal.id} iconKey={selectedCourseForModal.icon} size={26} />
+                  <CourseIcon courseId={selectedCourseForModal.id} iconKey={selectedCourseForModal.icon} size={22} />
                 </div>
+                <div>
+                  <span
+                    style={{
+                      background: 'rgba(255, 255, 255, 0.9)',
+                      color: '#0f172a',
+                      fontSize: '0.7rem',
+                      fontWeight: 800,
+                      padding: '2px 8px',
+                      borderRadius: '4px',
+                      textTransform: 'uppercase',
+                    }}
+                  >
+                    {selectedCourseForModal.category}
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            {/* Modal Header */}
+            <div className="modal-header" style={{ padding: 0, paddingBottom: '0.75rem', marginBottom: '1.25rem', borderBottom: '1px solid #e2e8f0', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '1rem', background: '#ffffff', color: '#0f172a' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.85rem', flex: 1, minWidth: 0 }}>
                 <div style={{ minWidth: 0 }}>
                   <div style={{ fontSize: '0.75rem', fontWeight: 800, color: selectedCourseForModal.tagColor || '#2563eb', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
                     {selectedCourseForModal.tag}

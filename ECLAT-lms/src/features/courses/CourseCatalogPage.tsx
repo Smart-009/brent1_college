@@ -6,6 +6,7 @@ import { MobileAppBottomNav } from '@/components/layout/MobileAppBottomNav'
 import { DesktopCommandPalette } from '@/components/shared/DesktopCommandPalette'
 import { getWhatsAppInquiryUrl, INSTITUTION_CONFIG, INSTITUTIONAL_SCHOOLS } from '@/config/institution'
 import { getDynamicCoursesList } from '@/config/officialCourses'
+import { getCoursePhoto } from '@/config/courseImages'
 import { schoolStore } from '@/lib/schoolData'
 import { intakeStore } from '@/lib/intakeStore'
 import { courseStore } from '@/lib/courseStore'
@@ -50,6 +51,7 @@ export interface CourseItem {
   careerOutcome: string
   skills: string[]
   icon: string
+  imageUrl?: string
   popular?: boolean
   syllabus?: { week: string; topic: string; practicalLab: string }[]
   schoolId?: string
@@ -91,6 +93,7 @@ const buildCatalogCourses = (): CourseItem[] => {
       careerOutcome: c.careerOutcome,
       skills: c.skills,
       icon: c.icon || 'book',
+      imageUrl: getCoursePhoto(c.id, c.category, c.title),
       popular: c.popular || c.bestseller,
       syllabus: c.syllabus,
       schoolId: c.schoolId,
@@ -1331,22 +1334,74 @@ export function CourseCatalogPage() {
                 }}
               >
                 <div>
-                  {/* Header */}
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '0.75rem', marginBottom: '0.85rem' }}>
+                  {/* Course Photo Banner */}
+                  <div
+                    style={{
+                      height: '140px',
+                      margin: '-1.25rem -1.25rem 1rem -1.25rem',
+                      borderRadius: '16px 16px 0 0',
+                      overflow: 'hidden',
+                      position: 'relative',
+                      background: '#0f172a',
+                    }}
+                  >
+                    <img
+                      src={course.imageUrl || getCoursePhoto(course.id, course.category, course.title)}
+                      alt={course.title}
+                      loading="lazy"
+                      style={{
+                        width: '100%',
+                        height: '100%',
+                        objectFit: 'cover',
+                        display: 'block',
+                      }}
+                    />
                     <div
                       style={{
-                        width: '46px',
-                        height: '46px',
-                        borderRadius: '12px',
-                        background: '#eff6ff',
+                        position: 'absolute',
+                        inset: 0,
+                        background: 'linear-gradient(to top, rgba(15, 23, 42, 0.5) 0%, rgba(15, 23, 42, 0.05) 50%, rgba(0, 0, 0, 0.1) 100%)',
+                        pointerEvents: 'none',
+                      }}
+                    />
+                    <div
+                      style={{
+                        position: 'absolute',
+                        bottom: '8px',
+                        left: '10px',
+                        width: '34px',
+                        height: '34px',
+                        borderRadius: '8px',
+                        background: 'rgba(255, 255, 255, 0.95)',
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
-                        border: '1px solid #bfdbfe',
-                        flexShrink: 0,
+                        boxShadow: '0 2px 8px rgba(0,0,0,0.18)',
                       }}
                     >
-                      <CourseIcon courseId={course.id} iconKey={course.icon} size={26} color="#1d4ed8" />
+                      <CourseIcon courseId={course.id} iconKey={course.icon} size={18} color="#1d4ed8" />
+                    </div>
+                  </div>
+
+                  {/* Header */}
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '0.75rem', marginBottom: '0.85rem' }}>
+                    <div>
+                      <span
+                        style={{
+                          background: `${course.tagColor}18`,
+                          color: course.tagColor,
+                          padding: '3px 8px',
+                          borderRadius: '6px',
+                          fontSize: '0.68rem',
+                          fontWeight: 800,
+                          textTransform: 'uppercase',
+                          letterSpacing: '0.03em',
+                          display: 'inline-block',
+                          marginBottom: '4px',
+                        }}
+                      >
+                        {course.tag.replace(/[\uD800-\uDBFF][\uDC00-\uDFFF]|\p{Extended_Pictographic}/gu, '').trim()}
+                      </span>
                     </div>
 
                     <div style={{ textAlign: 'right' }}>
