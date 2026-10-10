@@ -65,7 +65,7 @@ export function CourseList() {
 
     const studentName = profile?.full_name || 'Enrolled Student'
     const admNo = profile?.admission_number || studentIdentifier
-    const feeAmount = enrollUnit.course_fee || 15000
+    const feeAmount = enrollUnit.course_fee || (INSTITUTION_CONFIG.pricing.defaultTuitionFee * 130) || 15000
 
     setIsProcessingEnrollment(true)
 
@@ -218,7 +218,8 @@ export function CourseList() {
             const isEnrolled = registeredUnits.some(
               (ru) => ru.id === unit.id || ru.code?.toLowerCase() === unit.code?.toLowerCase()
             )
-            const feeDisplay = unit.course_fee ? `KES ${unit.course_fee.toLocaleString()}` : 'KES 15,000'
+            const fallbackFee = (INSTITUTION_CONFIG.pricing.defaultTuitionFee * 130) || 15000
+            const feeDisplay = unit.course_fee ? `KES ${unit.course_fee.toLocaleString()}` : `KES ${fallbackFee.toLocaleString()}`
 
             return (
               <div
@@ -477,7 +478,9 @@ export function CourseList() {
                         Tuition & Certification Fee
                       </div>
                       <div style={{ fontSize: '1.6rem', fontWeight: 900, margin: '0.25rem 0' }}>
-                        {enrollUnit.course_fee ? `KES ${enrollUnit.course_fee.toLocaleString()}` : 'KES 15,000'}
+                        {enrollUnit.course_fee
+                          ? `KES ${enrollUnit.course_fee.toLocaleString()}`
+                          : `KES ${((INSTITUTION_CONFIG.pricing.defaultTuitionFee * 130) || 15000).toLocaleString()}`}
                       </div>
                       <div style={{ fontSize: '0.8rem', color: '#cbd5e1' }}>
                         Includes full video lecture access, downloadable interactive labs, lecturer support, and official certificate.
