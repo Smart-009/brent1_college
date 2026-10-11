@@ -2,6 +2,7 @@ import { useState, useId } from 'react'
 import { Link } from 'react-router-dom'
 import { useIsMobile } from '@/hooks/useMediaQuery'
 import { INSTITUTION_CONFIG, getWhatsAppInquiryUrl } from '@/config/institution'
+import { cloudServicesStore } from '@/lib/cloudServicesStore'
 import {
   GraduationCapIcon,
   BriefcaseIcon,
@@ -234,6 +235,13 @@ export function CareersPage() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
+    try {
+      const position = OPEN_POSITIONS.find((p) => p.id === appData.positionId)
+      cloudServicesStore.addCareerApplication({
+        ...appData,
+        positionTitle: position ? position.title : appData.positionId,
+      })
+    } catch {}
     setApplicationSubmitted(true)
   }
 

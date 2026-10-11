@@ -152,8 +152,16 @@ export function AdminDashboard() {
             >
               {seeding ? '⏳ Syncing Cloud DB...' : '☁️ Sync & Seed Cloud DB'}
             </Button>
+            <Button
+              variant="accent"
+              size="sm"
+              style={{ background: '#7c3aed', borderColor: '#7c3aed', color: '#ffffff', fontWeight: 800 }}
+              onClick={() => navigate('/admin/cloud-services')}
+            >
+              🏛️ Cloud &amp; Services Hub
+            </Button>
             <Button variant="accent" size="sm" onClick={() => navigate('/admin/intakes')} style={{ fontWeight: 800 }}>
-              🗓️ Intake Scheduler & Adverts
+              🗓️ Intake Scheduler &amp; Adverts
             </Button>
             <Button variant="accent" size="sm" onClick={() => navigate('/teacher/courses/new')}>
               + 📖 Build Course Unit
@@ -168,11 +176,149 @@ export function AdminDashboard() {
               + Issue Admission / User
             </Button>
             <Button variant="primary" size="sm" onClick={() => navigate('/admin/activations')}>
-              🔑 Manage Access & Codes
+              🔑 Manage Access &amp; Codes
             </Button>
             <Button variant="outline" size="sm" style={{ color: 'white', borderColor: 'white' }} onClick={() => navigate('/admin/moderation')}>
               🛡️ Content Moderation
             </Button>
+          </div>
+        </div>
+      </div>
+
+      {/* Institutional Cloud & Services Management Panel */}
+      <div className="card mb-8" style={{ border: '1.5px solid #ddd6fe', background: '#fcfaff' }}>
+        <div className="card-header flex justify-between items-center flex-wrap gap-3" style={{ background: '#f5f3ff', borderBottom: '1px solid #ede9fe' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <span style={{ fontSize: '1.25rem' }}>🏛️</span>
+            <div>
+              <h3 style={{ margin: 0, color: '#4c1d95', fontSize: '1rem', fontWeight: 800 }}>
+                Cloud &amp; Services Administration
+              </h3>
+              <div style={{ fontSize: '0.75rem', color: '#6d28d9' }}>
+                Manage course monetization, enterprise tech services, faculty recruitment, and student sponsorships from your Admin Portal.
+              </div>
+            </div>
+          </div>
+          <Button
+            variant="primary"
+            size="sm"
+            style={{ background: '#7c3aed', borderColor: '#7c3aed', fontWeight: 800 }}
+            onClick={() => navigate('/admin/cloud-services')}
+          >
+            Open Cloud &amp; Services Hub →
+          </Button>
+        </div>
+        <div
+          className="card-body"
+          style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
+            gap: '0.85rem',
+          }}
+        >
+          <div
+            onClick={() => navigate('/admin/cloud-services')}
+            style={{
+              background: '#ffffff',
+              border: '1px solid #fde68a',
+              borderRadius: '12px',
+              padding: '0.9rem',
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'flex-start',
+              gap: '10px',
+            }}
+          >
+            <div style={{ width: '36px', height: '36px', borderRadius: '8px', background: 'linear-gradient(135deg, #f59e0b, #d97706)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontSize: '1.1rem', flexShrink: 0 }}>
+              ⭐
+            </div>
+            <div>
+              <div style={{ fontSize: '0.88rem', fontWeight: 800, color: '#b45309', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                <span>Publish Course &amp; Monetize</span>
+                <span style={{ fontSize: '0.62rem', background: '#fef3c7', color: '#b45309', padding: '1px 5px', borderRadius: '4px', fontWeight: 800 }}>50% Share</span>
+              </div>
+              <div style={{ fontSize: '0.74rem', color: '#64748b', marginTop: '2px' }}>
+                Host courses, approve tutors &amp; manage recurring revenue splits
+              </div>
+            </div>
+          </div>
+
+          <div
+            onClick={() => navigate('/admin/cloud-services')}
+            style={{
+              background: '#ffffff',
+              border: '1px solid #bfdbfe',
+              borderRadius: '12px',
+              padding: '0.9rem',
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'flex-start',
+              gap: '10px',
+            }}
+          >
+            <div style={{ width: '36px', height: '36px', borderRadius: '8px', background: 'linear-gradient(135deg, #3b82f6, #1d4ed8)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontSize: '1.1rem', flexShrink: 0 }}>
+              💻
+            </div>
+            <div>
+              <div style={{ fontSize: '0.88rem', fontWeight: 800, color: '#1d4ed8' }}>
+                Hire Eclat Tech Services
+              </div>
+              <div style={{ fontSize: '0.74rem', color: '#64748b', marginTop: '2px' }}>
+                Manage custom web development, apps, POS &amp; client quote requests
+              </div>
+            </div>
+          </div>
+
+          <div
+            onClick={() => navigate('/admin/cloud-services')}
+            style={{
+              background: '#ffffff',
+              border: '1px solid #bbf7d0',
+              borderRadius: '12px',
+              padding: '0.9rem',
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'flex-start',
+              gap: '10px',
+            }}
+          >
+            <div style={{ width: '36px', height: '36px', borderRadius: '8px', background: 'linear-gradient(135deg, #22c55e, #15803d)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontSize: '1.1rem', flexShrink: 0 }}>
+              🎓
+            </div>
+            <div>
+              <div style={{ fontSize: '0.88rem', fontWeight: 800, color: '#15803d' }}>
+                Careers &amp; Faculty
+              </div>
+              <div style={{ fontSize: '0.74rem', color: '#64748b', marginTop: '2px' }}>
+                Post teaching vacancies, review applications &amp; onboard faculty
+              </div>
+            </div>
+          </div>
+
+          <div
+            onClick={() => navigate('/admin/cloud-services')}
+            style={{
+              background: '#ffffff',
+              border: '1px solid #a7f3d0',
+              borderRadius: '12px',
+              padding: '0.9rem',
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'flex-start',
+              gap: '10px',
+            }}
+          >
+            <div style={{ width: '36px', height: '36px', borderRadius: '8px', background: 'linear-gradient(135deg, #10b981, #047857)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontSize: '1.1rem', flexShrink: 0 }}>
+              💚
+            </div>
+            <div>
+              <div style={{ fontSize: '0.88rem', fontWeight: 800, color: '#047857' }}>
+                Sponsor a Student / Donate
+              </div>
+              <div style={{ fontSize: '0.74rem', color: '#64748b', marginTop: '2px' }}>
+                Manage donor ledger, scholarship tiers &amp; student placements
+              </div>
+            </div>
           </div>
         </div>
       </div>

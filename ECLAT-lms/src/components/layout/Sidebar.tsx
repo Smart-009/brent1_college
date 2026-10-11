@@ -87,8 +87,9 @@ export function Sidebar({ isOpen, onClose }: { isOpen: boolean; onClose: () => v
 
   const adminNav: NavItem[] = [
     { to: '/admin', label: 'Admin Dashboard', icon: SettingsIcon },
+    { to: '/admin/cloud-services', label: 'Cloud & Services Hub', icon: BuildingIcon },
     { to: '/admin/intakes', label: 'Intake Scheduler & Adverts', icon: CalendarIcon },
-    { to: '/admin/classes', label: 'Academic Programs & Courses', icon: BuildingIcon },
+    { to: '/admin/classes', label: 'Academic Programs & Courses', icon: BookOpenIcon },
     { to: '/students', label: 'Student Directory & Admissions', icon: GraduationCapIcon },
     { to: '/library', label: 'E-Library & Cloud Drive', icon: LibraryIcon },
     { to: '/fees', label: 'Tuition Fees & Bursar Desk', icon: CreditCardIcon },

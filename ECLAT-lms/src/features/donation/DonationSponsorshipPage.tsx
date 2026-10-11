@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { initializePaystackCheckout } from '@/lib/paystack'
 import { INSTITUTION_CONFIG, getWhatsAppInquiryUrl } from '@/config/institution'
+import { cloudServicesStore } from '@/lib/cloudServicesStore'
 import {
   HeartHandshakeIcon,
   HeartIcon,
@@ -125,10 +126,9 @@ export function DonationSponsorshipPage() {
             date: new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }),
           })
 
-          // Save record in localStorage for reporting & transparency
+          // Save record via cloudServicesStore for Admin Portal & cloud sync
           try {
-            const existing = JSON.parse(localStorage.getItem('eclat_donations_ledger') || '[]')
-            existing.unshift({
+            cloudServicesStore.addDonationRecord({
               reference: ref,
               amount: effectiveAmount,
               currency,
@@ -139,7 +139,6 @@ export function DonationSponsorshipPage() {
               message: donorMessage,
               timestamp: new Date().toISOString(),
             })
-            localStorage.setItem('eclat_donations_ledger', JSON.stringify(existing))
           } catch {}
         },
         onClose: () => {

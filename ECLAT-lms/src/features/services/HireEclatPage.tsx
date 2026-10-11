@@ -2,6 +2,7 @@ import { useState, useId } from 'react'
 import { Link } from 'react-router-dom'
 import { useIsMobile } from '@/hooks/useMediaQuery'
 import { INSTITUTION_CONFIG, getWhatsAppInquiryUrl } from '@/config/institution'
+import { cloudServicesStore } from '@/lib/cloudServicesStore'
 import {
   CodeIcon,
   LaptopIcon,
@@ -267,12 +268,7 @@ export function HireEclatPage() {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
     try {
-      const existing = JSON.parse(localStorage.getItem('eclat_hire_inquiries') || '[]')
-      existing.unshift({
-        ...formData,
-        submittedAt: new Date().toISOString(),
-      })
-      localStorage.setItem('eclat_hire_inquiries', JSON.stringify(existing))
+      cloudServicesStore.addHireInquiry(formData)
     } catch {}
     setFormSubmitted(true)
   }

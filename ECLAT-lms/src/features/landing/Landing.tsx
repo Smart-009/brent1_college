@@ -7,6 +7,7 @@ import { isElectronApp, isCapacitorApp, OFFICIAL_APKPURE_URL, OFFICIAL_APK_URL }
 import { DesktopCommandPalette } from '@/components/shared/DesktopCommandPalette'
 import { supabase } from '@/lib/supabase'
 import { schoolStore } from '@/lib/schoolData'
+import { cloudServicesStore } from '@/lib/cloudServicesStore'
 import { INSTITUTION_CONFIG, getWhatsAppInquiryUrl } from '@/config/institution'
 import { OFFICIAL_COURSES, getDynamicCoursesList } from '@/config/officialCourses'
 import { getCoursePhoto } from '@/config/courseImages'
@@ -408,9 +409,17 @@ export function Landing() {
   const [categoryDropdownOpen, setCategoryDropdownOpen] = useState(false)
   const [academicsDropdownOpen, setAcademicsDropdownOpen] = useState(false)
   const [servicesDropdownOpen, setServicesDropdownOpen] = useState(false)
+  const [cloudServicesConfig, setCloudServicesConfig] = useState(() => cloudServicesStore.getConfig())
   const academicsDropdownRef = useRef<HTMLDivElement | null>(null)
   const servicesDropdownRef = useRef<HTMLDivElement | null>(null)
   const categoryDropdownRef = useRef<HTMLDivElement | null>(null)
+
+  useEffect(() => {
+    cloudServicesStore.syncFromCloud().catch(() => {})
+    return cloudServicesStore.subscribe(() => {
+      setCloudServicesConfig(cloudServicesStore.getConfig())
+    })
+  }, [])
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -1414,169 +1423,181 @@ export function Landing() {
                   )}
                 </div>
 
-                {/* 2. Institutional Services & Cloud Dropdown */}
-                <div ref={servicesDropdownRef} style={{ position: 'relative' }}>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setServicesDropdownOpen(!servicesDropdownOpen)
-                      setAcademicsDropdownOpen(false)
-                    }}
-                    style={{
-                      background: servicesDropdownOpen ? '#f5f3ff' : 'transparent',
-                      color: servicesDropdownOpen ? '#7c3aed' : '#334155',
-                      border: 'none',
-                      padding: '0.45rem 0.65rem',
-                      borderRadius: '8px',
-                      fontWeight: 700,
-                      fontSize: '0.86rem',
-                      display: 'inline-flex',
-                      alignItems: 'center',
-                      gap: '5px',
-                      cursor: 'pointer',
-                      transition: 'all 0.15s ease',
-                    }}
-                  >
-                    <BuildingIcon size={15} color="#7c3aed" />
-                    <span>Cloud & Services</span>
-                    <ChevronDownIcon
-                      size={13}
-                      color="#64748b"
-                      style={{
-                        transform: servicesDropdownOpen ? 'rotate(180deg)' : 'none',
-                        transition: 'transform 0.2s ease',
+                {/* 2. Institutional Services & Cloud Dropdown (Controlled from Admin Portal) */}
+                {cloudServicesConfig.showInPublicNavbar && (
+                  <div ref={servicesDropdownRef} style={{ position: 'relative' }}>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setServicesDropdownOpen(!servicesDropdownOpen)
+                        setAcademicsDropdownOpen(false)
                       }}
-                    />
-                  </button>
-
-                  {servicesDropdownOpen && (
-                    <div
                       style={{
-                        position: 'absolute',
-                        top: 'calc(100% + 8px)',
-                        left: 0,
-                        width: '320px',
-                        background: '#ffffff',
-                        border: '1px solid #cbd5e1',
-                        borderRadius: '12px',
-                        boxShadow: '0 12px 32px rgba(0, 0, 0, 0.15)',
-                        padding: '0.5rem',
-                        zIndex: 200,
-                        animation: 'fadeIn 0.15s ease',
-                        display: 'flex',
-                        flexDirection: 'column',
-                        gap: '2px',
+                        background: servicesDropdownOpen ? '#f5f3ff' : 'transparent',
+                        color: servicesDropdownOpen ? '#7c3aed' : '#334155',
+                        border: 'none',
+                        padding: '0.45rem 0.65rem',
+                        borderRadius: '8px',
+                        fontWeight: 700,
+                        fontSize: '0.86rem',
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: '5px',
+                        cursor: 'pointer',
+                        transition: 'all 0.15s ease',
                       }}
                     >
-                      <Link
-                        to="/publish-course"
-                        onClick={() => setServicesDropdownOpen(false)}
+                      <BuildingIcon size={15} color="#7c3aed" />
+                      <span>Cloud &amp; Services</span>
+                      <ChevronDownIcon
+                        size={13}
+                        color="#64748b"
                         style={{
-                          textDecoration: 'none',
-                          padding: '0.65rem 0.75rem',
-                          borderRadius: '8px',
-                          display: 'flex',
-                          alignItems: 'center',
-                          gap: '10px',
-                          color: '#0f172a',
-                          background: 'transparent',
-                          transition: 'background 0.15s',
+                          transform: servicesDropdownOpen ? 'rotate(180deg)' : 'none',
+                          transition: 'transform 0.2s ease',
                         }}
-                        onMouseEnter={(e) => (e.currentTarget.style.background = '#fffbeb')}
-                        onMouseLeave={(e) => (e.currentTarget.style.background = 'transparent')}
-                      >
-                        <div style={{ width: '30px', height: '30px', borderRadius: '8px', background: 'linear-gradient(135deg, #f59e0b, #d97706)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                          <SparklesIcon size={16} color="#ffffff" />
-                        </div>
-                        <div>
-                          <div style={{ fontSize: '0.86rem', fontWeight: 800, color: '#b45309', display: 'flex', alignItems: 'center', gap: '6px' }}>
-                            <span>Publish Course & Monetize</span>
-                            <span style={{ fontSize: '0.62rem', background: '#fef3c7', color: '#b45309', padding: '1px 5px', borderRadius: '4px', fontWeight: 800 }}>50% Share</span>
-                          </div>
-                          <div style={{ fontSize: '0.72rem', color: '#64748b' }}>Host your courses & earn recurring revenue</div>
-                        </div>
-                      </Link>
+                      />
+                    </button>
 
-                      <Link
-                        to="/hire"
-                        onClick={() => setServicesDropdownOpen(false)}
+                    {servicesDropdownOpen && (
+                      <div
                         style={{
-                          textDecoration: 'none',
-                          padding: '0.65rem 0.75rem',
-                          borderRadius: '8px',
+                          position: 'absolute',
+                          top: 'calc(100% + 8px)',
+                          left: 0,
+                          width: '320px',
+                          background: '#ffffff',
+                          border: '1px solid #cbd5e1',
+                          borderRadius: '12px',
+                          boxShadow: '0 12px 32px rgba(0, 0, 0, 0.15)',
+                          padding: '0.5rem',
+                          zIndex: 200,
+                          animation: 'fadeIn 0.15s ease',
                           display: 'flex',
-                          alignItems: 'center',
-                          gap: '10px',
-                          color: '#0f172a',
-                          background: 'transparent',
-                          transition: 'background 0.15s',
+                          flexDirection: 'column',
+                          gap: '2px',
                         }}
-                        onMouseEnter={(e) => (e.currentTarget.style.background = '#eff6ff')}
-                        onMouseLeave={(e) => (e.currentTarget.style.background = 'transparent')}
                       >
-                        <div style={{ width: '30px', height: '30px', borderRadius: '8px', background: 'linear-gradient(135deg, #3b82f6, #1d4ed8)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                          <LaptopIcon size={16} color="#ffffff" />
-                        </div>
-                        <div>
-                          <div style={{ fontSize: '0.86rem', fontWeight: 700, color: '#1d4ed8' }}>Hire Eclat Tech Services</div>
-                          <div style={{ fontSize: '0.72rem', color: '#64748b' }}>Custom web development, apps & data analytics</div>
-                        </div>
-                      </Link>
+                        {cloudServicesConfig.enablePublishCourse && (
+                          <Link
+                            to="/publish-course"
+                            onClick={() => setServicesDropdownOpen(false)}
+                            style={{
+                              textDecoration: 'none',
+                              padding: '0.65rem 0.75rem',
+                              borderRadius: '8px',
+                              display: 'flex',
+                              alignItems: 'center',
+                              gap: '10px',
+                              color: '#0f172a',
+                              background: 'transparent',
+                              transition: 'background 0.15s',
+                            }}
+                            onMouseEnter={(e) => (e.currentTarget.style.background = '#fffbeb')}
+                            onMouseLeave={(e) => (e.currentTarget.style.background = 'transparent')}
+                          >
+                            <div style={{ width: '30px', height: '30px', borderRadius: '8px', background: 'linear-gradient(135deg, #f59e0b, #d97706)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                              <SparklesIcon size={16} color="#ffffff" />
+                            </div>
+                            <div>
+                              <div style={{ fontSize: '0.86rem', fontWeight: 800, color: '#b45309', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                                <span>Publish Course &amp; Monetize</span>
+                                <span style={{ fontSize: '0.62rem', background: '#fef3c7', color: '#b45309', padding: '1px 5px', borderRadius: '4px', fontWeight: 800 }}>
+                                  {cloudServicesConfig.publishCourseBadge || '50% Share'}
+                                </span>
+                              </div>
+                              <div style={{ fontSize: '0.72rem', color: '#64748b' }}>Host your courses &amp; earn recurring revenue</div>
+                            </div>
+                          </Link>
+                        )}
 
-                      <Link
-                        to="/careers"
-                        onClick={() => setServicesDropdownOpen(false)}
-                        style={{
-                          textDecoration: 'none',
-                          padding: '0.65rem 0.75rem',
-                          borderRadius: '8px',
-                          display: 'flex',
-                          alignItems: 'center',
-                          gap: '10px',
-                          color: '#0f172a',
-                          background: 'transparent',
-                          transition: 'background 0.15s',
-                        }}
-                        onMouseEnter={(e) => (e.currentTarget.style.background = '#f0fdf4')}
-                        onMouseLeave={(e) => (e.currentTarget.style.background = 'transparent')}
-                      >
-                        <div style={{ width: '30px', height: '30px', borderRadius: '8px', background: 'linear-gradient(135deg, #22c55e, #15803d)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                          <GraduationCapIcon size={16} color="#ffffff" />
-                        </div>
-                        <div>
-                          <div style={{ fontSize: '0.86rem', fontWeight: 700, color: '#15803d' }}>Careers & Faculty</div>
-                          <div style={{ fontSize: '0.72rem', color: '#64748b' }}>Join our online teaching & operations team</div>
-                        </div>
-                      </Link>
+                        {cloudServicesConfig.enableHireServices && (
+                          <Link
+                            to="/hire"
+                            onClick={() => setServicesDropdownOpen(false)}
+                            style={{
+                              textDecoration: 'none',
+                              padding: '0.65rem 0.75rem',
+                              borderRadius: '8px',
+                              display: 'flex',
+                              alignItems: 'center',
+                              gap: '10px',
+                              color: '#0f172a',
+                              background: 'transparent',
+                              transition: 'background 0.15s',
+                            }}
+                            onMouseEnter={(e) => (e.currentTarget.style.background = '#eff6ff')}
+                            onMouseLeave={(e) => (e.currentTarget.style.background = 'transparent')}
+                          >
+                            <div style={{ width: '30px', height: '30px', borderRadius: '8px', background: 'linear-gradient(135deg, #3b82f6, #1d4ed8)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                              <LaptopIcon size={16} color="#ffffff" />
+                            </div>
+                            <div>
+                              <div style={{ fontSize: '0.86rem', fontWeight: 700, color: '#1d4ed8' }}>Hire Eclat Tech Services</div>
+                              <div style={{ fontSize: '0.72rem', color: '#64748b' }}>Custom web development, apps &amp; data analytics</div>
+                            </div>
+                          </Link>
+                        )}
 
-                      <Link
-                        to="/donate"
-                        onClick={() => setServicesDropdownOpen(false)}
-                        style={{
-                          textDecoration: 'none',
-                          padding: '0.65rem 0.75rem',
-                          borderRadius: '8px',
-                          display: 'flex',
-                          alignItems: 'center',
-                          gap: '10px',
-                          color: '#0f172a',
-                          background: 'transparent',
-                          transition: 'background 0.15s',
-                        }}
-                        onMouseEnter={(e) => (e.currentTarget.style.background = '#ecfdf5')}
-                        onMouseLeave={(e) => (e.currentTarget.style.background = 'transparent')}
-                      >
-                        <div style={{ width: '30px', height: '30px', borderRadius: '8px', background: 'linear-gradient(135deg, #10b981, #047857)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                          <HeartHandshakeIcon size={16} color="#ffffff" />
-                        </div>
-                        <div>
-                          <div style={{ fontSize: '0.86rem', fontWeight: 700, color: '#047857' }}>Sponsor a Student / Donate</div>
-                          <div style={{ fontSize: '0.72rem', color: '#64748b' }}>Empower underprivileged learners & classrooms</div>
-                        </div>
-                      </Link>
-                    </div>
-                  )}
-                </div>
+                        {cloudServicesConfig.enableCareers && (
+                          <Link
+                            to="/careers"
+                            onClick={() => setServicesDropdownOpen(false)}
+                            style={{
+                              textDecoration: 'none',
+                              padding: '0.65rem 0.75rem',
+                              borderRadius: '8px',
+                              display: 'flex',
+                              alignItems: 'center',
+                              gap: '10px',
+                              color: '#0f172a',
+                              background: 'transparent',
+                              transition: 'background 0.15s',
+                            }}
+                            onMouseEnter={(e) => (e.currentTarget.style.background = '#f0fdf4')}
+                            onMouseLeave={(e) => (e.currentTarget.style.background = 'transparent')}
+                          >
+                            <div style={{ width: '30px', height: '30px', borderRadius: '8px', background: 'linear-gradient(135deg, #22c55e, #15803d)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                              <GraduationCapIcon size={16} color="#ffffff" />
+                            </div>
+                            <div>
+                              <div style={{ fontSize: '0.86rem', fontWeight: 700, color: '#15803d' }}>Careers &amp; Faculty</div>
+                              <div style={{ fontSize: '0.72rem', color: '#64748b' }}>Join our online teaching &amp; operations team</div>
+                            </div>
+                          </Link>
+                        )}
+
+                        {cloudServicesConfig.enableDonations && (
+                          <Link
+                            to="/donate"
+                            onClick={() => setServicesDropdownOpen(false)}
+                            style={{
+                              textDecoration: 'none',
+                              padding: '0.65rem 0.75rem',
+                              borderRadius: '8px',
+                              display: 'flex',
+                              alignItems: 'center',
+                              gap: '10px',
+                              color: '#0f172a',
+                              background: 'transparent',
+                              transition: 'background 0.15s',
+                            }}
+                            onMouseEnter={(e) => (e.currentTarget.style.background = '#ecfdf5')}
+                            onMouseLeave={(e) => (e.currentTarget.style.background = 'transparent')}
+                          >
+                            <div style={{ width: '30px', height: '30px', borderRadius: '8px', background: 'linear-gradient(135deg, #10b981, #047857)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                              <HeartHandshakeIcon size={16} color="#ffffff" />
+                            </div>
+                            <div>
+                              <div style={{ fontSize: '0.86rem', fontWeight: 700, color: '#047857' }}>Sponsor a Student / Donate</div>
+                              <div style={{ fontSize: '0.72rem', color: '#64748b' }}>Empower underprivileged learners &amp; classrooms</div>
+                            </div>
+                          </Link>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                )}
 
                 {/* 3. E-Library Direct Link */}
                 <Link
@@ -1984,96 +2005,105 @@ export function Landing() {
                 </div>
               </div>
 
-              {/* Category 2: Services */}
-              <div>
-                <div style={{ fontSize: '0.68rem', fontWeight: 800, color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: '0.35rem', paddingLeft: '0.2rem' }}>
-                  Services
+              {/* Category 2: Services (Controlled from Admin Portal) */}
+              {cloudServicesConfig.showInPublicNavbar && (
+                <div>
+                  <div style={{ fontSize: '0.68rem', fontWeight: 800, color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: '0.35rem', paddingLeft: '0.2rem' }}>
+                    Services
+                  </div>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '0.3rem' }}>
+                    {cloudServicesConfig.enablePublishCourse && (
+                      <Link
+                        to="/publish-course"
+                        onClick={() => setMobileNavOpen(false)}
+                        style={{
+                          color: '#92400e',
+                          textDecoration: 'none',
+                          padding: '0.6rem 0.75rem',
+                          borderRadius: '8px',
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '9px',
+                          fontSize: '0.88rem',
+                          fontWeight: 800,
+                          background: '#fffbeb',
+                          border: '1px solid #fde68a',
+                        }}
+                      >
+                        <SparklesIcon size={16} color="#d97706" />
+                        <span>Publish Course (Earn {cloudServicesConfig.publishCourseBadge || '50% Share'})</span>
+                      </Link>
+                    )}
+
+                    {cloudServicesConfig.enableHireServices && (
+                      <Link
+                        to="/hire"
+                        onClick={() => setMobileNavOpen(false)}
+                        style={{
+                          color: '#1d4ed8',
+                          textDecoration: 'none',
+                          padding: '0.6rem 0.75rem',
+                          borderRadius: '8px',
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '9px',
+                          fontSize: '0.88rem',
+                          fontWeight: 700,
+                          background: '#eff6ff',
+                        }}
+                      >
+                        <LaptopIcon size={16} color="#1d4ed8" />
+                        <span>Hire Eclat (Tech Services)</span>
+                      </Link>
+                    )}
+
+                    {cloudServicesConfig.enableCareers && (
+                      <Link
+                        to="/careers"
+                        onClick={() => setMobileNavOpen(false)}
+                        style={{
+                          color: '#15803d',
+                          textDecoration: 'none',
+                          padding: '0.6rem 0.75rem',
+                          borderRadius: '8px',
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '9px',
+                          fontSize: '0.88rem',
+                          fontWeight: 700,
+                          background: '#f0fdf4',
+                        }}
+                      >
+                        <GraduationCapIcon size={16} color="#15803d" />
+                        <span>Careers &amp; Faculty</span>
+                      </Link>
+                    )}
+
+                    {cloudServicesConfig.enableDonations && (
+                      <Link
+                        to="/donate"
+                        onClick={() => setMobileNavOpen(false)}
+                        style={{
+                          color: '#047857',
+                          textDecoration: 'none',
+                          padding: '0.6rem 0.75rem',
+                          borderRadius: '8px',
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '9px',
+                          fontSize: '0.88rem',
+                          fontWeight: 800,
+                          background: '#ecfdf5',
+                          border: '1px solid #a7f3d0',
+                        }}
+                      >
+                        <HeartHandshakeIcon size={16} color="#059669" />
+                        <span>Sponsor a Student / Donate</span>
+                      </Link>
+                    )}
+                  </div>
                 </div>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.3rem' }}>
-
-                  <Link
-                    to="/publish-course"
-                    onClick={() => setMobileNavOpen(false)}
-                    style={{
-                      color: '#92400e',
-                      textDecoration: 'none',
-                      padding: '0.6rem 0.75rem',
-                      borderRadius: '8px',
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '9px',
-                      fontSize: '0.88rem',
-                      fontWeight: 800,
-                      background: '#fffbeb',
-                      border: '1px solid #fde68a',
-                    }}
-                  >
-                    <SparklesIcon size={16} color="#d97706" />
-                    <span>Publish Course (Earn 50% Share)</span>
-                  </Link>
-
-                  <Link
-                    to="/hire"
-                    onClick={() => setMobileNavOpen(false)}
-                    style={{
-                      color: '#1d4ed8',
-                      textDecoration: 'none',
-                      padding: '0.6rem 0.75rem',
-                      borderRadius: '8px',
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '9px',
-                      fontSize: '0.88rem',
-                      fontWeight: 700,
-                      background: '#eff6ff',
-                    }}
-                  >
-                    <LaptopIcon size={16} color="#1d4ed8" />
-                    <span>Hire Eclat (Tech Services)</span>
-                  </Link>
-
-                  <Link
-                    to="/careers"
-                    onClick={() => setMobileNavOpen(false)}
-                    style={{
-                      color: '#15803d',
-                      textDecoration: 'none',
-                      padding: '0.6rem 0.75rem',
-                      borderRadius: '8px',
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '9px',
-                      fontSize: '0.88rem',
-                      fontWeight: 700,
-                      background: '#f0fdf4',
-                    }}
-                  >
-                    <GraduationCapIcon size={16} color="#15803d" />
-                    <span>Careers & Faculty</span>
-                  </Link>
-
-                  <Link
-                    to="/donate"
-                    onClick={() => setMobileNavOpen(false)}
-                    style={{
-                      color: '#047857',
-                      textDecoration: 'none',
-                      padding: '0.6rem 0.75rem',
-                      borderRadius: '8px',
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '9px',
-                      fontSize: '0.88rem',
-                      fontWeight: 800,
-                      background: '#ecfdf5',
-                      border: '1px solid #a7f3d0',
-                    }}
-                  >
-                    <HeartHandshakeIcon size={16} color="#059669" />
-                    <span>Sponsor a Student / Donate</span>
-                  </Link>
-                </div>
-              </div>
+              )}
 
               {/* Category 3: Student Hub & Info */}
               <div>

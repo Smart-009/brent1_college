@@ -20,6 +20,7 @@ import {
   UserIcon,
 } from '@/components/icons/AppIcons'
 import { schoolStore } from '@/lib/schoolData'
+import { cloudServicesStore } from '@/lib/cloudServicesStore'
 
 export interface DepartmentOption {
   name: string
@@ -629,13 +630,9 @@ export function TutorPublishCoursePage() {
       setDownloadStatusMsg('✓ Course registered & published live! Video stream connected.')
     }
 
-    // 3. Persist in localStorage
+    // 3. Persist in cloudServicesStore for Admin Portal & cloud sync
     try {
-      const existing: SubmittedTutorCourse[] = JSON.parse(
-        localStorage.getItem('eclat_published_tutor_courses') || '[]'
-      )
-      existing.unshift(newCourse)
-      localStorage.setItem('eclat_published_tutor_courses', JSON.stringify(existing))
+      cloudServicesStore.savePublishedTutorCourse(newCourse as any)
     } catch {}
 
     setSubmitting(false)
