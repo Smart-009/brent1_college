@@ -1002,7 +1002,7 @@ export function YouTubeEmbed({
                 </button>
               ) : (
                 <div style={{ display: 'flex', alignItems: 'center', gap: '6px', background: 'rgba(15, 23, 42, 0.85)', backdropFilter: 'blur(8px)', padding: '4px 10px', borderRadius: '8px', border: '1px solid rgba(212, 175, 55, 0.4)' }}>
-                  <img src="/logo.png" alt="Eclat" style={{ width: '15px', height: '15px', borderRadius: '50%' }} />
+                  <img src="/logo.png?v=2" alt="Eclat" style={{ width: '15px', height: '15px', borderRadius: '50%' }} />
                   <span style={{ fontSize: '0.74rem', fontWeight: 800, color: '#f8fafc', letterSpacing: '0.02em' }}>
                     ECLAT INSTITUTE • OFFICIAL STREAM
                   </span>

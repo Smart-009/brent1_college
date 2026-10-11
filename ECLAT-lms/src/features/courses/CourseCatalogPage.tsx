@@ -302,7 +302,7 @@ export function CourseCatalogPage() {
       >
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
           <Link to="/" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '0.65rem' }}>
-            <img src="/logo.png" alt="Eclat Emblem" style={{ width: '36px', height: '36px', borderRadius: '50%', border: '2px solid #1d4ed8' }} />
+            <img src="/logo.png?v=2" alt="Eclat Emblem" style={{ width: '36px', height: '36px', borderRadius: '50%', border: '2px solid #1d4ed8' }} />
             <div>
               <div style={{ fontSize: '1.05rem', fontWeight: 900, color: '#1e3a8a', fontFamily: 'var(--font-heading)', lineHeight: 1.1 }}>
                 ECLAT INSTITUTE
@@ -452,7 +452,7 @@ export function CourseCatalogPage() {
             >
               <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem' }}>
                 <img
-                  src="/logo.png"
+                  src="/logo.png?v=2"
                   alt="Eclat Institute Logo"
                   style={{ width: '32px', height: '32px', borderRadius: '50%', border: '1.5px solid #1d4ed8' }}
                 />

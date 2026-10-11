@@ -76,7 +76,7 @@ export function LayoutShell() {
           >
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem' }}>
               <img
-                src="/logo.png"
+                src="/logo.png?v=2"
                 alt={`${INSTITUTION_CONFIG.name} Logo`}
                 style={{ width: '24px', height: '24px', borderRadius: '50%', border: '1px solid #d4af37' }}
               />

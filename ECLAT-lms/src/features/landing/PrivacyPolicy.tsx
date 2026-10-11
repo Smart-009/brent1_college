@@ -38,7 +38,7 @@ export function PrivacyPolicy() {
         }}
       >
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', cursor: 'pointer' }} onClick={() => navigate('/')}>
-          <img src="/logo.png" alt={INSTITUTION_CONFIG.name} style={{ width: '40px', height: '40px', borderRadius: '50%', border: '2px solid #d4af37' }} />
+          <img src="/logo.png?v=2" alt={INSTITUTION_CONFIG.name} style={{ width: '40px', height: '40px', borderRadius: '50%', border: '2px solid #d4af37' }} />
           <div>
             <div style={{ fontSize: '1.15rem', fontWeight: 900, color: '#0f172a', letterSpacing: '0.02em' }}>{INSTITUTION_CONFIG.name}</div>
             <div style={{ fontSize: '0.72rem', color: '#64748b', fontWeight: 600 }}>100% Online Virtual Campus • Directorate of Academic Affairs</div>

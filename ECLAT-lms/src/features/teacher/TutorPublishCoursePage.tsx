@@ -660,7 +660,7 @@ export function TutorPublishCoursePage() {
       >
         <div style={{ maxWidth: '1200px', margin: '0 auto', display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%' }}>
           <Link to="/" style={{ display: 'flex', alignItems: 'center', gap: '10px', textDecoration: 'none' }}>
-            <img src="/logo.png" alt="Eclat" style={{ width: '36px', height: '36px', borderRadius: '50%', border: '1.5px solid #d4af37' }} />
+            <img src="/logo.png?v=2" alt="Eclat" style={{ width: '36px', height: '36px', borderRadius: '50%', border: '1.5px solid #d4af37' }} />
             <div>
               <span style={{ fontSize: '1.05rem', fontWeight: 900, color: '#1e3a8a', letterSpacing: '-0.01em' }}>
                 ECLAT INSTITUTE

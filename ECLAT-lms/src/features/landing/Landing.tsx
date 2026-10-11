@@ -1104,7 +1104,7 @@ export function Landing() {
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexShrink: 1, minWidth: 0 }}>
             <Link to="/" style={{ display: 'flex', alignItems: 'center', gap: '0.45rem', textDecoration: 'none', minWidth: 0 }}>
               <img
-                src="/logo.png"
+                src="/logo.png?v=2"
                 alt="Eclat Institute Logo"
                 style={{ width: isMobile ? '32px' : '40px', height: isMobile ? '32px' : '40px', borderRadius: '50%', objectFit: 'cover', border: '2px solid #d4af37', boxShadow: '0 2px 8px rgba(0,0,0,0.12)', flexShrink: 0 }}
               />
@@ -1822,7 +1822,7 @@ export function Landing() {
             >
               <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem' }}>
                 <img
-                  src="/logo.png"
+                  src="/logo.png?v=2"
                   alt="Eclat Institute Logo"
                   style={{ width: '34px', height: '34px', borderRadius: '50%', border: '2px solid #A51D24', boxShadow: '0 2px 6px rgba(165, 29, 36, 0.2)' }}
                 />
@@ -4090,7 +4090,7 @@ export function Landing() {
               }}
             >
               <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '1.25rem', borderBottom: '1px solid rgba(255,255,255,0.1)', paddingBottom: '1rem' }}>
-                <img src="/logo.png" alt="Eclat" style={{ width: '44px', height: '44px', borderRadius: '50%', border: '2px solid #d4af37' }} />
+                <img src="/logo.png?v=2" alt="Eclat" style={{ width: '44px', height: '44px', borderRadius: '50%', border: '2px solid #d4af37' }} />
                 <div>
                   <h3 style={{ fontSize: '1.1rem', fontWeight: 900, color: '#ffffff', margin: 0 }}>Faculty Partnership Fast-Track</h3>
                   <div style={{ fontSize: '0.78rem', color: '#fbbf24', fontWeight: 700 }}>3 Simple Steps to Start Earning</div>
@@ -4823,7 +4823,7 @@ export function Landing() {
           {/* Brand & Overview */}
           <div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.85rem', marginBottom: '1.25rem' }}>
-              <img src="/logo.png" alt="Eclat Institute Logo" style={{ width: '44px', height: '44px', borderRadius: '50%', border: '2px solid #1d4ed8' }} />
+              <img src="/logo.png?v=2" alt="Eclat Institute Logo" style={{ width: '44px', height: '44px', borderRadius: '50%', border: '2px solid #1d4ed8' }} />
               <div>
                 <span style={{ fontSize: '1.2rem', fontWeight: 900, color: '#0f172a', fontFamily: 'var(--font-heading)', letterSpacing: '0.02em' }}>ECLAT INSTITUTE</span>
                 <div style={{ fontSize: '0.75rem', color: '#1d4ed8', fontWeight: 700 }}>100% ONLINE VIRTUAL CAMPUS & ACADEMY</div>
@@ -5293,7 +5293,7 @@ export function Landing() {
                 >
                   {/* Receipt Header */}
                   <div style={{ textAlign: 'center', borderBottom: `2px solid ${generatedAdmission.isPendingVerification ? '#d97706' : '#1e3a8a'}`, paddingBottom: '0.75rem', marginBottom: '1rem' }}>
-                    <img src="/logo.png" alt={INSTITUTION_CONFIG.name} style={{ width: '48px', height: '48px', borderRadius: '50%', border: `2px solid ${generatedAdmission.isPendingVerification ? '#f59e0b' : '#d4af37'}` }} />
+                    <img src="/logo.png?v=2" alt={INSTITUTION_CONFIG.name} style={{ width: '48px', height: '48px', borderRadius: '50%', border: `2px solid ${generatedAdmission.isPendingVerification ? '#f59e0b' : '#d4af37'}` }} />
                     <h2 style={{ fontSize: '1.35rem', fontWeight: 900, color: '#1e3a8a', margin: '0.25rem 0 2px', letterSpacing: '0.02em', textTransform: 'uppercase' }}>
                       {generatedAdmission.providerType === 'partner_institution' && generatedAdmission.institutionName
                         ? generatedAdmission.institutionName
@@ -5417,7 +5417,7 @@ export function Landing() {
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingBottom: '1rem', marginBottom: '1.25rem', borderBottom: '1px solid #f1f5f9' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '0.85rem' }}>
                 <div style={{ width: '44px', height: '44px', borderRadius: '12px', background: 'linear-gradient(135deg, #1e3a8a 0%, #0f172a 100%)', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 4px 12px rgba(30, 58, 138, 0.25)', flexShrink: 0 }}>
-                  <img src="/logo.png" alt="Eclat Emblem" style={{ width: '32px', height: '32px', borderRadius: '50%' }} />
+                  <img src="/logo.png?v=2" alt="Eclat Emblem" style={{ width: '32px', height: '32px', borderRadius: '50%' }} />
                 </div>
                 <div>
                   <h3 style={{ fontSize: isMobile ? '1.15rem' : '1.25rem', fontWeight: 900, color: '#0f172a', margin: 0, fontFamily: 'var(--font-heading)', letterSpacing: '-0.02em' }}>
@@ -6042,7 +6042,7 @@ export function Landing() {
             >
               <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                 <img
-                  src="/logo.png"
+                  src="/logo.png?v=2"
                   alt="Eclat"
                   style={{ width: '40px', height: '40px', borderRadius: '50%', border: '2px solid #d4af37' }}
                 />
@@ -6397,7 +6397,7 @@ export function Landing() {
               <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                 <div style={{ position: 'relative' }}>
                   <img
-                    src="/logo.png"
+                    src="/logo.png?v=2"
                     alt="Eclat Admissions Desk"
                     style={{ width: '40px', height: '40px', borderRadius: '50%', objectFit: 'cover', border: '2px solid #22c55e' }}
                   />

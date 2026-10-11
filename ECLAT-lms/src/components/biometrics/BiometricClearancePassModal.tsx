@@ -104,7 +104,7 @@ export const BiometricClearancePassModal: React.FC<Props> = ({ pass, onClose }) 
           >
             <div style={{ display: 'flex', borderBottom: 'none', justifyContent: 'center', alignItems: 'center', gap: '0.75rem', marginBottom: '0.5rem' }}>
               <img
-                src="/logo.png"
+                src="/logo.png?v=2"
                 alt={INSTITUTION_CONFIG.name}
                 style={{ width: '56px', height: '56px', borderRadius: '50%', objectFit: 'cover' }}
                 onError={(e) => {

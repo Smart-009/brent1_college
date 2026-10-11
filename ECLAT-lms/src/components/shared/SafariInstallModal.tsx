@@ -41,7 +41,7 @@ export function SafariInstallModal({ isOpen, onClose, isIOS }: SafariInstallModa
         {/* Header */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.85rem', marginBottom: '1.25rem' }}>
           <img
-            src="/logo.png"
+            src="/logo.png?v=2"
             alt="Eclat Institute"
             style={{ width: '48px', height: '48px', borderRadius: '12px', objectFit: 'cover', border: '2px solid #2563eb' }}
           />

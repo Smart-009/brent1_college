@@ -50,7 +50,7 @@ export function SchoolRegistrationPage() {
   // Step 3: Branding & Leadership
   const [primaryColor, setPrimaryColor] = useState('#881337')
   const [accentColor, setAccentColor] = useState('#d4af37')
-  const [logoUrl, setLogoUrl] = useState('/logo.png')
+  const [logoUrl, setLogoUrl] = useState('/logo.png?v=2')
   const [principalName, setPrincipalName] = useState('')
   const [principalTitle, setPrincipalTitle] = useState('Principal')
   const [principalEmail, setPrincipalEmail] = useState('')
@@ -133,7 +133,7 @@ export function SchoolRegistrationPage() {
         name: name.trim(),
         slug: slug.trim(),
         motto: motto.trim() || 'Knowledge, Discipline and Leadership',
-        logo_url: logoUrl.trim() || '/logo.png',
+        logo_url: logoUrl.trim() || '/logo.png?v=2',
         primary_color: primaryColor,
         accent_color: accentColor,
         academic_system: academicSystem,

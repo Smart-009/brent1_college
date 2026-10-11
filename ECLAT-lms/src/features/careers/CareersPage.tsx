@@ -261,7 +261,7 @@ export function CareersPage() {
       <header style={{ borderBottom: '1px solid rgba(255, 255, 255, 0.08)', background: 'rgba(11, 17, 32, 0.95)', backdropFilter: 'blur(12px)', position: 'sticky', top: 0, zIndex: 50, width: '100%', maxWidth: '100vw', boxSizing: 'border-box' }}>
         <div style={{ maxWidth: '1280px', margin: '0 auto', padding: '0.75rem 1rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
           <Link to="/" style={{ display: 'flex', alignItems: 'center', gap: '0.65rem', textDecoration: 'none', color: '#ffffff', minWidth: 0 }}>
-            <img src="/logo.png" alt="Eclat Institute Logo" style={{ width: '38px', height: '38px', borderRadius: '50%', border: '2px solid #3b82f6', flexShrink: 0 }} />
+            <img src="/logo.png?v=2" alt="Eclat Institute Logo" style={{ width: '38px', height: '38px', borderRadius: '50%', border: '2px solid #3b82f6', flexShrink: 0 }} />
             <div style={{ minWidth: 0, overflow: 'hidden' }}>
               <span style={{ fontSize: '1.1rem', fontWeight: 900, letterSpacing: '0.04em', color: '#ffffff', display: 'block', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>ECLAT INSTITUTE</span>
               <span className="hidden sm:block" style={{ fontSize: '0.68rem', color: '#38bdf8', fontWeight: 700, letterSpacing: '0.08em', whiteSpace: 'nowrap' }}>ACADEMIC FACULTY & CAREERS</span>
@@ -368,7 +368,7 @@ export function CareersPage() {
           >
             <div style={{ padding: '1rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: '1px solid #1e293b' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <img src="/logo.png" alt="Eclat Logo" style={{ width: '32px', height: '32px', borderRadius: '50%', border: '1.5px solid #3b82f6' }} />
+                <img src="/logo.png?v=2" alt="Eclat Logo" style={{ width: '32px', height: '32px', borderRadius: '50%', border: '1.5px solid #3b82f6' }} />
                 <div>
                   <div style={{ fontSize: '0.95rem', fontWeight: 900, color: '#ffffff' }}>ECLAT INSTITUTE</div>
                   <div style={{ fontSize: '0.62rem', color: '#38bdf8', fontWeight: 700 }}>ACADEMIC FACULTY</div>
@@ -969,7 +969,7 @@ export function CareersPage() {
       <footer style={{ borderTop: '1px solid rgba(255, 255, 255, 0.08)', background: '#070a14', padding: isMobile ? '2.5rem 1rem 1.5rem' : '3rem 1.5rem 2rem', color: '#64748b', fontSize: '0.85rem', width: '100%', boxSizing: 'border-box' }}>
         <div style={{ maxWidth: '1280px', margin: '0 auto', display: 'flex', flexDirection: 'column', gap: '1.5rem', alignItems: 'center', textAlign: 'center', width: '100%', boxSizing: 'border-box' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-            <img src="/logo.png" alt="Eclat Institute" style={{ width: '32px', height: '32px', borderRadius: '50%' }} />
+            <img src="/logo.png?v=2" alt="Eclat Institute" style={{ width: '32px', height: '32px', borderRadius: '50%' }} />
             <span style={{ color: '#ffffff', fontWeight: 800, fontSize: '1rem' }}>Eclat Institute Academic Board</span>
           </div>
           <div style={{ display: 'flex', gap: isMobile ? '1rem' : '1.5rem', flexWrap: 'wrap', justifyContent: 'center' }}>

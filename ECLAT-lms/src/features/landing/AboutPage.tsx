@@ -234,7 +234,7 @@ export function AboutPage() {
             style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', cursor: 'pointer' }}
           >
             <img
-              src="/logo.png"
+              src="/logo.png?v=2"
               alt="Eclat Institute Logo"
               style={{
                 width: '40px',
@@ -404,7 +404,7 @@ export function AboutPage() {
             >
               <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem' }}>
                 <img
-                  src="/logo.png"
+                  src="/logo.png?v=2"
                   alt="Eclat Institute Logo"
                   style={{ width: '32px', height: '32px', borderRadius: '50%', border: '1.5px solid #1d4ed8' }}
                 />
@@ -1445,7 +1445,7 @@ export function AboutPage() {
           }}
         >
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-            <img src="/logo.png" alt="Eclat" style={{ width: '32px', height: '32px', borderRadius: '50%', border: '1.5px solid #1d4ed8' }} />
+            <img src="/logo.png?v=2" alt="Eclat" style={{ width: '32px', height: '32px', borderRadius: '50%', border: '1.5px solid #1d4ed8' }} />
             <div>
               <div style={{ color: '#0f172a', fontWeight: 800 }}>{INSTITUTION_CONFIG.name}</div>
               <div style={{ fontSize: '0.72rem', color: '#64748b' }}>100% Online Virtual Campus</div>

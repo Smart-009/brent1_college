@@ -102,7 +102,7 @@ export function NativeAppHome({ courses, onSelectCourse }: { courses: CourseItem
       >
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem' }}>
           <img
-            src="/logo.png"
+            src="/logo.png?v=2"
             alt="Eclat"
             style={{ width: '36px', height: '36px', borderRadius: '50%', border: '2px solid #1e3a8a', boxShadow: '0 2px 8px rgba(30, 58, 138, 0.15)' }}
           />

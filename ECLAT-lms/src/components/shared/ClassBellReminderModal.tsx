@@ -201,8 +201,8 @@ export function ClassBellReminderModal() {
         navigator.serviceWorker.ready.then((registration) => {
           registration.showNotification(title, {
             body,
-            icon: '/logo.png',
-            badge: '/logo.png',
+            icon: '/logo.png?v=2',
+            badge: '/logo.png?v=2',
             vibrate: [500, 200, 500, 200, 500, 200, 1000],
             data: { url },
             tag: 'class-bell-reminder',
@@ -217,7 +217,7 @@ export function ClassBellReminderModal() {
       } else {
         new Notification(title, {
           body,
-          icon: '/logo.png',
+          icon: '/logo.png?v=2',
           requireInteraction: true,
         } as any)
       }

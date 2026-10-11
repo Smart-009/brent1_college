@@ -29,7 +29,7 @@ const INITIAL_PARTNER_SCHOOLS: PartnerSchoolTenant[] = [
     name: 'Apex Institute of Technology & Business',
     slug: 'apex-tech',
     motto: 'Practical Technology for Modern Enterprise',
-    logo_url: '/logo.png',
+    logo_url: '/logo.png?v=2',
     primary_color: '#047857', // Emerald Green
     accent_color: '#0284c7',  // Sky Blue
     academic_system: 'semester', // Semester-based: Semester 1, Semester 2
@@ -95,7 +95,7 @@ const INITIAL_PARTNER_SCHOOLS: PartnerSchoolTenant[] = [
     name: 'St. Jude Preparatory & High Academy',
     slug: 'st-jude',
     motto: 'Faith, Diligence and Integrity in Service',
-    logo_url: '/logo.png',
+    logo_url: '/logo.png?v=2',
     primary_color: '#1d4ed8', // Royal Blue
     accent_color: '#f59e0b',  // Warm Amber
     academic_system: 'term',  // Term-based
@@ -172,7 +172,7 @@ const INITIAL_PARTNER_SCHOOLS: PartnerSchoolTenant[] = [
     name: 'Hillcrest British International College',
     slug: 'hillcrest',
     motto: 'Semper Ad Excellentiam — Always Toward Excellence',
-    logo_url: '/logo.png',
+    logo_url: '/logo.png?v=2',
     primary_color: '#881337', // Burgundy
     accent_color: '#d4af37',  // Gold
     academic_system: 'term',  // Term-based: Term 1, Term 2, Term 3
@@ -409,7 +409,7 @@ class TenantSchoolStore {
       name: input.name.trim(),
       slug: finalSlug,
       motto: input.motto?.trim() || 'Knowledge, Discipline and Leadership',
-      logo_url: input.logo_url?.trim() || '/logo.png',
+      logo_url: input.logo_url?.trim() || '/logo.png?v=2',
       primary_color: input.primary_color || '#1e3a8a',
       accent_color: input.accent_color || '#d4af37',
       academic_system: input.academic_system,

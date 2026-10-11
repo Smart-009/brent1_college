@@ -477,7 +477,7 @@ export function CertificateGenerator({
               }}
             >
               <img
-                src="/logo-emblem-transparent.png"
+                src="/logo-emblem-transparent.png?v=2"
                 alt="Watermark Crest"
                 style={{ width: '100%', height: '100%', objectFit: 'contain', filter: 'grayscale(100%)' }}
               />
@@ -612,7 +612,7 @@ export function CertificateGenerator({
                     src={
                       activeCert.provider_type === 'partner_institution' && activeCert.institution_logo
                         ? activeCert.institution_logo
-                        : '/logo-emblem-transparent.png'
+                        : '/logo-emblem-transparent.png?v=2'
                     }
                     alt={activeCert.institution_name || INSTITUTION_CONFIG.name}
                     style={{

@@ -67,7 +67,7 @@ export function ReportCardGenerator({ reportCard, onClose }: ReportCardGenerator
           >
             <div style={{ display: 'flex', alignItems: 'center', gap: '1.25rem' }}>
               <img
-                src="/logo.png"
+                src="/logo.png?v=2"
                 alt="Eclat Institute Crest"
                 style={{ width: '85px', height: '85px', objectFit: 'contain' }}
               />

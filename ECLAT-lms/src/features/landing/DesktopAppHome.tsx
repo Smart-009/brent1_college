@@ -86,7 +86,7 @@ export function DesktopAppHome({ courses: _courses, onSelectCourse: _onSelectCou
         <div style={{ display: 'flex', alignItems: 'center', gap: '1.5rem' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.85rem', cursor: 'pointer' }} onClick={() => navigate('/')}>
             <img
-              src="/logo.png"
+              src="/logo.png?v=2"
               alt="Eclat"
               style={{ width: '40px', height: '40px', borderRadius: '50%', border: '2px solid #1e3a8a', boxShadow: '0 2px 8px rgba(30, 58, 138, 0.15)' }}
             />

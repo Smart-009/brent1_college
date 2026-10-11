@@ -68,7 +68,7 @@ export function LoadingScreen({ message = 'Loading Eclat Portal…' }: { message
             }}
           />
           <img
-            src="/logo.png"
+            src="/logo.png?v=2"
             alt="Eclat Institute"
             style={{
               position: 'relative',
@@ -292,7 +292,7 @@ export function AppOpeningSplashScreen({ onFinished }: { onFinished?: () => void
             }}
           />
           <img
-            src="/logo.png"
+            src="/logo.png?v=2"
             alt="Eclat Institute"
             style={{
               position: 'relative',

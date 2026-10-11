@@ -387,7 +387,7 @@ export function Login() {
           <div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.85rem', marginBottom: '1.5rem' }}>
               <img
-                src="/logo.png"
+                src="/logo.png?v=2"
                 alt="Eclat Institute Logo"
                 style={{
                   width: '52px',

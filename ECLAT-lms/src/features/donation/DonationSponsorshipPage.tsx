@@ -172,7 +172,7 @@ export function DonationSponsorshipPage() {
         <div style={{ maxWidth: '1240px', margin: '0 auto', display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%' }}>
           <Link to="/" style={{ display: 'flex', alignItems: 'center', gap: '0.65rem', textDecoration: 'none' }}>
             <img
-              src="/logo.png"
+              src="/logo.png?v=2"
               alt="Eclat Institute Logo"
               style={{ width: '40px', height: '40px', borderRadius: '50%', border: '2px solid #d4af37' }}
             />
@@ -950,7 +950,7 @@ export function DonationSponsorshipPage() {
       <footer style={{ background: '#0f172a', color: '#94a3b8', padding: '2.5rem 1rem', borderTop: '1px solid #1e293b' }}>
         <div style={{ maxWidth: '1180px', margin: '0 auto', display: 'flex', flexDirection: 'column', gap: '1.25rem', alignItems: 'center', textAlign: 'center' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <img src="/logo.png" alt="Eclat Institute" style={{ width: '32px', height: '32px', borderRadius: '50%' }} />
+            <img src="/logo.png?v=2" alt="Eclat Institute" style={{ width: '32px', height: '32px', borderRadius: '50%' }} />
             <span style={{ fontSize: '1rem', fontWeight: 900, color: '#ffffff' }}>Eclat Institute Foundation</span>
           </div>
           <p style={{ fontSize: '0.82rem', maxWidth: '640px', margin: 0, lineHeight: 1.6 }}>
