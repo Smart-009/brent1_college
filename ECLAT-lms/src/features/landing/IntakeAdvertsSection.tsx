@@ -487,11 +487,11 @@ export function IntakeAdvertsSection() {
               boxShadow: '0 8px 24px rgba(5, 150, 105, 0.1)',
             }}
           >
-            <div style={{ display: 'flex', alignItems: 'center', gap: '1.1rem', flex: 1, minWidth: '280px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '1.1rem', flex: 1, minWidth: isMobile ? 0 : '280px' }}>
               <div style={{ fontSize: '2.5rem', background: '#ffffff', width: '56px', height: '56px', borderRadius: '14px', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 4px 12px rgba(5, 150, 105, 0.15)', flexShrink: 0 }}>
                 🏡
               </div>
-              <div>
+              <div style={{ minWidth: 0 }}>
                 <div style={{ fontSize: '0.74rem', fontWeight: 900, color: '#047857', textTransform: 'uppercase', letterSpacing: '0.06em' }}>
                   Full-Time British Online Schooling &bull; Years 7 to 11
                 </div>
@@ -537,11 +537,11 @@ export function IntakeAdvertsSection() {
               boxShadow: '0 8px 24px rgba(124, 58, 237, 0.1)',
             }}
           >
-            <div style={{ display: 'flex', alignItems: 'center', gap: '1.1rem', flex: 1, minWidth: '280px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '1.1rem', flex: 1, minWidth: isMobile ? 0 : '280px' }}>
               <div style={{ fontSize: '2.5rem', background: '#ffffff', width: '56px', height: '56px', borderRadius: '14px', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 4px 12px rgba(124, 58, 237, 0.15)', flexShrink: 0 }}>
                 📚
               </div>
-              <div>
+              <div style={{ minWidth: 0 }}>
                 <div style={{ fontSize: '0.74rem', fontWeight: 900, color: '#6d28d9', textTransform: 'uppercase', letterSpacing: '0.06em' }}>
                   1-on-1 &bull; Small Group Pods &bull; Evening &amp; Weekend Booster Clinics
                 </div>
@@ -587,11 +587,11 @@ export function IntakeAdvertsSection() {
               boxShadow: '0 8px 24px rgba(2, 132, 199, 0.1)',
             }}
           >
-            <div style={{ display: 'flex', alignItems: 'center', gap: '1.1rem', flex: 1, minWidth: '280px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '1.1rem', flex: 1, minWidth: isMobile ? 0 : '280px' }}>
               <div style={{ fontSize: '2.5rem', background: '#ffffff', width: '56px', height: '56px', borderRadius: '14px', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 4px 12px rgba(2, 132, 199, 0.15)', flexShrink: 0 }}>
                 🇬🇧
               </div>
-              <div>
+              <div style={{ minWidth: 0 }}>
                 <div style={{ fontSize: '0.74rem', fontWeight: 900, color: '#0369a1', textTransform: 'uppercase', letterSpacing: '0.06em' }}>
                   Candidate Exam Centres KE042 &amp; Pearson EDX-98421 &bull; Integrated Cohorts
                 </div>
@@ -624,8 +624,11 @@ export function IntakeAdvertsSection() {
         <div
           style={{
             display: 'grid',
-            gridTemplateColumns: isMobile ? '1fr' : 'repeat(auto-fit, minmax(340px, 1fr))',
+            gridTemplateColumns: isMobile ? 'minmax(0, 1fr)' : 'repeat(auto-fit, minmax(min(100%, 340px), 1fr))',
             gap: isMobile ? '1.5rem' : '2rem',
+            width: '100%',
+            maxWidth: '100%',
+            minWidth: 0,
           }}
         >
           {filteredIntakes.map((intake) => {
@@ -655,6 +658,10 @@ export function IntakeAdvertsSection() {
                     : '0 10px 30px rgba(15, 23, 42, 0.08)',
                   transition: 'transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.25s ease',
                   position: 'relative',
+                  width: '100%',
+                  maxWidth: '100%',
+                  minWidth: 0,
+                  boxSizing: 'border-box',
                 }}
               >
                 {/* Top Poster Image / Banner */}
@@ -753,16 +760,19 @@ export function IntakeAdvertsSection() {
                 {/* Card Body */}
                 <div
                   style={{
-                    padding: '1.5rem',
+                    padding: isMobile ? '1.15rem 1rem' : '1.5rem',
                     background: '#ffffff',
                     display: 'flex',
                     flexDirection: 'column',
                     flex: 1,
                     justifyContent: 'space-between',
                     gap: '1.25rem',
+                    minWidth: 0,
+                    maxWidth: '100%',
+                    boxSizing: 'border-box',
                   }}
                 >
-                  <div>
+                  <div style={{ minWidth: 0 }}>
                     <h3
                       style={{
                         fontSize: '1.25rem',
@@ -770,6 +780,7 @@ export function IntakeAdvertsSection() {
                         color: '#0f172a',
                         margin: '0 0 0.4rem',
                         lineHeight: 1.3,
+                        wordBreak: 'break-word',
                       }}
                     >
                       {intake.title}
@@ -831,7 +842,7 @@ export function IntakeAdvertsSection() {
                     <div
                       style={{
                         display: 'grid',
-                        gridTemplateColumns: '1fr 1fr',
+                        gridTemplateColumns: isMobile ? 'minmax(0, 1fr)' : 'repeat(2, minmax(0, 1fr))',
                         gap: '0.6rem',
                         marginBottom: '1rem',
                       }}

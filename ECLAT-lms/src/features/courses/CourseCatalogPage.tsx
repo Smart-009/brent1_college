@@ -1187,7 +1187,7 @@ export function CourseCatalogPage() {
             </p>
           </div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : 'repeat(auto-fill, minmax(280px, 1fr))', gap: isMobile ? '1rem' : '1.5rem' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: isMobile ? 'minmax(0, 1fr)' : 'repeat(auto-fill, minmax(min(100%, 280px), 1fr))', gap: isMobile ? '1rem' : '1.5rem' }}>
             {INSTITUTIONAL_SCHOOLS.map((school) => (
               <div
                 key={school.id}
@@ -1203,6 +1203,9 @@ export function CourseCatalogPage() {
                   boxShadow: '0 4px 16px rgba(0,0,0,0.06)',
                   position: 'relative',
                   overflow: 'hidden',
+                  minWidth: 0,
+                  maxWidth: '100%',
+                  boxSizing: 'border-box',
                 }}
               >
                 <div style={{ position: 'absolute', top: 0, right: 0, width: '90px', height: '90px', background: `${school.color}0d`, borderRadius: '0 0 0 100%' }} />
@@ -1315,7 +1318,7 @@ export function CourseCatalogPage() {
             Showing <strong style={{ color: '#0f172a' }}>{filteredCourses.length}</strong> program{filteredCourses.length === 1 ? '' : 's'}
           </div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : 'repeat(auto-fill, minmax(280px, 1fr))', gap: '1.25rem' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: isMobile ? 'minmax(0, 1fr)' : 'repeat(auto-fill, minmax(min(100%, 280px), 1fr))', gap: '1.25rem' }}>
             {filteredCourses.map((course) => (
               <div
                 key={course.id}
@@ -1331,6 +1334,10 @@ export function CourseCatalogPage() {
                   gap: '1rem',
                   boxShadow: '0 4px 16px rgba(0,0,0,0.05)',
                   transition: 'transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1), border-color 0.25s ease, box-shadow 0.25s ease',
+                  minWidth: 0,
+                  maxWidth: '100%',
+                  boxSizing: 'border-box',
+                  overflow: 'hidden',
                 }}
               >
                 <div>

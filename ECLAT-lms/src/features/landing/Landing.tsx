@@ -2688,7 +2688,7 @@ export function Landing() {
             </p>
           </div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : 'repeat(auto-fit, minmax(260px, 1fr))', gap: '1.25rem' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: isMobile ? 'minmax(0, 1fr)' : 'repeat(auto-fit, minmax(min(100%, 260px), 1fr))', gap: '1.25rem' }}>
             {[
               {
                 title: 'Cambridge & Edexcel International',
@@ -2741,6 +2741,9 @@ export function Landing() {
                     justifyContent: 'space-between',
                     boxShadow: '0 2px 8px rgba(0,0,0,0.03)',
                     transition: 'transform 0.2s ease, box-shadow 0.2s ease',
+                    minWidth: 0,
+                    maxWidth: '100%',
+                    boxSizing: 'border-box',
                   }}
                 >
                   <div>
@@ -2778,7 +2781,7 @@ export function Landing() {
           </div>
 
           {/* Strategic Services Dual Cards: Hire Us & Careers */}
-          <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : 'repeat(2, 1fr)', gap: '1.25rem', marginTop: '1.5rem' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: isMobile ? 'minmax(0, 1fr)' : 'repeat(2, minmax(0, 1fr))', gap: '1.25rem', marginTop: '1.5rem' }}>
             <div
               style={{
                 background: 'linear-gradient(135deg, #0f172a 0%, #1e293b 100%)',
@@ -2789,6 +2792,9 @@ export function Landing() {
                 flexDirection: 'column',
                 justifyContent: 'space-between',
                 border: '1px solid rgba(255,255,255,0.1)',
+                minWidth: 0,
+                maxWidth: '100%',
+                boxSizing: 'border-box',
               }}
             >
               <div>
@@ -2833,6 +2839,9 @@ export function Landing() {
                 flexDirection: 'column',
                 justifyContent: 'space-between',
                 border: '1px solid rgba(255,255,255,0.1)',
+                minWidth: 0,
+                maxWidth: '100%',
+                boxSizing: 'border-box',
               }}
             >
               <div>
@@ -2930,7 +2939,7 @@ export function Landing() {
           <div
             style={{
               display: 'grid',
-              gridTemplateColumns: isMobile ? '1fr' : 'repeat(auto-fit, minmax(200px, 1fr))',
+              gridTemplateColumns: isMobile ? 'minmax(0, 1fr)' : 'repeat(auto-fit, minmax(min(100%, 200px), 1fr))',
               gap: isMobile ? '1rem 0.75rem' : '1.5rem',
               background: '#ffffff',
               border: '1px solid #e2e8f0',
@@ -2984,7 +2993,7 @@ export function Landing() {
           <div style={{ fontSize: '0.78rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.06em', color: '#64748b', textAlign: 'center', marginBottom: '1.25rem' }}>
             Our 5 Academic Departments
           </div>
-          <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : 'repeat(auto-fit, minmax(220px, 1fr))', gap: '1rem' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: isMobile ? 'minmax(0, 1fr)' : 'repeat(auto-fit, minmax(min(100%, 220px), 1fr))', gap: '1rem' }}>
             {[
               { icon: <LaptopIcon size={24} color="#2563eb" />, name: 'Tech & Software', desc: 'React 19, Node.js REST APIs, PostgreSQL & Ethical Hacking' },
               { icon: <DatabaseIcon size={24} color="#0284c7" />, name: 'Data Science & Research', desc: 'Python, RStudio Biostats, SPSS Surveys & Stata Econometrics' },
@@ -3003,10 +3012,13 @@ export function Landing() {
                   display: 'flex',
                   alignItems: 'flex-start',
                   gap: '12px',
+                  minWidth: 0,
+                  maxWidth: '100%',
+                  boxSizing: 'border-box',
                 }}
               >
                 <div style={{ flexShrink: 0, display: 'flex', alignItems: 'center' }}>{dept.icon}</div>
-                <div>
+                <div style={{ minWidth: 0 }}>
                   <div style={{ fontSize: '0.92rem', fontWeight: 800, color: '#0f172a' }}>{dept.name}</div>
                   <div style={{ fontSize: '0.78rem', color: '#64748b', marginTop: '3px', lineHeight: 1.45 }}>{dept.desc}</div>
                 </div>
@@ -3016,7 +3028,7 @@ export function Landing() {
         </div>
 
         {/* 4 Core Institutional Pillars */}
-        <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : 'repeat(auto-fit, minmax(260px, 1fr))', gap: isMobile ? '1rem' : '1.75rem' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: isMobile ? 'minmax(0, 1fr)' : 'repeat(auto-fit, minmax(min(100%, 260px), 1fr))', gap: isMobile ? '1rem' : '1.75rem' }}>
           <div style={{ background: '#ffffff', border: '1px solid #cbd5e1', borderRadius: '16px', padding: isMobile ? '1.25rem' : '2rem', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.04)' }}>
             <div style={{ width: '48px', height: '48px', borderRadius: '12px', background: '#eff6ff', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '1rem' }}>
               <LaptopIcon size={26} color="#2563eb" />
@@ -3134,14 +3146,14 @@ export function Landing() {
       </section>
 
       {/* Featured Short Courses Showcase */}
-      <section id="courses" style={{ background: '#ffffff', padding: isMobile ? '2.5rem 1rem' : '5rem 1.5rem', borderTop: '1px solid #e2e8f0', borderBottom: '1px solid #e2e8f0' }}>
-        <div style={{ maxWidth: '1240px', margin: '0 auto' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', flexWrap: 'wrap', gap: '1.5rem', marginBottom: '2rem' }}>
-            <div>
+      <section id="courses" style={{ background: '#ffffff', padding: isMobile ? '2.5rem 1rem' : '5rem 1.5rem', borderTop: '1px solid #e2e8f0', borderBottom: '1px solid #e2e8f0', width: '100%', maxWidth: '100vw', overflowX: 'hidden', boxSizing: 'border-box' }}>
+        <div style={{ maxWidth: '1240px', width: '100%', minWidth: 0, margin: '0 auto', boxSizing: 'border-box' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', flexWrap: 'wrap', gap: '1.5rem', marginBottom: '2rem', minWidth: 0, maxWidth: '100%' }}>
+            <div style={{ minWidth: 0, maxWidth: '100%' }}>
               <span style={{ fontSize: '0.82rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.08em', color: '#b45309' }}>
                 ONLINE PROGRAMS DIRECTORY
               </span>
-              <h2 style={{ fontSize: isMobile ? '1.6rem' : '2.2rem', fontWeight: 900, color: '#0f172a', margin: '0.35rem 0 0', fontFamily: 'var(--font-heading)' }}>
+              <h2 style={{ fontSize: isMobile ? '1.6rem' : '2.2rem', fontWeight: 900, color: '#0f172a', margin: '0.35rem 0 0', fontFamily: 'var(--font-heading)', wordBreak: 'break-word' }}>
                 Tech & Language Online Programs
               </h2>
               <p style={{ fontSize: '1rem', color: '#64748b', margin: '0.35rem 0 0' }}>
@@ -3150,7 +3162,7 @@ export function Landing() {
             </div>
 
             {/* Live Search Input Bar */}
-            <div style={{ position: 'relative', width: '100%', maxWidth: '380px' }}>
+            <div style={{ position: 'relative', width: '100%', maxWidth: '380px', minWidth: 0 }}>
               <input
                 type="text"
                 className="input"
@@ -3164,6 +3176,7 @@ export function Landing() {
                   background: '#f8fafc',
                   fontSize: '0.9rem',
                   width: '100%',
+                  boxSizing: 'border-box',
                 }}
               />
               <span style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', display: 'flex', alignItems: 'center', pointerEvents: 'none' }}>
@@ -3194,13 +3207,15 @@ export function Landing() {
           </div>
 
           {/* Category Filter Pills & Result Counter */}
-          <div style={{ display: 'flex', flexDirection: isMobile ? 'column' : 'row', justifyContent: 'space-between', alignItems: isMobile ? 'flex-start' : 'center', gap: '1rem', marginBottom: isMobile ? '1.5rem' : '2.5rem' }}>
+          <div style={{ display: 'flex', flexDirection: isMobile ? 'column' : 'row', justifyContent: 'space-between', alignItems: isMobile ? 'flex-start' : 'center', gap: '1rem', marginBottom: isMobile ? '1.5rem' : '2.5rem', width: '100%', maxWidth: '100%', minWidth: 0 }}>
             <div style={{
               display: 'flex',
               gap: '0.5rem',
               flexWrap: isMobile ? 'nowrap' : 'wrap',
               overflowX: isMobile ? 'auto' : 'visible',
               width: isMobile ? '100%' : 'auto',
+              maxWidth: '100%',
+              minWidth: 0,
               paddingBottom: isMobile ? '0.5rem' : 0,
               WebkitOverflowScrolling: 'touch',
               scrollbarWidth: 'none',
@@ -3277,7 +3292,7 @@ export function Landing() {
               })}
             </div>
 
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '1rem', flexWrap: 'wrap', width: '100%', marginTop: '0.5rem' }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '1rem', flexWrap: 'wrap', width: '100%', maxWidth: '100%', minWidth: 0, marginTop: '0.5rem' }}>
               <div style={{ fontSize: '0.88rem', color: '#64748b', fontWeight: 600 }}>
                 Showing <strong style={{ color: '#0f172a' }}>{filteredCourses.length}</strong> accredited program{filteredCourses.length === 1 ? '' : 's'}
               </div>
@@ -3368,7 +3383,7 @@ export function Landing() {
               VIEW MODE 1: COMPACT LIST VIEW (Normal list instead of whole card to avoid fatigue)
              ========================================================================= */}
           {courseViewMode === 'list' && filteredCourses.length > 0 && (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', width: '100%', maxWidth: '100%', minWidth: 0 }}>
               {filteredCourses.map((course) => {
                 const isHovered = hoveredCourseId === course.id
                 return (
@@ -3389,10 +3404,14 @@ export function Landing() {
                       gap: '1rem',
                       boxShadow: isHovered ? '0 4px 12px rgba(0, 0, 0, 0.06)' : '0 1px 2px rgba(0, 0, 0, 0.03)',
                       transition: 'all 0.15s ease',
+                      width: '100%',
+                      maxWidth: '100%',
+                      minWidth: 0,
+                      boxSizing: 'border-box',
                     }}
                   >
                     {/* Left: Thumbnail + Title & Metadata */}
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', flex: 1, minWidth: 0 }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', flex: 1, minWidth: 0, maxWidth: '100%', width: '100%' }}>
                       <div
                         style={{
                           width: isMobile ? '56px' : '72px',
@@ -3434,7 +3453,7 @@ export function Landing() {
                         </div>
                       </div>
 
-                      <div style={{ minWidth: 0, flex: 1 }}>
+                      <div style={{ minWidth: 0, maxWidth: '100%', flex: 1 }}>
                         <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap', marginBottom: '3px' }}>
                           <span
                             style={{
@@ -3474,6 +3493,10 @@ export function Landing() {
                             whiteSpace: isMobile ? 'normal' : 'nowrap',
                             overflow: 'hidden',
                             textOverflow: 'ellipsis',
+                            wordBreak: 'break-word',
+                            overflowWrap: 'break-word',
+                            minWidth: 0,
+                            maxWidth: '100%',
                           }}
                         >
                           {course.title}
@@ -3501,6 +3524,9 @@ export function Landing() {
                         justifyContent: isMobile ? 'space-between' : 'flex-end',
                         gap: '1rem',
                         width: isMobile ? '100%' : 'auto',
+                        maxWidth: '100%',
+                        minWidth: 0,
+                        flexWrap: 'wrap',
                         borderTop: isMobile ? '1px solid #f1f5f9' : 'none',
                         paddingTop: isMobile ? '0.65rem' : 0,
                         flexShrink: 0,
@@ -3570,8 +3596,11 @@ export function Landing() {
             <div
               style={{
                 display: 'grid',
-                gridTemplateColumns: isMobile ? '1fr' : 'repeat(auto-fill, minmax(260px, 1fr))',
+                gridTemplateColumns: isMobile ? 'minmax(0, 1fr)' : 'repeat(auto-fill, minmax(min(100%, 260px), 1fr))',
                 gap: '1.25rem',
+                width: '100%',
+                maxWidth: '100%',
+                minWidth: 0,
               }}
             >
               {filteredCourses.map((course) => {
@@ -3588,11 +3617,15 @@ export function Landing() {
                       borderRadius: '8px',
                       display: 'flex',
                       flexDirection: 'column',
-                      overflow: 'visible', // allow popover if desktop
+                      overflow: isMobile ? 'hidden' : 'visible', // allow popover if desktop, clip on mobile
                       position: 'relative',
                       boxShadow: isHovered ? '0 10px 25px -5px rgba(0, 0, 0, 0.1)' : '0 1px 3px rgba(0, 0, 0, 0.04)',
                       transition: 'all 0.2s cubic-bezier(0.16, 1, 0.3, 1)',
                       cursor: 'pointer',
+                      width: '100%',
+                      maxWidth: '100%',
+                      minWidth: 0,
+                      boxSizing: 'border-box',
                     }}
                   >
                     {/* 16:9 Crisp Course Header Thumbnail Banner with Realistic Photo */}
@@ -3602,6 +3635,8 @@ export function Landing() {
                         position: 'relative',
                         aspectRatio: '16 / 9',
                         width: '100%',
+                        maxWidth: '100%',
+                        minWidth: 0,
                         background: '#0f172a',
                         borderTopLeftRadius: '8px',
                         borderTopRightRadius: '8px',
@@ -3701,9 +3736,13 @@ export function Landing() {
                         display: 'flex',
                         flexDirection: 'column',
                         justifyContent: 'space-between',
+                        minWidth: 0,
+                        maxWidth: '100%',
+                        width: '100%',
+                        boxSizing: 'border-box',
                       }}
                     >
-                      <div>
+                      <div style={{ minWidth: 0, maxWidth: '100%' }}>
                         {/* Course Title (2-line clamp) */}
                         <h3
                           onClick={() => setSelectedCourseForModal(course)}
@@ -3715,11 +3754,16 @@ export function Landing() {
                             margin: '0 0 0.3rem',
                             lineHeight: 1.35,
                             fontFamily: 'var(--font-heading)',
-                            height: '2.6rem',
+                            minHeight: '2.55rem',
                             display: '-webkit-box',
                             WebkitLineClamp: 2,
                             WebkitBoxOrient: 'vertical',
                             overflow: 'hidden',
+                            whiteSpace: 'normal',
+                            wordBreak: 'break-word',
+                            overflowWrap: 'break-word',
+                            minWidth: 0,
+                            maxWidth: '100%',
                           }}
                         >
                           {course.title}
@@ -3734,13 +3778,15 @@ export function Landing() {
                             whiteSpace: 'nowrap',
                             overflow: 'hidden',
                             textOverflow: 'ellipsis',
+                            minWidth: 0,
+                            maxWidth: '100%',
                           }}
                         >
                           {course.instructor || 'Eclat Senior Faculty'}
                         </div>
 
                         {/* Rating row with stars */}
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '5px', marginBottom: '0.45rem' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '5px', marginBottom: '0.45rem', flexWrap: 'wrap' }}>
                           <span style={{ color: '#b45309', fontSize: '0.82rem', fontWeight: 900 }}>
                             {(course.rating || 4.9).toFixed(1)}
                           </span>
@@ -3769,15 +3815,18 @@ export function Landing() {
                           alignItems: 'center',
                           justifyContent: 'space-between',
                           gap: '0.5rem',
+                          flexWrap: 'wrap',
+                          minWidth: 0,
+                          maxWidth: '100%',
                         }}
                       >
-                        <div>
+                        <div style={{ minWidth: 0 }}>
                           <div style={{ fontSize: '1.05rem', fontWeight: 900, color: '#0f172a' }}>
                             {course.feeUsd ? `$${course.feeUsd}` : (course.feeDisplay || course.fee || 'Inquire')}
                           </div>
                         </div>
 
-                        <div style={{ display: 'flex', gap: '0.45rem' }}>
+                        <div style={{ display: 'flex', gap: '0.45rem', flexShrink: 0 }}>
                           <button
                             type="button"
                             onClick={(e) => {
@@ -3943,13 +3992,13 @@ export function Landing() {
           <div
             style={{
               display: 'grid',
-              gridTemplateColumns: isMobile ? '1fr' : '1.2fr 0.8fr',
+              gridTemplateColumns: isMobile ? 'minmax(0, 1fr)' : '1.2fr 0.8fr',
               gap: isMobile ? '2rem' : '3.5rem',
               alignItems: 'center',
             }}
           >
             {/* Left Column: Pitch & Value Proposition */}
-            <div>
+            <div style={{ minWidth: 0 }}>
               <div
                 style={{
                   display: 'inline-flex',
@@ -4009,7 +4058,7 @@ export function Landing() {
               <div
                 style={{
                   display: 'grid',
-                  gridTemplateColumns: isMobile ? '1fr' : 'repeat(3, 1fr)',
+                  gridTemplateColumns: isMobile ? 'minmax(0, 1fr)' : 'repeat(3, minmax(0, 1fr))',
                   gap: '1rem',
                   marginBottom: '2rem',
                 }}
@@ -4117,6 +4166,7 @@ export function Landing() {
                 borderRadius: '20px',
                 padding: isMobile ? '1.5rem' : '2rem',
                 boxShadow: '0 15px 40px rgba(0, 0, 0, 0.4)',
+                minWidth: 0,
               }}
             >
               <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '1.25rem', borderBottom: '1px solid rgba(255,255,255,0.1)', paddingBottom: '1rem' }}>
@@ -4191,8 +4241,8 @@ export function Landing() {
           </div>
 
           <div style={{ background: '#ffffff', border: '1px solid #cbd5e1', borderRadius: isMobile ? '16px' : '20px', padding: isMobile ? '1.25rem 1rem' : '2.5rem', boxShadow: '0 8px 20px rgba(0,0,0,0.06)' }}>
-            <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : 'repeat(auto-fit, minmax(280px, 1fr))', gap: isMobile ? '1.5rem' : '2rem' }}>
-              <div>
+            <div style={{ display: 'grid', gridTemplateColumns: isMobile ? 'minmax(0, 1fr)' : 'repeat(auto-fit, minmax(min(100%, 280px), 1fr))', gap: isMobile ? '1.5rem' : '2rem' }}>
+              <div style={{ minWidth: 0 }}>
                 <label className="label" style={{ fontWeight: 800, color: '#0f172a', marginBottom: '0.45rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                   <span>1. Select Program or Course</span>
                   <span style={{ fontSize: '0.72rem', background: '#eff6ff', color: '#2563eb', padding: '2px 8px', borderRadius: '4px', fontWeight: 700, border: '1px solid #bfdbfe' }}>▼ Click to change</span>
@@ -4224,7 +4274,7 @@ export function Landing() {
                 </div>
 
                 <label className="label">2. Select Preferred Payment Structure</label>
-                <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: '0.75rem', marginBottom: '1.25rem' }}>
+                <div style={{ display: 'grid', gridTemplateColumns: isMobile ? 'minmax(0, 1fr)' : 'repeat(2, minmax(0, 1fr))', gap: '0.75rem', marginBottom: '1.25rem' }}>
                   <button
                     type="button"
                     style={{
@@ -4272,7 +4322,7 @@ export function Landing() {
               </div>
 
               {/* Live Fee Inquiry Output Card */}
-              <div style={{ background: '#0f172a', color: '#ffffff', borderRadius: '16px', padding: isMobile ? '1.25rem 1rem' : '1.75rem', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+              <div style={{ background: '#0f172a', color: '#ffffff', borderRadius: '16px', padding: isMobile ? '1.25rem 1rem' : '1.75rem', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', minWidth: 0 }}>
                 <div>
                   <div style={{ fontSize: '0.78rem', color: '#93c5fd', textTransform: 'uppercase', fontWeight: 800 }}>Program Summary</div>
                   <div style={{ fontSize: '1.15rem', fontWeight: 900, color: '#ffffff', margin: '0.25rem 0 1rem' }}>
@@ -4365,9 +4415,9 @@ export function Landing() {
             </p>
           </div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : 'repeat(auto-fit, minmax(320px, 1fr))', gap: isMobile ? '1.25rem' : '2rem' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: isMobile ? 'minmax(0, 1fr)' : 'repeat(auto-fit, minmax(min(100%, 320px), 1fr))', gap: isMobile ? '1.25rem' : '2rem' }}>
             {/* Android Mobile App Card */}
-            <div style={{ background: 'rgba(30, 41, 59, 0.5)', border: '1px solid #334155', borderRadius: '20px', padding: isMobile ? '1.5rem 1.25rem' : '2.5rem', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+            <div style={{ background: 'rgba(30, 41, 59, 0.5)', border: '1px solid #334155', borderRadius: '20px', padding: isMobile ? '1.5rem 1.25rem' : '2.5rem', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', minWidth: 0 }}>
               <div>
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1.25rem' }}>
                   <div style={{ width: '56px', height: '56px', borderRadius: '14px', background: 'rgba(34, 197, 94, 0.15)', border: '1px solid rgba(34, 197, 94, 0.3)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -4449,7 +4499,7 @@ export function Landing() {
             </div>
 
             {/* Windows Desktop App Card */}
-            <div style={{ background: 'rgba(30, 41, 59, 0.5)', border: '1px solid #334155', borderRadius: '20px', padding: isMobile ? '1.5rem 1.25rem' : '2.5rem', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+            <div style={{ background: 'rgba(30, 41, 59, 0.5)', border: '1px solid #334155', borderRadius: '20px', padding: isMobile ? '1.5rem 1.25rem' : '2.5rem', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', minWidth: 0 }}>
               <div>
                 <div style={{ width: '56px', height: '56px', borderRadius: '14px', background: 'rgba(59, 130, 246, 0.15)', border: '1px solid rgba(59, 130, 246, 0.3)', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '1.5rem' }}>
                   <LaptopIcon size={28} color="#3b82f6" />
@@ -4499,7 +4549,7 @@ export function Landing() {
           </p>
         </div>
 
-        <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : 'repeat(auto-fit, minmax(320px, 1fr))', gap: isMobile ? '1.25rem' : '2rem' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: isMobile ? 'minmax(0, 1fr)' : 'repeat(auto-fit, minmax(min(100%, 320px), 1fr))', gap: isMobile ? '1.25rem' : '2rem' }}>
           {TESTIMONIALS.map((t, idx) => (
             <div
               key={idx}
@@ -4513,6 +4563,7 @@ export function Landing() {
                 justifyContent: 'space-between',
                 boxShadow: '0 4px 12px rgba(0,0,0,0.04)',
                 position: 'relative',
+                minWidth: 0,
               }}
             >
               <div>
@@ -4568,8 +4619,8 @@ export function Landing() {
             Your 3-Step Journey to Professional Success
           </h2>
 
-          <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : 'repeat(auto-fit, minmax(280px, 1fr))', gap: isMobile ? '1.25rem' : '2.5rem' }}>
-            <div style={{ background: 'rgba(255, 255, 255, 0.07)', border: '1px solid rgba(255, 255, 255, 0.15)', borderRadius: '16px', padding: isMobile ? '1.5rem 1.25rem' : '2rem' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: isMobile ? 'minmax(0, 1fr)' : 'repeat(auto-fit, minmax(min(100%, 280px), 1fr))', gap: isMobile ? '1.25rem' : '2.5rem' }}>
+            <div style={{ background: 'rgba(255, 255, 255, 0.07)', border: '1px solid rgba(255, 255, 255, 0.15)', borderRadius: '16px', padding: isMobile ? '1.5rem 1.25rem' : '2rem', minWidth: 0 }}>
               <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '1rem' }}>
                 <FileTextIcon size={34} color="#60a5fa" />
               </div>
@@ -4580,7 +4631,7 @@ export function Landing() {
               </p>
             </div>
 
-            <div style={{ background: 'rgba(255, 255, 255, 0.07)', border: '1px solid rgba(255, 255, 255, 0.15)', borderRadius: '16px', padding: isMobile ? '1.5rem 1.25rem' : '2rem' }}>
+            <div style={{ background: 'rgba(255, 255, 255, 0.07)', border: '1px solid rgba(255, 255, 255, 0.15)', borderRadius: '16px', padding: isMobile ? '1.5rem 1.25rem' : '2rem', minWidth: 0 }}>
               <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '1rem' }}>
                 <LaptopIcon size={34} color="#34d399" />
               </div>
@@ -4591,7 +4642,7 @@ export function Landing() {
               </p>
             </div>
 
-            <div style={{ background: 'rgba(255, 255, 255, 0.07)', border: '1px solid rgba(255, 255, 255, 0.15)', borderRadius: '16px', padding: isMobile ? '1.5rem 1.25rem' : '2rem' }}>
+            <div style={{ background: 'rgba(255, 255, 255, 0.07)', border: '1px solid rgba(255, 255, 255, 0.15)', borderRadius: '16px', padding: isMobile ? '1.5rem 1.25rem' : '2rem', minWidth: 0 }}>
               <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '1rem' }}>
                 <GraduationCapIcon size={34} color="#fbbf24" />
               </div>
@@ -4629,9 +4680,9 @@ export function Landing() {
 
       {/* Intakes, Global Payment & Admissions Section */}
       <section id="intakes" style={{ padding: isMobile ? '2.5rem 1rem' : '5rem 1.5rem', maxWidth: '1240px', margin: '0 auto' }}>
-        <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : 'repeat(auto-fit, minmax(320px, 1fr))', gap: isMobile ? '1.5rem' : '2.5rem' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: isMobile ? 'minmax(0, 1fr)' : 'repeat(auto-fit, minmax(min(100%, 320px), 1fr))', gap: isMobile ? '1.5rem' : '2.5rem' }}>
           {/* Global Payment Card */}
-          <div style={{ background: 'linear-gradient(135deg, #065f46 0%, #047857 100%)', color: '#ffffff', borderRadius: '20px', padding: isMobile ? '1.35rem 1rem' : '2.5rem', boxShadow: '0 10px 25px rgba(5, 150, 105, 0.2)' }}>
+          <div style={{ background: 'linear-gradient(135deg, #065f46 0%, #047857 100%)', color: '#ffffff', borderRadius: '20px', padding: isMobile ? '1.35rem 1rem' : '2.5rem', boxShadow: '0 10px 25px rgba(5, 150, 105, 0.2)', minWidth: 0 }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '1rem' }}>
               <CreditCardIcon size={28} color="#ffffff" />
               <div>
@@ -4675,7 +4726,7 @@ export function Landing() {
           </div>
 
           {/* Virtual Admissions & Support Desk Card */}
-          <div style={{ background: '#ffffff', border: '1px solid #e2e8f0', borderRadius: '20px', padding: isMobile ? '1.35rem 1rem' : '2.5rem', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.05)' }}>
+          <div style={{ background: '#ffffff', border: '1px solid #e2e8f0', borderRadius: '20px', padding: isMobile ? '1.35rem 1rem' : '2.5rem', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.05)', minWidth: 0 }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '1rem' }}>
               <GlobeIcon size={28} color="#2563eb" />
               <div>
@@ -4849,7 +4900,7 @@ export function Landing() {
 
       {/* Desktop & Mobile Footer */}
       <footer style={{ background: '#f8fafc', color: '#475569', padding: isMobile ? '3rem 1rem 6rem' : '4rem 1.5rem 2.5rem', borderTop: '1px solid #e2e8f0' }}>
-        <div style={{ maxWidth: '1280px', margin: '0 auto', display: 'grid', gridTemplateColumns: isMobile ? '1fr' : 'repeat(auto-fit, minmax(250px, 1fr))', gap: isMobile ? '2rem' : '2.5rem', marginBottom: isMobile ? '2rem' : '3rem' }}>
+        <div style={{ maxWidth: '1280px', margin: '0 auto', display: 'grid', gridTemplateColumns: isMobile ? 'minmax(0, 1fr)' : 'repeat(auto-fit, minmax(min(100%, 250px), 1fr))', gap: isMobile ? '2rem' : '2.5rem', marginBottom: isMobile ? '2rem' : '3rem' }}>
           {/* Brand & Overview */}
           <div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.85rem', marginBottom: '1.25rem' }}>
