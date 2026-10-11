@@ -180,15 +180,15 @@ export const INSTITUTIONAL_SCHOOLS = [
     description: 'Premier executive business school delivering high-paying global professional credentials: Project Management Professional (PMP®), Financial Modeling & Valuation (FMVA®), Corporate FP&A (CMA®), Lean Six Sigma Green Belt (LSSGB®), Business Analysis (CBAP®), Supply Chain & Logistics (CSCP®), Strategic HR (SHRM-CP®), and Computerized Accounting.',
     icon: '💼',
     color: '#f59e0b',
-    dean_name: 'Mrs. Grace Wanjiku, CPA(K)',
-    dean_email: 'g.wanjiku@eclat.institute',
+    dean_name: 'Office of the Dean — School of Business',
+    dean_email: 'business.faculty@eclat.institute',
     departments: [
       {
         id: 'dept-biztech',
         code: 'DEPT-BIZTECH',
         name: 'Department of Business Tech & Computerized Accounting',
         description: 'Computerized accounting, QuickBooks Online & Desktop, KRA iTax VAT & PAYE statutory filing, dynamic 3-statement financial modeling, valuation, and corporate FP&A.',
-        hod_name: 'Mrs. Grace Wanjiku, CPA(K)',
+        hod_name: 'Head of Department — Business Tech & Accounting',
         programs: [
           'Professional Forex Trading, Currency Markets & Technical Analysis (FX Mastery)',
           'Algorithmic Forex Trading & Quantitative Bot Strategies (Python & MT5)',
@@ -203,7 +203,7 @@ export const INSTITUTIONAL_SCHOOLS = [
         code: 'DEPT-COMM',
         name: 'Department of Commerce, Economics & Enterprise Management',
         description: 'Executive project management, Lean Six Sigma operational excellence, enterprise business analysis, global supply chain procurement, strategic human resources, and performance marketing.',
-        hod_name: 'Dr. Fiona Campbell, PMP®, M.Sc.',
+        hod_name: 'Head of Department — Commerce & Management',
         programs: [
           'Executive Project Management Professional (PMP®) & Agile Leadership',
           'Lean Six Sigma Green Belt (LSSGB®) & Process Optimization',
@@ -225,7 +225,7 @@ export const INSTITUTIONAL_SCHOOLS = [
     description: 'Premier computing faculty combining Full-Stack Web & Software Engineering (React 19 & Node.js), Python AI & Machine Learning, Big Data Analytics, Econometrics (R, SPSS, Stata), Cybersecurity, and Creative UI/UX Design.',
     icon: '💻',
     color: '#6366f1',
-    dean_name: 'Eng. Alex Mwangi & Dr. Brian Ochieng, Ph.D.',
+    dean_name: 'Office of the Dean — School of IT & Data Science',
     dean_email: 'tech.faculty@eclat.institute',
     departments: [
       {
@@ -233,7 +233,7 @@ export const INSTITUTIONAL_SCHOOLS = [
         code: 'DEPT-SWE',
         name: 'Department of Full-Stack Software Engineering & Cloud Technologies',
         description: '100% Online full-stack engineering, React 19, TypeScript, Node.js REST APIs, and cloud deployment.',
-        hod_name: 'Eng. Alex Mwangi',
+        hod_name: 'Head of Department — Software Engineering',
         programs: ['Full-Stack Web Development (React 19 & Node.js)', 'JavaScript & Cloud Deployment Masterclass', 'Mobile Application Development with Capacitor'],
       },
       {
@@ -241,7 +241,7 @@ export const INSTITUTIONAL_SCHOOLS = [
         code: 'DEPT-DATA',
         name: 'Department of Python Programming, Machine Learning & AI',
         description: 'Python programming, predictive machine learning models, neural networks, and automated data pipelines.',
-        hod_name: 'Dr. Brian Ochieng, Ph.D.',
+        hod_name: 'Head of Department — Data Science & AI',
         programs: ['Python for Data Science & Analytics', 'Predictive Machine Learning & AI Pipelines', 'SQL Database Engineering & Power BI'],
       },
       {
@@ -249,7 +249,7 @@ export const INSTITUTIONAL_SCHOOLS = [
         code: 'DEPT-CYBER',
         name: 'Department of Cybersecurity, Networking & Server Security',
         description: 'Network defense, server administration, penetration testing principles, and cloud architecture defense.',
-        hod_name: 'Mr. David Kiprono',
+        hod_name: 'Head of Department — Cybersecurity & Defense',
         programs: ['Cybersecurity Fundamentals & Threat Defense', 'Network Administration & Server Security', 'Cloud Security & DevOps Infrastructure'],
       },
       {
@@ -257,7 +257,7 @@ export const INSTITUTIONAL_SCHOOLS = [
         code: 'DEPT-ECON',
         name: 'Department of Econometrics, Statistics & Research Analytics',
         description: 'Advanced statistical inference, econometric time-series modeling in R, SPSS, Stata, and dissertation research.',
-        hod_name: 'Dr. Brian Ochieng',
+        hod_name: 'Head of Department — Econometrics & Research',
         programs: ['Advanced Econometrics & Time-Series in R', 'SPSS & Stata Multilevel Research Modeling', 'Quantitative Data Analysis for Academia & Industry'],
       },
       {
@@ -265,7 +265,7 @@ export const INSTITUTIONAL_SCHOOLS = [
         code: 'DEPT-UIUX',
         name: 'Department of UI/UX Design, Creative Media & Digital Skills',
         description: 'Figma UI/UX design systems, user research, Canva Pro visual branding, and essential computer packages.',
-        hod_name: 'Clara Dubois, M.A.',
+        hod_name: 'Head of Department — UI/UX & Digital Skills',
         programs: ['Executive UI/UX Design & Design Systems in Figma', 'Canva Pro Graphics & Social Media Animation', 'Comprehensive Computer Packages & Digital Office Skills'],
       },
     ],
@@ -279,15 +279,15 @@ export const INSTITUTIONAL_SCHOOLS = [
     description: 'International language mastery: IELTS Academic & General Training (Band 7.5-9.0), corporate English communication, modern foreign languages (Arabic, French, German), and Kiswahili Sanifu discourse.',
     icon: '🗣️',
     color: '#10b981',
-    dean_name: 'Prof. Eric Thorne',
-    dean_email: 'e.thorne@eclat.institute',
+    dean_name: 'Office of the Dean — School of Language',
+    dean_email: 'languages.faculty@eclat.institute',
     departments: [
       {
         id: 'dept-ielts',
         code: 'DEPT-IELTS',
         name: 'Department of IELTS & International Examination Prep',
         description: 'High-yield IELTS Academic and General Training preparation for global migration and university admissions.',
-        hod_name: 'Prof. Eric Thorne',
+        hod_name: 'Head of Department — IELTS & Exam Prep',
         programs: ['IELTS Academic Intensive (Band 7.5+ Target)', 'IELTS General Training for Global Migration', 'OET & Professional Language Certifications'],
       },
       {
@@ -295,7 +295,7 @@ export const INSTITUTIONAL_SCHOOLS = [
         code: 'DEPT-LANG',
         name: 'Department of Modern Foreign Languages (Arabic, French, German)',
         description: 'CEFR-aligned foreign language instruction for diplomacy, multinational careers, and international commerce.',
-        hod_name: 'Dr. Julian Croft',
+        hod_name: 'Head of Department — Modern Foreign Languages',
         programs: ['French Language Certificate (A1-C1 DELF)', 'German Language Proficiency (Goethe-Zertifikat)', 'Modern Standard Arabic for Professionals'],
       },
       {
@@ -303,7 +303,7 @@ export const INSTITUTIONAL_SCHOOLS = [
         code: 'DEPT-ENG',
         name: 'Department of English Fluency & Executive Public Speaking',
         description: 'Executive speaking, pitch deck presentations, speech crafting, and professional business correspondence.',
-        hod_name: 'Mrs. Victoria Sinclair',
+        hod_name: 'Head of Department — English & Communication',
         programs: ['English Language Fluency & Public Speaking', 'Corporate Business Writing & Rhetoric', 'Pronunciation & Cross-Cultural Discourse'],
       },
       {
@@ -311,7 +311,7 @@ export const INSTITUTIONAL_SCHOOLS = [
         code: 'DEPT-KISW',
         name: 'Department of Kiswahili Sanifu & African Dialects',
         description: 'Structured Swahili immersion for beginners, diaspora learners, researchers, and professional translators.',
-        hod_name: 'Mwl. Omondi Juma',
+        hod_name: 'Head of Department — Kiswahili & African Studies',
         programs: ['Kiswahili Sanifu for Beginners & Expatriates', 'Advanced Swahili Translation & Cultural Studies'],
       },
     ],
@@ -325,7 +325,7 @@ export const INSTITUTIONAL_SCHOOLS = [
     description: 'International British curriculum delivering Cambridge Assessment International Education (CAIE Center KE042) and Pearson Edexcel International (Center EDX-98421) across Year 9 Checkpoint, Year 10 IGCSE, and Year 11 Exam Series.',
     icon: '🇬🇧',
     color: '#0284c7',
-    dean_name: 'Dr. Michael Davies & Prof. Alistair Sterling',
+    dean_name: 'Office of the Dean — British International Curriculum',
     dean_email: 'igcse.faculty@eclat.institute',
     departments: [
       {
@@ -333,7 +333,7 @@ export const INSTITUTIONAL_SCHOOLS = [
         code: 'IGCSE-SCI',
         name: 'Department of IGCSE Natural & Pure Sciences (Triple Science)',
         description: 'Cambridge & Edexcel Physics (0625/4PH1), Chemistry (0620/4CH1), Biology (0610/4BI1), and Lower Secondary Year 9 Checkpoint Science.',
-        hod_name: 'Eng. Sarah Jenkins & Dr. Evelyn Dubois',
+        hod_name: 'Head of Department — IGCSE Natural & Pure Sciences',
         programs: ['Cambridge IGCSE Triple Sciences (0625/0620/0610)', 'Pearson Edexcel IGCSE Triple Sciences (4PH1/4CH1/4BI1)', 'Year 9 Lower Secondary Checkpoint Science'],
       },
       {
@@ -341,7 +341,7 @@ export const INSTITUTIONAL_SCHOOLS = [
         code: 'IGCSE-MTHCS',
         name: 'Department of IGCSE Mathematics & Computational Sciences',
         description: 'Cambridge & Edexcel Mathematics (0580/4MA1), Additional Mathematics (0606), Computer Science & Python (0478/4CP0), and Year 9 Math.',
-        hod_name: 'Dr. Michael Davies & Eng. Marcus Thorne',
+        hod_name: 'Head of Department — IGCSE Math & Computing',
         programs: ['Cambridge IGCSE Math 0580 & Additional Math 0606', 'Pearson Edexcel Math A 4MA1 Higher Tier', 'Cambridge & Edexcel Computer Science (0478 & 4CP0)'],
       },
       {
@@ -349,7 +349,7 @@ export const INSTITUTIONAL_SCHOOLS = [
         code: 'IGCSE-HUM',
         name: 'Department of IGCSE English Language & Global Humanities',
         description: 'Cambridge First Language English (0500), Literature (0475), Pearson Edexcel English Language A (4EA1), and Year 9 English.',
-        hod_name: 'Mrs. Victoria Sinclair & Dr. Julian Croft',
+        hod_name: 'Head of Department — IGCSE English & Humanities',
         programs: ['Cambridge IGCSE English 0500 (Papers 1 & 2)', 'Pearson Edexcel English Language A 4EA1', 'Year 9 Lower Secondary Checkpoint English'],
       },
       {
@@ -357,7 +357,7 @@ export const INSTITUTIONAL_SCHOOLS = [
         code: 'IGCSE-COMM',
         name: 'Department of IGCSE Commerce, Business & Economics',
         description: 'Cambridge Business Studies (0450) & Economics (0455), Pearson Edexcel Business (4BS1) & Economics (4EC1) for Cambridge ICE Distinction.',
-        hod_name: 'Mr. David Ombasa, MBA & Mrs. Fiona Campbell',
+        hod_name: 'Head of Department — IGCSE Commerce & Economics',
         programs: ['Cambridge IGCSE Business Studies 0450 & Economics 0455', 'Pearson Edexcel Business 4BS1 & Economics 4EC1', 'Cambridge ICE Group Award Distinction Track'],
       },
     ],

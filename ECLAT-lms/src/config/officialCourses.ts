@@ -3129,9 +3129,14 @@ export function getDynamicCoursesList(
 
     const feeCalculations = calculateDynamicFeeFields(liveFeeUsd, base.originalFeeUsd, deliveryMode)
 
+    const cleanInstructorRole = base.instructor?.includes('•')
+      ? base.instructor.split('•')[1].trim()
+      : 'Eclat Certified Faculty'
+
     programs.push({
       ...base,
       ...feeCalculations,
+      instructor: cleanInstructorRole,
       delivery_mode: deliveryMode,
       title: matchedSub?.name || matchedUnit?.title || base.title,
       duration: (matchedSub?.duration || matchedUnit?.course_duration || base.duration).replace(/4\s*Weeks?(\s*\(1\s*Month\))?|1\s*Month|6\s*Weeks?/gi, '8 Weeks (2 Months)'),

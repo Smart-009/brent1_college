@@ -132,33 +132,33 @@ export function AboutPage() {
 
   const leadership = [
     {
-      name: 'Dr. Arthur Sterling, Ph.D.',
-      role: 'Dean of Academic Affairs & Faculty Chair',
-      qual: 'Ph.D. in Computer Science (Edinburgh), M.Sc. Data Systems (Oxford)',
+      name: 'Office of the Academic Dean',
+      role: 'Academic Affairs & Curriculum Directorate',
+      qual: 'Computer Science, Data Systems & Pedagogical Quality Assurance',
       quote:
         'Our pedagogical mission is straightforward: empower motivated individuals worldwide with verifiable digital skills and real-world rigor.',
       avatar: '👨‍🏫',
     },
     {
-      name: 'Prof. Helen Montgomery, Ed.D.',
-      role: 'Director of Language Pedagogy & IELTS Methodologist',
-      qual: 'Cambridge DELTA Certified, Ed.D. Applied Linguistics',
+      name: 'Directorate of Language Pedagogy',
+      role: 'World Languages & IELTS Methodology Division',
+      qual: 'Cambridge DELTA Certified & Applied Linguistics Faculty',
       quote:
         'Language fluency is the gateway to global opportunity. Our breakout rooms and 1-on-1 mock clinics ensure every student hits their target band.',
       avatar: '👩‍🏫',
     },
     {
-      name: 'Eng. Marcus Vance',
-      role: 'Head of Software Engineering Labs',
-      qual: 'Former Principal Architect, Tech Lead in Fintech & Cloud Platforms',
+      name: 'Software Engineering Directorate',
+      role: 'Full-Stack, Cloud & Cybersecurity Labs',
+      qual: 'Enterprise Architecture, Fintech & Cloud Platforms Division',
       quote:
         'We do not teach syntax in a vacuum. We teach systems engineering, git workflows, architectural patterns, and production debugging.',
       avatar: '💻',
     },
     {
-      name: 'Claire A. Mutua, CPA-K, M.Sc.',
-      role: 'Head of Financial Tech & Business Systems',
-      qual: 'CPA-K, M.Sc. Finance & Accounting, Certified QuickBooks Trainer',
+      name: 'Financial Tech & Business Directorate',
+      role: 'Accounting, Corporate Finance & ERP Systems',
+      qual: 'Certified Accounting, Financial Modeling & QuickBooks Training Division',
       quote:
         'Contemporary finance demands automated reconciliation and cloud ERP dexterity. We bridge the gap between textbook bookkeeping and global corporate workflows.',
       avatar: '📊',

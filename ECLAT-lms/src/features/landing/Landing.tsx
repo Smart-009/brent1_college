@@ -3503,8 +3503,6 @@ export function Landing() {
                         </h3>
 
                         <div style={{ display: 'flex', alignItems: 'center', gap: '10px', fontSize: '0.78rem', color: '#64748b', flexWrap: 'wrap' }}>
-                          <span style={{ color: '#475569', fontWeight: 600 }}>{course.instructor || 'Eclat Senior Faculty'}</span>
-                          <span>•</span>
                           <span style={{ display: 'inline-flex', alignItems: 'center', gap: '3px', color: '#b45309', fontWeight: 800 }}>
                             ★ {(course.rating || 4.9).toFixed(1)} <span style={{ color: '#94a3b8', fontWeight: 500 }}>({(course.ratingCount || 1240).toLocaleString()})</span>
                           </span>
@@ -3728,7 +3726,7 @@ export function Landing() {
                       </div>
                     </div>
 
-                    {/* Udemy-Style Compact Body (Title, Instructor, Rating, Price) */}
+                    {/* Udemy-Style Compact Body (Title, Rating, Price) */}
                     <div
                       style={{
                         padding: '0.85rem 1rem',
@@ -3751,7 +3749,7 @@ export function Landing() {
                             fontSize: '0.94rem',
                             fontWeight: 800,
                             color: '#0f172a',
-                            margin: '0 0 0.3rem',
+                            margin: '0 0 0.45rem',
                             lineHeight: 1.35,
                             fontFamily: 'var(--font-heading)',
                             minHeight: '2.55rem',
@@ -3768,22 +3766,6 @@ export function Landing() {
                         >
                           {course.title}
                         </h3>
-
-                        {/* Instructor line */}
-                        <div
-                          style={{
-                            fontSize: '0.74rem',
-                            color: '#64748b',
-                            marginBottom: '0.45rem',
-                            whiteSpace: 'nowrap',
-                            overflow: 'hidden',
-                            textOverflow: 'ellipsis',
-                            minWidth: 0,
-                            maxWidth: '100%',
-                          }}
-                        >
-                          {course.instructor || 'Eclat Senior Faculty'}
-                        </div>
 
                         {/* Rating row with stars */}
                         <div style={{ display: 'flex', alignItems: 'center', gap: '5px', marginBottom: '0.45rem', flexWrap: 'wrap' }}>

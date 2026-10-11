@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0" />
+    <title>School Management ERP — Enterprise Portal</title>
+    <meta name="description" content="Next-generation School Information System & ERP: Admissions, Student Records, Bursary, Statutory Payroll, and Continuous Assessment." />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+    <style>
+      *, *::before, *::after {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        padding: 0;
+        background: #f8fafc;
+        color: #0f172a;
+        font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+      }
+      /* Custom scrollbar */
+      ::-webkit-scrollbar {
+        width: 6px;
+        height: 6px;
+      }
+      ::-webkit-scrollbar-track {
+        background: #f1f5f9;
+      }
+      ::-webkit-scrollbar-thumb {
+        background: #cbd5e1;
+        border-radius: 4px;
+      }
+      ::-webkit-scrollbar-thumb:hover {
+        background: #94a3b8;
+      }
+      /* Print styles */
+      @media print {
+        .no-print, header, aside, button {
+          display: none !important;
+        }
+        body, #root {
+          background: #ffffff !important;
+          color: #000000 !important;
+          padding: 0 !important;
+          margin: 0 !important;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div id="root">
+      <!-- Clean Initial Splash -->
+      <div id="initial-splash" style="min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; background: #f8fafc; color: #0f172a; text-align: center; padding: 2rem;">
+        <div style="width: 52px; height: 52px; border-radius: 12px; background: #2563eb; display: flex; align-items: center; justify-content: center; margin-bottom: 1.25rem; box-shadow: 0 4px 14px rgba(37,99,235,0.3);">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M22 10v6M2 10l10-5 10 5-10 5z" />
+            <path d="M6 12v5c3 3 9 3 12 0v-5" />
+          </svg>
+        </div>
+        <h2 style="margin: 0 0 0.35rem; font-size: 1.4rem; font-weight: 800; color: #0f172a; letter-spacing: -0.02em;">
+          School Management ERP
+        </h2>
+        <p style="margin: 0 0 1.25rem; font-size: 0.85rem; color: #64748b;">
+          Loading Enterprise Portal…
+        </p>
+        <div style="width: 120px; height: 4px; background: #e2e8f0; border-radius: 999px; overflow: hidden; position: relative;">
+          <div style="width: 100%; height: 100%; background: #2563eb; border-radius: 999px;"></div>
+        </div>
+      </div>
+    </div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

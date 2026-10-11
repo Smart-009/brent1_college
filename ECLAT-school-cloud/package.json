@@ -1,0 +1,39 @@
+{
+  "name": "@eclat/school-cloud",
+  "version": "1.0.0",
+  "type": "module",
+  "private": true,
+  "description": "Éclat School Cloud - Independent Multi-Tenant School Information System (SIS) & School Management ERP",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "test": "node tests/tenant_runtime_test.js"
+  },
+  "keywords": [
+    "school-management",
+    "sis",
+    "erp",
+    "multi-tenant",
+    "education-cloud",
+    "payroll",
+    "student-registration",
+    "bursar",
+    "teacher-desk"
+  ],
+  "dependencies": {
+    "react": "^19.2.7",
+    "react-dom": "^19.2.7",
+    "react-router-dom": "^7.18.1"
+  },
+  "devDependencies": {
+    "@types/node": "^24.13.2",
+    "@types/react": "^19.2.17",
+    "@types/react-dom": "^19.2.3",
+    "@vitejs/plugin-react": "^6.0.3",
+    "typescript": "~6.0.2",
+    "vite": "^8.1.1"
+  },
+  "author": "Éclat Technologies",
+  "license": "UNLICENSED"
+}

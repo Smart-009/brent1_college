@@ -1243,12 +1243,6 @@ export function CourseCatalogPage() {
                     {school.description}
                   </p>
 
-                  <div style={{ background: '#f8fafc', borderRadius: '10px', padding: '0.65rem 0.85rem', marginBottom: '1rem', border: '1px solid #e2e8f0' }}>
-                    <div style={{ fontSize: '0.72rem', color: '#64748b', fontWeight: 700, textTransform: 'uppercase' }}>Dean of Faculty</div>
-                    <div style={{ fontSize: '0.82rem', color: '#0f172a', fontWeight: 700 }}>{school.dean_name}</div>
-                    <div style={{ fontSize: '0.74rem', color: '#1d4ed8' }}>{school.dean_email}</div>
-                  </div>
-
                   <div style={{ fontSize: '0.76rem', color: '#b45309', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.04em', marginBottom: '0.5rem' }}>
                     Departments ({school.departments.length})
                   </div>
