@@ -154,9 +154,9 @@ export function FeeManagement() {
       id: `rec-clearance-${currentStudent?.id || profile?.id || 'std'}`,
       receipt_number: `RCT-${new Date().getFullYear()}-${Math.floor(1000 + Math.random() * 9000)}`,
       invoice_id: `inv-${currentStudent?.id || profile?.id || 'auto'}`,
-      student_id: currentStudent?.id || profile?.id || 'std-1',
+      student_id: currentStudent?.id || profile?.id || '',
       student_name: currentStudent?.full_name || profile?.full_name || 'Enrolled Student',
-      admission_number: currentStudent?.admission_number || profile?.admission_number || 'EI-2026-001',
+      admission_number: currentStudent?.admission_number || profile?.admission_number || '',
       amount: myBilled,
       amount_paid: myBilled,
       payment_method: 'Bank Transfer',
@@ -483,7 +483,7 @@ export function FeeManagement() {
                   onClick={() => {
                     const studentEmail = (profile as any)?.email || (currentStudent as any)?.email || 'student@eclat.institute'
                     const studentName = currentStudent?.full_name || profile?.full_name || 'Student'
-                    const studentAdm = currentStudent?.admission_number || profile?.admission_number || 'EI-2026'
+                    const studentAdm = currentStudent?.admission_number || profile?.admission_number || ''
 
                     initializePaystackCheckout({
                       email: studentEmail,
@@ -645,7 +645,7 @@ export function FeeManagement() {
               onClick={(e) => e.stopPropagation()}
             >
               <div style={{ textAlign: 'center', borderBottom: '2px solid #1e3a8a', paddingBottom: '1rem', marginBottom: '1.25rem' }}>
-                <h2 style={{ fontSize: '1.3rem', fontWeight: 900, color: '#1e3a8a', margin: 0 }}>ÉCLAT INSTITUTE</h2>
+                <h2 style={{ fontSize: '1.3rem', fontWeight: 900, color: '#1e3a8a', margin: 0 }}>ECLAT INSTITUTE</h2>
                 <div style={{ fontSize: '0.8rem', color: '#64748b' }}>OFFICIAL TUITION PAYMENT RECEIPT</div>
               </div>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '0.6rem', fontSize: '0.9rem' }}>
@@ -1612,7 +1612,7 @@ export function FeeManagement() {
               </div>
 
               <div style={{ textAlign: 'center', fontSize: '0.75rem', color: '#64748b', borderTop: '1px dashed #cbd5e1', paddingTop: '0.75rem' }}>
-                Thank you for your payment. Éclat Institute • 100% Online Tech & Languages.
+                Thank you for your payment. Eclat Institute • 100% Online Tech & Languages.
               </div>
             </div>
           </div>

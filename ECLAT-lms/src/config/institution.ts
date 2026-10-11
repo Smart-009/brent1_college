@@ -77,8 +77,8 @@ export interface InstitutionConfig {
 }
 
 export const INSTITUTION_CONFIG: InstitutionConfig = {
-  name: (import.meta.env.VITE_INSTITUTION_NAME as string) || 'Éclat Institute',
-  shortName: (import.meta.env.VITE_INSTITUTION_SHORT_NAME as string) || 'Éclat Institute',
+  name: (import.meta.env.VITE_INSTITUTION_NAME as string) || 'Eclat Institute',
+  shortName: (import.meta.env.VITE_INSTITUTION_SHORT_NAME as string) || 'Eclat Institute',
   tagline: (import.meta.env.VITE_INSTITUTION_TAGLINE as string) || '100% Online Virtual Campus',
   description:
     (import.meta.env.VITE_INSTITUTION_DESC as string) ||
@@ -100,7 +100,7 @@ export const INSTITUTION_CONFIG: InstitutionConfig = {
     name: (import.meta.env.VITE_BANK_NAME as string) || 'KCB Bank',
     accountNumber: (import.meta.env.VITE_BANK_ACCOUNT as string) || '1344329268',
     paybillNumber: (import.meta.env.VITE_PAYBILL_NUMBER as string) || '522522',
-    accountName: (import.meta.env.VITE_BANK_ACCOUNT_NAME as string) || 'Éclat Institute',
+    accountName: (import.meta.env.VITE_BANK_ACCOUNT_NAME as string) || 'Eclat Institute',
     branch: (import.meta.env.VITE_BANK_BRANCH as string) || 'Nairobi Central',
   },
 
@@ -123,7 +123,7 @@ export const INSTITUTION_CONFIG: InstitutionConfig = {
 
   igcse: {
     centerNumber: (import.meta.env.VITE_IGCSE_CENTER_NUMBER as string) || 'KE042',
-    centerName: 'Éclat Institute International Examination Centre',
+    centerName: 'Eclat Institute International Examination Centre',
     examBoards: ['Cambridge Assessment International Education (CAIE)', 'Pearson Edexcel International'],
     currentSeries: 'May/June 2026 Examination Series',
     qualificationsOffered: [
@@ -140,7 +140,7 @@ export const INSTITUTION_CONFIG: InstitutionConfig = {
     boardName: 'Cambridge Assessment International Education (CAIE)',
     shortBoard: 'Cambridge CAIE',
     centerNumber: (import.meta.env.VITE_CAMBRIDGE_CENTER_NUMBER as string) || 'KE042',
-    centerName: 'Éclat Institute Cambridge International Examination Centre (KE042)',
+    centerName: 'Eclat Institute Cambridge International Examination Centre (KE042)',
     currentSeries: 'May/June 2026 Examination Series',
     yearLevels: ['Year 9 (Foundation)', 'Year 10 (IGCSE Year 1)', 'Year 11 (Exam Series)'],
     qualificationsOffered: [
@@ -155,7 +155,7 @@ export const INSTITUTION_CONFIG: InstitutionConfig = {
     boardName: 'Pearson Edexcel International',
     shortBoard: 'Pearson Edexcel',
     centerNumber: (import.meta.env.VITE_EDEXCEL_CENTER_NUMBER as string) || 'EDX-98421',
-    centerName: 'Éclat Institute Pearson Edexcel International Centre',
+    centerName: 'Eclat Institute Pearson Edexcel International Centre',
     currentSeries: 'May/June 2026 Examination Series',
     yearLevels: ['Year 9 (Foundation)', 'Year 10 (IGCSE Year 1)', 'Year 11 (Exam Series)'],
     qualificationsOffered: [

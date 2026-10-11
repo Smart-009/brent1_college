@@ -135,7 +135,7 @@ const TESTIMONIALS = [
     course: 'R Programming & Biostatistics',
     avatar: 'MV',
     quote:
-      'The hands-on training in RStudio, tidyverse data pipelines, and biostatistical regression models at Éclat was world-class. I was able to automate our NHS hospital trust epidemiological reporting with total precision!',
+      'The hands-on training in RStudio, tidyverse data pipelines, and biostatistical regression models at Eclat was world-class. I was able to automate our NHS hospital trust epidemiological reporting with total precision!',
     rating: 5,
   },
   {
@@ -146,7 +146,7 @@ const TESTIMONIALS = [
     course: 'Full-Stack Web Dev (React 19 & Node.js)',
     avatar: 'CS',
     quote:
-      'Enrolling in Éclat’s React 19 and Node.js course from Germany was the best career decision I made. The live interactive coding labs, GitHub pull request reviews, and API deployments prepared me to land my software developer role.',
+      'Enrolling in Eclat’s React 19 and Node.js course from Germany was the best career decision I made. The live interactive coding labs, GitHub pull request reviews, and API deployments prepared me to land my software developer role.',
     rating: 5,
   },
   {
@@ -168,7 +168,7 @@ const TESTIMONIALS = [
     course: 'IBM SPSS & Stata Econometric Modeling',
     avatar: 'EM',
     quote:
-      'The survey coding in SPSS and multi-level panel regressions in Stata were broken down into practical steps by Éclat’s research methodologists. We used these exact techniques to publish our international health economics study.',
+      'The survey coding in SPSS and multi-level panel regressions in Stata were broken down into practical steps by Eclat’s research methodologists. We used these exact techniques to publish our international health economics study.',
     rating: 5,
   },
   {
@@ -179,7 +179,7 @@ const TESTIMONIALS = [
     course: 'Full-Stack JavaScript & React 19',
     avatar: 'AH',
     quote:
-      'The 100% online React 19 and Node.js course at Éclat was phenomenal. The live coding labs and mentor code reviews prepared me to build scalable full-stack applications. Right after graduating, I landed a remote developer role!',
+      'The 100% online React 19 and Node.js course at Eclat was phenomenal. The live coding labs and mentor code reviews prepared me to build scalable full-stack applications. Right after graduating, I landed a remote developer role!',
     rating: 5,
   },
   {
@@ -825,7 +825,7 @@ export function Landing() {
     const recNo = `EI-REC-${Math.random().toString(36).substring(2, 8).toUpperCase()}`
     const todayDate = new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })
 
-    // Paystack is the exclusive payment gateway accepted by Éclat Institute
+    // Paystack is the exclusive payment gateway accepted by Eclat Institute
     initializePaystackCheckout({
       email: inquiryForm.email || INSTITUTION_CONFIG.contact.admissionsEmail,
       amount: amountToPay,
@@ -858,8 +858,8 @@ export function Landing() {
           id: `std-${Date.now()}`,
           admission_number: admNo,
           full_name: inquiryForm.name,
-          gender: 'Male',
-          dob: '2000-01-01',
+          gender: 'Not Specified',
+          dob: '',
           class_id: selectedCourseObj.id,
           class_name: selectedCourseObj.title,
           grade_level: 'Professional Certificate',
@@ -936,7 +936,7 @@ export function Landing() {
             full_name: inquiryForm.name,
             email: inquiryForm.email,
             phone: inquiryForm.phone,
-            password: 'eclat_cleared',
+            password: inquiryForm.phone || admNo || 'Student@' + new Date().getFullYear(),
             role: 'student' as Role,
             account_type: 'student',
             delivery_mode: courseDeliveryMode,
@@ -968,7 +968,7 @@ export function Landing() {
         })
 
         setCheckoutStep('receipt')
-        showToast(`Payment verified! Welcome to Éclat Institute, ${inquiryForm.name}!`)
+        showToast(`Payment verified! Welcome to Eclat Institute, ${inquiryForm.name}!`)
       },
       onClose: () => {
         showToast('Paystack window closed. Please complete payment to issue your cleared admission receipt.')
@@ -1105,12 +1105,12 @@ export function Landing() {
             <Link to="/" style={{ display: 'flex', alignItems: 'center', gap: '0.45rem', textDecoration: 'none', minWidth: 0 }}>
               <img
                 src="/logo.png"
-                alt="Éclat Institute Logo"
+                alt="Eclat Institute Logo"
                 style={{ width: isMobile ? '32px' : '40px', height: isMobile ? '32px' : '40px', borderRadius: '50%', objectFit: 'cover', border: '2px solid #d4af37', boxShadow: '0 2px 8px rgba(0,0,0,0.12)', flexShrink: 0 }}
               />
               <div style={{ minWidth: 0, overflow: 'hidden' }}>
                 <div style={{ fontSize: isMobile ? 'clamp(0.88rem, 3.8vw, 1.15rem)' : '1.2rem', fontWeight: 900, color: '#0f172a', fontFamily: 'var(--font-heading)', letterSpacing: '0.01em', lineHeight: 1.1, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-                  ÉCLAT INSTITUTE
+                  ECLAT INSTITUTE
                 </div>
                 <div className="hidden sm:block" style={{ fontSize: '0.68rem', color: '#8c6e28', fontWeight: 700, letterSpacing: '0.06em', textTransform: 'uppercase', whiteSpace: 'nowrap' }}>
                   100% Online Virtual Campus
@@ -1518,7 +1518,7 @@ export function Landing() {
                           <LaptopIcon size={16} color="#ffffff" />
                         </div>
                         <div>
-                          <div style={{ fontSize: '0.86rem', fontWeight: 700, color: '#1d4ed8' }}>Hire Éclat Tech Services</div>
+                          <div style={{ fontSize: '0.86rem', fontWeight: 700, color: '#1d4ed8' }}>Hire Eclat Tech Services</div>
                           <div style={{ fontSize: '0.72rem', color: '#64748b' }}>Custom web development, apps & data analytics</div>
                         </div>
                       </Link>
@@ -1823,12 +1823,12 @@ export function Landing() {
               <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem' }}>
                 <img
                   src="/logo.png"
-                  alt="Éclat Institute Logo"
+                  alt="Eclat Institute Logo"
                   style={{ width: '34px', height: '34px', borderRadius: '50%', border: '2px solid #A51D24', boxShadow: '0 2px 6px rgba(165, 29, 36, 0.2)' }}
                 />
                 <div>
                   <div style={{ fontSize: '0.95rem', fontWeight: 900, color: '#A51D24', fontFamily: 'var(--font-heading)', lineHeight: 1.1 }}>
-                    ÉCLAT INSTITUTE
+                    ECLAT INSTITUTE
                   </div>
                   <div style={{ fontSize: '0.62rem', color: '#64748b', fontWeight: 600 }}>
                     100% Online Virtual Campus
@@ -2029,7 +2029,7 @@ export function Landing() {
                     }}
                   >
                     <LaptopIcon size={16} color="#1d4ed8" />
-                    <span>Hire Éclat (Tech Services)</span>
+                    <span>Hire Eclat (Tech Services)</span>
                   </Link>
 
                   <Link
@@ -2138,7 +2138,7 @@ export function Landing() {
                     }}
                   >
                     <BuildingIcon size={16} color="#64748b" />
-                    <span>About Éclat Institute</span>
+                    <span>About Eclat Institute</span>
                   </a>
 
                   {/* Native Apps Download */}
@@ -2766,7 +2766,7 @@ export function Landing() {
                   Enterprise & Client Solutions
                 </span>
                 <h3 style={{ fontSize: '1.25rem', fontWeight: 900, color: '#ffffff', margin: '0.35rem 0 0.5rem' }}>
-                  Hire Éclat Institute for Tech & Digital Services
+                  Hire Eclat Institute for Tech & Digital Services
                 </h3>
                 <p style={{ fontSize: '0.88rem', color: '#cbd5e1', lineHeight: 1.55, margin: 0 }}>
                   Full-stack engineering, bespoke web & mobile apps, business automation, retail POS & full accounting systems, institutional LMS portals, advanced data analytics, and corporate upskilling.
@@ -2810,7 +2810,7 @@ export function Landing() {
                   Faculty Recruitment
                 </span>
                 <h3 style={{ fontSize: '1.25rem', fontWeight: 900, color: '#ffffff', margin: '0.35rem 0 0.5rem' }}>
-                  Teach at Éclat — Academic & Faculty Openings
+                  Teach at Eclat — Academic & Faculty Openings
                 </h3>
                 <p style={{ fontSize: '0.88rem', color: '#cbd5e1', lineHeight: 1.55, margin: 0 }}>
                   We are hiring Cambridge IGCSE instructors, senior software trainers, data scientists, and language faculty for live online cohorts worldwide.
@@ -2939,13 +2939,13 @@ export function Landing() {
       <section id="about" style={{ padding: isMobile ? '3.5rem 1rem' : '5rem 1.5rem', maxWidth: '1240px', margin: '0 auto' }}>
         <div id="why-eclat" style={{ textAlign: 'center', marginBottom: isMobile ? '2.25rem' : '3.5rem' }}>
           <span style={{ fontSize: '0.82rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.08em', color: '#b45309' }}>
-            <BuildingIcon size={15} color="#b45309" style={{ marginRight: '6px', verticalAlign: 'middle' }} />ABOUT ÉCLAT INSTITUTE
+            <BuildingIcon size={15} color="#b45309" style={{ marginRight: '6px', verticalAlign: 'middle' }} />ABOUT ECLAT INSTITUTE
           </span>
           <h2 style={{ fontSize: isMobile ? '1.75rem' : '2.3rem', fontWeight: 900, color: '#0f172a', margin: '0.35rem 0 0.75rem', fontFamily: 'var(--font-heading)', lineHeight: 1.2 }}>
             Empowering Modern Learners Worldwide
           </h2>
           <p style={{ fontSize: isMobile ? '0.94rem' : '1.05rem', color: '#334155', maxWidth: '740px', margin: '0 auto', fontWeight: 500, lineHeight: 1.65 }}>
-            Éclat Institute is a premier 100% Online Virtual Campus. We deliver live virtual lectures, hands-on project labs, and direct mentor code reviews to help students and working professionals excel across 5 key disciplines.
+            Eclat Institute is a premier 100% Online Virtual Campus. We deliver live virtual lectures, hands-on project labs, and direct mentor code reviews to help students and working professionals excel across 5 key disciplines.
           </p>
         </div>
 
@@ -3450,7 +3450,7 @@ export function Landing() {
                         </h3>
 
                         <div style={{ display: 'flex', alignItems: 'center', gap: '10px', fontSize: '0.78rem', color: '#64748b', flexWrap: 'wrap' }}>
-                          <span style={{ color: '#475569', fontWeight: 600 }}>{course.instructor || 'Éclat Senior Faculty'}</span>
+                          <span style={{ color: '#475569', fontWeight: 600 }}>{course.instructor || 'Eclat Senior Faculty'}</span>
                           <span>•</span>
                           <span style={{ display: 'inline-flex', alignItems: 'center', gap: '3px', color: '#b45309', fontWeight: 800 }}>
                             ★ {(course.rating || 4.9).toFixed(1)} <span style={{ color: '#94a3b8', fontWeight: 500 }}>({(course.ratingCount || 1240).toLocaleString()})</span>
@@ -3706,7 +3706,7 @@ export function Landing() {
                             textOverflow: 'ellipsis',
                           }}
                         >
-                          {course.instructor || 'Éclat Senior Faculty'}
+                          {course.instructor || 'Eclat Senior Faculty'}
                         </div>
 
                         {/* Rating row with stars */}
@@ -3816,7 +3816,7 @@ export function Landing() {
                         </h4>
 
                         <div style={{ fontSize: '0.72rem', color: '#16a34a', fontWeight: 700, marginBottom: '0.4rem' }}>
-                          ✓ Updated 2026 • Verified Éclat Curriculum
+                          ✓ Updated 2026 • Verified Eclat Curriculum
                         </div>
 
                         <div style={{ fontSize: '0.76rem', color: '#64748b', marginBottom: '0.75rem' }}>
@@ -3970,7 +3970,7 @@ export function Landing() {
                   margin: '0 0 1.5rem',
                 }}
               >
-                Join Éclat Institute’s accredited virtual faculty. Turn your expertise in{' '}
+                Join Eclat Institute’s accredited virtual faculty. Turn your expertise in{' '}
                 <strong style={{ color: '#ffffff' }}>Coding, Tech, Forex, Accounting, Graphic Design, or Languages</strong> into a global revenue stream. 
                 We provide the streaming platform, automated Paystack payment processing, DRM watermarking, and active student enrollment pipeline.
               </p>
@@ -4052,7 +4052,7 @@ export function Landing() {
                 </Link>
 
                 <a
-                  href={getWhatsAppInquiryUrl('Hello Eclat Academic Directorate! I am a tutor/course creator interested in developing courses with Éclat Institute.')}
+                  href={getWhatsAppInquiryUrl('Hello Eclat Academic Directorate! I am a tutor/course creator interested in developing courses with Eclat Institute.')}
                   target="_blank"
                   rel="noopener noreferrer"
                   style={{
@@ -4090,7 +4090,7 @@ export function Landing() {
               }}
             >
               <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '1.25rem', borderBottom: '1px solid rgba(255,255,255,0.1)', paddingBottom: '1rem' }}>
-                <img src="/logo.png" alt="Éclat" style={{ width: '44px', height: '44px', borderRadius: '50%', border: '2px solid #d4af37' }} />
+                <img src="/logo.png" alt="Eclat" style={{ width: '44px', height: '44px', borderRadius: '50%', border: '2px solid #d4af37' }} />
                 <div>
                   <h3 style={{ fontSize: '1.1rem', fontWeight: 900, color: '#ffffff', margin: 0 }}>Faculty Partnership Fast-Track</h3>
                   <div style={{ fontSize: '0.78rem', color: '#fbbf24', fontWeight: 700 }}>3 Simple Steps to Start Earning</div>
@@ -4118,7 +4118,7 @@ export function Landing() {
                   <div style={{ width: '28px', height: '28px', borderRadius: '50%', background: '#f59e0b', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 900, fontSize: '0.85rem', flexShrink: 0 }}>3</div>
                   <div>
                     <strong style={{ fontSize: '0.9rem', color: '#ffffff' }}>Publish & Monetize Globally</strong>
-                    <p style={{ fontSize: '0.8rem', color: '#94a3b8', margin: '2px 0 0', lineHeight: 1.45 }}>We publish your lessons into the Éclat LMS player and market your course to active cohorts.</p>
+                    <p style={{ fontSize: '0.8rem', color: '#94a3b8', margin: '2px 0 0', lineHeight: 1.45 }}>We publish your lessons into the Eclat LMS player and market your course to active cohorts.</p>
                   </div>
                 </div>
               </div>
@@ -4767,12 +4767,12 @@ export function Landing() {
                     onClick={() =>
                       setPreviewCert({
                         student_name: certResult.studentName || 'Verified Graduate',
-                        admission_number: certResult.certNumber || 'EI-2026-001',
+                        admission_number: certResult.certNumber || '',
                         course_title: certResult.courseTitle || 'Executive Professional Diploma',
                         grade: 'Distinction (Grade A+)',
                         percentage: 95.5,
                         issue_date: certResult.completionDate || new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' }),
-                        certificate_no: certResult.certNumber || 'EI-CERT-2026-001',
+                        certificate_no: certResult.certNumber ? `EI-CERT-${certResult.certNumber}` : '',
                         duration: '12 Weeks Practical Intensive (120 CPD Hours)',
                         trainer_name: 'Eng. Beatrice Ochieng, M.Sc.',
                         skills_acquired: ['Hands-on Laboratory Mastery', 'Technical Workflow & Architecture', 'Verified Competencies'],
@@ -4823,9 +4823,9 @@ export function Landing() {
           {/* Brand & Overview */}
           <div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.85rem', marginBottom: '1.25rem' }}>
-              <img src="/logo.png" alt="Éclat Institute Logo" style={{ width: '44px', height: '44px', borderRadius: '50%', border: '2px solid #1d4ed8' }} />
+              <img src="/logo.png" alt="Eclat Institute Logo" style={{ width: '44px', height: '44px', borderRadius: '50%', border: '2px solid #1d4ed8' }} />
               <div>
-                <span style={{ fontSize: '1.2rem', fontWeight: 900, color: '#0f172a', fontFamily: 'var(--font-heading)', letterSpacing: '0.02em' }}>ÉCLAT INSTITUTE</span>
+                <span style={{ fontSize: '1.2rem', fontWeight: 900, color: '#0f172a', fontFamily: 'var(--font-heading)', letterSpacing: '0.02em' }}>ECLAT INSTITUTE</span>
                 <div style={{ fontSize: '0.75rem', color: '#1d4ed8', fontWeight: 700 }}>100% ONLINE VIRTUAL CAMPUS & ACADEMY</div>
               </div>
             </div>
@@ -4950,7 +4950,7 @@ export function Landing() {
         {/* Bottom Bar */}
         <div style={{ borderTop: '1px solid #e2e8f0', paddingTop: '1.75rem', textAlign: 'center', fontSize: '0.85rem', color: '#64748b', display: 'flex', flexDirection: isMobile ? 'column' : 'row', justifyContent: 'space-between', alignItems: 'center', gap: '1rem', maxWidth: '1280px', margin: '0 auto' }}>
           <div>
-            © {new Date().getFullYear()} <strong style={{ color: '#0f172a' }}>Éclat Institute</strong>. All Rights Reserved.
+            © {new Date().getFullYear()} <strong style={{ color: '#0f172a' }}>Eclat Institute</strong>. All Rights Reserved.
           </div>
           <div style={{ display: 'flex', gap: isMobile ? '0.75rem' : '1.25rem', alignItems: 'center', flexWrap: 'wrap', justifyContent: 'center' }}>
             <Link to="/about" style={{ color: '#1d4ed8', textDecoration: 'none', fontWeight: 700, display: 'inline-flex', alignItems: 'center', gap: '5px' }}>
@@ -5043,7 +5043,7 @@ export function Landing() {
                       type="text"
                       required
                       className="input"
-                      placeholder="e.g. John Doe / Fatuma Ali"
+                      placeholder="Enter your full name"
                       value={inquiryForm.name}
                       onChange={(e) => setInquiryForm({ ...inquiryForm, name: e.target.value })}
                     />
@@ -5224,7 +5224,7 @@ export function Landing() {
                           </div>
 
                           <p style={{ margin: 0, fontSize: '0.83rem', color: '#334155', lineHeight: 1.55 }}>
-                            Éclat Institute processes all tuition fee payments exclusively through <strong>Paystack</strong>. 
+                            Eclat Institute processes all tuition fee payments exclusively through <strong>Paystack</strong>. 
                             When you click below, Paystack's official secure payment interface will open to complete your transaction with instant clearance. 
                             <strong>Offline cash or unverified manual deposits are strictly not accepted.</strong>
                           </p>
@@ -5301,7 +5301,7 @@ export function Landing() {
                     </h2>
                     <div style={{ fontSize: '0.72rem', color: '#64748b', fontWeight: 700 }}>
                       {generatedAdmission.providerType === 'partner_institution'
-                        ? 'Accredited Academic Partner • Conferred in Affiliation with Éclat Institute'
+                        ? 'Accredited Academic Partner • Conferred in Affiliation with Eclat Institute'
                         : `${INSTITUTION_CONFIG.tagline} • ${INSTITUTION_CONFIG.domain}`}
                     </div>
                     {generatedAdmission.deliveryMode === 'live_cohort' ? (
@@ -5329,7 +5329,7 @@ export function Landing() {
                     <div style={{ wordBreak: 'break-word' }}>
                       <div><strong>Date:</strong> {generatedAdmission.date}</div>
                       <div><strong>Course:</strong> {generatedAdmission.courseTitle}</div>
-                      <div><strong>Certification:</strong> <span style={{ color: '#0369a1', fontWeight: 700 }}>{generatedAdmission.providerType === 'partner_institution' ? `Issued by ${generatedAdmission.institutionName || 'Partner School'}` : 'Issued by Éclat Institute'}</span></div>
+                      <div><strong>Certification:</strong> <span style={{ color: '#0369a1', fontWeight: 700 }}>{generatedAdmission.providerType === 'partner_institution' ? `Issued by ${generatedAdmission.institutionName || 'Partner School'}` : 'Issued by Eclat Institute'}</span></div>
                     </div>
                   </div>
 
@@ -5417,11 +5417,11 @@ export function Landing() {
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingBottom: '1rem', marginBottom: '1.25rem', borderBottom: '1px solid #f1f5f9' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '0.85rem' }}>
                 <div style={{ width: '44px', height: '44px', borderRadius: '12px', background: 'linear-gradient(135deg, #1e3a8a 0%, #0f172a 100%)', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 4px 12px rgba(30, 58, 138, 0.25)', flexShrink: 0 }}>
-                  <img src="/logo.png" alt="Éclat Emblem" style={{ width: '32px', height: '32px', borderRadius: '50%' }} />
+                  <img src="/logo.png" alt="Eclat Emblem" style={{ width: '32px', height: '32px', borderRadius: '50%' }} />
                 </div>
                 <div>
                   <h3 style={{ fontSize: isMobile ? '1.15rem' : '1.25rem', fontWeight: 900, color: '#0f172a', margin: 0, fontFamily: 'var(--font-heading)', letterSpacing: '-0.02em' }}>
-                    Install Éclat Apps
+                    Install Eclat Apps
                   </h3>
                   <p style={{ fontSize: '0.8rem', color: '#64748b', margin: '2px 0 0', fontWeight: 500 }}>
                     Study on your phone, tablet, or PC with video lessons & library
@@ -6043,7 +6043,7 @@ export function Landing() {
               <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                 <img
                   src="/logo.png"
-                  alt="Éclat"
+                  alt="Eclat"
                   style={{ width: '40px', height: '40px', borderRadius: '50%', border: '2px solid #d4af37' }}
                 />
                 <div>
@@ -6051,7 +6051,7 @@ export function Landing() {
                     FACULTY & CONTENT PARTNERSHIP
                   </div>
                   <h3 style={{ fontSize: '1.2rem', fontWeight: 900, color: '#0f172a', margin: '2px 0 0' }}>
-                    Create & Teach a Course With Éclat
+                    Create & Teach a Course With Eclat
                   </h3>
                 </div>
               </div>
@@ -6136,7 +6136,7 @@ export function Landing() {
                 style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}
               >
                 <div style={{ background: '#fefce8', border: '1px solid #fef08a', borderRadius: '10px', padding: '0.75rem 0.95rem', fontSize: '0.82rem', color: '#854d0e', lineHeight: 1.5 }}>
-                  💡 <strong>Earn with Éclat:</strong> We partner with expert tutors, software engineers, and professionals. You create the instructional video content or live sessions, and we handle student enrollments, Paystack payments, and certificate delivery!
+                  💡 <strong>Earn with Eclat:</strong> We partner with expert tutors, software engineers, and professionals. You create the instructional video content or live sessions, and we handle student enrollments, Paystack payments, and certificate delivery!
                 </div>
 
                 <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: '0.85rem' }}>
@@ -6398,7 +6398,7 @@ export function Landing() {
                 <div style={{ position: 'relative' }}>
                   <img
                     src="/logo.png"
-                    alt="Éclat Admissions Desk"
+                    alt="Eclat Admissions Desk"
                     style={{ width: '40px', height: '40px', borderRadius: '50%', objectFit: 'cover', border: '2px solid #22c55e' }}
                   />
                   <span
@@ -6415,7 +6415,7 @@ export function Landing() {
                   />
                 </div>
                 <div>
-                  <div style={{ fontWeight: 800, color: '#0f172a', fontSize: '0.92rem' }}>Éclat Admissions Desk</div>
+                  <div style={{ fontWeight: 800, color: '#0f172a', fontSize: '0.92rem' }}>Eclat Admissions Desk</div>
                   <div style={{ fontSize: '0.72rem', color: '#16a34a', fontWeight: 700 }}>● Online • Ready to Assist</div>
                 </div>
               </div>

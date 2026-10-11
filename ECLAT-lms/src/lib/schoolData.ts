@@ -59,7 +59,7 @@ export const SAMPLE_IGCSE_STATEMENTS: IGCSEStatementOfResults[] = [
   {
     id: 'igcse-stmt-001',
     center_number: 'KE042',
-    center_name: 'Éclat Institute — Cambridge Assessment International Education',
+    center_name: 'Eclat Institute — Cambridge Assessment International Education',
     candidate_number: '0014',
     candidate_name: 'Alexander Mwangi',
     date_of_birth: '2005-08-14',
@@ -95,7 +95,7 @@ export const SAMPLE_IGCSE_STATEMENTS: IGCSEStatementOfResults[] = [
   {
     id: 'igcse-stmt-002',
     center_number: 'EDX-98421',
-    center_name: 'Éclat Institute — Pearson Edexcel International Examination Center',
+    center_name: 'Eclat Institute — Pearson Edexcel International Examination Center',
     candidate_number: '0042',
     candidate_name: 'Chloe Bennett',
     date_of_birth: '2005-04-18',
@@ -2072,7 +2072,7 @@ export const FALLBACK_SAMPLE_RESOURCES: AcademicResource[] = [
     file_type: 'PDF',
     downloads_count: 142,
     year: 2026,
-    uploaded_by: 'Éclat Institute Faculty',
+    uploaded_by: 'Eclat Institute Faculty',
     created_at: new Date().toISOString(),
   },
   {
@@ -2184,7 +2184,7 @@ export const FALLBACK_SAMPLE_RESOURCES: AcademicResource[] = [
     file_type: 'COMIC',
     downloads_count: 342,
     year: 2026,
-    uploaded_by: 'Éclat Creative Studio',
+    uploaded_by: 'Eclat Creative Studio',
     created_at: new Date().toISOString(),
     description: 'An action-packed illustrated comic following a trainee ethical hacker deploying zero-day defenses against a syndicate AI cyber threat.',
     tags: ['comic', 'cybersecurity', 'hacker', 'graphic novel', 'manga', 'tech stories'],
@@ -2686,20 +2686,24 @@ class SchoolDataStore {
             (u) => u.id === cc.id || u.title.toLowerCase() === cc.title.toLowerCase() || (parsedDesc.unit_id && u.id === parsedDesc.unit_id)
           )
 
+          const offCourse = OFFICIAL_COURSES.find(
+            (c) => c.id === cc.id || c.title.toLowerCase() === cc.title.toLowerCase()
+          )
+
           const mappedUnit: CourseUnit = {
             id: parsedDesc.unit_id || cc.id,
             code: parsedDesc.code || `CRS-${cc.id.substring(0, 4).toUpperCase()}`,
             title: cc.title,
-            department: parsedDesc.department || 'School of Computing & Tech',
+            department: parsedDesc.department || offCourse?.schoolName || offCourse?.departmentName || 'Academic Department',
             program: parsedDesc.program || `${cc.title} Diploma`,
-            course_duration: parsedDesc.course_duration || '3 Months Certificate',
+            course_duration: parsedDesc.course_duration || offCourse?.duration || '3 Months Certificate',
             credit_hours: parsedDesc.credit_hours || 40,
             teacher_id: cc.teacher_id || 'tch-faculty',
             teacher_name: parsedDesc.teacher_name || 'Faculty Lecturer',
             description: parsedDesc.description || (cc.description && !cc.description.startsWith('{') ? cc.description : `Comprehensive online training in ${cc.title}.`),
             live_meeting_url: parsedDesc.live_meeting_url || '',
             live_schedule_text: parsedDesc.live_schedule_text || '',
-            fee: parsedDesc.fee || 60,
+            fee: parsedDesc.fee || offCourse?.feeUsd || 60,
             syllabus_modules: parsedDesc.syllabus_modules || [],
             lessons: unitLessons.length > 0 ? unitLessons : (parsedDesc.lessons || []),
             is_published: cc.is_published ?? true,
@@ -2753,13 +2757,13 @@ class SchoolDataStore {
             } else {
               localStudents.push({
                 id: sp.id,
-                admission_number: sp.admission_number || `EI-2026-${Math.floor(100 + Math.random() * 900)}`,
+                admission_number: sp.admission_number || `EI-${new Date().getFullYear()}-${Math.floor(100 + Math.random() * 900)}`,
                 full_name: sp.full_name || 'Enrolled Trainee',
-                gender: 'Male',
-                dob: '2004-01-01',
+                gender: 'Not Specified',
+                dob: '',
                 class_id: 'class-main',
                 class_name: 'Online Vocational Program',
-                grade_level: '2026 Virtual Intake',
+                grade_level: `${new Date().getFullYear()} Virtual Intake`,
                 stream: '100% Online Cohort',
                 enrollment_date: sp.created_at?.split('T')[0] || new Date().toISOString().split('T')[0],
                 admission_date: sp.created_at?.split('T')[0] || new Date().toISOString().split('T')[0],
@@ -4386,22 +4390,35 @@ class SchoolDataStore {
           students[stdIdx] = targetStudent
           this.set('students', students)
         } else {
+          const studentReg = this.getUnitRegistrations().find(
+            (r) =>
+              r.student_id?.toLowerCase() === clean ||
+              r.admission_number.toLowerCase() === clean ||
+              r.admission_number.toLowerCase().replace(/[^a-z0-9]/g, '') === cleanAlpha
+          )
+          const registeredUnit = studentReg
+            ? this.getCourseUnits().find((u) => u.id === studentReg.unit_id || u.title === studentReg.unit_title)
+            : null
+          const registeredSubject = studentReg
+            ? this.getSubjects().find((s) => s.name === studentReg.program)
+            : null
+
           targetStudent = {
             id: `std-${cleanAlpha || Date.now()}`,
             admission_number: identifier,
-            full_name: identifier,
-            gender: 'Male',
-            dob: '2005-01-01',
-            class_id: 'unit-grd1',
-            class_name: 'Graphics Design & Animation',
-            grade_level: '40 Credits (Short Course)',
-            stream: 'Main Campus',
+            full_name: studentReg?.student_name || identifier,
+            gender: 'Not Specified',
+            dob: '',
+            class_id: registeredUnit?.id || registeredSubject?.id || 'class-main',
+            class_name: studentReg?.program || registeredUnit?.title || registeredSubject?.name || 'Vocational Training Program',
+            grade_level: registeredUnit ? `${registeredUnit.credit_hours} Credits (Short Course)` : 'Online Certificate',
+            stream: 'Virtual Campus',
             enrollment_date: new Date().toISOString().split('T')[0],
             status: 'Active',
             guardian: { name: '', relationship: 'Guardian', phone: '', email: '' },
             emergency_contact: '',
             fee_balance: 0,
-            term_fee_total: 60,
+            term_fee_total: studentReg?.fee_amount || registeredUnit?.fee || registeredSubject?.fee || 60,
             fee_cleared: true,
             attendance_rate: 0,
             discipline_points: 0,
@@ -4434,6 +4451,7 @@ class SchoolDataStore {
           })
           this.set('invoices', invoices)
         } else {
+          const unitFee = targetStudent.term_fee_total || 60
           const newInv: FeeInvoice = {
             id: `inv-${Date.now()}`,
             invoice_number: `INV-${new Date().getFullYear()}-${Math.floor(1000 + Math.random() * 9000)}`,
@@ -4445,9 +4463,9 @@ class SchoolDataStore {
             academic_year: `${new Date().getFullYear()}/${new Date().getFullYear() + 1}`,
             issue_date: new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }),
             due_date: new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }),
-            items: [{ id: 'item-1', description: 'Tuition & Practical LMS Access', amount: 60 }],
-            total_amount: 60,
-            paid_amount: 60,
+            items: [{ id: `item-${Date.now()}`, description: `${studentClass} Tuition & LMS Access`, amount: unitFee }],
+            total_amount: unitFee,
+            paid_amount: unitFee,
             balance: 0,
             status: 'Paid',
           }

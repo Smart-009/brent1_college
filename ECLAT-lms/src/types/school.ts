@@ -1,5 +1,5 @@
 // ============================================================
-// Éclat Institute School Management System — Extended Type Definitions
+// Eclat Institute School Management System — Extended Type Definitions
 // ============================================================
 
 export interface GuardianInfo {
@@ -15,7 +15,7 @@ export interface StudentRecord {
   id: string
   admission_number: string
   full_name: string
-  gender: 'Male' | 'Female'
+  gender: 'Male' | 'Female' | 'Other' | 'Not Specified'
   dob: string
   class_id: string
   class_name: string
@@ -352,6 +352,10 @@ export interface UnitRegistrationReceipt {
   academic_year?: string
   course_duration: string // e.g. "3 Months (Intensive Short Course)"
   semester?: string
+  unit_id?: string
+  unit_title?: string
+  fee_amount?: number
+  balance_remaining?: number
   registered_unit_ids: string[]
   registered_units: {
     code: string
@@ -492,7 +496,7 @@ export type CambridgeICEAward = 'Distinction' | 'Merit' | 'Pass' | 'Not Eligible
 export interface IGCSEStatementOfResults {
   id: string
   center_number: string // e.g. "KE042"
-  center_name: string // e.g. "Éclat Institute International Examination Centre"
+  center_name: string // e.g. "Eclat Institute International Examination Centre"
   candidate_number: string // e.g. "0014"
   candidate_name: string
   date_of_birth: string

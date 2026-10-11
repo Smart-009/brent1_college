@@ -651,7 +651,7 @@ export function CertificateGenerator({
                       }}
                     >
                       {activeCert.provider_type === 'partner_institution'
-                        ? 'ACCREDITED PARTNER ACADEMY • CONFERRED IN AFFILIATION WITH ÉCLAT INSTITUTE'
+                        ? 'ACCREDITED PARTNER ACADEMY • CONFERRED IN AFFILIATION WITH ECLAT INSTITUTE'
                         : 'DIRECTORATE OF ACADEMIC AFFAIRS & GLOBAL CREDENTIALING'}
                     </div>
                     <div
@@ -665,7 +665,7 @@ export function CertificateGenerator({
                       }}
                     >
                       {activeCert.provider_type === 'partner_institution'
-                        ? 'Verified Institutional Provider • Quality Assured by Éclat Examination Board'
+                        ? 'Verified Institutional Provider • Quality Assured by Eclat Examination Board'
                         : `British curriculum Centre (KE042) • ${INSTITUTION_CONFIG.tagline}`}
                     </div>
                   </div>
@@ -1007,7 +1007,7 @@ export function CertificateGenerator({
 
                       {/* Medallion Text Arc */}
                       <text x="50" y="65" textAnchor="middle" fontSize="4.6" fontWeight="900" fill="#78350f" fontFamily="Cinzel, serif" letterSpacing="0.08em">
-                        ÉCLAT INSTITUTE
+                        ECLAT INSTITUTE
                       </text>
                       <text x="50" y="70" textAnchor="middle" fontSize="3.8" fontWeight="800" fill="#92400e" fontFamily="Cinzel, serif" letterSpacing="0.06em">
                         SIGILLUM AUTHENTICUM
@@ -1090,7 +1090,7 @@ export function CertificateGenerator({
                           boxShadow: 'inset 0 0 0 1px rgba(220,38,38,0.3)',
                         }}
                       >
-                        <div>ÉCLAT</div>
+                        <div>ECLAT</div>
                         <div style={{ fontSize: '0.42rem' }}>★ REGISTRAR ★</div>
                         <div>ARCHIVED</div>
                       </div>
@@ -1117,7 +1117,7 @@ export function CertificateGenerator({
                       </div>
                       <div style={{ fontSize: '0.55rem', color: '#64748b' }}>
                         {activeCert.provider_type === 'partner_institution'
-                          ? 'Director of Accreditation & Registry, Éclat'
+                          ? 'Director of Accreditation & Registry, Eclat'
                           : 'Director of Academic Registry'}
                       </div>
                     </div>

@@ -1,5 +1,5 @@
 // ============================================================
-// Éclat Institute — Cloud Database Seeder & Sync Utility
+// Eclat Institute — Cloud Database Seeder & Sync Utility
 // ============================================================
 
 import { supabase } from './supabase'
@@ -54,7 +54,7 @@ export async function seedCloudDatabase(): Promise<SeedResult> {
         title: h.title,
         discipline: h.faculty || 'Computing & Technology',
         level: 'All Trainees / Diploma',
-        author: 'Éclat Institute Academic Board',
+        author: 'Eclat Institute Academic Board',
         year: h.year || 2026,
         readings_count: 142,
         chapters: h.chapters || [],

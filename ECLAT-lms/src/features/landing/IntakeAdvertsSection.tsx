@@ -279,7 +279,7 @@ export function IntakeAdvertsSection() {
               ⚡ 15%–20% Early Bird Scholarship
             </span>
             <a
-              href={getWhatsAppInquiryUrl('Hello Éclat Institute, I would like to inquire about the upcoming intakes and scholarship registration.')}
+              href={getWhatsAppInquiryUrl('Hello Eclat Institute, I would like to inquire about the upcoming intakes and scholarship registration.')}
               target="_blank"
               rel="noopener noreferrer"
               style={{
@@ -971,7 +971,7 @@ export function IntakeAdvertsSection() {
                   >
                     <a
                       href={getWhatsAppInquiryUrl(
-                        `Hello Éclat Institute Admissions, I would like to enroll in the ${intake.title} (${intake.term_session}). Please guide me through registration and scholarship clearance.`
+                        `Hello Eclat Institute Admissions, I would like to enroll in the ${intake.title} (${intake.term_session}). Please guide me through registration and scholarship clearance.`
                       )}
                       target="_blank"
                       rel="noopener noreferrer"
@@ -1054,7 +1054,7 @@ export function IntakeAdvertsSection() {
             />
             <div style={{ marginTop: '1rem', display: 'flex', justifyContent: 'center', gap: '10px' }}>
               <a
-                href={getWhatsAppInquiryUrl('Hello Éclat Institute, I am viewing the intake advertisement poster and would like to register.')}
+                href={getWhatsAppInquiryUrl('Hello Eclat Institute, I am viewing the intake advertisement poster and would like to register.')}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="btn btn-success btn-sm"

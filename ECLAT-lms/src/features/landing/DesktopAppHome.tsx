@@ -31,7 +31,7 @@ interface CourseItem {
 const MOTIVATIONAL_QUOTES = [
   { text: 'An investment in knowledge pays the best interest.', author: 'Benjamin Franklin' },
   { text: 'The expert in anything was once a beginner.', author: 'Helen Hayes' },
-  { text: 'Learning today, leading tomorrow. Master your craft.', author: 'Éclat Academic Faculty' },
+  { text: 'Learning today, leading tomorrow. Master your craft.', author: 'Eclat Academic Faculty' },
   { text: 'Your potential is limitless. Commit to 30 minutes of study today.', author: 'Dean of Studies' },
 ]
 
@@ -87,12 +87,12 @@ export function DesktopAppHome({ courses: _courses, onSelectCourse: _onSelectCou
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.85rem', cursor: 'pointer' }} onClick={() => navigate('/')}>
             <img
               src="/logo.png"
-              alt="Éclat"
+              alt="Eclat"
               style={{ width: '40px', height: '40px', borderRadius: '50%', border: '2px solid #1e3a8a', boxShadow: '0 2px 8px rgba(30, 58, 138, 0.15)' }}
             />
             <div>
               <div style={{ fontSize: '1.15rem', fontWeight: 900, color: '#1e3a8a', fontFamily: 'var(--font-heading)', lineHeight: 1.1, letterSpacing: '0.04em' }}>
-                ÉCLAT INSTITUTE
+                ECLAT INSTITUTE
               </div>
               <div style={{ fontSize: '0.72rem', color: '#64748b', fontWeight: 600 }}>
                 Desktop Learning & Management Console
@@ -485,7 +485,7 @@ export function DesktopAppHome({ courses: _courses, onSelectCourse: _onSelectCou
           color: '#64748b',
         }}
       >
-        <span>© 2026 Éclat Institute • Enterprise College Management System</span>
+        <span>© 2026 Eclat Institute • Enterprise College Management System</span>
         <div style={{ display: 'flex', gap: '1.25rem' }}>
           <span><kbd style={{ background: '#f1f5f9', border: '1px solid #cbd5e1', padding: '2px 6px', borderRadius: '4px', color: '#334155' }}>Ctrl+P</kbd> Print Document</span>
           <span><kbd style={{ background: '#f1f5f9', border: '1px solid #cbd5e1', padding: '2px 6px', borderRadius: '4px', color: '#334155' }}>Ctrl+R</kbd> Refresh Cloud</span>

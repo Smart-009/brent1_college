@@ -242,7 +242,7 @@ export function CareersPage() {
     const positionTitle = position ? position.title : 'Faculty Position'
     const refCode = position ? position.referenceCode : 'ECLAT-FAC'
     const msg = encodeURIComponent(
-      `Hello Éclat Institute Dean of Academic Affairs! I am applying for the faculty role: ${positionTitle} [${refCode}].\n\n` +
+      `Hello Eclat Institute Dean of Academic Affairs! I am applying for the faculty role: ${positionTitle} [${refCode}].\n\n` +
       `Full Name: ${appData.fullName}\n` +
       `Email: ${appData.email}\n` +
       `Phone/WhatsApp: ${appData.phone}\n` +
@@ -261,9 +261,9 @@ export function CareersPage() {
       <header style={{ borderBottom: '1px solid rgba(255, 255, 255, 0.08)', background: 'rgba(11, 17, 32, 0.95)', backdropFilter: 'blur(12px)', position: 'sticky', top: 0, zIndex: 50, width: '100%', maxWidth: '100vw', boxSizing: 'border-box' }}>
         <div style={{ maxWidth: '1280px', margin: '0 auto', padding: '0.75rem 1rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
           <Link to="/" style={{ display: 'flex', alignItems: 'center', gap: '0.65rem', textDecoration: 'none', color: '#ffffff', minWidth: 0 }}>
-            <img src="/logo.png" alt="Éclat Institute Logo" style={{ width: '38px', height: '38px', borderRadius: '50%', border: '2px solid #3b82f6', flexShrink: 0 }} />
+            <img src="/logo.png" alt="Eclat Institute Logo" style={{ width: '38px', height: '38px', borderRadius: '50%', border: '2px solid #3b82f6', flexShrink: 0 }} />
             <div style={{ minWidth: 0, overflow: 'hidden' }}>
-              <span style={{ fontSize: '1.1rem', fontWeight: 900, letterSpacing: '0.04em', color: '#ffffff', display: 'block', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>ÉCLAT INSTITUTE</span>
+              <span style={{ fontSize: '1.1rem', fontWeight: 900, letterSpacing: '0.04em', color: '#ffffff', display: 'block', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>ECLAT INSTITUTE</span>
               <span className="hidden sm:block" style={{ fontSize: '0.68rem', color: '#38bdf8', fontWeight: 700, letterSpacing: '0.08em', whiteSpace: 'nowrap' }}>ACADEMIC FACULTY & CAREERS</span>
             </div>
           </Link>
@@ -368,9 +368,9 @@ export function CareersPage() {
           >
             <div style={{ padding: '1rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: '1px solid #1e293b' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <img src="/logo.png" alt="Éclat Logo" style={{ width: '32px', height: '32px', borderRadius: '50%', border: '1.5px solid #3b82f6' }} />
+                <img src="/logo.png" alt="Eclat Logo" style={{ width: '32px', height: '32px', borderRadius: '50%', border: '1.5px solid #3b82f6' }} />
                 <div>
-                  <div style={{ fontSize: '0.95rem', fontWeight: 900, color: '#ffffff' }}>ÉCLAT INSTITUTE</div>
+                  <div style={{ fontSize: '0.95rem', fontWeight: 900, color: '#ffffff' }}>ECLAT INSTITUTE</div>
                   <div style={{ fontSize: '0.62rem', color: '#38bdf8', fontWeight: 700 }}>ACADEMIC FACULTY</div>
                 </div>
               </div>
@@ -415,7 +415,7 @@ export function CareersPage() {
                   Apply as Teacher
                 </a>
                 <a
-                  href={`https://wa.me/${INSTITUTION_CONFIG.contact.phone.replace(/[^0-9]/g, '')}?text=Hello%20Éclat%20Dean!%20I%20am%20interested%20in%20joining%20the%20teaching%20faculty.`}
+                  href={`https://wa.me/${INSTITUTION_CONFIG.contact.phone.replace(/[^0-9]/g, '')}?text=Hello%20Eclat%20Dean!%20I%20am%20interested%20in%20joining%20the%20teaching%20faculty.`}
                   target="_blank"
                   rel="noopener noreferrer"
                   style={{ background: '#2563eb', color: '#ffffff', textDecoration: 'none', padding: '0.75rem', borderRadius: '8px', textAlign: 'center', fontWeight: 800, fontSize: '0.88rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}
@@ -438,7 +438,7 @@ export function CareersPage() {
           </div>
 
           <h1 style={{ fontSize: isMobile ? 'clamp(1.75rem, 6.5vw, 2.3rem)' : 'clamp(2.2rem, 5vw, 3.8rem)', fontWeight: 900, lineHeight: 1.15, marginBottom: '1.25rem', letterSpacing: '-0.02em', background: 'linear-gradient(135deg, #ffffff 40%, #a7f3d0)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', wordBreak: 'break-word' }}>
-            Teach at Éclat Institute — Inspire Global Minds from Anywhere
+            Teach at Eclat Institute — Inspire Global Minds from Anywhere
           </h1>
 
           <p style={{ fontSize: isMobile ? '0.95rem' : '1.15rem', color: '#94a3b8', maxWidth: '780px', margin: '0 auto 2rem', lineHeight: 1.65, wordBreak: 'break-word' }}>
@@ -938,10 +938,10 @@ export function CareersPage() {
         <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', width: '100%', boxSizing: 'border-box' }}>
           <div style={{ padding: isMobile ? '1rem' : '1.25rem', background: 'rgba(255, 255, 255, 0.03)', border: '1px solid rgba(255, 255, 255, 0.08)', borderRadius: '12px', boxSizing: 'border-box' }}>
             <h5 style={{ fontSize: '0.95rem', fontWeight: 800, color: '#38bdf8', marginBottom: '0.35rem', lineHeight: 1.35, wordBreak: 'break-word' }}>
-              Do I need to be located in Kenya to teach at Éclat Institute?
+              Do I need to be located in Kenya to teach at Eclat Institute?
             </h5>
             <p style={{ fontSize: isMobile ? '0.84rem' : '0.88rem', color: '#94a3b8', lineHeight: 1.6, margin: 0, wordBreak: 'break-word' }}>
-              No! Éclat Institute is a 100% virtual campus. We employ educators residing in Kenya, the United Kingdom, Egypt, Germany, Nigeria, the UAE, and across the globe. You only need a stable internet connection, an HD webcam/microphone, and subject expertise.
+              No! Eclat Institute is a 100% virtual campus. We employ educators residing in Kenya, the United Kingdom, Egypt, Germany, Nigeria, the UAE, and across the globe. You only need a stable internet connection, an HD webcam/microphone, and subject expertise.
             </p>
           </div>
 
@@ -956,7 +956,7 @@ export function CareersPage() {
 
           <div style={{ padding: isMobile ? '1rem' : '1.25rem', background: 'rgba(255, 255, 255, 0.03)', border: '1px solid rgba(255, 255, 255, 0.08)', borderRadius: '12px', boxSizing: 'border-box' }}>
             <h5 style={{ fontSize: '0.95rem', fontWeight: 800, color: '#38bdf8', marginBottom: '0.35rem', lineHeight: 1.35, wordBreak: 'break-word' }}>
-              What tools and software does Éclat provide for teachers?
+              What tools and software does Eclat provide for teachers?
             </h5>
             <p style={{ fontSize: isMobile ? '0.84rem' : '0.88rem', color: '#94a3b8', lineHeight: 1.6, margin: 0, wordBreak: 'break-word' }}>
               Teachers receive official `@eclatinstitute.internal` email credentials, access to our customized Teacher Workstation Dashboard, Google Workspace for Education with Meet recordings, past paper repository access, and live tech support.
@@ -969,8 +969,8 @@ export function CareersPage() {
       <footer style={{ borderTop: '1px solid rgba(255, 255, 255, 0.08)', background: '#070a14', padding: isMobile ? '2.5rem 1rem 1.5rem' : '3rem 1.5rem 2rem', color: '#64748b', fontSize: '0.85rem', width: '100%', boxSizing: 'border-box' }}>
         <div style={{ maxWidth: '1280px', margin: '0 auto', display: 'flex', flexDirection: 'column', gap: '1.5rem', alignItems: 'center', textAlign: 'center', width: '100%', boxSizing: 'border-box' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-            <img src="/logo.png" alt="Éclat Institute" style={{ width: '32px', height: '32px', borderRadius: '50%' }} />
-            <span style={{ color: '#ffffff', fontWeight: 800, fontSize: '1rem' }}>Éclat Institute Academic Board</span>
+            <img src="/logo.png" alt="Eclat Institute" style={{ width: '32px', height: '32px', borderRadius: '50%' }} />
+            <span style={{ color: '#ffffff', fontWeight: 800, fontSize: '1rem' }}>Eclat Institute Academic Board</span>
           </div>
           <div style={{ display: 'flex', gap: isMobile ? '1rem' : '1.5rem', flexWrap: 'wrap', justifyContent: 'center' }}>
             <Link to="/" style={{ color: '#94a3b8', textDecoration: 'none' }}>Home</Link>
@@ -980,7 +980,7 @@ export function CareersPage() {
             <Link to="/privacy" style={{ color: '#94a3b8', textDecoration: 'none' }}>Privacy Policy</Link>
           </div>
           <div>
-            © {new Date().getFullYear()} Éclat Institute. Equal Opportunity Virtual Employer.
+            © {new Date().getFullYear()} Eclat Institute. Equal Opportunity Virtual Employer.
           </div>
         </div>
       </footer>

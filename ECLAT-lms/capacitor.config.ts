@@ -2,7 +2,7 @@ import type { CapacitorConfig } from '@capacitor/cli';
 
 const config: CapacitorConfig = {
   appId: 'com.eclatinstitute.lms',
-  appName: 'Éclat Institute',
+  appName: 'Eclat Institute',
   webDir: 'dist',
   server: {
     androidScheme: 'https',

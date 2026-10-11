@@ -7,7 +7,7 @@ export function Spinner({ size = 'md', className = '' }: { size?: SpinnerSize; c
   return <span className={cls} role="status" aria-label="Loading…" />
 }
 
-export function LoadingScreen({ message = 'Loading Éclat Portal…' }: { message?: string }) {
+export function LoadingScreen({ message = 'Loading Eclat Portal…' }: { message?: string }) {
   return (
     <div
       style={{
@@ -69,7 +69,7 @@ export function LoadingScreen({ message = 'Loading Éclat Portal…' }: { messag
           />
           <img
             src="/logo.png"
-            alt="Éclat Institute"
+            alt="Eclat Institute"
             style={{
               position: 'relative',
               width: '110px',
@@ -95,7 +95,7 @@ export function LoadingScreen({ message = 'Loading Éclat Portal…' }: { messag
               color: '#1e3a8a',
             }}
           >
-            ÉCLAT INSTITUTE
+            ECLAT INSTITUTE
           </h1>
           <div
             style={{
@@ -226,7 +226,7 @@ export function AppOpeningSplashScreen({ onFinished }: { onFinished?: () => void
   } else if (progress > 75 && progress < 100) {
     stageCaption = 'Finalizing institutional session…'
   } else if (progress >= 100) {
-    stageCaption = 'Welcome to Éclat Institute'
+    stageCaption = 'Welcome to Eclat Institute'
   }
 
   return (
@@ -293,7 +293,7 @@ export function AppOpeningSplashScreen({ onFinished }: { onFinished?: () => void
           />
           <img
             src="/logo.png"
-            alt="Éclat Institute"
+            alt="Eclat Institute"
             style={{
               position: 'relative',
               width: '120px',
@@ -319,7 +319,7 @@ export function AppOpeningSplashScreen({ onFinished }: { onFinished?: () => void
               color: '#1e3a8a',
             }}
           >
-            ÉCLAT INSTITUTE
+            ECLAT INSTITUTE
           </h1>
           <div
             style={{

@@ -237,7 +237,7 @@ export function TenantSchoolHub() {
             fontWeight: 700,
           }}
         >
-          Register Your School on Éclat Cloud ➔
+          Register Your School on Eclat Cloud ➔
         </Link>
       </div>
     )

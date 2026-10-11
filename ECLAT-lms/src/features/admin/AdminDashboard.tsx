@@ -377,7 +377,7 @@ export function AdminDashboard() {
                     {syncModalData.success ? 'Cloud Database Synchronized' : 'Synchronization Failed'}
                   </h3>
                   <div style={{ fontSize: '0.75rem', color: '#cbd5e1', marginTop: '1px' }}>
-                    Éclat Institute Live Supabase Database
+                    Eclat Institute Live Supabase Database
                   </div>
                 </div>
               </div>

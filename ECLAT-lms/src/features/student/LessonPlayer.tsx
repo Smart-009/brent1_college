@@ -187,6 +187,10 @@ export function LessonPlayer() {
           order_index: idx + 1,
         }))
 
+        const matchedSub = storeSubjects.find(
+          (s) => s.code === localUnit.code || s.name.toLowerCase() === localUnit.title.toLowerCase() || s.name.toLowerCase() === localUnit.program.toLowerCase()
+        )
+
         return {
           lesson: {
             id: activeLessonId,
@@ -205,18 +209,18 @@ export function LessonPlayer() {
             id: localUnit.id,
             title: localUnit.title,
             description: localUnit.description,
-            subject_id: 'sub-computing',
+            subject_id: matchedSub?.id || localUnit.id,
             teacher_id: localUnit.teacher_id || 'tch-faculty',
             class_id: null,
             is_published: true,
             created_at: localUnit.created_at,
             updated_at: localUnit.created_at,
-            teacher: { full_name: localUnit.teacher_name } as any,
+            teacher: { full_name: localUnit.teacher_name || 'Faculty Lecturer' } as any,
           } as Course,
           courseLessons: courseLessons.length > 0 ? courseLessons : [{ id: activeLessonId, title: activeTitle, order_index: 1 }],
           enrollment: {
-            id: 'enr-local',
-            student_id: profile?.id || 'std',
+            id: `enr-${localUnit.id}`,
+            student_id: profile?.id || '',
             course_id: localUnit.id,
             completed_lesson_ids: [],
             enrolled_at: new Date().toISOString(),
@@ -260,8 +264,8 @@ export function LessonPlayer() {
           } as Course,
           courseLessons: [{ id: matchedSub.id, title: matchedSub.name, order_index: 1 }],
           enrollment: {
-            id: 'enr-local',
-            student_id: profile?.id || 'std',
+            id: `enr-${matchedSub.id}`,
+            student_id: profile?.id || '',
             course_id: matchedSub.id,
             completed_lesson_ids: [],
             enrolled_at: new Date().toISOString(),

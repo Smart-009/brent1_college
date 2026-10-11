@@ -280,7 +280,7 @@ export function HireEclatPage() {
   const getWhatsAppServiceInquiry = () => {
     const serviceName = TECH_SERVICES.find((s) => s.id === formData.serviceCategory)?.title || 'Tech Services'
     const msg = encodeURIComponent(
-      `Hello Éclat Institute Enterprise Team! I would like to hire your team for: ${serviceName}.\n\n` +
+      `Hello Eclat Institute Enterprise Team! I would like to hire your team for: ${serviceName}.\n\n` +
       `My Name: ${formData.name || 'Client'}\n` +
       `Company: ${formData.company || 'Private Project'}\n` +
       `Budget Range: ${formData.budget}\n` +
@@ -296,9 +296,9 @@ export function HireEclatPage() {
       <header style={{ borderBottom: '1px solid rgba(255, 255, 255, 0.08)', background: 'rgba(10, 15, 29, 0.95)', backdropFilter: 'blur(12px)', position: 'sticky', top: 0, zIndex: 50, width: '100%', maxWidth: '100vw', boxSizing: 'border-box' }}>
         <div style={{ maxWidth: '1280px', margin: '0 auto', padding: '0.75rem 1rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
           <Link to="/" style={{ display: 'flex', alignItems: 'center', gap: '0.65rem', textDecoration: 'none', color: '#ffffff', minWidth: 0 }}>
-            <img src="/logo.png" alt="Éclat Institute Logo" style={{ width: '38px', height: '38px', borderRadius: '50%', border: '2px solid #3b82f6', flexShrink: 0 }} />
+            <img src="/logo.png" alt="Eclat Institute Logo" style={{ width: '38px', height: '38px', borderRadius: '50%', border: '2px solid #3b82f6', flexShrink: 0 }} />
             <div style={{ minWidth: 0, overflow: 'hidden' }}>
-              <span style={{ fontSize: '1.1rem', fontWeight: 900, letterSpacing: '0.04em', color: '#ffffff', display: 'block', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>ÉCLAT INSTITUTE</span>
+              <span style={{ fontSize: '1.1rem', fontWeight: 900, letterSpacing: '0.04em', color: '#ffffff', display: 'block', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>ECLAT INSTITUTE</span>
               <span className="hidden sm:block" style={{ fontSize: '0.68rem', color: '#60a5fa', fontWeight: 700, letterSpacing: '0.08em', whiteSpace: 'nowrap' }}>ENTERPRISE TECH & CONSULTING</span>
             </div>
           </Link>
@@ -403,9 +403,9 @@ export function HireEclatPage() {
           >
             <div style={{ padding: '1rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: '1px solid #1e293b' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <img src="/logo.png" alt="Éclat Logo" style={{ width: '32px', height: '32px', borderRadius: '50%', border: '1.5px solid #3b82f6' }} />
+                <img src="/logo.png" alt="Eclat Logo" style={{ width: '32px', height: '32px', borderRadius: '50%', border: '1.5px solid #3b82f6' }} />
                 <div>
-                  <div style={{ fontSize: '0.95rem', fontWeight: 900, color: '#ffffff' }}>ÉCLAT INSTITUTE</div>
+                  <div style={{ fontSize: '0.95rem', fontWeight: 900, color: '#ffffff' }}>ECLAT INSTITUTE</div>
                   <div style={{ fontSize: '0.62rem', color: '#60a5fa', fontWeight: 700 }}>ENTERPRISE SERVICES</div>
                 </div>
               </div>
@@ -450,7 +450,7 @@ export function HireEclatPage() {
                   Request a Quote
                 </a>
                 <a
-                  href={`https://wa.me/${INSTITUTION_CONFIG.contact.phone.replace(/[^0-9]/g, '')}?text=Hello%20Éclat%20Team!%20I%20would%20like%20to%20discuss%20hiring%20your%20services.`}
+                  href={`https://wa.me/${INSTITUTION_CONFIG.contact.phone.replace(/[^0-9]/g, '')}?text=Hello%20Eclat%20Team!%20I%20would%20like%20to%20discuss%20hiring%20your%20services.`}
                   target="_blank"
                   rel="noopener noreferrer"
                   style={{ background: '#16a34a', color: '#ffffff', textDecoration: 'none', padding: '0.75rem', borderRadius: '8px', textAlign: 'center', fontWeight: 800, fontSize: '0.88rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}
@@ -469,11 +469,11 @@ export function HireEclatPage() {
         <div style={{ maxWidth: '960px', margin: '0 auto' }}>
           <div style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', background: 'rgba(37, 99, 235, 0.15)', border: '1px solid rgba(59, 130, 246, 0.4)', padding: '0.4rem 1rem', borderRadius: '999px', fontSize: '0.82rem', color: '#93c5fd', fontWeight: 700, marginBottom: '1.5rem', maxWidth: '100%', flexWrap: 'wrap', textAlign: 'center', lineHeight: 1.35, boxSizing: 'border-box' }}>
             <RocketIcon size={15} color="#60a5fa" />
-            <span style={{ maxWidth: '100%', wordBreak: 'break-word', whiteSpace: 'normal' }}>ÉCLAT INSTITUTE PROFESSIONAL SERVICES & SOFTWARE STUDIO</span>
+            <span style={{ maxWidth: '100%', wordBreak: 'break-word', whiteSpace: 'normal' }}>ECLAT INSTITUTE PROFESSIONAL SERVICES & SOFTWARE STUDIO</span>
           </div>
 
           <h1 style={{ fontSize: 'clamp(2.2rem, 5vw, 3.8rem)', fontWeight: 900, lineHeight: 1.15, marginBottom: '1.25rem', letterSpacing: '-0.02em', background: 'linear-gradient(135deg, #ffffff 40%, #93c5fd)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
-            Hire Éclat Institute to Build, Scale & Secure Your Tech
+            Hire Eclat Institute to Build, Scale & Secure Your Tech
           </h1>
 
           <p style={{ fontSize: '1.15rem', color: '#94a3b8', maxWidth: '780px', margin: '0 auto 2.5rem', lineHeight: 1.65 }}>
@@ -501,7 +501,7 @@ export function HireEclatPage() {
               <ArrowRightIcon size={16} />
             </a>
             <a
-              href={`https://wa.me/${INSTITUTION_CONFIG.contact.phone.replace(/[^0-9]/g, '')}?text=${encodeURIComponent('Hello! I would like to hire Éclat Institute for engineering/tech services.')}`}
+              href={`https://wa.me/${INSTITUTION_CONFIG.contact.phone.replace(/[^0-9]/g, '')}?text=${encodeURIComponent('Hello! I would like to hire Eclat Institute for engineering/tech services.')}`}
               target="_blank"
               rel="noopener noreferrer"
               style={{
@@ -657,12 +657,12 @@ export function HireEclatPage() {
         </div>
       </section>
 
-      {/* Why Choose Éclat Institute Engineering Section */}
+      {/* Why Choose Eclat Institute Engineering Section */}
       <section style={{ background: 'rgba(15, 23, 42, 0.6)', borderTop: '1px solid rgba(255, 255, 255, 0.06)', borderBottom: '1px solid rgba(255, 255, 255, 0.06)', padding: '4rem 1.5rem' }}>
         <div style={{ maxWidth: '1280px', margin: '0 auto' }}>
           <div style={{ textAlign: 'center', marginBottom: '3rem' }}>
             <h2 style={{ fontSize: '2.1rem', fontWeight: 900, marginBottom: '0.5rem' }}>
-              Why Organizations Choose Éclat Institute
+              Why Organizations Choose Eclat Institute
             </h2>
             <p style={{ color: '#94a3b8', fontSize: '1rem' }}>
               We combine pedagogical rigor with real-world enterprise engineering standards.
@@ -737,7 +737,7 @@ export function HireEclatPage() {
                 Inquiry Received Successfully!
               </h3>
               <p style={{ color: '#cbd5e1', fontSize: '0.95rem', maxWidth: '500px', margin: '0 auto 1.5rem', lineHeight: 1.6 }}>
-                Thank you, <strong>{formData.name}</strong>. An Éclat Institute project lead will review your specifications and email you a proposal at <strong>{formData.email}</strong>.
+                Thank you, <strong>{formData.name}</strong>. An Eclat Institute project lead will review your specifications and email you a proposal at <strong>{formData.email}</strong>.
               </p>
               <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center', flexWrap: 'wrap' }}>
                 <a
@@ -940,8 +940,8 @@ export function HireEclatPage() {
       <footer style={{ borderTop: '1px solid rgba(255, 255, 255, 0.08)', background: '#070a14', padding: '3rem 1.5rem 2rem', color: '#64748b', fontSize: '0.85rem' }}>
         <div style={{ maxWidth: '1280px', margin: '0 auto', display: 'flex', flexDirection: 'column', gap: '1.5rem', alignItems: 'center', textAlign: 'center' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-            <img src="/logo.png" alt="Éclat Institute" style={{ width: '32px', height: '32px', borderRadius: '50%' }} />
-            <span style={{ color: '#ffffff', fontWeight: 800, fontSize: '1rem' }}>Éclat Institute Tech Services</span>
+            <img src="/logo.png" alt="Eclat Institute" style={{ width: '32px', height: '32px', borderRadius: '50%' }} />
+            <span style={{ color: '#ffffff', fontWeight: 800, fontSize: '1rem' }}>Eclat Institute Tech Services</span>
           </div>
           <div style={{ display: 'flex', gap: '1.5rem', flexWrap: 'wrap', justifyContent: 'center' }}>
             <Link to="/" style={{ color: '#94a3b8', textDecoration: 'none' }}>Home</Link>
@@ -951,7 +951,7 @@ export function HireEclatPage() {
             <Link to="/privacy" style={{ color: '#94a3b8', textDecoration: 'none' }}>Privacy Policy</Link>
           </div>
           <div>
-            © {new Date().getFullYear()} Éclat Institute. All Rights Reserved. Delivered across East Africa & Worldwide.
+            © {new Date().getFullYear()} Eclat Institute. All Rights Reserved. Delivered across East Africa & Worldwide.
           </div>
         </div>
       </footer>

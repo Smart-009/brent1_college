@@ -1,5 +1,5 @@
 // ============================================================
-// Éclat Institute — Authentic Web Audio School Bell Synthesizer
+// Eclat Institute — Authentic Web Audio School Bell Synthesizer
 // Zero external mp3 dependencies; works 100% offline & in all modern browsers.
 // ============================================================
 

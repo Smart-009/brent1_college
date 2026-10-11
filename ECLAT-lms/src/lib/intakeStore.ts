@@ -1,5 +1,5 @@
 ﻿// ============================================================
-// Éclat Institute — Intake Scheduler & Marketing Store
+// Eclat Institute — Intake Scheduler & Marketing Store
 // Handles Database Persistence (Supabase) + Offline LocalStorage Cache
 // ============================================================
 

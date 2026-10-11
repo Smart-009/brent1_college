@@ -495,7 +495,7 @@ test('Google Drive Embed: Handles Google Docs, Sheets, and Slides formats', () =
 function mockDetectElectron({ search = '', userAgent = '', desktopAPI = undefined, storage = {} } = {}) {
   if (search.includes('platform=desktop')) return true
   if (desktopAPI && desktopAPI.isDesktop) return true
-  if (/Electron|ÉclatDesktopWorkstation|EclatDesktop/i.test(userAgent)) return true
+  if (/Electron|EclatDesktopWorkstation|EclatDesktop/i.test(userAgent)) return true
   if (storage['eclat_platform'] === 'desktop') return true
   return false
 }
@@ -512,7 +512,7 @@ test('Platform Detection: Electron Workstation Identification', () => {
   // Query param detection
   assert.ok(mockDetectElectron({ search: '?platform=desktop' }))
   // Electron User Agent detection
-  assert.ok(mockDetectElectron({ userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) Electron/32.0.0 ÉclatDesktopWorkstation/1.0.0' }))
+  assert.ok(mockDetectElectron({ userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) Electron/32.0.0 EclatDesktopWorkstation/1.0.0' }))
   // desktopAPI context bridge detection
   assert.ok(mockDetectElectron({ desktopAPI: { isDesktop: true } }))
   // Persisted storage detection
@@ -867,7 +867,7 @@ test('SEO Metadata: 4 Canonical Faculties, Meta Tags, Schema.org JSON-LD, and ll
   const htmlContent = fs.readFileSync(path.join(process.cwd(), 'index.html'), 'utf-8')
   
   // Title & Meta tags
-  assert.ok(htmlContent.includes('<title>Éclat Institute — 100% Online Virtual Campus | Business, IT & Data Science, Language, IGCSE</title>'))
+  assert.ok(htmlContent.includes('<title>Eclat Institute — 100% Online Virtual Campus | Business, IT & Data Science, Language, IGCSE</title>'))
   assert.ok(htmlContent.includes('name="description"'))
   assert.ok(htmlContent.includes('School of Business, School of IT & Data Science, School of Language, and IGCSE'))
   assert.ok(htmlContent.includes('Cambridge CAIE Center KE042 & Pearson Edexcel Center EDX-98421'))
@@ -879,8 +879,8 @@ test('SEO Metadata: 4 Canonical Faculties, Meta Tags, Schema.org JSON-LD, and ll
   // Schema.org JSON-LD
   assert.ok(htmlContent.includes('"name": "Cambridge Assessment International Education IGCSE (Center KE042)"'))
   assert.ok(htmlContent.includes('"name": "Pearson Edexcel International Curriculum (Center EDX-98421)"'))
-  assert.ok(htmlContent.includes('"text": "Éclat Institute consists of 4 canonical faculties'))
-  assert.ok(htmlContent.includes('Can external schools, academies, and independent tutors publish courses on Éclat Institute?'))
+  assert.ok(htmlContent.includes('"text": "Eclat Institute consists of 4 canonical faculties'))
+  assert.ok(htmlContent.includes('Can external schools, academies, and independent tutors publish courses on Eclat Institute?'))
   assert.ok(htmlContent.includes('What is the difference between Live Cohort Classes and Self-Paced Courses?'))
 
   // llms.txt AI Knowledge Grounding
@@ -1023,17 +1023,17 @@ test('Course Admission Rule: Live Cohort Classes get Formal Admission ID vs Inst
   assert.strictEqual(selfPacedEnrollment.instantAccessUnlocked, true)
 })
 
-test('Dynamic Certification Authority: Éclat-Issued for Individual Tutors vs Institution-Issued for Partner Schools', () => {
+test('Dynamic Certification Authority: Eclat-Issued for Individual Tutors vs Institution-Issued for Partner Schools', () => {
   function resolveCertificateIssuer(course) {
     if (course.provider_type === 'partner_institution' && course.institution_name) {
       return {
         issuingAuthority: course.institution_name,
-        affiliationBanner: 'ACCREDITED PARTNER ACADEMY • CONFERRED IN AFFILIATION WITH ÉCLAT INSTITUTE',
+        affiliationBanner: 'ACCREDITED PARTNER ACADEMY • CONFERRED IN AFFILIATION WITH ECLAT INSTITUTE',
         leadSignatory: course.institution_signatory || 'Dean / Authorized Signatory',
       }
     }
     return {
-      issuingAuthority: 'Éclat Institute',
+      issuingAuthority: 'Eclat Institute',
       affiliationBanner: 'DIRECTORATE OF ACADEMIC AFFAIRS & GLOBAL CREDENTIALING',
       leadSignatory: course.teacher_name ? `Lead Instructor: ${course.teacher_name}` : 'Dean of Academic Faculty',
     }
@@ -1043,7 +1043,7 @@ test('Dynamic Certification Authority: Éclat-Issued for Individual Tutors vs In
     provider_type: 'individual_tutor',
     teacher_name: 'Alex Ochieng',
   })
-  assert.strictEqual(tutorCert.issuingAuthority, 'Éclat Institute')
+  assert.strictEqual(tutorCert.issuingAuthority, 'Eclat Institute')
   assert.ok(tutorCert.leadSignatory.includes('Alex Ochieng'))
 
   const schoolCert = resolveCertificateIssuer({
@@ -1052,7 +1052,7 @@ test('Dynamic Certification Authority: Éclat-Issued for Individual Tutors vs In
     institution_signatory: 'Prof. Mary Wanjiku, Academic Dean',
   })
   assert.strictEqual(schoolCert.issuingAuthority, 'St. Jude Cambridge Academy')
-  assert.ok(schoolCert.affiliationBanner.includes('AFFILIATION WITH ÉCLAT INSTITUTE'))
+  assert.ok(schoolCert.affiliationBanner.includes('AFFILIATION WITH ECLAT INSTITUTE'))
   assert.strictEqual(schoolCert.leadSignatory, 'Prof. Mary Wanjiku, Academic Dean')
 })
 

@@ -499,7 +499,7 @@ export function ResourceLibrary() {
         e.preventDefault()
         setIsBlurred(true)
         try {
-          navigator.clipboard?.writeText?.('🔒 Protected academic content — Éclat Institute')
+          navigator.clipboard?.writeText?.('🔒 Protected academic content — Eclat Institute')
         } catch {}
         setDrmWarning('🔒 Screenshot capture is restricted by DRM policy.')
         setTimeout(() => setDrmWarning(null), 3000)
@@ -1874,7 +1874,7 @@ export function ResourceLibrary() {
                     whiteSpace: 'nowrap',
                   }}
                 >
-                  ÉCLAT INSTITUTE • LICENSED TO {profile?.full_name?.toUpperCase() || 'REGISTERED STUDENT'} • ACADEMIC USE ONLY
+                  ECLAT INSTITUTE • LICENSED TO {profile?.full_name?.toUpperCase() || 'REGISTERED STUDENT'} • ACADEMIC USE ONLY
                 </div>
               ))}
             </div>
@@ -3182,7 +3182,7 @@ export function ResourceLibrary() {
                       🎓 Course Unit Information
                     </div>
                     <p style={{ margin: '0 0 0.5rem' }}>
-                      This resource is an institutional study material managed under the Éclat Institute Academic Library.
+                      This resource is an institutional study material managed under the Eclat Institute Academic Library.
                     </p>
                     <p style={{ margin: 0, opacity: 0.8 }}>
                       Uploaded by: {readingResource.uploaded_by || 'Academic Administrator'} • Size: {readingResource.file_size || 'Standard Handbook'}
@@ -3835,7 +3835,7 @@ export function ResourceLibrary() {
 
             <p style={{ fontSize: '0.88rem', color: '#94a3b8', lineHeight: 1.6, marginBottom: '1.75rem' }}>
               To protect academic copyright, prevent unauthorized downloading, and block screen scraping, institutional library books and course materials are accessible exclusively inside the{' '}
-              <strong style={{ color: '#ffffff' }}>Official Éclat Native Applications</strong>.
+              <strong style={{ color: '#ffffff' }}>Official Eclat Native Applications</strong>.
             </p>
 
             <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', marginBottom: '1.25rem' }}>

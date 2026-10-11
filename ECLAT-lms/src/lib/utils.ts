@@ -1,5 +1,5 @@
 // ============================================================
-// Éclat Institute — Utility Functions
+// Eclat Institute — Utility Functions
 // ============================================================
 import { INSTITUTION_CONFIG } from '@/config/institution'
 

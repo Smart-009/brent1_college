@@ -1,5 +1,5 @@
 // ============================================================
-// Éclat Institute — Universal Dynamic Courses & Programs Store
+// Eclat Institute — Universal Dynamic Courses & Programs Store
 // Real-time Cloud Synchronization (Supabase) + Offline LocalStorage Cache
 // Single source of truth for Admin Console, Public Catalog, Landing, & SIMS
 // ============================================================
@@ -184,7 +184,7 @@ class CourseStore {
         newCourse.schedule ||
         'All Shifts: Early Morning, Late Morning, Midday, Afternoon, Evening & Night',
       ...feeCalcs,
-      instructor: newCourse.instructor || 'Éclat Institute Certified Faculty',
+      instructor: newCourse.instructor || 'Eclat Institute Certified Faculty',
       departmentId: newCourse.departmentId || 'dept-general',
       departmentName: newCourse.departmentName || 'General Academic Studies',
       schoolId: newCourse.schoolId,

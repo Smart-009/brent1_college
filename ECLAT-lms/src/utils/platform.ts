@@ -17,7 +17,7 @@ export function isElectronApp(): boolean {
   return Boolean(
     w.desktopAPI?.isDesktop ||
     w.electronAPI ||
-    /Electron|ÉclatDesktopWorkstation|EclatDesktop/i.test(navigator.userAgent) ||
+    /Electron|EclatDesktopWorkstation|EclatDesktop/i.test(navigator.userAgent) ||
     w.process?.versions?.electron ||
     (typeof sessionStorage !== 'undefined' && sessionStorage.getItem('eclat_platform') === 'desktop') ||
     (typeof localStorage !== 'undefined' && localStorage.getItem('eclat_platform') === 'desktop')

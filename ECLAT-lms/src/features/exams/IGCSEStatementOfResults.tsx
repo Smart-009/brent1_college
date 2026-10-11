@@ -396,7 +396,7 @@ export const IGCSEStatementOfResultsModal: FC<IGCSEStatementOfResultsProps> = ({
                 padding: '0.25rem',
               }}
             >
-              <span>ÉCLAT INST.</span>
+              <span>ECLAT INST.</span>
               <span style={{ fontSize: '0.8rem' }}>★ KE042 ★</span>
               <span>VERIFIED</span>
             </div>

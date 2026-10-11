@@ -37,18 +37,22 @@ export function CourseDetail() {
         (u) => u.id === courseId || u.code?.toLowerCase() === courseId.toLowerCase() || u.title?.toLowerCase() === courseId.toLowerCase()
       )
       if (localUnit) {
+        const allSubjects = schoolStore.getSubjects()
+        const matchedSub = allSubjects.find(
+          (s) => s.code === localUnit.code || s.name.toLowerCase() === localUnit.title.toLowerCase() || s.name.toLowerCase() === localUnit.program.toLowerCase()
+        )
         return {
           id: localUnit.id,
           title: localUnit.title,
           description: localUnit.description,
-          subject_id: 'sub-computing',
+          subject_id: matchedSub?.id || localUnit.id,
           teacher_id: localUnit.teacher_id || 'tch-faculty',
           class_id: null,
           is_published: true,
           created_at: localUnit.created_at,
           updated_at: localUnit.created_at,
           teacher: { full_name: localUnit.teacher_name || 'Faculty Lecturer' },
-          subject: { name: localUnit.program || 'Online Program', color_hex: '#1e3a8a' },
+          subject: { name: localUnit.program || matchedSub?.name || 'Online Program', color_hex: matchedSub?.color_hex || '#1e3a8a' },
         } as unknown as Course
       }
 

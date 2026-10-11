@@ -485,7 +485,7 @@ export function IGCSEPortal() {
                 Official Examination Results Portal
               </h4>
               <p style={{ fontSize: '0.85rem', maxWidth: '480px', margin: '0 auto', lineHeight: 1.5 }}>
-                Enter your candidate number above to view your statement of results, or contact the Éclat Institute Examination Officer for certification queries.
+                Enter your candidate number above to view your statement of results, or contact the Eclat Institute Examination Officer for certification queries.
               </p>
             </div>
           )}

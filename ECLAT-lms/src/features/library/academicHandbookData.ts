@@ -1,5 +1,5 @@
 // ============================================================
-// Éclat Institute — Institutional Academic Handbooks & E-Textbooks
+// Eclat Institute — Institutional Academic Handbooks & E-Textbooks
 // Native In-App High Resolution Reader Content Engine
 // ============================================================
 
@@ -419,7 +419,7 @@ export const COMIC_BOOKS_DATA: Record<string, ComicBook> = {
     volume: 'Volume 1 — Genesis Breach',
     genre: 'Cyberpunk & Security',
     author: 'Alex Mwangi',
-    illustrator: 'Éclat Interactive Studios',
+    illustrator: 'Eclat Interactive Studios',
     year: 2026,
     estimatedReadTime: '15 mins',
     coverEmoji: '🛡️',
@@ -434,7 +434,7 @@ export const COMIC_BOOKS_DATA: Record<string, ComicBook> = {
         panels: [
           {
             panelNumber: 1,
-            narrative: 'Nairobi Metropolis — 02:43 AM. The servers in the Éclat Cyber Range hum under an unprecedented surge.',
+            narrative: 'Nairobi Metropolis — 02:43 AM. The servers in the Eclat Cyber Range hum under an unprecedented surge.',
             backgroundTheme: 'cyber',
             illustrationEmoji: '🏙️',
             illustrationVisual: 'Towering neon skyscrapers reflected across rain-slicked server farm glass.',
@@ -602,7 +602,7 @@ export const COMIC_BOOKS_DATA: Record<string, ComicBook> = {
       {
         issueNumber: 1,
         title: 'Episode 1: The Hackathon Spark',
-        synopsis: 'The 48-hour Pan-African Innovation Challenge begins at Éclat Institute.',
+        synopsis: 'The 48-hour Pan-African Innovation Challenge begins at Eclat Institute.',
         coverEmoji: '🚀',
         panels: [
           {

@@ -173,12 +173,12 @@ export function DonationSponsorshipPage() {
           <Link to="/" style={{ display: 'flex', alignItems: 'center', gap: '0.65rem', textDecoration: 'none' }}>
             <img
               src="/logo.png"
-              alt="Éclat Institute Logo"
+              alt="Eclat Institute Logo"
               style={{ width: '40px', height: '40px', borderRadius: '50%', border: '2px solid #d4af37' }}
             />
             <div>
               <div style={{ fontSize: '1.15rem', fontWeight: 900, color: '#1e3a8a', fontFamily: 'var(--font-heading)', letterSpacing: '0.02em', lineHeight: 1.1 }}>
-                ÉCLAT INSTITUTE
+                ECLAT INSTITUTE
               </div>
               <div style={{ fontSize: '0.68rem', color: '#16a34a', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.05em' }}>
                 Education For All • Sponsorship Foundation
@@ -257,7 +257,7 @@ export function DonationSponsorshipPage() {
             }}
           >
             <HeartHandshakeIcon size={16} color="#86efac" />
-            <span>Éclat Community Education & Opportunity Initiative</span>
+            <span>Eclat Community Education & Opportunity Initiative</span>
           </div>
 
           <h1
@@ -630,7 +630,7 @@ export function DonationSponsorshipPage() {
                           Virtual Vocational & Technology Bootcamp
                         </strong>
                         <div style={{ fontSize: '0.78rem', color: '#475569', marginTop: '2px', lineHeight: 1.45 }}>
-                          Sponsors an underprivileged youth into Éclat's online coding, data science, digital literacy, or business accounting programs with full hardware/data support.
+                          Sponsors an underprivileged youth into Eclat's online coding, data science, digital literacy, or business accounting programs with full hardware/data support.
                         </div>
                       </div>
                     </label>
@@ -828,7 +828,7 @@ export function DonationSponsorshipPage() {
               </div>
 
               <p style={{ fontSize: '0.86rem', color: '#334155', lineHeight: 1.6, margin: '0 0 1rem' }}>
-                While Éclat Institute is an online campus, many brilliant children lack electricity, computers, or home stability to study virtually. 
+                While Eclat Institute is an online campus, many brilliant children lack electricity, computers, or home stability to study virtually. 
                 When funds accumulated for a student reach the target, <strong>we physically enroll them in recognized local secondary schools, vocational technical institutes, or academies</strong>, covering:
               </p>
 
@@ -950,11 +950,11 @@ export function DonationSponsorshipPage() {
       <footer style={{ background: '#0f172a', color: '#94a3b8', padding: '2.5rem 1rem', borderTop: '1px solid #1e293b' }}>
         <div style={{ maxWidth: '1180px', margin: '0 auto', display: 'flex', flexDirection: 'column', gap: '1.25rem', alignItems: 'center', textAlign: 'center' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <img src="/logo.png" alt="Éclat Institute" style={{ width: '32px', height: '32px', borderRadius: '50%' }} />
-            <span style={{ fontSize: '1rem', fontWeight: 900, color: '#ffffff' }}>Éclat Institute Foundation</span>
+            <img src="/logo.png" alt="Eclat Institute" style={{ width: '32px', height: '32px', borderRadius: '50%' }} />
+            <span style={{ fontSize: '1rem', fontWeight: 900, color: '#ffffff' }}>Eclat Institute Foundation</span>
           </div>
           <p style={{ fontSize: '0.82rem', maxWidth: '640px', margin: 0, lineHeight: 1.6 }}>
-            The Éclat Education & Scholarship Program is dedicated to breaking generational poverty through direct educational access. 
+            The Eclat Education & Scholarship Program is dedicated to breaking generational poverty through direct educational access. 
             All payments are cleared transparently via Paystack. Official receipts are issued with unique verification codes.
           </p>
           <div style={{ display: 'flex', gap: '1.25rem', flexWrap: 'wrap', fontSize: '0.8rem', color: '#cbd5e1' }}>
@@ -965,7 +965,7 @@ export function DonationSponsorshipPage() {
             <Link to="/privacy" style={{ color: '#cbd5e1', textDecoration: 'none' }}>Privacy Policy</Link>
           </div>
           <div style={{ fontSize: '0.75rem', color: '#64748b' }}>
-            © {new Date().getFullYear()} Éclat Institute. All Rights Reserved.
+            © {new Date().getFullYear()} Eclat Institute. All Rights Reserved.
           </div>
         </div>
       </footer>

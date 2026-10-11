@@ -521,7 +521,7 @@ export function TutorPublishCoursePage() {
           hod_email: email.trim() || 'info.eclatinstitute@gmail.com',
           programs: [finalProgramName],
           school_id: 'school-eclat',
-          school_name: providerType === 'partner_institution' ? (institutionName.trim() || 'Partner School') : 'Éclat Institute',
+          school_name: providerType === 'partner_institution' ? (institutionName.trim() || 'Partner School') : 'Eclat Institute',
           created_at: new Date().toISOString(),
         })
       }
@@ -660,10 +660,10 @@ export function TutorPublishCoursePage() {
       >
         <div style={{ maxWidth: '1200px', margin: '0 auto', display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%' }}>
           <Link to="/" style={{ display: 'flex', alignItems: 'center', gap: '10px', textDecoration: 'none' }}>
-            <img src="/logo.png" alt="Éclat" style={{ width: '36px', height: '36px', borderRadius: '50%', border: '1.5px solid #d4af37' }} />
+            <img src="/logo.png" alt="Eclat" style={{ width: '36px', height: '36px', borderRadius: '50%', border: '1.5px solid #d4af37' }} />
             <div>
               <span style={{ fontSize: '1.05rem', fontWeight: 900, color: '#1e3a8a', letterSpacing: '-0.01em' }}>
-                ÉCLAT INSTITUTE
+                ECLAT INSTITUTE
               </span>
               <div style={{ fontSize: '0.68rem', color: '#64748b', fontWeight: 700 }}>
                 Faculty & Course Creator Publishing Hub
@@ -685,7 +685,7 @@ export function TutorPublishCoursePage() {
               Browse Student Catalog →
             </Link>
             <a
-              href={getWhatsAppInquiryUrl('Hello Éclat Dean! I want to publish a course and earn 50% revenue share.')}
+              href={getWhatsAppInquiryUrl('Hello Eclat Dean! I want to publish a course and earn 50% revenue share.')}
               target="_blank"
               rel="noopener noreferrer"
               style={{
@@ -749,7 +749,7 @@ export function TutorPublishCoursePage() {
               letterSpacing: '-0.02em',
             }}
           >
-            Publish With Éclat Institute.{' '}
+            Publish With Eclat Institute.{' '}
             <span
               style={{
                 background: 'linear-gradient(135deg, #fbbf24 0%, #f59e0b 50%, #f97316 100%)',
@@ -798,7 +798,7 @@ export function TutorPublishCoursePage() {
             <div style={{ background: 'rgba(255, 255, 255, 0.05)', border: '1px solid rgba(255, 255, 255, 0.12)', borderRadius: '14px', padding: '1rem 1.25rem' }}>
               <div style={{ fontSize: '1.4rem', marginBottom: '4px' }}>🔒</div>
               <strong style={{ fontSize: '0.95rem', color: '#f8fafc', display: 'block' }}>Anti-Piracy Watermarking</strong>
-              <span style={{ fontSize: '0.8rem', color: '#94a3b8' }}>Lectures are protected with Éclat DRM watermarking and student admission IDs.</span>
+              <span style={{ fontSize: '0.8rem', color: '#94a3b8' }}>Lectures are protected with Eclat DRM watermarking and student admission IDs.</span>
             </div>
           </div>
         </div>
@@ -866,7 +866,7 @@ export function TutorPublishCoursePage() {
                 <div><strong>Delivery Track:</strong> <span style={{ color: submittedCourse.deliveryMode === 'live_cohort' ? '#7c3aed' : '#d97706', fontWeight: 800 }}>{submittedCourse.deliveryMode === 'live_cohort' ? '🎓 Live Cohort (Admissions Issued)' : '⚡ Self-Paced (Instant Streaming)'}</span></div>
                 <div><strong>Tuition Price:</strong> ${submittedCourse.suggestedPriceUsd} USD</div>
                 <div><strong>Revenue Split:</strong> <span style={{ color: '#16a34a', fontWeight: 900 }}>{submittedCourse.payoutSplitPct}% (${((submittedCourse.suggestedPriceUsd * submittedCourse.payoutSplitPct) / 100).toFixed(0)}/student)</span></div>
-                <div><strong>Certification:</strong> <span style={{ color: '#0369a1', fontWeight: 700 }}>{submittedCourse.providerType === 'partner_institution' ? `Awarded by ${submittedCourse.institutionName || 'Partner School'}` : 'Awarded by Éclat Institute'}</span></div>
+                <div><strong>Certification:</strong> <span style={{ color: '#0369a1', fontWeight: 700 }}>{submittedCourse.providerType === 'partner_institution' ? `Awarded by ${submittedCourse.institutionName || 'Partner School'}` : 'Awarded by Eclat Institute'}</span></div>
                 <div><strong>Disbursement:</strong> <span style={{ color: '#15803d', fontWeight: 700 }}>{submittedCourse.payoutMethod?.toUpperCase() || 'M-PESA'} ({submittedCourse.payoutSchedule === 'realtime' ? 'Instant Real-time' : submittedCourse.payoutSchedule === 'weekly' ? 'Weekly' : submittedCourse.payoutSchedule === 'monthly' ? 'Monthly' : 'On-Demand Choice'})</span></div>
               </div>
               <div style={{ borderTop: '1px solid #e2e8f0', paddingTop: '0.65rem' }}>
@@ -959,7 +959,7 @@ export function TutorPublishCoursePage() {
                       <span>Individual Tutor (50% Revenue Share)</span>
                     </div>
                     <div style={{ fontSize: '0.76rem', color: '#64748b', fontWeight: 500 }}>
-                      Automatic Éclat Institute-issued certificate naming you as Lead Faculty Instructor.
+                      Automatic Eclat Institute-issued certificate naming you as Lead Faculty Instructor.
                     </div>
                   </button>
 
@@ -985,7 +985,7 @@ export function TutorPublishCoursePage() {
                       <span>Partner School / Academic Institution</span>
                     </div>
                     <div style={{ fontSize: '0.76rem', color: '#64748b', fontWeight: 500 }}>
-                      Certificates issued directly under your school's name & crest, in affiliation with Éclat.
+                      Certificates issued directly under your school's name & crest, in affiliation with Eclat.
                     </div>
                   </button>
                 </div>
@@ -1045,7 +1045,7 @@ export function TutorPublishCoursePage() {
                       <span>Live Cohort Classes</span>
                     </div>
                     <div style={{ fontSize: '0.76rem', color: '#64748b', fontWeight: 500 }}>
-                      Formal Éclat Admission Number generated, live Google Meet schedule, and timetable allocation.
+                      Formal Eclat Admission Number generated, live Google Meet schedule, and timetable allocation.
                     </div>
                   </button>
                 </div>

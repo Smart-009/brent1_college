@@ -1,5 +1,5 @@
 // ============================================================
-// Éclat Institute — Intake Scheduler & Marketing Adverts Types
+// Eclat Institute — Intake Scheduler & Marketing Adverts Types
 // ============================================================
 
 export type IntakeStatus = 'Open' | 'Filling Fast' | 'Upcoming' | 'Closed' | 'Archived'

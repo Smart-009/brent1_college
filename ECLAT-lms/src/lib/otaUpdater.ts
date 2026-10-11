@@ -1,5 +1,5 @@
 /**
- * Over-The-Air (OTA) Live Update Engine for Éclat Institute
+ * Over-The-Air (OTA) Live Update Engine for Eclat Institute
  * Automatically pulls the latest code and assets from the cloud
  * without requiring users to manually reinstall or download APKs.
  */

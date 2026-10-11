@@ -111,7 +111,7 @@ export function Sidebar({ isOpen, onClose }: { isOpen: boolean; onClose: () => v
     ? roleNavMap.igcse
     : profile
     ? (roleNavMap[profile.role] || roleNavMap.student)
-    : { label: 'Éclat Institute Hub', icon: BuildingIcon, links: guestNav }
+    : { label: 'Eclat Institute Hub', icon: BuildingIcon, links: guestNav }
   const SectionHeaderIcon = currentSection.icon
 
   const handleSignOut = async () => {

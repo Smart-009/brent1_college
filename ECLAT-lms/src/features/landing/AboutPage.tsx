@@ -116,7 +116,7 @@ export function AboutPage() {
     {
       title: '100% Live Instructor-Led Classes',
       icon: '🎙️',
-      desc: 'Unlike passive pre-recorded video sites, Éclat offers live virtual classroom sessions with direct screen-shares, real-time Q&A, and mentor code reviews.',
+      desc: 'Unlike passive pre-recorded video sites, Eclat offers live virtual classroom sessions with direct screen-shares, real-time Q&A, and mentor code reviews.',
     },
     {
       title: 'Global Inclusivity & Flexible Access',
@@ -235,7 +235,7 @@ export function AboutPage() {
           >
             <img
               src="/logo.png"
-              alt="Éclat Institute Logo"
+              alt="Eclat Institute Logo"
               style={{
                 width: '40px',
                 height: '40px',
@@ -289,7 +289,7 @@ export function AboutPage() {
           {/* Action CTAs */}
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
             <a
-              href={getWhatsAppInquiryUrl('Hello Admissions Desk, I want to learn more about Éclat Institute programs and admissions.')}
+              href={getWhatsAppInquiryUrl('Hello Admissions Desk, I want to learn more about Eclat Institute programs and admissions.')}
               target="_blank"
               rel="noopener noreferrer"
               className="btn btn-sm hidden sm:inline-flex"
@@ -405,7 +405,7 @@ export function AboutPage() {
               <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem' }}>
                 <img
                   src="/logo.png"
-                  alt="Éclat Institute Logo"
+                  alt="Eclat Institute Logo"
                   style={{ width: '32px', height: '32px', borderRadius: '50%', border: '1.5px solid #1d4ed8' }}
                 />
                 <div>
@@ -560,7 +560,7 @@ export function AboutPage() {
                 }}
               >
                 <span>🏛️</span>
-                <span>About Éclat Institute</span>
+                <span>About Eclat Institute</span>
               </Link>
 
               <Link
@@ -660,7 +660,7 @@ export function AboutPage() {
               </Link>
 
               <a
-                href={getWhatsAppInquiryUrl('Hello Admissions Desk, I want to learn more about Éclat Institute programs and admissions.')}
+                href={getWhatsAppInquiryUrl('Hello Admissions Desk, I want to learn more about Eclat Institute programs and admissions.')}
                 target="_blank"
                 rel="noopener noreferrer"
                 style={{
@@ -1013,7 +1013,7 @@ export function AboutPage() {
           <div style={{ animation: 'fadeIn 0.3s ease' }}>
             <div style={{ maxWidth: '850px', margin: '0 auto', textAlign: 'center', marginBottom: '3rem' }}>
               <h3 style={{ fontSize: '1.8rem', fontWeight: 900, color: '#0f172a', margin: '0 0 1rem' }}>
-                The Éclat Hybrid-Live Pedagogy
+                The Eclat Hybrid-Live Pedagogy
               </h3>
               <p style={{ color: '#475569', fontSize: '1rem', lineHeight: 1.7 }}>
                 We believe passive video binge-watching does not produce world-class software engineers or fluent language speakers. Our multi-tiered learning loop guarantees active participation and mentor oversight.
@@ -1149,7 +1149,7 @@ export function AboutPage() {
               >
                 <div style={{ fontSize: '2.5rem', marginBottom: '0.5rem' }}>📜</div>
                 <div style={{ fontSize: '0.75rem', fontWeight: 800, letterSpacing: '0.1em', color: '#b45309', textTransform: 'uppercase' }}>
-                  ÉCLAT INSTITUTE OF TECHNOLOGY & LANGUAGES
+                  ECLAT INSTITUTE OF TECHNOLOGY & LANGUAGES
                 </div>
                 <div style={{ fontSize: '1.3rem', fontWeight: 900, color: '#0f172a', margin: '0.5rem 0 0.25rem' }}>
                   Certificate of Professional Achievement
@@ -1445,7 +1445,7 @@ export function AboutPage() {
           }}
         >
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-            <img src="/logo.png" alt="Éclat" style={{ width: '32px', height: '32px', borderRadius: '50%', border: '1.5px solid #1d4ed8' }} />
+            <img src="/logo.png" alt="Eclat" style={{ width: '32px', height: '32px', borderRadius: '50%', border: '1.5px solid #1d4ed8' }} />
             <div>
               <div style={{ color: '#0f172a', fontWeight: 800 }}>{INSTITUTION_CONFIG.name}</div>
               <div style={{ fontSize: '0.72rem', color: '#64748b' }}>100% Online Virtual Campus</div>

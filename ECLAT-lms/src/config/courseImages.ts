@@ -1,5 +1,5 @@
 // ============================================================
-// Éclat Institute — High-Quality Course Photography Registry
+// Eclat Institute — High-Quality Course Photography Registry
 // Curated, crisp, high-resolution Unsplash imagery tailored
 // directly to each academic program and professional domain.
 // ============================================================

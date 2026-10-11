@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import { useAuthContext } from '@/features/auth/AuthContext'
 import { MobileAppBottomNav } from '@/components/layout/MobileAppBottomNav'
 import { IntakeAdvertsSection } from './IntakeAdvertsSection'
-import { getWhatsAppInquiryUrl } from '@/config/institution'
+import { getWhatsAppInquiryUrl, INSTITUTION_CONFIG } from '@/config/institution'
 import {
   GraduationCapIcon,
   LockIcon,
@@ -34,7 +34,7 @@ interface CourseItem {
 const MOTIVATIONAL_QUOTES = [
   { text: 'An investment in knowledge pays the best interest.', author: 'Benjamin Franklin' },
   { text: 'The expert in anything was once a beginner.', author: 'Helen Hayes' },
-  { text: 'Learning today, leading tomorrow. Master your craft.', author: 'Éclat Academic Faculty' },
+  { text: 'Learning today, leading tomorrow. Master your craft.', author: 'Eclat Academic Faculty' },
   { text: 'Your potential is limitless. Commit to 30 minutes of study today.', author: 'Dean of Studies' },
 ]
 
@@ -103,12 +103,12 @@ export function NativeAppHome({ courses, onSelectCourse }: { courses: CourseItem
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem' }}>
           <img
             src="/logo.png"
-            alt="Éclat"
+            alt="Eclat"
             style={{ width: '36px', height: '36px', borderRadius: '50%', border: '2px solid #1e3a8a', boxShadow: '0 2px 8px rgba(30, 58, 138, 0.15)' }}
           />
           <div>
             <div style={{ fontSize: '1rem', fontWeight: 900, color: '#1e3a8a', fontFamily: 'var(--font-heading)', lineHeight: 1.1, letterSpacing: '0.04em' }}>
-              ÉCLAT INSTITUTE
+              ECLAT INSTITUTE
             </div>
             <div style={{ fontSize: '0.68rem', color: '#64748b', fontWeight: 600 }}>
               Official Learning & Campus App
@@ -117,7 +117,7 @@ export function NativeAppHome({ courses, onSelectCourse }: { courses: CourseItem
         </div>
 
 <span style={{ fontSize: '0.68rem', color: '#64748b', fontWeight: 600, background: '#f1f5f9', padding: '0.3rem 0.75rem', borderRadius: '999px' }}>
-          {profile ? `👋 ${profile.full_name?.split(' ')[0] || 'Welcome'}` : '🎓 Éclat Campus'}
+          {profile ? `👋 ${profile.full_name?.split(' ')[0] || 'Welcome'}` : '🎓 Eclat Campus'}
         </span>
       </header>
 

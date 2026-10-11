@@ -1,4 +1,4 @@
-# 🎓 Éclat Institute — Learning Management System (LMS)
+# 🎓 Eclat Institute — Learning Management System (LMS)
 
 > **100% Online Virtual Campus** for Technology, Software Engineering, Data Science, and Modern Languages.
 > Live at → [eclat.institute](https://eclat.institute)
@@ -7,7 +7,7 @@
 
 ## 📌 What Is This?
 
-This is the full web application (and desktop/mobile app) for **Éclat Institute**. It includes:
+This is the full web application (and desktop/mobile app) for **Eclat Institute**. It includes:
 
 - 🌐 **Public landing page** — course catalog, intake adverts, about page
 - 🎓 **Student portal** — enrolled courses, video lessons, transcripts, fee statements
@@ -190,7 +190,7 @@ git push origin feature/your-feature-name
 
 ## 📞 Contact
 
-**Éclat Institute**
+**Eclat Institute**
 - 🌐 [eclat.institute](https://eclat.institute)
 - 📧 info.eclatinstitute@gmail.com
 - 📞 +254 740 027 346

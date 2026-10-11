@@ -109,14 +109,14 @@ export function StudentDirectory() {
   const [newStudent, setNewStudent] = useState<Partial<StudentRecord>>({
     full_name: '',
     admission_number: `EI-${new Date().getFullYear()}-${String(students.length + 1).padStart(3, '0')}`,
-    gender: 'Male',
+    gender: 'Not Specified',
     grade_level: '8 to 12 Weeks (Short Course Certificate)',
     stream: 'Practical Lab Trainee',
     class_name: programOptions[0] || 'Comprehensive Computer Packages & Digital Skills',
-    dob: '2005-01-01',
+    dob: '',
     status: 'Active',
-    fee_balance: 75,
-    term_fee_total: 75,
+    fee_balance: 60,
+    term_fee_total: 60,
     attendance_rate: 0,
     discipline_points: 0,
     merits_count: 0,
@@ -218,16 +218,16 @@ export function StudentDirectory() {
     e.preventDefault()
     if (!newStudent.full_name || !newStudent.admission_number) return
 
-    const billed = Number(newStudent.term_fee_total) || 75
+    const billed = Number(newStudent.term_fee_total) || 60
     const balance = newStudent.fee_balance !== undefined ? Number(newStudent.fee_balance) : billed
-    const chosenPassword = studentPasswordInput.trim() || 'Student@2026'
+    const chosenPassword = studentPasswordInput.trim() || `Student@${new Date().getFullYear()}`
 
     const record: StudentRecord = {
       id: `std-${Date.now()}`,
       admission_number: newStudent.admission_number || `EI-${new Date().getFullYear()}-${String(students.length + 1).padStart(3, '0')}`,
       full_name: newStudent.full_name || '',
-      gender: newStudent.gender as 'Male' | 'Female',
-      dob: newStudent.dob || '2005-01-01',
+      gender: (newStudent.gender as 'Male' | 'Female' | 'Not Specified') || 'Not Specified',
+      dob: newStudent.dob || '',
       class_id: 'cls-custom',
       class_name: newStudent.class_name || programOptions[0] || 'Comprehensive Computer Packages & Digital Skills',
       grade_level: newStudent.grade_level || '4 to 12 Weeks (Short Course Certificate)',
@@ -1381,7 +1381,7 @@ export function StudentDirectory() {
                     fontFamily: 'monospace',
                   }}
                 >
-                  Dear {reminderTarget.guardian.name}, reminder from Éclat Institute Accounts: {reminderTarget.full_name} ({reminderTarget.admission_number}) has an outstanding tuition balance of ${reminderTarget.fee_balance.toLocaleString()}. Kindly settle via the online student portal before the clearance deadline.
+                  Dear {reminderTarget.guardian.name}, reminder from Eclat Institute Accounts: {reminderTarget.full_name} ({reminderTarget.admission_number}) has an outstanding tuition balance of ${reminderTarget.fee_balance.toLocaleString()}. Kindly settle via the online student portal before the clearance deadline.
                 </div>
               </div>
             </div>
@@ -1440,10 +1440,12 @@ export function StudentDirectory() {
                     <select
                       className="input"
                       value={newStudent.gender}
-                      onChange={(e) => setNewStudent({ ...newStudent, gender: e.target.value as 'Male' | 'Female' })}
+                      onChange={(e) => setNewStudent({ ...newStudent, gender: e.target.value as any })}
                     >
+                      <option value="Not Specified">Not Specified</option>
                       <option value="Male">Male</option>
                       <option value="Female">Female</option>
+                      <option value="Other">Other</option>
                     </select>
                   </div>
                 </div>
@@ -1600,7 +1602,7 @@ export function StudentDirectory() {
               {/* Credentials Card */}
               <div style={{ background: '#f8fafc', border: '1.5px solid #cbd5e1', borderRadius: '10px', padding: '1.25rem' }}>
                 <div style={{ fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.08em', color: '#64748b', fontWeight: 800, marginBottom: '0.75rem' }}>
-                  ÉCLAT INSTITUTE • STUDENT PORTAL CREDENTIALS
+                  ECLAT INSTITUTE • STUDENT PORTAL CREDENTIALS
                 </div>
 
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>

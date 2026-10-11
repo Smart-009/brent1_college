@@ -1,5 +1,5 @@
 // ============================================================
-// Éclat Institute — Multi-Tenant Partner School Type Definitions
+// Eclat Institute — Multi-Tenant Partner School Type Definitions
 // ============================================================
 
 export type AcademicCalendarSystem = 'term' | 'semester' | 'trimester' | 'quarter'

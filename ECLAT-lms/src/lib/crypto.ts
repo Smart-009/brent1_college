@@ -1,5 +1,5 @@
 ﻿/**
- * Éclat Institute — Enterprise Security & Cryptography Engine
+ * Eclat Institute — Enterprise Security & Cryptography Engine
  * Uses Web Crypto API (SubtleCrypto) for SHA-256 password hashing and secure token generation
  */
 

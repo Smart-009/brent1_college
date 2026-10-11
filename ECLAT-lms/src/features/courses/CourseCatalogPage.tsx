@@ -302,10 +302,10 @@ export function CourseCatalogPage() {
       >
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
           <Link to="/" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '0.65rem' }}>
-            <img src="/logo.png" alt="Éclat Emblem" style={{ width: '36px', height: '36px', borderRadius: '50%', border: '2px solid #1d4ed8' }} />
+            <img src="/logo.png" alt="Eclat Emblem" style={{ width: '36px', height: '36px', borderRadius: '50%', border: '2px solid #1d4ed8' }} />
             <div>
               <div style={{ fontSize: '1.05rem', fontWeight: 900, color: '#1e3a8a', fontFamily: 'var(--font-heading)', lineHeight: 1.1 }}>
-                ÉCLAT INSTITUTE
+                ECLAT INSTITUTE
               </div>
               <div style={{ fontSize: '0.65rem', color: '#64748b', fontWeight: 600 }}>
                 Academic Programs & Syllabus Directory
@@ -453,12 +453,12 @@ export function CourseCatalogPage() {
               <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem' }}>
                 <img
                   src="/logo.png"
-                  alt="Éclat Institute Logo"
+                  alt="Eclat Institute Logo"
                   style={{ width: '32px', height: '32px', borderRadius: '50%', border: '1.5px solid #1d4ed8' }}
                 />
                 <div>
                   <div style={{ fontSize: '0.95rem', fontWeight: 900, color: '#1e3a8a', fontFamily: 'var(--font-heading)', lineHeight: 1.1 }}>
-                    ÉCLAT INSTITUTE
+                    ECLAT INSTITUTE
                   </div>
                   <div style={{ fontSize: '0.62rem', color: '#64748b', fontWeight: 600 }}>
                     100% Online Virtual Campus
@@ -698,7 +698,7 @@ export function CourseCatalogPage() {
                 }}
               >
                 <BuildingIcon size={18} color="#0f172a" />
-                <span>About Éclat Institute</span>
+                <span>About Eclat Institute</span>
               </Link>
             </div>
 
@@ -1115,7 +1115,7 @@ export function CourseCatalogPage() {
                   </span>
                 </div>
                 <div style={{ fontSize: '0.8rem', color: '#334155', marginTop: '2px', lineHeight: 1.45 }}>
-                  At Éclat Institute, <strong>we do not teach separate subjects in IGCSE</strong>. Students enrol into comprehensive academic cohorts (Year 9, Year 10, or Year 11) where Mathematics, Pure Sciences, English, Computer Science, and Humanities are taught together in one cohesive programme.
+                  At Eclat Institute, <strong>we do not teach separate subjects in IGCSE</strong>. Students enrol into comprehensive academic cohorts (Year 9, Year 10, or Year 11) where Mathematics, Pure Sciences, English, Computer Science, and Humanities are taught together in one cohesive programme.
                 </div>
               </div>
             </div>

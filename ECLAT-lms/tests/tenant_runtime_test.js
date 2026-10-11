@@ -1,5 +1,5 @@
 // ============================================================
-// Éclat Institute — Tenant School Cloud Runtime Verification
+// Eclat Institute — Tenant School Cloud Runtime Verification
 // ============================================================
 
 import test from 'node:test'

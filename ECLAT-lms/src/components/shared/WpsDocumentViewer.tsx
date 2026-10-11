@@ -801,7 +801,7 @@ export function WpsDocumentViewer({
                 whiteSpace: 'nowrap',
               }}
             >
-              ÉCLAT INSTITUTE • {studentName?.toUpperCase() || 'REGISTERED STUDENT'} ({studentId || 'ECLAT-ID'}) • DRM CONFIDENTIAL
+              ECLAT INSTITUTE • {studentName?.toUpperCase() || 'REGISTERED STUDENT'} ({studentId || 'ECLAT-ID'}) • DRM CONFIDENTIAL
             </div>
           ))}
         </div>
@@ -1052,7 +1052,7 @@ export function WpsDocumentViewer({
       >
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
           <span>🔒 WPS Secure Streaming Engine</span>
-          <span>• 📜 Éclat Institute Learning Portal</span>
+          <span>• 📜 Eclat Institute Learning Portal</span>
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
           <span>Zoom: {zoom}%</span>

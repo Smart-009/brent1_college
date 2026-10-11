@@ -1,5 +1,5 @@
 // ============================================================
-// Éclat Institute — Multi-Tenant Domain & Subdomain Resolution
+// Eclat Institute — Multi-Tenant Domain & Subdomain Resolution
 // ============================================================
 
 import type { PartnerSchoolTenant } from '@/types/tenantSchool'

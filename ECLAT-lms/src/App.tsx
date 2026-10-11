@@ -171,7 +171,7 @@ export function App() {
   }, [])
 
   return (
-    <Suspense fallback={<LoadingScreen message="Loading Éclat Institute Portal..." />}>
+    <Suspense fallback={<LoadingScreen message="Loading Eclat Institute Portal..." />}>
       {showOpeningSplash && (
         <AppOpeningSplashScreen onFinished={() => setShowOpeningSplash(false)} />
       )}

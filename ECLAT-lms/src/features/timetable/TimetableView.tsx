@@ -69,21 +69,24 @@ export function TimetableView() {
     e.preventDefault()
     if (!newPeriod.subject_name || !newPeriod.teacher_name) return
 
+    const matchedSub = schoolStore.getSubjects().find((s) => s.name.toLowerCase() === newPeriod.subject_name?.toLowerCase()) || schoolStore.getCourseUnits().find((u) => u.title.toLowerCase() === newPeriod.subject_name?.toLowerCase())
+    const matchedTeacher = schoolStore.getTeachers().find((t) => t.name.toLowerCase() === newPeriod.teacher_name?.toLowerCase())
+
     const period: TimetablePeriod = {
       id: `tt-${Date.now()}`,
       period_number: Number(newPeriod.period_number) || 1,
       start_time: newPeriod.start_time || '08:30',
       end_time: newPeriod.end_time || '10:00',
-      subject_id: 'unit-auto',
+      subject_id: matchedSub?.id || `sub-${Date.now()}`,
       subject_name: newPeriod.subject_name,
-      subject_code: newPeriod.subject_code || 'CS 101',
-      color_hex: newPeriod.color_hex || '#2563eb',
-      teacher_id: 'tch-auto',
+      subject_code: newPeriod.subject_code || (matchedSub as any)?.code || 'CRS-101',
+      color_hex: newPeriod.color_hex || (matchedSub as any)?.color_hex || '#2563eb',
+      teacher_id: matchedTeacher?.id || `tch-${Date.now()}`,
       teacher_name: newPeriod.teacher_name,
-      room: newPeriod.room || 'Lecture Hall 1',
+      room: newPeriod.room || 'Online Virtual Lab',
       day_of_week: (newPeriod.day_of_week as any) || 'Monday',
-      class_id: 'cls-auto',
-      class_name: newPeriod.class_name || 'Diploma in Computer Science & ICT (Year 2)',
+      class_id: `cls-${Date.now()}`,
+      class_name: newPeriod.class_name || newPeriod.subject_name,
     }
 
     schoolStore.addPeriod(period)

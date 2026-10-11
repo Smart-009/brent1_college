@@ -330,7 +330,7 @@ export function SchoolRegistrationPage() {
                 textDecoration: 'none',
               }}
             >
-              Return to Éclat Homepage
+              Return to Eclat Homepage
             </Link>
           </div>
         </div>
@@ -379,7 +379,7 @@ export function SchoolRegistrationPage() {
             </div>
             <div>
               <span style={{ fontSize: '1.1rem', fontWeight: 900, color: '#0f172a', letterSpacing: '-0.02em' }}>
-                Éclat School Cloud
+                Eclat School Cloud
               </span>
               <span
                 style={{

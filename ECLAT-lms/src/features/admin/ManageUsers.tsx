@@ -204,18 +204,20 @@ export function ManageUsers() {
           (s) => s.admission_number.toUpperCase() === cleanAdm
         )
         if (!existingStudent) {
-          const progFee = 60
+          const selectedSubject = schoolStore.getSubjects().find((s) => s.id === selectedProg?.id || s.name === selectedProg?.name)
+          const selectedUnit = schoolStore.getCourseUnits().find((u) => u.id === selectedProg?.id || u.title === selectedProg?.name)
+          const progFee = selectedSubject?.fee || selectedUnit?.fee || 60
           await schoolStore.addStudent({
             id: registeredUserId,
             admission_number: cleanAdm,
             full_name: fullName.trim(),
             portal_password: password.trim(),
-            gender: 'Male',
-            dob: '2005-01-01',
-            class_id: selectedProg?.id || 'prog-comp',
-            class_name: selectedProg?.name || 'Comprehensive Computer Packages & Digital Skills',
+            gender: 'Not Specified',
+            dob: '',
+            class_id: selectedProg?.id || 'class-main',
+            class_name: selectedProg?.name || 'Vocational Training Program',
             grade_level: selectedProg?.grade_level || 'Vocational Certificate',
-            stream: 'Main Campus',
+            stream: 'Virtual Campus',
             enrollment_date: new Date().toISOString().split('T')[0],
             status: 'Active',
             guardian: {
@@ -486,7 +488,7 @@ export function ManageUsers() {
             <input
               id="admNo"
               type="text"
-              placeholder={role === 'student' ? `EI-${new Date().getFullYear()}-001` : 'TCH-001'}
+              placeholder={role === 'student' ? `e.g. EI-${new Date().getFullYear()}-001` : 'e.g. STF-001'}
               value={admissionNumber}
               onChange={(e) => setAdmissionNumber(e.target.value)}
               required

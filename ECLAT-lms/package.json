@@ -40,7 +40,7 @@
     "appx": {
       "identityName": "clatInstitute.EclatInstitute",
       "publisher": "CN=E227A441-60A1-4818-8C91-AA5CDA56D0DE",
-      "publisherDisplayName": "Éclat Institute",
+      "publisherDisplayName": "Eclat Institute",
       "displayName": "Eclat Institute",
       "applicationId": "clatInstitute.EclatInstitute",
       "backgroundColor": "#f8fafc"
@@ -50,7 +50,7 @@
       "allowToChangeInstallationDirectory": true,
       "createDesktopShortcut": true,
       "createStartMenuShortcut": true,
-      "shortcutName": "Éclat Institute"
+      "shortcutName": "Eclat Institute"
     }
   },
   "dependencies": {

@@ -614,7 +614,7 @@ export const BiometricScannerModal: React.FC<Props> = ({
                     className="btn btn-secondary btn-sm"
                     style={{ fontSize: '0.8rem', padding: '0.4rem 0.75rem' }}
                     onClick={() => {
-                      const text = `Éclat Institute Fee Statement:\nStudent: ${matchedStudent.full_name} (${matchedStudent.admission_number})\nClass: ${matchedStudent.class_name}\nTotal Billed: $${matchedStudent.term_fee_total.toLocaleString()}\nTotal Paid: $${Math.max(0, matchedStudent.term_fee_total - matchedStudent.fee_balance).toLocaleString()}\nBalance Due: $${matchedStudent.fee_balance.toLocaleString()}\nStatus: ${matchedStudent.fee_balance === 0 ? 'CLEARED' : 'PENDING'}`
+                      const text = `Eclat Institute Fee Statement:\nStudent: ${matchedStudent.full_name} (${matchedStudent.admission_number})\nClass: ${matchedStudent.class_name}\nTotal Billed: $${matchedStudent.term_fee_total.toLocaleString()}\nTotal Paid: $${Math.max(0, matchedStudent.term_fee_total - matchedStudent.fee_balance).toLocaleString()}\nBalance Due: $${matchedStudent.fee_balance.toLocaleString()}\nStatus: ${matchedStudent.fee_balance === 0 ? 'CLEARED' : 'PENDING'}`
                       navigator.clipboard.writeText(text)
                       alert('✓ Student fee statement copied to clipboard!')
                     }}

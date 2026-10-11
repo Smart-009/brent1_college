@@ -297,9 +297,9 @@ export function Login() {
           admission_number: generatedCode,
           full_name: cleanName,
           portal_password: cleanPassword,
-          gender: 'Male',
-          dob: '2004-01-01',
-          class_id: 'prog-comp',
+          gender: 'Not Specified',
+          dob: '',
+          class_id: 'class-main',
           class_name: regDeliveryTrack === 'live_cohort' ? 'Live Online Cohort' : 'Self-Paced Video Track',
           grade_level: 'Professional Certificate',
           stream: regDeliveryTrack === 'live_cohort' ? 'Live Online' : 'Self-Paced On-Demand',
@@ -388,7 +388,7 @@ export function Login() {
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.85rem', marginBottom: '1.5rem' }}>
               <img
                 src="/logo.png"
-                alt="Éclat Institute Logo"
+                alt="Eclat Institute Logo"
                 style={{
                   width: '52px',
                   height: '52px',
@@ -408,7 +408,7 @@ export function Login() {
                     lineHeight: 1.1,
                   }}
                 >
-                  ÉCLAT INSTITUTE
+                  ECLAT INSTITUTE
                 </div>
                 <div style={{ fontSize: '0.72rem', color: '#1d4ed8', fontWeight: 800, letterSpacing: '0.04em' }}>
                   100% ONLINE VIRTUAL CAMPUS
@@ -1134,7 +1134,7 @@ export function Login() {
 
           <div style={{ fontSize: '0.75rem', color: '#64748b', textAlign: 'center', marginTop: '1.25rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}>
             <LockIcon size={14} color="#64748b" />
-            <span>256-Bit SSL Encrypted • Éclat Institute Global Portal</span>
+            <span>256-Bit SSL Encrypted • Eclat Institute Global Portal</span>
           </div>
         </div>
       </div>

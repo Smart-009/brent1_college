@@ -526,8 +526,8 @@ export function BursarDesk() {
       amount_due: balance,
       balance_due: balance,
       due_date: 'Immediate',
-      message_text: `Dear Student/Guardian, this is a tuition reminder from Éclat Institute. An outstanding balance of $${balance.toLocaleString()} is due. Please settle via the online student portal. Thank you.`,
-      message: `Dear Student/Guardian, this is a tuition reminder from Éclat Institute. An outstanding balance of $${balance.toLocaleString()} is due. Please settle via the online student portal. Thank you.`,
+      message_text: `Dear Student/Guardian, this is a tuition reminder from Eclat Institute. An outstanding balance of $${balance.toLocaleString()} is due. Please settle via the online student portal. Thank you.`,
+      message: `Dear Student/Guardian, this is a tuition reminder from Eclat Institute. An outstanding balance of $${balance.toLocaleString()} is due. Please settle via the online student portal. Thank you.`,
       sent_at: new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }),
       status: 'Delivered',
       channel: 'SMS',
@@ -2136,7 +2136,7 @@ export function BursarDesk() {
               {/* Official Digital Stamp */}
               <div style={{ background: '#f8fafc', border: '1px dashed #94a3b8', borderRadius: '8px', padding: '0.75rem', textAlign: 'center', fontSize: '0.75rem', color: '#475569' }}>
                 <div>🛡️ <strong>OFFICIAL DIGITAL STAMP & VERIFICATION</strong></div>
-                <div>Éclat Institute Directorate of Finance • 100% Online Virtual Campus</div>
+                <div>Eclat Institute Directorate of Finance • 100% Online Virtual Campus</div>
                 <div style={{ color: '#16a34a', fontWeight: 800, marginTop: '2px' }}>STATUS: TRANSACTION VERIFIED & ACCOUNT CREDITED</div>
               </div>
 

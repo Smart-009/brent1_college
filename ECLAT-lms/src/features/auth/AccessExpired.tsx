@@ -163,7 +163,7 @@ export function AccessExpired() {
       </div>
 
       <div style={{ marginTop: 'var(--space-6)', fontSize: 'var(--text-xs)', color: 'var(--color-muted)' }}>
-        Éclat Institute • 100% Online Virtual Campus
+        Eclat Institute • 100% Online Virtual Campus
       </div>
     </div>
   )

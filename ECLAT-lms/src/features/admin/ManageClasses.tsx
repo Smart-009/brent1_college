@@ -123,7 +123,7 @@ export function ManageClasses() {
     setCourseShortTitle('')
     setCourseCategory('Tech & Programming')
     setCourseDepartment('School of IT and Data Science')
-    setCourseInstructor('Éclat Certified Senior Lecturer')
+    setCourseInstructor('Eclat Certified Senior Lecturer')
     setCourseFeeUsd(60)
     setCourseFeeKes(8000)
     setCourseDuration('12 Weeks (3 Months)')
@@ -179,7 +179,7 @@ export function ManageClasses() {
           shortTitle: courseShortTitle.trim() || courseTitle.trim(),
           category: courseCategory,
           departmentName: courseDepartment.trim() || editingCourse.departmentName,
-          instructor: courseInstructor.trim() || 'Éclat Faculty Specialist',
+          instructor: courseInstructor.trim() || 'Eclat Faculty Specialist',
           feeUsd: Number(courseFeeUsd) || 60,
           feeKes: Number(courseFeeKes) || Math.round((Number(courseFeeUsd) || 60) * 133),
           duration: courseDuration.trim() || '12 Weeks (3 Months)',
@@ -200,7 +200,7 @@ export function ManageClasses() {
           shortTitle: courseShortTitle.trim() || courseTitle.trim(),
           category: courseCategory,
           departmentName: courseDepartment.trim() || 'Academic Faculty',
-          instructor: courseInstructor.trim() || 'Éclat Faculty Specialist',
+          instructor: courseInstructor.trim() || 'Eclat Faculty Specialist',
           feeUsd: Number(courseFeeUsd) || 60,
           feeKes: Number(courseFeeKes) || Math.round((Number(courseFeeUsd) || 60) * 133),
           duration: courseDuration.trim() || '12 Weeks (3 Months)',
