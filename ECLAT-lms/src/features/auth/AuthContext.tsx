@@ -423,14 +423,25 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           if (storedHashOrPlain) {
             const isValid = await verifyPassword(password, storedHashOrPlain)
             if (!isValid) {
-              return { error: 'Incorrect password for this student admission account.' }
+              return { error: 'Incorrect password for this account.' }
             }
           }
-          if (userEntry.profile) {
+          const baseProfile: Profile | null = userEntry.profile || (userEntry.admission_number && userEntry.full_name ? {
+            id: userEntry.id || `usr-${cleanAlpha}`,
+            full_name: userEntry.full_name,
+            admission_number: userEntry.admission_number,
+            role: (userEntry.role as Role) || 'student',
+            first_login_at: new Date().toISOString(),
+            access_expires_at: userEntry.role === 'teacher' ? null : new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString(),
+            is_active: true,
+            created_at: userEntry.created_at || new Date().toISOString(),
+          } : null)
+
+          if (baseProfile) {
             const student = schoolStore.getStudents().find(
               (s) =>
                 s.admission_number.toLowerCase().replace(/[^a-z0-9]/g, '') === cleanAlpha ||
-                s.id === userEntry.profile.id ||
+                s.id === baseProfile.id ||
                 s.full_name.toLowerCase().replace(/[^a-z0-9]/g, '') === cleanAlpha
             )
             const renewedExpiry = new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString()
@@ -441,9 +452,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
               schoolStore.getReceipts().some((r) => r.admission_number.toLowerCase().replace(/[^a-z0-9]/g, '') === cleanAlpha) ||
               schoolStore.getInvoices().some((inv) => inv.admission_number.toLowerCase().replace(/[^a-z0-9]/g, '') === cleanAlpha && (inv.status === 'Paid' || inv.balance === 0))
 
-            const updatedProfile = {
-              ...userEntry.profile,
-              access_expires_at: isCleared ? renewedExpiry : userEntry.profile.access_expires_at,
+            const updatedProfile: Profile = {
+              ...baseProfile,
+              access_expires_at: baseProfile.role === 'student'
+                ? (isCleared ? renewedExpiry : baseProfile.access_expires_at)
+                : null,
             }
             localStorage.setItem('eclat_active_profile', JSON.stringify(updatedProfile))
             sessionStorage.setItem('eclat_active_profile', JSON.stringify(updatedProfile))
@@ -506,6 +519,44 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setProfile(studentProfile)
       await bindActiveDeviceSession(studentProfile)
       return { error: null, profile: studentProfile }
+    }
+
+    // 5. Check registered teacher records in Faculty store (Cloud-Synced)
+    const registeredTeachers = schoolStore.getTeachers()
+    const teacher = registeredTeachers.find((t) => {
+      const tStaffId = (t.staff_id || t.id).toLowerCase().replace(/[^a-z0-9]/g, '')
+      const tName = t.name.toLowerCase().replace(/[^a-z0-9]/g, '')
+      const tEmail = (t.email || '').toLowerCase().trim()
+      return (
+        tStaffId === cleanAlpha ||
+        (t.staff_id && t.staff_id.toLowerCase() === rawInput.toLowerCase()) ||
+        t.id.toLowerCase() === rawInput.toLowerCase() ||
+        tName === cleanAlpha ||
+        t.name.toLowerCase() === rawInput.toLowerCase() ||
+        (tEmail && tEmail === rawInput.toLowerCase())
+      )
+    })
+
+    if (teacher) {
+      if (teacher.portal_password && teacher.portal_password.trim() !== '') {
+        if (password.trim() !== teacher.portal_password.trim()) {
+          return { error: 'Incorrect password for this faculty teacher account.' }
+        }
+      }
+      const teacherProfile: Profile = {
+        id: teacher.id,
+        full_name: teacher.name,
+        admission_number: teacher.staff_id || teacher.id,
+        role: 'teacher',
+        first_login_at: new Date().toISOString(),
+        access_expires_at: null,
+        is_active: true,
+        created_at: teacher.created_at || new Date().toISOString(),
+      }
+      localStorage.setItem('eclat_active_profile', JSON.stringify(teacherProfile))
+      sessionStorage.setItem('eclat_active_profile', JSON.stringify(teacherProfile))
+      setProfile(teacherProfile)
+      return { error: null, profile: teacherProfile }
     }
 
     return {

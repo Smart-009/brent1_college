@@ -226,6 +226,7 @@ export function StudentDirectory() {
       id: `std-${Date.now()}`,
       admission_number: newStudent.admission_number || `EI-${new Date().getFullYear()}-${String(students.length + 1).padStart(3, '0')}`,
       full_name: newStudent.full_name || '',
+      portal_password: chosenPassword,
       gender: (newStudent.gender as 'Male' | 'Female' | 'Not Specified') || 'Not Specified',
       dob: newStudent.dob || '',
       class_id: 'cls-custom',
@@ -254,7 +255,7 @@ export function StudentDirectory() {
     await schoolStore.addStudent(record)
 
     // Save student login credentials for direct portal login
-    saveStudentCredentials(record.admission_number, record.full_name, chosenPassword)
+    await saveStudentCredentials(record.admission_number, record.full_name, chosenPassword)
 
     // Auto-link registered unit so course shows on student LMS immediately
     const matchedUnit = schoolStore.getCourseUnits().find(

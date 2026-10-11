@@ -322,6 +322,18 @@ export function Login() {
           merits_count: 1,
           demerits_count: 0,
         })
+      } else {
+        await schoolStore.addTeacher({
+          id: registeredUserId,
+          staff_id: generatedCode,
+          name: cleanName,
+          title: regType === 'school' ? 'Partner Academy / School' : 'Faculty Lecturer & Course Publisher',
+          email: cleanEmail || `${cleanAlpha}@eclat.institute`,
+          department: regType === 'school' ? 'Partner Institution' : 'Academic Faculty',
+          specialty: 'Online Masterclasses & Cohorts',
+          portal_password: cleanPassword,
+          created_at: new Date().toISOString(),
+        })
       }
 
       // Automatically sign in

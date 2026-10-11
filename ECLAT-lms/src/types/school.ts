@@ -433,11 +433,14 @@ export interface CollegeSubject {
 
 export interface FacultyTeacher {
   id: string
+  staff_id?: string
   name: string
   title: string
   email: string
   department: string
   specialty: string
+  portal_password?: string
+  class_ids?: string[]
   created_at: string
 }
 

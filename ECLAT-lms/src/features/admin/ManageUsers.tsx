@@ -25,6 +25,7 @@ export function ManageUsers() {
   const [role, setRole] = useState<Role>('student')
   const [selectedClassIds, setSelectedClassIds] = useState<string[]>([])
   const [modalError, setModalError] = useState<string | null>(null)
+  const [successBanner, setSuccessBanner] = useState<{ name: string; id: string; password: string; role: Role } | null>(null)
   const [managingStudent, setManagingStudent] = useState<Profile | null>(null)
   const [selectedUnitToAdd, setSelectedUnitToAdd] = useState<string>('')
   const [isAddingCourse, setIsAddingCourse] = useState(false)
@@ -42,35 +43,98 @@ export function ManageUsers() {
     { id: 'prog-foreign', name: 'Foreign Languages (Arabic, French, German)', grade_level: 'Diplomatic Diploma', academic_year: `${new Date().getFullYear()} Virtual Cohort`, created_at: '' },
   ]
 
-  // Fetch all profiles
+  // Fetch all profiles (merging Supabase profiles, SIS students, Faculty teachers, and local credentials)
   const { data: users, isLoading } = useQuery({
     queryKey: ['admin-manage-users'],
     queryFn: async () => {
-      const { data, error } = await supabase.from('profiles').select('*').order('created_at', { ascending: false })
-      if (error) {
-        // Fallback to locally stored profiles + SIS students
-        const localCredsRaw = localStorage.getItem('eclat_local_credentials')
-        const localList: Profile[] = []
-        if (localCredsRaw) {
-          try {
-            const parsed = JSON.parse(localCredsRaw)
-            Object.values(parsed).forEach((p: any) => {
-              localList.push({
-                id: p.id || `usr-${p.admission_number}`,
-                full_name: p.full_name,
-                admission_number: p.admission_number,
-                role: p.role || 'student',
-                first_login_at: null,
-                access_expires_at: null,
-                is_active: true,
-                created_at: p.created_at || new Date().toISOString(),
-              })
-            })
-          } catch {}
+      try {
+        await schoolStore.syncWithCloud(true)
+      } catch {}
+
+      const mergedMap = new Map<string, Profile>()
+
+      // 1. Load from Supabase profiles table if available
+      try {
+        const { data, error } = await supabase.from('profiles').select('*').order('created_at', { ascending: false })
+        if (!error && Array.isArray(data)) {
+          data.forEach((p: Profile) => {
+            if (p.admission_number) {
+              mergedMap.set(p.admission_number.toLowerCase().trim(), p)
+            }
+          })
         }
-        return localList
-      }
-      return data as Profile[]
+      } catch {}
+
+      // 2. Merge SIS Students from schoolStore
+      schoolStore.getStudents().forEach((s) => {
+        const key = s.admission_number.toLowerCase().trim()
+        if (!mergedMap.has(key)) {
+          mergedMap.set(key, {
+            id: s.id,
+            full_name: s.full_name,
+            admission_number: s.admission_number,
+            role: 'student',
+            first_login_at: null,
+            access_expires_at: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString(),
+            is_active: s.status === 'Active',
+            created_at: s.enrollment_date || new Date().toISOString(),
+          })
+        }
+      })
+
+      // 3. Merge Faculty Teachers from schoolStore
+      schoolStore.getTeachers().forEach((t) => {
+        const adm = (t.staff_id || t.id).trim()
+        const key = adm.toLowerCase()
+        if (!mergedMap.has(key)) {
+          mergedMap.set(key, {
+            id: t.id,
+            full_name: t.name,
+            admission_number: adm,
+            role: 'teacher',
+            first_login_at: null,
+            access_expires_at: null,
+            is_active: true,
+            created_at: t.created_at || new Date().toISOString(),
+          })
+        }
+      })
+
+      // 4. Merge Local Credentials store
+      try {
+        const localCredsRaw = localStorage.getItem('eclat_local_credentials')
+        if (localCredsRaw) {
+          const parsed = JSON.parse(localCredsRaw)
+          Object.values(parsed).forEach((p: any) => {
+            const adm = p.admission_number || p.profile?.admission_number
+            const fullNameVal = p.full_name || p.profile?.full_name
+            const roleVal = p.role || p.profile?.role || 'student'
+            if (adm && fullNameVal) {
+              const key = String(adm).toLowerCase().trim()
+              if (!mergedMap.has(key)) {
+                mergedMap.set(key, {
+                  id: p.id || p.profile?.id || `usr-${adm}`,
+                  full_name: fullNameVal,
+                  admission_number: adm,
+                  role: roleVal,
+                  first_login_at: null,
+                  access_expires_at:
+                    p.profile?.access_expires_at ||
+                    (roleVal === 'student'
+                      ? new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString()
+                      : null),
+                  is_active: true,
+                  created_at: p.created_at || p.profile?.created_at || new Date().toISOString(),
+                })
+              }
+            }
+          })
+        }
+      } catch {}
+
+      return Array.from(mergedMap.values()).sort(
+        (a, b) => new Date(b.created_at || 0).getTime() - new Date(a.created_at || 0).getTime()
+      )
     },
   })
 
@@ -122,50 +186,38 @@ export function ManageUsers() {
     setSelectedClassIds([])
   }
 
-  // Add user mutation (bypasses email rate limit with resilient multi-tier persistence)
+  // Add user mutation (resilient multi-tier persistence across cloud store, local store, and Supabase)
   const addUserMutation = useMutation({
     mutationFn: async () => {
       if (!fullName.trim() || !admissionNumber.trim() || !password.trim()) {
         throw new Error('Please complete all required fields.')
       }
 
-      const cleanAdm = admissionNumber.trim().toUpperCase()
-      const cleanKey = cleanAdm.toLowerCase().replace(/[^a-z0-9]/g, '')
-      const email = `${cleanKey}@eclatinstitute.internal`
-      const generatedUserId = typeof crypto !== 'undefined' && crypto.randomUUID
-        ? crypto.randomUUID()
-        : `usr-${Date.now()}-${Math.floor(Math.random() * 10000)}`
-
-      let registeredUserId = generatedUserId
-
-      // 1. Attempt Supabase Auth signUp, catch email rate limit error gracefully
-      try {
-        const { data: authData, error: _authErr } = await supabase.auth.signUp({
-          email,
-          password: password.trim(),
-          options: {
-            data: {
-              full_name: fullName.trim(),
-              admission_number: cleanAdm,
-              role,
-            },
-          },
-        })
-        if (authData?.user) {
-          registeredUserId = authData.user.id
-        }
-      } catch (authEx) {
-        console.warn('Supabase Auth signUp bypassed (rate limit or offline):', authEx)
+      if (password.trim().length < 4) {
+        throw new Error('Password must be at least 4 characters long.')
       }
 
-      // 2. Direct Profile Persistence in Supabase Database
+      const cleanAdm = sanitizeInput(admissionNumber.trim().toUpperCase())
+      const cleanName = sanitizeInput(fullName.trim())
+      const cleanPass = sanitizeInput(password.trim())
+      const cleanKey = cleanAdm.toLowerCase().replace(/[^a-z0-9]/g, '')
+      const generatedUserId =
+        typeof crypto !== 'undefined' && crypto.randomUUID
+          ? crypto.randomUUID()
+          : `usr-${Date.now()}-${Math.floor(Math.random() * 10000)}`
+
+      const registeredUserId = generatedUserId
+      const renewedExpiry =
+        role === 'student' ? new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString() : null
+
+      // 1. Direct Profile Object
       const newProfile: Profile = {
         id: registeredUserId,
-        full_name: fullName.trim(),
+        full_name: cleanName,
         admission_number: cleanAdm,
         role,
-        first_login_at: null,
-        access_expires_at: null,
+        first_login_at: new Date().toISOString(),
+        access_expires_at: renewedExpiry,
         is_active: true,
         created_at: new Date().toISOString(),
       }
@@ -176,20 +228,20 @@ export function ManageUsers() {
         console.warn('Supabase profiles upsert fallback:', dbErr)
       }
 
-      // 3. Save local credentials for instant frictionless authentication
+      // 2. Save local credentials (including full profile object for AuthContext.signIn)
       try {
         const stored = localStorage.getItem('eclat_local_credentials')
         const parsed = stored ? JSON.parse(stored) : {}
-        const cleanPass = sanitizeInput(password)
         const passHash = await hashPassword(cleanPass)
         parsed[cleanKey] = {
           id: registeredUserId,
-          admission_number: sanitizeInput(cleanAdm),
-          full_name: sanitizeInput(fullName),
+          admission_number: cleanAdm,
+          full_name: cleanName,
           password: cleanPass,
           passwordHash: passHash,
           role,
           class_ids: selectedClassIds,
+          profile: newProfile,
           created_at: new Date().toISOString(),
         }
         localStorage.setItem('eclat_local_credentials', JSON.stringify(parsed))
@@ -197,48 +249,70 @@ export function ManageUsers() {
         console.warn('Local credential storage error:', storeErr)
       }
 
-      // 4. Enroll in schoolStore SIS (High-Performance Student Registry)
+      // 3. Persist in schoolStore (Cloud-Synced Student Registry or Faculty Teacher Registry)
       if (role === 'student') {
         const selectedProg = availableClasses.find((c) => selectedClassIds.includes(c.id)) || availableClasses[0]
-        const existingStudent = schoolStore.getStudents().find(
-          (s) => s.admission_number.toUpperCase() === cleanAdm
-        )
-        if (!existingStudent) {
-          const selectedSubject = schoolStore.getSubjects().find((s) => s.id === selectedProg?.id || s.name === selectedProg?.name)
-          const selectedUnit = schoolStore.getCourseUnits().find((u) => u.id === selectedProg?.id || u.title === selectedProg?.name)
-          const progFee = selectedSubject?.fee || selectedUnit?.fee || 60
-          await schoolStore.addStudent({
-            id: registeredUserId,
-            admission_number: cleanAdm,
-            full_name: fullName.trim(),
-            portal_password: password.trim(),
-            gender: 'Not Specified',
-            dob: '',
-            class_id: selectedProg?.id || 'class-main',
-            class_name: selectedProg?.name || 'Vocational Training Program',
-            grade_level: selectedProg?.grade_level || 'Vocational Certificate',
-            stream: 'Virtual Campus',
-            enrollment_date: new Date().toISOString().split('T')[0],
-            status: 'Active',
-            guardian: {
-              name: '',
-              relationship: 'Guardian',
-              phone: '',
-              email: '',
-            },
-            emergency_contact: '',
-            fee_balance: progFee,
-            term_fee_total: progFee,
-            fee_cleared: false,
-            attendance_rate: 0,
-            discipline_points: 0,
-            merits_count: 0,
-            demerits_count: 0,
-          })
+        const selectedSubject = schoolStore.getSubjects().find((s) => s.id === selectedProg?.id || s.name === selectedProg?.name)
+        const selectedUnit = schoolStore.getCourseUnits().find((u) => u.id === selectedProg?.id || u.title === selectedProg?.name)
+        const progFee = selectedSubject?.fee || selectedUnit?.fee || 60
+
+        await schoolStore.addStudent({
+          id: registeredUserId,
+          admission_number: cleanAdm,
+          full_name: cleanName,
+          portal_password: cleanPass,
+          gender: 'Not Specified',
+          dob: '',
+          class_id: selectedProg?.id || 'class-main',
+          class_name: selectedProg?.name || 'Vocational Training Program',
+          grade_level: selectedProg?.grade_level || 'Vocational Certificate',
+          stream: 'Virtual Campus',
+          enrollment_date: new Date().toISOString().split('T')[0],
+          status: 'Active',
+          guardian: {
+            name: '',
+            relationship: 'Guardian',
+            phone: '',
+            email: '',
+          },
+          emergency_contact: '',
+          fee_balance: progFee,
+          term_fee_total: progFee,
+          fee_cleared: false,
+          attendance_rate: 100,
+          discipline_points: 100,
+          merits_count: 0,
+          demerits_count: 0,
+        })
+
+        // Also register selected course units for the student
+        for (const cId of selectedClassIds) {
+          const matchingUnit = schoolStore.getCourseUnits().find((u) => u.id === cId)
+          if (matchingUnit) {
+            try {
+              await schoolStore.addCourseToStudentProgram(cleanAdm, matchingUnit.id)
+            } catch {}
+          }
         }
+      } else if (role === 'teacher') {
+        const selectedCourseNames = availableClasses
+          .filter((c) => selectedClassIds.includes(c.id))
+          .map((c) => c.name)
+        await schoolStore.addTeacher({
+          id: registeredUserId,
+          staff_id: cleanAdm,
+          name: cleanName,
+          title: 'Faculty Lecturer',
+          email: `${cleanKey}@eclat.institute`,
+          department: selectedCourseNames[0] || 'Academic Faculty',
+          specialty: selectedCourseNames.join(', ') || 'General Studies & Practical Labs',
+          portal_password: cleanPass,
+          class_ids: selectedClassIds,
+          created_at: new Date().toISOString(),
+        })
       }
 
-      // 5. Enroll in class enrollments if selected
+      // 4. Enroll in class enrollments if selected
       if (selectedClassIds.length > 0) {
         const enrollments = selectedClassIds.map((cId) => ({
           student_id: registeredUserId,
@@ -250,6 +324,12 @@ export function ManageUsers() {
       }
     },
     onSuccess: () => {
+      setSuccessBanner({
+        name: fullName.trim(),
+        id: admissionNumber.trim().toUpperCase(),
+        password: password.trim(),
+        role,
+      })
       queryClient.invalidateQueries({ queryKey: ['admin-manage-users'] })
       setShowAddModal(false)
       setFullName('')
@@ -259,25 +339,37 @@ export function ManageUsers() {
       setModalError(null)
     },
     onError: (err: Error) => {
-      // If it's an email rate limit, we still succeeded via DB/local store
-      if (err.message && err.message.toLowerCase().includes('rate limit')) {
-        queryClient.invalidateQueries({ queryKey: ['admin-manage-users'] })
-        setShowAddModal(false)
-        setFullName('')
-        setAdmissionNumber('')
-        setPassword('')
-        setSelectedClassIds([])
-        setModalError(null)
-      } else {
-        setModalError(err.message)
-      }
+      setModalError(err.message)
     },
   })
 
   const handleDeleteUser = async (u: Profile) => {
     if (window.confirm(`Are you sure you want to completely remove "${u.full_name}" (${u.admission_number})? All associated academic, fee, and registration records will be permanently deleted.`)) {
+      // Remove from local credentials
+      try {
+        const stored = localStorage.getItem('eclat_local_credentials')
+        if (stored) {
+          const parsed = JSON.parse(stored)
+          const cleanKey = u.admission_number.toLowerCase().replace(/[^a-z0-9]/g, '')
+          delete parsed[cleanKey]
+          delete parsed[u.admission_number.toLowerCase()]
+          localStorage.setItem('eclat_local_credentials', JSON.stringify(parsed))
+        }
+      } catch {}
+
       if (u.role === 'student') {
         await schoolStore.deleteStudent(u.id)
+        if (u.admission_number) {
+          await schoolStore.deleteStudent(u.admission_number)
+        }
+      } else if (u.role === 'teacher') {
+        await schoolStore.deleteTeacher(u.id)
+        if (u.admission_number) {
+          await schoolStore.deleteTeacher(u.admission_number)
+        }
+        try {
+          await supabase.from('profiles').delete().eq('id', u.id)
+        } catch {}
       } else {
         try {
           await supabase.from('profiles').delete().eq('id', u.id)
@@ -304,7 +396,12 @@ export function ManageUsers() {
           <Button
             variant="primary"
             onClick={() => {
+              const yr = new Date().getFullYear()
+              const nextNum = String((users?.filter((u) => u.role === 'student').length || 0) + 1).padStart(3, '0')
               setRole('student')
+              setAdmissionNumber(`EI-${yr}-${nextNum}`)
+              setPassword(`Student@${yr}`)
+              setModalError(null)
               setShowAddModal(true)
             }}
           >
@@ -313,7 +410,12 @@ export function ManageUsers() {
           <Button
             variant="secondary"
             onClick={() => {
+              const yr = new Date().getFullYear()
+              const nextNum = String((users?.filter((u) => u.role === 'teacher').length || 0) + 1).padStart(3, '0')
               setRole('teacher')
+              setAdmissionNumber(`STF-${yr}-${nextNum}`)
+              setPassword(`Teacher@${yr}`)
+              setModalError(null)
               setShowAddModal(true)
             }}
           >
@@ -322,6 +424,33 @@ export function ManageUsers() {
         </div>
       }
     >
+      {successBanner && (
+        <div
+          className="alert alert-success mb-6"
+          style={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            gap: '1rem',
+            flexWrap: 'wrap',
+          }}
+        >
+          <div>
+            <strong>
+              ✅ {successBanner.role === 'student' ? 'Student Admission' : 'Faculty Teacher'} Account Created!
+            </strong>
+            <div style={{ fontSize: '0.85rem', marginTop: '4px' }}>
+              Name: <strong>{successBanner.name}</strong> &nbsp;|&nbsp; Login ID:{' '}
+              <code style={{ fontWeight: 800 }}>{successBanner.id}</code> &nbsp;|&nbsp; Password:{' '}
+              <code style={{ fontWeight: 800 }}>{successBanner.password}</code>
+            </div>
+          </div>
+          <Button variant="ghost" onClick={() => setSuccessBanner(null)}>
+            Dismiss
+          </Button>
+        </div>
+      )}
+
       {/* Search & Tabs */}
       <div className="card mb-6">
         <div className="card-body">

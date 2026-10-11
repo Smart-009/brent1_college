@@ -2354,6 +2354,9 @@ class SchoolDataStore {
             } else if (row.key === 'course_units' && Array.isArray(row.data)) {
               this.set('course_units', row.data)
               schoolEventBus.publish('COURSE_UNIT_CREATED' as any)
+            } else if (row.key === 'faculty_teachers' && Array.isArray(row.data)) {
+              this.set('faculty_teachers', row.data)
+              schoolEventBus.publish('TEACHER_UPDATED' as any)
             }
             window.dispatchEvent(new CustomEvent('eclat-data-synced'))
           }
@@ -2554,6 +2557,8 @@ class SchoolDataStore {
               this.set('notices', row.data)
             } else if (row.key === 'students' && Array.isArray(row.data)) {
               this.mergeCloudStudents(row.data)
+            } else if (row.key === 'faculty_teachers' && Array.isArray(row.data)) {
+              this.set('faculty_teachers', row.data)
             } else if (row.key === 'invoices' && Array.isArray(row.data)) {
               this.set('invoices', row.data)
             } else if (row.key === 'receipts' && Array.isArray(row.data)) {
@@ -2649,6 +2654,8 @@ class SchoolDataStore {
                   this.set('notices', parsed.data)
                 } else if (parsed.key === 'students' && Array.isArray(parsed.data)) {
                   this.mergeCloudStudents(parsed.data)
+                } else if (parsed.key === 'faculty_teachers' && Array.isArray(parsed.data)) {
+                  this.set('faculty_teachers', parsed.data)
                 } else if (parsed.key === 'invoices' && Array.isArray(parsed.data)) {
                   this.set('invoices', parsed.data)
                 } else if (parsed.key === 'receipts' && Array.isArray(parsed.data)) {
@@ -4597,13 +4604,23 @@ class SchoolDataStore {
       ['eclat_school_faculty_teachers'],
       () => {
         const list = this.getTeachers()
-        if (!list.some((t) => t.id === teacher.id || t.name.toLowerCase() === teacher.name.toLowerCase())) {
-          list.push(teacher)
-          this.set('faculty_teachers', list)
+        const existingIdx = list.findIndex(
+          (t) =>
+            t.id === teacher.id ||
+            (teacher.staff_id && t.staff_id?.toLowerCase() === teacher.staff_id.toLowerCase()) ||
+            t.name.toLowerCase() === teacher.name.toLowerCase()
+        )
+        if (existingIdx !== -1) {
+          list[existingIdx] = { ...list[existingIdx], ...teacher }
+        } else {
+          list.unshift(teacher)
         }
+        this.set('faculty_teachers', list)
       }
     )
     schoolEventBus.publish('TEACHER_ADDED' as any, teacher)
+    this.broadcastChange('TEACHER_ADDED', teacher)
+    await this.pushCollectionToCloud('faculty_teachers', this.getTeachers())
   }
 
   async deleteTeacher(id: string): Promise<void> {
@@ -4611,11 +4628,15 @@ class SchoolDataStore {
       `DELETE_TEACHER_${id}`,
       ['eclat_school_faculty_teachers'],
       () => {
-        const list = this.getTeachers().filter((t) => t.id !== id)
+        const list = this.getTeachers().filter(
+          (t) => t.id !== id && t.staff_id?.toLowerCase() !== id.toLowerCase()
+        )
         this.set('faculty_teachers', list)
       }
     )
     schoolEventBus.publish('TEACHER_UPDATED' as any)
+    this.broadcastChange('TEACHER_UPDATED')
+    await this.pushCollectionToCloud('faculty_teachers', this.getTeachers())
   }
 
   async clearAllTeachers(): Promise<void> {
@@ -4627,6 +4648,8 @@ class SchoolDataStore {
       }
     )
     schoolEventBus.publish('TEACHER_UPDATED' as any)
+    this.broadcastChange('TEACHER_UPDATED')
+    await this.pushCollectionToCloud('faculty_teachers', [])
   }
 
   // --- Admin Departments & Institutional Schools Management (ACID Protected) ---
