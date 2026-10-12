@@ -2362,7 +2362,7 @@ export function Landing() {
         style={{
           background: 'linear-gradient(160deg, #080e1a 0%, #0d1f3c 40%, #0a1628 100%)',
           color: '#ffffff',
-          padding: isMobile ? '2.5rem 1rem 2rem' : '5rem 2rem 4rem',
+          padding: isMobile ? '1.25rem 0.85rem 1.15rem' : '1.85rem 1.5rem 1.5rem',
           position: 'relative',
           overflow: 'hidden',
           borderBottom: '1px solid #1e3a8a',
@@ -2374,12 +2374,12 @@ export function Landing() {
             position: 'absolute',
             top: '-25%',
             right: '-10%',
-            width: '650px',
-            height: '650px',
+            width: '500px',
+            height: '500px',
             borderRadius: '50%',
             background: 'radial-gradient(circle, #1d4ed8 0%, #0284c7 100%)',
             opacity: 0.18,
-            filter: 'blur(140px)',
+            filter: 'blur(120px)',
             pointerEvents: 'none',
           }}
         />
@@ -2451,46 +2451,46 @@ export function Landing() {
           }}
         />
 
-        <div style={{ maxWidth: '1100px', margin: '0 auto', textAlign: 'center', position: 'relative', zIndex: 3 }}>
+        <div style={{ maxWidth: '1060px', margin: '0 auto', textAlign: 'center', position: 'relative', zIndex: 3 }}>
           {/* Academy Global Accreditation Pill */}
           <div
             style={{
               display: 'inline-flex',
               alignItems: 'center',
               justifyContent: 'center',
-              gap: '0.5rem',
+              gap: '0.4rem',
               background: 'rgba(255, 255, 255, 0.08)',
               border: '1px solid rgba(255, 255, 255, 0.18)',
               borderRadius: '999px',
-              padding: isMobile ? '0.35rem 0.85rem' : '0.4rem 1.25rem',
-              fontSize: isMobile ? '0.75rem' : '0.82rem',
+              padding: isMobile ? '0.25rem 0.7rem' : '0.28rem 0.95rem',
+              fontSize: isMobile ? '0.68rem' : '0.74rem',
               fontWeight: 700,
               color: '#93c5fd',
               letterSpacing: '0.03em',
-              marginBottom: '1.75rem',
+              marginBottom: '0.75rem',
               maxWidth: '100%',
               flexWrap: 'wrap',
               textAlign: 'center',
-              lineHeight: 1.35,
+              lineHeight: 1.3,
               boxSizing: 'border-box',
             }}
           >
-            <SparklesIcon size={16} color="#d4af37" />
+            <SparklesIcon size={14} color="#d4af37" />
             <span style={{ maxWidth: '100%', wordBreak: 'break-word', whiteSpace: 'normal' }}>
               100% ONLINE VIRTUAL CAMPUS • TECH, BUSINESS &amp; ACCREDITED VOCATIONAL PATHWAYS
             </span>
           </div>
 
-          {/* Clean, Authoritative Headline */}
+          {/* Clean, Compact Headline */}
           <h1
             className="landing-hero-heading"
             style={{
-              fontSize: isMobile ? 'clamp(1.5rem, 5.5vw, 2.15rem)' : '3.6rem',
+              fontSize: isMobile ? 'clamp(1.25rem, 4.6vw, 1.65rem)' : 'clamp(1.75rem, 2.6vw, 2.25rem)',
               fontWeight: 900,
-              letterSpacing: '-0.025em',
-              lineHeight: 1.2,
-              margin: '0 auto 1.25rem',
-              maxWidth: '960px',
+              letterSpacing: '-0.02em',
+              lineHeight: 1.18,
+              margin: '0 auto 0.6rem',
+              maxWidth: '900px',
               color: '#ffffff',
               fontFamily: 'var(--font-heading)',
               wordBreak: 'break-word',
@@ -2500,14 +2500,14 @@ export function Landing() {
             Learn In-Demand Tech, Business Automation &amp; Professional Skills
           </h1>
 
-          {/* Refined 2-sentence Subtitle */}
+          {/* Refined Compact Subtitle */}
           <p
             style={{
-              maxWidth: '780px',
-              margin: '0 auto 2.25rem',
-              fontSize: isMobile ? '0.95rem' : '1.15rem',
+              maxWidth: '740px',
+              margin: '0 auto 1.1rem',
+              fontSize: isMobile ? '0.84rem' : '0.95rem',
               color: '#cbd5e1',
-              lineHeight: 1.6,
+              lineHeight: 1.5,
               fontWeight: 400,
               wordBreak: 'break-word',
             }}
@@ -2516,28 +2516,28 @@ export function Landing() {
           </p>
 
           {/* Clean, High-Contrast CTAs */}
-          <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '0.85rem', flexWrap: 'wrap', marginBottom: '1.25rem', width: isMobile ? '100%' : 'auto', flexDirection: isMobile ? 'column' : 'row' }}>
+          <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '0.6rem', flexWrap: 'wrap', marginBottom: '0.65rem', width: isMobile ? '100%' : 'auto', flexDirection: isMobile ? 'column' : 'row' }}>
             <a
               href="#courses"
               style={{
                 background: '#2563eb',
                 color: '#ffffff',
                 fontWeight: 800,
-                padding: '0.85rem 1.75rem',
-                fontSize: '1rem',
-                borderRadius: '10px',
+                padding: '0.6rem 1.25rem',
+                fontSize: '0.88rem',
+                borderRadius: '9px',
                 textDecoration: 'none',
                 display: 'inline-flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                gap: '8px',
-                boxShadow: '0 8px 24px rgba(37, 99, 235, 0.35)',
+                gap: '6px',
+                boxShadow: '0 6px 18px rgba(37, 99, 235, 0.35)',
                 width: isMobile ? '100%' : 'auto',
                 boxSizing: 'border-box',
               }}
             >
               <span>Explore Programs & Courses</span>
-              <ArrowRightIcon size={16} />
+              <ArrowRightIcon size={15} />
             </a>
 
             <Link
@@ -2547,21 +2547,21 @@ export function Landing() {
                 border: '1.5px solid rgba(255, 255, 255, 0.35)',
                 color: '#ffffff',
                 fontWeight: 700,
-                padding: '0.85rem 1.75rem',
-                fontSize: '1rem',
-                borderRadius: '10px',
+                padding: '0.6rem 1.25rem',
+                fontSize: '0.88rem',
+                borderRadius: '9px',
                 textDecoration: 'none',
                 display: 'inline-flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                gap: '8px',
+                gap: '6px',
                 backdropFilter: 'blur(8px)',
-                boxShadow: '0 4px 14px rgba(0, 0, 0, 0.25)',
+                boxShadow: '0 4px 12px rgba(0, 0, 0, 0.25)',
                 width: isMobile ? '100%' : 'auto',
                 boxSizing: 'border-box',
               }}
             >
-              <LaptopIcon size={16} color="#60a5fa" />
+              <LaptopIcon size={15} color="#60a5fa" />
               <span>Hire Our Tech Team</span>
             </Link>
 
@@ -2572,27 +2572,24 @@ export function Landing() {
                 border: '1.5px solid rgba(74, 222, 128, 0.5)',
                 color: '#4ade80',
                 fontWeight: 800,
-                padding: '0.85rem 1.5rem',
-                fontSize: '0.95rem',
-                borderRadius: '10px',
+                padding: '0.6rem 1.15rem',
+                fontSize: '0.88rem',
+                borderRadius: '9px',
                 textDecoration: 'none',
                 display: 'inline-flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                gap: '8px',
+                gap: '6px',
                 backdropFilter: 'blur(8px)',
-                boxShadow: '0 4px 14px rgba(0, 0, 0, 0.2)',
+                boxShadow: '0 4px 12px rgba(0, 0, 0, 0.2)',
                 width: isMobile ? '100%' : 'auto',
                 boxSizing: 'border-box',
               }}
             >
-              <GraduationCapIcon size={16} color="#4ade80" />
+              <GraduationCapIcon size={15} color="#4ade80" />
               <span>Teaching Careers</span>
             </Link>
-          </div>
 
-          {/* Hero Secondary Direct Actions: Publish Course & Donate */}
-          <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '0.75rem', flexWrap: 'wrap', marginBottom: '2.5rem', width: isMobile ? '100%' : 'auto', flexDirection: isMobile ? 'column' : 'row' }}>
             <Link
               to="/publish-course"
               style={{
@@ -2600,21 +2597,21 @@ export function Landing() {
                 border: '1px solid rgba(253, 230, 138, 0.45)',
                 color: '#ffffff',
                 fontWeight: 800,
-                padding: '0.65rem 1.35rem',
-                fontSize: '0.88rem',
-                borderRadius: '10px',
+                padding: '0.6rem 1.15rem',
+                fontSize: '0.85rem',
+                borderRadius: '9px',
                 textDecoration: 'none',
                 display: 'inline-flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                gap: '7px',
-                boxShadow: '0 4px 14px rgba(217, 119, 6, 0.35)',
+                gap: '6px',
+                boxShadow: '0 4px 12px rgba(217, 119, 6, 0.35)',
                 width: isMobile ? '100%' : 'auto',
                 boxSizing: 'border-box',
               }}
             >
-              <SparklesIcon size={16} color="#ffffff" />
-              <span>Publish Course &amp; Earn 50% Share</span>
+              <SparklesIcon size={15} color="#ffffff" />
+              <span>Publish &amp; Earn 50%</span>
             </Link>
 
             <Link
@@ -2624,21 +2621,21 @@ export function Landing() {
                 border: '1px solid rgba(187, 247, 208, 0.45)',
                 color: '#ffffff',
                 fontWeight: 800,
-                padding: '0.65rem 1.35rem',
-                fontSize: '0.88rem',
-                borderRadius: '10px',
+                padding: '0.6rem 1.15rem',
+                fontSize: '0.85rem',
+                borderRadius: '9px',
                 textDecoration: 'none',
                 display: 'inline-flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                gap: '7px',
-                boxShadow: '0 4px 14px rgba(22, 163, 74, 0.35)',
+                gap: '6px',
+                boxShadow: '0 4px 12px rgba(22, 163, 74, 0.35)',
                 width: isMobile ? '100%' : 'auto',
                 boxSizing: 'border-box',
               }}
             >
-              <HeartHandshakeIcon size={16} color="#ffffff" />
-              <span>💖 Sponsor a Student / Donate</span>
+              <HeartHandshakeIcon size={15} color="#ffffff" />
+              <span>💖 Sponsor / Donate</span>
             </Link>
           </div>
 
@@ -2648,26 +2645,27 @@ export function Landing() {
               display: 'flex',
               justifyContent: 'center',
               alignItems: 'center',
-              gap: isMobile ? '1rem' : '2.5rem',
+              gap: isMobile ? '0.75rem' : '1.75rem',
               flexWrap: 'wrap',
-              fontSize: '0.85rem',
+              fontSize: '0.78rem',
               color: '#94a3b8',
               fontWeight: 600,
-              paddingTop: '1.5rem',
+              paddingTop: '0.85rem',
+              marginTop: '0.85rem',
               borderTop: '1px solid rgba(255, 255, 255, 0.1)',
             }}
           >
-            <span style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
-              <CheckCircleIcon size={15} color="#38bdf8" /> 100% Live Virtual Labs
+            <span style={{ display: 'inline-flex', alignItems: 'center', gap: '5px' }}>
+              <CheckCircleIcon size={14} color="#38bdf8" /> 100% Live Virtual Labs
             </span>
-            <span style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
-              <CheckCircleIcon size={15} color="#38bdf8" /> Cambridge CAIE (KE042)
+            <span style={{ display: 'inline-flex', alignItems: 'center', gap: '5px' }}>
+              <CheckCircleIcon size={14} color="#38bdf8" /> Cambridge CAIE (KE042)
             </span>
-            <span style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
-              <CheckCircleIcon size={15} color="#38bdf8" /> Pearson Edexcel (EDX-98421)
+            <span style={{ display: 'inline-flex', alignItems: 'center', gap: '5px' }}>
+              <CheckCircleIcon size={14} color="#38bdf8" /> Pearson Edexcel (EDX-98421)
             </span>
-            <span style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
-              <CheckCircleIcon size={15} color="#38bdf8" /> 40+ Countries Represented
+            <span style={{ display: 'inline-flex', alignItems: 'center', gap: '5px' }}>
+              <CheckCircleIcon size={14} color="#38bdf8" /> 40+ Countries Represented
             </span>
           </div>
         </div>
