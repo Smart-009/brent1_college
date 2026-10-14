@@ -347,17 +347,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const rawInput = inputIdentifier.trim()
     const cleanAlpha = rawInput.toLowerCase().replace(/[^a-z0-9]/g, '')
 
-    // 1. Strict Administrator Authentication (Only authorized account in the system)
-    const isAdminIdentifier =
-      rawInput.toLowerCase() === 'eclat@admin' ||
-      rawInput.toLowerCase() === 'admin' ||
-      rawInput.toLowerCase() === 'eclat2026@admin' ||
-      rawInput.toLowerCase() === 'admin-001' ||
-      cleanAlpha === 'eclatadmin' ||
-      cleanAlpha === 'admin' ||
-      cleanAlpha === 'admin001' ||
-      cleanAlpha === 'eclat2026admin' ||
-      cleanAlpha === 'principal'
+    // 1. Strict Administrator Authentication - ONLY "Eclat@admin" is authorized
+    const isAdminIdentifier = rawInput.toLowerCase() === 'eclat@admin'
 
     if (isAdminIdentifier) {
       const isCorrectPassword =

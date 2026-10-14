@@ -224,7 +224,7 @@ export function Login() {
       setFailedAttempts(0)
       setLockoutSeconds(0)
       const role = res.profile?.role || selectedRole
-      if (role === 'admin' || cleanAdmission.toLowerCase().includes('admin')) {
+      if (role === 'admin') {
         navigate('/admin')
       } else if (role === 'bursar') {
         navigate('/bursar')
@@ -733,6 +733,8 @@ export function Login() {
                           ? 'Enter candidate number or student name'
                           : selectedRole === 'student'
                           ? 'Enter admission number or full name'
+                          : selectedRole === 'admin'
+                          ? 'Eclat@admin'
                           : 'Enter username or staff email'
                       }
                       style={{ fontSize: '0.95rem', padding: '0.75rem 0.9rem' }}
