@@ -20,6 +20,7 @@ const PrivacyPolicy = lazy(() => import('@/features/landing/PrivacyPolicy').then
 const HireEclatPage = lazy(() => import('@/features/services/HireEclatPage').then((m) => ({ default: m.HireEclatPage })))
 const CareersPage = lazy(() => import('@/features/careers/CareersPage').then((m) => ({ default: m.CareersPage })))
 const TutorPublishCoursePage = lazy(() => import('@/features/teacher/TutorPublishCoursePage').then((m) => ({ default: m.TutorPublishCoursePage })))
+const PublisherPortal = lazy(() => import('@/features/teacher/PublisherPortal').then((m) => ({ default: m.PublisherPortal })))
 const DonationSponsorshipPage = lazy(() => import('@/features/donation/DonationSponsorshipPage').then((m) => ({ default: m.DonationSponsorshipPage })))
 const Login = lazy(() => import('@/features/auth/Login').then((m) => ({ default: m.Login })))
 const ChangePassword = lazy(() => import('@/features/auth/ChangePassword').then((m) => ({ default: m.ChangePassword })))
@@ -191,6 +192,9 @@ export function App() {
         <Route path="/jobs" element={<CareersPage />} />
         <Route path="/publish-course" element={<TutorPublishCoursePage />} />
         <Route path="/teach-with-us" element={<TutorPublishCoursePage />} />
+        <Route path="/publisher" element={<PublisherPortal />} />
+        <Route path="/tutor/publisher" element={<PublisherPortal />} />
+        <Route path="/teacher/publisher" element={<PublisherPortal />} />
         <Route path="/donate" element={<DonationSponsorshipPage />} />
         <Route path="/sponsorship" element={<DonationSponsorshipPage />} />
         <Route path="/sponsor" element={<DonationSponsorshipPage />} />

@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { useIsMobile } from '@/hooks/useMediaQuery'
 import { INSTITUTION_CONFIG, getWhatsAppInquiryUrl } from '@/config/institution'
 import {
@@ -421,6 +421,7 @@ interface SubmittedTutorCourse {
 }
 
 export function TutorPublishCoursePage() {
+  const navigate = useNavigate()
   const isMobile = useIsMobile(768)
 
   const [providerType, setProviderType] = useState<'individual_tutor' | 'partner_institution'>('individual_tutor')
@@ -670,6 +671,23 @@ export function TutorPublishCoursePage() {
 
           <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
             <Link
+              to="/publisher"
+              style={{
+                fontSize: '0.82rem',
+                fontWeight: 800,
+                color: '#0f766e',
+                background: '#ccfbf1',
+                padding: '0.4rem 0.85rem',
+                borderRadius: '8px',
+                textDecoration: 'none',
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '5px',
+              }}
+            >
+              <span>📊 Publisher Portal</span>
+            </Link>
+            <Link
               to="/courses"
               style={{
                 fontSize: '0.85rem',
@@ -905,6 +923,15 @@ export function TutorPublishCoursePage() {
                 style={{ padding: '0.75rem 1.5rem', fontWeight: 700, borderRadius: '10px' }}
               >
                 Publish Another Course
+              </button>
+
+              <button
+                type="button"
+                onClick={() => navigate('/publisher')}
+                className="btn btn-primary"
+                style={{ padding: '0.75rem 1.5rem', fontWeight: 800, borderRadius: '10px', background: '#0f766e', borderColor: '#0f766e' }}
+              >
+                📊 Go to Publisher Portal (Track Enrolled Students &amp; Revenue) →
               </button>
             </div>
           </div>

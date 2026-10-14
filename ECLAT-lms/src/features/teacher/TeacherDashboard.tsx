@@ -158,6 +158,49 @@ export function TeacherDashboard() {
       title={`Welcome, ${profile?.full_name}! 👩‍🏫`}
       subtitle="Eclat Institute Teacher Portal • Content Management & Attendance"
     >
+      {/* Course Publishers Follow-Up & Revenue Hub Banner */}
+      <div
+        className="card mb-6"
+        style={{
+          background: 'linear-gradient(135deg, #0f172a 0%, #1e293b 60%, #0f766e 100%)',
+          color: '#ffffff',
+          borderRadius: '14px',
+          border: '1px solid #334155',
+        }}
+      >
+        <div className="card-body flex justify-between items-center flex-wrap gap-4">
+          <div>
+            <div style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', background: 'rgba(20, 184, 166, 0.25)', border: '1px solid rgba(20, 184, 166, 0.5)', padding: '2px 8px', borderRadius: '999px', fontSize: '0.72rem', fontWeight: 800, color: '#5eead4', marginBottom: '6px' }}>
+              📊 COURSE PUBLISHERS &amp; REVENUE TRACKER
+            </div>
+            <h3 style={{ color: '#ffffff', margin: 0, fontSize: '1.15rem', fontWeight: 900 }}>
+              Course Publisher Portal • Enrolled Students, Revenue &amp; Pending Balances
+            </h3>
+            <p style={{ color: '#cbd5e1', margin: '4px 0 0', fontSize: '0.8rem' }}>
+              Follow up directly with registered students, monitor tuition fee payments and pending balances, and track creator royalty disbursements.
+            </p>
+          </div>
+          <div className="flex gap-2 flex-wrap">
+            <Button
+              variant="primary"
+              size="sm"
+              style={{ background: '#0f766e', borderColor: '#0f766e', fontWeight: 800 }}
+              onClick={() => navigate('/publisher')}
+            >
+              Open Publisher Portal →
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              style={{ color: '#ffffff', borderColor: 'rgba(255,255,255,0.4)' }}
+              onClick={() => navigate('/publish-course')}
+            >
+              + Publish New Course
+            </Button>
+          </div>
+        </div>
+      </div>
+
       {/* Quick Action Bar */}
       <div className="card mb-6" style={{ background: '#e8edf8', border: '1px solid #c5d2f3' }}>
         <div className="card-body flex justify-between items-center flex-wrap gap-4">

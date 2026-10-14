@@ -160,6 +160,14 @@ export function AdminDashboard() {
             >
               🏛️ Cloud &amp; Services Hub
             </Button>
+            <Button
+              variant="primary"
+              size="sm"
+              style={{ background: '#0f766e', borderColor: '#0f766e', color: '#ffffff', fontWeight: 800 }}
+              onClick={() => navigate('/publisher')}
+            >
+              📊 Publishers Portal
+            </Button>
             <Button variant="accent" size="sm" onClick={() => navigate('/admin/intakes')} style={{ fontWeight: 800 }}>
               🗓️ Intake Scheduler &amp; Adverts
             </Button>
@@ -234,11 +242,11 @@ export function AdminDashboard() {
             </div>
             <div>
               <div style={{ fontSize: '0.88rem', fontWeight: 800, color: '#b45309', display: 'flex', alignItems: 'center', gap: '6px' }}>
-                <span>Publish Course &amp; Monetize</span>
-                <span style={{ fontSize: '0.62rem', background: '#fef3c7', color: '#b45309', padding: '1px 5px', borderRadius: '4px', fontWeight: 800 }}>50% Share</span>
+                <span>Publishers, Royalties &amp; Balances</span>
+                <span style={{ fontSize: '0.62rem', background: '#fef3c7', color: '#b45309', padding: '1px 5px', borderRadius: '4px', fontWeight: 800 }}>Admin Control</span>
               </div>
               <div style={{ fontSize: '0.74rem', color: '#64748b', marginTop: '2px' }}>
-                Host courses, approve tutors &amp; manage recurring revenue splits
+                Control publisher revenue splits, track enrolled students, pending balances &amp; payouts
               </div>
             </div>
           </div>

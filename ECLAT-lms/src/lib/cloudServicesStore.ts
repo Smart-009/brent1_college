@@ -122,6 +122,22 @@ export interface PublishedTutorCourseRecord {
   downloadPath?: string
 }
 
+export interface PublisherPayoutRecord {
+  id: string
+  courseId?: string
+  courseTitle?: string
+  publisherName: string
+  publisherEmail: string
+  amount: number
+  currency: string
+  payoutMethod: string // M-Pesa, Bank Transfer, PayPal, Cash
+  referenceCode: string
+  disbursedAt: string
+  disbursedBy: string
+  notes?: string
+  status: 'Completed' | 'Pending'
+}
+
 const DEFAULT_CONFIG: CloudServicesConfig = {
   showInPublicNavbar: false, // Managed inside Admin Portal by default
   enablePublishCourse: true,
@@ -682,6 +698,40 @@ class CloudServicesStore {
     this.writeStorage('eclat_published_tutor_courses', next)
   }
 
+  updatePublishedTutorCourseRevenueSplit(id: string, splitPct: number) {
+    const list = this.getPublishedTutorCourses()
+    const next = list.map((c) => (c.id === id ? { ...c, payoutSplitPct: Math.max(1, Math.min(100, splitPct)) } : c))
+    this.writeStorage('eclat_published_tutor_courses', next)
+  }
+
+  updatePublishedTutorCourseStatus(id: string, status: 'Approved & Live' | 'Pending Review' | 'Paused') {
+    const list = this.getPublishedTutorCourses()
+    const next = list.map((c) => (c.id === id ? { ...c, status } : c))
+    this.writeStorage('eclat_published_tutor_courses', next)
+  }
+
+  // Publisher Payout Disbursements
+  getPayoutRecords(): PublisherPayoutRecord[] {
+    return this.readStorage<PublisherPayoutRecord[]>('eclat_publisher_payouts_ledger', [])
+  }
+
+  recordPublisherPayout(payout: PublisherPayoutRecord) {
+    const list = this.getPayoutRecords()
+    const record: PublisherPayoutRecord = {
+      ...payout,
+      id: payout.id || `pout-${Date.now()}`,
+      disbursedAt: payout.disbursedAt || new Date().toISOString(),
+      status: payout.status || 'Completed',
+    }
+    const next = [record, ...list]
+    this.writeStorage('eclat_publisher_payouts_ledger', next)
+  }
+
+  deletePublisherPayout(id: string) {
+    const next = this.getPayoutRecords().filter((p) => p.id !== id)
+    this.writeStorage('eclat_publisher_payouts_ledger', next)
+  }
+
   // 5. Donations & Student Sponsorship Ledger
   getDonationsLedger(): DonationLedgerItem[] {
     const list = this.readStorage<DonationLedgerItem[]>('eclat_donations_ledger', [])
@@ -751,6 +801,7 @@ class CloudServicesStore {
           if (parsed.donationsLedger) localStorage.setItem('eclat_donations_ledger', JSON.stringify(parsed.donationsLedger))
           if (parsed.tiersUsd) localStorage.setItem('eclat_sponsorship_tiers_usd', JSON.stringify(parsed.tiersUsd))
           if (parsed.tiersKes) localStorage.setItem('eclat_sponsorship_tiers_kes', JSON.stringify(parsed.tiersKes))
+          if (parsed.payouts) localStorage.setItem('eclat_publisher_payouts_ledger', JSON.stringify(parsed.payouts))
         }
         this.notify()
       }
@@ -766,6 +817,7 @@ class CloudServicesStore {
         jobPositions: this.getJobPositions(),
         careerApplications: this.getCareerApplications(),
         tutorCourses: this.getPublishedTutorCourses(),
+        payouts: this.getPayoutRecords(),
         donationsLedger: this.getDonationsLedger(),
         tiersUsd: this.getSponsorshipTiers('USD'),
         tiersKes: this.getSponsorshipTiers('KES'),

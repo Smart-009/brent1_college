@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { PageWrapper } from '@/components/layout/PageWrapper'
 import { Button } from '@/components/ui/Button'
@@ -12,7 +12,9 @@ import {
   type CareerApplicationItem,
   type DonationLedgerItem,
   type PublishedTutorCourseRecord,
+  type PublisherPayoutRecord,
 } from '@/lib/cloudServicesStore'
+import { getPublisherAnalytics, type PublisherCourseAnalytics } from '@/lib/publisherAnalytics'
 import { schoolStore } from '@/lib/schoolData'
 import { tenantSchoolStore } from '@/lib/tenantSchoolStore'
 import { formatDate } from '@/lib/utils'
@@ -91,6 +93,22 @@ export function ManageCloudServices() {
   const [donStudentName, setDonStudentName] = useState('')
   const [donStudentAdm, setDonStudentAdm] = useState('')
 
+  // Publisher Management State & Modals
+  const [payouts, setPayouts] = useState<PublisherPayoutRecord[]>(() => cloudServicesStore.getPayoutRecords())
+  const [payoutModalOpen, setPayoutModalOpen] = useState(false)
+  const [selectedCourseForPayout, setSelectedCourseForPayout] = useState<PublishedTutorCourseRecord | null>(null)
+  const [payoutAmount, setPayoutAmount] = useState(50)
+  const [payoutRef, setPayoutRef] = useState('')
+  const [payoutMethod, setPayoutMethod] = useState('M-Pesa')
+  const [payoutNotes, setPayoutNotes] = useState('')
+
+  const [splitModalOpen, setSplitModalOpen] = useState(false)
+  const [selectedCourseForSplit, setSelectedCourseForSplit] = useState<PublishedTutorCourseRecord | null>(null)
+  const [customSplitPct, setCustomSplitPct] = useState(50)
+
+  const [learnersModalOpen, setLearnersModalOpen] = useState(false)
+  const [selectedCourseForLearners, setSelectedCourseForLearners] = useState<PublisherCourseAnalytics | null>(null)
+
   const showToast = (msg: string) => {
     setToastMsg(msg)
     setTimeout(() => setToastMsg(null), 4500)
@@ -105,6 +123,72 @@ export function ManageCloudServices() {
     setTutorCourses(cloudServicesStore.getPublishedTutorCourses())
     setDonations(cloudServicesStore.getDonationsLedger())
     setPartnerSchools(tenantSchoolStore.getSchools())
+    setPayouts(cloudServicesStore.getPayoutRecords())
+  }
+
+  // Publisher Analytics computation
+  const { publishers: pubReports, instituteTotals } = useMemo(() => {
+    return getPublisherAnalytics()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [tutorCourses, payouts])
+
+  const courseAnalyticsMap = useMemo(() => {
+    const map = new Map<string, PublisherCourseAnalytics>()
+    pubReports.forEach((p) => {
+      p.courses.forEach((c) => {
+        map.set(c.courseId, c)
+      })
+    })
+    return map
+  }, [pubReports])
+
+  const handleOpenPayoutModal = (course: PublishedTutorCourseRecord) => {
+    setSelectedCourseForPayout(course)
+    const analytics = courseAnalyticsMap.get(course.id)
+    const suggestedAmt = analytics ? analytics.publisherEarningsUsd : 50
+    setPayoutAmount(suggestedAmt > 0 ? suggestedAmt : 50)
+    setPayoutRef(`POUT-PAY-${Date.now().toString().slice(-6)}`)
+    setPayoutMethod(course.payoutMethod || 'M-Pesa')
+    setPayoutNotes(`Monthly royalty payout for ${course.courseTitle}`)
+    setPayoutModalOpen(true)
+  }
+
+  const handleSavePayout = (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!selectedCourseForPayout) return
+    cloudServicesStore.recordPublisherPayout({
+      id: `pout-${Date.now()}`,
+      courseId: selectedCourseForPayout.id,
+      courseTitle: selectedCourseForPayout.courseTitle,
+      publisherName: selectedCourseForPayout.institutionName || selectedCourseForPayout.tutorName,
+      publisherEmail: selectedCourseForPayout.email,
+      amount: payoutAmount,
+      currency: selectedCourseForPayout.payoutCurrency || 'USD',
+      payoutMethod,
+      referenceCode: payoutRef,
+      disbursedAt: new Date().toISOString(),
+      disbursedBy: 'Institute Administration',
+      notes: payoutNotes,
+      status: 'Completed',
+    })
+    setPayoutModalOpen(false)
+    refreshAll()
+    showToast(`✓ Disbursed payout of $${payoutAmount} USD to ${selectedCourseForPayout.institutionName || selectedCourseForPayout.tutorName}`)
+  }
+
+  const handleOpenSplitModal = (course: PublishedTutorCourseRecord) => {
+    setSelectedCourseForSplit(course)
+    setCustomSplitPct(course.payoutSplitPct || 50)
+    setSplitModalOpen(true)
+  }
+
+  const handleSaveSplit = (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!selectedCourseForSplit) return
+    cloudServicesStore.updatePublishedTutorCourseRevenueSplit(selectedCourseForSplit.id, customSplitPct)
+    setSplitModalOpen(false)
+    refreshAll()
+    showToast(`✓ Updated creator split for "${selectedCourseForSplit.courseTitle}" to ${customSplitPct}%`)
   }
 
   useEffect(() => {
@@ -801,109 +885,345 @@ export function ManageCloudServices() {
         </div>
       )}
 
-      {/* TAB 1: PUBLISH COURSE & MONETIZE */}
+      {/* TAB 1: PUBLISH COURSE & MONETIZE - FULL PUBLISHER & REVENUE CONTROL DESK */}
       {activeTab === 'publish' && (
-        <div className="card">
-          <div className="card-header flex justify-between items-center flex-wrap gap-3">
-            <div>
-              <h3 style={{ margin: 0 }}>⭐ Publish Course &amp; Monetize — Tutor &amp; Partner School Courses</h3>
-              <p className="text-xs text-muted" style={{ margin: '2px 0 0' }}>
-                Approve tutor courses, adjust revenue share splits ({config.defaultTutorRevenueSplitPct}% Tutor / {config.defaultSchoolRevenueSplitPct}% Partner School), and manage payout settings.
-              </p>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+          {/* Institute Financial KPI Summary */}
+          <div
+            style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))',
+              gap: '0.85rem',
+            }}
+          >
+            <div className="card" style={{ borderLeft: '4px solid #3b82f6', background: '#f8faff', padding: '1rem' }}>
+              <div style={{ fontSize: '0.72rem', fontWeight: 800, color: '#1e40af', textTransform: 'uppercase' }}>
+                Total Enrolled Students
+              </div>
+              <div style={{ fontSize: '1.75rem', fontWeight: 900, color: '#1e3a8a', margin: '4px 0 2px' }}>
+                👥 {instituteTotals.totalStudents}
+              </div>
+              <div style={{ fontSize: '0.7rem', color: '#64748b' }}>
+                Across {tutorCourses.length} publisher courses
+              </div>
             </div>
-            <div className="flex gap-2">
-              <Button variant="accent" size="sm" onClick={() => navigate('/teacher/courses/new')}>
-                + Build Official Course Unit
-              </Button>
-              <Button variant="primary" size="sm" onClick={() => navigate('/publish-course')}>
-                + Launch Course Publisher (/publish-course) ↗
-              </Button>
+
+            <div className="card" style={{ borderLeft: '4px solid #10b981', background: '#f0fdf4', padding: '1rem' }}>
+              <div style={{ fontSize: '0.72rem', fontWeight: 800, color: '#065f46', textTransform: 'uppercase' }}>
+                Gross Tuition Revenue
+              </div>
+              <div style={{ fontSize: '1.75rem', fontWeight: 900, color: '#047857', margin: '4px 0 2px' }}>
+                ${instituteTotals.totalRevenueUsd.toLocaleString()} USD
+              </div>
+              <div style={{ fontSize: '0.7rem', color: '#15803d' }}>
+                Cleared Paystack tuition
+              </div>
+            </div>
+
+            <div className="card" style={{ borderLeft: '4px solid #f59e0b', background: '#fffbeb', padding: '1rem' }}>
+              <div style={{ fontSize: '0.72rem', fontWeight: 800, color: '#92400e', textTransform: 'uppercase' }}>
+                Pending Student Balances
+              </div>
+              <div style={{ fontSize: '1.75rem', fontWeight: 900, color: '#b45309', margin: '4px 0 2px' }}>
+                ${instituteTotals.totalPendingBalanceUsd.toLocaleString()} USD
+              </div>
+              <div style={{ fontSize: '0.7rem', color: '#b45309' }}>
+                Outstanding installments
+              </div>
+            </div>
+
+            <div className="card" style={{ borderLeft: '4px solid #8b5cf6', background: '#faf5ff', padding: '1rem' }}>
+              <div style={{ fontSize: '0.72rem', fontWeight: 800, color: '#5b21b6', textTransform: 'uppercase' }}>
+                Publisher Royalties Accrued
+              </div>
+              <div style={{ fontSize: '1.75rem', fontWeight: 900, color: '#6d28d9', margin: '4px 0 2px' }}>
+                ${instituteTotals.totalPublisherRoyaltiesUsd.toLocaleString()} USD
+              </div>
+              <div style={{ fontSize: '0.7rem', color: '#7c3aed' }}>
+                Creator revenue share
+              </div>
+            </div>
+
+            <div className="card" style={{ borderLeft: '4px solid #0284c7', background: '#f0f9ff', padding: '1rem' }}>
+              <div style={{ fontSize: '0.72rem', fontWeight: 800, color: '#0369a1', textTransform: 'uppercase' }}>
+                Platform Retained Share
+              </div>
+              <div style={{ fontSize: '1.75rem', fontWeight: 900, color: '#0284c7', margin: '4px 0 2px' }}>
+                ${instituteTotals.totalPlatformRetainedUsd.toLocaleString()} USD
+              </div>
+              <div style={{ fontSize: '0.7rem', color: '#0369a1' }}>
+                Institute platform commission
+              </div>
+            </div>
+
+            <div className="card" style={{ borderLeft: '4px solid #64748b', background: '#f8fafc', padding: '1rem' }}>
+              <div style={{ fontSize: '0.72rem', fontWeight: 800, color: '#334155', textTransform: 'uppercase' }}>
+                Total Disbursed Payouts
+              </div>
+              <div style={{ fontSize: '1.75rem', fontWeight: 900, color: '#0f172a', margin: '4px 0 2px' }}>
+                ${instituteTotals.totalDisbursedUsd.toLocaleString()} USD
+              </div>
+              <div style={{ fontSize: '0.7rem', color: '#64748b' }}>
+                {payouts.length} recorded settlements
+              </div>
             </div>
           </div>
-          <div className="table-wrapper">
-            <table>
-              <thead>
-                <tr>
-                  <th>Course Title &amp; Category</th>
-                  <th>Provider / Instructor</th>
-                  <th>Delivery Mode</th>
-                  <th>Tuition Fee</th>
-                  <th>Revenue Share</th>
-                  <th>Payout Method</th>
-                  <th>Status</th>
-                  <th>Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {tutorCourses.length === 0 ? (
+
+          {/* Main Course Publishers Control Table */}
+          <div className="card">
+            <div className="card-header flex justify-between items-center flex-wrap gap-3">
+              <div>
+                <h3 style={{ margin: 0 }}>⭐ Course Publishers, Enrollments &amp; Royalties Control Desk</h3>
+                <p className="text-xs text-muted" style={{ margin: '2px 0 0' }}>
+                  Control creator revenue shares, track student enrollments, inspect pending fee balances, and disburse publisher royalties.
+                </p>
+              </div>
+              <div className="flex gap-2 flex-wrap">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  style={{ color: '#0f766e', borderColor: '#0f766e', fontWeight: 800 }}
+                  onClick={() => navigate('/publisher')}
+                >
+                  📊 Open Publisher Portal (/publisher) ↗
+                </Button>
+                <Button variant="accent" size="sm" onClick={() => navigate('/teacher/courses/new')}>
+                  + Build Official Course Unit
+                </Button>
+                <Button variant="primary" size="sm" onClick={() => navigate('/publish-course')}>
+                  + Launch Course Publisher (/publish-course) ↗
+                </Button>
+              </div>
+            </div>
+            <div className="table-wrapper">
+              <table>
+                <thead>
                   <tr>
-                    <td colSpan={8} style={{ textAlign: 'center', padding: '2.5rem', color: 'var(--color-text-muted)' }}>
-                      No external tutor or partner school courses submitted yet. Click <strong>+ Launch Course Publisher</strong> above to publish and monetize a course.
-                    </td>
+                    <th>Course Title &amp; Category</th>
+                    <th>Publisher / Instructor</th>
+                    <th>Delivery Mode</th>
+                    <th>Tuition Fee</th>
+                    <th>Enrolled Students</th>
+                    <th>Revenue Generated</th>
+                    <th>Pending Balance</th>
+                    <th>Creator Share %</th>
+                    <th>Status</th>
+                    <th>Actions</th>
                   </tr>
-                ) : (
-                  tutorCourses.map((c) => (
-                    <tr key={c.id}>
-                      <td>
-                        <div className="font-bold">{c.courseTitle}</div>
-                        <div className="text-xs text-muted">{c.category}</div>
+                </thead>
+                <tbody>
+                  {tutorCourses.length === 0 ? (
+                    <tr>
+                      <td colSpan={10} style={{ textAlign: 'center', padding: '2.5rem', color: 'var(--color-text-muted)' }}>
+                        No external tutor or partner school courses submitted yet. Click <strong>+ Launch Course Publisher</strong> above to publish and monetize a course.
                       </td>
-                      <td>
-                        <div className="font-semibold text-sm">{c.institutionName || c.tutorName}</div>
-                        <div className="text-xs text-muted">
-                          {c.providerType === 'partner_institution' ? '🏫 Partner School' : '👩‍🏫 Individual Tutor'} • {c.email}
-                        </div>
+                    </tr>
+                  ) : (
+                    tutorCourses.map((c) => {
+                      const analytics = courseAnalyticsMap.get(c.id)
+                      const enrolledCount = analytics ? analytics.enrolledStudentsCount : 0
+                      const revGen = analytics ? analytics.revenueGeneratedUsd : 0
+                      const pendBal = analytics ? analytics.pendingBalanceUsd : 0
+
+                      return (
+                        <tr key={c.id}>
+                          <td>
+                            <div className="font-bold text-sm" style={{ color: '#0f172a' }}>{c.courseTitle}</div>
+                            <div className="text-xs text-muted">{c.category}</div>
+                          </td>
+                          <td>
+                            <div className="font-semibold text-sm">{c.institutionName || c.tutorName}</div>
+                            <div className="text-xs text-muted">
+                              {c.providerType === 'partner_institution' ? '🏫 Partner School' : '👩‍🏫 Individual Tutor'} • {c.email}
+                            </div>
+                          </td>
+                          <td>
+                            <span className="badge badge-secondary">
+                              {c.deliveryMode === 'live_cohort' ? '🎥 Live Cohort' : '⚡ Self-Paced'}
+                            </span>
+                          </td>
+                          <td className="font-bold">${c.suggestedPriceUsd} USD</td>
+                          <td>
+                            <button
+                              type="button"
+                              className="btn btn-sm"
+                              style={{
+                                background: enrolledCount > 0 ? '#dbeafe' : '#f1f5f9',
+                                color: enrolledCount > 0 ? '#1e40af' : '#64748b',
+                                border: 'none',
+                                fontWeight: 800,
+                                fontSize: '0.78rem',
+                                padding: '3px 8px',
+                                borderRadius: '6px',
+                                cursor: enrolledCount > 0 ? 'pointer' : 'default',
+                              }}
+                              onClick={() => {
+                                if (analytics && enrolledCount > 0) {
+                                  setSelectedCourseForLearners(analytics)
+                                  setLearnersModalOpen(true)
+                                }
+                              }}
+                            >
+                              👥 {enrolledCount} Students {enrolledCount > 0 ? '🔍' : ''}
+                            </button>
+                          </td>
+                          <td className="font-bold" style={{ color: '#16a34a' }}>
+                            ${revGen.toLocaleString()} USD
+                          </td>
+                          <td>
+                            {pendBal > 0 ? (
+                              <span style={{ color: '#ea580c', fontWeight: 800, fontSize: '0.82rem' }}>
+                                ${pendBal.toLocaleString()} USD
+                              </span>
+                            ) : (
+                              <span style={{ color: '#16a34a', fontWeight: 700, fontSize: '0.78rem' }}>
+                                $0
+                              </span>
+                            )}
+                          </td>
+                          <td>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                              <span style={{ background: '#fef3c7', color: '#b45309', padding: '2px 8px', borderRadius: '6px', fontWeight: 800, fontSize: '0.78rem' }}>
+                                {c.payoutSplitPct || 50}%
+                              </span>
+                              <button
+                                type="button"
+                                className="btn btn-outline btn-sm"
+                                style={{ fontSize: '0.7rem', padding: '1px 6px' }}
+                                onClick={() => handleOpenSplitModal(c)}
+                                title="Adjust creator royalty split percentage"
+                              >
+                                ✏️ Edit
+                              </button>
+                            </div>
+                          </td>
+                          <td>
+                            <span className={`badge ${c.status === 'Approved & Live' ? 'badge-success' : 'badge-warning'}`}>
+                              {c.status}
+                            </span>
+                          </td>
+                          <td>
+                            <div className="flex gap-2 flex-wrap">
+                              <Button
+                                variant="primary"
+                                size="sm"
+                                style={{ fontSize: '0.74rem', padding: '3px 8px', background: '#0f766e', borderColor: '#0f766e' }}
+                                onClick={() => handleOpenPayoutModal(c)}
+                              >
+                                💳 Disburse Payout
+                              </Button>
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                style={{ fontSize: '0.74rem', padding: '3px 8px' }}
+                                onClick={() => {
+                                  const nextStatus = c.status === 'Approved & Live' ? 'Paused' : 'Approved & Live'
+                                  cloudServicesStore.updatePublishedTutorCourseStatus(c.id, nextStatus as any)
+                                  refreshAll()
+                                  showToast(`Updated "${c.courseTitle}" status to ${nextStatus}`)
+                                }}
+                              >
+                                {c.status === 'Approved & Live' ? 'Pause' : 'Approve'}
+                              </Button>
+                              <Button
+                                variant="danger"
+                                size="sm"
+                                style={{ fontSize: '0.74rem', padding: '3px 8px' }}
+                                onClick={() => {
+                                  cloudServicesStore.deletePublishedTutorCourse(c.id)
+                                  refreshAll()
+                                  showToast(`Removed course "${c.courseTitle}"`)
+                                }}
+                              >
+                                Delete
+                              </Button>
+                            </div>
+                          </td>
+                        </tr>
+                      )
+                    })
+                  )}
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          {/* Publisher Payouts & Disbursements Ledger */}
+          <div className="card">
+            <div className="card-header flex justify-between items-center flex-wrap gap-3">
+              <div>
+                <h3 style={{ margin: 0 }}>💳 Recorded Publisher Payout Disbursements ({payouts.length})</h3>
+                <p className="text-xs text-muted" style={{ margin: '2px 0 0' }}>
+                  Audited ledger of tuition royalties disbursed to individual tutors and partner school publishers.
+                </p>
+              </div>
+            </div>
+            <div className="table-wrapper">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Date &amp; Ref</th>
+                    <th>Publisher &amp; Course</th>
+                    <th>Amount Disbursed</th>
+                    <th>Payment Method</th>
+                    <th>Disbursed By</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {payouts.length === 0 ? (
+                    <tr>
+                      <td colSpan={7} style={{ textAlign: 'center', padding: '2rem', color: '#64748b' }}>
+                        No payouts disbursed yet. Use the <strong>💳 Disburse Payout</strong> button in the table above to issue royalty disbursements.
                       </td>
-                      <td>
-                        <span className="badge badge-secondary">
-                          {c.deliveryMode === 'live_cohort' ? '🎥 Live Cohort' : '⚡ Self-Paced'}
-                        </span>
-                      </td>
-                      <td className="font-bold">${c.suggestedPriceUsd} USD</td>
-                      <td>
-                        <span style={{ background: '#fef3c7', color: '#b45309', padding: '2px 8px', borderRadius: '6px', fontWeight: 800, fontSize: '0.78rem' }}>
-                          {c.payoutSplitPct || 50}% Creator Share
-                        </span>
-                      </td>
-                      <td className="text-xs">
-                        <div className="font-semibold">{(c.payoutMethod || 'mpesa').toUpperCase()} ({c.payoutSchedule || 'monthly'})</div>
-                        <div className="text-muted">{c.payoutDetails}</div>
-                      </td>
-                      <td>
-                        <span className={`badge ${c.status === 'Approved & Live' ? 'badge-success' : 'badge-warning'}`}>
-                          {c.status}
-                        </span>
-                      </td>
-                      <td>
-                        <div className="flex gap-2">
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => {
-                              const nextStatus = c.status === 'Approved & Live' ? 'Paused' : 'Approved & Live'
-                              cloudServicesStore.savePublishedTutorCourse({ ...c, status: nextStatus })
-                              showToast(`Updated "${c.courseTitle}" status to ${nextStatus}`)
-                            }}
-                          >
-                            {c.status === 'Approved & Live' ? 'Pause' : 'Approve'}
-                          </Button>
+                    </tr>
+                  ) : (
+                    payouts.map((po) => (
+                      <tr key={po.id}>
+                        <td>
+                          <div className="font-bold text-xs" style={{ color: '#0f172a' }}>
+                            {new Date(po.disbursedAt).toLocaleDateString()}
+                          </div>
+                          <div className="text-xs text-muted"><code>{po.referenceCode}</code></div>
+                        </td>
+                        <td>
+                          <div className="font-semibold text-sm">{po.publisherName}</div>
+                          <div className="text-xs text-muted">{po.courseTitle || po.publisherEmail}</div>
+                        </td>
+                        <td className="font-bold" style={{ color: '#16a34a' }}>
+                          ${po.amount} {po.currency || 'USD'}
+                        </td>
+                        <td className="text-xs">
+                          <span style={{ fontWeight: 700 }}>{po.payoutMethod}</span>
+                          {po.notes && <div className="text-muted">{po.notes}</div>}
+                        </td>
+                        <td className="text-xs text-muted">
+                          {po.disbursedBy}
+                        </td>
+                        <td>
+                          <span className="badge badge-success">✓ {po.status}</span>
+                        </td>
+                        <td>
                           <Button
                             variant="danger"
                             size="sm"
+                            style={{ fontSize: '0.7rem', padding: '2px 6px' }}
                             onClick={() => {
-                              cloudServicesStore.deletePublishedTutorCourse(c.id)
-                              showToast(`Removed course "${c.courseTitle}"`)
+                              cloudServicesStore.deletePublisherPayout(po.id)
+                              refreshAll()
+                              showToast(`Removed payout record ${po.referenceCode}`)
                             }}
                           >
-                            Delete
+                            Void
                           </Button>
-                        </div>
-                      </td>
-                    </tr>
-                  ))
-                )}
-              </tbody>
-            </table>
+                        </td>
+                      </tr>
+                    ))
+                  )}
+                </tbody>
+              </table>
+            </div>
           </div>
         </div>
       )}
@@ -1562,6 +1882,186 @@ export function ManageCloudServices() {
             </Button>
           </div>
         </form>
+      </Modal>
+
+      {/* MODAL 4: DISBURSE PUBLISHER PAYOUT */}
+      <Modal
+        isOpen={payoutModalOpen}
+        onClose={() => setPayoutModalOpen(false)}
+        title={`💳 Disburse Royalty Payout — ${selectedCourseForPayout?.institutionName || selectedCourseForPayout?.tutorName || 'Publisher'}`}
+      >
+        {selectedCourseForPayout && (
+          <form onSubmit={handleSavePayout} style={{ display: 'flex', flexDirection: 'column', gap: '0.85rem' }}>
+            <div style={{ background: '#f8fafc', padding: '0.75rem', borderRadius: '8px', border: '1px solid #e2e8f0', fontSize: '0.82rem' }}>
+              <div><strong>Course:</strong> {selectedCourseForPayout.courseTitle}</div>
+              <div><strong>Publisher Email:</strong> {selectedCourseForPayout.email}</div>
+              <div><strong>Agreed Revenue Split:</strong> <span style={{ color: '#b45309', fontWeight: 800 }}>{selectedCourseForPayout.payoutSplitPct || 50}% Creator Share</span></div>
+            </div>
+
+            <div className="grid grid-2 gap-3">
+              <Input
+                label="Payout Amount ($ USD) *"
+                type="number"
+                min={1}
+                value={String(payoutAmount)}
+                onChange={(e) => setPayoutAmount(Number(e.target.value) || 0)}
+                required
+              />
+              <div>
+                <label className="form-label">Payment Channel *</label>
+                <select className="form-select" value={payoutMethod} onChange={(e) => setPayoutMethod(e.target.value)}>
+                  <option value="M-Pesa Express">M-Pesa Express</option>
+                  <option value="Bank Wire / Electronic Transfer">Bank Wire / Electronic Transfer</option>
+                  <option value="PayPal Direct">PayPal Direct</option>
+                  <option value="Paystack Bulk Transfer">Paystack Bulk Transfer</option>
+                </select>
+              </div>
+            </div>
+
+            <Input
+              label="Transaction / Disbursement Reference Code *"
+              value={payoutRef}
+              onChange={(e) => setPayoutRef(e.target.value)}
+              required
+              placeholder="e.g. MPESA-QWE987654 or BANK-TR-1234"
+            />
+
+            <Input
+              label="Disbursement Notes / Period"
+              value={payoutNotes}
+              onChange={(e) => setPayoutNotes(e.target.value)}
+              placeholder="e.g. October 2026 tuition revenue settlement"
+            />
+
+            <div className="flex justify-end gap-2 pt-2">
+              <Button type="button" variant="secondary" onClick={() => setPayoutModalOpen(false)}>
+                Cancel
+              </Button>
+              <Button type="submit" variant="primary" style={{ background: '#0f766e', borderColor: '#0f766e', fontWeight: 800 }}>
+                Confirm &amp; Disburse Payout
+              </Button>
+            </div>
+          </form>
+        )}
+      </Modal>
+
+      {/* MODAL 5: ADJUST PUBLISHER REVENUE SHARE SPLIT */}
+      <Modal
+        isOpen={splitModalOpen}
+        onClose={() => setSplitModalOpen(false)}
+        title={`✏️ Adjust Revenue Share — ${selectedCourseForSplit?.courseTitle || 'Course'}`}
+      >
+        {selectedCourseForSplit && (
+          <form onSubmit={handleSaveSplit} style={{ display: 'flex', flexDirection: 'column', gap: '0.85rem' }}>
+            <div style={{ background: '#f8fafc', padding: '0.75rem', borderRadius: '8px', border: '1px solid #e2e8f0', fontSize: '0.82rem' }}>
+              <div><strong>Publisher:</strong> {selectedCourseForSplit.institutionName || selectedCourseForSplit.tutorName}</div>
+              <div><strong>Track:</strong> {selectedCourseForSplit.providerType === 'partner_institution' ? '🏫 Partner School / Academy' : '👩‍🏫 Individual Tutor'}</div>
+              <div><strong>Default Baseline:</strong> {selectedCourseForSplit.providerType === 'partner_institution' ? '70% Creator / 30% Platform' : '50% Creator / 50% Platform'}</div>
+            </div>
+
+            <div>
+              <label className="form-label">Creator Royalty Split Percentage (%) *</label>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                <input
+                  type="range"
+                  min={10}
+                  max={95}
+                  step={5}
+                  value={customSplitPct}
+                  onChange={(e) => setCustomSplitPct(Number(e.target.value))}
+                  style={{ flex: 1 }}
+                />
+                <span style={{ fontSize: '1.25rem', fontWeight: 900, color: '#7c3aed', minWidth: '60px' }}>
+                  {customSplitPct}%
+                </span>
+              </div>
+              <div style={{ fontSize: '0.75rem', color: '#64748b', marginTop: '4px' }}>
+                Creator receives <strong>{customSplitPct}%</strong> of each student fee • Institute retains <strong>{100 - customSplitPct}%</strong> platform fee.
+              </div>
+            </div>
+
+            <div className="flex justify-end gap-2 pt-2">
+              <Button type="button" variant="secondary" onClick={() => setSplitModalOpen(false)}>
+                Cancel
+              </Button>
+              <Button type="submit" variant="primary">
+                Save Revenue Split
+              </Button>
+            </div>
+          </form>
+        )}
+      </Modal>
+
+      {/* MODAL 6: VIEW ENROLLED LEARNERS */}
+      <Modal
+        isOpen={learnersModalOpen}
+        onClose={() => setLearnersModalOpen(false)}
+        title={`👥 Enrolled Students — ${selectedCourseForLearners?.courseTitle || 'Course'}`}
+      >
+        {selectedCourseForLearners && (
+          <div>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem', background: '#f8fafc', padding: '0.75rem', borderRadius: '8px', border: '1px solid #e2e8f0', fontSize: '0.82rem' }}>
+              <div>
+                Total Enrolled: <strong>{selectedCourseForLearners.enrolledStudentsCount}</strong> • Revenue: <strong style={{ color: '#16a34a' }}>${selectedCourseForLearners.revenueGeneratedUsd} USD</strong>
+              </div>
+              <div>
+                Pending Balances: <strong style={{ color: selectedCourseForLearners.pendingBalanceUsd > 0 ? '#ea580c' : '#16a34a' }}>${selectedCourseForLearners.pendingBalanceUsd} USD</strong>
+              </div>
+            </div>
+
+            <div className="table-wrapper" style={{ maxHeight: '350px', overflowY: 'auto' }}>
+              <table>
+                <thead>
+                  <tr>
+                    <th>Student Name &amp; ID</th>
+                    <th>Tuition Paid</th>
+                    <th>Pending Balance</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {selectedCourseForLearners.learners.length === 0 ? (
+                    <tr>
+                      <td colSpan={4} style={{ textAlign: 'center', padding: '1.5rem', color: '#64748b' }}>
+                        No students enrolled yet.
+                      </td>
+                    </tr>
+                  ) : (
+                    selectedCourseForLearners.learners.map((lrn) => (
+                      <tr key={lrn.id}>
+                        <td>
+                          <div className="font-bold text-xs" style={{ color: '#0f172a' }}>{lrn.name}</div>
+                          <div className="text-xs text-muted">ID: {lrn.admissionNumber}</div>
+                        </td>
+                        <td className="font-bold" style={{ color: '#16a34a' }}>
+                          ${lrn.amountPaidUsd} USD
+                        </td>
+                        <td>
+                          {lrn.pendingBalanceUsd > 0 ? (
+                            <span style={{ color: '#ea580c', fontWeight: 800 }}>${lrn.pendingBalanceUsd} USD</span>
+                          ) : (
+                            <span style={{ color: '#16a34a' }}>✓ Cleared</span>
+                          )}
+                        </td>
+                        <td>
+                          <span className={`badge ${lrn.isCleared ? 'badge-success' : 'badge-warning'}`}>
+                            {lrn.isCleared ? 'Cleared' : 'Pending'}
+                          </span>
+                        </td>
+                      </tr>
+                    ))
+                  )}
+                </tbody>
+              </table>
+            </div>
+
+            <div className="flex justify-end pt-3">
+              <Button type="button" variant="secondary" onClick={() => setLearnersModalOpen(false)}>
+                Close
+              </Button>
+            </div>
+          </div>
+        )}
       </Modal>
     </PageWrapper>
   )
