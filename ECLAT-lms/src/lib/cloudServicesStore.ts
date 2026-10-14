@@ -710,6 +710,30 @@ class CloudServicesStore {
     this.writeStorage('eclat_published_tutor_courses', next)
   }
 
+  updatePublishedTutorCoursePrice(idOrQuery: string, priceUsd: number) {
+    const list = this.getPublishedTutorCourses()
+    const safePrice = Math.max(0, Math.round(priceUsd))
+    const q = (idOrQuery || '').toLowerCase().trim()
+    if (!q) return
+    let updated = false
+    const next = list.map((c) => {
+      const titleLower = (c.courseTitle || '').toLowerCase()
+      const match =
+        c.id.toLowerCase() === q ||
+        titleLower === q ||
+        (q.length >= 4 && titleLower.includes(q)) ||
+        (titleLower.length >= 4 && q.includes(titleLower))
+      if (match) {
+        updated = true
+        return { ...c, suggestedPriceUsd: safePrice }
+      }
+      return c
+    })
+    if (updated) {
+      this.writeStorage('eclat_published_tutor_courses', next)
+    }
+  }
+
   // Publisher Payout Disbursements
   getPayoutRecords(): PublisherPayoutRecord[] {
     return this.readStorage<PublisherPayoutRecord[]>('eclat_publisher_payouts_ledger', [])

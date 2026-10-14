@@ -273,17 +273,33 @@ form,
 }
 
 .modal-content,
-.modal-box,
-.modal-body,
-.modal-footer {
+.modal-box {
   background: #ffffff !important;
   color: #0f172a !important;
   border: 1px solid #cbd5e1 !important;
+  box-shadow: 0 25px 50px -12px rgba(15, 23, 42, 0.25), 0 0 0 1px #e2e8f0 !important;
 }
 
-.modal-content,
-.modal-box {
-  box-shadow: 0 25px 50px -12px rgba(15, 23, 42, 0.25), 0 0 0 1px #e2e8f0 !important;
+.modal-content > form,
+.modal-box > form {
+  display: flex !important;
+  flex-direction: column !important;
+  flex: 1 1 auto !important;
+  min-height: 0 !important;
+  overflow: hidden !important;
+  height: 100% !important;
+}
+
+.modal-body {
+  background: #ffffff !important;
+  color: #0f172a !important;
+}
+
+.modal-footer {
+  background: #f8fafc !important;
+  color: #0f172a !important;
+  border-top: 1px solid #cbd5e1 !important;
+  flex-shrink: 0 !important;
 }
 
 .modal-header {

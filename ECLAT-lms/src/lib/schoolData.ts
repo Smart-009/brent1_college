@@ -38,6 +38,7 @@ import { schoolEventBus } from './eventBus'
 export { schoolEventBus }
 import { generateBiometricTemplate } from './biometricEngine'
 import { supabase } from './supabase'
+import { cloudServicesStore } from './cloudServicesStore'
 import { INSTITUTION_CONFIG, INSTITUTIONAL_SCHOOLS } from '@/config/institution'
 import { OFFICIAL_COURSES, type CourseProgram } from '@/config/officialCourses'
 import { sanitizeInput } from './utils'
@@ -4998,6 +4999,9 @@ class SchoolDataStore {
     )
 
     schoolEventBus.publish('COURSE_UNIT_UPDATED' as any, { courseId, feeUsd: safeFee })
+    try {
+      cloudServicesStore.updatePublishedTutorCoursePrice(courseId, safeFee)
+    } catch {}
     this.broadcastChange('COLLECTION_UPDATED_FEE_STRUCTURES', this.getCustomCourseFees())
     if (typeof window !== 'undefined') {
       window.dispatchEvent(new CustomEvent('eclat-courses-updated', { detail: { courseId, feeUsd: safeFee } }))

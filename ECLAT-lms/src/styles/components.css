@@ -339,8 +339,8 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: flex-start;
-  padding: 3rem 1rem;
+  justify-content: center;
+  padding: 1.5rem 1rem;
   z-index: 99999;
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
@@ -355,13 +355,23 @@
   box-shadow: 0 25px 50px -12px rgba(15, 23, 42, 0.25), 0 0 0 1px #cbd5e1 !important;
   width: 100%;
   margin: auto;
-  max-height: calc(100vh - 5rem);
+  max-height: calc(100vh - 3rem);
   display: flex;
   flex-direction: column;
   overflow: hidden;
   position: relative;
   flex-shrink: 0;
   animation: fadeIn 0.2s ease forwards;
+}
+.modal-box > form,
+.modal-content > form {
+  display: flex !important;
+  flex-direction: column !important;
+  flex: 1 1 auto !important;
+  min-height: 0 !important;
+  overflow: hidden !important;
+  height: 100% !important;
+  margin: 0 !important;
 }
 .modal-sm { max-width: 420px; }
 .modal-md { max-width: 580px; }
@@ -388,7 +398,7 @@
   transition: background var(--transition-fast);
 }
 .modal-close:hover { background: var(--color-bg-alt); color: var(--color-text); }
-.modal-body { padding: 1.5rem; overflow-y: auto; flex: 1; min-height: 0; -webkit-overflow-scrolling: touch; }
+.modal-body { padding: 1.5rem; overflow-y: auto; flex: 1 1 auto; min-height: 0; -webkit-overflow-scrolling: touch; }
 .modal-footer {
   padding: 1rem 1.5rem;
   border-top: 1px solid var(--color-border);
@@ -396,7 +406,8 @@
   gap: var(--space-3);
   justify-content: flex-end;
   background: var(--color-bg-secondary);
-  flex-shrink: 0;
+  flex-shrink: 0 !important;
+  margin-top: auto !important;
 }
 
 /* Mobile Responsive Modals */

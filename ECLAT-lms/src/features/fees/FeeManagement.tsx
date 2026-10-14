@@ -10,6 +10,8 @@ import { generateBiometricVerificationCode } from '@/lib/biometricEngine'
 import { INSTITUTION_CONFIG } from '@/config/institution'
 import { CourseProgram, getDynamicCoursesList } from '@/config/officialCourses'
 import { initializePaystackCheckout } from '@/lib/paystack'
+import { CourseIcon } from '@/components/icons/AppIcons'
+import { cloudServicesStore } from '@/lib/cloudServicesStore'
 
 export function FeeManagement() {
   const { profile } = useAuth()
@@ -203,6 +205,11 @@ export function FeeManagement() {
     try {
       const numVal = Math.max(0, Math.round(Number(editFeeUsd)))
       await schoolStore.setCourseFee(editingCourseFee.id, numVal)
+      try {
+        cloudServicesStore.updatePublishedTutorCoursePrice(editingCourseFee.id, numVal)
+        cloudServicesStore.updatePublishedTutorCoursePrice(editingCourseFee.title, numVal)
+        cloudServicesStore.updatePublishedTutorCoursePrice(editingCourseFee.shortTitle, numVal)
+      } catch {}
       setFeeSaveSuccess(`Tuition fee for "${editingCourseFee.shortTitle}" updated to $${numVal} (KES ${(numVal * 130).toLocaleString()})!`)
       setCourseListTick((t) => t + 1)
       setTimeout(() => {
@@ -1303,8 +1310,10 @@ export function FeeManagement() {
                   }}
                 >
                   <div style={{ minWidth: 0, flex: 1, paddingRight: '0.75rem' }}>
-                    <div style={{ fontWeight: 600, color: 'var(--color-text-primary)', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
-                      <span>{course.icon}</span>
+                    <div style={{ fontWeight: 600, color: 'var(--color-text-primary)', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                      <span style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                        <CourseIcon courseId={course.id} iconKey={course.icon} size={18} color="#1d4ed8" />
+                      </span>
                       <span className="truncate">{course.shortTitle}</span>
                     </div>
                     <div style={{ fontSize: '0.75rem', color: 'var(--color-text-secondary)', display: 'flex', gap: '0.5rem', flexWrap: 'wrap', marginTop: '0.15rem' }}>
@@ -1850,10 +1859,12 @@ export function FeeManagement() {
       {/* Edit & Update Course Fee Schedule Modal */}
       {editingCourseFee && (
         <div className="modal-overlay" onClick={() => !isSavingFee && setEditingCourseFee(null)}>
-          <div className="modal-content" onClick={(e) => e.stopPropagation()} style={{ maxWidth: '520px' }}>
-            <div className="modal-header" style={{ borderBottom: '1px solid var(--color-border)', paddingBottom: '0.85rem' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem' }}>
-                <span style={{ fontSize: '1.75rem' }}>{editingCourseFee.icon || '🎓'}</span>
+          <div className="modal-content" onClick={(e) => e.stopPropagation()} style={{ maxWidth: '520px', maxHeight: 'min(92vh, 640px)', display: 'flex', flexDirection: 'column' }}>
+            <div className="modal-header" style={{ borderBottom: '1px solid var(--color-border)', paddingBottom: '0.85rem', flexShrink: 0 }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                <div style={{ width: 44, height: 44, borderRadius: '10px', background: '#eff6ff', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, border: '1px solid #bfdbfe' }}>
+                  <CourseIcon courseId={editingCourseFee.id} iconKey={editingCourseFee.icon} size={24} color="#1d4ed8" />
+                </div>
                 <div>
                   <h3 className="modal-title" style={{ fontSize: '1.15rem', fontWeight: 800, margin: 0, color: 'var(--color-text-primary)' }}>
                     Edit Course Tuition Fee
@@ -1873,8 +1884,30 @@ export function FeeManagement() {
               </button>
             </div>
 
-            <form onSubmit={handleSaveCourseFee}>
-              <div className="modal-body" style={{ display: 'flex', flexDirection: 'column', gap: '1.1rem', paddingTop: '1rem' }}>
+            <form
+              onSubmit={handleSaveCourseFee}
+              style={{
+                display: 'flex',
+                flexDirection: 'column',
+                flex: '1 1 auto',
+                minHeight: 0,
+                overflow: 'hidden',
+                margin: 0,
+              }}
+            >
+              <div
+                className="modal-body"
+                style={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: '1rem',
+                  padding: '1.25rem',
+                  overflowY: 'auto',
+                  flex: '1 1 auto',
+                  minHeight: 0,
+                  WebkitOverflowScrolling: 'touch',
+                }}
+              >
                 {feeSaveSuccess && (
                   <div
                     style={{
@@ -1972,7 +2005,19 @@ export function FeeManagement() {
                 </div>
               </div>
 
-              <div className="modal-footer" style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.75rem', marginTop: '1rem', borderTop: '1px solid var(--color-border)', paddingTop: '0.85rem' }}>
+              <div
+                className="modal-footer"
+                style={{
+                  display: 'flex',
+                  justifyContent: 'flex-end',
+                  gap: '0.75rem',
+                  padding: '0.85rem 1.25rem',
+                  borderTop: '1px solid var(--color-border)',
+                  flexShrink: 0,
+                  background: 'var(--color-bg-secondary)',
+                  marginTop: 'auto',
+                }}
+              >
                 <button
                   type="button"
                   className="btn btn-secondary"
