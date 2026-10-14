@@ -158,6 +158,8 @@ export interface FeePaymentReceipt {
   admission_number: string
   amount: number
   amount_paid?: number
+  course_id?: string
+  course_title?: string
   payment_method: 'Card' | 'Bank Transfer' | 'Paybill' | 'PayPal' | 'M-Pesa' | 'Cash Deposit'
   reference_code: string // e.g. "QWE8736421" or Bank slip #
   payment_reference?: string

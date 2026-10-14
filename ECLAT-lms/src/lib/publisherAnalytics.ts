@@ -80,21 +80,22 @@ export function getPublisherAnalytics(filterPublisher?: string): {
   }
 } {
   const publishedCourses = cloudServicesStore.getPublishedTutorCourses()
-  const storeUnits = schoolStore.getCourseUnits()
   const allStudents = schoolStore.getStudents()
   const allReceipts = schoolStore.getReceipts()
   const allPayouts = cloudServicesStore.getPayoutRecords()
+  const unitRegistrations = schoolStore.getUnitRegistrations()
 
-  // Build unified courses map (from cloud services store + school store units)
+  // Build unified courses map strictly from published tutor courses
   const unifiedCoursesMap = new Map<string, PublishedTutorCourseRecord>()
 
   publishedCourses.forEach((c) => {
     unifiedCoursesMap.set(c.id, c)
   })
 
-  // Also include any course units in schoolStore that have provider_type or custom teacher
+  // Also include any unit in schoolStore that was explicitly published as an external tutor/partner course
+  const storeUnits = schoolStore.getCourseUnits()
   storeUnits.forEach((u) => {
-    if (u.provider_type || u.teacher_name) {
+    if ((u as any).is_publisher_course && (u as any).publisher_email) {
       if (!unifiedCoursesMap.has(u.id)) {
         unifiedCoursesMap.set(u.id, {
           id: u.id,
@@ -102,7 +103,7 @@ export function getPublisherAnalytics(filterPublisher?: string): {
           tutorName: u.teacher_name || 'Faculty Lecturer',
           institutionName: u.institution_name,
           deliveryMode: u.delivery_mode || 'self_paced',
-          email: u.teacher_id ? `${u.teacher_id}@eclat.institute` : 'tutor@eclat.institute',
+          email: (u as any).publisher_email,
           phone: '',
           courseTitle: u.title,
           category: u.department || 'Vocational',
@@ -123,7 +124,7 @@ export function getPublisherAnalytics(filterPublisher?: string): {
 
   const courseList = Array.from(unifiedCoursesMap.values())
 
-  // Group by publisher
+  // Group strictly by publisher
   const publisherGroups = new Map<string, PublishedTutorCourseRecord[]>()
 
   courseList.forEach((c) => {
@@ -155,57 +156,85 @@ export function getPublisherAnalytics(filterPublisher?: string): {
       const cleanCourseTitle = normalizeStr(c.courseTitle)
       const cleanCourseId = normalizeStr(c.id)
 
-      // Find students matching this course
+      // Strict enrollment detection: ONLY students who actually enrolled in this exact course
       const enrolledStudents = allStudents.filter((s) => {
-        const inEnrolledArray = (s.enrolled_courses || []).some(
-          (cid) => normalizeStr(cid) === cleanCourseId || normalizeStr(cid) === cleanCourseTitle
+        // 1. Exact match in student's enrolled_courses list
+        const inEnrolledList = (s.enrolled_courses || []).some(
+          (cid) => normalizeStr(cid) === cleanCourseId || (cid.length > 5 && normalizeStr(cid) === cleanCourseTitle)
         )
-        const progStr = (s as any).program || s.class_name || ''
-        const inProgramName = normalizeStr(progStr).includes(cleanCourseTitle) || (cleanCourseTitle.length > 3 && cleanCourseTitle.includes(normalizeStr(progStr)))
-        return inEnrolledArray || (Boolean(progStr) && inProgramName)
+        if (inEnrolledList) return true
+
+        // 2. Exact match in official unit registration receipts
+        const inUnitRegs = unitRegistrations.some((reg) => {
+          const matchStudent =
+            normalizeStr(reg.student_id) === normalizeStr(s.id) ||
+            normalizeStr(reg.admission_number) === normalizeStr(s.admission_number)
+          if (!matchStudent) return false
+          const hasId = (reg.registered_unit_ids || []).some((uid) => normalizeStr(uid) === cleanCourseId)
+          const hasCode = (reg.registered_units || []).some(
+            (ru) => normalizeStr(ru.code) === cleanCourseId || normalizeStr(ru.name) === cleanCourseTitle
+          )
+          return hasId || hasCode
+        })
+        if (inUnitRegs) return true
+
+        // 3. Exact match in verified fee payment receipts for this course
+        const inReceipts = allReceipts.some((r) => {
+          const matchStudent =
+            normalizeStr(r.student_id) === normalizeStr(s.id) ||
+            normalizeStr(r.admission_number) === normalizeStr(s.admission_number)
+          if (!matchStudent) return false
+          const rAny = r as any
+          const matchCourse =
+            (Boolean(rAny.course_id) && normalizeStr(rAny.course_id) === cleanCourseId) ||
+            (Boolean(rAny.course_title) && normalizeStr(rAny.course_title) === cleanCourseTitle)
+          return matchCourse
+        })
+        return inReceipts
       })
 
-      // Calculate revenue and pending balances for this course
+      // Calculate actual revenue and pending balances strictly from receipts for this course
       let courseRevenue = 0
       let coursePending = 0
       const learners: EnrolledLearnerRecord[] = []
 
       enrolledStudents.forEach((std) => {
-        // Find receipts for this student
-        const studentReceipts = allReceipts.filter(
-          (r) =>
+        // Find receipts strictly tied to this course and this student
+        const studentReceipts = allReceipts.filter((r) => {
+          const matchStudent =
             normalizeStr(r.student_id) === normalizeStr(std.id) ||
             normalizeStr(r.admission_number) === normalizeStr(std.admission_number) ||
             normalizeStr(r.student_name) === normalizeStr(std.full_name)
+          if (!matchStudent) return false
+          const rAny = r as any
+          const matchCourse =
+            (Boolean(rAny.course_id) && normalizeStr(rAny.course_id) === cleanCourseId) ||
+            (Boolean(rAny.course_title) && normalizeStr(rAny.course_title) === cleanCourseTitle)
+          return matchCourse
+        })
+
+        const paidAmount = studentReceipts.reduce(
+          (sum, r) => sum + (Number(r.amount_paid) || Number(r.amount) || 0),
+          0
         )
-
-        let paidAmount = 0
-        if (studentReceipts.length > 0) {
-          paidAmount = studentReceipts.reduce((sum, r) => sum + (Number(r.amount_paid) || Number(r.amount) || 0), 0)
-        } else {
-          // If direct enrollment without receipt row
-          const totalFee = Number(std.term_fee_total) || c.suggestedPriceUsd
-          const bal = Number(std.fee_balance) || 0
-          paidAmount = Math.max(0, totalFee - bal)
-        }
-
-        const balAmount = Number(std.fee_balance) || 0
+        const courseFee = Number(c.suggestedPriceUsd) || 0
+        const pendingAmount = Math.max(0, courseFee - paidAmount)
 
         courseRevenue += paidAmount
-        coursePending += balAmount
+        coursePending += pendingAmount
 
         learners.push({
           id: std.id,
           name: std.full_name,
           admissionNumber: std.admission_number,
-          email: std.guardian?.email || `${normalizeStr(std.full_name)}@student.eclat.institute`,
+          email: std.guardian?.email || `${std.admission_number.toLowerCase()}@student.eclat.institute`,
           phone: std.guardian?.phone || std.parent_phone || '',
           enrolledCourseId: c.id,
           enrolledCourseTitle: c.courseTitle,
           amountPaidUsd: paidAmount,
-          pendingBalanceUsd: balAmount,
-          totalFeeUsd: paidAmount + balAmount || c.suggestedPriceUsd,
-          isCleared: balAmount === 0 || std.fee_cleared === true,
+          pendingBalanceUsd: pendingAmount,
+          totalFeeUsd: courseFee,
+          isCleared: pendingAmount === 0 && paidAmount > 0,
           enrolledAt: std.enrollment_date || std.admission_date || (std as any).created_at || new Date().toISOString(),
         })
       })

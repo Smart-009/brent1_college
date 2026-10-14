@@ -904,6 +904,8 @@ export function Landing() {
           admission_number: admNo,
           amount: amountToPay,
           amount_paid: amountToPay,
+          course_id: selectedCourseObj.id,
+          course_title: selectedCourseObj.title,
           payment_method: 'Card',
           reference_code: verifiedRef,
           payment_date: todayDate,
