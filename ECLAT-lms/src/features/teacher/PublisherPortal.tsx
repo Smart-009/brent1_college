@@ -466,12 +466,12 @@ export function PublisherPortal() {
               </p>
             </div>
             {/* Filter controls */}
-            <div className="flex gap-2 flex-wrap items-center">
+            <div className="flex gap-2 flex-wrap items-center" style={{ width: '100%', maxWidth: '640px' }}>
               <select
                 className="input"
                 value={selectedCourseFilter}
                 onChange={(e) => setSelectedCourseFilter(e.target.value)}
-                style={{ padding: '0.4rem 0.75rem', fontSize: '0.8rem', minWidth: '180px' }}
+                style={{ padding: '0.4rem 0.75rem', fontSize: '0.8rem', flex: '1 1 180px', minWidth: '160px', maxWidth: '100%' }}
               >
                 <option value="all">All Published Courses</option>
                 {currentPublisher?.courses.map((c) => (
@@ -485,7 +485,7 @@ export function PublisherPortal() {
                 className="input"
                 value={paymentStatusFilter}
                 onChange={(e) => setPaymentStatusFilter(e.target.value as any)}
-                style={{ padding: '0.4rem 0.75rem', fontSize: '0.8rem' }}
+                style={{ padding: '0.4rem 0.75rem', fontSize: '0.8rem', flex: '1 1 160px', minWidth: '150px', maxWidth: '100%' }}
               >
                 <option value="all">All Payment Statuses</option>
                 <option value="pending">⚠️ Pending Balances Only</option>
@@ -498,7 +498,7 @@ export function PublisherPortal() {
                 placeholder="Search student by name, admission #, phone..."
                 value={learnerSearchQuery}
                 onChange={(e) => setLearnerSearchQuery(e.target.value)}
-                style={{ padding: '0.4rem 0.75rem', fontSize: '0.8rem', minWidth: '220px' }}
+                style={{ padding: '0.4rem 0.75rem', fontSize: '0.8rem', flex: '1 1 200px', minWidth: '180px', maxWidth: '100%' }}
               />
             </div>
           </div>

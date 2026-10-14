@@ -354,8 +354,8 @@
   border-radius: var(--radius-xl);
   box-shadow: 0 25px 50px -12px rgba(15, 23, 42, 0.25), 0 0 0 1px #cbd5e1 !important;
   width: 100%;
-  margin: 0 auto;
-  max-height: calc(100vh - 6rem);
+  margin: auto;
+  max-height: calc(100vh - 5rem);
   display: flex;
   flex-direction: column;
   overflow: hidden;
@@ -388,7 +388,7 @@
   transition: background var(--transition-fast);
 }
 .modal-close:hover { background: var(--color-bg-alt); color: var(--color-text); }
-.modal-body { padding: 1.5rem; overflow-y: auto; flex: 1; min-height: 0; }
+.modal-body { padding: 1.5rem; overflow-y: auto; flex: 1; min-height: 0; -webkit-overflow-scrolling: touch; }
 .modal-footer {
   padding: 1rem 1.5rem;
   border-top: 1px solid var(--color-border);
@@ -400,16 +400,16 @@
 }
 
 /* Mobile Responsive Modals */
-@media (max-width: 640px) {
+@media (max-width: 768px) {
   .modal-overlay {
     padding: max(0.5rem, env(safe-area-inset-top, 0.5rem)) 0.5rem max(1.5rem, env(safe-area-inset-bottom, 1.5rem));
-    align-items: flex-start;
+    align-items: center;
   }
   .modal-box,
   .modal-content {
     max-height: calc(100vh - 1.5rem - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px));
     border-radius: var(--radius-lg);
-    margin: 0 auto;
+    margin: auto;
     width: 100%;
   }
   .modal-header {
@@ -430,7 +430,9 @@
     overflow-y: auto;
     -webkit-overflow-scrolling: touch;
   }
-  .modal-body div[style*="gridTemplateColumns"] {
+  .modal-body div[style*="gridTemplateColumns"],
+  .modal-content div[style*="gridTemplateColumns"],
+  .modal-box div[style*="gridTemplateColumns"] {
     grid-template-columns: 1fr !important;
   }
   .modal-footer {
@@ -883,8 +885,17 @@ tbody td { padding: var(--space-3) var(--space-4); color: var(--color-text-secon
   .landing-mobile-menu-toggle,
   .landing-mobile-actions,
   .landing-mobile-quick-strip,
-  .mobile-nav-container {
+  .mobile-nav-container,
+  .mobile-bottom-nav {
     display: none !important;
+  }
+
+  body {
+    padding-bottom: 0 !important;
+  }
+
+  .main-content {
+    padding-bottom: 0 !important;
   }
 }
 

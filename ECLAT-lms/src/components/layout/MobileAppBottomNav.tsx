@@ -36,7 +36,7 @@ export function MobileAppBottomNav() {
     return () => window.removeEventListener('focus', runSync)
   }, [isNative])
 
-  if (!isNative || currentPath.includes('/lesson/') || currentPath.startsWith('/student/lesson')) {
+  if (currentPath.includes('/lesson/') || currentPath.startsWith('/student/lesson')) {
     return null
   }
 

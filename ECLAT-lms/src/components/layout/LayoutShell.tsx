@@ -48,8 +48,7 @@ export function LayoutShell() {
           display: 'flex',
           flexDirection: 'column',
           minHeight: 'calc(100vh - 64px)',
-          paddingBottom: isVideoEnvironment ? '0' : (isDesktop ? '1rem' : isNative ? '4.5rem' : '5rem'),
-          
+          paddingBottom: isVideoEnvironment ? '0' : (isNative && !isDesktop ? '4.5rem' : '0'),
         }}
       >
         <div style={{ flex: 1 }}>

@@ -6070,7 +6070,7 @@ export function Landing() {
             </div>
 
             {/* Modal Actions (Sticky at bottom) */}
-            <div style={{ position: 'sticky', bottom: '-1.75rem', background: '#ffffff', padding: '1rem 0 0', marginTop: 'auto', borderTop: '1px solid #e2e8f0', display: 'flex', gap: '0.75rem', justifyContent: 'flex-end', flexWrap: 'wrap', zIndex: 10 }}>
+            <div style={{ position: 'sticky', bottom: 0, background: '#ffffff', padding: '1rem 0 0.5rem', marginTop: 'auto', borderTop: '1px solid #e2e8f0', display: 'flex', gap: '0.75rem', justifyContent: 'flex-end', flexWrap: 'wrap', zIndex: 10 }}>
               <a
                 href={getWhatsAppInquiryUrl(`Hello ${INSTITUTION_CONFIG.name}! I want to inquire about enrolling in ${selectedCourseForModal.title} online.`)}
                 target="_blank"
