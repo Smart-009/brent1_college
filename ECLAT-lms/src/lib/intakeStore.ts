@@ -1,4 +1,4 @@
-﻿// ============================================================
+// ============================================================
 // Eclat Institute — Intake Scheduler & Marketing Store
 // Handles Database Persistence (Supabase) + Offline LocalStorage Cache
 // ============================================================
@@ -7,7 +7,7 @@ import { supabase } from './supabase'
 import { INSTITUTION_CONFIG } from '@/config/institution'
 import type { IntakeSchedule } from '@/types/intake'
 
-const INTAKE_STORAGE_KEY = 'eclat_intake_schedules_store_v5'
+const INTAKE_STORAGE_KEY = 'eclat_intake_schedules_store_v6'
 
 export const INITIAL_INTAKE_SCHEDULES: IntakeSchedule[] = [
   {
@@ -15,9 +15,9 @@ export const INITIAL_INTAKE_SCHEDULES: IntakeSchedule[] = [
     title: 'November 2026 British International Curriculum Integrated Intake',
     academic_year: '2026/2027',
     term_session: 'November 2026 & May/June 2027 Series',
-    headline: 'Cambridge KE042 & Pearson EDX-98421 — All Subjects Taught Together',
+    headline: 'Cambridge & Pearson Edexcel Prep — All Subjects Taught Together',
     description:
-      'British curriculum admissions across Year 9 Checkpoint, Year 10 IGCSE, and Year 11 Exam Series. We do not teach separate, isolated subjects — all core subjects (Mathematics, Pure Sciences [Physics, Chemistry, Biology], English First Language, Computer Science, and Humanities) are taught together as a unified, cohesive cohort with comprehensive daily timetables, weekly past paper clinics, and official centre candidate registration.',
+      'British curriculum exam preparation across Year 9 Checkpoint, Year 10 IGCSE, and Year 11 Exam Series. We do not teach separate, isolated subjects — all core subjects (Mathematics, Pure Sciences [Physics, Chemistry, Biology], English First Language, Computer Science, and Humanities) are taught together as a unified, cohesive cohort with comprehensive daily timetables, weekly past paper clinics, and candidate placement at registered partner examination institutions.',
     poster_image_url:
       'https://images.unsplash.com/photo-1427504494785-3a9ca7044f45?auto=format&fit=crop&w=1200&q=80',
     application_deadline: '2026-10-28',
@@ -27,16 +27,15 @@ export const INITIAL_INTAKE_SCHEDULES: IntakeSchedule[] = [
     target_courses: [
       'Year 9 Lower Secondary Checkpoint — Complete Integrated Cohort (All Subjects Taught Together)',
       'Year 10 IGCSE Integrated Academic Cohort (All Core & Elective Subjects Taught Together)',
-      'Year 11 IGCSE Final Candidate Series — Intensive All-Subject Exam Cohort (KE042 & EDX-98421)',
-      'Cambridge ICE & Pearson Edexcel Multi-Subject Diploma Track (Dual 9-1 & A*-G)',
+      'Year 11 IGCSE Final Candidate Series — Intensive All-Subject Exam Prep & Partner Placement',
+      'Cambridge ICE & Pearson Edexcel Multi-Subject Preparation Track (Dual 9-1 & A*-G)',
     ],
     early_bird_discount: '🇬🇧 Full All-Subject Integrated Curriculum & Official Cambridge/Edexcel Past-Paper Kits',
     installment_plan: 'Flexible Termly & Monthly Installments ($ USD & KES Paybill)',
     study_modes: [
       '100% Online (Live Interactive & Recorded Cohorts)',
       'All Subjects Taught Together (Unified Timetable)',
-      'Cambridge Centre KE042 Exam Candidate Support',
-      'Pearson Edexcel Centre EDX-98421 Support',
+      'Cambridge & Edexcel Exam Prep + Partner Placement',
       'Weekend Executive Cohort & Evening Labs',
     ],
     contact_phone: INSTITUTION_CONFIG.contact.phone,
@@ -52,9 +51,9 @@ export const INITIAL_INTAKE_SCHEDULES: IntakeSchedule[] = [
     title: 'Full-Time British Curriculum Online Home Schooling (Years 7–11)',
     academic_year: '2026/2027 Academic Year',
     term_session: 'Full-Time Home Schooling Cohort',
-    headline: 'Cambridge KE042 & Pearson EDX-98421 — Complete Home Schooling from Home',
+    headline: 'Cambridge & Pearson Edexcel Track — Complete Home Schooling from Home',
     description:
-      'Complete, structured British curriculum schooling for home schoolers worldwide. Students enrol into cohesive grade cohorts (Years 7, 8, 9 Checkpoint and Years 10 & 11 IGCSE) where all subjects (Mathematics, Pure Sciences, English, Computer Science, and Humanities) are taught together under a full daily school timetable. Includes certified teachers, virtual science labs, termly report cards, parent-teacher reviews, and official candidate exam center placement.',
+      'Complete, structured British curriculum schooling for home schoolers worldwide. Students enrol into cohesive grade cohorts (Years 7, 8, 9 Checkpoint and Years 10 & 11 IGCSE) where all subjects (Mathematics, Pure Sciences, English, Computer Science, and Humanities) are taught together under a full daily school timetable. Includes experienced teachers, virtual science labs, termly report cards, parent-teacher reviews, and candidate placement at registered partner examination institutions.',
     poster_image_url:
       'https://images.unsplash.com/photo-1503676260728-1c00da094a0b?auto=format&fit=crop&w=1200&q=80',
     application_deadline: '2026-10-25',
@@ -65,7 +64,7 @@ export const INITIAL_INTAKE_SCHEDULES: IntakeSchedule[] = [
       'Year 7 & 8 Cambridge Lower Secondary Full Home Schooling Package',
       'Year 9 Checkpoint British Home Schooling Cohort (All Subjects Taught Together)',
       'Year 10 IGCSE Complete Home Schooling Program (All Subjects Taught Together)',
-      'Year 11 IGCSE Final Candidate Home Schooling & Exam Series Sitting',
+      'Year 11 IGCSE Final Candidate Home Schooling & Partner Exam Placement',
     ],
     early_bird_discount: '🏡 15% Family & Full-Year Home Schooling Scholarship',
     installment_plan: 'Convenient 3-Term Split or 10 Monthly Installments',
@@ -74,7 +73,7 @@ export const INITIAL_INTAKE_SCHEDULES: IntakeSchedule[] = [
       'All Subjects Taught Together (Cohesive Cohort)',
       'Daily Live Interactive Morning & Midday Schedules',
       'Termly Official Report Cards & Parent Portal',
-      'Registered Exam Centre (KE042 & EDX-98421)',
+      'Partner Exam Centre Placement',
     ],
     contact_phone: INSTITUTION_CONFIG.contact.phone,
     contact_email: INSTITUTION_CONFIG.contact.admissionsEmail,
@@ -91,7 +90,7 @@ export const INITIAL_INTAKE_SCHEDULES: IntakeSchedule[] = [
     term_session: 'Evening, Weekend & Holiday Tuition Batches',
     headline: 'Targeted Subject Mastery & Past Paper Clinics — Cambridge & Edexcel Candidates',
     description:
-      'Specialized private 1-on-1 and small-group interactive tuition for students requiring intensive subject coaching, syllabus catch-up, and exam technique mastery. Taught by senior Cambridge and Edexcel examiners across Extended Mathematics (0580 / 4MA1), Physics (0625 / 4PH1), Chemistry (0620), Biology (0610), Computer Science (0478), and English Language. Flexible evening and weekend timeslots.',
+      'Specialized private 1-on-1 and small-group interactive tuition for students requiring intensive subject coaching, syllabus catch-up, and exam technique mastery across Extended Mathematics (0580 / 4MA1), Physics (0625 / 4PH1), Chemistry (0620), Biology (0610), Computer Science (0478), and English Language. Flexible evening and weekend timeslots.',
     poster_image_url:
       'https://images.unsplash.com/photo-1434030216411-0b793f4b4173?auto=format&fit=crop&w=1200&q=80',
     application_deadline: 'Rolling Admissions (Weekly Batches)',
@@ -126,9 +125,9 @@ export const INITIAL_INTAKE_SCHEDULES: IntakeSchedule[] = [
     title: 'January 2027 British Curriculum (Years 9, 10 & 11) Full Academic Year',
     academic_year: '2027',
     term_session: 'Term 1 / Annual British Academic Session',
-    headline: 'Cambridge KE042 & Edexcel EDX-98421 — All Subjects Taught Together in Unified Cohorts',
+    headline: 'Cambridge & Edexcel IGCSE Prep — All Subjects Taught Together in Unified Cohorts',
     description:
-      'Premier full academic year enrolment for British curriculum students worldwide. We teach the complete curriculum together as a cohesive cohort for Year 9 (Foundation), Year 10 (IGCSE Year 1), and Year 11 (Candidate Series). All subjects — Mathematics, English Language, Physics, Chemistry, Biology, Computer Science, and Business — are taught together under one unified programme with daily live interactive seminars, virtual STEM labs, and personalized mentor evaluations.',
+      'Premier full academic year enrolment for British curriculum students worldwide. We teach the complete curriculum together as a cohesive cohort for Year 9 (Foundation), Year 10 (IGCSE Year 1), and Year 11 (Candidate Series). All subjects — Mathematics, English Language, Physics, Chemistry, Biology, Computer Science, and Business — are taught together under one unified programme with daily live interactive seminars, virtual STEM labs, and placement at registered partner examination institutions.',
     poster_image_url:
       'https://images.unsplash.com/photo-1523240795612-9a054b0db644?auto=format&fit=crop&w=1200&q=80',
     application_deadline: '2027-01-15',
@@ -138,7 +137,7 @@ export const INITIAL_INTAKE_SCHEDULES: IntakeSchedule[] = [
     target_courses: [
       'Year 9 British Lower Secondary Full Academic Package (All Subjects Taught Together)',
       'Year 10 Cambridge & Edexcel IGCSE Full Academic Package (All Subjects Taught Together)',
-      'Year 11 IGCSE Final Examination Candidate Cohort (All Subjects Taught Together & Center Exam Sitting)',
+      'Year 11 IGCSE Final Examination Candidate Cohort (All Subjects Taught Together & Partner Exam Placement)',
       'Integrated British Curriculum Cohort — Daily Live Seminars & Virtual Practical Labs',
     ],
     early_bird_discount: '⭐ 15% Academic Scholarship for Full-Year Integrated Cohort Tuition (Early Registration)',
@@ -202,7 +201,7 @@ export const INITIAL_INTAKE_SCHEDULES: IntakeSchedule[] = [
     term_session: 'Term 1 / First Quarter 2027',
     headline: 'Flagship New Year Admissions — Modular Diplomas, Tech Cohorts & Language Immersions',
     description:
-      'Our comprehensive annual intake enrolling students worldwide across 7 specialized schools: Tech & Engineering, Data Science & Research, Cambridge International (KE042), Pearson Edexcel (EDX-98421), Business & Accounting, Languages & Communication, and Creative Arts. 100% online live interactive classes with mentor reviews.',
+      'Our comprehensive annual intake enrolling students worldwide across 7 specialized tracks: Tech & Engineering, Data Science & Research, Cambridge IGCSE Prep, Pearson Edexcel IGCSE Prep, Business & Accounting, Languages & Communication, and Creative Arts. 100% online live interactive classes with mentor reviews.',
     poster_image_url:
       'https://images.unsplash.com/photo-1531482615713-2afd69097998?auto=format&fit=crop&w=1200&q=80',
     application_deadline: '2027-01-15',

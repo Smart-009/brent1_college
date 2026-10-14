@@ -10,6 +10,7 @@ import { LessonRow } from '@/components/shared/LessonRow'
 import { ProgressBar } from '@/components/ui/ProgressBar'
 import { Button } from '@/components/ui/Button'
 import { Spinner } from '@/components/ui/Spinner'
+import { CourseCommentsSection } from '@/components/shared/CourseCommentsSection'
 import { INSTITUTION_CONFIG } from '@/config/institution'
 import type { Course, Lesson, Enrollment } from '@/lib/database.types'
 
@@ -477,6 +478,12 @@ export function CourseDetail() {
           </div>
         )}
       </div>
+
+      {/* Interactive Students Comments & Discussion Section */}
+      <CourseCommentsSection
+        courseId={courseId || 'course-general'}
+        courseTitle={course?.title || 'Course Discussion'}
+      />
     </PageWrapper>
   )
 }

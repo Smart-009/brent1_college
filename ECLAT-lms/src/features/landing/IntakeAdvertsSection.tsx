@@ -269,7 +269,7 @@ export function IntakeAdvertsSection() {
                 Upcoming Intakes Enrolling Now:
               </strong>{' '}
               <span style={{ fontSize: isMobile ? '0.78rem' : '0.86rem', color: '#334155' }}>
-                <strong>Nov 02, 2026</strong> (Cambridge KE042 &amp; Pearson Edexcel Years 9–11) • <strong>Oct 15, 2026</strong> (Career Fast-Track) • <strong>Jan 20, 2027</strong> (Global New Year)
+                <strong>Nov 02, 2026</strong> (Cambridge &amp; Pearson Edexcel Prep Years 9–11) • <strong>Oct 15, 2026</strong> (Career Fast-Track) • <strong>Jan 20, 2027</strong> (Global New Year)
               </span>
             </div>
           </div>
@@ -346,7 +346,7 @@ export function IntakeAdvertsSection() {
               lineHeight: 1.6,
             }}
           >
-            100% Online live interactive classes across 6 flexible daily shifts (Early Morning to Night) + Weekend Executive Cohorts. Registered with Cambridge International (Center KE042) and Pearson Edexcel (Center EDX-98421).
+            100% Online live interactive classes across 6 flexible daily shifts (Early Morning to Night) + Weekend Executive Cohorts. Comprehensive IGCSE preparation for Cambridge International and Pearson Edexcel with candidate placement at registered partner examination institutions.
           </p>
 
           {/* Interactive Cohort Filter Tabs */}
@@ -499,7 +499,7 @@ export function IntakeAdvertsSection() {
                   Full-Time Online Home Schooling Academy
                 </h3>
                 <p style={{ margin: 0, fontSize: '0.84rem', color: '#1f2937', lineHeight: 1.5 }}>
-                  Give your child a world-class British education from home. Our full-time online home schooling programme features <strong style={{ color: '#047857' }}>all subjects taught together in cohesive year cohorts</strong>, live daily timetables, weekly assignments, termly report cards, and guaranteed candidate registration at our Cambridge (KE042) &amp; Edexcel (EDX-98421) exam centres.
+                  Give your child a world-class British education from home. Our full-time online home schooling programme features <strong style={{ color: '#047857' }}>all subjects taught together in cohesive year cohorts</strong>, live daily timetables, weekly assignments, termly report cards, and candidate placement at registered partner Cambridge &amp; Edexcel examination institutions.
                 </p>
               </div>
             </div>
@@ -514,7 +514,7 @@ export function IntakeAdvertsSection() {
                 ✓ Termly Report Cards
               </span>
               <span style={{ background: '#ffffff', border: '1px solid #a7f3d0', color: '#047857', fontSize: '0.74rem', fontWeight: 800, padding: '4px 10px', borderRadius: '999px' }}>
-                ✓ Official Exam Center Placement
+                ✓ Partner Exam Centre Placement
               </span>
             </div>
           </div>
@@ -549,7 +549,7 @@ export function IntakeAdvertsSection() {
                   IGCSE &amp; Checkpoint Private &amp; Evening Tuition
                 </h3>
                 <p style={{ margin: 0, fontSize: '0.84rem', color: '#334155', lineHeight: 1.5 }}>
-                  Accelerate your academic performance with <strong style={{ color: '#6d28d9' }}>personalized 1-on-1 and small-group tuition</strong> led by senior Cambridge &amp; Edexcel examiners. Targeted past paper drills, mark scheme breakdowns, Extended Mathematics (0580/4MA1), and Pure Science clinics designed to turn B/C grades into solid A/A* distinctions.
+                  Accelerate your academic performance with <strong style={{ color: '#6d28d9' }}>personalized 1-on-1 and small-group tuition</strong> led by experienced Cambridge &amp; Edexcel educators. Targeted past paper drills, mark scheme breakdowns, Extended Mathematics (0580/4MA1), and Pure Science clinics designed to turn B/C grades into solid A/A* distinctions.
                 </p>
               </div>
             </div>
@@ -564,7 +564,7 @@ export function IntakeAdvertsSection() {
                 ✓ Evening &amp; Weekend Shifts
               </span>
               <span style={{ background: '#ffffff', border: '1px solid #ddd6fe', color: '#6d28d9', fontSize: '0.74rem', fontWeight: 800, padding: '4px 10px', borderRadius: '999px' }}>
-                ✓ Senior Examiner Mentors
+                ✓ Dedicated IGCSE Mentors
               </span>
             </div>
           </div>
@@ -593,13 +593,13 @@ export function IntakeAdvertsSection() {
               </div>
               <div style={{ minWidth: 0 }}>
                 <div style={{ fontSize: '0.74rem', fontWeight: 900, color: '#0369a1', textTransform: 'uppercase', letterSpacing: '0.06em' }}>
-                  Candidate Exam Centres KE042 &amp; Pearson EDX-98421 &bull; Integrated Cohorts
+                  Cambridge &amp; Edexcel Exam Prep &bull; Partner Exam Centre Placement
                 </div>
                 <h3 style={{ margin: '2px 0 4px', fontSize: isMobile ? '1.15rem' : '1.35rem', fontWeight: 900, color: '#0f172a' }}>
                   British International Curriculum &amp; IGCSE Hub (Years 9, 10 &amp; 11)
                 </h3>
                 <p style={{ margin: 0, fontSize: '0.84rem', color: '#334155', lineHeight: 1.5 }}>
-                  <strong style={{ color: '#0369a1' }}>We do not teach separate subjects in IGCSE — we teach all subjects together.</strong> Students enrol into cohesive cohorts (Year 9 Checkpoint, Year 10 IGCSE, or Year 11 Exam Series) where Mathematics, Pure Sciences (Physics, Chemistry, Biology), English, Computer Science, and Humanities are seamlessly taught together under a unified daily timetable with guaranteed candidate examination registration and placement at Cambridge (KE042) &amp; Edexcel (EDX-98421) exam centres.
+                  <strong style={{ color: '#0369a1' }}>We do not teach separate subjects in IGCSE — we teach all subjects together.</strong> Students enrol into cohesive cohorts (Year 9 Checkpoint, Year 10 IGCSE, or Year 11 Exam Series) where Mathematics, Pure Sciences (Physics, Chemistry, Biology), English, Computer Science, and Humanities are seamlessly taught together under a unified daily timetable, and we place prepared candidates in registered partner Cambridge &amp; Edexcel examination institutions for their official exams.
                 </p>
               </div>
             </div>
@@ -614,7 +614,7 @@ export function IntakeAdvertsSection() {
                 ✓ Year 10 IGCSE Complete Cohort
               </span>
               <span style={{ background: '#ffffff', border: '1px solid #bae6fd', color: '#0369a1', fontSize: '0.74rem', fontWeight: 800, padding: '4px 10px', borderRadius: '999px' }}>
-                ✓ Year 11 Candidate Exam Series
+                ✓ Partner Exam Centre Placement
               </span>
             </div>
           </div>
@@ -751,7 +751,7 @@ export function IntakeAdvertsSection() {
                           letterSpacing: '0.04em',
                         }}
                       >
-                        🇬🇧 Cambridge KE042 &amp; Pearson EDX
+                        🇬🇧 Cambridge &amp; Edexcel Prep
                       </span>
                     )}
                   </div>

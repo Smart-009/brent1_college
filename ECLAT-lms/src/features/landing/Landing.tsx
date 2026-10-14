@@ -244,7 +244,7 @@ const HERO_PROMO_SLIDES: PromoSlide[] = [
     badgeColor: '#4ade80',
     headline: 'Online Home Schooling (Years 7-11)',
     highlight: 'Integrated Cohorts • Cambridge & Edexcel Dual Track',
-    description: 'Full-time British Curriculum schooling from home. Live interactive classes covering all core subjects together (Maths, Sciences, English, Humanities, Computer Science), weekly assessments, termly report cards, and physical exam center placement (KE042 / EDX-98421).',
+    description: 'Full-time British Curriculum schooling from home. Live interactive classes covering all core subjects together (Maths, Sciences, English, Humanities, Computer Science), weekly assessments, termly report cards, and exam placement at registered partner examination institutions.',
     gradient: 'radial-gradient(ellipse at 80% 20%, rgba(34, 197, 94, 0.35) 0%, rgba(15, 23, 42, 0.95) 70%), linear-gradient(135deg, #052e16 0%, #166534 50%, #0f172a 100%)',
     accentColor: '#4ade80',
     icon: 'homeschooling',
@@ -252,7 +252,7 @@ const HERO_PROMO_SLIDES: PromoSlide[] = [
     metricLabel: 'Full-Time Structured Timetable',
     category: 'Home Schooling',
     primaryCtaText: 'Explore Home Schooling Programs',
-    features: ['Cohesive Cohorts (All Subjects)', 'Cambridge & Edexcel Dual Track', 'Termly Progress & Report Cards', 'Physical Exam Center Placement'],
+    features: ['Cohesive Cohorts (All Subjects)', 'Cambridge & Edexcel Dual Track', 'Termly Progress & Report Cards', 'Partner Exam Centre Placement'],
   },
   {
     id: 'private-tuition',
@@ -273,37 +273,37 @@ const HERO_PROMO_SLIDES: PromoSlide[] = [
   },
   {
     id: 'cambridge-igcse',
-    badge: 'CAMBRIDGE ASSESSMENT INTERNATIONAL (CENTER KE042)',
+    badge: 'CAMBRIDGE IGCSE EXAM PREPARATION & PLACEMENT',
     badgeBg: 'rgba(2, 132, 199, 0.25)',
     badgeColor: '#38bdf8',
     headline: 'Cambridge IGCSE & Lower Secondary (Years 9-11)',
-    highlight: 'Registered Exam Venue (KE042) • Dual 9-1 & A*-G',
-    description: 'Master Cambridge IGCSE Mathematics (0580), Physics (0625), Chemistry (0620), Computer Science (0478), English (0500), and Business Studies (0450). Live international exam prep and Cambridge ICE Diploma.',
+    highlight: 'Exam Prep & Partner Centre Placement • Dual 9-1 & A*-G',
+    description: 'Master Cambridge IGCSE Mathematics (0580), Physics (0625), Chemistry (0620), Computer Science (0478), English (0500), and Business Studies (0450). Live international exam preparation and placement at registered partner exam institutions.',
     gradient: 'radial-gradient(ellipse at 80% 20%, rgba(2, 132, 199, 0.35) 0%, rgba(15, 23, 42, 0.95) 70%), linear-gradient(135deg, #022c22 0%, #0369a1 50%, #0f172a 100%)',
     accentColor: '#38bdf8',
     icon: 'cambridge-igcse',
-    metricNumber: 'KE042',
-    metricLabel: 'Cambridge Registered Centre',
+    metricNumber: 'Years 9-11',
+    metricLabel: 'Exam Prep & Partner Placement',
     category: 'Cambridge International (Years 9-11)',
     primaryCtaText: 'Explore Cambridge IGCSE Courses',
-    features: ['Dual 9-1 & A*-G Scale', 'Cambridge ICE Group Diploma', 'Weekly Past Paper Labs', 'Center KE042 Statements'],
+    features: ['Dual 9-1 & A*-G Scale', 'Cambridge ICE Group Prep', 'Weekly Past Paper Labs', 'Partner Exam Centre Placement'],
   },
   {
     id: 'edexcel-igcse',
-    badge: 'PEARSON EDEXCEL INTERNATIONAL (CENTER EDX-98421)',
+    badge: 'PEARSON EDEXCEL IGCSE PREPARATION & PLACEMENT',
     badgeBg: 'rgba(239, 68, 68, 0.25)',
     badgeColor: '#f87171',
     headline: 'Pearson Edexcel International GCSE (Years 9-11)',
     highlight: 'Linear 9-1 Rigor • Mathematics A 4MA1 & Physics 4PH1',
-    description: 'Specialized Pearson Edexcel International GCSE (9-1) curriculum: Mathematics A (4MA1 Higher Tier), Physics (4PH1), Computer Science (4CP0), Business (4BS1), and iLowerSecondary Year 9 foundation.',
+    description: 'Specialized Pearson Edexcel International GCSE (9-1) preparation: Mathematics A (4MA1 Higher Tier), Physics (4PH1), Computer Science (4CP0), Business (4BS1), and iLowerSecondary Year 9 foundation, with placement at registered partner exam centres.',
     gradient: 'radial-gradient(ellipse at 80% 20%, rgba(239, 68, 68, 0.35) 0%, rgba(15, 23, 42, 0.95) 70%), linear-gradient(135deg, #450a0a 0%, #991b1b 50%, #0f172a 100%)',
     accentColor: '#f87171',
     icon: 'edexcel-igcse',
-    metricNumber: 'EDX-98421',
-    metricLabel: 'Pearson Edexcel Centre',
+    metricNumber: '9-1 Scale',
+    metricLabel: 'Exam Prep & Partner Placement',
     category: 'Pearson Edexcel International (Years 9-11)',
     primaryCtaText: 'Explore Pearson Edexcel Courses',
-    features: ['Linear Numerical 9-1 Scale', '4MA1 Higher Tier Papers 1H & 2H', 'Onscreen Python Coding (4CP0)', 'Edexcel High Achiever Award'],
+    features: ['Linear Numerical 9-1 Scale', '4MA1 Higher Tier Papers 1H & 2H', 'Onscreen Python Coding (4CP0)', 'Partner Exam Centre Placement'],
   },
   {
     id: 'data-research',
@@ -748,6 +748,8 @@ export function Landing() {
     referenceCode: string
     date: string
     isPendingVerification?: boolean
+    studentPassword?: string
+    studentEmail?: string
   } | null>(null)
 
   const filteredCourses = useMemo(() => {
@@ -961,6 +963,8 @@ export function Landing() {
         setGeneratedAdmission({
           studentName: inquiryForm.name,
           admissionNumber: admNo,
+          studentPassword: inquiryForm.phone || admNo || `Student@${new Date().getFullYear()}`,
+          studentEmail: inquiryForm.email,
           receiptNumber: recNo,
           courseTitle: selectedCourseObj.title,
           courseId: selectedCourseObj.id,
@@ -1364,7 +1368,7 @@ export function Landing() {
                         </div>
                         <div>
                           <div style={{ fontSize: '0.86rem', fontWeight: 800, color: '#92400e' }}>British Curriculum & IGCSE</div>
-                          <div style={{ fontSize: '0.72rem', color: '#64748b' }}>Cambridge KE042 & Pearson Edexcel</div>
+                          <div style={{ fontSize: '0.72rem', color: '#64748b' }}>Cambridge & Edexcel Prep + Exam Placement</div>
                         </div>
                       </Link>
 
@@ -2659,10 +2663,10 @@ export function Landing() {
               <CheckCircleIcon size={14} color="#38bdf8" /> 100% Live Virtual Labs
             </span>
             <span style={{ display: 'inline-flex', alignItems: 'center', gap: '5px' }}>
-              <CheckCircleIcon size={14} color="#38bdf8" /> Cambridge CAIE (KE042)
+              <CheckCircleIcon size={14} color="#38bdf8" /> Cambridge &amp; Edexcel IGCSE Prep
             </span>
             <span style={{ display: 'inline-flex', alignItems: 'center', gap: '5px' }}>
-              <CheckCircleIcon size={14} color="#38bdf8" /> Pearson Edexcel (EDX-98421)
+              <CheckCircleIcon size={14} color="#38bdf8" /> Partner Exam Centre Placement
             </span>
             <span style={{ display: 'inline-flex', alignItems: 'center', gap: '5px' }}>
               <CheckCircleIcon size={14} color="#38bdf8" /> 40+ Countries Represented
@@ -2676,22 +2680,22 @@ export function Landing() {
         <div style={{ maxWidth: '1240px', margin: '0 auto' }}>
           <div style={{ textAlign: 'center', marginBottom: isMobile ? '1.75rem' : '2.5rem' }}>
             <span style={{ fontSize: '0.8rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.08em', color: '#1e3a8a' }}>
-              Academic Faculties & Professional Services
+              Academic Faculties &amp; Professional Services
             </span>
             <h2 style={{ fontSize: isMobile ? '1.6rem' : '2.2rem', fontWeight: 900, color: '#0f172a', margin: '0.4rem 0 0.5rem', letterSpacing: '-0.02em' }}>
               Structured Excellence Across Four Faculties
             </h2>
             <p style={{ fontSize: '0.95rem', color: '#64748b', maxWidth: '640px', margin: '0 auto' }}>
-              Direct Cambridge & Pearson accreditation, Silicon Valley tech curriculum, and corporate-grade industry services.
+              Cambridge &amp; Pearson IGCSE exam preparation with registered partner centre placement, practical tech curriculum, and corporate-grade industry services.
             </p>
           </div>
 
           <div style={{ display: 'grid', gridTemplateColumns: isMobile ? 'minmax(0, 1fr)' : 'repeat(auto-fit, minmax(min(100%, 260px), 1fr))', gap: '1.25rem' }}>
             {[
               {
-                title: 'Cambridge & Edexcel International',
-                badge: 'Years 7–11 • IGCSE / Lower Sec',
-                desc: 'Official exam-board mapped curriculum with certified educators and live personalized clinics.',
+                title: 'Cambridge & Edexcel IGCSE Prep',
+                badge: 'Years 7–11 • Prep & Exam Placement',
+                desc: 'Comprehensive IGCSE curriculum preparation with experienced educators and candidate placement in registered partner exam institutions.',
                 link: '#courses',
                 color: '#1e3a8a',
                 bg: '#eff6ff',
@@ -5409,6 +5413,39 @@ export function Landing() {
                       <div style={{ color: generatedAdmission.balanceRemaining === 0 ? '#16a34a' : '#ea580c', fontWeight: 800 }}>
                         {generatedAdmission.balanceRemaining === 0 ? 'STATUS: FULLY CLEARED' : 'STATUS: 1ST INSTALLMENT CLEARED'}
                       </div>
+                    </div>
+                  </div>
+
+                  {/* Student Portal Credentials & 24/7 Access Notice */}
+                  <div style={{ background: '#f8fafc', border: '1.5px solid #0284c7', borderRadius: '10px', padding: '1rem', marginBottom: '1rem' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '0.4rem' }}>
+                      <LockIcon size={17} color="#0284c7" />
+                      <span style={{ fontSize: '0.86rem', fontWeight: 800, color: '#0369a1', textTransform: 'uppercase', letterSpacing: '0.03em' }}>
+                        Your Permanent Student Portal Login Credentials
+                      </span>
+                    </div>
+                    <p style={{ margin: '0 0 0.75rem', fontSize: '0.8rem', color: '#475569', lineHeight: 1.5 }}>
+                      You have <strong>unlimited 24/7 lifetime access</strong> to log in anytime, watch lesson videos at your own pace, complete coursework, and earn your verified certificate.
+                    </p>
+                    <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : 'repeat(3, 1fr)', gap: '0.65rem', background: '#ffffff', padding: '0.75rem', borderRadius: '8px', border: '1px solid #e2e8f0' }}>
+                      <div>
+                        <div style={{ fontSize: '0.7rem', color: '#64748b', fontWeight: 700 }}>LOGIN PORTAL:</div>
+                        <div style={{ fontSize: '0.82rem', fontWeight: 800, color: '#0f172a' }}>eclat.institute/login</div>
+                      </div>
+                      <div>
+                        <div style={{ fontSize: '0.7rem', color: '#64748b', fontWeight: 700 }}>ADMISSION / USERNAME:</div>
+                        <div style={{ fontSize: '0.82rem', fontWeight: 800, color: '#2563eb' }}>{generatedAdmission.admissionNumber}</div>
+                      </div>
+                      <div>
+                        <div style={{ fontSize: '0.7rem', color: '#64748b', fontWeight: 700 }}>PORTAL PASSWORD:</div>
+                        <div style={{ fontSize: '0.82rem', fontWeight: 800, color: '#059669', fontFamily: 'monospace' }}>
+                          {generatedAdmission.studentPassword || inquiryForm.phone || generatedAdmission.admissionNumber}
+                        </div>
+                      </div>
+                    </div>
+                    <div style={{ marginTop: '0.65rem', fontSize: '0.72rem', color: '#64748b', display: 'flex', alignItems: 'center', gap: '5px' }}>
+                      <CheckCircleIcon size={13} color="#16a34a" />
+                      <span>Credentials saved automatically. You can also log in anytime using your registered email: <strong>{generatedAdmission.studentEmail || inquiryForm.email}</strong></span>
                     </div>
                   </div>
 

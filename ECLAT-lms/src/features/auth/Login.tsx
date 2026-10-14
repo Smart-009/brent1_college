@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useNavigate, useSearchParams, Link } from 'react-router-dom'
 import { useAuthContext } from '@/features/auth/AuthContext'
 import { MobileAppBottomNav } from '@/components/layout/MobileAppBottomNav'
@@ -82,6 +82,32 @@ export function Login() {
   const [showPassword, setShowPassword] = useState(false)
   const [failedAttempts, setFailedAttempts] = useState(0)
   const [lockoutSeconds, setLockoutSeconds] = useState(0)
+
+  // Secret 3-Click Logo Trigger for Admin Portal
+  const [logoClicks, setLogoClicks] = useState(0)
+  const lastLogoClickTime = useRef<number>(0)
+
+  const handleLogoTripleClick = () => {
+    const now = Date.now()
+    const diff = now - lastLogoClickTime.current
+    lastLogoClickTime.current = now
+
+    const nextCount = diff < 1500 ? logoClicks + 1 : 1
+    if (nextCount >= 3) {
+      setLogoClicks(0)
+      const nextMode = !isStaffMode
+      setIsStaffMode(nextMode)
+      setSelectedRole(nextMode ? 'admin' : 'student')
+      setSelectedPortalKey(nextMode ? 'admin' : 'student')
+      setError(null)
+      if (nextMode) {
+        setRegSuccessMsg('🔐 Administration Terminal Unlocked (Secret Mode Active)')
+        setTimeout(() => setRegSuccessMsg(null), 4000)
+      }
+    } else {
+      setLogoClicks(nextCount)
+    }
+  }
 
   useEffect(() => {
     if (lockoutSeconds > 0) {
@@ -401,12 +427,16 @@ export function Login() {
               <img
                 src="/logo.png?v=2"
                 alt="Eclat Institute Logo"
+                onClick={handleLogoTripleClick}
+                title="Eclat Institute"
                 style={{
                   width: '52px',
                   height: '52px',
                   borderRadius: '50%',
                   border: '2px solid #1e3a8a',
                   boxShadow: '0 2px 8px rgba(30, 58, 138, 0.15)',
+                  cursor: 'pointer',
+                  userSelect: 'none',
                 }}
               />
               <div>
@@ -518,41 +548,34 @@ export function Login() {
               ← Back to Home
             </Link>
 
-            {/* Discrete Switcher for Staff vs Student */}
-            <button
-              type="button"
-              onClick={() => {
-                const nextMode = !isStaffMode
-                setIsStaffMode(nextMode)
-                setSelectedRole(nextMode ? 'admin' : 'student')
-                setSelectedPortalKey(nextMode ? 'admin' : 'student')
-                setError(null)
-              }}
-              style={{
-                background: 'none',
-                border: 'none',
-                color: '#64748b',
-                fontSize: '0.75rem',
-                cursor: 'pointer',
-                fontWeight: 600,
-                textDecoration: 'underline',
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '4px',
-              }}
-            >
-              {isStaffMode ? (
-                <>
-                  <GraduationCapIcon size={14} color="#64748b" />
-                  <span>Trainee & Student Portal</span>
-                </>
-              ) : (
-                <>
-                  <LockIcon size={14} color="#64748b" />
-                  <span>Staff Access</span>
-                </>
-              )}
-            </button>
+            {/* Discrete Switcher: Only visible when staff mode was unlocked via triple-click */}
+            {isStaffMode && (
+              <button
+                type="button"
+                onClick={() => {
+                  setIsStaffMode(false)
+                  setSelectedRole('student')
+                  setSelectedPortalKey('student')
+                  setError(null)
+                }}
+                style={{
+                  background: '#fee2e2',
+                  border: '1px solid #fecaca',
+                  color: '#991b1b',
+                  fontSize: '0.74rem',
+                  padding: '3px 8px',
+                  borderRadius: '6px',
+                  cursor: 'pointer',
+                  fontWeight: 700,
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '4px',
+                }}
+              >
+                <LockIcon size={13} color="#991b1b" />
+                <span>Exit Staff Terminal</span>
+              </button>
+            )}
           </div>
         </div>
 
@@ -707,7 +730,7 @@ export function Login() {
                       onChange={(e) => setAdmissionNumber(e.target.value)}
                       placeholder={
                         selectedPortalKey === 'igcse'
-                          ? 'Enter candidate number (e.g. KE042/0001/2026) or name'
+                          ? 'Enter candidate number or student name'
                           : selectedRole === 'student'
                           ? 'Enter admission number or full name'
                           : 'Enter username or staff email'
@@ -849,7 +872,7 @@ export function Login() {
                         }}
                       >
                         <span>🏛️</span>
-                        <span>Open Cambridge & Edexcel Examination Center Portal →</span>
+                        <span>Open Cambridge & Edexcel IGCSE Prep Portal →</span>
                       </Link>
                     </div>
                   )}

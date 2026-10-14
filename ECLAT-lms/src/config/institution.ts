@@ -122,8 +122,8 @@ export const INSTITUTION_CONFIG: InstitutionConfig = {
   },
 
   igcse: {
-    centerNumber: (import.meta.env.VITE_IGCSE_CENTER_NUMBER as string) || 'KE042',
-    centerName: 'Eclat Institute International Examination Centre',
+    centerNumber: (import.meta.env.VITE_IGCSE_CENTER_NUMBER as string) || 'Partner Centre Placement',
+    centerName: 'Eclat Institute IGCSE Exam Preparation & Candidate Placement',
     examBoards: ['Cambridge Assessment International Education (CAIE)', 'Pearson Edexcel International'],
     currentSeries: 'May/June 2026 Examination Series',
     qualificationsOffered: [
@@ -139,8 +139,8 @@ export const INSTITUTION_CONFIG: InstitutionConfig = {
   cambridge: {
     boardName: 'Cambridge Assessment International Education (CAIE)',
     shortBoard: 'Cambridge CAIE',
-    centerNumber: (import.meta.env.VITE_CAMBRIDGE_CENTER_NUMBER as string) || 'KE042',
-    centerName: 'Eclat Institute Cambridge International Examination Centre (KE042)',
+    centerNumber: (import.meta.env.VITE_CAMBRIDGE_CENTER_NUMBER as string) || 'Partner Centre Placement',
+    centerName: 'Cambridge IGCSE Preparation & Registered Partner Exam Placement',
     currentSeries: 'May/June 2026 Examination Series',
     yearLevels: ['Year 9 (Foundation)', 'Year 10 (IGCSE Year 1)', 'Year 11 (Exam Series)'],
     qualificationsOffered: [
@@ -154,8 +154,8 @@ export const INSTITUTION_CONFIG: InstitutionConfig = {
   edexcel: {
     boardName: 'Pearson Edexcel International',
     shortBoard: 'Pearson Edexcel',
-    centerNumber: (import.meta.env.VITE_EDEXCEL_CENTER_NUMBER as string) || 'EDX-98421',
-    centerName: 'Eclat Institute Pearson Edexcel International Centre',
+    centerNumber: (import.meta.env.VITE_EDEXCEL_CENTER_NUMBER as string) || 'Partner Centre Placement',
+    centerName: 'Pearson Edexcel IGCSE Preparation & Registered Partner Exam Placement',
     currentSeries: 'May/June 2026 Examination Series',
     yearLevels: ['Year 9 (Foundation)', 'Year 10 (IGCSE Year 1)', 'Year 11 (Exam Series)'],
     qualificationsOffered: [
@@ -322,7 +322,7 @@ export const INSTITUTIONAL_SCHOOLS = [
     name: 'IGCSE',
     shortName: 'IGCSE',
     category: 'IGCSE',
-    description: 'International British curriculum delivering Cambridge Assessment International Education (CAIE Center KE042) and Pearson Edexcel International (Center EDX-98421) across Year 9 Checkpoint, Year 10 IGCSE, and Year 11 Exam Series.',
+    description: 'International British curriculum preparation for Cambridge Assessment International Education (CAIE) and Pearson Edexcel International across Year 9 Checkpoint, Year 10 IGCSE, and Year 11 Exam Series, with candidate placement at registered partner examination institutions.',
     icon: '🇬🇧',
     color: '#0284c7',
     dean_name: 'Office of the Dean — British International Curriculum',

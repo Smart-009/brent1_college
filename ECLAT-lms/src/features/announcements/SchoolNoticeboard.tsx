@@ -74,13 +74,20 @@ export function SchoolNoticeboard() {
     }
   }, [])
 
+  const isStudent = profile?.role === 'student'
+
   const filteredNotices = useMemo(() => {
     return notices.filter((n) => {
       const matchCat = categoryFilter === 'All' || n.category === categoryFilter
+      if (isStudent) {
+        // Students should only see announcements meant for everyone or students
+        const aud = (n.target_audience || 'All').toLowerCase()
+        return matchCat && (aud === 'all' || aud === 'students' || aud === 'student')
+      }
       const matchAud = audienceFilter === 'All' || n.target_audience === audienceFilter || n.target_audience === 'All'
       return matchCat && matchAud
     })
-  }, [notices, categoryFilter, audienceFilter])
+  }, [notices, categoryFilter, audienceFilter, isStudent])
 
   // Handle Add Notice
   const handleAddNotice = async (e: React.FormEvent) => {
@@ -195,19 +202,21 @@ export function SchoolNoticeboard() {
             </select>
           </div>
 
-          <div>
-            <label className="label" style={{ fontSize: '0.75rem' }}>Target Audience</label>
-            <select
-              className="input"
-              value={audienceFilter}
-              onChange={(e) => setAudienceFilter(e.target.value)}
-            >
-              <option value="All">All Audiences</option>
-              <option value="Students">Students Only</option>
-              <option value="Parents">Parents & Guardians</option>
-              <option value="Teachers">Faculty & Staff</option>
-            </select>
-          </div>
+          {!isStudent && (
+            <div>
+              <label className="label" style={{ fontSize: '0.75rem' }}>Target Audience</label>
+              <select
+                className="input"
+                value={audienceFilter}
+                onChange={(e) => setAudienceFilter(e.target.value)}
+              >
+                <option value="All">All Audiences</option>
+                <option value="Students">Students Only</option>
+                <option value="Parents">Parents & Guardians</option>
+                <option value="Teachers">Faculty & Staff</option>
+              </select>
+            </div>
+          )}
         </div>
       </div>
 

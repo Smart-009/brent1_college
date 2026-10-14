@@ -8,6 +8,7 @@ import { PageWrapper } from '@/components/layout/PageWrapper'
 import { YouTubeEmbed } from '@/components/shared/YouTubeEmbed'
 import { WpsDocumentViewer } from '@/components/shared/WpsDocumentViewer'
 import { QuizWidget } from '@/components/shared/QuizWidget'
+import { CourseCommentsSection } from '@/components/shared/CourseCommentsSection'
 import { Button } from '@/components/ui/Button'
 import { Spinner } from '@/components/ui/Spinner'
 import { schoolStore, schoolEventBus } from '@/lib/schoolData'
@@ -992,12 +993,21 @@ export function LessonPlayer() {
             <Button
               variant="accent"
               size="lg"
-              onClick={() => navigate(`/student/courses/${lesson.course_id}`)}
+              onClick={() => navigate(`/student/courses/${lesson?.course_id}`)}
             >
               Finish & Return to Course Summary 🏆
             </Button>
           )}
         </div>
+      )}
+
+      {/* Interactive Students Comments & Discussion Section */}
+      {lesson && (
+        <CourseCommentsSection
+          courseId={lesson.course_id || 'course-general'}
+          lessonId={lesson.id}
+          courseTitle={data?.course?.title || lesson.title}
+        />
       )}
       </div>
     </div>

@@ -1028,7 +1028,7 @@ export function CourseCatalogPage() {
                   </span>
                 </div>
                 <div style={{ fontSize: '0.8rem', color: '#1f2937', marginTop: '2px', lineHeight: 1.45 }}>
-                  Online schooling from home. Complete year cohorts with daily live lessons, certified UK teachers, virtual science labs, termly report cards, and official Cambridge (KE042) &amp; Edexcel (EDX-98421) candidate exam center registration.
+                  Online schooling from home. Complete year cohorts with daily live lessons, experienced educators, virtual science labs, termly report cards, and candidate placement at registered partner Cambridge &amp; Edexcel examination institutions.
                 </div>
               </div>
             </div>
@@ -1072,7 +1072,7 @@ export function CourseCatalogPage() {
                   </span>
                 </div>
                 <div style={{ fontSize: '0.8rem', color: '#334155', marginTop: '2px', lineHeight: 1.45 }}>
-                  Targeted subject mastery, exam techniques, and past paper clinics led by senior Cambridge and Edexcel examiners. Evening, weekend, and holiday sessions designed to jump grades and guarantee exam success.
+                  Targeted subject mastery, exam techniques, and past paper clinics for Cambridge and Edexcel syllabuses. Evening, weekend, and holiday sessions designed to jump grades and prepare candidates for official examinations.
                 </div>
               </div>
             </div>
@@ -1109,13 +1109,13 @@ export function CourseCatalogPage() {
               </div>
               <div>
                 <div style={{ fontSize: '0.88rem', fontWeight: 900, color: '#1e3a8a', display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
-                  <span>IGCSE Integrated Cohort Model — All Subjects Taught Together</span>
+                  <span>IGCSE Integrated Preparation &amp; Partner Exam Placement</span>
                   <span style={{ background: '#dbeafe', color: '#1d4ed8', fontSize: '0.68rem', padding: '2px 8px', borderRadius: '999px', fontWeight: 800 }}>
                     Unified Cohort Schedule
                   </span>
                 </div>
                 <div style={{ fontSize: '0.8rem', color: '#334155', marginTop: '2px', lineHeight: 1.45 }}>
-                  At Eclat Institute, <strong>we do not teach separate subjects in IGCSE</strong>. Students enrol into comprehensive academic cohorts (Year 9, Year 10, or Year 11) where Mathematics, Pure Sciences, English, Computer Science, and Humanities are taught together in one cohesive programme.
+                  At Eclat Institute, <strong>we prepare IGCSE students across all core subjects together</strong> (Year 9, Year 10, or Year 11) and place candidates in registered partner examination institutions for their official Cambridge &amp; Edexcel exams.
                 </div>
               </div>
             </div>
@@ -1168,7 +1168,7 @@ export function CourseCatalogPage() {
 
             <div style={{ fontSize: '0.78rem', color: '#475569', fontWeight: 600, display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
               <BritishShieldIcon size={14} />
-              <span>Centres: <strong style={{ color: '#1e3a8a' }}>CAIE KE042</strong> &bull; <strong style={{ color: '#b91c1c' }}>Edexcel EDX-98421</strong></span>
+              <span>IGCSE Prep: <strong style={{ color: '#1e3a8a' }}>Cambridge CAIE</strong> &bull; <strong style={{ color: '#b91c1c' }}>Pearson Edexcel</strong> (Partner Exam Placement)</span>
             </div>
           </div>
         </div>

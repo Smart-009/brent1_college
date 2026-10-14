@@ -146,7 +146,7 @@ export function IGCSEPortal() {
 
   return (
     <PageWrapper title="Cambridge & Edexcel IGCSE Portal">
-      {/* Official Examination Center Banner */}
+      {/* IGCSE Preparation & Partner Exam Placement Banner */}
       <div
         style={{
           background: 'linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #31104b 100%)',
@@ -175,7 +175,7 @@ export function IGCSEPortal() {
                   borderRadius: '9999px',
                 }}
               >
-                International Examination Center
+                IGCSE Preparation & Partner Exam Placement
               </span>
             </div>
             <h1
@@ -191,7 +191,7 @@ export function IGCSEPortal() {
               Cambridge & Pearson Edexcel IGCSE Portal
             </h1>
             <p style={{ color: '#cbd5e1', fontSize: '0.92rem', maxWidth: '640px', lineHeight: 1.5, margin: 0 }}>
-              Official candidate workstation for Cambridge Assessment International Education (CAIE) and Pearson Edexcel International GCSE qualification tracks.
+              Comprehensive IGCSE tuition and exam preparation for Cambridge (CAIE) and Pearson Edexcel curricula, with candidate registration and placement at accredited partner examination centres.
             </p>
           </div>
 
@@ -205,13 +205,13 @@ export function IGCSEPortal() {
             }}
           >
             <div style={{ fontSize: '0.75rem', color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.06em', fontWeight: 700 }}>
-              Center Identifiers
+              Exam Registration & Placement
             </div>
-            <div style={{ fontSize: '1rem', fontWeight: 900, color: '#38bdf8', marginTop: '0.2rem' }}>
-              CAIE: {INSTITUTION_CONFIG.igcse.centerNumber || 'KE042'}
+            <div style={{ fontSize: '0.95rem', fontWeight: 900, color: '#38bdf8', marginTop: '0.2rem' }}>
+              Cambridge CAIE & Pearson Edexcel
             </div>
-            <div style={{ fontSize: '0.82rem', fontWeight: 700, color: '#fca5a5', marginTop: '0.15rem' }}>
-              Pearson Edexcel: EDX-98421
+            <div style={{ fontSize: '0.8rem', fontWeight: 700, color: '#fde68a', marginTop: '0.15rem' }}>
+              Placed in Registered Partner Centres
             </div>
             <div style={{ fontSize: '0.74rem', color: '#cbd5e1', marginTop: '0.4rem', borderTop: '1px solid rgba(255, 255, 255, 0.1)', paddingTop: '0.35rem' }}>
               Series: {INSTITUTION_CONFIG.igcse.currentSeries || 'May/June 2026'}
@@ -376,7 +376,7 @@ export function IGCSEPortal() {
               Candidate Statement of Results Search & Verification
             </h3>
             <p style={{ fontSize: '0.85rem', color: 'var(--color-text-secondary)', margin: '0 0 1.25rem 0' }}>
-              Enter candidate name, unique candidate ID (e.g. KE042/0001/2026), or verification code to look up official CAIE / Pearson Edexcel transcripts.
+              Enter candidate name, unique candidate ID, or verification code to look up official CAIE / Pearson Edexcel transcripts and mock exam assessments.
             </p>
 
             <form onSubmit={handleLookup} style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap' }}>
@@ -385,7 +385,7 @@ export function IGCSEPortal() {
                 className="input"
                 value={searchCandidate}
                 onChange={(e) => setSearchCandidate(e.target.value)}
-                placeholder="Enter candidate name or number (e.g. KE042/0001/2026)..."
+                placeholder="Enter candidate name or candidate number..."
                 style={{ flex: 1, minWidth: '240px', padding: '0.7rem 0.9rem' }}
               />
               <button
