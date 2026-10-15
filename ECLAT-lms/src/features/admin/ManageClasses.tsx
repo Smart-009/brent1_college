@@ -5,6 +5,7 @@ import { Modal, ConfirmModal } from '@/components/ui/Modal'
 import { Spinner } from '@/components/ui/Spinner'
 import { DatabaseIcon, BookOpenIcon, SearchIcon, RefreshCwIcon, UserIcon, ClockIcon, CalendarIcon } from '@/components/icons/AppIcons'
 import { courseStore } from '@/lib/courseStore'
+import { schoolStore } from '@/lib/schoolData'
 import { type CourseProgram } from '@/config/officialCourses'
 import { supabase } from '@/lib/supabase'
 
@@ -71,8 +72,25 @@ export function ManageClasses() {
   const fetchSubjects = async () => {
     setIsLoadingSubjects(true)
     try {
+      const storeSubs = schoolStore.getSubjects()
       const { data } = await supabase.from('subjects').select('*').order('name', { ascending: true })
-      if (data) setSubjects(data as DbSubject[])
+      const mergedMap = new Map<string, DbSubject>()
+      storeSubs.forEach((s) => {
+        mergedMap.set(s.id, {
+          id: s.id,
+          name: s.name,
+          color_hex: s.color_hex || '#1e3a8a',
+          created_at: s.created_at,
+        })
+      })
+      if (Array.isArray(data)) {
+        data.forEach((d: DbSubject) => {
+          if (!mergedMap.has(d.id)) {
+            mergedMap.set(d.id, d)
+          }
+        })
+      }
+      setSubjects(Array.from(mergedMap.values()))
     } finally {
       setIsLoadingSubjects(false)
     }
@@ -253,9 +271,26 @@ export function ManageClasses() {
       }
 
       if (editingSubject) {
-        await supabase.from('subjects').update(payload).eq('id', editingSubject.id)
+        await schoolStore.updateSubject(editingSubject.id, payload)
+        try {
+          await supabase.from('subjects').update(payload).eq('id', editingSubject.id)
+        } catch {}
       } else {
-        await supabase.from('subjects').insert([{ ...payload, created_at: new Date().toISOString() }])
+        const newId = `sub-${Date.now()}`
+        await schoolStore.addSubject({
+          id: newId,
+          code: subjectName.trim().slice(0, 8).toUpperCase(),
+          name: subjectName.trim(),
+          color_hex: subjectColor,
+          department_id: 'dept-general',
+          department_name: 'Academic Faculty',
+          fee: 60,
+          duration: '8 Weeks (2 Months)',
+          created_at: new Date().toISOString(),
+        })
+        try {
+          await supabase.from('subjects').insert([{ id: newId, ...payload, created_at: new Date().toISOString() }])
+        } catch {}
       }
 
       setShowSubjectModal(false)
@@ -272,7 +307,10 @@ export function ManageClasses() {
   const handleDeleteSubject = async () => {
     if (!subjectToDelete) return
     try {
-      await supabase.from('subjects').delete().eq('id', subjectToDelete.id)
+      await schoolStore.deleteSubject(subjectToDelete.id)
+      try {
+        await supabase.from('subjects').delete().eq('id', subjectToDelete.id)
+      } catch {}
       setSubjectToDelete(null)
       fetchSubjects()
     } catch (err: any) {

@@ -10,6 +10,7 @@ import { RoleBadge } from '@/components/ui/Badge'
 import { isAccessExpired, formatDate, daysUntil, sanitizeInput } from '@/lib/utils'
 import { hashPassword } from '@/lib/crypto'
 import type { Profile, Role, Class } from '@/lib/database.types'
+import type { StudentRecord } from '@/types/school'
 
 export function ManageUsers() {
   const queryClient = useQueryClient()
@@ -30,6 +31,19 @@ export function ManageUsers() {
   const [selectedUnitToAdd, setSelectedUnitToAdd] = useState<string>('')
   const [isAddingCourse, setIsAddingCourse] = useState(false)
   const [courseActionMsg, setCourseActionMsg] = useState<string | null>(null)
+
+  // Edit User Modal State
+  const [editingUser, setEditingUser] = useState<Profile | null>(null)
+  const [editFullName, setEditFullName] = useState('')
+  const [editAdmissionNumber, setEditAdmissionNumber] = useState('')
+  const [editRole, setEditRole] = useState<Role>('student')
+  const [editStatus, setEditStatus] = useState<'Active' | 'Suspended' | 'Alumni'>('Active')
+  const [editPassword, setEditPassword] = useState('')
+  const [editPhone, setEditPhone] = useState('')
+  const [editFeeBalance, setEditFeeBalance] = useState<number>(0)
+  const [editTermFeeTotal, setEditTermFeeTotal] = useState<number>(60)
+  const [isSavingUser, setIsSavingUser] = useState(false)
+  const [editUserError, setEditUserError] = useState<string | null>(null)
 
   // Default institutional programs fallback
   const DEFAULT_PROGRAMS: Class[] = [
@@ -52,14 +66,18 @@ export function ManageUsers() {
       } catch {}
 
       const mergedMap = new Map<string, Profile>()
+      const purged = schoolStore.getPurgedStudentAdmissions()
 
       // 1. Load from Supabase profiles table if available
       try {
         const { data, error } = await supabase.from('profiles').select('*').order('created_at', { ascending: false })
         if (!error && Array.isArray(data)) {
           data.forEach((p: Profile) => {
+            const admKey = p.admission_number?.toLowerCase()?.trim() || ''
+            const idKey = (p.id || '').toLowerCase()?.trim() || ''
+            if (purged.has(admKey) || (idKey && purged.has(idKey))) return
             if (p.admission_number) {
-              mergedMap.set(p.admission_number.toLowerCase().trim(), p)
+              mergedMap.set(admKey, p)
             }
           })
         }
@@ -68,6 +86,8 @@ export function ManageUsers() {
       // 2. Merge SIS Students from schoolStore
       schoolStore.getStudents().forEach((s) => {
         const key = s.admission_number.toLowerCase().trim()
+        const idKey = (s.id || '').toLowerCase().trim()
+        if (purged.has(key) || (idKey && purged.has(idKey))) return
         if (!mergedMap.has(key)) {
           mergedMap.set(key, {
             id: s.id,
@@ -86,6 +106,8 @@ export function ManageUsers() {
       schoolStore.getTeachers().forEach((t) => {
         const adm = (t.staff_id || t.id).trim()
         const key = adm.toLowerCase()
+        const idKey = (t.id || '').toLowerCase().trim()
+        if (purged.has(key) || (idKey && purged.has(idKey))) return
         if (!mergedMap.has(key)) {
           mergedMap.set(key, {
             id: t.id,
@@ -111,6 +133,8 @@ export function ManageUsers() {
             const roleVal = p.role || p.profile?.role || 'student'
             if (adm && fullNameVal) {
               const key = String(adm).toLowerCase().trim()
+              const idVal = String(p.id || p.profile?.id || '').toLowerCase().trim()
+              if (purged.has(key) || (idVal && purged.has(idVal))) return
               if (!mergedMap.has(key)) {
                 mergedMap.set(key, {
                   id: p.id || p.profile?.id || `usr-${adm}`,
@@ -343,8 +367,149 @@ export function ManageUsers() {
     },
   })
 
+  const handleOpenEditUser = (u: Profile) => {
+    setEditingUser(u)
+    setEditFullName(u.full_name || '')
+    setEditAdmissionNumber(u.admission_number || '')
+    setEditRole((u.role as Role) || 'student')
+    setEditStatus(u.is_active ? 'Active' : 'Suspended')
+    setEditPassword('')
+    setEditUserError(null)
+
+    if (u.role === 'student') {
+      const std = schoolStore.getStudents().find(
+        (s) => s.id === u.id || s.admission_number.toLowerCase() === (u.admission_number || '').toLowerCase()
+      )
+      if (std) {
+        setEditPhone(std.parent_phone || '')
+        setEditFeeBalance(Number(std.fee_balance) || 0)
+        setEditTermFeeTotal(Number(std.term_fee_total) || 60)
+        setEditStatus(std.status === 'Active' || std.status === 'Suspended' || std.status === 'Alumni' ? std.status : 'Active')
+      } else {
+        setEditPhone('')
+        setEditFeeBalance(0)
+        setEditTermFeeTotal(60)
+      }
+    } else {
+      setEditPhone('')
+      setEditFeeBalance(0)
+      setEditTermFeeTotal(0)
+    }
+  }
+
+  const handleSaveEditUser = async (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!editingUser) return
+    setEditUserError(null)
+
+    if (!editFullName.trim() || !editAdmissionNumber.trim()) {
+      setEditUserError('Full Name and Admission/Staff Number are required.')
+      return
+    }
+
+    setIsSavingUser(true)
+    try {
+      const oldAdm = editingUser.admission_number
+      const newAdm = editAdmissionNumber.trim().toUpperCase()
+      const newName = editFullName.trim()
+      const isActive = editStatus === 'Active'
+
+      // 1. Update in schoolStore
+      if (editingUser.role === 'student') {
+        const stdList = schoolStore.getStudents()
+        const stdIdx = stdList.findIndex(
+          (s) => s.id === editingUser.id || s.admission_number.toLowerCase() === oldAdm.toLowerCase()
+        )
+        if (stdIdx !== -1) {
+          const updatedStd: StudentRecord = {
+            ...stdList[stdIdx],
+            full_name: newName,
+            admission_number: newAdm,
+            status: editStatus,
+            parent_phone: editPhone.trim() || stdList[stdIdx].parent_phone,
+            fee_balance: Number(editFeeBalance),
+            term_fee_total: Number(editTermFeeTotal),
+            fee_cleared: Number(editFeeBalance) <= 0,
+          }
+          await schoolStore.updateStudent(stdList[stdIdx].id, updatedStd)
+        }
+      } else if (editingUser.role === 'teacher') {
+        const teachers = schoolStore.getTeachers()
+        const tIdx = teachers.findIndex(
+          (t) => t.id === editingUser.id || (t.staff_id && t.staff_id.toLowerCase() === oldAdm.toLowerCase())
+        )
+        if (tIdx !== -1) {
+          await schoolStore.updateTeacher(teachers[tIdx].id, {
+            name: newName,
+            staff_id: newAdm,
+          })
+        }
+      }
+
+      // 2. Update local credentials store
+      try {
+        const credsRaw = localStorage.getItem('eclat_local_credentials')
+        if (credsRaw) {
+          const creds = JSON.parse(credsRaw)
+          const oldClean = oldAdm.toLowerCase().replace(/[^a-z0-9]/g, '')
+          const newClean = newAdm.toLowerCase().replace(/[^a-z0-9]/g, '')
+          const existingEntry = creds[oldClean] || creds[oldAdm.toLowerCase()] || creds[editingUser.id] || {}
+
+          const updatedEntry = {
+            ...existingEntry,
+            id: editingUser.id,
+            admission_number: newAdm,
+            full_name: newName,
+            role: editRole,
+            ...(editPassword.trim() ? { password_hash: editPassword.trim() } : {}),
+            profile: {
+              ...(existingEntry.profile || {}),
+              id: editingUser.id,
+              admission_number: newAdm,
+              full_name: newName,
+              role: editRole,
+              is_active: isActive,
+            },
+          }
+
+          if (oldClean !== newClean) {
+            delete creds[oldClean]
+            delete creds[oldAdm.toLowerCase()]
+          }
+          creds[newClean] = updatedEntry
+          creds[newAdm.toLowerCase()] = updatedEntry
+          if (editingUser.id) creds[editingUser.id] = updatedEntry
+          localStorage.setItem('eclat_local_credentials', JSON.stringify(creds))
+        }
+      } catch {}
+
+      // 3. Update Supabase profiles table
+      try {
+        await supabase
+          .from('profiles')
+          .update({
+            full_name: newName,
+            admission_number: newAdm,
+            role: editRole,
+            is_active: isActive,
+            updated_at: new Date().toISOString(),
+          })
+          .eq('id', editingUser.id)
+      } catch {}
+
+      setEditingUser(null)
+      queryClient.invalidateQueries({ queryKey: ['admin-manage-users'] })
+      alert(`User "${newName}" (${newAdm}) updated successfully!`)
+    } catch (err: any) {
+      setEditUserError(err.message || 'Failed to update user.')
+    } finally {
+      setIsSavingUser(false)
+    }
+  }
+
   const handleDeleteUser = async (u: Profile) => {
     if (window.confirm(`Are you sure you want to completely remove "${u.full_name}" (${u.admission_number})? All associated academic, fee, and registration records will be permanently deleted.`)) {
+      schoolStore.recordPurgedStudent(u.admission_number, u.id)
       // Remove from local credentials
       try {
         const stored = localStorage.getItem('eclat_local_credentials')
@@ -353,6 +518,7 @@ export function ManageUsers() {
           const cleanKey = u.admission_number.toLowerCase().replace(/[^a-z0-9]/g, '')
           delete parsed[cleanKey]
           delete parsed[u.admission_number.toLowerCase()]
+          if (u.id) delete parsed[u.id]
           localStorage.setItem('eclat_local_credentials', JSON.stringify(parsed))
         }
       } catch {}
@@ -534,6 +700,15 @@ export function ManageUsers() {
                       </td>
                       <td className="text-xs text-muted">{formatDate(u.created_at)}</td>
                       <td style={{ textAlign: 'right', whiteSpace: 'nowrap' }}>
+                        <button
+                          type="button"
+                          className="btn btn-xs btn-secondary"
+                          style={{ fontWeight: 700, marginRight: '6px' }}
+                          onClick={() => handleOpenEditUser(u)}
+                          title="Edit user details, admission number, status, fee, and password"
+                        >
+                          ✏️ Edit
+                        </button>
                         {u.role === 'student' && (
                           <button
                             type="button"
@@ -731,6 +906,139 @@ export function ManageUsers() {
           </div>
         </form>
       </Modal>
+
+      {/* Edit User Modal */}
+      {editingUser && (
+        <Modal
+          isOpen={true}
+          onClose={() => setEditingUser(null)}
+          title={`✏️ Edit ${editingUser.role === 'student' ? 'Student' : editingUser.role === 'teacher' ? 'Faculty Member' : 'User'}: ${editingUser.full_name}`}
+          size="md"
+        >
+          {editUserError && (
+            <div className="alert alert-danger mb-4">
+              <span className="alert-icon">⚠️</span>
+              <div>{editUserError}</div>
+            </div>
+          )}
+
+          <form onSubmit={handleSaveEditUser}>
+            <div className="form-group">
+              <label className="form-label" htmlFor="editFullName">Full Name *</label>
+              <input
+                id="editFullName"
+                type="text"
+                value={editFullName}
+                onChange={(e) => setEditFullName(e.target.value)}
+                required
+              />
+            </div>
+
+            <div className="form-group">
+              <label className="form-label" htmlFor="editAdmNo">
+                {editingUser.role === 'student' ? 'Admission Number *' : 'Staff ID / User ID *'}
+              </label>
+              <input
+                id="editAdmNo"
+                type="text"
+                value={editAdmissionNumber}
+                onChange={(e) => setEditAdmissionNumber(e.target.value)}
+                required
+              />
+            </div>
+
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+              <div className="form-group">
+                <label className="form-label" htmlFor="editRole">System Role</label>
+                <select
+                  id="editRole"
+                  className="form-input"
+                  value={editRole}
+                  onChange={(e) => setEditRole(e.target.value as Role)}
+                >
+                  <option value="student">Student</option>
+                  <option value="teacher">Teacher / Faculty</option>
+                  <option value="bursar">Bursar / Finance</option>
+                  <option value="admin">Administrator</option>
+                </select>
+              </div>
+
+              <div className="form-group">
+                <label className="form-label" htmlFor="editStatus">Account Status</label>
+                <select
+                  id="editStatus"
+                  className="form-input"
+                  value={editStatus}
+                  onChange={(e) => setEditStatus(e.target.value as any)}
+                >
+                  <option value="Active">Active</option>
+                  <option value="Suspended">Suspended / Inactive</option>
+                  <option value="Alumni">Alumni / Completed</option>
+                </select>
+              </div>
+            </div>
+
+            {editingUser.role === 'student' && (
+              <>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+                  <div className="form-group">
+                    <label className="form-label" htmlFor="editFeeBal">Fee Balance ($ / USD)</label>
+                    <input
+                      id="editFeeBal"
+                      type="number"
+                      min="0"
+                      value={editFeeBalance}
+                      onChange={(e) => setEditFeeBalance(Number(e.target.value))}
+                    />
+                  </div>
+                  <div className="form-group">
+                    <label className="form-label" htmlFor="editTermFee">Term Total Fee ($ / USD)</label>
+                    <input
+                      id="editTermFee"
+                      type="number"
+                      min="0"
+                      value={editTermFeeTotal}
+                      onChange={(e) => setEditTermFeeTotal(Number(e.target.value))}
+                    />
+                  </div>
+                </div>
+
+                <div className="form-group">
+                  <label className="form-label" htmlFor="editPhone">Contact / Parent Phone</label>
+                  <input
+                    id="editPhone"
+                    type="text"
+                    placeholder="e.g. +254 700 000 000"
+                    value={editPhone}
+                    onChange={(e) => setEditPhone(e.target.value)}
+                  />
+                </div>
+              </>
+            )}
+
+            <div className="form-group">
+              <label className="form-label" htmlFor="editPassword">Reset Password (Optional)</label>
+              <input
+                id="editPassword"
+                type="text"
+                placeholder="Leave blank to keep existing password"
+                value={editPassword}
+                onChange={(e) => setEditPassword(e.target.value)}
+              />
+              <span className="form-hint">Enter a new password here only if the user requested a reset.</span>
+            </div>
+
+            <div className="flex justify-end gap-3 mt-6">
+              <Button type="button" variant="secondary" onClick={() => setEditingUser(null)}>
+                Cancel
+              </Button>
+              <Button type="submit" variant="primary" loading={isSavingUser}>
+                💾 Save Changes
+              </Button>
+            </div>
+          </form>
+        </Modal>
+      )}
 
       {/* Manage Student Courses Modal */}
       {managingStudent && (

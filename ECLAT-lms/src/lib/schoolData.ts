@@ -2401,12 +2401,25 @@ class SchoolDataStore {
   }
 
   async pushCollectionToCloud(collectionKey: string, data: any): Promise<void> {
+    let cleanData = data
+    if (collectionKey === 'students' && Array.isArray(data)) {
+      const purged = this.getPurgedStudentAdmissions()
+      cleanData = data.filter((s: any) => {
+        const k = s?.admission_number?.toLowerCase()?.trim() || ''
+        const idK = (s?.id || '').toLowerCase()?.trim() || ''
+        return !purged.has(k) && (!idK || !purged.has(idK))
+      })
+    } else if (collectionKey === 'resources' && Array.isArray(data)) {
+      const purgedRes = this.getPurgedResourceIds()
+      cleanData = data.filter((r: any) => !purgedRes.has(r?.id?.trim?.() || ''))
+    }
+
     // 1. Primary app_cloud_sync table persistence
     try {
       await supabase.from('app_cloud_sync').upsert(
         {
           key: collectionKey,
-          data: data,
+          data: cleanData,
           updated_at: new Date().toISOString(),
         },
         { onConflict: 'key' }
@@ -2416,7 +2429,7 @@ class SchoolDataStore {
     // 2. Secondary fallback sync container in courses table (ensures universal cross-platform redundancy)
     try {
       const containerTitle = `__ECLAT_SYNC_${collectionKey.toUpperCase()}__`
-      const payloadString = JSON.stringify({ key: collectionKey, data })
+      const payloadString = JSON.stringify({ key: collectionKey, data: cleanData })
       await supabase.from('courses').upsert(
         {
           id: `aaaaaaaa-0000-0000-0000-${collectionKey.slice(0, 12).padEnd(12, '0').replace(/[^0-9a-f]/g, 'a')}`,
@@ -2432,17 +2445,66 @@ class SchoolDataStore {
       )
     } catch {}
 
-    this.broadcastChange(`COLLECTION_UPDATED_${collectionKey.toUpperCase()}`, data)
+    this.broadcastChange(`COLLECTION_UPDATED_${collectionKey.toUpperCase()}`, cleanData)
+  }
+
+  getPurgedStudentAdmissions(): Set<string> {
+    try {
+      const stored = localStorage.getItem('eclat_purged_student_admissions')
+      if (stored) {
+        const arr = JSON.parse(stored)
+        if (Array.isArray(arr)) return new Set(arr.map((s: string) => String(s).toLowerCase().trim()))
+      }
+    } catch {}
+    return new Set<string>()
+  }
+
+  recordPurgedStudent(adm?: string, id?: string): void {
+    const set = this.getPurgedStudentAdmissions()
+    if (adm) set.add(adm.toLowerCase().trim())
+    if (id) set.add(id.toLowerCase().trim())
+    try {
+      localStorage.setItem('eclat_purged_student_admissions', JSON.stringify(Array.from(set)))
+    } catch {}
+  }
+
+  getPurgedResourceIds(): Set<string> {
+    try {
+      const stored = localStorage.getItem('eclat_purged_resource_ids')
+      if (stored) {
+        const arr = JSON.parse(stored)
+        if (Array.isArray(arr)) return new Set(arr.map((s: string) => String(s).trim()))
+      }
+    } catch {}
+    return new Set<string>()
+  }
+
+  recordPurgedResourceId(id?: string): void {
+    if (!id) return
+    const set = this.getPurgedResourceIds()
+    set.add(id.trim())
+    try {
+      localStorage.setItem('eclat_purged_resource_ids', JSON.stringify(Array.from(set)))
+    } catch {}
   }
 
   mergeCloudStudents(cloudList: StudentRecord[]): void {
     if (!Array.isArray(cloudList)) return
     const currentList = this.get<StudentRecord[]>('students', INITIAL_STUDENTS)
+    const purged = this.getPurgedStudentAdmissions()
     const map = new Map<string, StudentRecord>()
-    currentList.forEach((s) => map.set(s.admission_number.toLowerCase().trim(), s))
+    currentList.forEach((s) => {
+      const k = s.admission_number.toLowerCase().trim()
+      const idK = (s.id || '').toLowerCase().trim()
+      if (!purged.has(k) && (!idK || !purged.has(idK))) {
+        map.set(k, s)
+      }
+    })
 
     cloudList.forEach((cs) => {
-      const key = cs.admission_number.toLowerCase().trim()
+      const key = cs.admission_number?.toLowerCase()?.trim() || ''
+      const idKey = (cs.id || '').toLowerCase()?.trim() || ''
+      if (purged.has(key) || (idKey && purged.has(idKey))) return
       const local = map.get(key)
       if (local) {
         const isCleared = cs.fee_cleared === true || local.fee_cleared === true || (cs.fee_balance === 0) || (local.fee_balance === 0)
@@ -3239,6 +3301,7 @@ class SchoolDataStore {
     )
 
     // 11. Cloud Cascade Deletion via Supabase
+    this.recordPurgedStudent(targetAdm, targetId)
     try {
       if (targetId) {
         supabase.from('profiles').delete().eq('id', targetId).then(() => {})
@@ -3377,6 +3440,7 @@ class SchoolDataStore {
       }
     )
     schoolEventBus.publish('TIMETABLE_UPDATED')
+    await this.pushCollectionToCloud('timetable', this.getTimetable())
   }
 
   // --- Invoices & Fees (ACID Protected) ---
@@ -3538,6 +3602,7 @@ class SchoolDataStore {
       }
     )
     schoolEventBus.publish('INVOICE_CREATED', invoiceId)
+    await this.pushCollectionToCloud('invoices', this.getInvoices())
   }
 
   async clearAllInvoices(): Promise<void> {
@@ -3549,6 +3614,7 @@ class SchoolDataStore {
       }
     )
     schoolEventBus.publish('INVOICE_CREATED')
+    await this.pushCollectionToCloud('invoices', [])
   }
 
   getReceipts(): FeePaymentReceipt[] {
@@ -3727,6 +3793,7 @@ class SchoolDataStore {
     )
     schoolEventBus.publish('PAYMENT_RECORDED')
     schoolEventBus.publish('STUDENT_UPDATED')
+    await this.pushCollectionToCloud('receipts', [])
   }
 
   // --- Payment Reminders ---
@@ -3961,6 +4028,7 @@ class SchoolDataStore {
 
   async deleteResource(id: string): Promise<void> {
     let remainingList: AcademicResource[] = []
+    this.recordPurgedResourceId(id)
     await txEngine.executeAtomic(
       `DELETE_RESOURCE_${id}`,
       ['eclat_school_resources'],
@@ -4207,6 +4275,7 @@ class SchoolDataStore {
     )
     schoolEventBus.publish('UNIT_REGISTRATION_COMPLETED' as any)
     this.broadcastChange('UNIT_REGISTRATION_DELETED', { identifier })
+    await this.pushCollectionToCloud('unit_registrations', this.get<UnitRegistrationReceipt[]>('unit_registrations', []))
   }
 
   async clearAllUnitRegistrations(): Promise<void> {
@@ -4219,6 +4288,7 @@ class SchoolDataStore {
     )
     schoolEventBus.publish('UNIT_REGISTRATION_COMPLETED' as any)
     this.broadcastChange('UNIT_REGISTRATIONS_CLEARED')
+    await this.pushCollectionToCloud('unit_registrations', [])
   }
 
   async registerStudentUnits(receipt: UnitRegistrationReceipt): Promise<void> {
@@ -4624,6 +4694,26 @@ class SchoolDataStore {
     await this.pushCollectionToCloud('faculty_teachers', this.getTeachers())
   }
 
+  async updateTeacher(id: string, updated: Partial<FacultyTeacher>): Promise<void> {
+    await txEngine.executeAtomic(
+      `UPDATE_TEACHER_${id}`,
+      ['eclat_school_faculty_teachers'],
+      () => {
+        const list = this.getTeachers()
+        const idx = list.findIndex(
+          (t) => t.id === id || (t.staff_id && t.staff_id.toLowerCase() === id.toLowerCase())
+        )
+        if (idx !== -1) {
+          list[idx] = { ...list[idx], ...updated }
+          this.set('faculty_teachers', list)
+        }
+      }
+    )
+    schoolEventBus.publish('TEACHER_UPDATED' as any, updated)
+    this.broadcastChange('TEACHER_UPDATED', updated)
+    await this.pushCollectionToCloud('faculty_teachers', this.getTeachers())
+  }
+
   async deleteTeacher(id: string): Promise<void> {
     await txEngine.executeAtomic(
       `DELETE_TEACHER_${id}`,
@@ -4768,6 +4858,7 @@ class SchoolDataStore {
   }
 
   async updateSubject(id: string, updated: Partial<CollegeSubject>): Promise<void> {
+    let unitChanged = false
     await txEngine.executeAtomic(
       `UPDATE_SUBJECT_${id}`,
       ['eclat_school_subjects', 'eclat_school_course_units'],
@@ -4801,25 +4892,30 @@ class SchoolDataStore {
           this.set('subjects', list)
         }
 
-        // Synchronize fee with corresponding course units if fee was updated
-        if (typeof updated.fee === 'number') {
-          const targetSub = idx !== -1 ? list[idx] : updated
-          const units = this.getCourseUnits()
-          let unitChanged = false
-          for (let i = 0; i < units.length; i++) {
-            const u = units[i]
-            if (
-              u.id === id ||
-              (targetSub.code && u.code?.toLowerCase() === targetSub.code.toLowerCase()) ||
-              (targetSub.name && u.title?.toLowerCase().trim() === targetSub.name.toLowerCase().trim())
-            ) {
-              units[i] = { ...u, fee: updated.fee }
-              unitChanged = true
+        // Synchronize corresponding course units
+        const targetSub = idx !== -1 ? list[idx] : updated
+        const units = this.getCourseUnits()
+        for (let i = 0; i < units.length; i++) {
+          const u = units[i]
+          if (
+            u.id === id ||
+            (targetSub.code && u.code?.toLowerCase() === targetSub.code.toLowerCase()) ||
+            (targetSub.name && u.title?.toLowerCase().trim() === targetSub.name.toLowerCase().trim())
+          ) {
+            units[i] = {
+              ...u,
+              ...(typeof updated.fee === 'number' ? { fee: updated.fee } : {}),
+              ...(updated.name ? { title: updated.name } : {}),
+              ...(updated.duration ? { course_duration: updated.duration } : {}),
+              ...(updated.description ? { description: updated.description } : {}),
+              ...(updated.code ? { code: updated.code } : {}),
+              ...(updated.department_name ? { department: updated.department_name } : {}),
             }
+            unitChanged = true
           }
-          if (unitChanged) {
-            this.set('course_units', units)
-          }
+        }
+        if (unitChanged) {
+          this.set('course_units', units)
         }
       }
     )
@@ -4829,22 +4925,78 @@ class SchoolDataStore {
       window.dispatchEvent(new CustomEvent('eclat-courses-updated', { detail: { type: 'subject', id, updated } }))
     }
     await this.pushCollectionToCloud('subjects', this.getSubjects())
-    if (typeof updated.fee === 'number') {
+    if (unitChanged) {
       await this.pushCollectionToCloud('course_units', this.getCourseUnits())
     }
+
+    // Also update official courses storage cache if matching
+    try {
+      const rawStored = localStorage.getItem('eclat_school_official_courses_v2')
+      if (rawStored) {
+        const storedCourses = JSON.parse(rawStored)
+        if (Array.isArray(storedCourses)) {
+          let updatedCourse = false
+          for (let i = 0; i < storedCourses.length; i++) {
+            const c = storedCourses[i]
+            if (c.id === id || c.id === `c-${id.replace(/^sub-/, '')}` || c.title?.toLowerCase() === updated.name?.toLowerCase()) {
+              if (updated.name) storedCourses[i].title = updated.name
+              if (typeof updated.fee === 'number') storedCourses[i].feeUsd = updated.fee
+              if (updated.duration) storedCourses[i].duration = updated.duration
+              updatedCourse = true
+            }
+          }
+          if (updatedCourse) {
+            localStorage.setItem('eclat_school_official_courses_v2', JSON.stringify(storedCourses))
+          }
+        }
+      }
+    } catch {}
   }
 
   async deleteSubject(id: string): Promise<void> {
+    let removedUnits = false
     await txEngine.executeAtomic(
       `DELETE_SUBJECT_${id}`,
-      ['eclat_school_subjects'],
+      ['eclat_school_subjects', 'eclat_school_course_units'],
       () => {
+        const targetSub = this.getSubjects().find((s) => s.id === id)
         const list = this.getSubjects().filter((s) => s.id !== id)
         this.set('subjects', list)
+
+        // Cascade delete matching course units
+        const currentUnits = this.getCourseUnits()
+        const remainingUnits = currentUnits.filter((u) => {
+          if (u.id === id) return false
+          if (targetSub?.code && u.code?.toLowerCase() === targetSub.code.toLowerCase()) return false
+          if (targetSub?.name && u.title?.toLowerCase().trim() === targetSub.name.toLowerCase().trim()) return false
+          return true
+        })
+        if (remainingUnits.length !== currentUnits.length) {
+          this.set('course_units', remainingUnits)
+          removedUnits = true
+        }
       }
     )
     this.broadcastChange('SUBJECT_DELETED', { id })
+    if (typeof window !== 'undefined') {
+      window.dispatchEvent(new CustomEvent('eclat-courses-updated', { detail: { type: 'delete-subject', id } }))
+    }
     await this.pushCollectionToCloud('subjects', this.getSubjects())
+    if (removedUnits) {
+      await this.pushCollectionToCloud('course_units', this.getCourseUnits())
+    }
+
+    // Also remove from official courses cache if present
+    try {
+      const rawStored = localStorage.getItem('eclat_school_official_courses_v2')
+      if (rawStored) {
+        const storedCourses = JSON.parse(rawStored)
+        if (Array.isArray(storedCourses)) {
+          const filtered = storedCourses.filter((c: any) => c.id !== id && c.id !== `c-${id.replace(/^sub-/, '')}`)
+          localStorage.setItem('eclat_school_official_courses_v2', JSON.stringify(filtered))
+        }
+      }
+    } catch {}
   }
 
   // --- Biometric Security & Fingerprint Verification (ACID Protected) ---

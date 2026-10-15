@@ -102,8 +102,8 @@ class CourseStore {
    * Push courses list to Supabase cloud
    */
   public async pushToCloud(coursesList: CourseProgram[]): Promise<void> {
+    // 1. Save full courses JSON to app_cloud_sync (Primary sync)
     try {
-      // Save full courses JSON to app_cloud_sync
       await supabase.from('app_cloud_sync').upsert(
         {
           key: 'official_courses',
@@ -113,8 +113,12 @@ class CourseStore {
         },
         { onConflict: 'key' }
       )
+    } catch (err) {
+      console.warn('Could not sync courses to app_cloud_sync:', err)
+    }
 
-      // Also ensure classes table reflects course updates
+    // 2. Secondary sync to classes table (if schema matches UUID or string)
+    try {
       const classesPayload = coursesList.map((c) => ({
         id: `class-${c.id}-2026`,
         name: c.title,
@@ -129,7 +133,7 @@ class CourseStore {
 
       await supabase.from('classes').upsert(classesPayload, { onConflict: 'id' })
     } catch (err) {
-      console.warn('Could not sync courses to Supabase cloud:', err)
+      // Non-fatal if legacy classes table requires UUID format
     }
   }
 
@@ -228,6 +232,14 @@ class CourseStore {
   public async deleteCourse(id: string): Promise<void> {
     this.courses = this.getCourses().filter((c) => c.id !== id)
     this.saveToStorage()
+
+    try {
+      const { schoolStore } = await import('@/lib/schoolData')
+      const subId = id.startsWith('sub-') ? id : `sub-${id.replace(/^c-/, '')}`
+      schoolStore.deleteSubject(id).catch(() => {})
+      schoolStore.deleteSubject(subId).catch(() => {})
+      schoolStore.deleteCourseUnit(id).catch(() => {})
+    } catch {}
 
     window.dispatchEvent(new CustomEvent('eclat-courses-updated', { detail: this.courses }))
     window.dispatchEvent(new Event('storage'))
