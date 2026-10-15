@@ -2810,9 +2810,14 @@ class SchoolDataStore {
         const studentProfiles = profiles.filter((p) => p.role === 'student')
         if (studentProfiles.length > 0) {
           const localStudents = this.getStudents()
+          const purged = this.getPurgedStudentAdmissions()
           let stdUpdated = false
 
           for (const sp of studentProfiles) {
+            const admKey = (sp.admission_number || '').toLowerCase().trim()
+            const idKey = (sp.id || '').toLowerCase().trim()
+            if (purged.has(admKey) || (idKey && purged.has(idKey))) continue
+
             const existsIdx = localStudents.findIndex(
               (s) => (sp.admission_number && s.admission_number.toLowerCase() === sp.admission_number.toLowerCase()) || s.id === sp.id
             )
@@ -2864,8 +2869,13 @@ class SchoolDataStore {
       const { data: cloudInvoices } = await supabase.from('fee_invoices').select('*')
       if (cloudInvoices && cloudInvoices.length > 0) {
         const localInvoices = this.getInvoices()
+        const purged = this.getPurgedStudentAdmissions()
         let invUpdated = false
         for (const ci of cloudInvoices) {
+          const admKey = (ci.admission_number || '').toLowerCase().trim()
+          const stdId = (ci.student_id || '').toLowerCase().trim()
+          if (purged.has(admKey) || (stdId && purged.has(stdId))) continue
+
           const idx = localInvoices.findIndex((inv) => inv.id === ci.id || inv.invoice_number === ci.invoice_number)
           const mappedInv: FeeInvoice = {
             id: ci.id,
@@ -2901,8 +2911,13 @@ class SchoolDataStore {
       const { data: cloudPayments } = await supabase.from('fee_payments').select('*')
       if (cloudPayments && cloudPayments.length > 0) {
         const localReceipts = this.getReceipts()
+        const purged = this.getPurgedStudentAdmissions()
         let recUpdated = false
         for (const cp of cloudPayments) {
+          const admKey = (cp.admission_number || '').toLowerCase().trim()
+          const stdId = (cp.student_id || '').toLowerCase().trim()
+          if (purged.has(admKey) || (stdId && purged.has(stdId))) continue
+
           const idx = localReceipts.findIndex((r) => r.id === cp.id || r.receipt_number === cp.receipt_number)
           const mappedRec: FeePaymentReceipt = {
             id: cp.id,
@@ -2932,6 +2947,9 @@ class SchoolDataStore {
         }
       }
 
+      // 7. Automatic Integrity Scrubber - Purge orphaned & duplicate records
+      this.cleanOrphanedAndDuplicateRecords()
+
       // Publish global synced notification to UI components
       schoolEventBus.publish('LIBRARY_UPDATED' as any)
       window.dispatchEvent(new CustomEvent('eclat-data-synced'))
@@ -2939,6 +2957,153 @@ class SchoolDataStore {
       console.warn('Cloud store sync notice:', err)
     } finally {
       this.isSyncing = false
+    }
+  }
+
+  cleanOrphanedAndDuplicateRecords(): {
+    removedDuplicateStudents: number
+    removedOrphanedInvoices: number
+    removedOrphanedReceipts: number
+    removedOrphanedRegistrations: number
+    removedPurgedCredentials: number
+  } {
+    const purged = this.getPurgedStudentAdmissions()
+    let removedDuplicateStudents = 0
+    let removedOrphanedInvoices = 0
+    let removedOrphanedReceipts = 0
+    let removedOrphanedRegistrations = 0
+    let removedPurgedCredentials = 0
+
+    // 1. Clean Students
+    const rawStudents = this.get<StudentRecord[]>('students', INITIAL_STUDENTS)
+    const seenAdms = new Set<string>()
+    const seenIds = new Set<string>()
+    const cleanStudents: StudentRecord[] = []
+    for (const s of rawStudents) {
+      if (!s) continue
+      const adm = (s.admission_number || '').toLowerCase().trim()
+      const id = (s.id || '').toLowerCase().trim()
+      if (purged.has(adm) || (id && purged.has(id))) {
+        removedDuplicateStudents++
+        continue
+      }
+      if (adm && seenAdms.has(adm)) {
+        removedDuplicateStudents++
+        continue
+      }
+      if (id && seenIds.has(id)) {
+        removedDuplicateStudents++
+        continue
+      }
+      if (adm) seenAdms.add(adm)
+      if (id) seenIds.add(id)
+      cleanStudents.push(s)
+    }
+    if (cleanStudents.length !== rawStudents.length) {
+      this.set('students', cleanStudents)
+    }
+
+    const validStudentIds = new Set(cleanStudents.map((s) => s.id.toLowerCase()))
+    const validStudentAdms = new Set(cleanStudents.map((s) => s.admission_number.toLowerCase().trim()))
+
+    // 2. Clean Invoices
+    const rawInvoices = this.get<FeeInvoice[]>('invoices', INITIAL_INVOICES)
+    const seenInvoiceStudents = new Set<string>()
+    const cleanInvoices: FeeInvoice[] = []
+    for (const inv of rawInvoices) {
+      if (!inv) continue
+      const stdId = (inv.student_id || '').toLowerCase().trim()
+      const stdAdm = (inv.admission_number || '').toLowerCase().trim()
+      if (purged.has(stdAdm) || (stdId && purged.has(stdId))) {
+        removedOrphanedInvoices++
+        continue
+      }
+      if (cleanStudents.length > 0 && !validStudentIds.has(stdId) && !validStudentAdms.has(stdAdm)) {
+        removedOrphanedInvoices++
+        continue
+      }
+      const studentKey = stdAdm || stdId
+      if (studentKey && seenInvoiceStudents.has(studentKey)) {
+        removedOrphanedInvoices++
+        continue
+      }
+      if (studentKey) seenInvoiceStudents.add(studentKey)
+      cleanInvoices.push(inv)
+    }
+    if (cleanInvoices.length !== rawInvoices.length) {
+      this.set('invoices', cleanInvoices)
+    }
+
+    // 3. Clean Receipts
+    const rawReceipts = this.get<FeePaymentReceipt[]>('receipts', INITIAL_RECEIPTS)
+    const seenReceiptKeys = new Set<string>()
+    const cleanReceipts: FeePaymentReceipt[] = []
+    for (const r of rawReceipts) {
+      if (!r) continue
+      const adm = (r.admission_number || '').toLowerCase().trim()
+      const stdId = (r.student_id || '').toLowerCase().trim()
+      if (purged.has(adm) || (stdId && purged.has(stdId))) {
+        removedOrphanedReceipts++
+        continue
+      }
+      const key = r.id || r.receipt_number
+      if (key && seenReceiptKeys.has(key)) {
+        removedOrphanedReceipts++
+        continue
+      }
+      if (key) seenReceiptKeys.add(key)
+      cleanReceipts.push(r)
+    }
+    if (cleanReceipts.length !== rawReceipts.length) {
+      this.set('receipts', cleanReceipts)
+    }
+
+    // 4. Clean Unit Registrations
+    const rawRegistrations = this.get<UnitRegistrationReceipt[]>('unit_registrations', [])
+    const cleanRegistrations = rawRegistrations.filter((reg) => {
+      const stdId = (reg.student_id || '').toLowerCase()
+      const stdAdm = (reg.admission_number || '').toLowerCase()
+      if (purged.has(stdAdm) || (stdId && purged.has(stdId))) {
+        removedOrphanedRegistrations++
+        return false
+      }
+      if (cleanStudents.length > 0 && !validStudentIds.has(stdId) && !validStudentAdms.has(stdAdm)) {
+        removedOrphanedRegistrations++
+        return false
+      }
+      return true
+    })
+    if (cleanRegistrations.length !== rawRegistrations.length) {
+      this.set('unit_registrations', cleanRegistrations)
+    }
+
+    // 5. Clean local credentials
+    try {
+      const credsRaw = localStorage.getItem('eclat_local_credentials')
+      if (credsRaw) {
+        const creds = JSON.parse(credsRaw)
+        let changed = false
+        for (const [key, val] of Object.entries(creds) as [string, any][]) {
+          const adm = String(val?.admission_number || val?.profile?.admission_number || '').toLowerCase().trim()
+          const id = String(val?.id || val?.profile?.id || '').toLowerCase().trim()
+          if (purged.has(adm) || (id && purged.has(id))) {
+            delete creds[key]
+            removedPurgedCredentials++
+            changed = true
+          }
+        }
+        if (changed) {
+          localStorage.setItem('eclat_local_credentials', JSON.stringify(creds))
+        }
+      }
+    } catch {}
+
+    return {
+      removedDuplicateStudents,
+      removedOrphanedInvoices,
+      removedOrphanedReceipts,
+      removedOrphanedRegistrations,
+      removedPurgedCredentials,
     }
   }
 
@@ -2993,8 +3158,27 @@ class SchoolDataStore {
   // --- Students CRUD (ACID Protected) ---
   getStudents(): StudentRecord[] {
     const rawList = this.get<StudentRecord[]>('students', INITIAL_STUDENTS)
+    const purged = this.getPurgedStudentAdmissions()
     const receipts = this.getReceipts()
-    return rawList.map((s) => {
+
+    // Deduplicate by admission number & ID, and exclude purged
+    const seenAdms = new Set<string>()
+    const seenIds = new Set<string>()
+    const dedupedList: StudentRecord[] = []
+
+    for (const s of rawList) {
+      if (!s) continue
+      const adm = (s.admission_number || '').toLowerCase().trim()
+      const id = (s.id || '').toLowerCase().trim()
+      if (purged.has(adm) || (id && purged.has(id))) continue
+      if (adm && seenAdms.has(adm)) continue
+      if (id && seenIds.has(id)) continue
+      if (adm) seenAdms.add(adm)
+      if (id) seenIds.add(id)
+      dedupedList.push(s)
+    }
+
+    return dedupedList.map((s) => {
       const studentReceipts = receipts.filter(
         (r) => (r.student_id && r.student_id === s.id) || (r.admission_number && r.admission_number.toLowerCase() === s.admission_number.toLowerCase())
       )
@@ -3446,15 +3630,40 @@ class SchoolDataStore {
   // --- Invoices & Fees (ACID Protected) ---
   getInvoices(): FeeInvoice[] {
     const rawInvoices = this.get<FeeInvoice[]>('invoices', INITIAL_INVOICES)
-    const rawStudents = this.get<StudentRecord[]>('students', INITIAL_STUDENTS)
+    const rawStudents = this.getStudents()
+    const purged = this.getPurgedStudentAdmissions()
     const receipts = this.getReceipts()
 
-    const invoiceList = [...rawInvoices]
+    const validStudentIds = new Set(rawStudents.map((s) => s.id.toLowerCase()))
+    const validStudentAdms = new Set(rawStudents.map((s) => s.admission_number.toLowerCase().trim()))
+
+    // Filter out purged or orphaned invoices and deduplicate by student
+    const seenStudents = new Set<string>()
+    const seenInvoiceIds = new Set<string>()
+    const invoiceList: FeeInvoice[] = []
+
+    for (const inv of rawInvoices) {
+      if (!inv) continue
+      const stdId = (inv.student_id || '').toLowerCase().trim()
+      const stdAdm = (inv.admission_number || '').toLowerCase().trim()
+      if (purged.has(stdAdm) || (stdId && purged.has(stdId))) continue
+      // If we have registered students, ensure invoice points to a living student
+      if (rawStudents.length > 0 && !validStudentIds.has(stdId) && !validStudentAdms.has(stdAdm)) continue
+
+      const studentKey = stdAdm || stdId
+      if (studentKey && seenStudents.has(studentKey)) continue
+      if (inv.id && seenInvoiceIds.has(inv.id)) continue
+
+      if (studentKey) seenStudents.add(studentKey)
+      if (inv.id) seenInvoiceIds.add(inv.id)
+      invoiceList.push(inv)
+    }
+
     for (const std of rawStudents) {
       const hasInv = invoiceList.some(
         (inv) =>
-          (inv.student_id && inv.student_id === std.id) ||
-          (inv.admission_number && inv.admission_number.toLowerCase() === std.admission_number.toLowerCase())
+          (inv.student_id && inv.student_id.toLowerCase() === std.id.toLowerCase()) ||
+          (inv.admission_number && inv.admission_number.toLowerCase().trim() === std.admission_number.toLowerCase().trim())
       )
       if (!hasInv) {
         const billed = Number(std.term_fee_total) || 60
@@ -3618,7 +3827,21 @@ class SchoolDataStore {
   }
 
   getReceipts(): FeePaymentReceipt[] {
-    return this.get<FeePaymentReceipt[]>('receipts', INITIAL_RECEIPTS)
+    const raw = this.get<FeePaymentReceipt[]>('receipts', INITIAL_RECEIPTS)
+    const purged = this.getPurgedStudentAdmissions()
+    const seen = new Set<string>()
+    return raw.filter((r) => {
+      if (!r) return false
+      const adm = (r.admission_number || '').toLowerCase().trim()
+      const stdId = (r.student_id || '').toLowerCase().trim()
+      if (purged.has(adm) || (stdId && purged.has(stdId))) return false
+      const key = r.id || r.receipt_number
+      if (key) {
+        if (seen.has(key)) return false
+        seen.add(key)
+      }
+      return true
+    })
   }
 
   async recordPayment(receipt: FeePaymentReceipt): Promise<void> {
@@ -4666,7 +4889,15 @@ class SchoolDataStore {
 
   // --- Faculty Teachers & Course Assignments (ACID Protected) ---
   getTeachers(): FacultyTeacher[] {
-    return this.get<FacultyTeacher[]>('faculty_teachers', INITIAL_FACULTY_TEACHERS)
+    const raw = this.get<FacultyTeacher[]>('faculty_teachers', INITIAL_FACULTY_TEACHERS)
+    const seen = new Set<string>()
+    return raw.filter((t) => {
+      if (!t) return false
+      const key = (t.staff_id || t.id || t.name).toLowerCase().trim()
+      if (seen.has(key)) return false
+      seen.add(key)
+      return true
+    })
   }
 
   async addTeacher(teacher: FacultyTeacher): Promise<void> {
