@@ -869,16 +869,15 @@ test('SEO Metadata: 4 Canonical Faculties, Meta Tags, Schema.org JSON-LD, and ll
   // Title & Meta tags
   assert.ok(htmlContent.includes('<title>Eclat Institute — 100% Online Virtual Campus | Business, IT & Data Science, Language, IGCSE</title>'))
   assert.ok(htmlContent.includes('name="description"'))
-  assert.ok(htmlContent.includes('School of Business, School of IT & Data Science, School of Language, and IGCSE'))
-  assert.ok(htmlContent.includes('Cambridge CAIE Center KE042 & Pearson Edexcel Center EDX-98421'))
+  assert.ok(htmlContent.includes('British curriculum IGCSE exam preparation'))
 
   // Open Graph & Twitter
   assert.ok(htmlContent.includes('property="og:title"'))
   assert.ok(htmlContent.includes('name="twitter:card" content="summary_large_image"'))
 
   // Schema.org JSON-LD
-  assert.ok(htmlContent.includes('"name": "Cambridge Assessment International Education IGCSE (Center KE042)"'))
-  assert.ok(htmlContent.includes('"name": "Pearson Edexcel International Curriculum (Center EDX-98421)"'))
+  assert.ok(htmlContent.includes('"name": "Cambridge Assessment International Education IGCSE Preparation & Partner Placement"'))
+  assert.ok(htmlContent.includes('"name": "Pearson Edexcel International GCSE Preparation & Partner Placement"'))
   assert.ok(htmlContent.includes('"text": "Eclat Institute consists of 4 canonical faculties'))
   assert.ok(htmlContent.includes('Can external schools, academies, and independent tutors publish courses on Eclat Institute?'))
   assert.ok(htmlContent.includes('What is the difference between Live Cohort Classes and Self-Paced Courses?'))
